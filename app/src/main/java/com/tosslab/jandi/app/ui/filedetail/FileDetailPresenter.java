@@ -12,10 +12,10 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
-import com.tosslab.jandi.app.network.models.ReqMention;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
@@ -211,7 +211,7 @@ public class FileDetailPresenter {
     }
 
     @Background
-    public void sendComment(int fileId, String message, List<ReqMention> mentions) {
+    public void sendComment(int fileId, String message, List<MentionObject> mentions) {
         view.showProgress();
         try {
             fileDetailModel.sendMessageComment(fileId, message, mentions);
@@ -229,7 +229,7 @@ public class FileDetailPresenter {
     }
 
     @Background
-    void sendCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment, List<ReqMention> mentions) {
+    void sendCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment, List<MentionObject> mentions) {
         view.showProgress();
         try {
             fileDetailModel.sendMessageCommentWithSticker(fileId, stickerGroupId, stickerId, comment, mentions);
@@ -387,13 +387,21 @@ public class FileDetailPresenter {
         mentionControlViewModel.clear();
     }
 
-    public List<ReqMention> getMentions() {
+    public List<MentionObject> getMentions() {
         Log.e("resultmention", mentionControlViewModel.getResultMentions().toString());
         return mentionControlViewModel.getResultMentions();
     }
 
     public MentionControlViewModel getMentionControlViewModel() {
         return mentionControlViewModel;
+    }
+
+    public void registStarredFile(int teamId, int messageId) {
+        fileDetailModel.registStarredFile(teamId, messageId);
+    }
+
+    public void unregistStarredFile(int teamId, int messageId) {
+        fileDetailModel.unregistStarredFile(teamId, messageId);
     }
 
     public interface View {

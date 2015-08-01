@@ -10,13 +10,13 @@ import com.tosslab.jandi.app.R;
 /**
  * Created by tee on 15. 7. 21..
  */
-public class MentionListViewHolder extends RecyclerView.ViewHolder {
+public class MentionMemberListViewHolder extends RecyclerView.ViewHolder {
 
     private ImageView ivIcon;
     private TextView tvName;
     private View convertView;
 
-    public MentionListViewHolder(View itemView) {
+    public MentionMemberListViewHolder(View itemView) {
         super(itemView);
         ivIcon = (ImageView) itemView.findViewById(R.id.img_member_item_icon);
         tvName = (TextView) itemView.findViewById(R.id.tv_member_item_name);

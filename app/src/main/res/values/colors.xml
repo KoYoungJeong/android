@@ -204,6 +204,15 @@
 
     <color name="jandi_message_indicator">#D2D2D2</color>
 
+
+    <!-- coach mark -->
     <color name="jandi_coach_mark_text">#FF19c1ff</color>
     <color name="jandi_coach_mark_text_shadow">#DD000000</color>
+
+    <!-- starred / MentionObject-->
+    <color name="jandi_starred_list_line">#FFeeeeee</color>
+    <color name="jandi_star_mention_item_name_content_text">#333333</color>
+    <color name="jandi_star_mention_item_topic_name_text">#02a6eb</color>
+    <color name="jandi_star_mention_item_date_text">#999999</color>
+    <color name="jandi__star_mention_item_divider">#DDDDDD</color>
 </resources>

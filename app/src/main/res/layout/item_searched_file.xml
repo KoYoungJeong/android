@@ -102,13 +102,4 @@
             android:textSize="@dimen/jandi_file_search_item_date_text" />
     </RelativeLayout>
 
-    <!--<TextView-->
-    <!--android:id="@+id/txt_searched_file_in_cdp"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_toRightOf="@id/txt_searched_file_date"-->
-    <!--android:layout_alignBottom="@id/txt_searched_file_date"-->
-    <!--android:textColor="@color/message_date_text"-->
-    <!--android:text="in somewhere"-->
-    <!--/>-->
 </RelativeLayout>

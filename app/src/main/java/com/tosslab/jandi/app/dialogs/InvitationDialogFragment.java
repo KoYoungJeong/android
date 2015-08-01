@@ -22,7 +22,6 @@ import com.tosslab.jandi.app.ui.invites.email.InviteEmailActivity_;
  * Created by Bill Minwook Heo on 15. 4. 21..
  */
 
-
 public class InvitationDialogFragment extends DialogFragment {
 
     private static final String INVITE_TEAM_NAME = "invite_team_name";

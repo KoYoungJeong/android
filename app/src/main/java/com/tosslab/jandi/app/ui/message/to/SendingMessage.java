@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.message.to;
 
-import com.tosslab.jandi.app.network.models.ReqMention;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public class SendingMessage {
     private final String message;
     //    int messageId;
     private StickerInfo stickerInfo;
-    private List<ReqMention> mentions;
+    private List<MentionObject> mentions;
 
     public SendingMessage(long localId, ReqSendMessageV3 reqSendMessageV3) {
         this.localId = localId;
@@ -21,14 +21,14 @@ public class SendingMessage {
         this.mentions = reqSendMessageV3.getMentions();
     }
 
-    public SendingMessage(long localId, String message, StickerInfo stickerInfo, List<ReqMention> mentions) {
+    public SendingMessage(long localId, String message, StickerInfo stickerInfo, List<MentionObject> mentions) {
         this.localId = localId;
         this.message = message;
         this.stickerInfo = stickerInfo;
         this.mentions = mentions;
     }
 
-    public List<ReqMention> getMentions() {
+    public List<MentionObject> getMentions() {
         return mentions;
     }
 

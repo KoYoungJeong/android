@@ -17,7 +17,7 @@
             android:layout_width="@dimen/jandi_file_detail_uploder_profile_size"
             android:layout_height="@dimen/jandi_file_detail_uploder_profile_size"
             android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/jandi_file_detail_uploder_profile_margin_right"/>
+            android:layout_marginRight="@dimen/jandi_file_detail_uploder_profile_margin_right" />
 
         <TextView
             android:id="@+id/txt_file_detail_user_name"
@@ -27,7 +27,7 @@
             android:layout_toRightOf="@+id/img_file_detail_user_profile"
             android:text="name"
             android:textSize="@dimen/jandi_file_detail_text_user_name"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txt_file_detail_create_date"
@@ -39,7 +39,7 @@
             android:gravity="right"
             android:text="asdlkjadklj"
             android:textColor="@color/jandi_file_detail_date"
-            android:textSize="@dimen/jandi_file_detail_text_date"/>
+            android:textSize="@dimen/jandi_file_detail_text_date" />
 
         <ImageView
             android:id="@+id/img_entity_listitem_line_through"
@@ -49,7 +49,7 @@
             android:layout_alignLeft="@+id/txt_file_detail_user_name"
             android:layout_alignRight="@+id/txt_file_detail_user_name"
             android:layout_alignTop="@+id/txt_file_detail_user_name"
-            android:src="@drawable/line_gray"/>
+            android:src="@drawable/line_gray" />
 
         <View
             android:id="@+id/view_entity_listitem_warning"
@@ -60,7 +60,7 @@
             android:layout_alignRight="@+id/img_file_detail_user_profile"
             android:layout_alignTop="@+id/img_file_detail_user_profile"
             android:background="#99ffffff"
-            android:visibility="visible"/>
+            android:visibility="visible" />
 
 
     </RelativeLayout>
@@ -72,13 +72,14 @@
         android:layout_marginBottom="@dimen/jandi_file_detail_file_margin_top"
         android:layout_marginLeft="@dimen/jandi_file_detail_padding_sides"
         android:layout_marginRight="@dimen/jandi_file_detail_padding_sides"
-        android:src="@drawable/jandi_down_img"/>
+        android:src="@drawable/jandi_down_img" />
     <!-- 파일의 상세 정보 -->
     <LinearLayout
         android:id="@+id/ly_file_detail_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
+        android:orientation="horizontal"
         android:paddingLeft="@dimen/jandi_file_detail_padding_sides"
         android:paddingRight="@dimen/jandi_file_detail_padding_sides">
 
@@ -86,10 +87,10 @@
             android:id="@+id/icon_file_detail_content_type"
             android:layout_width="@dimen/jandi_file_detail_file_icon_width"
             android:layout_height="@dimen/jandi_file_detail_file_icon_height"
-            android:background="@drawable/jandi_fview_icon_etc"/>
+            android:background="@drawable/jandi_fview_icon_etc" />
 
         <RelativeLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp">
@@ -99,7 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/jandi_file_detail_type_text"
-                android:textSize="@dimen/jandi_file_detail_file_type_text"/>
+                android:textSize="@dimen/jandi_file_detail_file_type_text" />
 
             <TextView
                 android:id="@+id/txt_file_detail_shared_cdp"
@@ -107,8 +108,24 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/txt_file_detail_file_info"
                 android:layout_marginTop="2dp"
+                android:text="22222"
                 android:textColor="@color/jandi_file_detail_share_text"
-                android:textSize="@dimen/jandi_file_detail_file_share_text"/>
+                android:textSize="@dimen/jandi_file_detail_file_share_text" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/bt_file_detail_starred"
+                android:layout_width="33dp"
+                android:layout_height="33dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/jandi_selector_starred"
+                android:clickable="true" />
+
         </RelativeLayout>
         <!--<ImageView--><!--android:id="@+id/btn_file_detail_share"--><!--android:layout_width="31dp"--><!--android:layout_height="31dp"--><!--android:layout_marginTop="10dp"--><!--android:src="@drawable/jandi_fview_bt_more"/>-->
     </LinearLayout>
@@ -116,5 +133,5 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/jandi_message_input_border"/>
+        android:background="@color/jandi_message_input_border" />
 </LinearLayout>

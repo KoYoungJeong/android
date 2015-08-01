@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.models;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.network.jackson.deserialize.EventInfoDeserialize;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -115,6 +116,7 @@ public class ResMessages {
         public int feedbackId;
         public FileMessage feedback;
         public String linkPreviewId;
+        public List<MentionObject> mentions;
 
         @Override
         public String toString() {
@@ -130,7 +132,8 @@ public class ResMessages {
                     ", permission=" + permission +
                     ", feedbackId=" + feedbackId +
                     ", feedback=" + feedback +
-                    ", linkPreviewId=" + linkPreviewId +
+                    ", linkPreviewId='" + linkPreviewId + '\'' +
+                    ", mentions=" + mentions +
                     '}';
         }
     }

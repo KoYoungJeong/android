@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -51,6 +52,7 @@ import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
+import com.tosslab.jandi.app.events.messages.StarredEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
@@ -61,10 +63,10 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
-import com.tosslab.jandi.app.network.models.ReqMention;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
@@ -633,7 +635,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         String message = messageListPresenter.getSendEditText().trim();
 
         ReqSendMessageV3 reqSendMessage = null;
-        List<ReqMention> mentions = null;
+        List<MentionObject> mentions = null;
 
         if (!TextUtils.isEmpty(message)) {
             if (mentionControlViewModel.hasMentionMember()) {
@@ -1218,6 +1220,19 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             case DELETE:
                 messageListPresenter.showProgressWheel();
                 announcementModel.deleteAnnouncement(teamId, roomId);
+                break;
+        }
+    }
+
+    public void onEvent(StarredEvent event) {
+        switch (event.getAction()) {
+            case STARRED:
+                messageListModel.registStarredMessage(teamId, event.getMessageId());
+                Toast.makeText(getActivity(),R.string.jandi_message_starred,Toast.LENGTH_SHORT).show();
+
+                break;
+            case UNSTARRED:
+                messageListModel.unRegistStarredMessage(teamId, event.getMessageId());
                 break;
         }
     }

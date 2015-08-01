@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
-import com.tosslab.jandi.app.ui.commonviewmodels.mention.viewholder.MentionListViewHolder;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.viewholder.MentionMemberListViewHolder;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 
@@ -18,11 +18,11 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tee on 15. 7. 21..
  */
-public class MentionListAdapter extends RecyclerView.Adapter<MentionListViewHolder> {
+public class MentionMemberListAdapter extends RecyclerView.Adapter<MentionMemberListViewHolder> {
 
     private List<SearchedItemVO> searchedMembersList;
 
-    public MentionListAdapter(List<SearchedItemVO> searchedMembersList) {
+    public MentionMemberListAdapter(List<SearchedItemVO> searchedMembersList) {
         this.searchedMembersList = searchedMembersList;
     }
 
@@ -45,13 +45,13 @@ public class MentionListAdapter extends RecyclerView.Adapter<MentionListViewHold
     }
 
     @Override
-    public MentionListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new MentionListViewHolder(LayoutInflater.from(parent.getContext())
+    public MentionMemberListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new MentionMemberListViewHolder(LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_search_member_list, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(MentionListViewHolder holder, int position) {
+    public void onBindViewHolder(MentionMemberListViewHolder holder, int position) {
         if (searchedMembersList == null)
             return;
         SearchedItemVO item = searchedMembersList.get(position);

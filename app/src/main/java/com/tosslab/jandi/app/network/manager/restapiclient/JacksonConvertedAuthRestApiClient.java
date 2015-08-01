@@ -77,11 +77,13 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMentioned;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.network.models.ResStarred;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
@@ -538,5 +540,25 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     @Override
     public List<ResMessages.FileMessage> searchNewImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
         return RestAdapterBuilder.newInstance(FileApiV2Client.class).create().searchNewImageFile(teamId, roomId, messageId, count);
+    }
+
+    @Override
+    public ResMentioned getMentionedMessagesByTeamApi(int teamId, int page, int perPage) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getMentionedMessages(teamId, page, perPage);
+    }
+
+    @Override
+    public ResStarred registStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().registStarredMessage(teamId, messageId, new ReqDeleteTopic(0));
+    }
+
+    @Override
+    public ResCommon unregistStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().unregistStarredMessage(teamId, messageId);
+    }
+
+    @Override
+    public ResMentioned getStarredMessages(int teamId) {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getStarredMessages(teamId);
     }
 }

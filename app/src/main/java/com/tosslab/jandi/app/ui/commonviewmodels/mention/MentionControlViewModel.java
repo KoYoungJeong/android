@@ -14,8 +14,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.models.ReqMention;
-import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.MentionListAdapter;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.MentionMemberListAdapter;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel_;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.util.MensionSpannable;
@@ -61,7 +61,7 @@ public class MentionControlViewModel {
     private List<Integer> roomIds;
     private String currentSearchText;
     private LinkedHashMap<Integer, SearchedItemVO> selectedMemberHashMap;
-    private List<ReqMention> resultMentions;
+    private List<MentionObject> resultMentions;
     private String type = MENTION_TYPE_MESSAGE;
 
     // finally generated mention info.
@@ -114,8 +114,10 @@ public class MentionControlViewModel {
             fileCommentListView = (ListView) view.findViewById(R.id.lv_file_detail_comments);
         }
 
-        searchMemberListView.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
-        searchMemberListView.setAdapter(new MentionListAdapter(searchMemberModel.getUserSearchByName(null, "", null, type)));
+        searchMemberListView.setLayoutManager(new LinearLayoutManager(activity,
+                LinearLayoutManager.VERTICAL, false));
+        searchMemberListView.setAdapter(new MentionMemberListAdapter(
+                searchMemberModel.getUserSearchByName(null, "", null, type)));
 
         if (keyboardHeightModel.getOnKeyboardShowListener() == null) {
             keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
@@ -194,14 +196,14 @@ public class MentionControlViewModel {
     }
 
     public void showSearchMembersInfo(String searchString, String type) {
-        MentionListAdapter mentionListAdapter = (MentionListAdapter) searchMemberListView.getAdapter();
-        mentionListAdapter.setSearchedMembersList(
+        MentionMemberListAdapter mentionMemberListAdapter = (MentionMemberListAdapter) searchMemberListView.getAdapter();
+        mentionMemberListAdapter.setSearchedMembersList(
                 searchMemberModel.getUserSearchByName(getRoomIds(), searchString, selectedMemberHashMap, type));
     }
 
     public void removeAllMemberList() {
-        MentionListAdapter mentionListAdapter = (MentionListAdapter) searchMemberListView.getAdapter();
-        mentionListAdapter.clearMembersList();
+        MentionMemberListAdapter mentionMemberListAdapter = (MentionMemberListAdapter) searchMemberListView.getAdapter();
+        mentionMemberListAdapter.clearMembersList();
     }
 
     public void showListView(boolean isShow) {
@@ -225,8 +227,8 @@ public class MentionControlViewModel {
     }
 
     public List<SearchedItemVO> getMembersList() {
-        MentionListAdapter mentionListAdapter = (MentionListAdapter) searchMemberListView.getAdapter();
-        return mentionListAdapter.getSearchedMembersList();
+        MentionMemberListAdapter mentionMemberListAdapter = (MentionMemberListAdapter) searchMemberListView.getAdapter();
+        return mentionMemberListAdapter.getSearchedMembersList();
     }
 
 
@@ -308,7 +310,7 @@ public class MentionControlViewModel {
             Log.e(name + "offset", offset + "");
             Log.e(name + "length", length + "");
 
-            ReqMention mentionInfo = new ReqMention(key, type, offset, length);
+            MentionObject mentionInfo = new MentionObject(key, type, offset, length);
 
             resultMentions.add(mentionInfo);
         }
@@ -323,9 +325,11 @@ public class MentionControlViewModel {
         return false;
     }
 
-    public List<ReqMention> getResultMentions() {
-        List<ReqMention> result = new ArrayList<>();
-        result.addAll(resultMentions);
+    public List<MentionObject> getResultMentions() {
+        List<MentionObject> result = new ArrayList<>();
+        if (resultMentions != null) {
+            result.addAll(resultMentions);
+        }
         return result;
     }
 

@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
+import com.tosslab.jandi.app.events.messages.StarredEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -155,6 +156,15 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
             actionCopy.setVisibility(View.GONE);
         }
 
+        if (messageType == MessageItem.TYPE_STRING) {
+            actionStarred.setVisibility(View.VISIBLE);
+            //actionUnStarred.setVisibility(View.VISIBLE);
+            actionUnStarred.setVisibility(View.GONE);
+        } else {
+            actionStarred.setVisibility(View.GONE);
+            actionUnStarred.setVisibility(View.GONE);
+        }
+
         boolean isTextMessage = messageType == MessageItem.TYPE_STRING;
         actionSetAnnouncement.setVisibility(isTextMessage ? View.VISIBLE : View.GONE);
 
@@ -178,6 +188,19 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
             dismiss();
         });
 
+        actionStarred.setOnClickListener((view) -> {
+            StarredEvent event =
+                    new StarredEvent(StarredEvent.Action.STARRED, messageId);
+            EventBus.getDefault().post(event);
+            dismiss();
+        });
+
+        actionUnStarred.setOnClickListener((view) -> {
+            StarredEvent event =
+                    new StarredEvent(StarredEvent.Action.UNSTARRED, messageId);
+            EventBus.getDefault().post(event);
+            dismiss();
+        });
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mainView)

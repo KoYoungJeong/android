@@ -444,11 +444,22 @@
     <string name="jandi_coach_mark_more_explain2">别忘了邀请伙伴加入！</string>
     <string name="jandi_coach_mark_more_explain3"></string>
 
-    <!-- starred -->
+    <!-- starred / mentioned -->
+
+
     <string name="jandi_starred_star">标示</string>
+    <string name="jandi_mention_mentions">提及</string>
+    <string name="jandi_mention_more">更多</string>
+    <string name="jandi_starred_files">文件类别</string>
+    <string name="jandi_starred_all">全部类别</string>
     <string name="jandi_starred_unstar">取消标示</string>
-    <string name="jandi_starred_UNDO">复原</string>
-    <string name="jandi_starred_Unstarred">已取消标示</string>
-    <string name="jandi_starred_Stars">已标示</string>
+    <string name="jandi_starred_undo">复原</string>
+    <string name="jandi_starred_unstarred">已取消标示</string>
+    <string name="jandi_starred_stars">已标示</string>
+    <string name="jandi_mention_all_topic_members">议题成员</string>
+    <string name="jandi_mention_mentioned_you">提及你</string>
+    <string name="jandi_mention_no_mentions">还没有人提及你</string>
+    <string name="jandi_starred_no_all">还没有人提及你</string>
+    <string name="jandi_starred_no_file">No starred files</string>
 
 </resources>

@@ -31,6 +31,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -55,9 +56,9 @@ import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
-import com.tosslab.jandi.app.network.models.ReqMention;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
@@ -122,6 +123,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     ViewGroup vgStickerPreview;
     @ViewById(R.id.iv_file_detail_preview_sticker_image)
     ImageView ivStickerPreview;
+
     @Bean
     StickerViewModel stickerViewModel;
     @Bean
@@ -179,6 +181,13 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         lvFileDetailComments.addHeaderView(header);
         lvFileDetailComments.setAdapter(fileDetailCommentListAdapter);
+        Button btFileDetailStarred = (Button) header.findViewById(R.id.bt_file_detail_starred);
+        btFileDetailStarred.setOnClickListener(v -> {
+            v.setSelected(true);
+            fileDetailPresenter.registStarredFile(EntityManager.getInstance(FileDetailActivity.this).getTeamId(),
+                    fileId);
+            Toast.makeText(this, R.string.jandi_message_starred, Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Override
@@ -267,6 +276,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             case R.id.action_file_detail_delete:
                 showDeleteFileDialog(fileId);
                 return true;
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -571,7 +581,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         hideSoftKeyboard();
 
         String convertedComment = fileDetailPresenter.getMentionConvertedMessage();
-        List<ReqMention> mentions = fileDetailPresenter.getMentions();
+        List<MentionObject> mentions = fileDetailPresenter.getMentions();
         Log.e("mentions", mentions.toString());
         fileDetailPresenter.clearMentionControlViewModel();
 

@@ -30,13 +30,13 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
-import com.tosslab.jandi.app.network.models.ReqMention;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
@@ -171,7 +171,7 @@ public class MessageListModel {
                 .build(item);
     }
 
-    public int sendMessage(long localId, String message, List<ReqMention> mentions) {
+    public int sendMessage(long localId, String message, List<MentionObject> mentions) {
 
         SendingMessage sendingMessage = new SendingMessage(localId, new ReqSendMessageV3(message, mentions));
         try {
@@ -400,7 +400,7 @@ public class MessageListModel {
         JandiMarkerDatabaseManager.getInstance(activity).updateMarker(teamId, roomId, myId, lastLinkId);
     }
 
-    public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, String message, List<ReqMention> mentions) {
+    public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, String message, List<MentionObject> mentions) {
 
         FormattedEntity entity = EntityManager.getInstance(activity.getApplicationContext()).getEntityById(entityId);
         String type = null;
@@ -418,6 +418,26 @@ public class MessageListModel {
             return -1;
         }
 
+    }
+
+    @Background
+    public void registStarredMessage(int teamId, int messageId) {
+        try {
+            RequestApiManager.getInstance()
+                    .registStarredMessageByTeamApi(teamId, messageId);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Background
+    public void unRegistStarredMessage(int teamId, int messageId) {
+        try {
+            RequestApiManager.getInstance()
+                    .unregistStarredMessageByTeamApi(teamId, messageId);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+        }
     }
 
 }

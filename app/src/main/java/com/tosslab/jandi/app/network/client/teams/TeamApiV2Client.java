@@ -5,13 +5,14 @@ import com.tosslab.jandi.app.network.manager.restapiclient.annotation.Authorized
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
 import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
-import com.tosslab.jandi.app.network.models.ReqDealStarred;
+import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMentioned;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResStarred;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
@@ -25,6 +26,7 @@ import retrofit.http.Headers;
 import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Path;
+import retrofit.http.Query;
 
 /**
  * Created by tee on 15. 6. 16..
@@ -67,12 +69,19 @@ public interface TeamApiV2Client {
     @GET("/teams/{teamId}/messages/{messageId}")
     ResMessages.OriginalMessage getMessage(@Path("teamId") int teamId, @Path("messageId") int messageId);
 
-    @POST("/teams/{teamId}/members/{memberId}/messages/{messageId}/starred")
-    ResStarred registStarredMessage(@Path("teamId") int teamId, @Path("memberId") int memberId,
-                                    @Path("messageId") int messageId, @Body ReqDealStarred reqDealStarred);
+    @POST("/teams/{teamId}/messages/{messageId}/starred")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    ResStarred registStarredMessage(@Path("teamId") int teamId, @Path("messageId") int messageId, @Body ReqDeleteTopic reqDeleteTopic);
 
-    @DELETEWithBody("/teams/{teamId}/members/{memberId}/messages/{messageId}/starred")
-    ResCommon unregistStarredMessage(@Path("teamId") int teamId, @Path("memberId") int memberId,
-                                     @Path("messageId") int messageId, @Body ReqDealStarred reqDealStarred);
+    @DELETEWithBody("/teams/{teamId}/messages/{messageId}/starred")
+    ResCommon unregistStarredMessage(@Path("teamId") int teamId, @Path("messageId") int messageId);
+
+    @GET("/teams/{teamId}/messages/mentioned")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    ResMentioned getMentionedMessages(@Path("teamId") int teamId, @Query("page") int page, @Query("perPage") int perPage);
+
+    @GET("/teams/{teamId}/messages/starred")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    ResMentioned getStarredMessages(@Path("teamId") int teamId);
 
 }

@@ -6,6 +6,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
@@ -128,6 +130,15 @@ public class MessageViewHolder implements BodyViewHolder {
                         .setSpan(unreadCountSpannable, beforeLength, messageStringBuilder.length(),
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
+
+            Log.e("abcde", link.message.mentions.size() + "");
+
+            for (MentionObject mention : link.message.mentions) {
+                String name = messageStringBuilder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
+                MensionMessageSpannable spannable1 = new MensionMessageSpannable(messageTextView.getContext(), name);
+                messageStringBuilder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+
 
             messageTextView.setText(messageStringBuilder);
 

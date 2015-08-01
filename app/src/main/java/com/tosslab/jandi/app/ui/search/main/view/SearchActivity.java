@@ -266,7 +266,6 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         String text = textView.getText().toString();
         if (!TextUtils.isEmpty(text) && TextUtils.getTrimmedLength(text) > 0) {
             searchPresenter.onSearchAction(text);
-
             sendNewQuery(text);
         } else {
             inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);

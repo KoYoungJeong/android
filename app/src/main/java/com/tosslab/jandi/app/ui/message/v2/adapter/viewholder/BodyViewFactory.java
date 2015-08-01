@@ -24,7 +24,6 @@ public class BodyViewFactory {
                 return new PureCommentViewHolder();
             case FileComment:
                 return new FileCommentViewHolder();
-
             case CollapseStickerComment:
                 return new CollapseStickerCommentViewHolder();
             case PureStickerComment:

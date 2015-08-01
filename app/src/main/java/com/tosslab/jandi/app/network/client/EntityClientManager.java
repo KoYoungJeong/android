@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
-import com.tosslab.jandi.app.network.models.ReqMention;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
@@ -178,7 +178,7 @@ public class EntityClientManager {
         return RequestApiManager.getInstance().getFileDetailByMessagesApiAuth(selectedTeamId, messageId);
     }
 
-    public ResCommon sendMessageComment(final int messageId, String comment, List<ReqMention> mentions) throws RetrofitError {
+    public ResCommon sendMessageComment(final int messageId, String comment, List<MentionObject> mentions) throws RetrofitError {
 
         final ReqSendComment reqSendComment = new ReqSendComment(comment, mentions);
 

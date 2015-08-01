@@ -6,17 +6,21 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
+
+import java.util.List;
 
 /**
  * Created by Steve SeongUg Jung on 15. 5. 6..
@@ -77,7 +81,18 @@ public class PureMessageViewHolder implements BodyViewHolder {
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
+        List<MentionObject> mentions = link.message.mentions;
+
+        Log.e("abcde", mentions.size() + "");
+
+        for (MentionObject mention : mentions) {
+            String name = builder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
+            MensionMessageSpannable spannable1 = new MensionMessageSpannable(tvMessage.getContext(), name);
+            builder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
         tvMessage.setText(builder);
+
 
         linkPreviewViewModel.bindData(link);
 

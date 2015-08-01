@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
@@ -184,9 +185,16 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
             boolean hasLink = LinkifyUtil.addLinks(context, spannableStringBuilder);
 
+            for (MentionObject mention : link.message.mentions) {
+                String name = spannableStringBuilder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
+                MensionCommentSpannable spannable1 = new MensionCommentSpannable(commentTextView.getContext(), name);
+                spannableStringBuilder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+
             if (hasLink) {
                 commentTextView.setText(
                         Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
+
                 LinkifyUtil.setOnLinkClick(commentTextView);
             } else {
                 commentTextView.setText(spannableStringBuilder);

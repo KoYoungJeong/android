@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.models.sticker;
 
-import com.tosslab.jandi.app.network.models.ReqMention;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -17,10 +17,10 @@ public class ReqSendSticker {
     private int share;
     private String type;
     private String content;
-    private List<ReqMention> mentions;
+    private List<MentionObject> mentions;
 
     private ReqSendSticker(int groupId, String stickerId, int teamId, int share, String type,
-                           String content, List<ReqMention> mentions) {
+                           String content, List<MentionObject> mentions) {
         this.stickerId = stickerId;
         this.groupId = groupId;
         this.teamId = teamId;
@@ -31,7 +31,7 @@ public class ReqSendSticker {
     }
 
     public static ReqSendSticker create(int groupId, String sitkcerId, int teamId, int share,
-                                        String type, String content, List<ReqMention> mentions) {
+                                        String type, String content, List<MentionObject> mentions) {
 
         return new ReqSendSticker(groupId, sitkcerId, teamId, share, type, content, mentions);
 
@@ -61,7 +61,7 @@ public class ReqSendSticker {
         return content;
     }
 
-    public List<ReqMention> getMentions() {
+    public List<MentionObject> getMentions() {
         return mentions;
     }
 }

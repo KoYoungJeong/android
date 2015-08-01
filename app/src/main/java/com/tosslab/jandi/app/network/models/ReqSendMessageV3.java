@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.network.models;
 
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+
 import java.util.List;
 
 /**
@@ -9,9 +11,9 @@ public class ReqSendMessageV3 {
 
     private String content;
 
-    private List<ReqMention> mentions;
+    private List<MentionObject> mentions;
 
-    public ReqSendMessageV3(String content, List<ReqMention> mentions) {
+    public ReqSendMessageV3(String content, List<MentionObject> mentions) {
         this.content = content;
         this.mentions = mentions;
     }
@@ -20,7 +22,7 @@ public class ReqSendMessageV3 {
         return content;
     }
 
-    public List<ReqMention> getMentions() {
+    public List<MentionObject> getMentions() {
         return mentions;
     }
 
