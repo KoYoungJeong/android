@@ -11,8 +11,8 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
+import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
-import com.tosslab.jandi.app.events.messages.StarredEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -28,6 +28,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
     private static final String MESSAGE_TYPE = "messageType";
     private static final String FEEDBACK_ID = "feedbackId";
     private static final String CURRENT_MESSAGE = "currentMessage";
+    private static final String IS_STARRED = "isStarred";
     private static final String IS_MINE = "isMine";
 
     public static ManipulateMessageDialogFragment newInstance(MessageItem item) {
@@ -66,6 +67,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         args.putInt(MESSAGE_TYPE, MessageItem.TYPE_STRING);
         args.putString(CURRENT_MESSAGE, item.content.body);
         args.putBoolean(IS_MINE, isMine);
+        args.putBoolean(IS_STARRED, item.isStarred);
         frag.setArguments(args);
         return frag;
     }
@@ -110,6 +112,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         args.putInt(MESSAGE_TYPE, MessageItem.TYPE_COMMENT);
         args.putString(CURRENT_MESSAGE, item.content.body);
         args.putBoolean(IS_MINE, isMine);
+        args.putBoolean(IS_STARRED, item.isStarred);
         frag.setArguments(args);
         return frag;
     }
@@ -132,6 +135,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         final boolean isMine = getArguments().getBoolean(IS_MINE, false);
 
         final String currentMessage = getArguments().getString(CURRENT_MESSAGE);
+        final boolean isStarred = getArguments().getBoolean(IS_STARRED, false);
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mainView = inflater.inflate(R.layout.dialog_manipulate_message, null);
@@ -156,10 +160,15 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
             actionCopy.setVisibility(View.GONE);
         }
 
-        if (messageType == MessageItem.TYPE_STRING) {
-            actionStarred.setVisibility(View.VISIBLE);
-            //actionUnStarred.setVisibility(View.VISIBLE);
-            actionUnStarred.setVisibility(View.GONE);
+        if (messageType == MessageItem.TYPE_STRING || messageType == MessageItem.TYPE_COMMENT) {
+            if (!isStarred) {
+                actionStarred.setVisibility(View.VISIBLE);
+                //actionUnStarred.setVisibility(View.VISIBLE);
+                actionUnStarred.setVisibility(View.GONE);
+            } else {
+                actionStarred.setVisibility(View.GONE);
+                actionUnStarred.setVisibility(View.VISIBLE);
+            }
         } else {
             actionStarred.setVisibility(View.GONE);
             actionUnStarred.setVisibility(View.GONE);
@@ -189,15 +198,15 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         });
 
         actionStarred.setOnClickListener((view) -> {
-            StarredEvent event =
-                    new StarredEvent(StarredEvent.Action.STARRED, messageId);
+            MessageStarredEvent event =
+                    new MessageStarredEvent(MessageStarredEvent.Action.STARRED, messageId);
             EventBus.getDefault().post(event);
             dismiss();
         });
 
         actionUnStarred.setOnClickListener((view) -> {
-            StarredEvent event =
-                    new StarredEvent(StarredEvent.Action.UNSTARRED, messageId);
+            MessageStarredEvent event =
+                    new MessageStarredEvent(MessageStarredEvent.Action.UNSTARRED, messageId);
             EventBus.getDefault().post(event);
             dismiss();
         });

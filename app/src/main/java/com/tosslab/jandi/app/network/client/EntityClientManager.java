@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
@@ -20,6 +19,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;

@@ -117,6 +117,7 @@ public class ResMessages {
         public FileMessage feedback;
         public String linkPreviewId;
         public List<MentionObject> mentions;
+        public boolean isStarred;
 
         @Override
         public String toString() {
@@ -134,6 +135,7 @@ public class ResMessages {
                     ", feedback=" + feedback +
                     ", linkPreviewId='" + linkPreviewId + '\'' +
                     ", mentions=" + mentions +
+                    ", isStarred=" + isStarred +
                     '}';
         }
     }

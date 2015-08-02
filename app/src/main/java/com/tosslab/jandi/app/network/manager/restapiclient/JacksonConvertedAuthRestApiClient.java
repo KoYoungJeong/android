@@ -558,7 +558,8 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResMentioned getStarredMessages(int teamId) {
-        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getStarredMessages(teamId);
+    public ResMentioned getStarredMessagesByTeamApi(int teamId, String type, int page, int perPage) {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getStarredMessages(teamId,
+                type, page, perPage);
     }
 }

@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.starmention.model;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -11,6 +10,7 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResMentioned;
 import com.tosslab.jandi.app.network.models.commonobject.CursorObject;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
+import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 
 import org.androidannotations.annotations.EBean;
@@ -34,9 +34,15 @@ public class StarMentionListModel {
         return RequestApiManager.getInstance().getMentionedMessagesByTeamApi(teamId, page, pagePerCount);
     }
 
-    public ResMentioned getStarredRawDatas() {
+    public ResMentioned getStarredRawDatas(String categoryType, int page, int pagePerCount) {
         int teamId = getTeamId(JandiApplication.getContext());
-        return RequestApiManager.getInstance().getStarredMessages(teamId);
+        if (categoryType.equals(StarMentionListActivity.TYPE_STAR_FILES)) {
+            return RequestApiManager.getInstance().getStarredMessagesByTeamApi(
+                    teamId, "file", page, pagePerCount);
+        }
+
+        return RequestApiManager.getInstance().getStarredMessagesByTeamApi(
+                teamId, null, page, pagePerCount);
     }
 
     public List<StarMentionVO> addMentionMessagesToList(int page, int pagePerCount) {
@@ -46,7 +52,6 @@ public class StarMentionListModel {
         }
 
         ResMentioned resMentioned = getMentionRawDatas(page, pagePerCount);
-        Log.e("xx", resMentioned.toString());
         List<StarMentionedMessageObject> starMentionedMessageObjectList = resMentioned.getRecords();
         CursorObject mentionedCursorList = resMentioned.getCursor();
         totalCount = mentionedCursorList.getTotalCount();
@@ -81,7 +86,7 @@ public class StarMentionListModel {
             starMentionList = new ArrayList<>();
         }
 
-        ResMentioned resMentioned = getStarredRawDatas();
+        ResMentioned resMentioned = getStarredRawDatas(categoryType, 1, 50);
         List<StarMentionedMessageObject> starMentionedMessageObjectList = resMentioned.getRecords();
         CursorObject mentionedCursorList = resMentioned.getCursor();
         totalCount = mentionedCursorList.getTotalCount();

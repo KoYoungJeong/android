@@ -45,6 +45,7 @@ public interface ITeamApiLoader {
 
     IExecutor<ResCommon> loadUnregistStarredMessageByTeamApi(int teamId, int messageId);
 
-    IExecutor<ResMentioned> loadGetStarredMessages(int teamId);
+    IExecutor<ResMentioned> loadGetStarredMessagesByTeamApi(int teamId, String type,
+                                                            int page, int perPage);
 
 }

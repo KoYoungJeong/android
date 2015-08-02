@@ -604,7 +604,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public ResMentioned getStarredMessages(int teamId) {
-        return requestApiExecute(RestApiLoader.getInstance().loadGetStarredMessages(teamId));
+    public ResMentioned getStarredMessagesByTeamApi(int teamId, String type, int page, int perPage) {
+        return requestApiExecute(RestApiLoader.getInstance().loadGetStarredMessagesByTeamApi(teamId, type, page, perPage));
     }
 }

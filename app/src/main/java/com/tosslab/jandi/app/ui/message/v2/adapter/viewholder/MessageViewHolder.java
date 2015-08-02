@@ -131,14 +131,11 @@ public class MessageViewHolder implements BodyViewHolder {
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
-            Log.e("abcde", link.message.mentions.size() + "");
-
             for (MentionObject mention : link.message.mentions) {
                 String name = messageStringBuilder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
                 MensionMessageSpannable spannable1 = new MensionMessageSpannable(messageTextView.getContext(), name);
                 messageStringBuilder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-
 
             messageTextView.setText(messageStringBuilder);
 

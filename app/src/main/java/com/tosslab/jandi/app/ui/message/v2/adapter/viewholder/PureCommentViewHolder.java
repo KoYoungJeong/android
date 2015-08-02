@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -82,9 +81,7 @@ public class PureCommentViewHolder implements BodyViewHolder {
 
             boolean hasLink = LinkifyUtil.addLinks(context, spannableStringBuilder);
 
-            Log.e("abcdef", link.message.mentions.size() + "");
-
-            for (MentionObject mention : link.message.mentions) {
+            for (MentionObject mention : commentMessage.mentions) {
                 String name = spannableStringBuilder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
                 MensionCommentSpannable spannable1 = new MensionCommentSpannable(commentTextView.getContext(), name);
                 spannableStringBuilder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -97,6 +94,8 @@ public class PureCommentViewHolder implements BodyViewHolder {
             } else {
                 commentTextView.setText(spannableStringBuilder);
             }
+
+
         }
 
         nameTextView.setOnClickListener(v ->

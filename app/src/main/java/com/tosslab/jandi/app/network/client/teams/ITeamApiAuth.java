@@ -46,6 +46,7 @@ public interface ITeamApiAuth {
 
     ResCommon unregistStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError;
 
-    ResMentioned getStarredMessages(int teamId);
+    ResMentioned getStarredMessagesByTeamApi(int teamId, String type,
+                                             int page, int perPage);
 
 }

@@ -185,7 +185,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
             boolean hasLink = LinkifyUtil.addLinks(context, spannableStringBuilder);
 
-            for (MentionObject mention : link.message.mentions) {
+            for (MentionObject mention : commentMessage.mentions) {
                 String name = spannableStringBuilder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
                 MensionCommentSpannable spannable1 = new MensionCommentSpannable(commentTextView.getContext(), name);
                 spannableStringBuilder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

@@ -179,10 +179,11 @@
     <RelativeLayout
         android:id="@+id/ll_messages"
         android:layout_width="match_parent"
-        android:layout_height="63dp"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/vg_message_sticker_selector"
         android:layout_alignWithParentIfMissing="true"
-        android:background="@color/jandi_messages_bottom_bg">
+        android:background="@color/jandi_messages_bottom_bg"
+        android:minHeight="63dp">
 
         <ImageButton
             android:id="@+id/btn_upload_file"

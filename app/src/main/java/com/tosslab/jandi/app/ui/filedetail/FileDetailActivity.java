@@ -15,10 +15,10 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,9 +58,9 @@ import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.filedetail.fileinfo.FileHeadManager;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
@@ -123,6 +123,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     ViewGroup vgStickerPreview;
     @ViewById(R.id.iv_file_detail_preview_sticker_image)
     ImageView ivStickerPreview;
+    @ViewById(R.id.rv_list_search_members)
+    RecyclerView rvListSearchMembers;
 
     @Bean
     StickerViewModel stickerViewModel;
@@ -356,8 +358,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         }
 
         drawFileDetail(resFileDetail, isSendAction);
+
         fileDetailPresenter.refreshMentionVM(this, getFileMessage(resFileDetail.messageDetails),
-                etComment.getRootView());
+                rvListSearchMembers, etComment, lvFileDetailComments);
     }
 
     /**
@@ -577,13 +580,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @Click(R.id.btn_send_message)
     void sendComment() {
         CharSequence text = etComment.getText();
-        String comment = TextUtils.isEmpty(text) ? "" : text.toString().trim();
+//        String comment = TextUtils.isEmpty(text) ? "" : text.toString().trim();
         hideSoftKeyboard();
 
-        String convertedComment = fileDetailPresenter.getMentionConvertedMessage();
-        List<MentionObject> mentions = fileDetailPresenter.getMentions();
-        Log.e("mentions", mentions.toString());
-        fileDetailPresenter.clearMentionControlViewModel();
+        ResultMentionsVO mentions = fileDetailPresenter.getMentionInfo();
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
             dismissStickerPreview();
@@ -591,12 +591,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                     .upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
 
             fileDetailPresenter.sendCommentWithSticker(
-                    fileId, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), convertedComment, mentions);
+                    fileId, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(),
+                    mentions.getMessage(), mentions.getMentions());
             stickerInfo = NULL_STICKER;
         } else {
-            Log.e("converted Comment", convertedComment);
-            Log.e("mention®", mentions.toString() + "");
-            fileDetailPresenter.sendComment(fileId, convertedComment, mentions);
+            fileDetailPresenter.sendComment(fileId, mentions.getMessage(), mentions.getMentions());
         }
 
         etComment.setText("");
@@ -941,7 +940,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         searchedItemVO.setName(event.getName());
         searchedItemVO.setType(event.getType());
         MentionControlViewModel mentionControlViewModel = fileDetailPresenter.getMentionControlViewModel();
-        mentionControlViewModel.convertMentionedMemberText(searchedItemVO, mentionControlViewModel.getCurrentSearchText());
+        mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
     }
 
 

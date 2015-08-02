@@ -25,7 +25,8 @@ import rx.Observable;
 @EBean
 public class SearchMemberModel {
 
-    LinkedHashMap<Integer, SearchedItemVO> searchedItemlinkedHashMap;
+    LinkedHashMap<Integer, SearchedItemVO> selectableMembersLinkedHashMap;
+
     boolean isFirst = true;
 
     public List<SearchedItemVO> getUserSearchByName(List<Integer> topicIds, String subNameString,
@@ -104,7 +105,7 @@ public class SearchMemberModel {
         Collections.sort(searchedItems, getChatItemComparator());
 
         if (isFirst) {
-            setSearchedItemlinkedHashMap(searchedItems);
+            setSelectableMembersLinkedHashMap(searchedItems);
             isFirst = false;
         }
 
@@ -149,14 +150,14 @@ public class SearchMemberModel {
         };
     }
 
-    public LinkedHashMap<Integer, SearchedItemVO> getSearchedItemlinkedHashMap() {
-        return searchedItemlinkedHashMap;
+    public LinkedHashMap<Integer, SearchedItemVO> getSelectableMembers() {
+        return selectableMembersLinkedHashMap;
     }
 
-    public void setSearchedItemlinkedHashMap(List<SearchedItemVO> searchedMemberList) {
-        searchedItemlinkedHashMap = new LinkedHashMap<>();
+    public void setSelectableMembersLinkedHashMap(List<SearchedItemVO> searchedMemberList) {
+        selectableMembersLinkedHashMap = new LinkedHashMap<>();
         for (SearchedItemVO searchedMember : searchedMemberList) {
-            searchedItemlinkedHashMap.put(searchedMember.getId(), searchedMember);
+            selectableMembersLinkedHashMap.put(searchedMember.getId(), searchedMember);
         }
     }
 

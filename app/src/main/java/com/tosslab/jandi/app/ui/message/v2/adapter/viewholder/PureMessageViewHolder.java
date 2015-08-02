@@ -6,7 +6,6 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -82,8 +81,6 @@ public class PureMessageViewHolder implements BodyViewHolder {
         }
 
         List<MentionObject> mentions = link.message.mentions;
-
-        Log.e("abcde", mentions.size() + "");
 
         for (MentionObject mention : mentions) {
             String name = builder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();

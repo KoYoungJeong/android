@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.MensionCommentSpannable;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
@@ -55,6 +57,15 @@ public class FileDetailCollapseCommentView implements CommentViewHolder {
         int startIndex = spannableStringBuilder.length();
         spannableStringBuilder.append(" ");
         int endIndex = spannableStringBuilder.length();
+
+        for (MentionObject mention : commentMessage.mentions) {
+            String name = spannableStringBuilder.subSequence(mention.getOffset() + 1,
+                    mention.getLength() + mention.getOffset()).toString();
+            MensionCommentSpannable spannable1 = new MensionCommentSpannable(
+                    textViewCommentContent.getContext(), name);
+            spannableStringBuilder.setSpan(spannable1, mention.getOffset(),
+                    mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
 
         DateViewSpannable spannable =
                 new DateViewSpannable(textViewCommentContent.getContext(), createTime);

@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.ui.commonviewmodels.mention;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -13,12 +15,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.MentionMemberListAdapter;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel_;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.util.MensionSpannable;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel_;
@@ -39,45 +41,93 @@ public class MentionControlViewModel {
     public static final String MENTION_TYPE_MESSAGE = "mention_type_message";
     public static final String MENTION_TYPE_FILE_COMMENT = "mention_type_file_comment";
 
-    RecyclerView searchMemberListView;
+    private RecyclerView searchMemberListView;
 
-    EditText editText;
-
-    KeyboardHeightModel keyboardHeightModel;
-
-    SearchMemberModel searchMemberModel;
+    private EditText editText;
 
     // for Message List View
-    RecyclerView messageListView;
+    private RecyclerView messageListView;
 
     // for File comment List View
-    ListView fileCommentListView;
+    private ListView fileCommentListView;
 
+    private KeyboardHeightModel keyboardHeightModel;
+
+    private SearchMemberModel searchMemberModel;
+
+    //MESSAGE OR FILE VIEW TYPE
+    private String mentionType = MENTION_TYPE_MESSAGE;
+
+    //for textControl
     private int beforeTextCnt = 0;
     private int afterTextCnt = 0;
     private String beforeText = "";
     private String afterText = "";
     private String removedText = "";
+    private String currentSearchKeywordString;
+
     private List<Integer> roomIds;
-    private String currentSearchText;
+
+    // restore mentioned members using hashmap for time complexity
     private LinkedHashMap<Integer, SearchedItemVO> selectedMemberHashMap;
-    private List<MentionObject> resultMentions;
-    private String type = MENTION_TYPE_MESSAGE;
 
-    // finally generated mention info.
+    private ClipboardListener clipboardListener;
 
-    public static final MentionControlViewModel getInstance() {
-        return new MentionControlViewModel();
+    private TextWatcher textWatcher;
+
+    public MentionControlViewModel(Activity activity, RecyclerView searchMemberListView,
+                                   EditText editText, RecyclerView messageListView,
+                                   List<Integer> roomIds) {
+        this.messageListView = messageListView;
+        this.mentionType = MENTION_TYPE_MESSAGE;
+        init(activity, searchMemberListView, editText, roomIds, mentionType);
     }
 
-    private void messageTextInit(View view) {
-        editText = (EditText) view.findViewById(R.id.et_message);
-        addTextWatcher();
+    public MentionControlViewModel(Activity activity, RecyclerView searchMemberListView,
+                                   EditText editText, ListView fileCommentListView,
+                                   List<Integer> roomIds) {
+        this.fileCommentListView = fileCommentListView;
+        this.mentionType = MENTION_TYPE_FILE_COMMENT;
+        init(activity, searchMemberListView, editText, roomIds, mentionType);
     }
 
-    private void addTextWatcher() {
+    private void init(Activity activity, RecyclerView searchMemberListView, EditText editText,
+                      List<Integer> roomIds, String mentionType) {
+
+        this.searchMemberListView = searchMemberListView;
+        this.editText = editText;
+        this.roomIds = roomIds;
+
+        addTextWatcher(editText);
+
+        keyboardHeightModel = KeyboardHeightModel_.getInstance_(activity);
+        searchMemberModel = SearchMemberModel_.getInstance_(activity);
+
+        searchMemberListView.setLayoutManager(new LinearLayoutManager(activity,
+                LinearLayoutManager.VERTICAL, false));
+        searchMemberListView.setAdapter(new MentionMemberListAdapter(
+                searchMemberModel.getUserSearchByName(null, "", null, mentionType)));
+
+        if (keyboardHeightModel.getOnKeyboardShowListener() == null) {
+            keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
+                if (!isShow) {
+                    showListView(false);
+                }
+            });
+        }
+
+        selectedMemberHashMap = new LinkedHashMap<>();
+
+        clipboardListener = new ClipboardListener();
+        ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
+                .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
+        clipBoard.addPrimaryClipChangedListener(clipboardListener);
+
+    }
+
+    private void addTextWatcher(EditText editText) {
         editText.addTextChangedListener(
-                new TextWatcher() {
+                textWatcher = new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                         beforeEditTextChanged(editText, s, start, count, after);
@@ -94,40 +144,6 @@ public class MentionControlViewModel {
                     }
                 }
         );
-    }
-
-    public void init(View view, Activity activity, String type, List<Integer> roomIds) {
-        this.type = type;
-        this.roomIds = roomIds;
-
-        searchMemberListView = (RecyclerView) view.findViewById(R.id.rv_list_search_members);
-
-        messageTextInit(view);
-
-        keyboardHeightModel = KeyboardHeightModel_.getInstance_(activity);
-
-        searchMemberModel = SearchMemberModel_.getInstance_(activity);
-
-        if (type.equals(MENTION_TYPE_MESSAGE)) {
-            messageListView = (RecyclerView) view.findViewById(R.id.list_messages);
-        } else if (type.equals(MENTION_TYPE_FILE_COMMENT)) {
-            fileCommentListView = (ListView) view.findViewById(R.id.lv_file_detail_comments);
-        }
-
-        searchMemberListView.setLayoutManager(new LinearLayoutManager(activity,
-                LinearLayoutManager.VERTICAL, false));
-        searchMemberListView.setAdapter(new MentionMemberListAdapter(
-                searchMemberModel.getUserSearchByName(null, "", null, type)));
-
-        if (keyboardHeightModel.getOnKeyboardShowListener() == null) {
-            keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
-                if (!isShow) {
-                    showListView(false);
-                }
-            });
-        }
-
-        selectedMemberHashMap = new LinkedHashMap<>();
     }
 
     void beforeEditTextChanged(TextView tv, CharSequence s, int start, int count,
@@ -163,18 +179,17 @@ public class MentionControlViewModel {
         }
 
         if (result != null) {
-            int startIndex = cs.length() - (result.length() + 1);
-            int endIndex = appendCharIndex;
-            setCurrentSearchText(result);
-            showSearchMembersInfo(result, type);
 
-            if (getMembersList().size() > 0) {
+            currentSearchKeywordString = result;
+
+            showSearchMembersInfo(currentSearchKeywordString, getMentionType());
+
+            if (getMembersListByAdapter().size() > 0) {
                 showListView(true);
             } else {
                 showListView(false);
             }
 
-            currentSearchText = result;
 
         } else {
             removeAllMemberList();
@@ -183,30 +198,21 @@ public class MentionControlViewModel {
 
     }
 
-    public String getCurrentSearchText() {
-        return currentSearchText;
-    }
-
-    public void setCurrentSearchText(String currentSearchText) {
-        this.currentSearchText = currentSearchText;
-    }
-
-    public List<Integer> getRoomIds() {
-        return roomIds;
-    }
-
-    public void showSearchMembersInfo(String searchString, String type) {
-        MentionMemberListAdapter mentionMemberListAdapter = (MentionMemberListAdapter) searchMemberListView.getAdapter();
+    private void showSearchMembersInfo(String searchString, String type) {
+        MentionMemberListAdapter mentionMemberListAdapter =
+                (MentionMemberListAdapter) searchMemberListView.getAdapter();
         mentionMemberListAdapter.setSearchedMembersList(
-                searchMemberModel.getUserSearchByName(getRoomIds(), searchString, selectedMemberHashMap, type));
+                searchMemberModel.getUserSearchByName(getRoomIds(),
+                        searchString, selectedMemberHashMap, type));
     }
 
-    public void removeAllMemberList() {
-        MentionMemberListAdapter mentionMemberListAdapter = (MentionMemberListAdapter) searchMemberListView.getAdapter();
+    private void removeAllMemberList() {
+        MentionMemberListAdapter mentionMemberListAdapter =
+                (MentionMemberListAdapter) searchMemberListView.getAdapter();
         mentionMemberListAdapter.clearMembersList();
     }
 
-    public void showListView(boolean isShow) {
+    private void showListView(boolean isShow) {
 
         if (isShow) {
             searchMemberListView.setVisibility(View.VISIBLE);
@@ -226,11 +232,11 @@ public class MentionControlViewModel {
 
     }
 
-    public List<SearchedItemVO> getMembersList() {
-        MentionMemberListAdapter mentionMemberListAdapter = (MentionMemberListAdapter) searchMemberListView.getAdapter();
+    public List<SearchedItemVO> getMembersListByAdapter() {
+        MentionMemberListAdapter mentionMemberListAdapter =
+                (MentionMemberListAdapter) searchMemberListView.getAdapter();
         return mentionMemberListAdapter.getSearchedMembersList();
     }
-
 
     private String returnRemoveText(String beforeText, String afterText, int currentSelection) {
         if (beforeTextCnt <= afterTextCnt) {
@@ -248,16 +254,13 @@ public class MentionControlViewModel {
     private void restoreOrDeleteSelectedMentionMemberInfo(int type, String rawMemberText) {
         if (rawMemberText != null) {
             String id = "";
-            Pattern p = Pattern.compile("(?:@)(.+)(?:\\!\\^\\$)(\\d+)(?:\\!\\^\\$)");
+            Pattern p = Pattern.compile("(?:@)([^\\u2063].+)(?:\\u2063)(\\d+)(?:\\u2063)");
             Matcher matcher = p.matcher(rawMemberText);
             while (matcher.find()) {
                 id = matcher.group(2);
                 if (type == 0) {
-                    LinkedHashMap<Integer, SearchedItemVO> searchedItemLinkedHashMap =
-                            searchMemberModel.getSearchedItemlinkedHashMap();
-                    Iterator i = searchedItemLinkedHashMap.keySet().iterator();
                     selectedMemberHashMap.put(new Integer(id),
-                            searchedItemLinkedHashMap.get(new Integer(id)));
+                            getSelectableMembersInThis().get(new Integer(id)));
                 } else if (type == 1) {
                     selectedMemberHashMap.remove(Integer.valueOf(id));
                 }
@@ -265,57 +268,107 @@ public class MentionControlViewModel {
         }
     }
 
-    public void convertMentionedMemberText(SearchedItemVO searchedItemVO, String currentSearchText) {
-        int selectionIndex = editText.getSelectionStart();
-        int startIndex = selectionIndex - currentSearchText.length();
-        SpannableStringBuilder ssb = new SpannableStringBuilder(editText.getEditableText());
-        MensionSpannable spannable = new MensionSpannable(editText.getContext(), searchedItemVO.getName());
-        String convertedText = searchedItemVO.getName() + "!^$" + searchedItemVO.getId() + "!^$";
-        restoreOrDeleteSelectedMentionMemberInfo(0, "@" + convertedText);
-        ssb.replace(startIndex, selectionIndex, convertedText);
-        ssb.setSpan(spannable, startIndex - 1, startIndex + convertedText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        editText.setText(ssb, TextView.BufferType.SPANNABLE);
-        editText.setSelection(startIndex + convertedText.length());
+    public LinkedHashMap<Integer, SearchedItemVO> getSelectableMembersInThis() {
+        return searchMemberModel.getSelectableMembers();
     }
 
-    public String getConvertedMessage() {
+    public void mentionedMemberHighlightInEditText(SearchedItemVO searchedItemVO) {
 
-        String message = editText.getText().toString();
-        StringBuilder builder = new StringBuilder(message);
+        int selectionIndex = editText.getSelectionStart();
+        int startIndex = selectionIndex - currentSearchKeywordString.length();
 
-        Iterator iterator = selectedMemberHashMap.keySet().iterator();
+        SpannableStringBuilder ssb = new SpannableStringBuilder(editText.getEditableText());
 
-        if (iterator.hasNext()) {
-            resultMentions = new ArrayList<>();
+        MensionSpannable spannable = new MensionSpannable(editText.getContext(), searchedItemVO.getName());
+
+        StringBuilder convertedTextBuilder = new StringBuilder();
+
+        convertedTextBuilder
+                .append(searchedItemVO.getName())
+                .append("\u2063")
+                .append(searchedItemVO.getId())
+                .append("\u2063");
+
+        restoreOrDeleteSelectedMentionMemberInfo(0, "@" + convertedTextBuilder);
+
+        ssb.replace(startIndex, selectionIndex, convertedTextBuilder);
+
+        ssb.setSpan(spannable, startIndex - 1, startIndex + convertedTextBuilder.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        editText.setText(ssb, TextView.BufferType.SPANNABLE);
+        editText.setSelection(startIndex + convertedTextBuilder.length());
+
+    }
+
+
+    private ResultMentionsVO getMentionInfoObject(String message,
+                                                  LinkedHashMap<Integer, SearchedItemVO> selectedMembers,
+                                                  LinkedHashMap<Integer, SearchedItemVO> selectableMembers) {
+
+        if (selectedMembers.size() == 0) {
+            return new ResultMentionsVO(message, new ArrayList<MentionObject>());
         }
 
+        StringBuilder builder = new StringBuilder(message);
+        String findId = "";
+        Pattern p = Pattern.compile("(?:@)([^\\u2063]+)(?:\\u2063)(\\d+)(?:\\u2063)");
+        Matcher matcher = p.matcher(message);
+
+        LinkedHashMap<Integer, SearchedItemVO> orderedSearchedMember = new LinkedHashMap<>();
+
+        while (matcher.find()) {
+            findId = matcher.group(2);
+            Log.e("id", String.valueOf(findId));
+            if (selectedMembers.get(new Integer(findId)) != null) {
+                orderedSearchedMember.put(new Integer(findId),
+                        selectableMembers.get(new Integer(findId)));
+            }
+        }
+
+        Iterator iterator = orderedSearchedMember.keySet().iterator();
+
+        List<MentionObject> mentions = new ArrayList<>();
+
         while (iterator.hasNext()) {
+
             int key = (Integer) iterator.next();
             StringBuilder memberInfoStringSB = new StringBuilder();
-            SearchedItemVO searchedItemVO = selectedMemberHashMap.get(Integer.valueOf(key));
+            SearchedItemVO searchedItemVO = orderedSearchedMember.get(Integer.valueOf(key));
+
             String name = searchedItemVO.getName();
             String id = String.valueOf(key);
             String type = searchedItemVO.getType();
-            memberInfoStringSB.append(name);
-            memberInfoStringSB.append("!^$");
-            memberInfoStringSB.append(id);
-            memberInfoStringSB.append("!^$");
+
+            memberInfoStringSB
+                    .append(name)
+                    .append("\u2063")
+                    .append(id)
+                    .append("\u2063");
+
             int startIndexOfMemberString = builder.indexOf(memberInfoStringSB.toString());
+
             builder.replace(startIndexOfMemberString,
                     startIndexOfMemberString + memberInfoStringSB.length(), name);
 
             int offset = startIndexOfMemberString - 1;
             int length = name.length() + 1;
-
-            Log.e(name + "offset", offset + "");
-            Log.e(name + "length", length + "");
-
             MentionObject mentionInfo = new MentionObject(key, type, offset, length);
-
-            resultMentions.add(mentionInfo);
+            mentions.add(mentionInfo);
         }
 
-        return builder.toString();
+        return new ResultMentionsVO(builder.toString(), mentions);
+
+    }
+
+    public ResultMentionsVO getMentionInfoObject() {
+        return getMentionInfoObject(editText.getText().toString(),
+                selectedMemberHashMap, getSelectableMembersInThis());
+    }
+
+    public ResultMentionsVO getMentionInfoObject(String string) {
+        return getMentionInfoObject(string,
+                selectedMemberHashMap, getSelectableMembersInThis());
     }
 
     public boolean hasMentionMember() {
@@ -325,17 +378,43 @@ public class MentionControlViewModel {
         return false;
     }
 
-    public List<MentionObject> getResultMentions() {
-        List<MentionObject> result = new ArrayList<>();
-        if (resultMentions != null) {
-            result.addAll(resultMentions);
-        }
-        return result;
-    }
-
     public void clear() {
         selectedMemberHashMap.clear();
-        resultMentions.clear();
-        addTextWatcher();
+    }
+
+    public void setTextOnClip(String pasteData) {
+        ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
+                .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
+        clipBoard.removePrimaryClipChangedListener(clipboardListener);
+        android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", pasteData);
+        clipBoard.setPrimaryClip(clip);
+        clipBoard.addPrimaryClipChangedListener(clipboardListener);
+    }
+
+    public String getMentionType() {
+        return mentionType;
+    }
+
+    public List<Integer> getRoomIds() {
+        return roomIds;
+    }
+
+    class ClipboardListener implements
+            ClipboardManager.OnPrimaryClipChangedListener {
+        public void onPrimaryClipChanged() {
+            String et = editText.getText().toString();
+            ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
+                    .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
+            CharSequence pasteData = "";
+            ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
+            pasteData = item.getText();
+            Log.e("editText", editText.getText().toString());
+            Log.e("pasteData", pasteData.toString());
+            if (et.contains(pasteData.toString())) {
+                String convertedMessage = getMentionInfoObject(pasteData.toString()).getMessage();
+                Log.e(convertedMessage, convertedMessage);
+                setTextOnClip(convertedMessage);
+            }
+        }
     }
 }

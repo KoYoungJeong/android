@@ -83,6 +83,9 @@ public class MessageListPresenter {
     @ViewById(R.id.et_message)
     EditText messageEditText;
 
+    @ViewById(R.id.rv_list_search_members)
+    RecyclerView rvListSearchMembers;
+
     @RootContext
     AppCompatActivity activity;
 
@@ -188,7 +191,7 @@ public class MessageListPresenter {
                 .build();
         messageListView.addItemDecoration(stickyHeadersItemDecoration);
 
-        setSendEditText(tempMessage);
+//        setSendEditText(tempMessage);
 
         if (isDisabled) {
             sendLayoutVisibleGone();
@@ -801,4 +804,15 @@ public class MessageListPresenter {
         messageListAdapter.setEntityId(entityId);
     }
 
+    public EditText getMessageEditText() {
+        return messageEditText;
+    }
+
+    public RecyclerView getMessageListView() {
+        return messageListView;
+    }
+
+    public RecyclerView getRvListSearchMembers() {
+        return rvListSearchMembers;
+    }
 }

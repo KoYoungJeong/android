@@ -629,9 +629,8 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
         return () -> authRestApiClient.unregistStarredMessageByTeamApi(teamId, messageId);
     }
 
-
     @Override
-    public IExecutor<ResMentioned> loadGetStarredMessages(int teamId) {
-        return () -> authRestApiClient.getStarredMessages(teamId);
+    public IExecutor<ResMentioned> loadGetStarredMessagesByTeamApi(int teamId, String type, int page, int perPage) {
+        return () -> authRestApiClient.getStarredMessagesByTeamApi(teamId, type, page, perPage);
     }
 }
