@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.soundcloud.android.crop.Crop;
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
@@ -31,7 +30,6 @@ import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -327,28 +325,6 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         }
     }
 
-    @Background
-    void onUpdateProfile(ProgressDialog progressDialog) {
-        // TODO Refactoring...
-
-        memberProfileView.showProgressWheel();
-
-        try {
-            ResLeftSideMenu entitiesInfo = EntityClientManager_.getInstance_(MemberProfileActivity.this).getTotalEntitiesInfo();
-            JandiEntityDatabaseManager.getInstance(MemberProfileActivity.this).upsertLeftSideMenu(entitiesInfo);
-            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
-            JandiPreference.setBadgeCount(MemberProfileActivity.this, totalUnreadCount);
-            BadgeUtils.setBadge(MemberProfileActivity.this, totalUnreadCount);
-            EntityManager.getInstance(MemberProfileActivity.this).refreshEntity(entitiesInfo);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-        }
-
-        memberProfileView.dismissProgressWheel();
-
-
-    }
-
     @UiThread
     void upateOptionMenu() {
         invalidateOptionsMenu();
@@ -385,7 +361,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
             return;
         }
-        
+
         Uri output = Crop.getOutput(imageData);
 
         String filePath = output.getPath();
