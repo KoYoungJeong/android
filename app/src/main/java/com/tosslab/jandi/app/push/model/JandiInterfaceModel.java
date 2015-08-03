@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.push.model;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -10,9 +12,11 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -34,11 +38,26 @@ public class JandiInterfaceModel {
     @SystemService
     ActivityManager activityManager;
 
+    public int getInstalledAppVersion(Context context) {
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            String packageName = context.getPackageName();
+            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // should never happen
+            return 0;
+        }
+    }
+
+    public ResConfig getConfigInfo() throws RetrofitError {
+        return RequestApiManager.getInstance().getConfigByMainRest();
+    }
+
     public void refreshAccountInfo() throws RetrofitError {
         ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
         JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(resAccountInfo);
-
 
         EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();

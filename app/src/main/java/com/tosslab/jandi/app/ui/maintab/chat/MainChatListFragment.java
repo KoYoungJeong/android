@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
+import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
@@ -210,7 +211,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
             return;
         }
 
-        if (TextUtils.equals(event.getEntityType(), "user")) {
+        if(TextUtils.equals(event.getEntityType(), PushTO.RoomType.CHAT.getName())) {
             mainChatListPresenter.onReloadChatList(getActivity());
         }
     }

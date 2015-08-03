@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 
 import com.koushikdutta.ion.Ion;
 import com.parse.ParseInstallation;
@@ -26,6 +27,7 @@ import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
@@ -43,11 +45,14 @@ import java.util.List;
  */
 @EBean
 public class JandiPushReceiverModel {
-
+    public static final long NONE_CREATED_AT = -1;
     public static final String JSON_KEY_DATA = "com.parse.Data";
 
     @SystemService
     AudioManager audioManager;
+
+    // 이전 Push Message 작성 시간
+    private long preCreatedAt = NONE_CREATED_AT;
 
     public PendingIntent generatePendingIntent(Context context, int chatId, int chatType, int teamId) {
         Intent intent = new Intent(context, PushInterfaceActivity_.class);
@@ -68,34 +73,30 @@ public class JandiPushReceiverModel {
         return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    public int getEntityType(PushTO.MessagePush messagePush) {
-        String entityType = messagePush.getChatType();
+    public int getEntityType(PushTO.PushInfo pushInfo) {
+        String entityType = pushInfo.getRoomType();
 
-        if (entityType.equals("channel")) {
+        if (TextUtils.equals(entityType, PushTO.RoomType.CHANNEL.getName())) {
             return JandiConstants.TYPE_PUBLIC_TOPIC;
-        } else if (entityType.equals("privateGroup")) {
+        } else if (TextUtils.equals(entityType, PushTO.RoomType.PRIVATE_GROUP.getName())) {
             return JandiConstants.TYPE_PRIVATE_TOPIC;
-        } else if (entityType.equals("user")) {
+        } else if (TextUtils.equals(entityType, PushTO.RoomType.CHAT.getName())) {
             return JandiConstants.TYPE_DIRECT_MESSAGE;
         } else {
             return -1;
         }
     }
 
-    public void updateEntityAndBadge(Context context) {
+    public void updateEntityAndBadge(Context context, int unreadCountFromPush) {
         EntityClientManager jandiEntityClient = EntityClientManager_.getInstance_(context);
         ResLeftSideMenu resLeftSideMenu = jandiEntityClient.getTotalEntitiesInfo();
-
         JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
-
-        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
-        LogUtil.e(JandiPushReceiverModel.class.getSimpleName(), "totalUnreadCount - " + totalUnreadCount);
-        BadgeUtils.setBadge(context, totalUnreadCount);
-        JandiPreference.setBadgeCount(context, totalUnreadCount);
-
         EntityManager.getInstance(context).refreshEntity(resLeftSideMenu);
-//        Intent intent = new Intent(context, BadgeHandleService.class);
-//        context.startService(intent);
+
+//        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
+        LogUtil.e(JandiPushReceiverModel.class.getSimpleName(), "totalUnreadCount - " + unreadCountFromPush);
+        BadgeUtils.setBadge(context, unreadCountFromPush);
+        JandiPreference.setBadgeCount(context, unreadCountFromPush);
     }
 
     public PushTO parsingPushTO(Bundle extras) {
@@ -112,7 +113,6 @@ public class JandiPushReceiverModel {
             return null;
         }
 
-
     }
 
     public boolean isMyEntityId(Context context, int writerId) {
@@ -126,17 +126,17 @@ public class JandiPushReceiverModel {
         return false;
     }
 
-    private Notification generateNotification(Context context, PushTO.MessagePush messagePush) {
-        return generateNotification(context, messagePush, null);
+    private Notification generateNotification(Context context, PushTO.PushInfo pushInfo) {
+        return generateNotification(context, pushInfo, null);
     }
 
-    private Notification generateNotification(Context context, PushTO.MessagePush messagePush, Bitmap writerProfile) {
-        String message = messagePush.getAlert();
-        String chatName = messagePush.getChatName();
-        String writerName = messagePush.getWriterName();
+    private Notification generateNotification(Context context, PushTO.PushInfo pushInfo, Bitmap writerProfile) {
+        String message = pushInfo.getMessageContent();
+        String chatName = pushInfo.getRoomName();
+        String writerName = pushInfo.getWriterName();
 
-        int chatId = messagePush.getChatId();
-        int chatType = getEntityType(messagePush);
+        int chatId = pushInfo.getRoomId();
+        int chatType = getEntityType(pushInfo);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle(writerName);
@@ -177,7 +177,7 @@ public class JandiPushReceiverModel {
         JandiPreference.setChatIdFromPush(context, chatId);
 
         // 노티를 터치할 경우 실행 intent 설정
-        PendingIntent pendingIntent = generatePendingIntent(context, chatId, chatType, messagePush.getTeamId());
+        PendingIntent pendingIntent = generatePendingIntent(context, chatId, chatType, pushInfo.getTeamId());
         builder.setContentIntent(pendingIntent);
         if (writerProfile != null) {    // 작성자의 프로필 사진
             builder.setLargeIcon(writerProfile);
@@ -205,10 +205,18 @@ public class JandiPushReceiverModel {
         return true;
     }
 
-    @Background
-    public void sendNotificationWithProfile(final Context context, final PushTO.MessagePush messagePush) {
-        // 현재 디바이스 설정이 push off 라면 무시
-        String writerProfile = messagePush.getWriterThumb();
+    public void sendNotificationWithProfile(final Context context, final PushTO.PushInfo pushInfo) {
+        // 이전 푸쉬 메세지가 현재 푸쉬 메세지보다 더 최근에 작성되었다면 무시.
+        String createdAt = pushInfo.getCreatedAt();
+        long createdAtTime = DateTransformator.getTimeFromISO(createdAt);
+        if (preCreatedAt != NONE_CREATED_AT) {
+            if (createdAtTime < preCreatedAt) {
+                return;
+            }
+        }
+        preCreatedAt = createdAtTime;
+
+        String writerProfile = pushInfo.getWriterThumb();
         Notification notification;
         if (writerProfile != null) {
             Bitmap bitmap = null;
@@ -220,9 +228,9 @@ public class JandiPushReceiverModel {
             } catch (Exception e) {
             }
 
-            notification = generateNotification(context, messagePush, bitmap);
+            notification = generateNotification(context, pushInfo, bitmap);
         } else {
-            notification = generateNotification(context, messagePush);
+            notification = generateNotification(context, pushInfo);
         }
 
         sendNotification(context, notification);
@@ -233,7 +241,6 @@ public class JandiPushReceiverModel {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (notification != null) {
-//            nm.cancel(JandiConstants.NOTIFICATION_ID);
             nm.notify(JandiConstants.NOTIFICATION_ID, notification);
         }
     }

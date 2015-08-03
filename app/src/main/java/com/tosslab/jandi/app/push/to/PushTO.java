@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.push.to;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
@@ -11,19 +9,24 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class PushTO {
+    public enum RoomType {
+        CHANNEL("channel"),
+        PRIVATE_GROUP("privateGroup"),
+        CHAT("chat");
+
+        String name;
+
+        RoomType(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
 
     private String action;
-    private String type;
-
-    @JsonTypeInfo(
-            use = JsonTypeInfo.Id.NAME,
-            include = JsonTypeInfo.As.EXTERNAL_PROPERTY,
-            property = "type",
-            defaultImpl = PushInfo.class)
-    @JsonSubTypes({
-            @JsonSubTypes.Type(value = PushTO.MessagePush.class, name = "push"),
-            @JsonSubTypes.Type(value = PushTO.SubscribePush.class, name = "subscribe"),
-            @JsonSubTypes.Type(value = PushTO.UnSubscribePush.class, name = "unsubscribe")})
+    private Alarm alarm;
     private PushInfo info;
 
     public String getAction() {
@@ -34,12 +37,12 @@ public class PushTO {
         this.action = action;
     }
 
-    public String getType() {
-        return type;
+    public Alarm getAlarm() {
+        return alarm;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setAlarm(Alarm alarm) {
+        this.alarm = alarm;
     }
 
     public PushInfo getInfo() {
@@ -50,56 +53,114 @@ public class PushTO {
         this.info = info;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class PushInfo {
-
-        private String alert;
-
-        public String getAlert() {
-            return alert;
-        }
-
-        public void setAlert(String alert) {
-            this.alert = alert;
-        }
+    @Override
+    public String toString() {
+        return "PushTO{" +
+                "action='" + action + '\'' +
+                ", alarm=" + alarm +
+                ", info=" + info +
+                '}';
     }
-
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    static public class MessagePush extends PushInfo {
-        private int chatId;
-        private String contentType;
-        private String chatName;
-        private String chatType;
+    static public class PushInfo {
+        private int badge;
+        private int teamId;
+        private String teamName;
+        private int roomId;
+        private String roomName;
+        private String roomType;
+        private int messageId;
+        private String messageType;
+        private String messageContent;
+
+        // TODO MENTION !
+        private Mention mention;
+
         private int writerId;
         private String writerName;
         private String writerThumb;
-        private int teamId;
-        private String teamName;
+        private String createdAt;
 
-        public String getContentType() {
-            return contentType;
+        public int getBadge() {
+            return badge;
         }
 
-        public void setContentType(String contentType) {
-            this.contentType = contentType;
+        public void setBadge(int badge) {
+            this.badge = badge;
         }
 
-        public String getChatName() {
-            return chatName;
+        public int getTeamId() {
+            return teamId;
         }
 
-        public void setChatName(String chatName) {
-            this.chatName = chatName;
+        public void setTeamId(int teamId) {
+            this.teamId = teamId;
         }
 
-        public String getChatType() {
-            return chatType;
+        public String getTeamName() {
+            return teamName;
         }
 
-        public void setChatType(String chatType) {
-            this.chatType = chatType;
+        public void setTeamName(String teamName) {
+            this.teamName = teamName;
+        }
+
+        public int getRoomId() {
+            return roomId;
+        }
+
+        public void setRoomId(int roomId) {
+            this.roomId = roomId;
+        }
+
+        public String getRoomName() {
+            return roomName;
+        }
+
+        public void setRoomName(String roomName) {
+            this.roomName = roomName;
+        }
+
+        public String getRoomType() {
+            return roomType;
+        }
+
+        public void setRoomType(String roomType) {
+            this.roomType = roomType;
+        }
+
+        public int getMessageId() {
+            return messageId;
+        }
+
+        public void setMessageId(int messageId) {
+            this.messageId = messageId;
+        }
+
+        public String getMessageType() {
+            return messageType;
+        }
+
+        public void setMessageType(String messageType) {
+            this.messageType = messageType;
+        }
+
+        public String getMessageContent() {
+            return messageContent;
+        }
+
+        public void setMessageContent(String messageContent) {
+            this.messageContent = messageContent;
+        }
+
+        public Mention getMention() {
+            return mention;
+        }
+
+        public void setMention(Mention mention) {
+            this.mention = mention;
         }
 
         public int getWriterId() {
@@ -126,56 +187,115 @@ public class PushTO {
             this.writerThumb = writerThumb;
         }
 
-        public int getTeamId() {
-            return teamId;
+        public String getCreatedAt() {
+            return createdAt;
         }
 
-        public void setTeamId(int teamId) {
-            this.teamId = teamId;
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
         }
 
-        public String getTeamName() {
-            return teamName;
-        }
-
-        public void setTeamName(String teamName) {
-            this.teamName = teamName;
-        }
-
-        public int getChatId() {
-            return chatId;
-        }
-
-        public void setChatId(int chatId) {
-            this.chatId = chatId;
-        }
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    static public class SubscribePush extends PushInfo {
-        private String chatId;
-
-        public String getChatId() {
-            return chatId;
-        }
-
-        public void setChatId(String chatId) {
-            this.chatId = chatId;
+        @Override
+        public String toString() {
+            return "PushInfo{" +
+                    "badge=" + badge +
+                    ", teamId=" + teamId +
+                    ", teamName='" + teamName + '\'' +
+                    ", roomId=" + roomId +
+                    ", roomName='" + roomName + '\'' +
+                    ", roomType=" + roomType +
+                    ", messageId=" + messageId +
+                    ", messageType=" + messageType +
+                    ", messageContent='" + messageContent + '\'' +
+                    ", mention=" + mention +
+                    ", writerId=" + writerId +
+                    ", writerName='" + writerName + '\'' +
+                    ", writerThumb='" + writerThumb + '\'' +
+                    ", createdAt='" + createdAt + '\'' +
+                    '}';
         }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    static public class UnSubscribePush extends PushInfo {
-        private String chatId;
+    public static class Alarm {
+        private boolean topicSubscription = true;
+        private boolean platformActive = false;
 
-        public String getChatId() {
-            return chatId;
+        public boolean isTopicSubscription() {
+            return topicSubscription;
         }
 
-        public void setChatId(String chatId) {
-            this.chatId = chatId;
+        public void setTopicSubscription(boolean topicSubscription) {
+            this.topicSubscription = topicSubscription;
+        }
+
+        public boolean isPlatformActive() {
+            return platformActive;
+        }
+
+        public void setPlatformActive(boolean platformActive) {
+            this.platformActive = platformActive;
+        }
+
+        @Override
+        public String toString() {
+            return "Alarm{" +
+                    "topicSubscription=" + topicSubscription +
+                    ", platformActive=" + platformActive +
+                    '}';
         }
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class Mention {
+        private int id;
+        private String type;
+        private int offset;
+        private int length;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public int getOffset() {
+            return offset;
+        }
+
+        public void setOffset(int offset) {
+            this.offset = offset;
+        }
+
+        public int getLength() {
+            return length;
+        }
+
+        public void setLength(int length) {
+            this.length = length;
+        }
+
+        @Override
+        public String toString() {
+            return "Mention{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", offset=" + offset +
+                    ", length=" + length +
+                    '}';
+        }
+    }
+
 }

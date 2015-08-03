@@ -113,7 +113,7 @@ public class IntroActivityPresenter {
             if (o == JandiConstants.NETWORK_SUCCESS) {
                 model.sleep(initTime, MAX_DELAY_MS);
                 if (model.hasSelectedTeam(context) && !startForInvite) {
-                    ParseUpdateUtil.updateParseWithoutSelectedTeam(context);
+                    ParseUpdateUtil.subscribeChannelFromAccountId(context);
                     view.moveToMainActivity();
                 } else {
                     view.moveTeamSelectActivity();

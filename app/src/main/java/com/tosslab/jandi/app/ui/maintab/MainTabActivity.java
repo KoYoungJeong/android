@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
+import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
@@ -341,7 +342,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     public void onEvent(MessagePushEvent event) {
         LogUtil.d("MainTabAcitivity.MessagePushEventCall");
-        if (!TextUtils.equals(event.getEntityType(), "user")) {
+        if (!TextUtils.equals(event.getEntityType(), PushTO.RoomType.CHAT.getName())) {
             getEntities();
         }
     }

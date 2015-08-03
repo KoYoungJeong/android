@@ -77,11 +77,6 @@ public class EntitySocketModel {
                     .subscribe(eventWrapper -> postRetrieveTopicEvent());
 
             Observable.from(eventWrappers)
-                    .takeFirst(eventWrapper -> eventWrapper.parseUpdate)
-                    .subscribe(eventWrapper ->
-                            ParseUpdateUtil.updateParseWithoutSelectedTeam(context));
-
-            Observable.from(eventWrappers)
                     .takeFirst(eventWrapper ->
                             !TextUtils.isEmpty(eventWrapper.socketMessageEventContent))
                     .subscribe(eventWrapper -> postSocketMessageEvent
