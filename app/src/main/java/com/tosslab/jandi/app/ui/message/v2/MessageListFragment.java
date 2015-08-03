@@ -227,7 +227,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             newsMessageLoader.setMessageListModel(messageListModel);
             newsMessageLoader.setMessageListPresenter(messageListPresenter);
             newsMessageLoader.setMessageState(messageState);
-            newsMessageLoader.setMessageSubscription(messageSubscription);
 
             MarkerOldMessageLoader oldMessageLoader = new MarkerOldMessageLoader(getActivity());
             oldMessageLoader.setMessageListModel(messageListModel);

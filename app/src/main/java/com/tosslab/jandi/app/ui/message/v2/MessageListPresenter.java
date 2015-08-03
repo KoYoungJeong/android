@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
@@ -623,16 +624,13 @@ public class MessageListPresenter {
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void addAndMove(List<ResMessages.Link> records) {
+    public void addAndMove(List<ResMessages.Link> records, boolean firstLoad) {
         int firstVisibleItemLinkId = getFirstVisibleItemLinkId();
         int firstVisibleItemTop = getFirstVisibleItemTop();
         int lastItemPosition = getLastItemPosition();
 
-        if (lastItemPosition > 0) {
-            messageListView.getLayoutManager().scrollToPosition(lastItemPosition - 1);
-        }
         addAll(lastItemPosition, records);
-        if (firstVisibleItemLinkId > 0) {
+        if (!firstLoad && firstVisibleItemLinkId > 0) {
             moveToMessage(firstVisibleItemLinkId, firstVisibleItemTop);
         }
     }
@@ -928,6 +926,51 @@ public class MessageListPresenter {
             }
         }
 
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void updateMarkerMessage(int linkId, ResMessages oldMessage, boolean isCallByMarker, boolean isFirstMessage, int latestVisibleMessageId, int firstVisibleItemTop) {
+        if (!isCallByMarker) {
+            dismissLoadingView();
+        }
+        addAll(0, oldMessage.records);
+
+        if (latestVisibleMessageId > 0) {
+            moveToMessage(latestVisibleMessageId, firstVisibleItemTop);
+        } else {
+            // if has no first item...
+
+            int messageId = -1;
+            for (ResMessages.Link record : oldMessage.records) {
+                if (record.id == linkId) {
+                    messageId = record.messageId;
+                }
+            }
+            if (messageId > 0) {
+                int yPosition = JandiApplication.getContext()
+                        .getResources()
+                        .getDisplayMetrics().heightPixels * 2 / 5;
+                moveToMessage(messageId, yPosition);
+            } else {
+                moveToMessage(oldMessage.records.get(oldMessage.records.size() - 1).messageId, firstVisibleItemTop);
+            }
+        }
+
+        if (!isFirstMessage) {
+            setOldLoadingComplete();
+        } else {
+            setOldNoMoreLoading();
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void updateMarkerNewMessage(ResMessages newMessage, boolean isLastLinkId, boolean firstLoad) {
+        if (!isLastLinkId) {
+            addAndMove(newMessage.records, firstLoad);
+            setNewLoadingComplete();
+        } else {
+            setNewNoMoreLoading();
+        }
     }
 
 }

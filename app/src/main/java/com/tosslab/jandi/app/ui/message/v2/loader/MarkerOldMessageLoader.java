@@ -44,8 +44,8 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
         ResMessages oldMessage = null;
         try {
 
-            boolean isCallByMarker = messageListPresenter.getFirstVisibleItemLinkId() > 0;
-            if (isCallByMarker) {
+            boolean noFirstLoad = messageListPresenter.getFirstVisibleItemLinkId() > 0;
+            if (noFirstLoad) {
                 // 일반적인 Old Message 요청
                 int itemCount = Math.min(
                         Math.max(MessageManipulator.NUMBER_OF_MESSAGES, messageListPresenter.getItemCount()),
@@ -62,7 +62,7 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
                 return oldMessage;
             }
 
-            if (!isCallByMarker) {
+            if (!noFirstLoad) {
                 if (oldMessage.lastLinkId == oldMessage.records.get(oldMessage.records.size() - 1).id) {
                     messageListPresenter.setGotoLatestLayoutVisibleGone();
                 }
@@ -78,41 +78,16 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
 
             int latestVisibleMessageId = messageListPresenter.getFirstVisibleItemLinkId();
             int firstVisibleItemTop = 0;
-            if (isCallByMarker) {
+            if (noFirstLoad) {
                 firstVisibleItemTop = messageListPresenter.getFirstVisibleItemTop();
             } else {
                 // if has no first item...
-                messageListPresenter.dismissLoadingView();
                 messageState.setLastUpdateLinkId(lastLinkId);
             }
 
 
-            messageListPresenter.addAll(0, oldMessage.records);
-
-            if (latestVisibleMessageId > 0) {
-                messageListPresenter.moveToMessage(latestVisibleMessageId, firstVisibleItemTop);
-            } else {
-                // if has no first item...
-
-                int messageId = -1;
-                for (ResMessages.Link record : oldMessage.records) {
-                    if (record.id == linkId) {
-                        messageId = record.messageId;
-                    }
-                }
-                if (messageId > 0) {
-                    int yPosition = context.getResources().getDisplayMetrics().heightPixels * 2 / 5;
-                    messageListPresenter.moveToMessage(messageId, yPosition);
-                } else {
-                    messageListPresenter.moveToMessage(oldMessage.records.get(oldMessage.records.size() - 1).messageId, firstVisibleItemTop);
-                }
-            }
-
-            if (!isFirstMessage) {
-                messageListPresenter.setOldLoadingComplete();
-            } else {
-                messageListPresenter.setOldNoMoreLoading();
-            }
+            messageListPresenter.updateMarkerMessage(linkId, oldMessage, noFirstLoad,
+                    isFirstMessage, latestVisibleMessageId, firstVisibleItemTop);
 
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -124,4 +99,5 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
 
         return oldMessage;
     }
+
 }
