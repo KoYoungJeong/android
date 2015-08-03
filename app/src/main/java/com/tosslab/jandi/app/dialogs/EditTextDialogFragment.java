@@ -197,13 +197,13 @@ public class EditTextDialogFragment extends DialogFragment {
         AlertDialog dialog = builder.create();
         dialog.setOnShowListener(dialog1 -> setupPositiveButton(dialog, currentMessage,
                 actionType, currentMessage));
-        setEditTextByPurpose(editTextInput, currentMessage, actionType);
+        setEditTextByPurpose(dialog, editTextInput, currentMessage, actionType);
 
         return dialog;
 
     }
 
-    private void setEditTextByPurpose(final EditText input,
+    private void setEditTextByPurpose(AlertDialog dialog, final EditText input,
                                       final String currentMessage, final int purpose) {
         switch (purpose) {
             case ACTION_MODIFY_PROFILE_PHONE:
