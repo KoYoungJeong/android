@@ -198,29 +198,29 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
         loadStarMentionList();
     }
 
-    @Override
-    public void onShowDialog(int teamId, int messageId) {
-        if (unstarredDialog == null) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//    @Override
+//    public void onShowDialog(int teamId, int messageId) {
+//        if (unstarredDialog == null) {
+//            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//
+//            builder.setMessage("지울건가?");
+//
+//            builder.setPositiveButton("yes", (dialog, which) -> {
+//                starMentionListPresentor.unregistStarredMessage(teamId, messageId);
+//            });
+//
+//            builder.setNegativeButton("no", (dialog, which) -> {
+//
+//            });
+//            unstarredDialog = builder.create();
+//        }
+//
+//        unstarredDialog.show();
+//
+//    }
 
-            builder.setMessage("지울건가?");
-
-            builder.setPositiveButton("yes", (dialog, which) -> {
-                starMentionListPresentor.unregistStarredMessage(teamId, messageId);
-            });
-
-            builder.setNegativeButton("no", (dialog, which) -> {
-
-            });
-            unstarredDialog = builder.create();
-        }
-
-        unstarredDialog.show();
-
-    }
-
-    @Override
-    public void onRemoveItem(int position) {
-        starMentionListAdapter.removeStarMentionListAt(position);
-    }
+//    @Override
+//    public void onRemoveItem(int position) {
+//        starMentionListAdapter.removeStarMentionListAt(position);
+//    }
 }
