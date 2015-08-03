@@ -14,6 +14,9 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 class LifecycleChecker implements Application.ActivityLifecycleCallbacks {
     public static final String TAG = Logger.makeTag(LifecycleChecker.class);
 
+    private int resumed = 0;
+    private int stopped = 0;
+
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         String activityName = activity.getClass().getName();
@@ -31,11 +34,17 @@ class LifecycleChecker implements Application.ActivityLifecycleCallbacks {
         String activityName = activity.getClass().getName();
         Logger.i(TAG, activityName + " - onActivityResumed");
         Sprinkler sprinkler = Sprinkler.with(activity.getApplicationContext());
-        if (sprinkler.isFlushRetrieverStopped()) {
-            trackDefaultProperty(sprinkler);
-            sprinkler.flush();
-            sprinkler.startFlushRetriever();
+
+        if (resumed == stopped) {
+            Logger.i(TAG, "Application On Active.");
+            if (sprinkler.isFlushRetrieverStopped()) {
+                trackDefaultProperty(sprinkler);
+                sprinkler.flush();
+                sprinkler.startFlushRetriever();
+            }
         }
+
+        resumed++;
         sprinkler.setActive(true);
     }
 
@@ -49,6 +58,13 @@ class LifecycleChecker implements Application.ActivityLifecycleCallbacks {
     public void onActivityStopped(Activity activity) {
         String activityName = activity.getClass().getName();
         Logger.e(TAG, activityName + " - onActivityStopped");
+
+        stopped++;
+
+        if (resumed == stopped) {
+            Logger.i(TAG, "Application On Deactive.");
+            Sprinkler.with(activity.getApplicationContext()).stopAll();
+        }
     }
 
     @Override
@@ -60,7 +76,7 @@ class LifecycleChecker implements Application.ActivityLifecycleCallbacks {
     @Override
     public void onActivityDestroyed(Activity activity) {
         String activityName = activity.getClass().getName();
-        Logger.e(TAG, activityName + " - onActivityDestroyed isTaskRoot ? " + activity.isTaskRoot());
+        Logger.e(TAG, activityName + " - onActivityDestroyed");
     }
 
     private void trackDefaultProperty(Sprinkler sprinkler) {

@@ -52,12 +52,6 @@ public class JandiApplication extends MultiDexApplication {
         Sprinkler.initialize(this, BuildConfig.DEBUG);
     }
 
-    @Override
-    public void onTrimMemory(int level) {
-        Sprinkler.with(this).stopAll();
-        super.onTrimMemory(level);
-    }
-
     synchronized public Tracker getTracker(TrackerName trackerId) {
         if (!mTrackers.containsKey(trackerId)) {
 
