@@ -10,10 +10,13 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.text.TextUtils;
 
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.parse.ParseInstallation;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
@@ -151,7 +154,8 @@ public class SettingsFragment extends PreferenceFragment {
 
         ParseUpdateUtil.deleteChannelOnServer();
 
-        AccountRepository.getRepository();
+        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
+                .clearAllData();
     }
 
     private void setPushSubState(boolean isEnabled) {

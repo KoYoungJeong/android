@@ -689,13 +689,13 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @UiThread
     @Override
     public void dismissDownloadProgressDialog() {
-        if (progressDialog == null || !progressDialog.isShowing()) {
+        if (progressDialog == null || !progressDialog.isShowing() || !isForeground) {
             return;
         }
         progressDialog.dismiss();
     }
 
-    public void onEvent(FileDownloadStartEvent fileDownloadStartEvent) {
+    public void onEventMainThread(FileDownloadStartEvent fileDownloadStartEvent) {
         if (!isForeground) {
             return;
         }

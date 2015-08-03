@@ -91,8 +91,14 @@ public class PushInterfaceActivity extends AppCompatActivity {
 
 
         FormattedEntity entity = EntityManager.getInstance(PushInterfaceActivity.this).getEntityById(entityId);
+
+        if (entity == null) {
+            moveIntroActivity();
+            return;
+        }
+
         boolean isUser = entity.isUser();
-        int roomId = -1;
+        int roomId;
         if (!isUser) {
             roomId = entityId;
         } else {

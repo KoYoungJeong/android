@@ -113,6 +113,9 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
     }
 
     public Topic getItem(int position) {
+        if (getItemCount() >= position) {
+            return new Topic.Builder().build();
+        }
         return topicList.get(position);
     }
 

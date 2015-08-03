@@ -192,4 +192,62 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private void dropTable(ConnectionSource connectionSource, Class<?> dataClass) throws SQLException {
         TableUtils.dropTable(connectionSource, dataClass, true);
     }
+
+    public void clearAllData() {
+        clearTable(getConnectionSource(), ResAccountInfo.ThumbnailInfo.class);
+        clearTable(getConnectionSource(), ResAccountInfo.ThumbnailInfo.class);
+        clearTable(getConnectionSource(), ResAccountInfo.UserDevice.class);
+        clearTable(getConnectionSource(), ResAccountInfo.UserEmail.class);
+        clearTable(getConnectionSource(), ResAccountInfo.UserTeam.class);
+        clearTable(getConnectionSource(), ResAccountInfo.class);
+        clearTable(getConnectionSource(), SelectedTeam.class);
+
+        clearTable(getConnectionSource(), LeftSideMenu.class);
+
+        clearTable(getConnectionSource(), ResMessages.Link.class);
+        clearTable(getConnectionSource(), ResMessages.OriginalMessage.IntegerWrapper.class);
+        clearTable(getConnectionSource(), ResMessages.CreateEvent.class);
+        clearTable(getConnectionSource(), ResMessages.PublicCreateInfo.class);
+        clearTable(getConnectionSource(), ResMessages.PublicCreateInfo.IntegerWrapper.class);
+        clearTable(getConnectionSource(), ResMessages.JoinEvent.class);
+        clearTable(getConnectionSource(), ResMessages.InviteEvent.class);
+        clearTable(getConnectionSource(), ResMessages.InviteEvent.IntegerWrapper.class);
+        clearTable(getConnectionSource(), ResMessages.LeaveEvent.class);
+        clearTable(getConnectionSource(), ResMessages.AnnouncementCreateEvent.class);
+        clearTable(getConnectionSource(), ResMessages.AnnouncementCreateEvent.Info.class);
+        clearTable(getConnectionSource(), ResMessages.AnnouncementUpdateEvent.class);
+        clearTable(getConnectionSource(), ResMessages.AnnouncementUpdateEvent.Info.class);
+        clearTable(getConnectionSource(), ResMessages.AnnouncementDeleteEvent.class);
+
+        clearTable(getConnectionSource(), ResMessages.TextMessage.class);
+        clearTable(getConnectionSource(), ResMessages.TextContent.class);
+        clearTable(getConnectionSource(), ResMessages.LinkPreview.class);
+        clearTable(getConnectionSource(), ResMessages.FileMessage.class);
+        clearTable(getConnectionSource(), ResMessages.FileContent.class);
+        clearTable(getConnectionSource(), ResMessages.ThumbnailUrls.class);
+        clearTable(getConnectionSource(), ResMessages.StickerMessage.class);
+        clearTable(getConnectionSource(), ResMessages.StickerContent.class);
+        clearTable(getConnectionSource(), RecentSticker.class);
+        clearTable(getConnectionSource(), ResMessages.CommentStickerMessage.class);
+        clearTable(getConnectionSource(), ResMessages.CommentStickerMessage.class);
+        clearTable(getConnectionSource(), ResMessages.CommentMessage.class);
+
+        clearTable(getConnectionSource(), ResChat.class);
+
+        clearTable(getConnectionSource(), ResRoomInfo.class);
+        clearTable(getConnectionSource(), ResRoomInfo.MarkerInfo.class);
+
+        clearTable(getConnectionSource(), ResAnnouncement.class);
+
+        clearTable(getConnectionSource(), FileDetail.class);
+
+    }
+
+    private void clearTable(ConnectionSource connectionSource, Class<?> dataClass) {
+        try {
+            TableUtils.clearTable(connectionSource, dataClass);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

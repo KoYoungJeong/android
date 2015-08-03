@@ -69,7 +69,7 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
     public void onItemClick(Context context, RecyclerView.Adapter adapter, int position) {
         Topic item = ((TopicRecyclerAdapter) adapter).getItem(position);
         item.setUnreadCount(0);
-        adapter.notifyItemChanged(position);
+        adapter.notifyDataSetChanged();
 
         mainTopicModel.resetBadge(context, item.getEntityId());
         int badgeCount = JandiPreference.getBadgeCount(context) - item.getUnreadCount();
@@ -129,7 +129,7 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
             view.moveToMessageActivity(topic.getEntityId(), entityType, topic.isStarred(),
                     teamId, topic.getMarkerLinkId());
             view.setSelectedItem(topic.getEntityId());
-            
+
         } catch (RetrofitError e) {
             e.printStackTrace();
             LogUtil.e("fail to join entity", e);
