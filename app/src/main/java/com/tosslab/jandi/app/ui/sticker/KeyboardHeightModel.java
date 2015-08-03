@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.sticker;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.view.KeyCharacterMap;
@@ -9,6 +10,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.AfterViews;
@@ -45,6 +47,19 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
     }
 
     public void setOnKeyboardHeightCaptureListener(OnKeyboardCaptureListener onKeyboardHeightCapture) {
+
+        Resources resources = JandiApplication.getContext().getResources();
+        Configuration configuration = resources.getConfiguration();
+        if (configuration.keyboard != Configuration.KEYBOARD_NOKEYS) {
+            // if connect Hard keyboard
+            onKeyboardHeightCapture.onCapture();
+
+            // 전체 화면의 3/5 만큼만 되도록 지정
+            int stickerHeight = resources.getDisplayMetrics().heightPixels * 3 / 5;
+            JandiPreference.setKeyboardHeight(activity, stickerHeight);
+            return;
+        }
+
         this.onKeyboardHeightCapture = onKeyboardHeightCapture;
     }
 
