@@ -47,6 +47,7 @@ import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.DummyDeleteEvent;
 import com.tosslab.jandi.app.events.messages.DummyRetryEvent;
+import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
@@ -54,7 +55,6 @@ import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
-import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
@@ -1313,14 +1313,26 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     public void onEvent(MessageStarredEvent event) {
+        int messageId = event.getMessageId();
         switch (event.getAction()) {
             case STARRED:
-                messageListModel.registStarredMessage(teamId, event.getMessageId());
-                Toast.makeText(getActivity(), R.string.jandi_message_starred, Toast.LENGTH_SHORT).show();
+                try {
+
+                    messageListModel.registStarredMessage(teamId, messageId);
+                    Toast.makeText(getActivity(), R.string.jandi_message_starred, Toast.LENGTH_SHORT).show();
+                    messageListPresenter.modifyStarredInfo(messageId, false);
+                } catch (RetrofitError e) {
+                    e.printStackTrace();
+                }
 
                 break;
             case UNSTARRED:
-                messageListModel.unregistStarredMessage(teamId, event.getMessageId());
+                try {
+                    messageListModel.unregistStarredMessage(teamId, messageId);
+                    messageListPresenter.modifyStarredInfo(messageId, true);
+                } catch (RetrofitError e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }

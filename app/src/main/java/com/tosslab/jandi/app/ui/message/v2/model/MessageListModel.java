@@ -451,6 +451,7 @@ public class MessageListModel {
                     .registStarredMessageByTeamApi(teamId, messageId);
         } catch (RetrofitError e) {
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -461,6 +462,7 @@ public class MessageListModel {
                     .unregistStarredMessageByTeamApi(teamId, messageId);
         } catch (RetrofitError e) {
             e.printStackTrace();
+            throw e;
         }
     }
 

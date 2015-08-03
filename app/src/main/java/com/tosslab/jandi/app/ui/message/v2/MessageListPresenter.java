@@ -807,6 +807,12 @@ public class MessageListPresenter {
         messageListAdapter.setEntityId(entityId);
     }
 
+    public void modifyStarredInfo(int messageId, boolean isStarred) {
+        int position = messageListAdapter.getItemPositionByMessageId(messageId);
+        messageListAdapter.getItem(position).message.isStarred = isStarred;
+        messageListAdapter.notifyDataSetChanged();
+    }
+
     public EditText getMessageEditText() {
         return messageEditText;
     }

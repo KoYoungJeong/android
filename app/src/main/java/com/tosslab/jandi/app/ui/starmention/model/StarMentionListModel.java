@@ -34,6 +34,7 @@ public class StarMentionListModel {
     private int totalCount = 0;
     private int listCount = 0;
     private int page = 0;
+    private int pagePerCount = 0;
 
     public ResStarMentioned getMentionRawDatas(int page, int pagePerCount) throws RetrofitError {
         int teamId = getTeamId(JandiApplication.getContext());
