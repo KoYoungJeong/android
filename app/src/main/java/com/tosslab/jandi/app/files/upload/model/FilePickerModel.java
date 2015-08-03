@@ -23,7 +23,6 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
-import com.tosslab.jandi.app.ui.profile.image.CropActivity_;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
@@ -115,9 +114,11 @@ public class FilePickerModel {
         fragment.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_GALLERY);
     }
 
-    public void openAlbumForActivityResult(Activity activity) {
-        CropActivity_.intent(activity)
-                .startForResult(FilePickerViewModel.TYPE_UPLOAD_GALLERY);
+    public void openAlbumForActivityResult(Activity activity, int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        activity.startActivityForResult(intent, requestCode);
     }
 
     public boolean isOverSize(String... realFilePath) {

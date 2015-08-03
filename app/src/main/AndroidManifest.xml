@@ -233,7 +233,7 @@
             android:theme="@style/JandiTheme.PushIntro"/>
 
         <activity
-            android:name=".ui.profile.image.CropActivity_"
+            android:name="com.soundcloud.android.crop.CropImageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"/>
 

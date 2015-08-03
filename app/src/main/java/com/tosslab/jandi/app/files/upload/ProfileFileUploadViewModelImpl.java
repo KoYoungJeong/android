@@ -47,8 +47,8 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
     }
 
     @Override
-    public void selectFileSelector(int type, Activity activity) {
-        filePickerModel.openAlbumForActivityResult(activity);
+    public void selectFileSelector(int requestCode, Activity activity) {
+        filePickerModel.openAlbumForActivityResult(activity, requestCode);
     }
 
     @Override

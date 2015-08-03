@@ -4,6 +4,7 @@ import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -11,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.soundcloud.android.crop.Crop;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
@@ -29,6 +31,7 @@ import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -39,6 +42,9 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.UiThread;
+
+import java.io.File;
+import java.io.IOException;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
@@ -327,6 +333,29 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         }
 
         String filePath = filePickerViewModel.getFilePath(getApplicationContext(), FilePickerViewModel.TYPE_UPLOAD_GALLERY, imageData).get(0);
+        if (!TextUtils.isEmpty(filePath)) {
+            try {
+                Crop.of(Uri.fromFile(new File(filePath)),
+                        Uri.fromFile(File.createTempFile("temp_", ".jpg",
+                                new File(GoogleImagePickerUtil.getDownloadPath()))))
+                        .asSquare()
+                        .start(MemberProfileActivity.this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @OnActivityResult(Crop.REQUEST_CROP)
+    public void onImageCropResult(int resultCode, Intent imageData) {
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+
+        Uri output = Crop.getOutput(imageData);
+
+        String filePath = output.getPath();
         if (!TextUtils.isEmpty(filePath)) {
             filePickerViewModel.startUpload(MemberProfileActivity.this, null, -1, filePath, null);
         }

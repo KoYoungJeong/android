@@ -465,5 +465,7 @@
     <string name="jandi_chat_detail">"대화창 설정"</string>
     <string name="jandi_already_in_team">"이 이메일 주소는 이미 %s의 멤버입니다."</string>
 
+    <string name="jandi_profile_picture">프로필 사진</string>
+
 
 </resources>

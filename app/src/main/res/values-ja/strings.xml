@@ -456,4 +456,7 @@
     <string name="jandi_chat_detail">"トピック設定"</string>
     <string name="jandi_already_in_team">"このメールはすでに%sのメンバーです"</string>
 
+    <string name="jandi_profile_picture">プロフィール画像</string>
+
+
 </resources>
