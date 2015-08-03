@@ -114,11 +114,11 @@ public class FilePickerModel {
         fragment.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_GALLERY);
     }
 
-    public void openAlbumForActivityResult(Activity activity) {
-        Intent intent = new Intent(Intent.ACTION_PICK,
+    public void openAlbumForActivityResult(Activity activity, int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        activity.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_GALLERY);
+        activity.startActivityForResult(intent, requestCode);
     }
 
     public boolean isOverSize(String... realFilePath) {

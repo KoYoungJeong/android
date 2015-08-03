@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.profile.member;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -10,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.soundcloud.android.crop.Crop;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -28,6 +30,8 @@ import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -38,6 +42,9 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.UiThread;
+
+import java.io.File;
+import java.io.IOException;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
@@ -117,8 +124,6 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
      */
     @Background
     void getProfileInBackground() {
-
-
         memberProfileView.showProgressWheel();
         try {
             ResLeftSideMenu.User me;
@@ -207,6 +212,13 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         }
     }
 
+    @Click(R.id.profile_photo)
+    void getPicture() {
+        // 프로필 사진
+        filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, MemberProfileActivity.this);
+
+    }
+
     public void onEvent(MemberEmailChangeEvent event) {
         if (NetworkCheckUtil.isConnected()) {
             memberProfileView.updateEmailTextColor(event.getEmail());
@@ -264,7 +276,6 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
     @Background
     void updateProfileExtraInfo(ReqUpdateProfile reqUpdateProfile) {
-
         memberProfileView.showProgressWheel();
         try {
             ResLeftSideMenu.User me = memberProfileModel.updateProfile(reqUpdateProfile);
@@ -316,20 +327,31 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         }
     }
 
-    /**
-     * *********************************************************
-     * 프로필 사진 업로드
-     * **********************************************************
-     */
-    @Click(R.id.profile_photo)
-    void getPicture() {
+    @Background
+    void onUpdateProfile(ProgressDialog progressDialog) {
+        // TODO Refactoring...
 
-        if (!NetworkCheckUtil.isConnected()) {
-            alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
-            return;
+        memberProfileView.showProgressWheel();
+
+        try {
+            ResLeftSideMenu entitiesInfo = EntityClientManager_.getInstance_(MemberProfileActivity.this).getTotalEntitiesInfo();
+            JandiEntityDatabaseManager.getInstance(MemberProfileActivity.this).upsertLeftSideMenu(entitiesInfo);
+            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
+            JandiPreference.setBadgeCount(MemberProfileActivity.this, totalUnreadCount);
+            BadgeUtils.setBadge(MemberProfileActivity.this, totalUnreadCount);
+            EntityManager.getInstance(MemberProfileActivity.this).refreshEntity(entitiesInfo);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
         }
-        filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, MemberProfileActivity.this);
 
+        memberProfileView.dismissProgressWheel();
+
+
+    }
+
+    @UiThread
+    void upateOptionMenu() {
+        invalidateOptionsMenu();
     }
 
     @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_GALLERY)
@@ -338,12 +360,35 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             return;
         }
 
+        String filePath = filePickerViewModel.getFilePath(getApplicationContext(), FilePickerViewModel.TYPE_UPLOAD_GALLERY, imageData).get(0);
+        if (!TextUtils.isEmpty(filePath)) {
+            try {
+                Crop.of(Uri.fromFile(new File(filePath)),
+                        Uri.fromFile(File.createTempFile("temp_", ".jpg",
+                                new File(GoogleImagePickerUtil.getDownloadPath()))))
+                        .asSquare()
+                        .start(MemberProfileActivity.this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @OnActivityResult(Crop.REQUEST_CROP)
+    public void onImageCropResult(int resultCode, Intent imageData) {
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+
         if (!NetworkCheckUtil.isConnected()) {
             alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
             return;
         }
+        
+        Uri output = Crop.getOutput(imageData);
 
-        String filePath = filePickerViewModel.getFilePath(getApplicationContext(), FilePickerViewModel.TYPE_UPLOAD_GALLERY, imageData).get(0);
+        String filePath = output.getPath();
         if (!TextUtils.isEmpty(filePath)) {
             filePickerViewModel.startUpload(MemberProfileActivity.this, null, -1, filePath, null);
         }

@@ -2,12 +2,16 @@ package com.tosslab.jandi.app.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
+import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
@@ -48,8 +52,55 @@ public class BitmapUtil {
         }
     }
 
-    public enum Thumbnails {
-        SMALL, MEDIUM, LARGE, ORIGINAL
+    public static Bitmap getOptimizedBitmap(String path) {
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+
+        int bitmapWidth = options.outWidth;
+        int bitmapHeight = options.outHeight;
+
+        DisplayMetrics displayMetrics = JandiApplication.getContext()
+                .getResources().getDisplayMetrics();
+
+        int deviceWidth = displayMetrics.widthPixels;
+        int deviceHeight = displayMetrics.heightPixels;
+
+        float widthRatio = bitmapWidth / deviceWidth;
+        float heightRatio = bitmapHeight / deviceHeight;
+
+        int maxRatio = (int) Math.max(widthRatio, heightRatio);
+
+        int samplingSize;
+
+        if (maxRatio <= 1) {
+            samplingSize = 1;
+        } else {
+            boolean find = false;
+            samplingSize = 1;
+            while (!find) {
+                samplingSize *= 2;
+
+                if (samplingSize >= maxRatio) {
+                    find = true;
+                }
+            }
+        }
+
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = samplingSize;
+
+        Glide.get(JandiApplication.getContext()).clearMemory();
+        Ion.getDefault(JandiApplication.getContext()).dump();
+
+        while (true) {
+            try {
+                return BitmapFactory.decodeFile(path, options);
+            } catch (OutOfMemoryError e) {
+                options.inSampleSize *= 2;
+            }
+        }
     }
 
     public static String getThumbnailUrlOrOriginal(ResMessages.FileContent content,
@@ -136,6 +187,10 @@ public class BitmapUtil {
 
         // 80x80 정사각형 이미지
         return small;
+    }
+
+    public enum Thumbnails {
+        SMALL, MEDIUM, LARGE, ORIGINAL
     }
 
 }

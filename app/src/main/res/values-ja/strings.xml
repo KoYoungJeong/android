@@ -456,4 +456,7 @@
     <string name="jandi_already_in_team">"このメールはすでに%sのメンバーです"</string>
     <string name="jandi_unread_messages_below">"ここから未読メッセージ"</string>
 
+    <string name="jandi_profile_picture">プロフィール画像</string>
+
+
 </resources>
