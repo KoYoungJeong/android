@@ -431,7 +431,7 @@ public class MessageListModel {
     }
 
     @Background
-    public void unRegistStarredMessage(int teamId, int messageId) {
+    public void unregistStarredMessage(int teamId, int messageId) {
         try {
             RequestApiManager.getInstance()
                     .unregistStarredMessageByTeamApi(teamId, messageId);

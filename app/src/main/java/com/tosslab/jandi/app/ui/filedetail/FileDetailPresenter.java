@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -391,12 +390,22 @@ public class FileDetailPresenter {
         return mentionControlViewModel;
     }
 
-    public void registStarredFile(int teamId, int messageId) {
-        fileDetailModel.registStarredFile(teamId, messageId);
+    public void registStarredMessage(int teamId, int messageId) {
+        try {
+            fileDetailModel.registStarredMessage(teamId, messageId);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
-    public void unregistStarredFile(int teamId, int messageId) {
-        fileDetailModel.unregistStarredFile(teamId, messageId);
+    public void unregistStarredMessage(int teamId, int messageId) {
+        try {
+            fileDetailModel.unregistStarredMessage(teamId, messageId);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public interface View {

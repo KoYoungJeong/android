@@ -77,7 +77,7 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResMentioned;
+import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
@@ -543,7 +543,7 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResMentioned getMentionedMessagesByTeamApi(int teamId, int page, int perPage) throws RetrofitError {
+    public ResStarMentioned getMentionedMessagesByTeamApi(int teamId, int page, int perPage) throws RetrofitError {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getMentionedMessages(teamId, page, perPage);
     }
 
@@ -558,7 +558,7 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResMentioned getStarredMessagesByTeamApi(int teamId, String type, int page, int perPage) {
+    public ResStarMentioned getStarredMessagesByTeamApi(int teamId, String type, int page, int perPage) {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getStarredMessages(teamId,
                 type, page, perPage);
     }

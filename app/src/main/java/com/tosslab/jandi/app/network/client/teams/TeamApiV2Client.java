@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResMentioned;
+import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResStarred;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
@@ -78,12 +78,12 @@ public interface TeamApiV2Client {
 
     @GET("/teams/{teamId}/messages/mentioned")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResMentioned getMentionedMessages(@Path("teamId") int teamId,
+    ResStarMentioned getMentionedMessages(@Path("teamId") int teamId,
                                       @Query("page") int page, @Query("perPage") int perPage);
 
     @GET("/teams/{teamId}/messages/starred")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResMentioned getStarredMessages(@Path("teamId") int teamId, @Query("type") String type,
+    ResStarMentioned getStarredMessages(@Path("teamId") int teamId, @Query("type") String type,
                                     @Query("page") int page, @Query("perPage") int perPage);
 
 }

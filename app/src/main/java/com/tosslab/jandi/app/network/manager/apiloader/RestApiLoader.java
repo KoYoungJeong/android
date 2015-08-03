@@ -65,7 +65,7 @@ import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResMentioned;
+import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
@@ -615,7 +615,7 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResMentioned> loadGetMentionedMessagesByTeamApi(int teamId, int page, int perPage) {
+    public IExecutor<ResStarMentioned> loadGetMentionedMessagesByTeamApi(int teamId, int page, int perPage) {
         return () -> authRestApiClient.getMentionedMessagesByTeamApi(teamId, page, perPage);
     }
 
@@ -630,7 +630,7 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResMentioned> loadGetStarredMessagesByTeamApi(int teamId, String type, int page, int perPage) {
+    public IExecutor<ResStarMentioned> loadGetStarredMessagesByTeamApi(int teamId, String type, int page, int perPage) {
         return () -> authRestApiClient.getStarredMessagesByTeamApi(teamId, type, page, perPage);
     }
 }

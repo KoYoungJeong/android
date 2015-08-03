@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by tee on 15. 7. 29..
  */
-public class ResMentioned {
+public class ResStarMentioned {
 
     private CursorObject cursor;
 
@@ -32,7 +32,7 @@ public class ResMentioned {
 
     @Override
     public String toString() {
-        return "ResMentioned{" +
+        return "ResStarMentioned{" +
                 "cursor=" + cursor.toString() +
                 ", records=" + records.toString() +
                 '}';

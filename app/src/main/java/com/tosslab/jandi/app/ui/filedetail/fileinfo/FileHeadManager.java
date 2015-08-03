@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -45,11 +46,11 @@ public class FileHeadManager {
     private View disableLineThroughView;
     private View disableCoverView;
 
+    private Button btFileDetailStarred;
     private ImageView imageViewPhotoFile;
     private ImageView iconFileType;
     private LinearLayout fileInfoLayout;
     private int roomId;
-
 
     public View getHeaderView() {
         View header = LayoutInflater.from(activity).inflate(R.layout.activity_file_detail_header, null, false);
@@ -63,7 +64,7 @@ public class FileHeadManager {
         iconFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
         disableLineThroughView = header.findViewById(R.id.img_entity_listitem_line_through);
         disableCoverView = header.findViewById(R.id.view_entity_listitem_warning);
-
+        btFileDetailStarred = (Button) header.findViewById(R.id.bt_file_detail_starred);
         return header;
     }
 
@@ -127,7 +128,8 @@ public class FileHeadManager {
                 int length = spannableStringBuilder.length();
                 spannableStringBuilder.append(sharedEntity.getName());
 
-                spannableStringBuilder.setSpan(entitySpannable, length, length + sharedEntity.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(entitySpannable, length,
+                        length + sharedEntity.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 
             }
@@ -153,6 +155,12 @@ public class FileHeadManager {
 
         imageViewUserProfile.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileMessage.writerId).build().show(activity.getSupportFragmentManager(), "dialog"));
         textViewUserName.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileMessage.writerId).build().show(activity.getSupportFragmentManager(), "dialog"));
+
+        if (fileMessage.isStarred) {
+            btFileDetailStarred.setSelected(true);
+        } else {
+            btFileDetailStarred.setSelected(false);
+        }
 
         // 파일
         String createTime = DateTransformator.getTimeString(fileMessage.createTime);
@@ -189,6 +197,18 @@ public class FileHeadManager {
                 thumbLoader.loadThumb(fileMessage);
             }
         }
+    }
+
+//    public boolean isStarredButtonEnabled() {
+//        return btFileDetailStarred.isSelected();
+//    }
+//
+//    public void setStarredButtonEnabled(boolean enabled) {
+//        btFileDetailStarred.setSelected(enabled);
+//    }
+
+    public Button getStarredButton() {
+        return btFileDetailStarred;
     }
 
     public void setRoomId(int roomId) {

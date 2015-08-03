@@ -1249,7 +1249,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
                 break;
             case UNSTARRED:
-                messageListModel.unRegistStarredMessage(teamId, event.getMessageId());
+                messageListModel.unregistStarredMessage(teamId, event.getMessageId());
                 break;
         }
     }

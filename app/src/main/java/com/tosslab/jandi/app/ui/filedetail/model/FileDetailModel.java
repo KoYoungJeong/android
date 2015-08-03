@@ -229,22 +229,24 @@ public class FileDetailModel {
     }
 
     @Background
-    public void registStarredFile(int teamId, int messageId) {
+    public void registStarredMessage(int teamId, int messageId) {
         try {
             RequestApiManager.getInstance()
                     .registStarredMessageByTeamApi(teamId, messageId);
         } catch (RetrofitError e) {
             e.printStackTrace();
+            throw e;
         }
     }
 
     @Background
-    public void unregistStarredFile(int teamId, int messageId) {
+    public void unregistStarredMessage(int teamId, int messageId) {
         try {
             RequestApiManager.getInstance()
-                    .registStarredMessageByTeamApi(teamId, messageId);
+                    .unregistStarredMessageByTeamApi(teamId, messageId);
         } catch (RetrofitError e) {
             e.printStackTrace();
+            throw e;
         }
     }
 

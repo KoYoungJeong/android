@@ -11,14 +11,22 @@ import java.util.List;
 public class StarMentionVO {
 
     private int contentType;
+    private int teamId;
+    private int isStarred;
+    private int linkId;
     private String writerName;
     private String writerPictureUrl;
     private String content;
+    private int imageResource;
+    private int messageId;
 
     //for type is text
     private String roomName;
+    private int roomId;
+    private int roomType;
 
-    //for type is comment
+    //for type is comment -  file
+    private int fileId;
     private String fileName;
 
     private Date updatedAt;
@@ -88,14 +96,86 @@ public class StarMentionVO {
         this.mentions = mentions;
     }
 
+    public int getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
+    }
+
+    public int getIsStarred() {
+        return isStarred;
+    }
+
+    public void setIsStarred(int isStarred) {
+        this.isStarred = isStarred;
+    }
+
+    public int getLinkId() {
+        return linkId;
+    }
+
+    public void setLinkId(int linkId) {
+        this.linkId = linkId;
+    }
+
+    public int getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
+    }
+
+    public int getRoomType() {
+        return roomType;
+    }
+
+    public void setRoomType(int roomType) {
+        this.roomType = roomType;
+    }
+
+    public int getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(int fileId) {
+        this.fileId = fileId;
+    }
+
+    public int getImageResource() {
+        return imageResource;
+    }
+
+    public void setImageResource(int imageResource) {
+        this.imageResource = imageResource;
+    }
+
+    public int getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(int messageId) {
+        this.messageId = messageId;
+    }
+
     @Override
     public String toString() {
         return "StarMentionVO{" +
                 "contentType=" + contentType +
+                ", teamId=" + teamId +
+                ", isStarred=" + isStarred +
+                ", linkId=" + linkId +
                 ", writerName='" + writerName + '\'' +
                 ", writerPictureUrl='" + writerPictureUrl + '\'' +
                 ", content='" + content + '\'' +
+                ", imageResource=" + imageResource +
+                ", messageId=" + messageId +
                 ", roomName='" + roomName + '\'' +
+                ", roomId=" + roomId +
+                ", roomType=" + roomType +
+                ", fileId=" + fileId +
                 ", fileName='" + fileName + '\'' +
                 ", updatedAt=" + updatedAt +
                 ", mentions=" + mentions +

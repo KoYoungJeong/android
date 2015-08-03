@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResMentioned;
+import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResStarred;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
@@ -39,13 +39,13 @@ public interface ITeamApiLoader {
 
     IExecutor<ResMessages.OriginalMessage> loadGetMessage(int teamId, int topicId);
 
-    IExecutor<ResMentioned> loadGetMentionedMessagesByTeamApi(int teamId, int page, int perPage);
+    IExecutor<ResStarMentioned> loadGetMentionedMessagesByTeamApi(int teamId, int page, int perPage);
 
     IExecutor<ResStarred> loadRegistStarredMessageByTeamApi(int teamId, int messageId);
 
     IExecutor<ResCommon> loadUnregistStarredMessageByTeamApi(int teamId, int messageId);
 
-    IExecutor<ResMentioned> loadGetStarredMessagesByTeamApi(int teamId, String type,
+    IExecutor<ResStarMentioned> loadGetStarredMessagesByTeamApi(int teamId, String type,
                                                             int page, int perPage);
 
 }
