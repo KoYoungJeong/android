@@ -10,6 +10,8 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 public interface CommentViewHolder {
 
     void init(View rootView);
+
     void bind(ResMessages.OriginalMessage originalMessage);
+
     int getLayoutResourceId();
 }

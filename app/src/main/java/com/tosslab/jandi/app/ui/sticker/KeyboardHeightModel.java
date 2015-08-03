@@ -24,6 +24,7 @@ import org.androidannotations.annotations.RootContext;
 public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListener {
 
     public static final int MIN_KEYBOARD_HEIGHT = 150;
+
     @RootContext
     Activity activity;
 

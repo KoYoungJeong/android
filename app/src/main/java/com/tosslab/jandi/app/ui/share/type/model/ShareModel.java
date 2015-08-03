@@ -100,7 +100,7 @@ public class ShareModel {
         }
         messageManipulator.initEntity(entityType, entity.getEntityId());
 
-        messageManipulator.sendMessage(messageText);
+        messageManipulator.sendMessage(messageText, null);
 
     }
 

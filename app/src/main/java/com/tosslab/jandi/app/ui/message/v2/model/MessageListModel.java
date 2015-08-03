@@ -35,11 +35,13 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
@@ -86,7 +88,6 @@ public class MessageListModel {
     EntityClientManager entityClientManager;
     @Bean
     MessageListTimer messageListTimer;
-
     @RootContext
     AppCompatActivity activity;
 
@@ -119,8 +120,7 @@ public class MessageListModel {
         return TextUtils.isEmpty(text);
     }
 
-    public ResUpdateMessages getNewMessage(int linkId) throws
-            RetrofitError {
+    public ResUpdateMessages getNewMessage(int linkId) throws RetrofitError {
         return messageManipulator.updateMessages(linkId);
     }
 
@@ -181,10 +181,11 @@ public class MessageListModel {
                 .build(item);
     }
 
-    public int sendMessage(long localId, String message) {
-        SendingMessage sendingMessage = new SendingMessage(localId, message);
+    public int sendMessage(long localId, String message, List<MentionObject> mentions) {
+
+        SendingMessage sendingMessage = new SendingMessage(localId, new ReqSendMessageV3(message, mentions));
         try {
-            ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage());
+            ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage(), sendingMessage.getMentions());
             SendMessageRepository.getRepository().deleteSendMessage(sendingMessage.getLocalId());
             EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
             return resCommon.id;
@@ -423,7 +424,7 @@ public class MessageListModel {
         MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, myId, lastLinkId);
     }
 
-    public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, String message) {
+    public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, String message, List<MentionObject> mentions) {
 
         FormattedEntity entity = EntityManager.getInstance(activity.getApplicationContext()).getEntityById(entityId);
         String type = null;
@@ -431,7 +432,7 @@ public class MessageListModel {
             type = entity.isPublicTopic() ? JandiConstants.RoomType.TYPE_PUBLIC : entity.isPrivateGroup() ? JandiConstants.RoomType.TYPE_PRIVATE : JandiConstants.RoomType.TYPE_USER;
         }
 
-        ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), teamId, entityId, type, message);
+        ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), teamId, entityId, type, message, mentions);
 
         try {
             RequestApiManager.getInstance().sendStickerByStickerApi(reqSendSticker);
@@ -441,6 +442,26 @@ public class MessageListModel {
             return -1;
         }
 
+    }
+
+    @Background
+    public void registStarredMessage(int teamId, int messageId) {
+        try {
+            RequestApiManager.getInstance()
+                    .registStarredMessageByTeamApi(teamId, messageId);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Background
+    public void unregistStarredMessage(int teamId, int messageId) {
+        try {
+            RequestApiManager.getInstance()
+                    .unregistStarredMessageByTeamApi(teamId, messageId);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean isUser(int entityId) {

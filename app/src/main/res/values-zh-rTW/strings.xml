@@ -446,5 +446,21 @@
     <string name="jandi_chat_detail">"聊天設定"</string>
     <string name="jandi_already_in_team">"此電子郵箱已為 %s 的成員"</string>
     <string name="jandi_unread_messages_below">"以下為未讀訊息"</string>
+
+    <!-- starred / mention-->
+    <string name="jandi_starred_star">標示</string>
+    <string name="jandi_mention_mentions">提及</string>
+    <string name="jandi_mention_more">更多</string>
+    <string name="jandi_starred_files">檔案類別</string>
+    <string name="jandi_starred_all">全部類別</string>
+    <string name="jandi_starred_unstar">取消標示</string>
+    <string name="jandi_starred_undo">復原</string>
+    <string name="jandi_starred_unstarred">已取消標示</string>
+    <string name="jandi_starred_stars">已標示</string>
+    <string name="jandi_mention_all_topic_members">議題成員</string>
+    <string name="jandi_mention_mentioned_you">提到你</string>
+    <string name="jandi_mention_no_mentions">還沒有人提到你</string>
+    <string name="jandi_starred_no_all">下載電腦版</string>
+    <string name="jandi_starred_no_file">No starred files</string>
 </resources>
 

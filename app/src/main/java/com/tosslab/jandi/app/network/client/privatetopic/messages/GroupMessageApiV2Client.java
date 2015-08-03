@@ -4,7 +4,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
-import com.tosslab.jandi.app.network.models.ReqSendMessage;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
@@ -50,9 +50,10 @@ public interface GroupMessageApiV2Client {
                                        @Query("linkId") int currentLinkId);
 
     // Private Group에서의 Message 생성
-    @POST("/privateGroups/{groupId}/message")
-    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon sendGroupMessage(@Body ReqSendMessage message, @Path("groupId") int groupId);
+    @POST("/privateGroups/{privateGroupId}/message")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+    ResCommon sendGroupMessage(@Path("privateGroupId") int privateGroupId, @Query("teamId") int teamId,
+                               @Body ReqSendMessageV3 reqSendMessageV3);
 
     // Private Group Message 수정
     @PUT("/privateGroups/{groupId}/messages/{messageId}")

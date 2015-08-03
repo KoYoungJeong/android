@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.messages.comments;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ReqModifyComment;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
@@ -114,12 +115,12 @@ public class CommentsApiClientTest {
             return;
         }
 
-        ReqSendComment reqSendComment = new ReqSendComment();
-        reqSendComment.teamId = sideMenu.team.id;
-        reqSendComment.comment = "create_" + new Timestamp(System.currentTimeMillis());
+        ReqSendComment reqSendComment = new ReqSendComment("create_" +
+                new Timestamp(System.currentTimeMillis()), null);
+
         try {
             ResCommon resCommon = RequestApiManager.getInstance().
-                    sendMessageCommentByCommentsApi(reqSendComment, myFileMessage.id);
+                    sendMessageCommentByCommentsApi(myFileMessage.id, sideMenu.team.id, reqSendComment);
         } catch (RetrofitError e) {
             fail(e.getResponse().getBody().toString());
         }
@@ -141,13 +142,13 @@ public class CommentsApiClientTest {
 
         ResMessages.CommentMessage textMessage = getMyCommentMessage(fileDetail);
 
-        ReqSendComment reqSendComment = new ReqSendComment();
-        reqSendComment.teamId = sideMenu.team.id;
-        reqSendComment.comment = "mod_" + new Timestamp(System.currentTimeMillis());
+        ReqModifyComment reqModifyComment = new ReqModifyComment(
+                "mod_" + new Timestamp(System.currentTimeMillis()),
+                sideMenu.team.id);
         ResCommon resCommon = null;
         try {
             resCommon = RequestApiManager.getInstance().
-                    modifyMessageCommentByCommentsApi(reqSendComment, textMessage.feedbackId, textMessage.id);
+                    modifyMessageCommentByCommentsApi(reqModifyComment, textMessage.feedbackId, textMessage.id);
         } catch (RetrofitError e) {
             fail(e.getResponse().getBody().toString());
         }

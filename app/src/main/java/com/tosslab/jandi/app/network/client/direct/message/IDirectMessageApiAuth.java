@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network.client.direct.message;
 
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
-import com.tosslab.jandi.app.network.models.ReqSendMessage;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
@@ -23,7 +23,8 @@ public interface IDirectMessageApiAuth {
 
     ResMessages getDirectMarkerMessagesByDirectMessageApi(int teamId, int userId, int currentLinkId) throws RetrofitError;
 
-    ResCommon sendDirectMessageByDirectMessageApi(ReqSendMessage message, int userId) throws RetrofitError;
+    ResCommon sendDirectMessageByDirectMessageApi(int userId, int teamId,
+                                                  ReqSendMessageV3 reqSendMessageV3) throws RetrofitError;
 
     ResCommon modifyDirectMessageByDirectMessageApi(ReqModifyMessage message,
                                                     int userId, int messageId) throws RetrofitError;

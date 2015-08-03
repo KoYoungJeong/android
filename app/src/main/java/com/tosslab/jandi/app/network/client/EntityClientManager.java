@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.network.client;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -18,6 +19,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -176,11 +178,14 @@ public class EntityClientManager {
         return RequestApiManager.getInstance().getFileDetailByMessagesApiAuth(selectedTeamId, messageId);
     }
 
-    public ResCommon sendMessageComment(final int messageId, String comment) throws RetrofitError {
-        final ReqSendComment reqSendComment = new ReqSendComment();
-        reqSendComment.teamId = selectedTeamId;
-        reqSendComment.comment = comment;
-        return RequestApiManager.getInstance().sendMessageCommentByCommentsApi(reqSendComment, messageId);
+    public ResCommon sendMessageComment(final int messageId, String comment, List<MentionObject> mentions) throws RetrofitError {
+
+        final ReqSendComment reqSendComment = new ReqSendComment(comment, mentions);
+
+        Log.e("reqSendComment", reqSendComment.toString());
+
+        return RequestApiManager.getInstance().sendMessageCommentByCommentsApi(messageId, selectedTeamId,
+                reqSendComment);
     }
 
     public ResCommon shareMessage(final int messageId, int cdpIdToBeShared) throws RetrofitError {

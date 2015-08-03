@@ -54,13 +54,14 @@ import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
+import com.tosslab.jandi.app.network.models.ReqModifyComment;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
-import com.tosslab.jandi.app.network.models.ReqSendMessage;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
@@ -76,11 +77,13 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.network.models.ResStarred;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
@@ -230,8 +233,8 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon sendPublicTopicMessageByChannelMessageApi(ReqSendMessage message, int channelId) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(ChannelMessageApiV2Client.class).create().sendPublicTopicMessage(message, channelId);
+    public ResCommon sendPublicTopicMessageByChannelMessageApi(int channelId, int teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(ChannelMessageApiV2Client.class).create().sendPublicTopicMessage(channelId, teamId, reqSendMessageV3);
     }
 
     @Override
@@ -255,12 +258,12 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon sendMessageCommentByCommentsApi(ReqSendComment comment, int messageId) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(CommentsApiV2Client.class).create().sendMessageComment(comment, messageId);
+    public ResCommon sendMessageCommentByCommentsApi(int messageId, int teamId, ReqSendComment reqSendComment) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(CommentsApiV2Client.class).create().sendMessageComment(messageId, teamId, reqSendComment);
     }
 
     @Override
-    public ResCommon modifyMessageCommentByCommentsApi(ReqSendComment comment, int messageId, int commentId) throws RetrofitError {
+    public ResCommon modifyMessageCommentByCommentsApi(ReqModifyComment comment, int messageId, int commentId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(CommentsApiV2Client.class).create().modifyMessageComment(comment, messageId, commentId);
     }
 
@@ -295,8 +298,10 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon sendDirectMessageByDirectMessageApi(ReqSendMessage message, int userId) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(DirectMessageApiV2Client.class).create().sendDirectMessage(message, userId);
+    public ResCommon sendDirectMessageByDirectMessageApi(int userId, int teamId,
+                                                         ReqSendMessageV3 reqSendMessageV3) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(DirectMessageApiV2Client.class).create()
+                .sendDirectMessage(userId, teamId, reqSendMessageV3);
     }
 
     @Override
@@ -363,8 +368,8 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon sendGroupMessageByGroupMessageApi(ReqSendMessage message, int groupId) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(GroupMessageApiV2Client.class).create().sendGroupMessage(message, groupId);
+    public ResCommon sendGroupMessageByGroupMessageApi(int privateGroupId, int teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(GroupMessageApiV2Client.class).create().sendGroupMessage(privateGroupId, teamId, reqSendMessageV3);
     }
 
     @Override
@@ -541,5 +546,26 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     @Override
     public List<ResMessages.FileMessage> searchNewImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
         return RestAdapterBuilder.newInstance(FileApiV2Client.class).create().searchNewImageFile(teamId, roomId, messageId, count);
+    }
+
+    @Override
+    public ResStarMentioned getMentionedMessagesByTeamApi(int teamId, int page, int perPage) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getMentionedMessages(teamId, page, perPage);
+    }
+
+    @Override
+    public ResStarred registStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().registStarredMessage(teamId, messageId, new ReqDeleteTopic(0));
+    }
+
+    @Override
+    public ResCommon unregistStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().unregistStarredMessage(teamId, messageId);
+    }
+
+    @Override
+    public ResStarMentioned getStarredMessagesByTeamApi(int teamId, String type, int page, int perPage) {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getStarredMessages(teamId,
+                type, page, perPage);
     }
 }

@@ -2,11 +2,9 @@ package com.tosslab.jandi.app.ui.maintab.more;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.Menu;
-import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
@@ -19,6 +17,8 @@ import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
+import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
+import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
@@ -30,7 +30,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
 
@@ -53,8 +52,8 @@ public class MainMoreFragment extends Fragment {
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
 
-    @ViewById(R.id.txt_more_jandi_version)
-    TextView textViewJandiVersion;
+//    @ViewById(R.id.txt_more_jandi_version)
+//    TextView textViewJandiVersion;
 
     private EntityManager mEntityManager;
 
@@ -69,8 +68,8 @@ public class MainMoreFragment extends Fragment {
     void initView() {
         LogUtil.d("initView MainMoreFragment");
         profileIconView = (IconWithTextView) getView().findViewById(R.id.ly_more_profile);
-
-        showJandiVersion();
+//
+//        showJandiVersion();
     }
 
     @Override
@@ -97,15 +96,15 @@ public class MainMoreFragment extends Fragment {
         menu.clear();
     }
 
-    private void showJandiVersion() {
-        try {
-            String packageName = getActivity().getPackageName();
-            String versionName = getActivity().getPackageManager().getPackageInfo(packageName, 0).versionName;
-            textViewJandiVersion.setText("v." + versionName);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void showJandiVersion() {
+//        try {
+//            String packageName = getActivity().getPackageName();
+//            String versionName = getActivity().getPackageManager().getPackageInfo(packageName, 0).versionName;
+//            textViewJandiVersion.setText("v." + versionName);
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Click(R.id.ly_more_profile)
     public void moveToProfileActivity() {
@@ -133,20 +132,36 @@ public class MainMoreFragment extends Fragment {
                 .start();
     }
 
-    @Click(R.id.ly_more_setting)
+    @Click(R.id.rl_more_setting)
     public void moveToSettingActivity() {
         SettingsActivity_.intent(mContext)
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .start();
     }
 
-    @Click(R.id.ly_more_help)
+    @Click(R.id.rl_more_help)
     public void launchHelpPageOnBrowser() {
         InternalWebActivity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .url(getSupportUrlEachLanguage())
                 .hideActionBar(true)
                 .helpSite(true)
+                .start();
+    }
+
+    @Click(R.id.ly_more_mentioned)
+    public void launchHelpPageOnMentioned() {
+        StarMentionListActivity_.intent(getActivity())
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .extra("type", StarMentionListActivity.TYPE_MENTION_LIST)
+                .start();
+    }
+
+    @Click(R.id.ly_more_starred)
+    public void launchHelpPageOnStarred() {
+        StarMentionListActivity_.intent(getActivity())
+                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .extra("type", StarMentionListActivity.TYPE_STAR_LIST)
                 .start();
     }
 

@@ -12,9 +12,12 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -30,6 +33,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -47,7 +51,9 @@ import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
+import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
+import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -56,8 +62,10 @@ import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.filedetail.fileinfo.FileHeadManager;
-import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -86,6 +94,8 @@ import java.io.File;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
+
 
 /**
  * Created by justinygchoi on 2014. 7. 19..
@@ -102,8 +112,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     int roomId = -1;
 
     @Bean
-    FileDetailModel fileDetailModel;
-    @Bean
     FileDetailPresenter fileDetailPresenter;
     @Bean
     FileDetailCommentListAdapter fileDetailCommentListAdapter;
@@ -113,14 +121,17 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     ListView lvFileDetailComments;
     @ViewById(R.id.vg_file_detail_input_comment)
     RelativeLayout vgCommentLayout;
-    @ViewById(R.id.et_file_detail_comment)
+    @ViewById(R.id.et_message)
     EditText etComment;
-    @ViewById(R.id.btn_file_detail_send_comment)
+    @ViewById(R.id.btn_send_message)
     Button btnSend;
     @ViewById(R.id.vg_file_detail_preview_sticker)
     ViewGroup vgStickerPreview;
     @ViewById(R.id.iv_file_detail_preview_sticker_image)
     ImageView ivStickerPreview;
+    @ViewById(R.id.rv_list_search_members)
+    RecyclerView rvListSearchMembers;
+
     @Bean
     StickerViewModel stickerViewModel;
     @Bean
@@ -129,6 +140,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     InputMethodManager inputMethodManager;
     @SystemService
     ClipboardManager clipboardManager;
+
     private EntityManager entityManager;
     private boolean isMyFile;
     private boolean isDeleted = true;
@@ -137,11 +149,13 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     private ProgressDialog progressDialog;
     private StickerInfo stickerInfo = NULL_STICKER;
 
+
     @AfterViews
     public void initForm() {
         setUpActionBar();
 
         addFileDetailViewAsListviewHeader();
+        addStarredButtonExecution();
         fileHeadManager.setRoomId(roomId);
 
         progressWheel = new ProgressWheel(this);
@@ -185,6 +199,41 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         lvFileDetailComments.addHeaderView(header);
         lvFileDetailComments.setAdapter(fileDetailCommentListAdapter);
+    }
+
+    private void addStarredButtonExecution() {
+        fileHeadManager.getStarredButton().setOnClickListener(v -> {
+            boolean successed = false;
+            if (v.isSelected()) {
+                try {
+                    fileDetailPresenter.unregistStarredMessage(EntityManager.getInstance(FileDetailActivity.this).getTeamId(),
+                            fileId);
+                    successed = true;
+                } catch (RetrofitError e) {
+                    e.printStackTrace();
+                    successed = false;
+                } finally {
+                    if (successed) {
+                        v.setSelected(false);
+                    }
+                }
+            } else {
+                try {
+                    fileDetailPresenter.registStarredMessage(EntityManager.
+                            getInstance(FileDetailActivity.this).getTeamId(), fileId);
+                    successed = true;
+                } catch (RetrofitError e) {
+                    e.printStackTrace();
+                    successed = false;
+                } finally {
+                    if (successed) {
+                        v.setSelected(true);
+                        Toast.makeText(this, R.string.jandi_message_starred, Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            }
+        });
     }
 
     @Override
@@ -273,6 +322,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             case R.id.action_file_detail_delete:
                 showDeleteFileDialog(fileId);
                 return true;
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -315,7 +365,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
     }
 
-    @AfterTextChange(R.id.et_file_detail_comment)
+    @AfterTextChange(R.id.et_message)
     void onCommentTextChange(Editable editable) {
         int inputLength = editable.length();
         setSendButtonSelected(inputLength > 0);
@@ -351,6 +401,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         }
 
         drawFileDetail(resFileDetail, isSendAction);
+
+        fileDetailPresenter.refreshMentionVM(this, getFileMessage(resFileDetail.messageDetails),
+                rvListSearchMembers, etComment, lvFileDetailComments);
     }
 
     /**
@@ -567,23 +620,27 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
      * 댓글 작성 관련
      * **********************************************************
      */
-    @Click(R.id.btn_file_detail_send_comment)
+    @Click(R.id.btn_send_message)
     void sendComment() {
         CharSequence text = etComment.getText();
-        String comment = TextUtils.isEmpty(text) ? "" : text.toString().trim();
+//        String comment = TextUtils.isEmpty(text) ? "" : text.toString().trim();
         hideSoftKeyboard();
-        etComment.setText("");
+
+        ResultMentionsVO mentions = fileDetailPresenter.getMentionInfo();
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
             dismissStickerPreview();
             StickerRepository.getRepository().upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
 
             fileDetailPresenter.sendCommentWithSticker(
-                    fileId, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), comment);
+                    fileId, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(),
+                    mentions.getMessage(), mentions.getMentions());
             stickerInfo = NULL_STICKER;
-        } else if (!TextUtils.isEmpty(comment)) {
-            fileDetailPresenter.sendComment(fileId, comment);
+        } else {
+            fileDetailPresenter.sendComment(fileId, mentions.getMessage(), mentions.getMentions());
         }
+
+        etComment.setText("");
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -819,7 +876,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @Override
     public void drawFileDetail(ResFileDetail resFileDetail, boolean isSendAction) {
         ResMessages.OriginalMessage fileDetail = getFileMessage(resFileDetail.messageDetails);
-
+        //todo
         final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
 
         fileHeadManager.setFileInfo(fileMessage);
@@ -923,4 +980,66 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             stickerViewModel.dismissStickerSelector();
         }
     }
+
+    public void onEvent(SelectedMemberInfoForMensionEvent event) {
+        SearchedItemVO searchedItemVO = new SearchedItemVO();
+        searchedItemVO.setId(event.getId());
+        searchedItemVO.setName(event.getName());
+        searchedItemVO.setType(event.getType());
+        MentionControlViewModel mentionControlViewModel = fileDetailPresenter.getMentionControlViewModel();
+        mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
+    }
+
+    public void onEvent(MessageStarredEvent event) {
+        if (!isForeground) {
+            return;
+        }
+        boolean successed = false;
+        switch (event.getAction()) {
+            case STARRED:
+                try {
+                    fileDetailPresenter.registStarredMessage(EntityManager.
+                            getInstance(FileDetailActivity.this).getTeamId(), event.getMessageId());
+                    successed = true;
+                } catch (RetrofitError e) {
+                    e.printStackTrace();
+                    successed = false;
+                } finally {
+                    if (successed) {
+                        Toast.makeText(this, R.string.jandi_message_starred, Toast.LENGTH_SHORT).show();
+                        new Handler() {
+                            @Override
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+                                fileDetailPresenter.getFileDetail(fileId, false, true);
+                            }
+                        }.sendEmptyMessageDelayed(0, 100);
+                    }
+                }
+                break;
+            case UNSTARRED:
+                try {
+                    fileDetailPresenter.unregistStarredMessage(EntityManager.
+                            getInstance(FileDetailActivity.this).getTeamId(), event.getMessageId());
+                    successed = true;
+                } catch (RetrofitError e) {
+                    e.printStackTrace();
+                    successed = false;
+                } finally {
+                    if (successed) {
+                        fileDetailPresenter.getFileDetail(fileId, false, true);
+                    }
+                    new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            super.handleMessage(msg);
+                            fileDetailPresenter.getFileDetail(fileId, false, true);
+                        }
+                    }.sendEmptyMessageDelayed(0, 100);
+                }
+                break;
+        }
+
+    }
+
 }

@@ -22,11 +22,13 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -83,8 +85,8 @@ public class FileDetailModel {
         entityClientManager.unshareMessage(fileId, entityIdToBeUnshared);
     }
 
-    public void sendMessageComment(int fileId, String message) throws RetrofitError {
-        entityClientManager.sendMessageComment(fileId, message);
+    public void sendMessageComment(int fileId, String message, List<MentionObject> mentions) throws RetrofitError {
+        entityClientManager.sendMessageComment(fileId, message, mentions);
     }
 
     public ResLeftSideMenu.User getUserProfile(int userEntityId) throws RetrofitError {
@@ -180,6 +182,7 @@ public class FileDetailModel {
             list.add(shareEntity);
             if (shareEntity == myEntityId) {
                 include = true;
+                break;
             }
         }
 
@@ -239,15 +242,37 @@ public class FileDetailModel {
         }
     }
 
-    public void sendMessageCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment) throws RetrofitError {
+    public void sendMessageCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment, List<MentionObject> mentions) throws RetrofitError {
         try {
             int teamId = AccountRepository.getRepository().getSelectedTeamId();
-            ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerGroupId, stickerId, teamId, fileId, "", comment);
+            ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerGroupId, stickerId, teamId, fileId, "", comment, mentions);
             RequestApiManager.getInstance().sendStickerCommentByStickerApi(reqSendSticker);
         } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Background
+    public void registStarredMessage(int teamId, int messageId) {
+        try {
+            RequestApiManager.getInstance()
+                    .registStarredMessageByTeamApi(teamId, messageId);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Background
+    public void unregistStarredMessage(int teamId, int messageId) {
+        try {
+            RequestApiManager.getInstance()
+                    .unregistStarredMessageByTeamApi(teamId, messageId);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 

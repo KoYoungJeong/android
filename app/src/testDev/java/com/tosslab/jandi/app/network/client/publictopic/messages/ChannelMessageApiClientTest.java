@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.network.client.publictopic.messages;
 
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
-import com.tosslab.jandi.app.network.models.ReqSendMessage;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -63,17 +63,13 @@ public class ChannelMessageApiClientTest {
 
         ResLeftSideMenu.Channel entity = getChannel();
 
-        ReqSendMessage message = new ReqSendMessage();
-        message.content = "hahaha. test";
-        message.teamId = sideMenu.team.id;
-        message.type = entity.type;
+        ReqSendMessageV3 reqSendMessageV3 = new ReqSendMessageV3("HAHAHA. TEST", null);
 
-        ResCommon resCommon = RequestApiManager.getInstance().sendPublicTopicMessageByChannelMessageApi(message, entity.id);
+        ResCommon resCommon = RequestApiManager.getInstance().sendPublicTopicMessageByChannelMessageApi(entity.id, sideMenu.team.id, reqSendMessageV3);
 
         assertThat(resCommon, is(notNullValue()));
 
     }
-
 
     @Test
     public void testGetPublicTopicMessages() throws Exception {

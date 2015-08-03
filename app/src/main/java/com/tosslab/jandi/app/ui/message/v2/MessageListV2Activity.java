@@ -91,10 +91,12 @@ public class MessageListV2Activity extends AppCompatActivity {
             } else {
                 super.onBackPressed();
             }
+            finish();
         }
     }
 
     public interface OnBackPressedListener {
         boolean onBackPressed();
     }
+
 }

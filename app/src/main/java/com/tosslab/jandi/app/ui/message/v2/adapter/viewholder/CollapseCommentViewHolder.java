@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
@@ -47,6 +48,12 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
         builder.append(" ");
 
         Resources resources = context.getResources();
+
+        for (MentionObject mention : link.message.mentions) {
+            String name = builder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
+            MensionCommentSpannable spannable1 = new MensionCommentSpannable(tvMessage.getContext(), name);
+            builder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
 
         int startIndex = builder.length();
         builder.append(DateTransformator.getTimeStringForSimple(link.message.createTime));

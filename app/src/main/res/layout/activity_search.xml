@@ -72,7 +72,7 @@
             android:background="?android:attr/selectableItemBackground"
             android:gravity="center"
             android:text="@string/jandi_messages"
-            android:textColor="@color/text_color_search_category"
+            android:textColor="@color/text_color_category"
             android:textSize="@dimen/jadi_search_scope_txt_size" />
 
         <TextView
@@ -83,7 +83,7 @@
             android:background="?android:attr/selectableItemBackground"
             android:gravity="center"
             android:text="@string/jandi_tab_file"
-            android:textColor="@color/text_color_search_category"
+            android:textColor="@color/text_color_category"
             android:textSize="@dimen/jadi_search_scope_txt_size" />
     </LinearLayout>
 
