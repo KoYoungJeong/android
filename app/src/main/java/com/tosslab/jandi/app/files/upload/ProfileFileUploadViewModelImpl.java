@@ -58,13 +58,12 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
 
     @Override
     public void startUpload(Activity activity, String title, int entityId, String realFilePath, String comment) {
-        Context context = activity.getApplicationContext();
         if (GoogleImagePickerUtil.isUrl(realFilePath)) {
 
             String downloadDir = GoogleImagePickerUtil.getDownloadPath();
             String downloadName = GoogleImagePickerUtil.getWebImageName();
             ProgressDialog downloadProgress =
-                    GoogleImagePickerUtil.getDownloadProgress(context, downloadDir, downloadName);
+                    GoogleImagePickerUtil.getDownloadProgress(activity, downloadDir, downloadName);
             downloadImageAndShowFileUploadDialog(activity,
                     downloadProgress, realFilePath, downloadDir, downloadName);
         } else {

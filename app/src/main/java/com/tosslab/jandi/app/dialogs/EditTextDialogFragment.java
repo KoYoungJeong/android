@@ -195,7 +195,8 @@ public class EditTextDialogFragment extends DialogFragment {
                 });
 
         AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(dialog1 -> setupPositiveButton(currentMessage, actionType, currentMessage));
+        dialog.setOnShowListener(dialog1 -> setupPositiveButton(dialog, currentMessage,
+                actionType, currentMessage));
         setEditTextByPurpose(editTextInput, currentMessage, actionType);
 
         return dialog;
@@ -241,7 +242,7 @@ public class EditTextDialogFragment extends DialogFragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                setupPositiveButton(editable.toString(), purpose, currentMessage);
+                setupPositiveButton(dialog, editable.toString(), purpose, currentMessage);
             }
         });
 
@@ -275,8 +276,8 @@ public class EditTextDialogFragment extends DialogFragment {
         }
     }
 
-    private void setupPositiveButton(String editable, int purpose, String currentMessage) {
-        Button confirm = ((AlertDialog) getDialog()).getButton(DialogInterface.BUTTON_POSITIVE);
+    private void setupPositiveButton(AlertDialog dialog, String editable, int purpose, String currentMessage) {
+        Button confirm = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
 
         if (confirm == null) {
             return;

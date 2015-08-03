@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.utils;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Environment;
@@ -49,7 +50,16 @@ public class GoogleImagePickerUtil {
     }
 
     public static ProgressDialog getDownloadProgress(Context context, String downloadDir, String downloadPath) {
+
         final ProgressDialog progressDialog = new ProgressDialog(context);
+
+        if (context instanceof Activity) {
+            if (((Activity) context).isFinishing()) {
+                return progressDialog;
+            }
+        }
+
+
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setMessage(context.getString(R.string.jandi_action_download) + " " + downloadDir + "/" + downloadPath);
         progressDialog.show();
