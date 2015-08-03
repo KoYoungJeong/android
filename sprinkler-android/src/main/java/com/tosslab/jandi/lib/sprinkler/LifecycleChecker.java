@@ -94,7 +94,6 @@ class LifecycleChecker implements Application.ActivityLifecycleCallbacks {
                 .property(PropertyKey.ScreenWidth, defaultProperties.getScreenWidth())
                 .property(PropertyKey.Carrier, defaultProperties.getDeviceCarrier())
                 .property(PropertyKey.Wifi, defaultProperties.isWifiEnabled())
-                .property(PropertyKey.GooglePlayServices, defaultProperties.getGooglePlayAvailable())
                 .build());
     }
 }

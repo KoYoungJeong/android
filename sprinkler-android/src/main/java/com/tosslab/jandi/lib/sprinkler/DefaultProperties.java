@@ -37,7 +37,6 @@ class DefaultProperties {
     private int screenWidth;
     private int screenHeight;
     private boolean wifiEnabled = false;
-    private String googlePlayAvailable = "not included";
 
     @SuppressLint("CommitPrefEdits")
     public DefaultProperties(Context context) {
@@ -71,8 +70,6 @@ class DefaultProperties {
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifiInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         wifiEnabled = wifiInfo != null && wifiInfo.isAvailable() && wifiInfo.isConnected();
-
-        googlePlayAvailable = getGooglePlayAvailable(context);
 
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         screenDpi = metrics.densityDpi;
@@ -132,43 +129,6 @@ class DefaultProperties {
         return wifiEnabled;
     }
 
-    public String getGooglePlayAvailable() {
-        return googlePlayAvailable;
-    }
-
-    private String getGooglePlayAvailable(Context context) {
-        String avaliable = "not included";
-//            try {
-//                try {
-//                    final int servicesAvailable =
-//                            GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
-//                    switch (servicesAvailable) {
-//                        case ConnectionResult.SUCCESS:
-//                            avaliable = "available";
-//                            break;
-//                        case ConnectionResult.SERVICE_MISSING:
-//                            avaliable = "missing";
-//                            break;
-//                        case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
-//                            avaliable = "out of date";
-//                            break;
-//                        case ConnectionResult.SERVICE_DISABLED:
-//                            avaliable = "disabled";
-//                            break;
-//                        case ConnectionResult.SERVICE_INVALID:
-//                            avaliable = "invalid";
-//                            break;
-//                    }
-//                } catch (RuntimeException e) {
-//                    avaliable = "not configured";
-//                }
-//
-//            } catch (NoClassDefFoundError e) {
-//                avaliable = "not included";
-//            }
-        return avaliable;
-    }
-
     @Override
     public String toString() {
         return "DefaultProperties{" +
@@ -185,7 +145,6 @@ class DefaultProperties {
                 ", screenWidth=" + screenWidth +
                 ", screenHeight=" + screenHeight +
                 ", wifiEnabled=" + wifiEnabled +
-                ", googlePlayAvailable='" + googlePlayAvailable + '\'' +
                 '}';
     }
 }
