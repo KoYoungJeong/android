@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.share.model.MainShareModel;
+import com.tosslab.jandi.app.ui.share.type.etc.EtcShareDialogFragment_;
 import com.tosslab.jandi.app.ui.share.type.image.ImageShareDialogFragment_;
 import com.tosslab.jandi.app.ui.share.type.text.TextShareDialogFragment_;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -60,7 +61,10 @@ public class MainShareActivity extends AppCompatActivity {
                         .build();
                 break;
             default:
-                fragment = null;
+                fragment = EtcShareDialogFragment_
+                        .builder()
+                        .uriString(mainShareModel.handleSendImage(intent).toString())
+                        .build();
                 break;
         }
 
@@ -77,6 +81,6 @@ public class MainShareActivity extends AppCompatActivity {
     }
 
     public enum IntentType {
-        Image, Text
+        Image, Text, Etc
     }
 }

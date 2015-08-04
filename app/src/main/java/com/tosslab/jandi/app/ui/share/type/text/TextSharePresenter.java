@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.share.type.text;
 
 import android.app.Activity;
-import android.content.Context;
 import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -99,7 +98,7 @@ public class TextSharePresenter {
 
     @UiThread
     public void showProgressWheel() {
-        if (progressWheel != null && progressWheel.isShowing()) {
+        if (progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
 
