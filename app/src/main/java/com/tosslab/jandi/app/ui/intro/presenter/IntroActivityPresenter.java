@@ -75,7 +75,6 @@ public class IntroActivityPresenter {
                 }
 
                 if (!model.isNeedLogin(context)) {
-                    ParseUpdateUtil.addChannelOnServer();
                     if (model.hasMigration()) {
                         refreshAccountInfo(context);
                         moveNextActivity(context, initTime, startForInvite);
