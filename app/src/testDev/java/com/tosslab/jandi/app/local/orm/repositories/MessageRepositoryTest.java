@@ -70,7 +70,12 @@ public class MessageRepositoryTest {
         for (ResMessages.Link message : messages) {
             message.roomId = ROOM_ID;
         }
+
+        long beforeTime = System.currentTimeMillis();
+
         MessageRepository.getRepository().upsertMessages(messages);
+
+        System.out.println("소요 시간 : " + (System.currentTimeMillis() - beforeTime) + "ms");
 
 
         List<ResMessages.Link> savedLinks = MessageRepository.getRepository().getMessages(ROOM_ID);
