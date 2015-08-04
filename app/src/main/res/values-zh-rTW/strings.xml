@@ -154,6 +154,9 @@
     <string name="modify_message">"編輯訊息"</string>
     <string name="today">"今天"</string>
 
+    <!-- Mention -->
+    <string name="jandi_mention_push_message">"%s 提到你"</string>
+
     <!-- File Detail Activity -->
     <string name="jandi_action_download">"下載"</string>
     <string name="jandi_action_unshare">"取消分享"</string>

@@ -160,6 +160,9 @@
     <string name="modify_message">"メッセージを編集する"</string>
     <string name="today">"今日"</string>
 
+    <!-- Mention -->
+    <string name="jandi_mention_push_message">"%sさんからのメンション"</string>
+
     <!-- File Detail Activity -->
     <string name="jandi_action_download">"ダウンロード"</string>
     <string name="jandi_action_unshare">"非共有"</string>

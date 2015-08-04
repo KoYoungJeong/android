@@ -170,6 +170,9 @@
     <string name="modify_message">"Message 수정"</string>
     <string name="today">"오늘"</string>
 
+    <!-- Mention -->
+    <string name="jandi_mention_push_message">"%s 님의 멘션"</string>
+
     <!-- File Detail Activity -->
     <string name="jandi_action_download">"다운로드"</string>
     <string name="jandi_action_unshare">"공유 해제"</string>

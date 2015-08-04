@@ -229,4 +229,8 @@ public class EntityClientManager {
         entityInfo.description = description;
         return RequestApiManager.getInstance().modifyGroupByGroupApi(entityInfo, entityId);
     }
+
+    public int getSelectedTeamId() {
+        return selectedTeamId;
+    }
 }
