@@ -134,7 +134,7 @@ public class IntroActivityPresenter {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
         if (selectedTeamInfo != null && !startForInvite) {
-            ParseUpdateUtil.updateParseWithoutSelectedTeam(context);
+            ParseUpdateUtil.addChannelOnServer(context);
             view.moveToMainActivity();
         } else {
             view.moveTeamSelectActivity();

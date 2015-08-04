@@ -5,9 +5,7 @@ import android.text.TextUtils;
 
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -47,8 +45,7 @@ public class ParseUpdateUtil {
                 .observeOn(Schedulers.io())
                 .subscribe(accountId -> {
                     ParseInstallation currentInstallation = ParseInstallation.getCurrentInstallation();
-                    int memberId = JandiAccountDatabaseManager.getInstance(context)
-                            .getSelectedTeamInfo().getMemberId();
+                    int memberId = AccountRepository.getRepository().getSelectedTeamInfo().getMemberId();
                     currentInstallation.put(PARSE_MY_ENTITY_ID, memberId);
 
                     // 이전 채널 중 accountId 와 맞지 않는 채널이 있으면 지운다.
