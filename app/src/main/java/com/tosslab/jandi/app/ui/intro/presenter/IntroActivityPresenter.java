@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.intro.viewmodel;
+package com.tosslab.jandi.app.ui.intro.presenter;
 
 import android.content.Context;
 
@@ -75,7 +75,7 @@ public class IntroActivityPresenter {
                 }
 
                 if (!model.isNeedLogin(context)) {
-                    ParseUpdateUtil.addChannelOnServer(context);
+                    ParseUpdateUtil.addChannelOnServer();
                     if (model.hasMigration()) {
                         refreshAccountInfo(context);
                         moveNextActivity(context, initTime, startForInvite);
@@ -91,12 +91,17 @@ public class IntroActivityPresenter {
 
         } catch (RetrofitError e) {
             model.sleep(initTime, MAX_DELAY_MS);
+
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            model.trackSignInFailAndFlush(errorCode);
+
             if (e.getCause() instanceof ConnectionNotFoundException) {
                 view.showCheckNetworkDialog();
             } else {
                 view.showMaintenanceDialog();
             }
         } catch (Exception e) {
+            model.trackSignInFailAndFlush(-1);
             view.showCheckNetworkDialog();
         }
 
@@ -134,7 +139,7 @@ public class IntroActivityPresenter {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
         if (selectedTeamInfo != null && !startForInvite) {
-            ParseUpdateUtil.addChannelOnServer(context);
+            ParseUpdateUtil.addChannelOnServer();
             
             // Track Auto Sign In (with flush)
             model.trackAutoSignInSuccessAndFlush(true);

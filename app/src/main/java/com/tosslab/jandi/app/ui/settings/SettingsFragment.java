@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.settings;/**
  */
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -13,7 +12,6 @@ import android.text.TextUtils;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.parse.ParseInstallation;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;

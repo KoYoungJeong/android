@@ -50,6 +50,7 @@ import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
+import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -204,15 +205,15 @@ public class MessageListModel {
                     sendingMessage.getLocalId(), SendMessage.Status.FAIL);
             int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
             trackMessagePostFail(errorCode);
-            JandiMessageDatabaseManager.getInstance(activity).updateSendState(
-                    sendingMessage.getLocalId(), SendingState.Fail);
+            SendMessageRepository.getRepository().updateSendMessageStatus(
+                    sendingMessage.getLocalId(), SendMessage.Status.FAIL);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
             return -1;
         } catch (Exception e) {
             SendMessageRepository.getRepository().updateSendMessageStatus(
                     sendingMessage.getLocalId(), SendMessage.Status.FAIL);
             trackMessagePostFail(-1);
-            JandiMessageDatabaseManager.getInstance(activity).updateSendState(sendingMessage.getLocalId(), SendingState.Fail);
+            SendMessageRepository.getRepository().updateSendMessageStatus(sendingMessage.getLocalId(), SendMessage.Status.FAIL);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
             return -1;
         }

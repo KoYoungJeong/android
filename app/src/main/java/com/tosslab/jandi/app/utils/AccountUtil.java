@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.utils;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
 /**
@@ -14,7 +14,7 @@ public class AccountUtil {
             return null;
         }
 
-        ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(context).getAccountInfo();
+        ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
 
         return accountInfo != null ? accountInfo.getId() : null;
     }
@@ -25,7 +25,7 @@ public class AccountUtil {
         }
 
         ResAccountInfo.UserTeam selectedTeamInfo =
-                JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+                AccountRepository.getRepository().getSelectedTeamInfo();
 
         return selectedTeamInfo != null ? selectedTeamInfo.getMemberId() : -1;
     }

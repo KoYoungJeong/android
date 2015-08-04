@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.ui.signup.account.model;
 
-import android.content.Context;
-
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;

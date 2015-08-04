@@ -249,7 +249,7 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
         JandiSocketService.stopService(AccountHomeActivity.this);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
-        ParseUpdateUtil.addChannelOnServer(AccountHomeActivity.this.getApplicationContext());
+        ParseUpdateUtil.addChannelOnServer();
 
         MainTabActivity_.intent(AccountHomeActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

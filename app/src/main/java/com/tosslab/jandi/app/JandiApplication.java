@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.multidex.MultiDexApplication;
+import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -11,6 +12,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -133,6 +135,12 @@ public class JandiApplication extends MultiDexApplication {
         }
 
         private void updatePlatformStatus(final boolean active) {
+            String accessToken = JandiPreference.getAccessToken(JandiApplication.getContext());
+            if (TextUtils.isEmpty(accessToken)) {
+                LogUtil.i(TAG, "Don't request(has not accessToken).");
+                return;
+            }
+
             Observable.OnSubscribe<ResCommon> updatePlatformStatusSubscribe =
                     subscriber -> {
                         LogUtil.i(TAG, "updatePlatformStatus");

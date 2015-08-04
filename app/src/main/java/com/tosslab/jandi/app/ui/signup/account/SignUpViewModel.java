@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.signup.account;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment;
 import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
 import com.tosslab.jandi.app.ui.signup.verify.SignUpVerifyActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
