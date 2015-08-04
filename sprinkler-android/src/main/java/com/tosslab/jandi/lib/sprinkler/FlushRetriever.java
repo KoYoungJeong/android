@@ -14,7 +14,7 @@ class FlushRetriever {
     public static final String TAG = Logger.makeTag(FlushRetriever.class);
 
     private static final long INTERVAL = 1000 * 60;
-//    private static final long INTERVAL = 1000 * 15;
+    //    private static final long INTERVAL = 1000 * 15;
     private boolean isStopped = true;
     private Handler handler;
     private Context context;
@@ -52,6 +52,17 @@ class FlushRetriever {
         handler = null;
     }
 
+    private void flush() {
+        Sprinkler.with(context).flush();
+    }
+
+    private void scheduleNextFlush() {
+        if (handler == null) {
+            return;
+        }
+        handler.sendEmptyMessageDelayed(0, INTERVAL);
+    }
+
     private class FlushHandler extends Handler {
 
         public FlushHandler(Looper looper) {
@@ -61,8 +72,8 @@ class FlushRetriever {
         @Override
         public void handleMessage(Message msg) {
             Log.d(TAG, "handleMessage");
-            Sprinkler.with(context).flush();
-            handler.sendEmptyMessageDelayed(0, INTERVAL);
+            flush();
+            scheduleNextFlush();
         }
     }
 }
