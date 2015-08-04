@@ -169,7 +169,6 @@ public class FilePickerModel {
                 .with(context)
                 .load(requestURL)
                 .uploadProgressDialog(progressDialog)
-                .uploadProgress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
