@@ -111,6 +111,7 @@ public class EntityManager {
             entity.lastLinkId = marker.lastLinkId;
             entity.alarmCount = marker.alarmCount;
             entity.announcementOpened = marker.announcementOpened;
+            entity.isTopicPushOn = marker.subscribe;
         }
         return entity;
     }
@@ -274,7 +275,7 @@ public class EntityManager {
         return new FormattedEntity(mMe);
     }
 
-    public String  getDistictId() {
+    public String getDistictId() {
         // FIXME Why null???
         if (mMe != null && mMyTeam != null) {
             return mMe.id + "-" + mMyTeam.id;

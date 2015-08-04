@@ -12,10 +12,12 @@ import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity_;
 public class TopicDetailCommand implements MenuCommand {
 
     private final Fragment fragment;
+    private final int teamId;
     private final int entityId;
 
-    public TopicDetailCommand(Fragment fragment, int entityId) {
+    public TopicDetailCommand(Fragment fragment, int teamId, int entityId) {
         this.fragment = fragment;
+        this.teamId = teamId;
         this.entityId = entityId;
     }
 
@@ -23,6 +25,7 @@ public class TopicDetailCommand implements MenuCommand {
     public void execute(MenuItem menuItem) {
         TopicDetailActivity_.intent(fragment)
                 .entityId(entityId)
+                .teamId(teamId)
                 .startForResult(TopicDetailActivity.REQUEST_DETAIL);
     }
 }

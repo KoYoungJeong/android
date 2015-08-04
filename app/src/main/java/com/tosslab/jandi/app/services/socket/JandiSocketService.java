@@ -219,6 +219,10 @@ public class JandiSocketService extends Service {
                 objects -> jandiSocketServiceModel.updateLinkPreviewMessage(objects[0]);
         eventHashMap.put("link_preview_created", linkPreviewMessageUpdateListener);
 
+        EventListener topicTopicPushSubscribeUpdateListener =
+                objects -> jandiSocketServiceModel.updateTopicPushSubscribe(objects[0]);
+        eventHashMap.put("room_subscription_updated", topicTopicPushSubscribeUpdateListener);
+
     }
 
     private void setUpSocketListener() {

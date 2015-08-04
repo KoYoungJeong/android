@@ -428,6 +428,9 @@
     <string name="jandi_topic_detail">"토픽 상세정보"</string>
     <string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 
+    <string name="jandi_turn_on_topic_push">"현재 토픽 알림 켜기"</string>
+    <string name="jandi_turn_off_topic_push">"현재 토픽 알림 끄기"</string>
+
     <!-- tutorial -->
     <string name="jandi_coach_mark_search_message">토픽 메시지 검색</string>
     <string name="jandi_coach_mark_create_new_topics">토픽 만들기</string>

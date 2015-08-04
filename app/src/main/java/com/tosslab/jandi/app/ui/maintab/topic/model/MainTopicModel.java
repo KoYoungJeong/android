@@ -50,6 +50,7 @@ public class MainTopicModel {
                         .name(formattedEntity.getName())
                         .unreadCount(formattedEntity.alarmCount)
                         .markerLinkId(formattedEntity.lastLinkId)
+                        .isPushOn(formattedEntity.isTopicPushOn)
                         .build());
     }
 

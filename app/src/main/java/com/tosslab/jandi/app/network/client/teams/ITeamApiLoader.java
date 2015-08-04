@@ -5,6 +5,7 @@ import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
+import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
@@ -48,4 +49,5 @@ public interface ITeamApiLoader {
     IExecutor<ResStarMentioned> loadGetStarredMessagesByTeamApi(int teamId, String type,
                                                             int page, int perPage);
 
+    IExecutor<ResCommon> loadUpdateTopicPushSubscribe(int teamId, int topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe);
 }

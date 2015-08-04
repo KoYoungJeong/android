@@ -55,6 +55,7 @@ import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
+import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -550,6 +551,11 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     @Override
     public IExecutor<ResMessages.OriginalMessage> loadGetMessage(int teamId, int topicId) {
         return () -> authRestApiClient.getMessage(teamId, topicId);
+    }
+
+    @Override
+    public IExecutor<ResCommon> loadUpdateTopicPushSubscribe(int teamId, int topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe) {
+        return () -> authRestApiClient.updateTopicPushSubscribe(teamId, topicId, reqUpdateTopicPushSubscribe);
     }
 
     @Override

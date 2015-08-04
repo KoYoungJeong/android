@@ -419,6 +419,9 @@
     <string name="jandi_topic_detail">"トピックの詳細情報"</string>
     <string name="jandi_explain_topic_description">"トピックの説明（選択）"</string>
 
+    <string name="jandi_turn_on_topic_push">"通知をオンにする"</string>
+    <string name="jandi_turn_off_topic_push">"通知をオフにする"</string>
+
     <!-- tutorial -->
     <string name="jandi_coach_mark_search_message">トピックメッセー\nジ検索</string>
     <string name="jandi_coach_mark_create_new_topics">トピック作成</string>

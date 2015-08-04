@@ -8,6 +8,9 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.TopicDetailModel;
@@ -52,6 +55,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         int topicMemberCount = topicDetailModel.getTopicMemberCount(context, entityId);
         boolean isStarred = topicDetailModel.isStarred(context, entityId);
         boolean owner = topicDetailModel.isOwner(context, entityId);
+        boolean isTopicPushSubscribe = topicDetailModel.isPushOn(context, entityId);
 
         if (TextUtils.isEmpty(topicDescription)) {
             if (owner) {
@@ -66,6 +70,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         view.setTopicDescription(topicDescription);
         view.setTopicMemberCount(topicMemberCount);
         view.setEnableTopicDelete(owner);
+        view.setTopicPushSwitch(isTopicPushSubscribe);
     }
 
     @Override
@@ -169,6 +174,32 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             view.showFailToast(context.getString(R.string.err_entity_modify));
         } finally {
             view.dismissProgressWheel();
+        }
+    }
+
+    @Background
+    @Override
+    public void updateTopicPushSubscribe(Context context, int teamId, int entityId, boolean pushOn) {
+        view.showProgressWheel();
+
+        try {
+            topicDetailModel.updatePushStatus(teamId, entityId, pushOn);
+
+            view.dismissProgressWheel();
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+
+            view.dismissProgressWheel();
+
+            if (e.getCause() instanceof ConnectionNotFoundException) {
+                view.showFailToast(context.getString(R.string.err_network));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            view.dismissProgressWheel();
+
         }
     }
 

@@ -16,8 +16,9 @@ public class Topic {
     private String description;
     private boolean selected;
     private int markerLinkId;
+    private boolean isPushOn;
 
-    public Topic(String name, boolean isStarred, boolean isJoined, int entityId, int memberCount, int unreadCount, boolean isPublic, String description, int creatorId, int markerLinkId) {
+    public Topic(String name, boolean isStarred, boolean isJoined, int entityId, int memberCount, int unreadCount, boolean isPublic, String description, int creatorId, int markerLinkId, boolean isPushOn) {
         this.name = name;
         this.isStarred = isStarred;
         this.isJoined = isJoined;
@@ -28,6 +29,7 @@ public class Topic {
         this.description = description;
         this.creatorId = creatorId;
         this.markerLinkId = markerLinkId;
+        this.isPushOn = isPushOn;
     }
 
     public int getMarkerLinkId() {
@@ -114,6 +116,14 @@ public class Topic {
         this.selected = selected;
     }
 
+    public boolean isPushOn() {
+        return isPushOn;
+    }
+
+    public void setIsPushOn(boolean isPushOn) {
+        this.isPushOn = isPushOn;
+    }
+
     public static class Builder {
         private String name;
         private boolean isStarred;
@@ -125,6 +135,7 @@ public class Topic {
         private String description;
         private int creatorId;
         private int markerLinkId;
+        private boolean isPushOn;
 
         public Builder name(String name) {
             this.name = name;
@@ -176,9 +187,14 @@ public class Topic {
             return this;
         }
 
+        public Builder isPushOn(boolean isPushOn) {
+            this.isPushOn = isPushOn;
+            return this;
+        }
+
         public Topic build() {
             return new Topic(name, isStarred, isJoined, entityId, memberCount, unreadCount,
-                    isPublic, description, creatorId, markerLinkId);
+                    isPublic, description, creatorId, markerLinkId, isPushOn);
         }
     }
 }

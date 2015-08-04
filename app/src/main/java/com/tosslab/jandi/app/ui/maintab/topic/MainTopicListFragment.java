@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicRecyclerAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicRecyclerStickyHeaderAdapter;
@@ -69,6 +70,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     TopicRecyclerAdapter topicListAdapter;
     private ProgressWheel progressWheel;
 
+    private boolean isForeground = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,11 +81,18 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     @Override
     public void onResume() {
         super.onResume();
+        isForeground = true;
         btnFA.setAnimation(null);
         btnFA.setVisibility(View.VISIBLE);
 
         topicListAdapter.startAnimation();
         mainTopicListPresenter.onRefreshTopicList();
+    }
+
+    @Override
+    public void onPause() {
+        isForeground = false;
+        super.onPause();
     }
 
     @Override
@@ -292,5 +301,12 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
         mainTopicListPresenter.onNewMessage(event);
 
+    }
+
+    public void onEvent(SocketTopicPushEvent event) {
+        if (!isForeground) {
+            return;
+        }
+        mainTopicListPresenter.onInitTopics(getActivity());
     }
 }

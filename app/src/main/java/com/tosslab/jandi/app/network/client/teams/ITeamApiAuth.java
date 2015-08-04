@@ -4,6 +4,7 @@ import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
+import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
@@ -49,4 +50,6 @@ public interface ITeamApiAuth {
     ResStarMentioned getStarredMessagesByTeamApi(int teamId, String type,
                                              int page, int perPage);
 
+
+    ResCommon updateTopicPushSubscribe(int teamId, int topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe) throws RetrofitError;
 }

@@ -410,6 +410,9 @@
     <string name="jandi_topic_detail">"议题信息"</string>
     <string name="jandi_explain_topic_description">"描述 (选项)"</string>
 
+    <string name="jandi_turn_on_topic_push">"开启议题推播通知"</string>
+    <string name="jandi_turn_off_topic_push">"关闭议题推播通知"</string>
+
     <!-- tutorial -->
     <string name="jandi_coach_mark_search_message">搜索信息</string>
     <string name="jandi_coach_mark_create_new_topics">建立新议题</string>

@@ -25,28 +25,33 @@ public class FixedLinearLayout extends LinearLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        if (getChildCount() == 2) {
+        int childCount = getChildCount();
+        if (childCount >= 2) {
             View firstChild = getChildAt(0);
-            View secondChild = getChildAt(1);
+            LinearLayout.LayoutParams firstChildParams = (LayoutParams) firstChild.getLayoutParams();
+            int leftSideWidth = firstChild.getMeasuredWidth()
+                    + firstChildParams.leftMargin + firstChildParams.rightMargin;
 
-            secondChild.measure(MeasureSpec.UNSPECIFIED, heightMeasureSpec);
+            int rightSideWidth = 0;
+            for (int i = 1; i < childCount; i++) {
+                View child = getChildAt(i);
+                child.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+                LinearLayout.LayoutParams childParams = (LayoutParams) child.getLayoutParams();
 
-            int secondRighPosition = firstChild.getMeasuredWidth()
-                    + secondChild.getMeasuredWidth()
-                    + ((LayoutParams) secondChild.getLayoutParams()).leftMargin;
+                rightSideWidth +=
+                        child.getMeasuredWidth() + childParams.leftMargin + childParams.rightMargin;
+            }
 
-            if (getMeasuredWidth() <= secondRighPosition) {
+            if (getMeasuredWidth() < (leftSideWidth + rightSideWidth)) {
+                leftSideWidth = getMeasuredWidth() - rightSideWidth;
 
+                int firstChildWidth = leftSideWidth
+                        - firstChildParams.leftMargin - firstChildParams.rightMargin;
 
-                int firstChildWidth = getMeasuredWidth() - secondChild.getMeasuredWidth()
-                        - ((LayoutParams) secondChild.getLayoutParams()).leftMargin;
-
-                firstChild.measure(
-                        MeasureSpec.makeMeasureSpec(firstChildWidth, MeasureSpec.EXACTLY),
-                        heightMeasureSpec);
-
+                int newWidthMeasureSpec =
+                        MeasureSpec.makeMeasureSpec(firstChildWidth, MeasureSpec.EXACTLY);
+                firstChild.measure(newWidthMeasureSpec, heightMeasureSpec);
             }
         }
-
     }
 }

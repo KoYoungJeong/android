@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.detail.view;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
@@ -24,6 +26,7 @@ import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
@@ -33,6 +36,7 @@ import com.tosslab.jandi.app.ui.message.detail.presenter.TopicDetailPresenter;
 import com.tosslab.jandi.app.ui.message.detail.presenter.TopicDetailPresenterImpl;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -55,7 +59,8 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @FragmentArg
     int entityId;
-
+    @FragmentArg
+    int teamId;
 
     @Bean(TopicDetailPresenterImpl.class)
     TopicDetailPresenter topicDetailPresenter;
@@ -76,6 +81,11 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     View vgDelete;
     @ViewById(R.id.iv_topic_detail_starred)
     View ivStarred;
+    @ViewById(R.id.switch_topic_detail_set_push)
+    SwitchCompat switchSetPush;
+    @ViewById(R.id.tv_topic_detail_set_push)
+    TextView tvSetPush;
+
     private boolean owner;
     private ProgressWheel progressWheel;
 
@@ -134,10 +144,10 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     public void onEvent(ConfirmModifyTopicEvent event) {
-        topicDetailPresenter.onConfirmChangeTopicName(getActivity()
-                , event.topicId
-                , event.inputName
-                , event.topicType);
+        topicDetailPresenter.onConfirmChangeTopicName(getActivity(),
+                event.topicId,
+                event.inputName,
+                event.topicType);
     }
 
     public void onEventMainThread(TopicInfoUpdateEvent event) {
@@ -151,6 +161,20 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     public void onEventMainThread(TopicDeleteEvent event) {
         if (event.getId() == entityId) {
             leaveTopic();
+        }
+    }
+
+    public void onEventMainThread(SocketTopicPushEvent event) {
+        if (event.getData() == null) {
+            LogUtil.e("SocketTopicPushEvent - event.data is null");
+            return;
+        }
+
+        boolean isPushSubscribe = event.getData().isSubscribe();
+        LogUtil.e("SocketTopicPushEvent - isPushSubscribe ? " + isPushSubscribe);
+
+        if (switchSetPush.isChecked() != isPushSubscribe) {
+            setTopicPushSwitch(isPushSubscribe);
         }
     }
 
@@ -186,6 +210,28 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
                 .type(MembersListActivity.TYPE_MEMBERS_LIST_TOPIC)
                 .entityId(entityId)
                 .start();
+    }
+
+    // Topic Push
+    @Click(R.id.vg_topic_detail_set_push)
+    void onPushClick() {
+        boolean checked = !switchSetPush.isChecked();
+
+        setTopicPushSwitch(checked);
+
+        topicDetailPresenter.updateTopicPushSubscribe(getActivity(), teamId, entityId, checked);
+    }
+
+    @UiThread
+    @Override
+    public void setTopicPushSwitch(boolean isPushOn) {
+        Resources resources = getActivity().getResources();
+        String pushSettingMessage = isPushOn
+                ? resources.getString(R.string.jandi_turn_off_topic_push)
+                : resources.getString(R.string.jandi_turn_on_topic_push);
+
+        tvSetPush.setText(pushSettingMessage);
+        switchSetPush.setChecked(isPushOn);
     }
 
     @OptionsItem(R.id.action_add_member)

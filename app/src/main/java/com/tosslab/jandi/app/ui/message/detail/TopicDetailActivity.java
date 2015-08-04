@@ -21,6 +21,8 @@ public class TopicDetailActivity extends AppCompatActivity {
     public static final String EXTRA_LEAVE = "leave";
     @Extra
     int entityId;
+    @Extra
+    int teamId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,7 @@ public class TopicDetailActivity extends AppCompatActivity {
         } else {
             fragment = TopicDetailFragment_.builder()
                     .entityId(entityId)
+                    .teamId(teamId)
                     .build();
         }
 

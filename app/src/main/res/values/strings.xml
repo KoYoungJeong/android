@@ -416,6 +416,9 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_plz_input_topic_description">"Description (optional)"</string>
     <string name="jandi_save">"Save"</string>
 
+    <string name="jandi_turn_on_topic_push">"Turn on topic notification"</string>
+    <string name="jandi_turn_off_topic_push">"Turn off topic notification"</string>
+
     <!-- tutorial -->
     <string name="jandi_coach_mark_search_message">Search for messages</string>
     <string name="jandi_coach_mark_create_new_topics">Create new topics</string>
