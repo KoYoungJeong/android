@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
@@ -20,8 +21,14 @@ import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.members.adapter.MembersAdapter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -79,6 +86,13 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
 
     @AfterViews
     void initViews() {
+        Sprinkler.with(JandiApplication.getContext())
+            .track(new FutureTrack.Builder()
+                    .event(Event.ScreenView)
+                    .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                    .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                    .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_MEMBER)
+                    .build());
 
         setupActionbar();
 

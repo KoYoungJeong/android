@@ -1,5 +1,8 @@
 package com.tosslab.jandi.app.ui.signup.account.model;
 
+import android.content.Context;
+
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
@@ -7,6 +10,10 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.PasswordChecker;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -127,6 +134,24 @@ public class SignUpModel {
 
         return RequestApiManager.getInstance().signUpAccountByMainRest(signUpInfo);
 
+    }
+
+    public void trackSendEmailSuccess(String email) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.SendAccountVerificationMail)
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.Email, email)
+                        .build());
+    }
+
+    public void trackSendEmailFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.SendAccountVerificationMail)
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
     }
 
 }

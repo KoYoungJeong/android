@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.settings;/**
  */
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -12,6 +13,7 @@ import android.text.TextUtils;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.parse.ParseInstallation;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
@@ -25,10 +27,16 @@ import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.settings.viewmodel.SettingFragmentViewModel;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -54,6 +62,14 @@ public class SettingsFragment extends PreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ScreenView, ScreenViewProperty.SETTING)
+                        .build());
 
         addPreferencesFromResource(R.xml.pref_setting);
 
@@ -109,6 +125,8 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     public void onEvent(SignOutEvent event) {
+        trackSignOut();
+
         startSignOut();
     }
 
@@ -147,6 +165,16 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
         settingFragmentViewModel.returnToLoginActivity(getActivity());
+    }
+
+    private void trackSignOut() {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.SignOut)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .build())
+                .flush();
     }
 
     private void removeSignData() {

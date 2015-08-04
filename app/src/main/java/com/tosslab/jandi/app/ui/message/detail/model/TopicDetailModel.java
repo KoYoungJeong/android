@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.detail.model;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -10,6 +11,11 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -75,7 +81,7 @@ public class TopicDetailModel {
             return JandiConstants.TYPE_DIRECT_MESSAGE;
         }
     }
-
+    
     public void trackDeletingEntity(Context context, int entityType) {
         String distictId = EntityManager.getInstance(context).getDistictId();
         try {
@@ -84,6 +90,28 @@ public class TopicDetailModel {
                     .trackDeletingEntity(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
         } catch (JSONException e) {
         }
+    }
+
+    public void trackTopicDeleteSuccess(int entityId) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.TopicDelete)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TopicId, entityId)
+                        .build());
+    }
+
+    public void trackTopicDeleteFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.TopicDelete)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
     }
 
     public void modifyTopicName(int entityType, int entityId, String inputName) throws RetrofitError {
@@ -104,7 +132,7 @@ public class TopicDetailModel {
         return entity.isTopicPushOn;
     }
 
-    public void trackChangingEntityName(Context context, int entityType) {
+    public void trackChangingEntityName(Context context, int entityId, int entityType) {
 
         try {
             String distictId = EntityManager.getInstance(context).getDistictId();
@@ -114,6 +142,70 @@ public class TopicDetailModel {
                     .trackChangingEntityName(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
         } catch (JSONException e) {
         }
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.TopicNameChange)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TopicId, entityId)
+                        .build());
+    }
+
+    public void trackChangingEntityNameFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.TopicNameChange)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.TopicId, errorCode)
+                        .build());
+    }
+
+    public void trackTopicStarSuccess(int topicId) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.TopicStar)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TopicId, topicId)
+                        .build());
+    }
+
+    public void trackTopicUnStarSuccess(int topicId) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.TopicUnStar)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TopicId, topicId)
+                        .build());
+    }
+
+    public void trackTopicStarFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.TopicStar)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
+    public void trackTopicUnStarFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.TopicUnStar)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
     }
 
 }

@@ -53,7 +53,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
         if (!accountHomeModel.checkAccount()) {
             view.invalidAccess();
-            return ;
+            return;
         }
 
         getAccountInfo();
@@ -93,11 +93,17 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             ResLeftSideMenu entityInfo = accountHomeModel.getEntityInfo(teamId);
             accountHomeModel.updateEntityInfo(context, entityInfo);
             view.dismissProgressWheel();
+
+            // Track Team List Sign In (with flush)
+            accountHomeModel.trackLaunchTeamSuccess(teamId);
             view.moveSelectedTeam(firstJoin);
         } catch (RetrofitError e) {
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            accountHomeModel.trackLaunchTeamFail(errorCode);
             view.dismissProgressWheel();
             e.printStackTrace();
         } catch (Exception e) {
+            accountHomeModel.trackLaunchTeamFail(-1);
             view.dismissProgressWheel();
             e.printStackTrace();
         }
@@ -119,21 +125,27 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showProgressWheel();
         try {
             ResAccountInfo resAccountInfo = accountHomeModel.updateAccountName(newName);
-            MixpanelAccountAnalyticsClient
-                    .getInstance(context, resAccountInfo.getId())
-                    .trackSetAccount();
+            accountHomeModel.trackChangeAccountNameSuccess(context, resAccountInfo.getId());
 
             AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
             view.dismissProgressWheel();
             view.setAccountName(newName);
             view.showSuccessToast(context.getString(R.string.jandi_success_update_account_profile));
         } catch (RetrofitError e) {
+            int errorCode = -1;
+            if (e.getResponse() != null) {
+                errorCode = e.getResponse().getStatus();
+            }
+
+            accountHomeModel.trackChangeAccountNameFail(errorCode);
+
             view.dismissProgressWheel();
             if (e.getCause() instanceof ConnectionNotFoundException) {
                 view.showErrorToast(context.getResources().getString(R.string.err_network));
             }
             e.printStackTrace();
         } catch (Exception e) {
+            accountHomeModel.trackChangeAccountNameFail(-1);
             view.dismissProgressWheel();
             e.printStackTrace();
         }

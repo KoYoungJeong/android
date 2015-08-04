@@ -8,6 +8,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
 import org.androidannotations.api.BackgroundExecutor;
 
@@ -44,10 +45,11 @@ public class JandiApplication extends MultiDexApplication {
                 JandiConstantsForFlavors.PARSE_APPLICATION_ID,
                 JandiConstantsForFlavors.PARSE_CLIENT_KEY);
 
-
         // Set AndroidAnnotations Background pool
         BackgroundExecutor.setExecutor(
                 Executors.newScheduledThreadPool(PoolableRequestApiExecutor.MAX_POOL_SIZE));
+
+        Sprinkler.initialize(this, BuildConfig.DEBUG);
     }
 
     synchronized public Tracker getTracker(TrackerName trackerId) {

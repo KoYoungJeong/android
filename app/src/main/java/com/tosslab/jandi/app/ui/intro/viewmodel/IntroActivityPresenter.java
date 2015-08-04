@@ -135,8 +135,14 @@ public class IntroActivityPresenter {
 
         if (selectedTeamInfo != null && !startForInvite) {
             ParseUpdateUtil.addChannelOnServer(context);
+            
+            // Track Auto Sign In (with flush)
+            model.trackAutoSignInSuccessAndFlush(true);
+            
             view.moveToMainActivity();
         } else {
+            model.trackAutoSignInSuccessAndFlush(false);
+            
             view.moveTeamSelectActivity();
         }
     }

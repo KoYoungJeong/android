@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.local.database.file.JandiFileDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 

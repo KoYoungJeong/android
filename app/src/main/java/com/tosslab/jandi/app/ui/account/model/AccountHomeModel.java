@@ -3,17 +3,24 @@ package com.tosslab.jandi.app.ui.account.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 
@@ -125,4 +132,48 @@ public class AccountHomeModel {
     public boolean checkAccount() {
         return AccountRepository.getRepository().getAccountInfo() != null;
     }
+
+    public void trackLaunchTeamSuccess(int teamId) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.LaunchTeam)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TeamId, teamId)
+                        .build());
+    }
+
+    public void trackLaunchTeamFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.LaunchTeam)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
+    public void trackChangeAccountNameSuccess(Context context, String accountId) {
+        MixpanelAccountAnalyticsClient
+                .getInstance(context, accountId)
+                .trackSetAccount();
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ChangeAccountName)
+                        .accountId(accountId)
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .build());
+    }
+
+    public void trackChangeAccountNameFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ChangeAccountName)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
 }

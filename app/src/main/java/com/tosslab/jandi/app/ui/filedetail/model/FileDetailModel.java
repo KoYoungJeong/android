@@ -18,15 +18,21 @@ import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -254,6 +260,97 @@ public class FileDetailModel {
         }
     }
 
+    private int getFileId() {
+        return getFileMessage() != null ? getFileMessage().id : -1;
+    }
+
+    public void trackFileDownloadSuccess() {
+        int fileId = getFileId();
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileDownload)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.FileId, fileId)
+                        .build());
+    }
+
+    public void trackFileShareSuccess(int topicId) {
+        int fileId = getFileId();
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileShare)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TopicId, topicId)
+                        .property(PropertyKey.FileId, fileId)
+                        .build());
+    }
+
+    public void trackFileShareFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileShare)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
+    public void trackFileUnShareSuccess(int topicId) {
+        int fileId = getFileId();
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileUnShare)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TopicId, topicId)
+                        .property(PropertyKey.FileId, fileId)
+                        .build());
+    }
+
+    public void trackFileUnShareFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileUnShare)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
+    public void trackFileDeleteSuccess(int topicId) {
+        int fileId = getFileId();
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileDelete)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TopicId, topicId)
+                        .property(PropertyKey.FileId, fileId)
+                        .build());
+    }
+
+    public void trackFileDeleteFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileDelete)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
     @Background
     public void registStarredMessage(int teamId, int messageId) {
         try {

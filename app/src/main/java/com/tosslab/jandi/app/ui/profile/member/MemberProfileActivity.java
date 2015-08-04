@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.soundcloud.android.crop.Crop;
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
@@ -28,10 +29,17 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
 import com.tosslab.jandi.app.utils.AlertUtil;
+import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -67,6 +75,13 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
     @AfterViews
     void bindAdapter() {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ScreenView, ScreenViewProperty.PROFILE)
+                        .build());
 
         setupActionBar();
 
