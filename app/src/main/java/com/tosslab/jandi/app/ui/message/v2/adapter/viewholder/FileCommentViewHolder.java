@@ -207,9 +207,11 @@ public class FileCommentViewHolder implements BodyViewHolder {
             }
 
             for (MentionObject mention : commentMessage.mentions) {
-                String name = spannableStringBuilder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
+                String name = builder.subSequence(mention.getOffset() + 1, mention.getLength() +
+                        mention.getOffset()).toString();
                 MensionCommentSpannable spannable1 = new MensionCommentSpannable(commentTextView.getContext(), name);
-                spannableStringBuilder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                builder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention
+                        .getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
             if (hasLink) {

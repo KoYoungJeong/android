@@ -64,8 +64,8 @@ public class FileDetailPresenter {
 
         EntityManager entityManager = EntityManager.getInstance(context);
 
-        for (int entity : fileDetail.shareEntities) {
-            FormattedEntity formattedEntity = entityManager.getEntityById(entity);
+        for (ResMessages.OriginalMessage.IntegerWrapper entity : ((ResMessages.FileMessage) fileDetail).shareEntities) {
+            FormattedEntity formattedEntity = entityManager.getEntityById(entity.getShareEntity());
             if (formattedEntity.isPublicTopic() || formattedEntity.isPrivateGroup()) {
                 sharedTopicIds.add(formattedEntity.getId());
             }
