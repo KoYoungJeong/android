@@ -68,6 +68,9 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
     @Override
     public void onItemClick(Context context, RecyclerView.Adapter adapter, int position) {
         Topic item = ((TopicRecyclerAdapter) adapter).getItem(position);
+        if (item == null) {
+            return;
+        }
         item.setUnreadCount(0);
         adapter.notifyDataSetChanged();
 
@@ -162,6 +165,11 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
     public void onItemLongClick(Context context, RecyclerView.Adapter adapter, int position) {
 
         Topic item = ((TopicRecyclerAdapter) adapter).getItem(position);
+
+        if (item == null) {
+            return;
+        }
+
         if (item.isJoined() || !item.isPublic()) {
             view.showEntityMenuDialog(item);
         } else {

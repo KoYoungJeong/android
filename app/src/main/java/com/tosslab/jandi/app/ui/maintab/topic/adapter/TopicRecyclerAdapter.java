@@ -69,6 +69,9 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
     @Override
     public void onBindViewHolder(TopicViewHolder holder, int position) {
         Topic topic = getItem(position);
+        if (topic == null) {
+            return;
+        }
 
         holder.draw(topic);
 
@@ -114,7 +117,7 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
 
     public Topic getItem(int position) {
         if (getItemCount() >= position) {
-            return new Topic.Builder().build();
+            return null;
         }
         return topicList.get(position);
     }

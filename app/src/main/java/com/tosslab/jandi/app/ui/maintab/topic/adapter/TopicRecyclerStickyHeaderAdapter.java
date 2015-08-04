@@ -37,12 +37,19 @@ public class TopicRecyclerStickyHeaderAdapter implements StickyHeadersAdapter {
 
     @Override
     public long getHeaderId(int position) {
-        return topicRecyclerAdapter.getItem(position).isJoined() ? 1 : 2;
+        Topic item = topicRecyclerAdapter.getItem(position);
+        if (item == null) {
+            return 2;
+        }
+        return item.isJoined() ? 1 : 2;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Topic item = topicRecyclerAdapter.getItem(position);
+        if (item == null) {
+            return;
+        }
 
         TopicHeaderViewHolder viewHolder = (TopicHeaderViewHolder) holder;
 
