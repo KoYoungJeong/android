@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.network.client.direct.message;
 
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
-import com.tosslab.jandi.app.network.models.ReqSendMessage;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -111,14 +111,11 @@ public class DirectMessageApiClientTest {
     @Test
     public void testSendDirectMessage() throws Exception {
         ResLeftSideMenu.User user = getUser();
-        ReqSendMessage reqSendMessage = new ReqSendMessage();
-        reqSendMessage.type = "string";
-        reqSendMessage.teamId = sideMenu.team.id;
-        reqSendMessage.content = "create_" + new Timestamp(System.currentTimeMillis());
+        ReqSendMessageV3 reqSendMessage = new ReqSendMessageV3("create_" + new Timestamp(System.currentTimeMillis()), null);
 
         ResCommon resCommon = null;
         try {
-            resCommon = RequestApiManager.getInstance().sendDirectMessageByDirectMessageApi(reqSendMessage, user.id);
+            resCommon = RequestApiManager.getInstance().sendDirectMessageByDirectMessageApi(user.id, user.teamId, reqSendMessage);
         } catch (RetrofitError e) {
             fail(e.getResponse().getBody().toString());
         }

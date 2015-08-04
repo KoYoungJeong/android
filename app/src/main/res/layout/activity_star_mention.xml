@@ -1,0 +1,54 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/layout_search_bar"
+        style="@style/Jandi.Default.ActionBar"
+        android:layout_width="match_parent"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/ll_starred_tab"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/jandi_star_tab_default_size"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bg_search_tab"
+        android:gravity="center_vertical"
+        android:weightSum="2">
+
+        <TextView
+            android:id="@+id/tv_star_tab_all"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="@string/jandi_starred_all"
+            android:textColor="@color/text_color_category"
+            android:textSize="@dimen/jandi_star_tab_text_size" />
+
+        <TextView
+            android:id="@+id/tv_star_tab_file"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="@string/jandi_starred_files"
+            android:textColor="@color/text_color_category"
+            android:textSize="@dimen/jandi_star_tab_text_size" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/jandi_starred_list_line" />
+
+    <FrameLayout
+        android:id="@+id/star_mention_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

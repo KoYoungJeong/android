@@ -468,4 +468,21 @@
     <string name="jandi_profile_picture">프로필 사진</string>
 
 
+    <!-- starred / mention -->
+
+    <string name="jandi_starred_star">즐겨찾기</string>
+    <string name="jandi_mention_mentions">멘션</string>
+    <string name="jandi_mention_more">더보기</string>
+    <string name="jandi_starred_files">파일 타입</string>
+    <string name="jandi_starred_all">모든 타입</string>
+    <string name="jandi_starred_unstar">즐겨찾기 해제</string>
+    <string name="jandi_starred_undo">취소</string>
+    <string name="jandi_starred_unstarred">즐겨찾기 해제됨</string>
+    <string name="jandi_starred_stars">즐겨찾기</string>
+    <string name="jandi_mention_all_topic_members">모든 토픽 멤버</string>
+    <string name="jandi_mention_mentioned_you">님의 멘션</string>
+    <string name="jandi_mention_no_mentions">아직 다른 팀 멤버로부터 받은 멘션이 없습니다.</string>
+    <string name="jandi_starred_no_all">즐겨찾기 한 메시지나 파일이 없습니다.</string>
+    <string name="jandi_starred_no_file">즐겨찾기 한 파일이 없습니다.</string>
+
 </resources>

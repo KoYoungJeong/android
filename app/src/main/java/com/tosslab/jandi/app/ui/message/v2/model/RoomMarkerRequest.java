@@ -52,7 +52,7 @@
 //    public ResRoomInfo request() throws JandiNetworkException {
 ////        roomsApiClient.setAuthentication(TokenUtil.getRequestAuthentication());
 ////
-////        return roomsApiClient.getRoomInfo(teamId, roomId);
-//        return restAdapter.create(RoomsApiV2Client.class).getRoomInfo(teamId, roomId);
+////        return roomsApiClient.getRoomId(teamId, roomId);
+//        return restAdapter.create(RoomsApiV2Client.class).getRoomId(teamId, roomId);
 //    }
 //}

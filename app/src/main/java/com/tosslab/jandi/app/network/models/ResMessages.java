@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.network.jackson.deserialize.message.InviteInfoDeser
 import com.tosslab.jandi.app.network.jackson.deserialize.message.LinkShareEntityDeserializer;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.PrivateTopicCreateInfoDeserializer;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.PublicTopicCreateInfoDeserializer;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -159,6 +160,8 @@ public class ResMessages {
         public int feedbackId;
         @DatabaseField
         public String linkPreviewId;
+        public List<MentionObject> mentions;
+        public boolean isStarred;
 
         @Override
         public String toString() {
@@ -173,6 +176,8 @@ public class ResMessages {
                     ", permission=" + permission +
                     ", feedbackId=" + feedbackId +
                     ", linkPreviewId=" + linkPreviewId +
+                    ", mentions=" + mentions +
+                    ", isStarred=" + isStarred +
                     '}';
         }
 

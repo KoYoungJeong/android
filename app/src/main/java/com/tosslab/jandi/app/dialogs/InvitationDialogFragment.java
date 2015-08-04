@@ -21,7 +21,6 @@ import com.tosslab.jandi.app.ui.invites.email.InviteEmailActivity_;
  * Created by Bill Minwook Heo on 15. 4. 21..
  */
 
-
 public class InvitationDialogFragment extends DialogFragment {
 
     public static final int TYPE_INVITATION_EMAIL = 0x01;

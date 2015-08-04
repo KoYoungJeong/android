@@ -38,13 +38,14 @@ import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
+import com.tosslab.jandi.app.network.models.ReqModifyComment;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
-import com.tosslab.jandi.app.network.models.ReqSendMessage;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
@@ -64,12 +65,14 @@ import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.network.models.ResStarred;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
@@ -243,8 +246,8 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadSendPublicTopicMessageByChannelMessageApi(ReqSendMessage message, int channelId) {
-        return () -> authRestApiClient.sendPublicTopicMessageByChannelMessageApi(message, channelId);
+    public IExecutor<ResCommon> loadSendPublicTopicMessageByChannelMessageApi(int channelId, int teamId, ReqSendMessageV3 reqSendMessageV3) {
+        return () -> authRestApiClient.sendPublicTopicMessageByChannelMessageApi(channelId, teamId, reqSendMessageV3);
     }
 
     @Override
@@ -268,12 +271,12 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadSendMessageCommentByCommentsApi(ReqSendComment comment, int messageId) {
-        return () -> authRestApiClient.sendMessageCommentByCommentsApi(comment, messageId);
+    public IExecutor<ResCommon> loadSendMessageCommentByCommentsApi(int messageId, int teamId, ReqSendComment reqSendComment) {
+        return () -> authRestApiClient.sendMessageCommentByCommentsApi(messageId, teamId, reqSendComment);
     }
 
     @Override
-    public IExecutor<ResCommon> loadModifyMessageCommentByCommentsApi(ReqSendComment comment, int messageId, int commentId) {
+    public IExecutor<ResCommon> loadModifyMessageCommentByCommentsApi(ReqModifyComment comment, int messageId, int commentId) {
         return () -> authRestApiClient.modifyMessageCommentByCommentsApi(comment, messageId, commentId);
     }
 
@@ -314,8 +317,9 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadSendDirectMessageByDirectMessageApi(ReqSendMessage message, int userId) {
-        return () -> authRestApiClient.sendDirectMessageByDirectMessageApi(message, userId);
+    public IExecutor<ResCommon> loadSendDirectMessageByDirectMessageApi(int userId, int teamId,
+                                                                        ReqSendMessageV3 reqSendMessageV3) {
+        return () -> authRestApiClient.sendDirectMessageByDirectMessageApi(userId, teamId, reqSendMessageV3);
     }
 
     @Override
@@ -385,8 +389,8 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadSendGroupMessageByGroupMessageApi(ReqSendMessage message, int groupId) {
-        return () -> authRestApiClient.sendGroupMessageByGroupMessageApi(message, groupId);
+    public IExecutor<ResCommon> loadSendGroupMessageByGroupMessageApi(int privateGroupId, int teamId, ReqSendMessageV3 reqSendMessageV3) {
+        return () -> authRestApiClient.sendGroupMessageByGroupMessageApi(privateGroupId, teamId, reqSendMessageV3);
     }
 
     @Override
@@ -613,5 +617,25 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     @Override
     public IExecutor<List<ResMessages.FileMessage>> loaderSearchNewImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
         return () -> authRestApiClient.searchNewImageFileByFileApi(teamId, roomId, messageId, count);
+    }
+
+    @Override
+    public IExecutor<ResStarMentioned> loadGetMentionedMessagesByTeamApi(int teamId, int page, int perPage) {
+        return () -> authRestApiClient.getMentionedMessagesByTeamApi(teamId, page, perPage);
+    }
+
+    @Override
+    public IExecutor<ResStarred> loadRegistStarredMessageByTeamApi(int teamId, int messageId) {
+        return () -> authRestApiClient.registStarredMessageByTeamApi(teamId, messageId);
+    }
+
+    @Override
+    public IExecutor<ResCommon> loadUnregistStarredMessageByTeamApi(int teamId, int messageId) {
+        return () -> authRestApiClient.unregistStarredMessageByTeamApi(teamId, messageId);
+    }
+
+    @Override
+    public IExecutor<ResStarMentioned> loadGetStarredMessagesByTeamApi(int teamId, String type, int page, int perPage) {
+        return () -> authRestApiClient.getStarredMessagesByTeamApi(teamId, type, page, perPage);
     }
 }

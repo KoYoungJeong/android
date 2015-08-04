@@ -7,14 +7,14 @@ import android.view.View;
 * Created by Steve SeongUg Jung on 15. 3. 19..
 */
 public class RecyclerBodyViewHolder extends RecyclerView.ViewHolder {
-    private final BodyViewHolder viewHolder;
+        private final BodyViewHolder viewHolder;
 
-    public RecyclerBodyViewHolder(View itemView, BodyViewHolder viewHolder) {
-        super(itemView);
-        this.viewHolder = viewHolder;
-    }
+        public RecyclerBodyViewHolder(View itemView, BodyViewHolder viewHolder) {
+            super(itemView);
+            this.viewHolder = viewHolder;
+        }
 
-    public BodyViewHolder getViewHolder() {
-        return viewHolder;
-    }
+        public BodyViewHolder getViewHolder() {
+            return viewHolder;
+        }
 }

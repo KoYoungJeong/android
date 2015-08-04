@@ -2,6 +2,10 @@ package com.tosslab.jandi.app.ui.filedetail;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.widget.EditText;
+import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -14,6 +18,9 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.utils.BitmapUtil;
@@ -48,7 +55,23 @@ public class FileDetailPresenter {
     @Bean
     FileDetailModel fileDetailModel;
 
+    private MentionControlViewModel mentionControlViewModel;
+
     private View view;
+
+    public List<Integer> getSharedTopicIds(Context context, ResMessages.OriginalMessage fileDetail) {
+        List<Integer> sharedTopicIds = new ArrayList<>();
+
+        EntityManager entityManager = EntityManager.getInstance(context);
+
+        for (int entity : fileDetail.shareEntities) {
+            FormattedEntity formattedEntity = entityManager.getEntityById(entity);
+            if (formattedEntity.isPublicTopic() || formattedEntity.isPrivateGroup()) {
+                sharedTopicIds.add(formattedEntity.getId());
+            }
+        }
+        return sharedTopicIds;
+    }
 
     public void setView(View view) {
         this.view = view;
@@ -99,6 +122,7 @@ public class FileDetailPresenter {
     @Background
     public void getFileDetail(int fileId, boolean isSendAction, boolean showDialog) {
         LogUtil.d("try to get file detail having ID, " + fileId);
+
         if (showDialog) {
             view.showProgress();
         }
@@ -146,6 +170,7 @@ public class FileDetailPresenter {
             view.showToast(activity.getResources().getString(R.string.err_file_detail));
             view.finishOnMainThread();
         }
+
     }
 
     public void onLongClickComment(ResMessages.OriginalMessage item) {
@@ -245,11 +270,10 @@ public class FileDetailPresenter {
     }
 
     @Background
-    public void sendComment(int fileId, String message) {
+    public void sendComment(int fileId, String message, List<MentionObject> mentions) {
         view.showProgress();
         try {
-            fileDetailModel.sendMessageComment(fileId, message);
-
+            fileDetailModel.sendMessageComment(fileId, message, mentions);
             view.dismissProgress();
 
             getFileDetail(fileId, true, true);
@@ -264,10 +288,10 @@ public class FileDetailPresenter {
     }
 
     @Background
-    void sendCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment) {
+    void sendCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment, List<MentionObject> mentions) {
         view.showProgress();
         try {
-            fileDetailModel.sendMessageCommentWithSticker(fileId, stickerGroupId, stickerId, comment);
+            fileDetailModel.sendMessageCommentWithSticker(fileId, stickerGroupId, stickerId, comment, mentions);
 
             view.dismissProgress();
 
@@ -402,6 +426,46 @@ public class FileDetailPresenter {
         } catch (Exception e) {
             LogUtil.e("get profile failed", e);
             view.onGetProfileFailed();
+        }
+    }
+
+    public void refreshMentionVM(Activity activity, ResMessages.OriginalMessage fileMessage,
+                                 RecyclerView searchMemberListView,
+                                 EditText editText, ListView fileCommentListView) {
+
+        List<Integer> sharedTopicIds = getSharedTopicIds(
+                activity.getApplicationContext(), fileMessage);
+
+        if (mentionControlViewModel == null) {
+            mentionControlViewModel = new MentionControlViewModel(activity,
+                    searchMemberListView, editText, fileCommentListView, sharedTopicIds);
+        }
+        mentionControlViewModel.clear();
+    }
+
+    public ResultMentionsVO getMentionInfo() {
+        return mentionControlViewModel.getMentionInfoObject();
+    }
+
+    public MentionControlViewModel getMentionControlViewModel() {
+        return mentionControlViewModel;
+    }
+
+    public void registStarredMessage(int teamId, int messageId) {
+        try {
+            fileDetailModel.registStarredMessage(teamId, messageId);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public void unregistStarredMessage(int teamId, int messageId) {
+        try {
+            fileDetailModel.unregistStarredMessage(teamId, messageId);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 

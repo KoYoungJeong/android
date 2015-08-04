@@ -684,7 +684,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     public void sendMessageInBackground(String message) {
         try {
-            messageManipulator.sendMessage(message);
+            //messageManipulator.sendMessage(message);
             LogUtil.d("sendMessageInBackground : succeed");
             sendMessageSucceed();
         } catch (RetrofitError e) {

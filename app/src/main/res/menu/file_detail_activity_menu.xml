@@ -20,6 +20,13 @@
             <item
                 android:id="@+id/action_file_detail_unshare"
                 android:title="@string/jandi_action_unshare" />
+            <item
+                android:id="@+id/action_file_detail_starred"
+                android:title="@string/jandi_starred_star" />
+            <item
+                android:id="@+id/action_file_detail_unstarred"
+                android:title="@string/jandi_starred_unstar" />
+
         </menu>
     </item>
 </menu>

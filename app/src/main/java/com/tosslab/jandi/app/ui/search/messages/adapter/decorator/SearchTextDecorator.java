@@ -17,6 +17,10 @@ public abstract class SearchTextDecorator implements TextDecorator {
         this.textDecorator = textDecorator;
     }
 
+    public static Builder builder(Context context) {
+        return new Builder(context);
+    }
+
     public abstract void appendText();
 
     @Override
@@ -33,10 +37,6 @@ public abstract class SearchTextDecorator implements TextDecorator {
 
     public static enum ContentType {
         Text, File, Shared, Unshared, Comment
-    }
-
-    public static Builder builder(Context context) {
-        return new Builder(context);
     }
 
     public static class Builder {
@@ -65,7 +65,7 @@ public abstract class SearchTextDecorator implements TextDecorator {
             if (TextUtils.equals(contentType, "file")) {
                 if (TextUtils.equals(contentType, "shared")) {
                     this.contentType = ContentType.Shared;
-                } else if (TextUtils.equals(contentType, "unsahred")) {
+                } else if (TextUtils.equals(contentType, "unshared")) {
                     this.contentType = ContentType.Unshared;
                 } else {
                     this.contentType = ContentType.File;

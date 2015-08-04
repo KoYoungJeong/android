@@ -13,12 +13,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -30,7 +33,6 @@ import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
-import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
@@ -45,10 +47,12 @@ import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.DummyDeleteEvent;
 import com.tosslab.jandi.app.events.messages.DummyRetryEvent;
+import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
+import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
@@ -69,6 +73,9 @@ import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
@@ -114,8 +121,10 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -153,6 +162,19 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @FragmentArg
     int roomId;
 
+    @ViewById(R.id.list_messages)
+    RecyclerView messageListView;
+
+    @ViewById(R.id.btn_send_message)
+    Button sendButton;
+
+    @ViewById(R.id.et_message)
+    EditText messageEditText;
+
+    @ViewById(R.id.rv_list_search_members)
+    RecyclerView rvListSearchMembers;
+
+
     @Bean
     MessageListPresenter messageListPresenter;
 
@@ -177,6 +199,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Bean
     AnnouncementViewModel announcementViewModel;
+
+    MentionControlViewModel mentionControlViewModel;
 
     private OldMessageLoader oldMessageLoader;
     private NewsMessageLoader newsMessageLoader;
@@ -340,6 +364,14 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
 
+        Log.e("roomId", String.valueOf(roomId));
+        List<Integer> roomIds = new ArrayList<>();
+        roomIds.add(roomId);
+
+
+        mentionControlViewModel = new MentionControlViewModel(getActivity(),
+                rvListSearchMembers, messageEditText, messageListView, roomIds);
+
     }
 
     @Background
@@ -416,10 +448,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     private void sendMessage(MessageQueue messageQueue) {
         SendingMessage data = (SendingMessage) messageQueue.getData();
         int linkId;
+        List mentions = data.getMentions();
         if (data.getStickerInfo() != null) {
-            linkId = messageListModel.sendStickerMessage(teamId, entityId, data.getStickerInfo(), data.getMessage());
+            linkId = messageListModel.sendStickerMessage(teamId, entityId, data.getStickerInfo(), data.getMessage(), mentions);
         } else {
-            linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
+            linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage(), mentions);
         }
         if (linkId > 0) {
             messageListPresenter.updateDummyMessageState(data.getLocalId(), SendMessage.Status.COMPLETE);
@@ -550,8 +583,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.e("onDestroy", "onDestroy");
         messageSubscription.unsubscribe();
         EventBus.getDefault().unregister(this);
+
     }
 
     @Override
@@ -646,7 +681,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!(oldMessageLoader instanceof NormalOldMessageLoader)) {
             EventBus.getDefault().post(new ChatModeChangeEvent(true));
         }
-//        messageListPresenter.restartMessageApp(entityId, entityType, isFavorite, teamId);
     }
 
     @Click(R.id.layout_messages_preview_last_item)
@@ -664,15 +698,25 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     void onSendClick() {
 
         String message = messageListPresenter.getSendEditText().trim();
-        messageListPresenter.setSendEditText("");
+
+        ReqSendMessageV3 reqSendMessage = null;
+
+        ResultMentionsVO mentionInfos = mentionControlViewModel.getMentionInfoObject();
+        if (!TextUtils.isEmpty(message)) {
+            if (mentionControlViewModel.hasMentionMember()) {
+                mentionControlViewModel.clear();
+                reqSendMessage = new ReqSendMessageV3(
+                        mentionInfos.getMessage(), mentionInfos.getMentions());
+            } else {
+                reqSendMessage = new ReqSendMessageV3(message, null);
+            }
+        }
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
-
             StickerRepository.getRepository().upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
-
-            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo))));
-
-        } else if (!TextUtils.isEmpty(message)) {
+            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo), mentionInfos.getMentions())));
+        } else {
+            // insert to db //todo 데이터 베이스에 삽입해야함.
             // insert to db
             long localId;
             if (messageListModel.isUser(entityId)) {
@@ -685,20 +729,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             } else {
                 localId = messageListModel.insertSendingMessage(entityId, message);
             }
-
             FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
-
             // insert to ui
             messageListPresenter.insertSendingMessage(localId, message, me.getName(), me.getUserLargeProfileUrl());
-
             // networking...
-            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, message)));
-
+            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, reqSendMessage)));
         }
 
         messageListPresenter.dismissStickerPreview();
         stickerInfo = NULL_STICKER;
         messageListPresenter.setEnableSendButton(false);
+        messageListPresenter.setSendEditText("");
 
     }
 
@@ -897,7 +938,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         DummyMessageLink dummyMessage = messageListPresenter.getDummyMessage(event.getLocalId());
         dummyMessage.setStatus(SendMessage.Status.SENDING.name());
         messageListPresenter.justRefresh();
-        sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(event.getLocalId(), ((ResMessages.TextMessage) dummyMessage.message).content.body)));
+        sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(event.getLocalId(),
+                new ReqSendMessageV3((((ResMessages.TextMessage) dummyMessage.message).content.body), null))));
     }
 
     public void onEvent(DummyDeleteEvent event) {
@@ -1268,6 +1310,40 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 deleteAnnouncement();
                 break;
         }
+    }
+
+    public void onEvent(MessageStarredEvent event) {
+        int messageId = event.getMessageId();
+        switch (event.getAction()) {
+            case STARRED:
+                try {
+
+                    messageListModel.registStarredMessage(teamId, messageId);
+                    Toast.makeText(getActivity(), R.string.jandi_message_starred, Toast.LENGTH_SHORT).show();
+                    messageListPresenter.modifyStarredInfo(messageId, false);
+                } catch (RetrofitError e) {
+                    e.printStackTrace();
+                }
+
+                break;
+            case UNSTARRED:
+                try {
+                    messageListModel.unregistStarredMessage(teamId, messageId);
+                    messageListPresenter.modifyStarredInfo(messageId, true);
+                } catch (RetrofitError e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+    }
+
+    public void onEvent(SelectedMemberInfoForMensionEvent event) {
+        SearchedItemVO searchedItemVO = new SearchedItemVO();
+        searchedItemVO.setId(event.getId());
+        searchedItemVO.setName(event.getName());
+        searchedItemVO.setType(event.getType());
+        mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
+        Log.e("onEvent-name:", event.getName());
     }
 
     @Background

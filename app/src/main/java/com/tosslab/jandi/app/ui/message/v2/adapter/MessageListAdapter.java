@@ -74,10 +74,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
     @Override
     public RecyclerBodyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-
         BodyViewHolder viewHolder = BodyViewFactory.createViewHolder(viewType);
         View convertView = LayoutInflater.from(context).inflate(viewHolder.getLayoutId(), parent, false);
-
         viewHolder.initView(convertView);
 
         RecyclerBodyViewHolder recyclerBodyViewHolder = new RecyclerBodyViewHolder(convertView, viewHolder);

@@ -49,6 +49,7 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
+import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -85,6 +86,9 @@ public class MessageListPresenter {
 
     @ViewById(R.id.et_message)
     EditText messageEditText;
+
+    @ViewById(R.id.rv_list_search_members)
+    RecyclerView rvListSearchMembers;
 
     @RootContext
     AppCompatActivity activity;
@@ -138,15 +142,16 @@ public class MessageListPresenter {
     InvitationDialogExecutor invitationDialogExecutor;
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
+
+    @Bean
+    KeyboardHeightModel keyboardHeightModel;
+
     private MessageListAdapter messageListAdapter;
     private ProgressWheel progressWheel;
     private String tempMessage;
     private boolean isDisabled;
     private boolean sendLayoutVisible;
     private boolean gotoLatestLayoutVisible;
-    private EntityManager mEntityManager;
-    private String invitationUrl;
-    private String teamName;
 
     @AfterInject
     void initObject() {
@@ -169,14 +174,11 @@ public class MessageListPresenter {
             }
         });
 
-        mEntityManager = EntityManager.getInstance(activity);
-
         progressWheel = new ProgressWheel(activity);
     }
 
     @AfterViews
     void initViews() {
-
         messageListView.setAdapter(messageListAdapter);
         messageListView.setItemAnimator(null);
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
@@ -194,8 +196,7 @@ public class MessageListPresenter {
 
         messageListView.addItemDecoration(stickyHeadersItemDecoration);
 
-
-        setSendEditText(tempMessage);
+//        setSendEditText(tempMessage);
 
         if (isDisabled) {
             sendLayoutVisibleGone();
@@ -210,6 +211,7 @@ public class MessageListPresenter {
         if (gotoLatestLayoutVisible) {
             setGotoLatestLayoutVisible();
         }
+
     }
 
     public void sendLayoutVisibleGone() {
@@ -344,7 +346,6 @@ public class MessageListPresenter {
     public String getSendEditText() {
         return messageEditText.getText().toString();
     }
-
 
     public void setSendEditText(String text) {
         tempMessage = text;
@@ -610,7 +611,6 @@ public class MessageListPresenter {
         }
     }
 
-
     public void setMoreNewFromAdapter(boolean isMoreNew) {
         messageListAdapter.setMoreFromNew(isMoreNew);
     }
@@ -650,7 +650,6 @@ public class MessageListPresenter {
             moveRealChatView.setVisibility(View.GONE);
         }
     }
-
 
     public void setOnItemClickListener(MessageListAdapter.OnItemClickListener onItemClickListener) {
         messageListAdapter.setOnItemClickListener(onItemClickListener);
@@ -793,7 +792,6 @@ public class MessageListPresenter {
     }
 
     public void showStickerPreview(StickerInfo stickerInfo) {
-
         vgStickerPreview.setVisibility(View.VISIBLE);
     }
 
@@ -802,13 +800,29 @@ public class MessageListPresenter {
     }
 
     public void dismissStickerPreview() {
-
         vgStickerPreview.setVisibility(View.GONE);
-
     }
 
     public void setEntityInfo(int entityId) {
         messageListAdapter.setEntityId(entityId);
+    }
+
+    public void modifyStarredInfo(int messageId, boolean isStarred) {
+        int position = messageListAdapter.getItemPositionByMessageId(messageId);
+        messageListAdapter.getItem(position).message.isStarred = isStarred;
+        messageListAdapter.notifyDataSetChanged();
+    }
+
+    public EditText getMessageEditText() {
+        return messageEditText;
+    }
+
+    public RecyclerView getMessageListView() {
+        return messageListView;
+    }
+
+    public RecyclerView getRvListSearchMembers() {
+        return rvListSearchMembers;
     }
 
     public void setLastReadLinkId(int lastReadLinkId) {

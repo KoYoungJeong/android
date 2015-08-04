@@ -449,5 +449,22 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_coach_mark_more_explain1">Here is your Settings menu.</string>
     <string name="jandi_coach_mark_more_explain2">Don\'t forget to invite</string>
     <string name="jandi_coach_mark_more_explain3">your team members!</string>
+
+    <!-- star/mention -->
+    <string name="jandi_starred_star">Star</string>
+    <string name="jandi_mention_mentions">Mentions</string>
+    <string name="jandi_mention_more">More</string>
+    <string name="jandi_starred_files">Files</string>
+    <string name="jandi_starred_all">All</string>
+    <string name="jandi_starred_unstar">Unstar</string>
+    <string name="jandi_starred_undo">UNDO</string>
+    <string name="jandi_starred_unstarred">Unstarred</string>
+    <string name="jandi_starred_stars">Stars</string>
+    <string name="jandi_mention_all_topic_members">topic members</string>
+    <string name="jandi_mention_mentioned_you">mentioned you</string>
+    <string name="jandi_mention_no_mentions">No mentions</string>
+    <string name="jandi_starred_no_all">No starred messages or files</string>
+    <string name="jandi_starred_no_file">No starred files</string>
+
     <string name="jandi_unread_messages_below">"Unread messages below"</string>
 </resources>

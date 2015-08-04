@@ -60,13 +60,15 @@ public class StickerApiClientTest {
         List<ResMessages.StickerContent> stickers = StickerRepository.getRepository().getStickers(100);
         ResMessages.StickerContent resSticker = stickers.get((int) (Math.random() * stickers.size()));
 
-        ResCommon resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(ReqSendSticker.create(resSticker.groupId, resSticker.stickerId, teamId, entity.id, type, ""));
+        ResCommon resCommon = RequestApiManager.getInstance().sendStickerByStickerApi
+                (ReqSendSticker.create(resSticker.groupId, resSticker.stickerId, teamId, entity
+                        .id, type, "", null));
         assertNotNull(resCommon);
 
         resSticker = stickers.get((int) (Math.random() * stickers.size()));
         resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(ReqSendSticker.create
                 (resSticker.groupId, resSticker.stickerId, teamId, entity.id, type, "test sticker with " +
-                        "message"));
+                        "message"), null);
         assertNotNull(resCommon);
     }
 
@@ -99,7 +101,8 @@ public class StickerApiClientTest {
         ResMessages.StickerContent resSticker = stickers.get((int) (Math.random() * stickers.size()));
 
         RequestApiManager.getInstance().sendStickerCommentByStickerApi(ReqSendSticker.create
-                (resSticker.groupId, resSticker.stickerId, teamId, fileMessage.id, "", "asdasd"));
+                (resSticker.groupId, resSticker.stickerId, teamId, fileMessage.id, "", "asdasd", 
+                        null));
 
     }
 }
