@@ -39,13 +39,22 @@ public class MessageRepository {
     public boolean upsertMessages(List<ResMessages.Link> messages) {
         lock.lock();
         try {
+
             Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
 
-            for (ResMessages.Link message : messages) {
-                dao.createOrUpdate(message);
-            }
+            // 내부에서 트랜잭션 commit 컨트롤을 함
+            dao.callBatchTasks(() -> {
+                for (ResMessages.Link message : messages) {
+                    dao.createOrUpdate(message);
+                }
+                return null;
+            });
+
+
             return true;
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             lock.unlock();
