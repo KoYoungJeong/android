@@ -78,6 +78,7 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
@@ -153,7 +154,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         setUpActionBar();
 
         addFileDetailViewAsListviewHeader();
-        addStarredButtonExecution();
+
         fileHeadManager.setRoomId(roomId);
 
         progressWheel = new ProgressWheel(this);
@@ -180,6 +181,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         });
 
         JandiPreference.setKeyboardHeight(FileDetailActivity.this, 0);
+        addStarredButtonExecution();
     }
 
     private void addFileDetailViewAsListviewHeader() {
@@ -192,37 +194,44 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     private void addStarredButtonExecution() {
         fileHeadManager.getStarredButton().setOnClickListener(v -> {
-            boolean successed = false;
             if (v.isSelected()) {
-                try {
-                    fileDetailPresenter.unregistStarredMessage(EntityManager.getInstance(FileDetailActivity.this).getTeamId(),
-                            fileId);
-                    successed = true;
-                } catch (RetrofitError e) {
-                    e.printStackTrace();
-                    successed = false;
-                } finally {
-                    if (successed) {
-                        v.setSelected(false);
-                    }
-                }
+                unregistStarredMessage();
             } else {
-                try {
-                    fileDetailPresenter.registStarredMessage(EntityManager.
-                            getInstance(FileDetailActivity.this).getTeamId(), fileId);
-                    successed = true;
-                } catch (RetrofitError e) {
-                    e.printStackTrace();
-                    successed = false;
-                } finally {
-                    if (successed) {
-                        v.setSelected(true);
-                        Toast.makeText(this, R.string.jandi_message_starred, Toast.LENGTH_SHORT).show();
-                    }
-                }
+                registStarredMessage();
 
             }
         });
+    }
+
+    @Background
+    void unregistStarredMessage() {
+        try {
+            int teamId = EntityManager.getInstance(FileDetailActivity.this).getTeamId();
+            fileDetailPresenter.unregistStarredMessage(teamId, fileId);
+            starredButtonSelected(false);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            starredButtonSelected(true);
+
+        }
+    }
+
+    @Background
+    void registStarredMessage() {
+        try {
+            int teamId = EntityManager.getInstance(FileDetailActivity.this).getTeamId();
+            fileDetailPresenter.registStarredMessage(teamId, fileId);
+            starredButtonSelected(true);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            starredButtonSelected(false);
+        }
+    }
+
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void starredButtonSelected(boolean selected) {
+        fileHeadManager.getStarredButton().setSelected(selected);
     }
 
     @Override
@@ -613,7 +622,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @Click(R.id.btn_send_message)
     void sendComment() {
         CharSequence text = etComment.getText();
-//        String comment = TextUtils.isEmpty(text) ? "" : text.toString().trim();
+        String comment = TextUtils.isEmpty(text) ? "" : text.toString().trim();
         hideSoftKeyboard();
 
         ResultMentionsVO mentions = fileDetailPresenter.getMentionInfo();
@@ -976,53 +985,34 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
     }
 
+    @Background
     public void onEvent(MessageStarredEvent event) {
         if (!isForeground) {
             return;
         }
-        boolean successed = false;
         switch (event.getAction()) {
             case STARRED:
-                try {
-                    fileDetailPresenter.registStarredMessage(EntityManager.
-                            getInstance(FileDetailActivity.this).getTeamId(), event.getMessageId());
-                    successed = true;
-                } catch (RetrofitError e) {
-                    e.printStackTrace();
-                    successed = false;
-                } finally {
-                    if (successed) {
-                        Toast.makeText(this, R.string.jandi_message_starred, Toast.LENGTH_SHORT).show();
-                        new Handler() {
-                            @Override
-                            public void handleMessage(Message msg) {
-                                super.handleMessage(msg);
-                                fileDetailPresenter.getFileDetail(fileId, false, true);
-                            }
-                        }.sendEmptyMessageDelayed(0, 100);
-                    }
-                }
-                break;
-            case UNSTARRED:
-                try {
-                    fileDetailPresenter.unregistStarredMessage(EntityManager.
-                            getInstance(FileDetailActivity.this).getTeamId(), event.getMessageId());
-                    successed = true;
-                } catch (RetrofitError e) {
-                    e.printStackTrace();
-                    successed = false;
-                } finally {
-                    if (successed) {
+                fileDetailPresenter.registStarredMessage(EntityManager.
+                        getInstance(FileDetailActivity.this).getTeamId(), event.getMessageId());
+                Toast.makeText(this, R.string.jandi_message_starred, Toast.LENGTH_SHORT).show();
+                new Handler() {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
                         fileDetailPresenter.getFileDetail(fileId, false, true);
                     }
-                    new Handler() {
-                        @Override
-                        public void handleMessage(Message msg) {
-                            super.handleMessage(msg);
-                            fileDetailPresenter.getFileDetail(fileId, false, true);
-                        }
-                    }.sendEmptyMessageDelayed(0, 100);
-                }
+                }.sendEmptyMessageDelayed(0, 100);
+                break;
+            case UNSTARRED:
+                fileDetailPresenter.unregistStarredMessage(EntityManager.
+                        getInstance(FileDetailActivity.this).getTeamId(), event.getMessageId());
+                new Handler() {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        fileDetailPresenter.getFileDetail(fileId, false, true);
+                    }
+                }.sendEmptyMessageDelayed(0, 100);
                 break;
         }
 

@@ -19,7 +19,6 @@ import com.tosslab.jandi.app.ui.starmention.adapter.StarMentionListAdapter;
 import com.tosslab.jandi.app.ui.starmention.presentor.StarMentionListPresentor;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
-import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -79,7 +78,6 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     }
 
     private void loadStarMentionList() {
-
         try {
             if (listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
                 starMentionListPresentor.addMentionMessagesToList(StarMentionListActivity.TYPE_MENTION_LIST);
@@ -97,7 +95,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     }
 
     private void notifyViewStatus() {
-        if (starMentionListPresentor.getTotalCount() == 0) {
+        if (starMentionListPresentor.isEmpty()) {
             starMentionList.setVisibility(View.GONE);
             llEmptyListStarMention.setVisibility(View.VISIBLE);
             if (listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
@@ -130,7 +128,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
 
     public void setOnItemLongClickListener() {
         StarMentionListAdapter.OnItemLongClickListener onItemLongClickListener = (adapter, position) -> {
-            return starMentionListPresentor.executeLongClickEvent(adapter.getItemsByPosition(position));
+            return starMentionListPresentor.executeLongClickEvent(adapter.getItemsByPosition(position), position);
         };
         starMentionListAdapter.setOnItemLongClickListener(onItemLongClickListener);
     }
@@ -147,29 +145,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void onDismissMoreProgressBar() {
-        try {
-
-            moreLoadingProgressBar.getAnimation().reset();
-            Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_out_bottom);
-            moreLoadingProgressBar.setAnimation(animation);
-            animation.setAnimationListener(new SimpleEndAnimationListener() {
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    moreLoadingProgressBar.setVisibility(View.GONE);
-                }
-            });
-            animation.startNow();
-
-        } catch (NullPointerException e) {
-
-            if (DissMissProgressBarRetryCnt < 3) {
-                onDismissMoreProgressBar();
-            } else {
-                DissMissProgressBarRetryCnt = 0;
-            }
-            DissMissProgressBarRetryCnt++;
-
-        }
+        moreLoadingProgressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -198,29 +174,31 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
         loadStarMentionList();
     }
 
-//    @Override
-//    public void onShowDialog(int teamId, int messageId) {
-//        if (unstarredDialog == null) {
-//            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//
-//            builder.setMessage("지울건가?");
-//
-//            builder.setPositiveButton("yes", (dialog, which) -> {
-//                starMentionListPresentor.unregistStarredMessage(teamId, messageId);
-//            });
-//
-//            builder.setNegativeButton("no", (dialog, which) -> {
-//
-//            });
-//            unstarredDialog = builder.create();
-//        }
-//
-//        unstarredDialog.show();
-//
-//    }
+    @Override
+    public void onShowDialog(int teamId, int messageId, int position) {
 
-//    @Override
-//    public void onRemoveItem(int position) {
-//        starMentionListAdapter.removeStarMentionListAt(position);
-//    }
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.jandi_starred_unstar_from_item);
+
+        builder.setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
+            starMentionListPresentor.unregistStarredMessage(teamId, messageId, position);
+        });
+
+        builder.setNegativeButton(R.string.jandi_cancel, (dialog, which) -> {
+            unstarredDialog.dismiss();
+        });
+
+        unstarredDialog = builder.create();
+
+        unstarredDialog.show();
+
+
+    }
+
+    @Override
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void onRemoveItem(int position) {
+        starMentionListAdapter.removeStarMentionListAt(position);
+    }
+
 }

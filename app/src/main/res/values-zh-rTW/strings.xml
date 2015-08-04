@@ -459,6 +459,7 @@
     <string name="jandi_mention_mentioned_you">提到你</string>
     <string name="jandi_mention_no_mentions">還沒有人提到你</string>
     <string name="jandi_starred_no_all">下載電腦版</string>
-    <string name="jandi_starred_no_file">No starred files</string>
+    <string name="jandi_starred_no_file">沒有標示檔案</string>
+    <string name="jandi_starred_unstar_from_item">你確定要取消標示嗎？</string>
 </resources>
 

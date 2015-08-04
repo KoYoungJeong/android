@@ -8,10 +8,11 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResStarred;
+import com.tosslab.jandi.app.network.models.ResRegistStarred;
+import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 
 import java.util.List;
 
@@ -40,13 +41,13 @@ public interface ITeamApiAuth {
 
     ResMessages.OriginalMessage getMessage(int teamId, int messageId) throws RetrofitError;
 
-    ResStarMentioned getMentionedMessagesByTeamApi(int teamId, int page, int perPage) throws RetrofitError;
+    ResStarMentioned getMentionedMessagesByTeamApi(int teamId, Integer messageId, int count) throws RetrofitError;
 
-    ResStarred registStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError;
+    StarMentionedMessageObject registStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError;
 
     ResCommon unregistStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError;
 
-    ResStarMentioned getStarredMessagesByTeamApi(int teamId, String type,
-                                             int page, int perPage);
+    ResStarMentioned getStarredMessagesByTeamApi(int teamId, Integer starredId,
+                                                 int count, String type) throws RetrofitError;
 
 }

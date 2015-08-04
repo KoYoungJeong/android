@@ -469,7 +469,8 @@
     <string name="jandi_mention_mentioned_you">さんからのメンション</string>
     <string name="jandi_mention_no_mentions">メンションされたことがありません</string>
     <string name="jandi_starred_no_all">お気に入りのメッセージやファイルがありません</string>
-    <string name="jandi_starred_no_file">No starred files</string>
+    <string name="jandi_starred_no_file">スター付きのファイルなし</string>
+    <string name="jandi_starred_unstar_from_item">スター付きを解除しましょうか？</string>
 
 
 </resources>

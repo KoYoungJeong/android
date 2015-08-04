@@ -95,14 +95,13 @@ public class StarMentionedMessageObject {
         public int id;
         public int writerId;
         public String contentType;
-        public String contentTitle;
-        public String contentBody;
-        public String contentExtension;
+
         public List<MentionObject> mentions;
         public int feedbackId;
         public String feedbackTitle;
         public int commentCount;
         public Date createAt;
+        public Content content;
 
         public Message() {
         }
@@ -112,16 +111,57 @@ public class StarMentionedMessageObject {
             return "Message{" +
                     "id=" + id +
                     ", writerId=" + writerId +
-                    ", contentType='" + contentType + '\'' +
-                    ", contentTitle='" + contentTitle + '\'' +
-                    ", contentBody='" + contentBody + '\'' +
-                    ", contentExtension='" + contentExtension + '\'' +
                     ", mentions=" + mentions +
                     ", feedbackId=" + feedbackId +
                     ", feedbackTitle='" + feedbackTitle + '\'' +
                     ", commentCount=" + commentCount +
                     ", createAt=" + createAt +
+                    ", content=" + content.toString() +
                     '}';
+        }
+
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+        static public class Content {
+
+            public String body;
+            public String title;
+            public String name;
+            public String filename;
+            public String filterType;
+            public String type;
+            public String icon;
+            public String size;
+            public String ext;
+            public String serverUrl;
+            public String fileUrl;
+            public String smallThumbnailUrl;
+            public String mediumThumbnailUrl;
+            public String largeThumbnailUrl;
+
+            public Content() {
+
+            }
+
+            @Override
+            public String toString() {
+                return "Content{" +
+                        "body='" + body + '\'' +
+                        ", title='" + title + '\'' +
+                        ", name='" + name + '\'' +
+                        ", filename='" + filename + '\'' +
+                        ", filterType='" + filterType + '\'' +
+                        ", type='" + type + '\'' +
+                        ", icon='" + icon + '\'' +
+                        ", size='" + size + '\'' +
+                        ", ext='" + ext + '\'' +
+                        ", serverUrl='" + serverUrl + '\'' +
+                        ", fileUrl='" + fileUrl + '\'' +
+                        ", smallThumbnailUrl='" + smallThumbnailUrl + '\'' +
+                        ", mediumThumbnailUrl='" + mediumThumbnailUrl + '\'' +
+                        ", largeThumbnailUrl='" + largeThumbnailUrl + '\'' +
+                        '}';
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.network.models;
 
-import com.tosslab.jandi.app.network.models.commonobject.CursorObject;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 
 import java.util.List;
@@ -10,16 +9,16 @@ import java.util.List;
  */
 public class ResStarMentioned {
 
-    private CursorObject cursor;
+    private boolean hasMore;
 
     private List<StarMentionedMessageObject> records;
 
-    public CursorObject getCursor() {
-        return cursor;
+    public boolean isHasMore() {
+        return hasMore;
     }
 
-    public void setCursor(CursorObject cursor) {
-        this.cursor = cursor;
+    public void setHasMore(boolean hasMore) {
+        this.hasMore = hasMore;
     }
 
     public List<StarMentionedMessageObject> getRecords() {
@@ -32,8 +31,8 @@ public class ResStarMentioned {
 
     @Override
     public String toString() {
-        return "ResStarMentioned{" +
-                "cursor=" + cursor.toString() +
+        return "ResMentioned{" +
+                "hasMore=" + hasMore +
                 ", records=" + records.toString() +
                 '}';
     }

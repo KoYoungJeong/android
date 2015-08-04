@@ -26,35 +26,28 @@ public class StarMentionListPresentor {
 
     @Bean
     StarMentionListModel starMentionListModel;
-    private int page = 1;
-    private int pagePerCount = 20;
     private View view;
 
     @Background
     public void addMentionMessagesToList(String listType) {
-//        if (page <= 1) {
-//            view.onShowMoreProgressBar();
-//        }
+        if (!starMentionListModel.isFirst()) {
+            view.onShowMoreProgressBar();
+        }
         try {
-
             if (listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
                 List<StarMentionVO> starMentionList = starMentionListModel.
-                        getStarMentionedMessages(
-                                StarMentionListActivity.TYPE_MENTION_LIST, page, pagePerCount);
+                        getStarMentionedMessages(StarMentionListActivity.TYPE_MENTION_LIST);
                 view.onAddAndShowList(starMentionList);
             } else if (listType.equals(StarMentionListActivity.TYPE_STAR_ALL)) {
                 List<StarMentionVO> starMentionList = starMentionListModel.
-                        getStarMentionedMessages(
-                                StarMentionListActivity.TYPE_STAR_ALL, page, pagePerCount);
+                        getStarMentionedMessages(StarMentionListActivity.TYPE_STAR_ALL);
                 view.onAddAndShowList(starMentionList);
             } else if (listType.equals(StarMentionListActivity.TYPE_STAR_FILES)) {
                 List<StarMentionVO> starMentionList = starMentionListModel.
-                        getStarMentionedMessages(
-                                StarMentionListActivity.TYPE_STAR_FILES, page, pagePerCount);
+                        getStarMentionedMessages(StarMentionListActivity.TYPE_STAR_FILES);
                 view.onAddAndShowList(starMentionList);
             }
-
-            if (starMentionListModel.getTotalCount() > starMentionListModel.getListCount()) {
+            if (starMentionListModel.hasMore()) {
                 view.onSetReadyMoreState();
             } else {
                 view.onSetNoMoreState();
@@ -65,12 +58,8 @@ public class StarMentionListPresentor {
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
-        } finally {
-//            if (page <= 1) {
-//                view.onDismissMoreProgressBar();
-//            }
-            page++;
         }
+        view.onDismissMoreProgressBar();
     }
 
     public void executeClickEvent(StarMentionVO starMentionVO, Activity activity) {
@@ -94,33 +83,32 @@ public class StarMentionListPresentor {
         }
     }
 
-    public boolean executeLongClickEvent(StarMentionVO starMentionVO) {
-//        try {
-//            view.onShowDialog(starMentionVO.getTeamId(), starMentionVO.getMessageId());
-//            return true;
-//        } catch (RetrofitError e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-        return false;
+    public boolean executeLongClickEvent(StarMentionVO starMentionVO, int position) {
+        try {
+            view.onShowDialog(starMentionVO.getTeamId(), starMentionVO.getMessageId(), position);
+            return true;
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Background
-    public void unregistStarredMessage(int teamId, int messageId) {
+    public void unregistStarredMessage(int teamId, int messageId, int position) {
         try {
             starMentionListModel.unregistStarredMessage(teamId, messageId);
+            view.onRemoveItem(position);
         } catch (RetrofitError e) {
             e.printStackTrace();
         }
-
     }
 
     public void setView(View view) {
         this.view = view;
     }
 
-    public int getTotalCount() {
-        return starMentionListModel.getTotalCount();
+    public boolean isEmpty() {
+        return starMentionListModel.isEmpty();
     }
 
     public static interface View {
@@ -135,7 +123,9 @@ public class StarMentionListPresentor {
 
         public void onSetReadyMoreState();
 
-//        public void onShowDialog(int teamId, int messageId);
+        public void onShowDialog(int teamId, int messageId, int position);
+
+        public void onRemoveItem(int position);
 
     }
 

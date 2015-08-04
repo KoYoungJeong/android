@@ -808,18 +808,6 @@ public class MessageListPresenter {
         messageListAdapter.setEntityId(entityId);
     }
 
-//    public EditText getMessageEditText() {
-//        return messageEditText;
-//    }
-//
-//    public RecyclerView getMessageListView() {
-//        return messageListView;
-//    }
-//
-//    public RecyclerView getRvListSearchMembers() {
-//        return rvListSearchMembers;
-//    }
-
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void modifyStarredInfo(int messageId, boolean isStarred) {
         int position = messageListAdapter.getItemPositionByMessageId(messageId);

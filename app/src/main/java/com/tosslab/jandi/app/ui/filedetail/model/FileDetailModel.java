@@ -25,7 +25,6 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -228,25 +227,21 @@ public class FileDetailModel {
         }
     }
 
-    @Background
-    public void registStarredMessage(int teamId, int messageId) {
+    public void registStarredMessage(int teamId, int messageId) throws RetrofitError {
         try {
             RequestApiManager.getInstance()
                     .registStarredMessageByTeamApi(teamId, messageId);
         } catch (RetrofitError e) {
             e.printStackTrace();
-            throw e;
         }
     }
 
-    @Background
-    public void unregistStarredMessage(int teamId, int messageId) {
+    public void unregistStarredMessage(int teamId, int messageId) throws RetrofitError {
         try {
             RequestApiManager.getInstance()
                     .unregistStarredMessageByTeamApi(teamId, messageId);
         } catch (RetrofitError e) {
             e.printStackTrace();
-            throw e;
         }
     }
 
