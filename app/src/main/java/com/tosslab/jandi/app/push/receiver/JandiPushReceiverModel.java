@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
+import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -49,9 +50,6 @@ public class JandiPushReceiverModel {
 
     @SystemService
     AudioManager audioManager;
-
-    // 이전 Push Message 작성 시간
-    private String preCreatedAt;
 
     public PendingIntent generatePendingIntent(Context context, int chatId, int chatType, int teamId) {
         Intent intent = new Intent(context, PushInterfaceActivity_.class);
@@ -220,15 +218,17 @@ public class JandiPushReceiverModel {
         String createdAt = pushInfo.getCreatedAt();
         LogUtil.d(TAG, createdAt);
         long createdAtTime = DateTransformator.getTimeFromISO(createdAt);
-        if (!TextUtils.isEmpty(preCreatedAt)) {
-            LogUtil.i(TAG, preCreatedAt);
-            long preCreatedAtTime = DateTransformator.getTimeFromISO(preCreatedAt);
+
+        String lastNotifiedCreatedAt = PushMonitor.getInstance().getLastNotifiedCreatedAt();
+        if (!TextUtils.isEmpty(lastNotifiedCreatedAt)) {
+            LogUtil.i(TAG, lastNotifiedCreatedAt);
+            long preCreatedAtTime = DateTransformator.getTimeFromISO(lastNotifiedCreatedAt);
             if (createdAtTime < preCreatedAtTime) {
                 LogUtil.i(TAG, "createdAtTime < preCreatedAtTime");
                 return;
             }
         }
-        preCreatedAt = createdAt;
+        PushMonitor.getInstance().setLastNotifiedCreatedAt(createdAt);
 
         String message = pushInfo.getMessageContent();
         String writerName = pushInfo.getWriterName();
