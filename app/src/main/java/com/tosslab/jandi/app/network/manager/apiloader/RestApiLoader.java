@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.network.client.main.IMainRestApiLoader;
 import com.tosslab.jandi.app.network.client.messages.IMessagesApiLoader;
 import com.tosslab.jandi.app.network.client.messages.comments.ICommentsApiLoader;
 import com.tosslab.jandi.app.network.client.messages.search.IMessageSearchApiLoader;
+import com.tosslab.jandi.app.network.client.platform.IPlatformApiLoader;
 import com.tosslab.jandi.app.network.client.privatetopic.IGroupApiLoader;
 import com.tosslab.jandi.app.network.client.privatetopic.messages.IGroupMessageApiLoader;
 import com.tosslab.jandi.app.network.client.profile.IProfileApiLoader;
@@ -53,6 +54,7 @@ import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
+import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
@@ -86,7 +88,7 @@ import java.util.List;
 public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApiLoader, IAccountPasswordApiLoader, IChatApiLoader,
         IDirectMessageApiLoader, IInvitationApiLoader, IMainRestApiLoader, ICommentsApiLoader, IMessageSearchApiLoader,
         IMessagesApiLoader, IGroupMessageApiLoader, IGroupApiLoader, IProfileApiLoader, IChannelMessageApiLoader, IChannelApiLoader,
-        IRoomsApiLoader, IAccountProfileApiLoader, IStarredEntityApiLoader, IStickerApiLoader, ITeamApiLoader, IFileApiLoader {
+        IRoomsApiLoader, IAccountProfileApiLoader, IStarredEntityApiLoader, IStickerApiLoader, ITeamApiLoader, IFileApiLoader, IPlatformApiLoader {
 
     JacksonConvertedAuthRestApiClient authRestApiClient = new JacksonConvertedAuthRestApiClient();
 
@@ -643,5 +645,10 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     @Override
     public IExecutor<ResStarMentioned> loadGetStarredMessagesByTeamApi(int teamId, String type, int page, int perPage) {
         return () -> authRestApiClient.getStarredMessagesByTeamApi(teamId, type, page, perPage);
+    }
+
+    @Override
+    public IExecutor<ResCommon> loadUpdatePlatformStatus(ReqUpdatePlatformStatus reqUpdatePlatformStatus) {
+        return () -> authRestApiClient.updatePlatformStatus(reqUpdatePlatformStatus);
     }
 }
