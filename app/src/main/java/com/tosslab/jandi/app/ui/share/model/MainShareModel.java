@@ -44,9 +44,10 @@ public class MainShareModel {
             return MainShareActivity.IntentType.Image;
         } else if (TextUtils.equals(type, "text/plain")) {
             return MainShareActivity.IntentType.Text;
+        } else {
+            return MainShareActivity.IntentType.Etc;
         }
 
-        return null;
     }
 
     public boolean hasTeamInfo() {

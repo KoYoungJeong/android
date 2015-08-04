@@ -159,4 +159,12 @@ public class ShareModel {
         } catch (JSONException e) {
         }
     }
+
+    public String getFilePath(String uriString) {
+        return Uri.parse(uriString).getPath();
+    }
+
+    public boolean isFileUri(String uriString) {
+        return !TextUtils.isEmpty(uriString) && uriString.startsWith("file://");
+    }
 }
