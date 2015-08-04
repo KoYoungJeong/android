@@ -92,9 +92,8 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
 
             CommentStarMentionViewHolder viewHolder = (CommentStarMentionViewHolder) holder;
             viewHolder.getStarMentionFileNameView().setText(starMentionVO.getFileName());
-            SpannableStringBuilder commentStringBuilder = new SpannableStringBuilder();
-            commentStringBuilder.append(!TextUtils.isEmpty(starMentionVO.getContent()) ?
-                    starMentionVO.getContent() : "");
+            SpannableStringBuilder commentStringBuilder = new SpannableStringBuilder
+                    (starMentionVO.getContent());
 
             for (MentionObject mention : starMentionVO.getMentions()) {
                 try {

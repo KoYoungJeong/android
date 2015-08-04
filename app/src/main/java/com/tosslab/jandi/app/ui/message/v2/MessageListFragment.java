@@ -105,6 +105,7 @@ import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.imeissue.NewEditText;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -165,7 +166,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     Button sendButton;
 
     @ViewById(R.id.et_message)
-    EditText messageEditText;
+    NewEditText messageEditText;
 
     @ViewById(R.id.rv_list_search_members)
     RecyclerView rvListSearchMembers;
@@ -1248,10 +1249,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         switch (event.getAction()) {
             case STARRED:
                 try {
-
                     messageListModel.registStarredMessage(teamId, messageId);
                     Toast.makeText(getActivity(), R.string.jandi_message_starred, Toast.LENGTH_SHORT).show();
-                    messageListPresenter.modifyStarredInfo(messageId, false);
+                    messageListPresenter.modifyStarredInfo(messageId, true);
+                    Log.e("messageId", messageId + "");
                 } catch (RetrofitError e) {
                     e.printStackTrace();
                 }
@@ -1260,7 +1261,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             case UNSTARRED:
                 try {
                     messageListModel.unregistStarredMessage(teamId, messageId);
-                    messageListPresenter.modifyStarredInfo(messageId, true);
+                    messageListPresenter.modifyStarredInfo(messageId, false);
+                    Log.e("messageId", messageId + "");
                 } catch (RetrofitError e) {
                     e.printStackTrace();
                 }

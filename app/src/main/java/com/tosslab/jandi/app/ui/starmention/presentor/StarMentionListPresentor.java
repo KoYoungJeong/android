@@ -32,9 +32,9 @@ public class StarMentionListPresentor {
 
     @Background
     public void addMentionMessagesToList(String listType) {
-        if (page <= 1) {
-            view.onShowMoreProgressBar();
-        }
+//        if (page <= 1) {
+//            view.onShowMoreProgressBar();
+//        }
         try {
 
             if (listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
@@ -66,9 +66,9 @@ public class StarMentionListPresentor {
             e.printStackTrace();
             throw e;
         } finally {
-            if (page <= 1) {
-                view.onDismissMoreProgressBar();
-            }
+//            if (page <= 1) {
+//                view.onDismissMoreProgressBar();
+//            }
             page++;
         }
     }

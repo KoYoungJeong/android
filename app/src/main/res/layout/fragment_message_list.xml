@@ -195,7 +195,7 @@
             android:layout_marginRight="4dp"
             android:background="@drawable/jandi_upload_file" />
 
-        <EditText
+        <com.tosslab.jandi.app.utils.imeissue.NewEditText
             android:id="@+id/et_message"
             style="@style/JandiChat.EditText"
             android:layout_width="wrap_content"
