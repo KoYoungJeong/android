@@ -466,6 +466,11 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         return -1;
     }
 
+    public void modifyStarredStateByPosition(int position, boolean isStarred) {
+        messageList.get(position).message.isStarred = isStarred;
+        notifyItemChanged(position);
+    }
+
     private enum MoreState {
         Idle, Loading, Nope
     }

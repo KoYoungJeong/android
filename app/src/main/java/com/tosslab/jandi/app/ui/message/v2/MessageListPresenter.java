@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -211,6 +213,8 @@ public class MessageListPresenter {
         if (gotoLatestLayoutVisible) {
             setGotoLatestLayoutVisible();
         }
+
+        setEditTextKeyListener();
 
     }
 
@@ -809,16 +813,27 @@ public class MessageListPresenter {
 
     public void modifyStarredInfo(int messageId, boolean isStarred) {
         int position = messageListAdapter.getItemPositionByMessageId(messageId);
-        messageListAdapter.getItem(position).message.isStarred = isStarred;
-        messageListAdapter.notifyDataSetChanged();
+        messageListAdapter.modifyStarredStateByPosition(position, isStarred);
     }
 
-    public EditText getMessageEditText() {
-        return messageEditText;
-    }
+    private void setEditTextKeyListener() {
 
-    public RecyclerView getMessageListView() {
-        return messageListView;
+        messageEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() != KeyEvent.ACTION_DOWN) {
+                    //We only look at ACTION_DOWN in this code, assuming that ACTION_UP is redundant.
+                    // If not, adjust accordingly.
+                    return false;
+                } else if (event.getUnicodeChar() ==
+                        (int) EditableAccomodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
+                    //We are ignoring this character, and we want everyone else to ignore it, too, so
+                    // we return true indicating that we have handled it (by ignoring it).
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     public RecyclerView getRvListSearchMembers() {
@@ -988,3 +1003,5 @@ public class MessageListPresenter {
     }
 
 }
+
+
