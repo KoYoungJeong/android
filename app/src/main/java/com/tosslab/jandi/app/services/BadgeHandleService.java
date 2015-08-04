@@ -59,7 +59,7 @@ public class BadgeHandleService extends IntentService {
             if (postRetrieveTopicEvent) {
                 postRetrieveTopicEvent();
 
-                ParseUpdateUtil.subscribeChannelFromAccountId(context);
+                ParseUpdateUtil.addChannelOnServer(context);
             }
 
             String socketMessageEventContent = intent.getStringExtra(KEY_SOCKET_MESSAGE_EVENT);

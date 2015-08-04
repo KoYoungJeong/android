@@ -16,11 +16,9 @@ import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
@@ -32,7 +30,6 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -40,19 +37,21 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 
+import retrofit.RetrofitError;
+
 /**
  * Created by Steve SeongUg Jung on 15. 4. 10..
  */
 @EBean
 public class JandiPushReceiverModel {
-    public static final long NONE_CREATED_AT = -1;
-    public static final String JSON_KEY_DATA = "com.parse.Data";
+    private static final String JSON_KEY_DATA = "com.parse.Data";
+    public static final String TAG = JandiPushReceiverModel.class.getSimpleName();
 
     @SystemService
     AudioManager audioManager;
 
     // 이전 Push Message 작성 시간
-    private long preCreatedAt = NONE_CREATED_AT;
+    private String preCreatedAt;
 
     public PendingIntent generatePendingIntent(Context context, int chatId, int chatType, int teamId) {
         Intent intent = new Intent(context, PushInterfaceActivity_.class);
@@ -66,41 +65,55 @@ public class JandiPushReceiverModel {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-//        pendingIntent.cancel();
 
         return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    public int getEntityType(PushTO.PushInfo pushInfo) {
-        String entityType = pushInfo.getRoomType();
-
-        if (TextUtils.equals(entityType, PushTO.RoomType.CHANNEL.getName())) {
+    public int getEntityType(String roomType) {
+        if (TextUtils.equals(roomType, PushTO.RoomType.CHANNEL.getName())) {
             return JandiConstants.TYPE_PUBLIC_TOPIC;
-        } else if (TextUtils.equals(entityType, PushTO.RoomType.PRIVATE_GROUP.getName())) {
+        } else if (TextUtils.equals(roomType, PushTO.RoomType.PRIVATE_GROUP.getName())) {
             return JandiConstants.TYPE_PRIVATE_TOPIC;
-        } else if (TextUtils.equals(entityType, PushTO.RoomType.CHAT.getName())) {
+        } else if (TextUtils.equals(roomType, PushTO.RoomType.CHAT.getName())) {
             return JandiConstants.TYPE_DIRECT_MESSAGE;
         } else {
             return -1;
         }
     }
 
-    public void updateEntityAndBadge(Context context, int unreadCountFromPush) {
-        EntityClientManager jandiEntityClient = EntityClientManager_.getInstance_(context);
-        ResLeftSideMenu resLeftSideMenu = jandiEntityClient.getTotalEntitiesInfo();
-        JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
-        EntityManager.getInstance(context).refreshEntity(resLeftSideMenu);
+    public ResLeftSideMenu getTeamInfo(int teamId) {
+        ResLeftSideMenu resLeftSideMenu = null;
+        try {
+            resLeftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
+        return resLeftSideMenu;
+    }
 
-//        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
-        LogUtil.e(JandiPushReceiverModel.class.getSimpleName(), "totalUnreadCount - " + unreadCountFromPush);
-        BadgeUtils.setBadge(context, unreadCountFromPush);
-        JandiPreference.setBadgeCount(context, unreadCountFromPush);
+    public boolean isTopicPushOn(ResLeftSideMenu leftSideMenu, int roomId) {
+        boolean isTopicPushOn = true;
+
+        ResLeftSideMenu.User user = leftSideMenu.user;
+        List<ResLeftSideMenu.MessageMarker> markers = user.u_messageMarkers;
+        for (int i = 0; i < markers.size(); i++) {
+            ResLeftSideMenu.MessageMarker messageMarker = markers.get(i);
+            if (messageMarker.entityId == roomId) {
+                isTopicPushOn = messageMarker.subscribe;
+                break;
+            }
+        }
+
+        return isTopicPushOn;
+    }
+
+    public void updateBadgeCount(Context context, int badgeCount) {
+        LogUtil.e(TAG, "badgeCount - " + badgeCount);
+        BadgeUtils.setBadge(context, badgeCount);
+        JandiPreference.setBadgeCount(context, badgeCount);
     }
 
     public PushTO parsingPushTO(Bundle extras) {
-
         if (extras == null || !extras.containsKey(JSON_KEY_DATA)) {
             return null;
         }
@@ -110,13 +123,14 @@ public class JandiPushReceiverModel {
             ObjectMapper mapper = JacksonMapper.getInstance().getObjectMapper();
             return mapper.readValue(jsonData, PushTO.class);
         } catch (IOException e) {
+            e.printStackTrace();
             return null;
         }
-
     }
 
     public boolean isMyEntityId(Context context, int writerId) {
-        List<ResAccountInfo.UserTeam> userTeams = JandiAccountDatabaseManager.getInstance(context).getUserTeams();
+        List<ResAccountInfo.UserTeam> userTeams =
+                JandiAccountDatabaseManager.getInstance(context).getUserTeams();
 
         for (ResAccountInfo.UserTeam userTeam : userTeams) {
             if (userTeam.getMemberId() == writerId) {
@@ -126,25 +140,31 @@ public class JandiPushReceiverModel {
         return false;
     }
 
-    private Notification generateNotification(Context context, PushTO.PushInfo pushInfo) {
-        return generateNotification(context, pushInfo, null);
+    public boolean isPushFromSelectedTeam(Context context, int teamId) {
+        return teamId == EntityClientManager_.getInstance_(context).getSelectedTeamId();
     }
 
-    private Notification generateNotification(Context context, PushTO.PushInfo pushInfo, Bitmap writerProfile) {
-        String message = pushInfo.getMessageContent();
-        String chatName = pushInfo.getRoomName();
-        String writerName = pushInfo.getWriterName();
+    public boolean isPushOn() {
+        if (ParseUpdateUtil.PARSE_ACTIVATION_OFF.equals(
+                ParseInstallation.getCurrentInstallation().getString(ParseUpdateUtil.PARSE_ACTIVATION))) {
+            return false;
+        }
 
-        int chatId = pushInfo.getRoomId();
-        int chatType = getEntityType(pushInfo);
+        return true;
+    }
 
+    private Notification generateNotification(Context context, int teamId,
+                                              int roomId, String roomType, String roomName,
+                                              String writerName, String message, Bitmap writerProfile,
+                                              int badgeCount) {
+        int roomTypeInt = getEntityType(roomType);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle(writerName);
         builder.setContentText(message);
-        if (chatType == JandiConstants.TYPE_DIRECT_MESSAGE) {
-            chatName = context.getString(R.string.jandi_tab_direct_message);
+        if (roomTypeInt == JandiConstants.TYPE_DIRECT_MESSAGE) {
+            roomName = context.getString(R.string.jandi_tab_direct_message);
         }
-        builder.setStyle(getBigTextStyle(writerName, message, chatName));
+        builder.setStyle(getBigTextStyle(writerName, message, roomName));
 
         int led = 0;
 
@@ -170,15 +190,16 @@ public class JandiPushReceiverModel {
         builder.setSmallIcon(R.drawable.jandi_icon_push_notification);
         builder.setPriority(Notification.PRIORITY_HIGH);
         builder.setAutoCancel(true);
-        builder.setNumber(JandiPreference.getBadgeCount(context));
+        builder.setNumber(badgeCount);
 
         // 노티를 터치할 경우엔 자동 삭제되나, 노티를 삭제하지 않고 앱으로 진입했을 때, 해당 채팅 방에 들어갈 때만
         // 이 노티가 삭제되도록...
-        JandiPreference.setChatIdFromPush(context, chatId);
+        JandiPreference.setChatIdFromPush(context, roomId);
 
         // 노티를 터치할 경우 실행 intent 설정
-        PendingIntent pendingIntent = generatePendingIntent(context, chatId, chatType, pushInfo.getTeamId());
+        PendingIntent pendingIntent = generatePendingIntent(context, roomId, roomTypeInt, teamId);
         builder.setContentIntent(pendingIntent);
+
         if (writerProfile != null) {    // 작성자의 프로필 사진
             builder.setLargeIcon(writerProfile);
         }
@@ -194,44 +215,56 @@ public class JandiPushReceiverModel {
         return bigTextStyle;
     }
 
-    public boolean isPushOn() {
-        if (ParseUpdateUtil.PARSE_ACTIVATION_OFF.equals(
-                ParseInstallation
-                        .getCurrentInstallation()
-                        .getString(ParseUpdateUtil.PARSE_ACTIVATION))) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public void sendNotificationWithProfile(final Context context, final PushTO.PushInfo pushInfo) {
+    public void showNotification(Context context, PushTO.PushInfo pushInfo, int badgeCount) {
         // 이전 푸쉬 메세지가 현재 푸쉬 메세지보다 더 최근에 작성되었다면 무시.
         String createdAt = pushInfo.getCreatedAt();
+        LogUtil.d(TAG, createdAt);
         long createdAtTime = DateTransformator.getTimeFromISO(createdAt);
-        if (preCreatedAt != NONE_CREATED_AT) {
-            if (createdAtTime < preCreatedAt) {
+        if (!TextUtils.isEmpty(preCreatedAt)) {
+            LogUtil.i(TAG, preCreatedAt);
+            long preCreatedAtTime = DateTransformator.getTimeFromISO(preCreatedAt);
+            if (createdAtTime < preCreatedAtTime) {
+                LogUtil.i(TAG, "createdAtTime < preCreatedAtTime");
                 return;
             }
         }
-        preCreatedAt = createdAtTime;
+        preCreatedAt = createdAt;
 
-        String writerProfile = pushInfo.getWriterThumb();
-        Notification notification;
-        if (writerProfile != null) {
-            Bitmap bitmap = null;
+        String message = pushInfo.getMessageContent();
+        String writerName = pushInfo.getWriterName();
+        String roomName = pushInfo.getRoomName();
+
+        if (pushInfo.hasMentions()) {
+            StringBuilder sb = new StringBuilder();
+            String mention =
+                    context.getResources().getString(R.string.jandi_mention_push_message, writerName);
+            sb.append(mention + "\n");
+            sb.append(message + "\n");
+            sb.append(roomName + " / " + badgeCount);
+
+            message = sb.toString();
+        }
+
+        int teamId = pushInfo.getTeamId();
+        int roomId = pushInfo.getRoomId();
+        String roomType = pushInfo.getRoomType();
+        String writerThumb = pushInfo.getWriterThumb();
+        Bitmap profileImage = null;
+        if (writerThumb != null) {
             try {
-                bitmap = Ion.with(context)
-                        .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + writerProfile)
+                profileImage = Ion.with(context)
+                        .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + writerThumb)
                         .asBitmap()
                         .get();
             } catch (Exception e) {
             }
-
-            notification = generateNotification(context, pushInfo, bitmap);
-        } else {
-            notification = generateNotification(context, pushInfo);
         }
+
+        Notification notification =
+                generateNotification(context, teamId,
+                        roomId, roomType, roomName,
+                        writerName, message, profileImage,
+                        badgeCount);
 
         sendNotification(context, notification);
     }

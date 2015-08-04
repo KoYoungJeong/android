@@ -3,6 +3,8 @@ package com.tosslab.jandi.app.push.to;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+import java.util.List;
+
 /**
  * Created by Steve SeongUg Jung on 14. 12. 30..
  */
@@ -26,7 +28,6 @@ public class PushTO {
     }
 
     private String action;
-    private Alarm alarm;
     private PushInfo info;
 
     public String getAction() {
@@ -35,14 +36,6 @@ public class PushTO {
 
     public void setAction(String action) {
         this.action = action;
-    }
-
-    public Alarm getAlarm() {
-        return alarm;
-    }
-
-    public void setAlarm(Alarm alarm) {
-        this.alarm = alarm;
     }
 
     public PushInfo getInfo() {
@@ -57,7 +50,6 @@ public class PushTO {
     public String toString() {
         return "PushTO{" +
                 "action='" + action + '\'' +
-                ", alarm=" + alarm +
                 ", info=" + info +
                 '}';
     }
@@ -65,7 +57,6 @@ public class PushTO {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     static public class PushInfo {
-        private int badge;
         private int teamId;
         private String teamName;
         private int roomId;
@@ -76,20 +67,12 @@ public class PushTO {
         private String messageContent;
 
         // TODO MENTION !
-        private Mention mention;
+        private List<Mention> mentions;
 
         private int writerId;
         private String writerName;
         private String writerThumb;
         private String createdAt;
-
-        public int getBadge() {
-            return badge;
-        }
-
-        public void setBadge(int badge) {
-            this.badge = badge;
-        }
 
         public int getTeamId() {
             return teamId;
@@ -155,12 +138,12 @@ public class PushTO {
             this.messageContent = messageContent;
         }
 
-        public Mention getMention() {
-            return mention;
+        public List<Mention> getMentions() {
+            return mentions;
         }
 
-        public void setMention(Mention mention) {
-            this.mention = mention;
+        public void setMentions(List<Mention> mentions) {
+            this.mentions = mentions;
         }
 
         public int getWriterId() {
@@ -195,11 +178,14 @@ public class PushTO {
             this.createdAt = createdAt;
         }
 
+        public boolean hasMentions() {
+            return mentions != null && !mentions.isEmpty();
+        }
+
         @Override
         public String toString() {
             return "PushInfo{" +
-                    "badge=" + badge +
-                    ", teamId=" + teamId +
+                    "teamId=" + teamId +
                     ", teamName='" + teamName + '\'' +
                     ", roomId=" + roomId +
                     ", roomName='" + roomName + '\'' +
@@ -207,42 +193,11 @@ public class PushTO {
                     ", messageId=" + messageId +
                     ", messageType=" + messageType +
                     ", messageContent='" + messageContent + '\'' +
-                    ", mention=" + mention +
+                    ", mentions=" + mentions +
                     ", writerId=" + writerId +
                     ", writerName='" + writerName + '\'' +
                     ", writerThumb='" + writerThumb + '\'' +
                     ", createdAt='" + createdAt + '\'' +
-                    '}';
-        }
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class Alarm {
-        private boolean topicSubscription = true;
-        private boolean platformActive = false;
-
-        public boolean isTopicSubscription() {
-            return topicSubscription;
-        }
-
-        public void setTopicSubscription(boolean topicSubscription) {
-            this.topicSubscription = topicSubscription;
-        }
-
-        public boolean isPlatformActive() {
-            return platformActive;
-        }
-
-        public void setPlatformActive(boolean platformActive) {
-            this.platformActive = platformActive;
-        }
-
-        @Override
-        public String toString() {
-            return "Alarm{" +
-                    "topicSubscription=" + topicSubscription +
-                    ", platformActive=" + platformActive +
                     '}';
         }
     }

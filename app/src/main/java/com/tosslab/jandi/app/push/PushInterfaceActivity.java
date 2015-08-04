@@ -36,6 +36,7 @@ import retrofit.RetrofitError;
  */
 @EActivity(R.layout.activity_intro)
 public class PushInterfaceActivity extends AppCompatActivity {
+    public static final String TAG = "JANDI.PushInterfaceActivity";
 
     public static final String EXTRA_USED = "used";
     // Push -> 선택된 엔티티 설정이 안됨에 따라...
@@ -62,6 +63,9 @@ public class PushInterfaceActivity extends AppCompatActivity {
             ResConfig config = jandiInterfaceModel.getConfigInfo();
 
             int installedAppVersion = jandiInterfaceModel.getInstalledAppVersion(getApplicationContext());
+
+            LogUtil.i(TAG, "installedAppVersion - " + installedAppVersion
+                    + " config.versions.android - " + config.versions.android);
 
             if (config.maintenance != null && config.maintenance.status) {
                 showMaintenanceDialog();
@@ -107,7 +111,7 @@ public class PushInterfaceActivity extends AppCompatActivity {
 
     @Background(serial = "push_interface_activity_background")
     public void checkTeamAndMoveToNextActivity() {
-        LogUtil.i("PushInterfaceActivity - Update is not necessary.");
+        LogUtil.i(TAG, "Upgrade is not necessary.");
 
         boolean used = (getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
 

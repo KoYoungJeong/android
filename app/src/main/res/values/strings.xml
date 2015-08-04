@@ -173,6 +173,9 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="modify_message">"Edit message"</string>
     <string name="today">"Today"</string>
 
+    <!-- Mention -->
+    <string name="jandi_mention_push_message">"%s mentioned you"</string>
+
     <!-- File Detail Activity -->
     <string name="jandi_action_download">"Download"</string>
     <string name="jandi_action_unshare">"Unshare"</string>
