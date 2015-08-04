@@ -16,6 +16,9 @@ import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
+import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.api.BackgroundExecutor;
 
