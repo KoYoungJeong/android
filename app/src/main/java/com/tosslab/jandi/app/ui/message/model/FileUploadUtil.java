@@ -32,6 +32,7 @@ import java.net.URLConnection;
 /**
  * Created by Steve SeongUg Jung on 14. 12. 10..
  */
+@Deprecated
 public class FileUploadUtil {
 
     public static void uploadStart(ConfirmFileUploadEvent event, Context context, ChattingInfomations chattingInfomations, final UploadCallback uploadCallback) {

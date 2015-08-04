@@ -231,6 +231,7 @@ public class MessageListModel {
         return EntityManager.getInstance(activity).getMe().getId() == writerId;
     }
 
+    @Deprecated
     public JsonObject uploadFile(ConfirmFileUploadEvent event, ProgressDialog progressDialog, boolean isPublicTopic) throws ExecutionException, InterruptedException {
         File uploadFile = new File(event.realFilePath);
         String requestURL = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/v2/file";

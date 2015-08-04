@@ -252,6 +252,17 @@
 
         </activity>
 
+        <activity
+            android:name=".ui.starmention.StarMentionListActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_starred_stars"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <service android:name=".services.socket.JandiSocketService"/>
         <receiver
             android:name=".services.socket.monitor.SocketServiceStarter"
