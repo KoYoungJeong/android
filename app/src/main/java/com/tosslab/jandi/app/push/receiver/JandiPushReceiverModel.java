@@ -239,9 +239,7 @@ public class JandiPushReceiverModel {
             String mention =
                     context.getResources().getString(R.string.jandi_mention_push_message, writerName);
             sb.append(mention + "\n");
-            sb.append(message + "\n");
-            sb.append(roomName + " / " + badgeCount);
-
+            sb.append(message);
             message = sb.toString();
         }
 
