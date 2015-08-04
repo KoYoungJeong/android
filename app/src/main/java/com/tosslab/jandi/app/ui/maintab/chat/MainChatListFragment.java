@@ -65,6 +65,9 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     @ViewById(R.id.layout_main_chat_list_empty)
     View emptyView;
 
+    @ViewById(R.id.btn_main_chat_fab)
+    View btnFAB;
+
     MainChatListAdapter mainChatListAdapter;
     private boolean foreground;
 
@@ -81,7 +84,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         chatListView.setEmptyView(emptyView);
         chatListView.setAdapter(mainChatListAdapter);
 
-        FAButtonUtil.setFAButtonController(chatListView, getView().findViewById(R.id.btn_main_chat_fab));
+        FAButtonUtil.setFAButtonController(chatListView, btnFAB);
 
         mainChatListPresenter.onInitChatList(getActivity(), selectedEntity);
 
@@ -97,8 +100,13 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     public void onResume() {
         super.onResume();
         foreground = true;
+        
+        btnFAB.setAnimation(null);
+        btnFAB.setVisibility(View.VISIBLE);
+
         mainChatListAdapter.startAnimation();
         mainChatListPresenter.onReloadChatList(JandiApplication.getContext());
+
     }
 
     @Override

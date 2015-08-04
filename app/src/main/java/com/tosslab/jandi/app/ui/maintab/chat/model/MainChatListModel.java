@@ -16,7 +16,6 @@ import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import retrofit.RetrofitError;
@@ -58,7 +57,7 @@ public class MainChatListModel {
 
         List<ChatItem> chatItems = new ArrayList<ChatItem>();
 
-        Iterator<ChatItem> iterator = Observable.from(chatList)
+        Observable.from(chatList)
                 .filter(resChat -> EntityManager.getInstance(context).getEntityById(resChat.getCompanionId()) != null)
                 .map(resChat -> {
 
@@ -79,13 +78,8 @@ public class MainChatListModel {
 
                     return chatItem;
                 })
-
-                .toBlocking()
-                .getIterator();
-
-        while (iterator.hasNext()) {
-            chatItems.add(iterator.next());
-        }
+                .collect(() -> chatItems, List::add)
+                .subscribe();
 
         return chatItems;
     }
