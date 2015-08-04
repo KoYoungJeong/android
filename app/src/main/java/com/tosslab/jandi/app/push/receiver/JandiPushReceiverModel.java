@@ -240,8 +240,6 @@ public class JandiPushReceiverModel {
                     context.getResources().getString(R.string.jandi_mention_push_message, writerName);
             sb.append(mention + "\n");
             sb.append(message + "\n");
-            sb.append(roomName + " / " + badgeCount);
-
             message = sb.toString();
         }
 
