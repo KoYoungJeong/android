@@ -20,6 +20,7 @@ import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
@@ -68,7 +69,7 @@ public class StickerApiClientTest {
         resSticker = stickers.get((int) (Math.random() * stickers.size()));
         resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(ReqSendSticker.create
                 (resSticker.groupId, resSticker.stickerId, teamId, entity.id, type, "test sticker with " +
-                        "message"), null);
+                        "message", new ArrayList<>()));
         assertNotNull(resCommon);
     }
 
