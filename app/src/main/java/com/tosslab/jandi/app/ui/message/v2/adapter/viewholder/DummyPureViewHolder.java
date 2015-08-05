@@ -1,7 +1,10 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.graphics.drawable.Drawable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ImageSpan;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -15,12 +18,10 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 public class DummyPureViewHolder implements BodyViewHolder {
 
     private TextView messageTextView;
-    private ImageView ivStatus;
 
     @Override
     public void initView(View rootView) {
         messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
-        ivStatus = ((ImageView) rootView.findViewById(R.id.iv_message_sending_status));
     }
 
     @Override
@@ -28,29 +29,53 @@ public class DummyPureViewHolder implements BodyViewHolder {
 
         DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
-            messageTextView.setText(textMessage.content.body);
+            builder.append(textMessage.content.body);
         }
 
         SendMessage.Status status = SendMessage.Status.valueOf(dummyMessageLink.getStatus());
         int textColor = messageTextView.getContext().getResources().getColor(R.color.jandi_messages_name);
         switch (status) {
-            case FAIL:
-                ivStatus.setVisibility(View.VISIBLE);
-                ivStatus.setImageResource(R.drawable.jandi_icon_message_failure);
-                messageTextView.setTextColor(textColor & 0x30FFFFFF);
-                break;
-            case SENDING:
-                ivStatus.setVisibility(View.VISIBLE);
-                ivStatus.setImageResource(R.drawable.jandi_icon_message_sending);
+            case FAIL: {
+                builder.append("  ");
+                int beforLenghth = builder.length();
+                Drawable drawable = messageTextView.getContext()
+                        .getDrawable(R.drawable.jandi_icon_message_failure);
+                drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable
+                        .getIntrinsicHeight());
+                builder.append(" ")
+                        .setSpan(
+                                new ImageSpan(drawable,
+                                        ImageSpan.ALIGN_BASELINE),
+                                beforLenghth, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 messageTextView.setTextColor(textColor);
                 break;
+            }
+            case SENDING: {
+                builder.append("  ");
+                int beforLenghth = builder.length();
+                Drawable drawable = messageTextView.getContext()
+                        .getDrawable(R.drawable.jandi_icon_message_sending);
+                drawable.setBounds(0, 0,
+                        drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+                builder.append(" ")
+                        .setSpan(
+                                new ImageSpan(drawable,
+                                        ImageSpan.ALIGN_BASELINE),
+                                beforLenghth, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                messageTextView.setTextColor(textColor);
+                break;
+            }
             case COMPLETE:
-                ivStatus.setVisibility(View.INVISIBLE);
                 messageTextView.setTextColor(textColor);
                 break;
         }
+
+        messageTextView.setText(builder);
+
 
     }
 

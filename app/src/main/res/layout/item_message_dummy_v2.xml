@@ -46,6 +46,7 @@
         android:id="@+id/txt_message_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginRight="40dp"
         android:layout_below="@+id/ly_message_default"
         android:layout_toLeftOf="@+id/iv_message_sending_status"
         android:layout_toRightOf="@+id/img_message_user_profile"
@@ -55,16 +56,4 @@
         android:textSize="@dimen/jandi_messages_content"/>
 
 
-    <ImageView
-        android:id="@+id/iv_message_sending_status"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/txt_message_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/txt_message_content"
-        android:layout_centerVertical="true"
-        android:paddingLeft="10.5dp"
-        android:paddingRight="10.5dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/jandi_icon_message_failure"/>
 </RelativeLayout>

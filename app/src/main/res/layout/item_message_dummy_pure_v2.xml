@@ -22,23 +22,12 @@
         android:layout_below="@+id/ly_message_default"
         android:layout_centerVertical="true"
         android:layout_marginLeft="43dp"
+        android:layout_marginRight="40dp"
         android:layout_toLeftOf="@+id/iv_message_sending_status"
         android:gravity="center_vertical"
         android:minHeight="19dp"
         android:text="Text"
         android:textColor="@color/jandi_messages_content"
         android:textSize="@dimen/jandi_messages_content"/>
-
-    <ImageView
-        android:id="@+id/iv_message_sending_status"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/txt_message_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/txt_message_content"
-        android:layout_centerVertical="true"
-        android:paddingLeft="10.5dp"
-        android:paddingRight="10.5dp"
-        android:src="@drawable/jandi_icon_message_failure"/>
 
 </RelativeLayout>

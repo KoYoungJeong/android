@@ -197,7 +197,7 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
             message.messageType = ResMessages.MessageType.FILE.name();
 
             DaoManager.createDao(connectionSource, ResMessages.FileMessage.class)
-                    .create(((ResMessages.FileMessage) contentMessage));
+                    .createOrUpdate(((ResMessages.FileMessage) contentMessage));
         } else if (contentMessage instanceof ResMessages.CommentStickerMessage) {
             message.messageType = ResMessages.MessageType.COMMENT_STICKER.name();
             ResMessages.CommentStickerMessage stickerMessage = (ResMessages.CommentStickerMessage) contentMessage;
@@ -218,7 +218,7 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
                     .createOrUpdate(stickerMessage);
 
             DaoManager.createDao(connectionSource, ResMessages.FileMessage.class)
-                    .create(message.feedback);
+                    .createOrUpdate(message.feedback);
         } else if (contentMessage instanceof ResMessages.CommentMessage) {
             message.messageType = ResMessages.MessageType.COMMENT.name();
 
@@ -252,7 +252,7 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
                     .createOrUpdate(commentMessage);
 
             DaoManager.createDao(connectionSource, ResMessages.FileMessage.class)
-                    .create(message.feedback);
+                    .createOrUpdate(message.feedback);
 
         }
     }
