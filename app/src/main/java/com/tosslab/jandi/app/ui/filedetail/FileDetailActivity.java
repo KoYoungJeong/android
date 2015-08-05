@@ -447,6 +447,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         /**
          * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
          */
+        LogUtil.e("ahh?", "ahh");
         View view = getLayoutInflater().inflate(R.layout.dialog_select_cdp, null);
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -457,7 +458,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
         // 현재 이 파일을 share 하지 않는 entity를 추출
         final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, unSharedEntities);
+
         lv.setAdapter(adapter);
+
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long id) {
@@ -467,6 +470,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                 fileDetailPresenter.shareMessage(fileId, unSharedEntities.get(i).getEntity().id);
             }
         });
+
     }
 
     @UiThread

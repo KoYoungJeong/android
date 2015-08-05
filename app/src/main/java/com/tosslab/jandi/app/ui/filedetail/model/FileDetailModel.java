@@ -349,6 +349,7 @@ public class FileDetailModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
     }
+
     public void registStarredMessage(int teamId, int messageId) throws RetrofitError {
         try {
             RequestApiManager.getInstance()
