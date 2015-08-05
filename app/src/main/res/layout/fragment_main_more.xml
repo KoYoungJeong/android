@@ -188,7 +188,36 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/jandi_background_default" />
+        android:background="@color/jandi_background_default" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="JANDI"
+                android:textColor="@color/jandi_text_medium" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="3dp"
+                android:text="TOSS LAB, INC."
+                android:textColor="@color/jandi_text_light" />
+
+            <TextView
+                android:id="@+id/txt_more_jandi_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/jandi_text_medium" />
+
+        </LinearLayout>
+    </LinearLayout>
 
 
 </LinearLayout>
