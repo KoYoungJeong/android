@@ -1,7 +1,13 @@
 package com.tosslab.jandi.lib.sprinkler.io;
 
+import com.tosslab.jandi.lib.sprinkler.Logger;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import retrofit.client.Request;
 import retrofit.client.UrlConnectionClient;
@@ -19,6 +25,7 @@ final class RequestUrlConnectionClient extends UrlConnectionClient {
         HttpURLConnection connection = super.openConnection(request);
         connection.setConnectTimeout(CONNECTION_TIMEOUT);
         connection.setReadTimeout(READ_TIMEOUT);
-        return super.openConnection(request);
+        connection.addRequestProperty("Connection", "close");
+        return connection;
     }
 }
