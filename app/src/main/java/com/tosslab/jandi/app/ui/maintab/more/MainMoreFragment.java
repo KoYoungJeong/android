@@ -2,9 +2,11 @@ package com.tosslab.jandi.app.ui.maintab.more;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.Menu;
+import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiApplication;
@@ -37,6 +39,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
 
@@ -59,8 +62,8 @@ public class MainMoreFragment extends Fragment {
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
 
-//    @ViewById(R.id.txt_more_jandi_version)
-//    TextView textViewJandiVersion;
+    @ViewById(R.id.txt_more_jandi_version)
+    TextView textViewJandiVersion;
 
     private EntityManager mEntityManager;
 
@@ -84,8 +87,8 @@ public class MainMoreFragment extends Fragment {
                         .build());
 
         profileIconView = (IconWithTextView) getView().findViewById(R.id.ly_more_profile);
-//
-//        showJandiVersion();
+
+        showJandiVersion();
     }
 
     @Override
@@ -112,15 +115,15 @@ public class MainMoreFragment extends Fragment {
         menu.clear();
     }
 
-//    private void showJandiVersion() {
-//        try {
-//            String packageName = getActivity().getPackageName();
-//            String versionName = getActivity().getPackageManager().getPackageInfo(packageName, 0).versionName;
-//            textViewJandiVersion.setText("v." + versionName);
-//        } catch (PackageManager.NameNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private void showJandiVersion() {
+        try {
+            String packageName = getActivity().getPackageName();
+            String versionName = getActivity().getPackageManager().getPackageInfo(packageName, 0).versionName;
+            textViewJandiVersion.setText("v." + versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Click(R.id.ly_more_profile)
     public void moveToProfileActivity() {

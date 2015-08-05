@@ -6,6 +6,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.tosslab.jandi.app.local.orm.dao.FileMessageDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.LinkDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.AnnounceCreateEventDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.CreateEventDaoImpl;
@@ -290,7 +291,7 @@ public class ResMessages {
         public TextContent content;
     }
 
-    @DatabaseTable(tableName = "message_file")
+    @DatabaseTable(tableName = "message_file", daoClass = FileMessageDaoImpl.class)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class FileMessage extends OriginalMessage {
