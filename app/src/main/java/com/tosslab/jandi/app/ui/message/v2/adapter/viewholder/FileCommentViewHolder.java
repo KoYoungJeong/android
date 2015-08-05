@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
+import com.tosslab.jandi.app.views.spannable.MensionMessageSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import de.greenrobot.event.EventBus;
@@ -198,7 +199,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                         new NameSpannable(
                                 context.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_small)
                                 , context.getResources().getColor(R.color.jandi_accent_color));
-                builder.append(" ");
+                builder.append("  ");
                 int beforeLength = builder.length();
                 builder.append(" ");
                 builder.append(String.valueOf(unreadCount))
@@ -206,13 +207,26 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
+
+            boolean hasMention = false;
             for (MentionObject mention : commentMessage.mentions) {
                 String name = builder.subSequence(mention.getOffset() + 1, mention.getLength() +
                         mention.getOffset()).toString();
-                MensionCommentSpannable spannable1 = new MensionCommentSpannable(commentTextView.getContext(), name);
+                MensionMessageSpannable spannable1 = new MensionMessageSpannable(commentTextView
+                        .getContext(), name, mention.getId(),
+                        commentTextView.getResources().getDimensionPixelSize(R.dimen.jandi_mention_comment_item_font_size));
                 builder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention
                         .getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                if (!hasMention) {
+                    hasMention = true;
+                }
             }
+
+            if (hasMention) {
+                LinkifyUtil.setOnLinkClick(commentTextView);
+            }
+
 
             if (hasLink) {
                 commentTextView.setText(

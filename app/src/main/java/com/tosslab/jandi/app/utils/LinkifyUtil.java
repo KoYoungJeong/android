@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.regex.Regex;
+import com.tosslab.jandi.app.views.spannable.MensionMessageSpannable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,6 +107,18 @@ public class LinkifyUtil {
 
                         return true;
                     }
+
+                    MensionMessageSpannable[] mention = buffer.getSpans(off, off,
+                            MensionMessageSpannable.class);
+
+                    if (mention.length != 0) {
+                        if (action == MotionEvent.ACTION_UP) {
+                            mention[0].onClick();
+                        }
+
+                        return true;
+                    }
+
                 }
 
                 return false;

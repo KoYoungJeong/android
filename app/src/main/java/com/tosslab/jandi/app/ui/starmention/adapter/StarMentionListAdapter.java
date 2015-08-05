@@ -10,7 +10,6 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshOldStarMentionedEvent;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.MensionMessageSpannable;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.viewholder.CommentStarMentionViewHolder;
 import com.tosslab.jandi.app.ui.starmention.viewholder.CommonStarMentionViewHolder;
@@ -20,6 +19,8 @@ import com.tosslab.jandi.app.ui.starmention.viewholder.RecyclerViewFactory;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.views.spannable.MensionMessageSpannable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,19 +71,29 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
 
             SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder(starMentionVO.getContent());
 
+            boolean hasMention = false;
             for (MentionObject mention : starMentionVO.getMentions()) {
                 try {
                     String name = messageStringBuilder.subSequence(mention.getOffset() + 1,
                             mention.getLength() + mention.getOffset()).toString();
 
                     MensionMessageSpannable spannable1 = new MensionMessageSpannable(
-                            viewHolder.getStarMentionContentView().getContext(), name);
+                            viewHolder.getStarMentionContentView().getContext(), name, mention.getId(), viewHolder.getStarMentionContentView()
+                            .getResources().getDimensionPixelSize(R.dimen.jandi_mention_message_item_font_size));
 
                     messageStringBuilder.setSpan(spannable1, mention.getOffset(), mention.getLength() +
                             mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
                 }
+
+                if (!hasMention) {
+                    hasMention =true;
+                }
+            }
+
+            if (hasMention) {
+                LinkifyUtil.setOnLinkClick(viewHolder.getStarMentionContentView());
             }
 
             viewHolder.getStarMentionContentView().setText(messageStringBuilder);
@@ -94,17 +105,28 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
             SpannableStringBuilder commentStringBuilder = new SpannableStringBuilder
                     (starMentionVO.getContent());
 
+            boolean hasMention = false;
             for (MentionObject mention : starMentionVO.getMentions()) {
                 try {
                     String name = commentStringBuilder.subSequence(mention.getOffset() + 1,
                             mention.getLength() + mention.getOffset()).toString();
                     MensionMessageSpannable spannable1 = new MensionMessageSpannable(viewHolder.
-                            getStarMentionCommentView().getContext(), name);
+                            getStarMentionCommentView().getContext(), name, mention.getId(),
+                            viewHolder.getStarMentionCommentView().getResources()
+                                    .getDimensionPixelSize(R.dimen.jandi_mention_message_item_font_size));
                     commentStringBuilder.setSpan(spannable1, mention.getOffset(), mention.getLength() +
                             mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
                 }
+
+                if (!hasMention) {
+                    hasMention = true;
+                }
+            }
+
+            if (hasMention) {
+                LinkifyUtil.setOnLinkClick(viewHolder.getStarMentionCommentView());
             }
 
             viewHolder.getStarMentionCommentView().setText(commentStringBuilder);

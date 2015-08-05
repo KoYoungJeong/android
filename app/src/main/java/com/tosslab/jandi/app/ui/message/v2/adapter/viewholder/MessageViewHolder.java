@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
+import com.tosslab.jandi.app.views.spannable.MensionMessageSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import de.greenrobot.event.EventBus;
@@ -132,10 +133,20 @@ public class MessageViewHolder implements BodyViewHolder {
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
+            boolean hasMention = false;
             for (MentionObject mention : textMessage.mentions) {
                 String name = messageStringBuilder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
-                MensionMessageSpannable spannable1 = new MensionMessageSpannable(messageTextView.getContext(), name);
+                MensionMessageSpannable spannable1 = new MensionMessageSpannable(messageTextView.getContext(),
+                        name, mention.getId(),
+                        messageTextView.getResources().getDimensionPixelSize(R.dimen.jandi_mention_message_item_font_size));
                 messageStringBuilder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if (!hasMention) {
+                    hasMention = true;
+                }
+            }
+
+            if (hasMention) {
+                LinkifyUtil.setOnLinkClick(messageTextView);
             }
 
             messageTextView.setText(messageStringBuilder);
