@@ -66,6 +66,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
@@ -916,6 +917,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             int fileId = data.getIntExtra(EXTRA_FILE_ID, -1);
             if (fileId != -1) {
                 messageListPresenter.changeToArchive(fileId);
+                MessageRepository.getRepository().updateStatus(fileId, "archived");
             }
         } else {
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
@@ -1088,6 +1090,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public void onEvent(DeleteFileEvent event) {
 
         messageListPresenter.changeToArchive(event.getId());
+        MessageRepository.getRepository().updateStatus(event.getId(), "archived");
     }
 
     public void onEvent(FileCommentRefreshEvent event) {

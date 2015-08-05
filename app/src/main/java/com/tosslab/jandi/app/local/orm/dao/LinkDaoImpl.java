@@ -196,7 +196,8 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
         } else if (contentMessage instanceof ResMessages.FileMessage) {
             message.messageType = ResMessages.MessageType.FILE.name();
 
-            upsertFileMessage((ResMessages.FileMessage) contentMessage, connectionSource);
+            DaoManager.createDao(connectionSource, ResMessages.FileMessage.class)
+                    .create(((ResMessages.FileMessage) contentMessage));
         } else if (contentMessage instanceof ResMessages.CommentStickerMessage) {
             message.messageType = ResMessages.MessageType.COMMENT_STICKER.name();
             ResMessages.CommentStickerMessage stickerMessage = (ResMessages.CommentStickerMessage) contentMessage;
@@ -216,8 +217,8 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
             DaoManager.createDao(connectionSource, ResMessages.CommentStickerMessage.class)
                     .createOrUpdate(stickerMessage);
 
-            upsertFileMessage(message.feedback, connectionSource);
-
+            DaoManager.createDao(connectionSource, ResMessages.FileMessage.class)
+                    .create(message.feedback);
         } else if (contentMessage instanceof ResMessages.CommentMessage) {
             message.messageType = ResMessages.MessageType.COMMENT.name();
 
@@ -250,35 +251,10 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
             DaoManager.createDao(connectionSource, ResMessages.CommentMessage.class)
                     .createOrUpdate(commentMessage);
 
-            upsertFileMessage(message.feedback, connectionSource);
+            DaoManager.createDao(connectionSource, ResMessages.FileMessage.class)
+                    .create(message.feedback);
 
         }
-    }
-
-    private void upsertFileMessage(ResMessages.FileMessage fileMessage, ConnectionSource connectionSource)
-            throws SQLException {
-
-        Dao<ResMessages.OriginalMessage.IntegerWrapper, ?> dao = DaoManager.createDao
-                (connectionSource, ResMessages
-                        .OriginalMessage
-                        .IntegerWrapper.class);
-        DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
-        deleteBuilder.where().eq("fileOf_id", fileMessage.id);
-        deleteBuilder.delete();
-
-        for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : fileMessage.shareEntities) {
-            shareEntity.setFileOf(fileMessage);
-            dao.create(shareEntity);
-        }
-
-
-        DaoManager.createDao(connectionSource, ResMessages.FileContent.class).createOrUpdate
-                (fileMessage.content);
-        DaoManager.createDao(connectionSource, ResMessages.ThumbnailUrls.class).createOrUpdate
-                (fileMessage.content
-                        .extraInfo);
-        DaoManager.createDao(connectionSource, ResMessages.FileMessage.class).createOrUpdate
-                (fileMessage);
     }
 
     private void queryMessage(ResMessages.Link link) throws SQLException {
@@ -426,10 +402,5 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
                 return info;
         }
 
-    }
-
-    @Override
-    public ResMessages.Link queryForFirst(PreparedQuery<ResMessages.Link> preparedQuery) throws SQLException {
-        return super.queryForFirst(preparedQuery);
     }
 }

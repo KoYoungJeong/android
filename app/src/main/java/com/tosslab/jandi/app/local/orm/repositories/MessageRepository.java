@@ -175,4 +175,30 @@ public class MessageRepository {
         }
         return 0;
     }
+
+    public void updateStatus(int fileId, String archived) {
+        try {
+            Dao<ResMessages.FileMessage, Integer> dao = helper.getDao(ResMessages.FileMessage
+                    .class);
+            if (dao.idExists(fileId)) {
+                UpdateBuilder<ResMessages.FileMessage, Integer> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnValue("status", archived);
+                updateBuilder.where()
+                        .eq("id", fileId);
+                updateBuilder.update();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void upsertFileMessage(ResMessages.FileMessage fileMessage) {
+        Dao<ResMessages.FileMessage, ?> dao = null;
+        try {
+            dao = helper.getDao(ResMessages.FileMessage.class);
+            dao.createOrUpdate(fileMessage);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

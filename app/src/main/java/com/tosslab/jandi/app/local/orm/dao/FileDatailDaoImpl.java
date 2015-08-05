@@ -23,7 +23,8 @@ public class FileDatailDaoImpl extends BaseDaoImpl<FileDetail, Long> {
     @Override
     public int create(FileDetail data) throws SQLException {
 
-        upsertFileMessage(data.getFile());
+        DaoManager.createDao(getConnectionSource(), ResMessages.FileMessage.class)
+                .createOrUpdate(data.getFile());
 
         if (data.getComment() != null) {
             data.setCommentType(FileDetail.CommentType.TEXT.name());
@@ -78,6 +79,10 @@ public class FileDatailDaoImpl extends BaseDaoImpl<FileDetail, Long> {
 
     @Override
     public int update(FileDetail data) throws SQLException {
+
+        DaoManager.createDao(getConnectionSource(), ResMessages.FileMessage.class)
+                .createOrUpdate(data.getFile());
+
         if (data.getComment() != null) {
             data.setCommentType(FileDetail.CommentType.TEXT.name());
             upsertCommentMessage(data);
@@ -128,28 +133,5 @@ public class FileDatailDaoImpl extends BaseDaoImpl<FileDetail, Long> {
                 .queryForFirst();
 
     }
-
-    private void upsertFileMessage(ResMessages.FileMessage fileMessage) throws SQLException {
-
-        Dao<ResMessages.OriginalMessage.IntegerWrapper, ?> dao =
-                DaoManager.createDao(getConnectionSource(), ResMessages.OriginalMessage.IntegerWrapper.class);
-        DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
-        deleteBuilder.where().eq("fileOf_id", fileMessage.id);
-        deleteBuilder.delete();
-
-        for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : fileMessage.shareEntities) {
-            shareEntity.setFileOf(fileMessage);
-            dao.create(shareEntity);
-        }
-
-
-        DaoManager.createDao(getConnectionSource(), ResMessages.FileContent.class)
-                .createOrUpdate(fileMessage.content);
-        DaoManager.createDao(getConnectionSource(), ResMessages.ThumbnailUrls.class)
-                .createOrUpdate(fileMessage.content.extraInfo);
-        DaoManager.createDao(getConnectionSource(), ResMessages.FileMessage.class)
-                .createOrUpdate(fileMessage);
-    }
-
 
 }

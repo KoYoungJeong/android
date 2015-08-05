@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.local.orm.domain.FileDetail;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.FileDetailRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -384,6 +385,8 @@ public class FileDetailModel {
     public void saveFileDetailInfo(ResFileDetail resFileDetail) {
         ResMessages.FileMessage fileMessage = getFileMessage();
 
+        MessageRepository.getRepository().upsertFileMessage(fileMessage);
+
         Observable.from(resFileDetail.messageDetails)
                 .observeOn(Schedulers.io())
                 .onBackpressureBuffer()
@@ -396,6 +399,8 @@ public class FileDetailModel {
                         fileDetail.setSticker(((ResMessages.CommentStickerMessage) originalMessage));
                     } else if (originalMessage instanceof ResMessages.CommentMessage) {
                         fileDetail.setComment(((ResMessages.CommentMessage) originalMessage));
+                    } else {
+                        return null;
                     }
 
                     return fileDetail;
