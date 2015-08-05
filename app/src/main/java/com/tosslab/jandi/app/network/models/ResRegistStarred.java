@@ -10,7 +10,7 @@ import java.util.Date;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class ResStarred {
+public class ResRegistStarred {
     private int messageId;
     private int roomId;
     private int teamId;
@@ -59,7 +59,7 @@ public class ResStarred {
 
     @Override
     public String toString() {
-        return "ResStarred{" +
+        return "ResRegistStarred{" +
                 "messageId" + messageId +
                 "teamId=" + teamId +
                 ", roomId=" + roomId +

@@ -34,7 +34,7 @@
             android:gravity="center"
             android:orientation="vertical"
             android:text="@string/jandi_mention_mentions"
-            app:img="@drawable/icon_help" />
+            app:img="@drawable/icon_mentioned" />
 
         <com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView
             android:id="@+id/ly_more_starred"
@@ -67,7 +67,7 @@
             android:gravity="center"
             android:orientation="vertical"
             android:text="@string/jandi_team_member"
-            app:img="@drawable/jandi_icon_more_team" />
+            app:img="@drawable/icon_team_member" />
 
         <!-- invite -->
         <com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView
@@ -79,7 +79,7 @@
             android:gravity="center"
             android:orientation="vertical"
             android:text="@string/jandi_invitation"
-            app:img="@drawable/jandi_more_btn_invite" />
+            app:img="@drawable/icon_invite_member" />
 
         <!-- goto main -->
         <com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView

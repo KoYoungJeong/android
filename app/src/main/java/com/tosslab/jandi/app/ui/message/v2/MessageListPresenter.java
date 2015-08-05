@@ -811,6 +811,7 @@ public class MessageListPresenter {
         messageListAdapter.setEntityId(entityId);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void modifyStarredInfo(int messageId, boolean isStarred) {
         int position = messageListAdapter.getItemPositionByMessageId(messageId);
         messageListAdapter.modifyStarredStateByPosition(position, isStarred);

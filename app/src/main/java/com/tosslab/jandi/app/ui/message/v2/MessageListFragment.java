@@ -110,7 +110,6 @@ import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
-import com.tosslab.jandi.app.utils.imeissue.NewEditText;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -172,7 +171,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     Button sendButton;
 
     @ViewById(R.id.et_message)
-    NewEditText messageEditText;
+    EditText messageEditText;
 
     @ViewById(R.id.rv_list_search_members)
     RecyclerView rvListSearchMembers;

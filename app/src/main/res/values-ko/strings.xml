@@ -490,5 +490,6 @@
     <string name="jandi_mention_no_mentions">아직 다른 팀 멤버로부터 받은 멘션이 없습니다.</string>
     <string name="jandi_starred_no_all">즐겨찾기 한 메시지나 파일이 없습니다.</string>
     <string name="jandi_starred_no_file">즐겨찾기 한 파일이 없습니다.</string>
+    <string name="jandi_starred_unstar_from_item">즐겨찾기에서 해제 할까요?</string>
 
 </resources>

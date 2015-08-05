@@ -66,16 +66,17 @@ import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
+import com.tosslab.jandi.app.network.models.ResRegistStarred;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
-import com.tosslab.jandi.app.network.models.ResStarred;
+import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 
 import java.util.List;
@@ -626,12 +627,12 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResStarMentioned> loadGetMentionedMessagesByTeamApi(int teamId, int page, int perPage) {
-        return () -> authRestApiClient.getMentionedMessagesByTeamApi(teamId, page, perPage);
+    public IExecutor<ResStarMentioned> loadGetMentionedMessagesByTeamApi(int teamId, Integer messageId, int count) {
+        return () -> authRestApiClient.getMentionedMessagesByTeamApi(teamId, messageId, count);
     }
 
     @Override
-    public IExecutor<ResStarred> loadRegistStarredMessageByTeamApi(int teamId, int messageId) {
+    public IExecutor<StarMentionedMessageObject> loadRegistStarredMessageByTeamApi(int teamId, int messageId) {
         return () -> authRestApiClient.registStarredMessageByTeamApi(teamId, messageId);
     }
 
@@ -641,7 +642,7 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResStarMentioned> loadGetStarredMessagesByTeamApi(int teamId, String type, int page, int perPage) {
-        return () -> authRestApiClient.getStarredMessagesByTeamApi(teamId, type, page, perPage);
+    public IExecutor<ResStarMentioned> loadGetStarredMessagesByTeamApi(int teamId, Integer messageId, int count, String type) {
+        return () -> authRestApiClient.getStarredMessagesByTeamApi(teamId, messageId, count, type);
     }
 }

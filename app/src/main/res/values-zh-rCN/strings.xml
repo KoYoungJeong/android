@@ -457,8 +457,6 @@
 
 
     <!-- starred / mentioned -->
-
-
     <string name="jandi_starred_star">标示</string>
     <string name="jandi_mention_mentions">提及</string>
     <string name="jandi_mention_more">更多</string>
@@ -472,6 +470,7 @@
     <string name="jandi_mention_mentioned_you">提及你</string>
     <string name="jandi_mention_no_mentions">还没有人提及你</string>
     <string name="jandi_starred_no_all">还没有人提及你</string>
-    <string name="jandi_starred_no_file">No starred files</string>
+    <string name="jandi_starred_no_file">没有标示档案</string>
+    <string name="jandi_starred_unstar_from_item">你确定要取消标示吗？</string>
 
 </resources>

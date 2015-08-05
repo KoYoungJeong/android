@@ -5,18 +5,18 @@ import com.tosslab.jandi.app.network.manager.restapiclient.annotation.Authorized
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
 import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
-import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
+import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResStarred;
+import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.network.spring.JandiV3HttpMessageConverter;
 
 import java.util.List;
@@ -78,7 +78,7 @@ public interface TeamApiV2Client {
 
     @POST("/teams/{teamId}/messages/{messageId}/starred")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResStarred registStarredMessage(@Path("teamId") int teamId, @Path("messageId") int messageId, @Body ReqDeleteTopic reqDeleteTopic);
+    StarMentionedMessageObject registStarredMessage(@Path("teamId") int teamId, @Path("messageId") int messageId, @Body ReqNull reqNull);
 
     @DELETEWithBody("/teams/{teamId}/messages/{messageId}/starred")
     ResCommon unregistStarredMessage(@Path("teamId") int teamId, @Path("messageId") int messageId);
@@ -86,11 +86,11 @@ public interface TeamApiV2Client {
     @GET("/teams/{teamId}/messages/mentioned")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResStarMentioned getMentionedMessages(@Path("teamId") int teamId,
-                                      @Query("page") int page, @Query("perPage") int perPage);
+                                          @Query("messageId") Integer messageId, @Query("count") int count);
 
     @GET("/teams/{teamId}/messages/starred")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResStarMentioned getStarredMessages(@Path("teamId") int teamId, @Query("type") String type,
-                                    @Query("page") int page, @Query("perPage") int perPage);
+    ResStarMentioned getStarredMessages(@Path("teamId") int teamId, @Query("starredId") Integer starredId,
+                                        @Query("count") int count, @Query("type") String type);
 
 }

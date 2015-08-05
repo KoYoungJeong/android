@@ -64,6 +64,10 @@ public class FileDetailPresenter {
 
         EntityManager entityManager = EntityManager.getInstance(context);
 
+        for (int entity : fileDetail.shareEntities) {
+            FormattedEntity formattedEntity = entityManager.getEntityById(entity);
+            if (formattedEntity != null &&
+                    (formattedEntity.isPublicTopic() || formattedEntity.isPrivateGroup())) {
         for (ResMessages.OriginalMessage.IntegerWrapper entity : ((ResMessages.FileMessage) fileDetail).shareEntities) {
             FormattedEntity formattedEntity = entityManager.getEntityById(entity.getShareEntity());
             if (formattedEntity.isPublicTopic() || formattedEntity.isPrivateGroup()) {
@@ -451,22 +455,12 @@ public class FileDetailPresenter {
         return mentionControlViewModel;
     }
 
-    public void registStarredMessage(int teamId, int messageId) {
-        try {
-            fileDetailModel.registStarredMessage(teamId, messageId);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            throw e;
-        }
+    public void registStarredMessage(int teamId, int messageId) throws RetrofitError {
+        fileDetailModel.registStarredMessage(teamId, messageId);
     }
 
-    public void unregistStarredMessage(int teamId, int messageId) {
-        try {
-            fileDetailModel.unregistStarredMessage(teamId, messageId);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            throw e;
-        }
+    public void unregistStarredMessage(int teamId, int messageId) throws RetrofitError {
+        fileDetailModel.unregistStarredMessage(teamId, messageId);
     }
 
     public interface View {

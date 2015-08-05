@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.starmention;
 
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -12,15 +11,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.messages.RefreshOldStarMentionedEvent;
 import com.tosslab.jandi.app.ui.starmention.views.StarMentionListFragment;
 import com.tosslab.jandi.app.ui.starmention.views.StarMentionListFragment_;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by tee on 15. 7. 28..

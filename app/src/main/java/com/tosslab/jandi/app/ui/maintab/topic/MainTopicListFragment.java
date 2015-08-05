@@ -309,4 +309,5 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         }
         mainTopicListPresenter.onInitTopics(getActivity());
     }
+
 }

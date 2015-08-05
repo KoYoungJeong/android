@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.starmention.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -67,17 +66,15 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
             MessageStarMentionViewHolder viewHolder = (MessageStarMentionViewHolder) holder;
             viewHolder.getStarMentionTopicNameView().setText(starMentionVO.getRoomName());
 
-            SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
-            messageStringBuilder.append(!TextUtils.isEmpty(starMentionVO.getContent()) ?
-                    starMentionVO.getContent() : "");
+            SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder(starMentionVO.getContent());
 
             for (MentionObject mention : starMentionVO.getMentions()) {
                 try {
                     String name = messageStringBuilder.subSequence(mention.getOffset() + 1,
                             mention.getLength() + mention.getOffset()).toString();
 
-                    MensionMessageSpannable spannable1 = new MensionMessageSpannable(viewHolder.
-                            getStarMentionContentView().getContext(), name);
+                    MensionMessageSpannable spannable1 = new MensionMessageSpannable(
+                            viewHolder.getStarMentionContentView().getContext(), name);
 
                     messageStringBuilder.setSpan(spannable1, mention.getOffset(), mention.getLength() +
                             mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
