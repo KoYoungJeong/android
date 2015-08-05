@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.detail.model;
 import android.content.Context;
 import android.support.v7.app.AlertDialog;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
@@ -11,8 +12,13 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -76,12 +82,17 @@ public class LeaveViewModel {
             trackLeavingEntity(entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity
                     .isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE);
 
+            trackTopicLeaveSuccess(entityId);
+
             EventBus.getDefault().post(new TopicLeaveEvent());
 
         } catch (RetrofitError e) {
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            trackTopicLeaveFail(errorCode);
             e.printStackTrace();
             leaveEntityFailed(context.getString(R.string.err_entity_leave));
         } catch (Exception e) {
+            trackTopicLeaveFail(-1);
             e.printStackTrace();
             leaveEntityFailed(context.getString(R.string.err_entity_leave));
         }
@@ -96,6 +107,28 @@ public class LeaveViewModel {
         } catch (JSONException e) {
             LogUtil.e("CANNOT MEET", e);
         }
+    }
+
+    private void trackTopicLeaveSuccess(int entityId) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.TopicLeave)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TopicId, entityId)
+                        .build());
+    }
+
+    private void trackTopicLeaveFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.TopicLeave)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
     }
 
     @UiThread

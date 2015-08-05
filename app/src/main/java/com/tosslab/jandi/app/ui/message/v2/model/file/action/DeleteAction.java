@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.model.file.action;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.v7.app.AlertDialog;
 
 import com.tosslab.jandi.app.R;

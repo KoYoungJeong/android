@@ -22,6 +22,8 @@ import com.tosslab.jandi.app.network.client.messages.comments.CommentsApiV2Clien
 import com.tosslab.jandi.app.network.client.messages.comments.ICommentsApiAuth;
 import com.tosslab.jandi.app.network.client.messages.search.IMessageSearchApiAuth;
 import com.tosslab.jandi.app.network.client.messages.search.MessagesSearchApiV2Client;
+import com.tosslab.jandi.app.network.client.platform.IPlatformApiAuth;
+import com.tosslab.jandi.app.network.client.platform.PlatformApiV2Client;
 import com.tosslab.jandi.app.network.client.privatetopic.GroupApiV2Client;
 import com.tosslab.jandi.app.network.client.privatetopic.IGroupApiAuth;
 import com.tosslab.jandi.app.network.client.privatetopic.messages.GroupMessageApiV2Client;
@@ -62,6 +64,7 @@ import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
+import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
@@ -69,6 +72,7 @@ import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
+import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
@@ -101,7 +105,7 @@ import retrofit.RetrofitError;
 public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth, IAccountEmailsApiAuth, IAccountPasswordApiAuth,
         IChatApiAuth, IDirectMessageApiAuth, IInvitationApiAuth, IMainRestApiAuth, ICommentsApiAuth, IMessageSearchApiAuth,
         IMessagesApiAuth, IGroupMessageApiAuth, IGroupApiAuth, IProfileApiAuth, IChannelMessageApiAuth, IChannelApiAuth,
-        IRoomsApiAuth, IAccountProfileApiAuth, IStarredEntityApiAuth, IStickerApiAuth, ITeamApiAuth, IFileApiAuth {
+        IRoomsApiAuth, IAccountProfileApiAuth, IStarredEntityApiAuth, IStickerApiAuth, ITeamApiAuth, IFileApiAuth, IPlatformApiAuth {
 
     @Override
     public ResAccountInfo registerNotificationTokenByAccountDeviceApi(ReqNotificationRegister reqNotificationRegister) throws RetrofitError {
@@ -575,5 +579,10 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     public ResStarMentioned getStarredMessagesByTeamApi(int teamId, Integer starredId, int count, String type) throws RetrofitError {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getStarredMessages(teamId,
                 starredId, count, type);
+    }
+    
+    @Override
+    public ResCommon updatePlatformStatus(ReqUpdatePlatformStatus reqUpdatePlatformStatus) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(PlatformApiV2Client.class).create().updatePlatformStatus(reqUpdatePlatformStatus);
     }
 }

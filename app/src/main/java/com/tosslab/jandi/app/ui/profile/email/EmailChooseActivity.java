@@ -81,8 +81,14 @@ public class EmailChooseActivity extends AppCompatActivity {
         try {
             ResAccountInfo resAccountInfo = emailChooseModel.updatePrimaryEmail(selectedEmail);
             AccountRepository.getRepository().upsertUserEmail(resAccountInfo.getEmails());
+            
+            String accountId = resAccountInfo.getId();
+            emailChooseModel.trackChangeAccountEmailSuccess(accountId);
+            
             emailChoosePresenter.finishWithResultOK();
         } catch (RetrofitError e) {
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            emailChooseModel.trackChangeAccountEmailFail(errorCode);
             e.printStackTrace();
             emailChoosePresenter.showFailToast(getString(R.string.err_network));
         } catch (SQLException e) {
@@ -216,9 +222,14 @@ public class EmailChooseActivity extends AppCompatActivity {
         try {
             ResAccountInfo resAccountInfo = emailChooseModel.requestNewEmail(email);
             AccountRepository.getRepository().upsertUserEmail(resAccountInfo.getEmails());
+ 
+            emailChooseModel.trackRequestVerifyEmailSuccess();
+            
             emailChoosePresenter.refreshEmails(emailChooseModel.getAccountEmails());
             emailChoosePresenter.showSuccessToast(getString(R.string.sent_auth_email));
         } catch (RetrofitError e) {
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            emailChooseModel.trackRequestVerifyEmailFail(errorCode);
             e.printStackTrace();
             emailChoosePresenter.showFailToast(getString(R.string.err_team_creation_failed));
         } catch (SQLException e) {

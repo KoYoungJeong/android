@@ -52,6 +52,8 @@ dependencies {
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 
+    compile project(':sprinkler-android')
+
     apt 'org.androidannotations:androidannotations:3.3.1'
 
     compile 'com.android.support:multidex:1.0.0'

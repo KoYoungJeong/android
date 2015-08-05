@@ -181,16 +181,24 @@ public class SignUpActivity extends AppCompatActivity {
 
             signUpViewModel.dismissProgressWheel();
 
+            signUpModel.trackSendEmailSuccess(email);
+
             signUpViewModel.requestSignUpVerify(email);
         } catch (RetrofitError e) {
             signUpViewModel.dismissProgressWheel();
+            int errorCode = -1;
             if (e.getResponse() != null) {
+                errorCode = e.getResponse().getStatus();
+
                 String error = new String(((TypedByteArray) e.getResponse().getBody()).getBytes());
-                if (error.contains("40001"))
+                if (error.contains("40001")) {
                     signUpViewModel.showErrorToast(getString(R.string.jandi_duplicate_email));
+                }
             } else {
                 signUpViewModel.showErrorToast(getString(R.string.err_network));
             }
+
+            signUpModel.trackSendEmailFail(errorCode);
         }
     }
 }

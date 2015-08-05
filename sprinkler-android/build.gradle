@@ -1,0 +1,51 @@
+apply plugin: 'com.android.library'
+apply plugin: 'org.robolectric'     // Android-Test
+
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion '21.1.2'
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 21
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
+}
+
+dependencies {
+    repositories {
+        jcenter()
+    }
+
+//    compile 'com.google.android.gms:play-services-base:7.5.0'
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    testCompile 'org.robolectric:robolectric:2.4'
+    testCompile 'com.jayway.awaitility:awaitility:1.6.+'
+    testCompile 'junit:junit:4.12'
+}
+
+
+robolectric {
+    // configure the set of classes for JUnit tests
+    include '**/*Test.class'
+
+    // configure max heap size of the test JVM
+    maxHeapSize = "2048m"
+
+    ignoreFailures true
+
+}

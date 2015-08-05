@@ -29,7 +29,7 @@ public class ParseUpdateUtil {
 
     private static final String CHANNEL_ID_PREFIX = "accountId_";
 
-    public static void addChannelOnServer(Context context) {
+    public static void addChannelOnServer() {
         Observable.OnSubscribe<String> subscribe = subscriber -> {
             ResAccountInfo accountInfo =
                     AccountRepository.getRepository().getAccountInfo();

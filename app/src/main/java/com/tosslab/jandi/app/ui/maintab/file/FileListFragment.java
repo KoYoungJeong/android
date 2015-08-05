@@ -19,6 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
@@ -44,10 +45,16 @@ import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -135,6 +142,18 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     @AfterViews
     void bindAdapter() {
         LogUtil.d("FileListFragment AfterViews");
+
+        int screenView = getActivity() instanceof SearchActivity
+                ? ScreenViewProperty.FILE_SEARCH : ScreenViewProperty.FILE_PANEL;
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ScreenView, screenView)
+                        .build());
+
         setHasOptionsMenu(true);
 
         // Empty View를 가진 ListView 설정
@@ -411,6 +430,11 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
                 reqSearchFile.listCount = requestCount;
             }
             ResSearchFile resSearchFile = fileListModel.searchFileList(reqSearchFile);
+
+            String keyword = reqSearchFile.keyword;
+
+            fileListModel.trackFileKeywordSearchSuccess(keyword);
+
             if (resSearchFile.fileCount < reqSearchFile.listCount) {
                 searchedFileItemListAdapter.setNoMoreLoad();
             } else {
@@ -442,11 +466,14 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
             searchSucceed(resSearchFile);
         } catch (RetrofitError e) {
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            fileListModel.trackFileKeywordSearchFail(errorCode);
             e.printStackTrace();
             LogUtil.e("fail to get searched files.", e);
             searchFailed(R.string.err_file_search);
         } catch (Exception e) {
             e.printStackTrace();
+            fileListModel.trackFileKeywordSearchFail(-1);
             searchFailed(R.string.err_file_search);
         }
     }

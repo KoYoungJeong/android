@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.UnjoinedUserListAdapter;
@@ -23,9 +24,14 @@ import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.topic.model.EntityComparator;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -158,14 +164,43 @@ class InviteCommand implements MenuCommand {
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
             EntityManager.getInstance(activity).refreshEntity(resLeftSideMenu);
 
+            int memberCount = invitedUsers.size();
 
-            inviteSucceed(invitedUsers.size());
+            trackTopicMemberInviteSuccess(memberCount);
+
+            inviteSucceed(memberCount);
         } catch (RetrofitError e) {
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            trackTopicMemberInviteFail(errorCode);
             LogUtil.e("fail to invite entity");
             inviteFailed(activity.getString(R.string.err_entity_invite));
         } catch (Exception e) {
+            trackTopicMemberInviteFail(-1);
             inviteFailed(activity.getString(R.string.err_entity_invite));
         }
+    }
+
+    private void trackTopicMemberInviteSuccess(int memberCount) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.TopicMemberInvite)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TopicId, chattingInfomations.entityId)
+                        .property(PropertyKey.MemberCount, memberCount)
+                        .build());
+    }
+
+    private void trackTopicMemberInviteFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.TopicMemberInvite)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
     }
 
     @UiThread
@@ -179,5 +214,6 @@ class InviteCommand implements MenuCommand {
     public void inviteFailed(String errMessage) {
         ColoredToast.showError(activity, errMessage);
     }
+
 
 }

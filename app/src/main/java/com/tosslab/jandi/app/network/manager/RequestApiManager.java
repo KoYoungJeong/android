@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.network.client.main.IMainRestApiSimple;
 import com.tosslab.jandi.app.network.client.messages.IMessagesApiAuth;
 import com.tosslab.jandi.app.network.client.messages.comments.ICommentsApiAuth;
 import com.tosslab.jandi.app.network.client.messages.search.IMessageSearchApiAuth;
+import com.tosslab.jandi.app.network.client.platform.IPlatformApiAuth;
 import com.tosslab.jandi.app.network.client.privatetopic.IGroupApiAuth;
 import com.tosslab.jandi.app.network.client.privatetopic.messages.IGroupMessageApiAuth;
 import com.tosslab.jandi.app.network.client.profile.IProfileApiAuth;
@@ -55,6 +56,7 @@ import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
+import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
@@ -93,7 +95,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
         IChatApiAuth, IDirectMessageApiAuth, IInvitationApiAuth, IMainRestApiAuth, ICommentsApiAuth, IMessageSearchApiAuth,
         IMessagesApiAuth, IGroupMessageApiAuth, IGroupApiAuth, IProfileApiAuth, IChannelMessageApiAuth, IChannelApiAuth,
         IRoomsApiAuth, IAccountProfileApiAuth, IStarredEntityApiAuth, IStickerApiAuth, ITeamApiAuth, IAccountPasswordApiSimple,
-        IMainRestApiSimple, IFileApiAuth {
+        IMainRestApiSimple, IFileApiAuth, IPlatformApiAuth {
 
     private static final RequestApiManager requestApiManager = new RequestApiManager();
 
@@ -618,5 +620,10 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     @Override
     public ResStarMentioned getStarredMessagesByTeamApi(int teamId, Integer starredId, int count, String type) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadGetStarredMessagesByTeamApi(teamId, starredId, count, type));
+    }
+
+    @Override
+    public ResCommon updatePlatformStatus(ReqUpdatePlatformStatus reqUpdatePlatformStatus) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadUpdatePlatformStatus(reqUpdatePlatformStatus));
     }
 }
