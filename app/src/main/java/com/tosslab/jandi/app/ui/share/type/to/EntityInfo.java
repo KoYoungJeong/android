@@ -8,13 +8,15 @@ public class EntityInfo {
     private final String name;
     private final boolean isPublicTopic;
     private final boolean isPrivateTopic;
+    private final boolean user;
     private final String profileImage;
 
-    public EntityInfo(int entityId, String name, boolean isPublicTopic, boolean isPrivateTopic, String profileImage) {
+    public EntityInfo(int entityId, String name, boolean isPublicTopic, boolean isPrivateTopic, boolean user, String profileImage) {
         this.entityId = entityId;
         this.name = name;
         this.isPublicTopic = isPublicTopic;
         this.isPrivateTopic = isPrivateTopic;
+        this.user = user;
         this.profileImage = profileImage;
     }
 
@@ -36,5 +38,9 @@ public class EntityInfo {
 
     public boolean isPrivateTopic() {
         return isPrivateTopic;
+    }
+
+    public boolean isUser() {
+        return user;
     }
 }

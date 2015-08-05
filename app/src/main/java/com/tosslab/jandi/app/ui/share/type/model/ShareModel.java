@@ -30,7 +30,6 @@ import org.json.JSONException;
 import java.io.File;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -55,7 +54,9 @@ public class ShareModel {
         entities.addAll(entityManager.getGroups());
         entities.addAll(entityManager.getFormattedUsersWithoutMe());
 
-        Iterator<EntityInfo> iterator = Observable.from(entities)
+        List<EntityInfo> entityInfos = new ArrayList<EntityInfo>();
+
+        Observable.from(entities)
                 .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
                 .map(entity -> {
 
@@ -69,17 +70,27 @@ public class ShareModel {
                     } else {
                         userLargeProfileUrl = "";
                     }
-                    return new EntityInfo(entity.getId(), entity.getName(), publicTopic, privateGroup, userLargeProfileUrl);
+                    return new EntityInfo(entity.getId(), entity.getName(), publicTopic,
+                            privateGroup, user, userLargeProfileUrl);
 
                 })
-                .toBlocking()
-                .getIterator();
+                .toSortedList((formattedEntity, formattedEntity2) -> {
+                    if (formattedEntity.isUser() && formattedEntity2.isUser()) {
+                        return formattedEntity.getName()
+                                .compareToIgnoreCase(formattedEntity2.getName());
+                    } else if (!formattedEntity.isUser() && !formattedEntity2.isUser()) {
+                        return formattedEntity.getName()
+                                .compareToIgnoreCase(formattedEntity2.getName());
+                    } else {
+                        if (formattedEntity.isUser()) {
+                            return 1;
+                        } else {
+                            return -1;
+                        }
+                    }
+                })
+                .subscribe(entityInfos::addAll);
 
-        List<EntityInfo> entityInfos = new ArrayList<EntityInfo>();
-
-        while (iterator.hasNext()) {
-            entityInfos.add(iterator.next());
-        }
 
         return entityInfos;
 

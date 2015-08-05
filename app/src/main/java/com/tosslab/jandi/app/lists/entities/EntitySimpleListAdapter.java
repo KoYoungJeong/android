@@ -19,14 +19,17 @@ import java.util.List;
  * Created by justinygchoi on 2014. 8. 18..
  */
 public class EntitySimpleListAdapter extends BaseAdapter {
-    private final List<FormattedEntity> mFormattedEntities;
-    private final LayoutInflater mLayoutInflater;
-    private final Context mContext;
+    private final Context context;
+    private List<FormattedEntity> mFormattedEntities;
 
     public EntitySimpleListAdapter(Context context, List<FormattedEntity> formattedEntities) {
         this.mFormattedEntities = formattedEntities;
-        this.mLayoutInflater = LayoutInflater.from(context);
-        this.mContext = context;
+        this.context = context;
+    }
+
+    public void setEntities(List<FormattedEntity> entities) {
+        mFormattedEntities = entities;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -48,7 +51,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
     public View getView(int i, View convertView, ViewGroup viewGroup) {
         final ViewHolder holder;
         if (convertView == null) {
-            convertView = mLayoutInflater.inflate(R.layout.item_select_cdp, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_select_cdp, null);
             holder = new ViewHolder();
             holder.textView = (TextView) convertView.findViewById(R.id.txt_select_cdp_name);
             holder.imageView = (ImageView) convertView.findViewById(R.id.img_select_cdp_icon);
