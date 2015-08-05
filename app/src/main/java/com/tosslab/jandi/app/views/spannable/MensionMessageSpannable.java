@@ -1,15 +1,16 @@
-package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
+package com.tosslab.jandi.app.views.spannable;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.text.style.ReplacementSpan;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by tee on 15. 7. 20..
@@ -17,20 +18,19 @@ import com.tosslab.jandi.app.R;
 public class MensionMessageSpannable extends ReplacementSpan {
 
     private TextView tvDate;
+    private int entityId;
 
-    public MensionMessageSpannable(Context context, String date) {
-
+    public MensionMessageSpannable(Context context, String name, int entityId, float pxSize) {
         super();
+        this.entityId = entityId;
 
         tvDate = new TextView(context);
-        tvDate.setText(date);
+        tvDate.setText(name);
         tvDate.setTextColor(0xFF00a6e9);
         tvDate.setBackgroundColor(0xFFdaf2ff);
-        tvDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources()
-                .getDimensionPixelSize(R.dimen.jandi_mention_message_item_font_size));
+        tvDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, pxSize);
 
         prepareView();
-        Log.e("ss", tvDate.getText().toString());
     }
 
     private void prepareView() {
@@ -58,6 +58,12 @@ public class MensionMessageSpannable extends ReplacementSpan {
         tvDate.draw(canvas);
 
         canvas.restore();
+
+    }
+
+    public void onClick() {
+
+        EventBus.getDefault().post(new RequestUserInfoEvent(entityId));
 
     }
 
