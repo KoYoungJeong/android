@@ -356,9 +356,9 @@ public class JandiSocketServiceModel {
                     = objectMapper.readValue(object.toString(), SocketMessageStarredEvent.class);
 
             MessageRepository.getRepository().updateStarred(socketFileEvent.getStarredInfo()
-                    .getMessageId(), true);
+                    .getMessageId(), false);
 
-            postEvent(new SocketMessageStarEvent(socketFileEvent.getStarredInfo().getMessageId(), true));
+            postEvent(new SocketMessageStarEvent(socketFileEvent.getStarredInfo().getMessageId(), false));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -371,9 +371,9 @@ public class JandiSocketServiceModel {
                     = objectMapper.readValue(object.toString(), SocketMessageStarredEvent.class);
 
             MessageRepository.getRepository().updateStarred(socketFileEvent.getStarredInfo()
-                    .getMessageId(), false);
+                    .getMessageId(), true);
 
-            postEvent(new SocketMessageStarEvent(socketFileEvent.getStarredInfo().getMessageId(), false));
+            postEvent(new SocketMessageStarEvent(socketFileEvent.getStarredInfo().getMessageId(), true));
 
         } catch (IOException e) {
             e.printStackTrace();
