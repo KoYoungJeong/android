@@ -1,23 +1,59 @@
 package com.tosslab.jandi.app.network.models.commonobject;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import com.tosslab.jandi.app.network.models.ResMessages;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 /**
  * Created by tee on 15. 7. 28..
  */
+
+@DatabaseTable(tableName = "message_mention")
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class MentionObject {
 
+    @DatabaseField(generatedId = true)
+    private long _id;
+    @DatabaseField(foreign = true)
+    private ResMessages.TextMessage textOf;
+    @DatabaseField(foreign = true)
+    private ResMessages.CommentMessage commentOf;
+    @DatabaseField
     private int id;
+    @DatabaseField
     private String type;
+    @DatabaseField
     private int offset;
+    @DatabaseField
     private int length;
 
     public MentionObject() {
     }
-
     public MentionObject(int id, String type, int offset, int length) {
         this.id = id;
         this.type = type;
         this.offset = offset;
         this.length = length;
+    }
+
+    public ResMessages.TextMessage getTextOf() {
+        return textOf;
+    }
+
+    public void setTextOf(ResMessages.TextMessage textOf) {
+        this.textOf = textOf;
+    }
+
+    public ResMessages.CommentMessage getCommentOf() {
+        return commentOf;
+    }
+
+    public void setCommentOf(ResMessages.CommentMessage commentOf) {
+        this.commentOf = commentOf;
     }
 
     public int getId() {
@@ -62,4 +98,11 @@ public class MentionObject {
                 '}';
     }
 
+    public long get_id() {
+        return _id;
+    }
+
+    public void set_id(long _id) {
+        this._id = _id;
+    }
 }

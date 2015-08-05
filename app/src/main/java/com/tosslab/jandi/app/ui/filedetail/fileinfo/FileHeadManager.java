@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,6 +26,7 @@ import com.tosslab.jandi.app.views.spannable.MessageSpannable;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.UiThread;
 
 import java.util.Iterator;
 
@@ -48,7 +48,7 @@ public class FileHeadManager {
     private View disableLineThroughView;
     private View disableCoverView;
 
-    private Button btFileDetailStarred;
+    private ImageView btnFileDetailStarred;
     private ImageView imageViewPhotoFile;
     private ImageView iconFileType;
     private LinearLayout fileInfoLayout;
@@ -66,7 +66,7 @@ public class FileHeadManager {
         iconFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
         disableLineThroughView = header.findViewById(R.id.img_entity_listitem_line_through);
         disableCoverView = header.findViewById(R.id.view_entity_listitem_warning);
-        btFileDetailStarred = (Button) header.findViewById(R.id.bt_file_detail_starred);
+        btnFileDetailStarred = (ImageView) header.findViewById(R.id.bt_file_detail_starred);
         return header;
     }
 
@@ -159,11 +159,7 @@ public class FileHeadManager {
         imageViewUserProfile.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileMessage.writerId).build().show(activity.getSupportFragmentManager(), "dialog"));
         textViewUserName.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileMessage.writerId).build().show(activity.getSupportFragmentManager(), "dialog"));
 
-        if (fileMessage.isStarred) {
-            btFileDetailStarred.setSelected(true);
-        } else {
-            btFileDetailStarred.setSelected(false);
-        }
+        btnFileDetailStarred.setSelected(fileMessage.isStarred);
 
         // 파일
         String createTime = DateTransformator.getTimeString(fileMessage.createTime);
@@ -202,20 +198,17 @@ public class FileHeadManager {
         }
     }
 
-//    public boolean isStarredButtonEnabled() {
-//        return btFileDetailStarred.isSelected();
-//    }
-//
-//    public void setStarredButtonEnabled(boolean enabled) {
-//        btFileDetailStarred.setSelected(enabled);
-//    }
-
-    public Button getStarredButton() {
-        return btFileDetailStarred;
+    public ImageView getStarredButton() {
+        return btnFileDetailStarred;
     }
 
     public void setRoomId(int roomId) {
 
         this.roomId = roomId;
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void updateStarred(boolean starred) {
+        btnFileDetailStarred.setSelected(starred);
     }
 }

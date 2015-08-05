@@ -19,8 +19,6 @@ import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
-import java.util.List;
-
 /**
  * Created by Steve SeongUg Jung on 15. 5. 6..
  */
@@ -41,7 +39,8 @@ public class PureMessageViewHolder implements BodyViewHolder {
 
     @Override
     public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
-        String message = ((ResMessages.TextMessage) link.message).content.body;
+        ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
+        String message = textMessage.content.body;
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
         builder.append(!TextUtils.isEmpty(message) ? message : "");
@@ -83,9 +82,7 @@ public class PureMessageViewHolder implements BodyViewHolder {
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        List<MentionObject> mentions = link.message.mentions;
-
-        for (MentionObject mention : mentions) {
+        for (MentionObject mention : textMessage.mentions) {
             String name = builder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
             MensionMessageSpannable spannable1 = new MensionMessageSpannable(tvMessage.getContext(), name);
             builder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

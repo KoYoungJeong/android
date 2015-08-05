@@ -31,7 +31,8 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
 
     @Override
     public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
-        String message = ((ResMessages.CommentMessage) link.message).content.body;
+        ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
+        String message = commentMessage.content.body;
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
         builder.append(message);
@@ -49,19 +50,19 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
 
         Resources resources = context.getResources();
 
-        for (MentionObject mention : link.message.mentions) {
+        for (MentionObject mention : commentMessage.mentions) {
             String name = builder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
             MensionCommentSpannable spannable1 = new MensionCommentSpannable(tvMessage.getContext(), name);
             builder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
         int startIndex = builder.length();
-        builder.append(DateTransformator.getTimeStringForSimple(link.message.createTime));
+        builder.append(DateTransformator.getTimeStringForSimple(commentMessage.createTime));
         int endIndex = builder.length();
 
         DateViewSpannable spannable =
                 new DateViewSpannable(tvMessage.getContext(),
-                        DateTransformator.getTimeStringForSimple(link.message.createTime));
+                        DateTransformator.getTimeStringForSimple(commentMessage.createTime));
         builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,

@@ -6,7 +6,6 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -133,7 +132,7 @@ public class MessageViewHolder implements BodyViewHolder {
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
-            for (MentionObject mention : link.message.mentions) {
+            for (MentionObject mention : textMessage.mentions) {
                 String name = messageStringBuilder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
                 MensionMessageSpannable spannable1 = new MensionMessageSpannable(messageTextView.getContext(), name);
                 messageStringBuilder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

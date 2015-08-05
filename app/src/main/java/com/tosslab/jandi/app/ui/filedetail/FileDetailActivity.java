@@ -54,6 +54,7 @@ import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
+import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -533,6 +534,15 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                 fileMessage);
         clearAdapter();
         fileDetailPresenter.getFileDetail(fileId, false, true);
+    }
+
+    public void onEvent(SocketMessageStarEvent event) {
+        int messageId = event.getMessageId();
+        boolean starred = event.isStarred();
+
+        if (messageId == fileId) {
+            fileHeadManager.updateStarred(starred);
+        }
     }
 
     public void onEvent(ConfirmDeleteFileEvent event) {

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.local.orm.repositories;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -142,5 +143,36 @@ public class MessageRepository {
 
         return new ArrayList<>();
 
+    }
+
+    public int updateStarred(int messageId, boolean isStarred) {
+        try {
+            Dao<ResMessages.TextMessage, Integer> textMessageDao = helper.getDao(ResMessages
+                    .TextMessage.class);
+
+            if (textMessageDao.idExists(messageId)) {
+                UpdateBuilder<ResMessages.TextMessage, Integer> updateBuilder = textMessageDao.updateBuilder();
+                updateBuilder.updateColumnValue("isStarred", isStarred);
+                updateBuilder
+                        .where()
+                        .eq("id", messageId);
+                return updateBuilder.update();
+            }
+
+            Dao<ResMessages.CommentMessage, Integer> commentMessageDao
+                    = helper.getDao(ResMessages.CommentMessage.class);
+
+            if (commentMessageDao.idExists(messageId)) {
+                UpdateBuilder<ResMessages.CommentMessage, Integer> updateBuilder = commentMessageDao.updateBuilder();
+                updateBuilder.updateColumnValue("isStarred", isStarred);
+                updateBuilder.where()
+                        .eq("id", messageId);
+                return updateBuilder.update();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

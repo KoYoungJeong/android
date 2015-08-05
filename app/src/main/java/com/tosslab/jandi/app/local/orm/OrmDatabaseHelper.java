@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -80,6 +81,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, ResMessages.CommentStickerMessage.class);
             createTable(connectionSource, ResMessages.CommentStickerMessage.class);
             createTable(connectionSource, ResMessages.CommentMessage.class);
+
+            createTable(connectionSource, MentionObject.class);
 
             createTable(connectionSource, ResChat.class);
 
@@ -168,6 +171,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             dropTable(connectionSource, ResMessages.CommentStickerMessage.class);
             dropTable(connectionSource, ResMessages.CommentStickerMessage.class);
             dropTable(connectionSource, ResMessages.CommentMessage.class);
+
+            dropTable(connectionSource, MentionObject.class);
 
             dropTable(connectionSource, ResChat.class);
 

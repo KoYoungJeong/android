@@ -9,6 +9,7 @@ import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -146,6 +147,15 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
                 dao.create(shareEntity);
             }
 
+            Dao<MentionObject, ?> mentionObjectDao = DaoManager.createDao(connectionSource, MentionObject.class);
+            DeleteBuilder<MentionObject, ?> mentionObjectDeleteBuilder = mentionObjectDao.deleteBuilder();
+            mentionObjectDeleteBuilder.where().eq("textOf_id", textMessage.id);
+            mentionObjectDeleteBuilder.delete();
+
+            for (MentionObject mention : textMessage.mentions) {
+                mention.setTextOf(textMessage);
+                mentionObjectDao.create(mention);
+            }
 
             Dao<ResMessages.TextContent, ?> textContentDao = DaoManager.createDao
                     (connectionSource, ResMessages.TextContent
@@ -223,6 +233,16 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
             for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : commentMessage.shareEntities) {
                 shareEntity.setCommentOf(commentMessage);
                 dao.create(shareEntity);
+            }
+
+            Dao<MentionObject, ?> mentionObjectDao = DaoManager.createDao(connectionSource, MentionObject.class);
+            DeleteBuilder<MentionObject, ?> mentionObjectDeleteBuilder = mentionObjectDao.deleteBuilder();
+            mentionObjectDeleteBuilder.where().eq("textOf_id", commentMessage.id);
+            mentionObjectDeleteBuilder.delete();
+
+            for (MentionObject mention : commentMessage.mentions) {
+                mention.setCommentOf(commentMessage);
+                mentionObjectDao.create(mention);
             }
 
             DaoManager.createDao(connectionSource, ResMessages.TextContent.class).createOrUpdate

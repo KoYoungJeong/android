@@ -56,8 +56,8 @@ import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -1003,6 +1003,16 @@ public class MessageListPresenter {
         }
     }
 
+    public void updateMessageStarred(int messageId, boolean starred) {
+        int itemCount = messageListAdapter.getItemCount();
+        for (int idx = 0; idx > itemCount; ++idx) {
+            ResMessages.OriginalMessage message = messageListAdapter.getItem(idx).message;
+            if (message.id == messageId) {
+                message.isStarred = starred;
+                break;
+            }
+        }
+    }
 }
 
 

@@ -206,6 +206,14 @@ public class JandiSocketService extends Service {
                 jandiSocketServiceModel.refreshMessage(objects[0]);
         eventHashMap.put("message", messageRefreshListener);
 
+        EventListener messageStarredListener = objects ->
+                jandiSocketServiceModel.refreshStarredMessage(objects[0]);
+        eventHashMap.put("message_starred", messageStarredListener);
+
+        EventListener messageUnstarredListener = objects ->
+                jandiSocketServiceModel.refreshUnstarredMessage(objects[0]);
+        eventHashMap.put("message_unstarred", messageUnstarredListener);
+
         EventListener markerUpdateListener = objects ->
                 jandiSocketServiceModel.updateMarker(objects[0]);
         eventHashMap.put("room_marker_updated", markerUpdateListener);

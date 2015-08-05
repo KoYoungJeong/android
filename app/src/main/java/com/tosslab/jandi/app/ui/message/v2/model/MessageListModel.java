@@ -450,6 +450,7 @@ public class MessageListModel {
         try {
             RequestApiManager.getInstance()
                     .registStarredMessageByTeamApi(teamId, messageId);
+            MessageRepository.getRepository().updateStarred(messageId, true);
         } catch (RetrofitError e) {
             e.printStackTrace();
             throw e;
@@ -461,6 +462,7 @@ public class MessageListModel {
         try {
             RequestApiManager.getInstance()
                     .unregistStarredMessageByTeamApi(teamId, messageId);
+            MessageRepository.getRepository().updateStarred(messageId, false);
         } catch (RetrofitError e) {
             e.printStackTrace();
             throw e;

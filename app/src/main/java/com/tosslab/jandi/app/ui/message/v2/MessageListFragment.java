@@ -56,6 +56,7 @@ import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
+import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
@@ -383,7 +384,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
             if (!user) {
                 roomId = entityId;
-            } else if (NetworkCheckUtil.isConnected()){
+            } else if (NetworkCheckUtil.isConnected()) {
 
                 int roomId = initRoomId();
 
@@ -1078,6 +1079,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
+    }
+
+    public void onEvent(SocketMessageStarEvent event) {
+        int messageId = event.getMessageId();
+        boolean starred = event.isStarred();
+
+        messageListPresenter.updateMessageStarred(messageId, starred);
     }
 
     public void onEvent(SocketMessageEvent event) {

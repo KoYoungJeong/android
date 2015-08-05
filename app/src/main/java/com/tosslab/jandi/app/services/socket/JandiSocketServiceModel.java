@@ -12,11 +12,13 @@ import com.tosslab.jandi.app.events.files.CreateFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
+import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -35,6 +37,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberProfileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
@@ -347,4 +350,33 @@ public class JandiSocketServiceModel {
         entitySocketModel.stopObserver();
     }
 
+    public void refreshUnstarredMessage(Object object) {
+        try {
+            SocketMessageStarredEvent socketFileEvent
+                    = objectMapper.readValue(object.toString(), SocketMessageStarredEvent.class);
+
+            MessageRepository.getRepository().updateStarred(socketFileEvent.getStarredInfo()
+                    .getMessageId(), true);
+
+            postEvent(new SocketMessageStarEvent(socketFileEvent.getStarredInfo().getMessageId(), true));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void refreshStarredMessage(Object object) {
+        try {
+            SocketMessageStarredEvent socketFileEvent
+                    = objectMapper.readValue(object.toString(), SocketMessageStarredEvent.class);
+
+            MessageRepository.getRepository().updateStarred(socketFileEvent.getStarredInfo()
+                    .getMessageId(), false);
+
+            postEvent(new SocketMessageStarEvent(socketFileEvent.getStarredInfo().getMessageId(), false));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

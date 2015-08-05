@@ -160,7 +160,7 @@ public class ResMessages {
         public int feedbackId;
         @DatabaseField
         public String linkPreviewId;
-        public List<MentionObject> mentions;
+        @DatabaseField
         public boolean isStarred;
 
         @Override
@@ -176,7 +176,6 @@ public class ResMessages {
                     ", permission=" + permission +
                     ", feedbackId=" + feedbackId +
                     ", linkPreviewId=" + linkPreviewId +
-                    ", mentions=" + mentions +
                     ", isStarred=" + isStarred +
                     '}';
         }
@@ -247,6 +246,11 @@ public class ResMessages {
     public static class TextMessage extends OriginalMessage {
         @ForeignCollectionField(foreignFieldName = "textOf")
         public Collection<IntegerWrapper> shareEntities;
+
+        @ForeignCollectionField(foreignFieldName = "textOf")
+        public Collection<MentionObject> mentions;
+
+
         @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public TextContent content;
         @DatabaseField(foreign = true, foreignAutoRefresh = true)
@@ -278,6 +282,9 @@ public class ResMessages {
     public static class CommentMessage extends OriginalMessage {
         @ForeignCollectionField(foreignFieldName = "commentOf")
         public Collection<IntegerWrapper> shareEntities;
+
+        @ForeignCollectionField(foreignFieldName = "commentOf")
+        public Collection<MentionObject> mentions;
 
         @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public TextContent content;
