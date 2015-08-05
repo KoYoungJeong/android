@@ -74,11 +74,12 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
-import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -221,6 +222,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     private void addStarredButtonExecution() {
         fileHeadManager.getStarredButton().setOnClickListener(v -> {
+            LogUtil.e("selected1", v.isSelected() + "");
             if (v.isSelected()) {
                 unregistStarredMessage();
             } else {
@@ -239,7 +241,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         } catch (RetrofitError e) {
             e.printStackTrace();
             starredButtonSelected(true);
-
         }
     }
 
@@ -258,6 +259,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void starredButtonSelected(boolean selected) {
+        LogUtil.e("selected", selected + "");
         fileHeadManager.getStarredButton().setSelected(selected);
     }
 
@@ -1036,7 +1038,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
                 new Handler() {
                     @Override
-                    public void handleMessage(Message msg) {                        super.handleMessage(msg);
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
                         Toast.makeText(FileDetailActivity.this, R.string.jandi_message_starred, Toast.LENGTH_SHORT).show();
                         fileDetailPresenter.getFileDetail(fileId, false, true);
                     }
