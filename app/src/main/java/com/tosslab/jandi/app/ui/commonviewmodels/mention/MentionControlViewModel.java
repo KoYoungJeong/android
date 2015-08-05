@@ -41,6 +41,10 @@ public class MentionControlViewModel {
     public static final String MENTION_TYPE_MESSAGE = "mention_type_message";
     public static final String MENTION_TYPE_FILE_COMMENT = "mention_type_file_comment";
 
+    public interface OnMentionViewShowingListener {
+        void onMentionViewShowing(boolean isShowing);
+    }
+
     private RecyclerView searchMemberListView;
 
     private EditText editText;
@@ -74,6 +78,8 @@ public class MentionControlViewModel {
     private ClipboardListener clipboardListener;
 
     private TextWatcher textWatcher;
+
+    private OnMentionViewShowingListener onMentionViewShowingListener;
 
     public MentionControlViewModel(Activity activity, RecyclerView searchMemberListView,
                                    EditText editText, RecyclerView messageListView,
@@ -123,6 +129,10 @@ public class MentionControlViewModel {
                 .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
         clipBoard.addPrimaryClipChangedListener(clipboardListener);
 
+    }
+
+    public void setOnMentionViewShowingListener(OnMentionViewShowingListener listener) {
+        onMentionViewShowingListener = listener;
     }
 
     private void addTextWatcher(EditText editText) {
@@ -228,6 +238,10 @@ public class MentionControlViewModel {
             } else if (fileCommentListView != null) {
                 fileCommentListView.setVisibility(View.VISIBLE);
             }
+        }
+
+        if (onMentionViewShowingListener != null) {
+            onMentionViewShowingListener.onMentionViewShowing(isShow);
         }
 
     }
