@@ -36,4 +36,5 @@ public class CommentStarMentionViewHolder extends CommonStarMentionViewHolder {
                 ", starMentionFileNameView=" + starMentionFileNameView +
                 '}';
     }
+
 }

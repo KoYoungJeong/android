@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshOldStarMentionedEvent;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.MensionMessageSpannable;
+import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.viewholder.CommentStarMentionViewHolder;
 import com.tosslab.jandi.app.ui.starmention.viewholder.CommonStarMentionViewHolder;
 import com.tosslab.jandi.app.ui.starmention.viewholder.FileStarMentionViewHolder;
@@ -35,6 +36,7 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
     private RecyclerViewFactory recyclerViewFactory;
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
+    private String listType = StarMentionListActivity.TYPE_MENTION_LIST;
 
     @Override
     public CommonStarMentionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -135,7 +137,7 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
         if (position == getItemCount() - 1 && moreState == MoreState.Idle) {
             moreState = MoreState.Loading;
 
-            EventBus.getDefault().post(new RefreshOldStarMentionedEvent());
+            EventBus.getDefault().post(new RefreshOldStarMentionedEvent(getListType()));
         }
 
     }
@@ -190,6 +192,14 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
 
     }
 
+    public String getListType() {
+        return listType;
+    }
+
+    public void setListType(String listType) {
+        this.listType = listType;
+    }
+
     private enum MoreState {
         Idle, Loading, NoMore
     }
@@ -201,6 +211,4 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
     public interface OnItemLongClickListener {
         boolean onItemLongClick(StarMentionListAdapter adapter, int position);
     }
-
-
 }

@@ -86,9 +86,17 @@ public class StarMentionListModel {
 
         List<StarMentionedMessageObject> starMentionedMessageObjectList = resStarMentioned.getRecords();
         for (StarMentionedMessageObject starMentionedMessageObject : starMentionedMessageObjectList) {
+
             StarMentionVO starMentionVO = new StarMentionVO();
             String type = starMentionedMessageObject.getMessage().contentType;
-            int messageId = starMentionedMessageObject.getMessage().id;
+            int messageId = 0;
+
+            if (categoryType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
+                messageId = starMentionedMessageObject.getMessage().id;
+            } else {
+                messageId = starMentionedMessageObject.getStarredId();
+            }
+
             FormattedEntity entity = EntityManager.getInstance(JandiApplication.getContext())
                     .getEntityById(starMentionedMessageObject.getMessage().writerId);
             starMentionVO.setWriterName(entity.getUser().name);
@@ -110,6 +118,7 @@ public class StarMentionListModel {
                 }
                 starMentionVO.setLinkId(starMentionedMessageObject.getLinkId());
             }
+            
 
             if (type.equals("comment")) {
                 starMentionVO.setContentType(StarMentionVO.Type.Comment.getValue());
