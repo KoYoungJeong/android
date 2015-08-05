@@ -5,40 +5,10 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:padding="8dp">
-
-        <EditText
-            android:id="@+id/et_cdp_search"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_round_rect_white"
-            android:gravity="center_vertical"
-            android:hint="@string/jandi_action_search"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:paddingLeft="64dp"
-            android:paddingRight="64dp"/>
-
-        <ImageView
-            android:layout_width="@dimen/jandi_search_default_size"
-            android:layout_height="@dimen/jandi_search_default_size"
-            android:layout_centerVertical="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:paddingLeft="13.5dp"
-            android:paddingRight="13.5dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/icon_contact_search"/>
-
-
-    </RelativeLayout>
-
     <ListView
         android:id="@+id/lv_cdp_select"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@null"
-        android:dividerHeight="0dp"/>
+        android:dividerHeight="0dp" />
 </LinearLayout>

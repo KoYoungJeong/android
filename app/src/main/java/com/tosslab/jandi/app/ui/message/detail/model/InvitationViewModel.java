@@ -95,7 +95,7 @@ public class InvitationViewModel {
         /**
          * 사용자 초대를 위한 Dialog 를 보여준 뒤, 체크된 사용자를 초대한다.
          */
-        View view = LayoutInflater.from(context).inflate(R.layout.dialog_select_cdp, null);
+        View view = LayoutInflater.from(context).inflate(R.layout.dialog_invite_to_topic, null);
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
         EditText et = (EditText) view.findViewById(R.id.et_cdp_search);
 
