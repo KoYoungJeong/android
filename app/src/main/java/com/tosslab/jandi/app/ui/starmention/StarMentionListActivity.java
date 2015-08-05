@@ -55,7 +55,6 @@ public class StarMentionListActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
@@ -67,6 +66,7 @@ public class StarMentionListActivity extends AppCompatActivity {
         } else if (type.equals(TYPE_STAR_LIST)) {
             actionBar.setTitle(R.string.jandi_starred_stars);
         }
+
     }
 
 

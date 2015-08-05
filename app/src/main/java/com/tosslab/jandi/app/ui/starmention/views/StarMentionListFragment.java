@@ -59,22 +59,20 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     AlertDialog unstarredDialog;
 
     StarMentionListAdapter starMentionListAdapter;
-    int DissMissProgressBarRetryCnt = 0;
 
     @AfterViews
     void initFragment() {
-
         starMentionListPresentor.setView(this);
         starMentionList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         starMentionList.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         starMentionListAdapter = new StarMentionListAdapter();
+        starMentionListAdapter.setListType(listType);
         starMentionList.setAdapter(starMentionListAdapter);
         loadStarMentionList();
         setOnItemClickListener();
         if (!listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
             setOnItemLongClickListener();
         }
-
     }
 
     private void loadStarMentionList() {
@@ -171,7 +169,18 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     }
 
     public void onEvent(RefreshOldStarMentionedEvent event) {
-        loadStarMentionList();
+
+        if (event.getType().equals(StarMentionListActivity.TYPE_STAR_FILES)
+                && listType.equals(StarMentionListActivity.TYPE_STAR_FILES)) {
+            loadStarMentionList();
+        } else if (event.getType().equals(StarMentionListActivity.TYPE_STAR_ALL)
+                && listType.equals(StarMentionListActivity.TYPE_STAR_ALL)) {
+            loadStarMentionList();
+        } else if (event.getType().equals(StarMentionListActivity.TYPE_MENTION_LIST)
+                && listType.equals(StarMentionListActivity.TYPE_STAR_ALL)) {
+            loadStarMentionList();
+        }
+
     }
 
     @Override
@@ -191,7 +200,6 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
         unstarredDialog = builder.create();
 
         unstarredDialog.show();
-
 
     }
 
