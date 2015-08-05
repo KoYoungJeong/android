@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -15,25 +16,28 @@ import com.tosslab.jandi.app.events.entities.InvitationSuccessEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.UnjoinedUserListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.maintab.topic.model.EntityComparator;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.subjects.PublishSubject;
 
 /**
  * Copied By com.tosslab.jandi.app.ui.message.model.menus.InviteCommand
@@ -72,12 +76,28 @@ public class InvitationViewModel {
             invitationDialogExecutor.execute();
             return;
         }
+        final UnjoinedUserListAdapter adapter = new UnjoinedUserListAdapter(context);
+
+        PublishSubject<String> publishSubject = PublishSubject.create();
+        Subscription subscribe = publishSubject.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
+                .flatMap(s -> Observable.from(getUnjoinedEntities(context))
+                                .filter(formattedEntity -> {
+                                    String searchTarget = s.toLowerCase();
+                                    return formattedEntity.getName().toLowerCase()
+                                            .contains(searchTarget);
+                                })
+                                .toSortedList((formattedEntity, formattedEntity2) -> formattedEntity
+                                        .getName().compareToIgnoreCase(formattedEntity2.getName()))
+                )
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(adapter::setUnjoinedEntities);
 
         /**
          * 사용자 초대를 위한 Dialog 를 보여준 뒤, 체크된 사용자를 초대한다.
          */
-        View view = LayoutInflater.from(context).inflate(R.layout.dialog_select_cdp, null);
+        View view = LayoutInflater.from(context).inflate(R.layout.dialog_invite_to_topic, null);
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
+        EditText et = (EditText) view.findViewById(R.id.et_cdp_search);
 
         // 현재 채널에 가입된 사용자를 제외한 초대 대상 사용자 리스트를 획득한다.
         List<FormattedEntity> unjoinedMembers = getUnjoinedEntities(context);
@@ -86,9 +106,7 @@ public class InvitationViewModel {
             ColoredToast.showWarning(context, context.getString(R.string.warn_all_users_are_already_invited));
             return;
         }
-        Collections.sort(unjoinedMembers, new EntityComparator());
 
-        final UnjoinedUserListAdapter adapter = new UnjoinedUserListAdapter(context, unjoinedMembers);
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -98,6 +116,15 @@ public class InvitationViewModel {
                 item.isSelectedToBeJoined = !item.isSelectedToBeJoined;
 
                 userListAdapter.notifyDataSetChanged();
+            }
+        });
+
+        publishSubject.onNext("");
+
+        et.addTextChangedListener(new SimpleTextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                publishSubject.onNext(s.toString());
             }
         });
 
@@ -115,6 +142,9 @@ public class InvitationViewModel {
                 }
             }
         });
+
+        dialog.setOnDismissListener(dialog1 -> subscribe.unsubscribe());
+
         dialog.show();
     }
 
