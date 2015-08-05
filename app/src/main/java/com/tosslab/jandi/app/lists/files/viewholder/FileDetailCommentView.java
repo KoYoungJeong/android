@@ -17,11 +17,11 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.MensionCommentSpannable;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
+import com.tosslab.jandi.app.views.spannable.MensionMessageSpannable;
 
 import de.greenrobot.event.EventBus;
 
@@ -102,13 +102,22 @@ public class FileDetailCommentView implements CommentViewHolder {
         spannableStringBuilder.append(" ");
         int endIndex = spannableStringBuilder.length();
 
+        boolean hasMention = false;
         for (MentionObject mention : commentMessage.mentions) {
             String name = spannableStringBuilder.subSequence(mention.getOffset() + 1,
                     mention.getLength() + mention.getOffset()).toString();
-            MensionCommentSpannable spannable1 = new MensionCommentSpannable(
-                    textViewCommentContent.getContext(), name);
+            MensionMessageSpannable spannable1 = new MensionMessageSpannable(
+                    textViewCommentContent.getContext(), name, mention.getId(), textViewCommentContent.getResources()
+                    .getDimensionPixelSize(R.dimen.jandi_mention_comment_item_font_size));
             spannableStringBuilder.setSpan(spannable1, mention.getOffset(),
                     mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (!hasMention) {
+                hasMention = true;
+            }
+        }
+
+        if (hasMention) {
+            LinkifyUtil.setOnLinkClick(textViewCommentContent);
         }
 
 

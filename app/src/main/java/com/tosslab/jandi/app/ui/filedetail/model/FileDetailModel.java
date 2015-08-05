@@ -186,7 +186,6 @@ public class FileDetailModel {
             list.add(shareEntity);
             if (shareEntity == myEntityId) {
                 include = true;
-                break;
             }
         }
 
@@ -196,16 +195,26 @@ public class FileDetailModel {
 
         List<FormattedEntity> entities = entityManager.retrieveExclusivedEntities(list);
 
-        Iterator<FormattedEntity> enabledEntities = Observable.from(entities)
-                .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
-                .toBlocking()
-                .getIterator();
-
         List<FormattedEntity> formattedEntities = new ArrayList<>();
 
-        while (enabledEntities.hasNext()) {
-            formattedEntities.add(enabledEntities.next());
-        }
+        Observable.from(entities)
+                .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
+                .toSortedList((formattedEntity, formattedEntity2) -> {
+                    if (formattedEntity.isUser() && formattedEntity2.isUser()) {
+                        return formattedEntity.getName()
+                                .compareToIgnoreCase(formattedEntity2.getName());
+                    } else if (!formattedEntity.isUser() && !formattedEntity2.isUser()) {
+                        return formattedEntity.getName()
+                                .compareToIgnoreCase(formattedEntity2.getName());
+                    } else {
+                        if (formattedEntity.isUser()) {
+                            return 1;
+                        } else {
+                            return -1;
+                        }
+                    }
+                })
+                .subscribe(formattedEntities::addAll);
 
         return formattedEntities;
     }

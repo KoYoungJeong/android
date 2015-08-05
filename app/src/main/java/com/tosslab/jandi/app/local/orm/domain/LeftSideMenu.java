@@ -9,10 +9,7 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "left_raw")
 public class LeftSideMenu {
 
-    @DatabaseField(generatedId = true)
-    private long _id;
-
-    @DatabaseField
+    @DatabaseField(id = true)
     private int teamId;
     @DatabaseField
     private String rawLeftSideMenu;
@@ -33,11 +30,4 @@ public class LeftSideMenu {
         this.rawLeftSideMenu = rawLeftSideMenu;
     }
 
-    public long get_id() {
-        return _id;
-    }
-
-    public void set_id(long _id) {
-        this._id = _id;
-    }
 }

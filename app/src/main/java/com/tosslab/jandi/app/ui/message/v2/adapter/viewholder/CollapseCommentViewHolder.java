@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
+import com.tosslab.jandi.app.views.spannable.MensionMessageSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 
@@ -50,10 +51,20 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
 
         Resources resources = context.getResources();
 
+        boolean hasMention = false;
         for (MentionObject mention : commentMessage.mentions) {
             String name = builder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
-            MensionCommentSpannable spannable1 = new MensionCommentSpannable(tvMessage.getContext(), name);
+            MensionMessageSpannable spannable1 = new MensionMessageSpannable(tvMessage.getContext
+                    (), name, mention.getId(),tvMessage.getResources().getDimensionPixelSize(R.dimen
+                    .jandi_mention_comment_item_font_size));
             builder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (!hasMention) {
+                hasMention = true;
+            }
+        }
+
+        if (hasMention) {
+            LinkifyUtil.setOnLinkClick(tvMessage);
         }
 
         int startIndex = builder.length();

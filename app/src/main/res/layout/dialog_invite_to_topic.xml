@@ -20,7 +20,9 @@
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:paddingLeft="64dp"
-            android:paddingRight="64dp"/>
+            android:paddingRight="64dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/jandi_text_hint"/>
 
         <ImageView
             android:layout_width="@dimen/jandi_search_default_size"
