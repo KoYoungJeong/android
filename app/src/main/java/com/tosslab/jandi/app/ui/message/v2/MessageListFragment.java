@@ -391,7 +391,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         mentionControlViewModel = new MentionControlViewModel(getActivity(),
                 rvListSearchMembers, messageEditText, messageListView, roomIds);
-
+        mentionControlViewModel.setOnMentionViewShowingListener(isShowing ->
+                announcementViewModel.setAnnouncementViewVisibility(!isShowing));
     }
 
     @Background

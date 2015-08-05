@@ -205,6 +205,19 @@ public class AnnouncementViewModel {
                 .show();
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void setAnnouncementViewVisibility(boolean visibility) {
+        if(vgAnnouncement == null) {
+            return;
+        }
+
+        if (announcement == null || announcement.isEmpty()) {
+            return;
+        }
+
+        vgAnnouncement.setVisibility(visibility ? View.VISIBLE : View.GONE);
+    }
+
     public void setOnAnnouncementOpenListener(OnAnnouncementOpenListener onAnnouncementOpenListener) {
         this.onAnnouncementOpenListener = onAnnouncementOpenListener;
     }

@@ -1033,11 +1033,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             case STARRED:
                 fileDetailPresenter.registStarredMessage(EntityManager.
                         getInstance(FileDetailActivity.this).getTeamId(), event.getMessageId());
-                Toast.makeText(this, R.string.jandi_message_starred, Toast.LENGTH_SHORT).show();
+
                 new Handler() {
                     @Override
-                    public void handleMessage(Message msg) {
-                        super.handleMessage(msg);
+                    public void handleMessage(Message msg) {                        super.handleMessage(msg);
+                        Toast.makeText(FileDetailActivity.this, R.string.jandi_message_starred, Toast.LENGTH_SHORT).show();
                         fileDetailPresenter.getFileDetail(fileId, false, true);
                     }
                 }.sendEmptyMessageDelayed(0, 100);
