@@ -15,6 +15,7 @@ public class StarMentionedMessageObject {
     private int teamId;
     private int linkId;
     private Date createdAt;
+    private int starredId;
     private Room room;
     private Message message;
 
@@ -56,6 +57,14 @@ public class StarMentionedMessageObject {
 
     public void setMessage(Message message) {
         this.message = message;
+    }
+
+    public int getStarredId() {
+        return starredId;
+    }
+
+    public void setStarredId(int starredId) {
+        this.starredId = starredId;
     }
 
     @Override
