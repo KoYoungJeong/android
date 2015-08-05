@@ -1041,6 +1041,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
     }
 
+
+    //FIXME ?
     @Background
     public void onEvent(MessageStarredEvent event) {
         if (!isForeground) {

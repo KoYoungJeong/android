@@ -188,6 +188,8 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="err_share">"File could not be shared"</string>
     <string name="err_unshare">"File could not be unshared"</string>
     <string name="err_delete_file">"File could not be deleted"</string>
+    <string name="err_file_has_not_been_shared">"File has not been shared"</string>
+    <string name="err_file_already_shared_all_topics">"File is already shared in all your topics"</string>
 
     <!-- File Upload -->
     <string name="title_file_upload">"Upload File"</string>

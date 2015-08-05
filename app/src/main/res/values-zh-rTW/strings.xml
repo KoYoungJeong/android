@@ -169,6 +169,8 @@
     <string name="err_share">"檔案無法分享"</string>
     <string name="err_unshare">"檔案無法取消分享"</string>
     <string name="err_delete_file">"檔案無法刪除"</string>
+    <string name="err_file_has_not_been_shared">"檔案尚未分享到其它群組"</string>
+    <string name="err_file_already_shared_all_topics">"檔案已分享於所有你加入的議題中"</string>
 
     <!-- File Upload -->
     <string name="title_file_upload">"上傳檔案"</string>

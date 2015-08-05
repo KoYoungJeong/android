@@ -175,6 +175,8 @@
     <string name="err_share">"ファイルが共有できませんでした"</string>
     <string name="err_unshare">"ファイルが非共有にできませんでした"</string>
     <string name="err_delete_file">"ファイルが削除できませんでした"</string>
+    <string name="err_file_has_not_been_shared">"共有されたファイルがありません"</string>
+    <string name="err_file_already_shared_all_topics">"このファイルは既に参加されているすべてのトピックに共有されています"</string>
 
     <!-- File Upload -->
     <string name="title_file_upload">"ファイルをアップロード"</string>

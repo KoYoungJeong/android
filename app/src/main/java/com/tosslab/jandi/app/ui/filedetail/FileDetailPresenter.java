@@ -183,11 +183,26 @@ public class FileDetailPresenter {
 
     public void onClickShare() {
         final List<FormattedEntity> unSharedEntities = fileDetailModel.getUnsharedEntities();
-        view.initShareListDialog(unSharedEntities);
+
+        int myId = fileDetailModel.getMyId();
+
+        List<FormattedEntity> unSharedEntityWithoutMe = new ArrayList<>();
+
+        Observable.from(unSharedEntities)
+                .filter(entity -> entity.getId() != myId)
+                .collect(() -> unSharedEntityWithoutMe, List::add)
+                .subscribe();
+
+        if (!unSharedEntityWithoutMe.isEmpty()) {
+            view.initShareListDialog(unSharedEntityWithoutMe);
+        } else {
+            view.showErrorToast(activity.getString(R.string.err_file_already_shared_all_topics));
+        }
     }
 
     public void onClickUnShare() {
-        final Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities = fileDetailModel.getFileMessage().shareEntities;
+        final Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities =
+                fileDetailModel.getFileMessage().shareEntities;
 
         int myId = fileDetailModel.getMyId();
 
@@ -195,10 +210,14 @@ public class FileDetailPresenter {
 
         Observable.from(shareEntities)
                 .filter(integerWrapper -> integerWrapper.getShareEntity() != myId)
-                .collect(() -> sharedEntityWithoutMe, (integers, integerWrapper1) -> integers.add(integerWrapper1.getShareEntity()));
+                .collect(() -> sharedEntityWithoutMe,
+                        (integers, integerWrapper1) -> integers.add(integerWrapper1.getShareEntity()))
+                .subscribe();
 
         if (!sharedEntityWithoutMe.isEmpty()) {
             view.initUnShareListDialog(sharedEntityWithoutMe);
+        } else {
+            view.showErrorToast(activity.getString(R.string.err_file_has_not_been_shared));
         }
     }
 
