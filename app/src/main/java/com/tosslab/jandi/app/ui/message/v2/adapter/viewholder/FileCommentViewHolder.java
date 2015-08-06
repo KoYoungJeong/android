@@ -18,15 +18,14 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
-import com.tosslab.jandi.app.views.spannable.ClickableMensionMessageSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import de.greenrobot.event.EventBus;
@@ -208,24 +207,10 @@ public class FileCommentViewHolder implements BodyViewHolder {
             }
 
 
-            boolean hasMention = false;
-            for (MentionObject mention : commentMessage.mentions) {
-                String name = builder.subSequence(mention.getOffset() + 1, mention.getLength() +
-                        mention.getOffset()).toString();
-                ClickableMensionMessageSpannable spannable1 = new ClickableMensionMessageSpannable(commentTextView
-                        .getContext(), name, mention.getId(),
-                        commentTextView.getResources().getDimensionPixelSize(R.dimen.jandi_mention_comment_item_font_size));
-                builder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention
-                        .getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                if (!hasMention) {
-                    hasMention = true;
-                }
-            }
-
-            if (hasMention) {
-                LinkifyUtil.setOnLinkClick(commentTextView);
-            }
+            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                    commentTextView, builder, commentMessage.mentions, entityManager.getMe().getId())
+                    .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
+            builder = generateMentionMessageUtil.generate();
 
 
             if (hasLink) {

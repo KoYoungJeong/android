@@ -69,7 +69,6 @@ public class StarMentionListActivity extends AppCompatActivity {
 
     }
 
-
     void setupTabButton() {
         allTabView = findViewById(R.id.tv_star_tab_all);
         allTabView.setOnClickListener(v -> {

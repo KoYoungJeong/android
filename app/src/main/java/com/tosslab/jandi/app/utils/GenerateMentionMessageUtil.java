@@ -32,6 +32,7 @@ public class GenerateMentionMessageUtil {
         this.textView = textView;
         this.pxSize = context.getResources().getDimensionPixelSize(R.dimen.jandi_mention_message_item_font_size);
         this.textColor = 0xFF00a6e9;
+        this.backgroundColor = 0xFFdaf2ff;
         this.stringBuilder = stringBuilder;
         this.mentions = mentions;
         this.myId = myId;
@@ -45,10 +46,10 @@ public class GenerateMentionMessageUtil {
                     mention.getLength() + mention.getOffset()).toString();
             if (mention.getId() == myId) {
                 spannable = new ClickableMensionMessageSpannable(context,
-                        name, mention.getId(), pxSize, textColor, 0xFFdaf2ff);
+                        name, mention.getId(), pxSize, textColor, backgroundColor);
             } else {
                 spannable = new ClickableMensionMessageSpannable(context,
-                        name, mention.getId(), pxSize, textColor, backgroundColor);
+                        name, mention.getId(), pxSize, -1, -1);
             }
             stringBuilder.setSpan(spannable, mention.getOffset(),
                     mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

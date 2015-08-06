@@ -107,18 +107,33 @@ public class StarMentionListModel {
 
             if (type.equals("text")) {
                 starMentionVO.setContentType(StarMentionVO.Type.Text.getValue());
-                starMentionVO.setRoomName(starMentionedMessageObject.getRoom().name);
-                starMentionVO.setRoomId(starMentionedMessageObject.getRoom().id);
+
+
                 if (starMentionedMessageObject.getRoom().type.equals("channel")) {
                     starMentionVO.setRoomType(JandiConstants.TYPE_PUBLIC_TOPIC);
+                    starMentionVO.setRoomName(starMentionedMessageObject.getRoom().name);
+                    starMentionVO.setRoomId(starMentionedMessageObject.getRoom().id);
                 } else if (starMentionedMessageObject.getRoom().type.equals("privateGroup")) {
                     starMentionVO.setRoomType(JandiConstants.TYPE_PRIVATE_TOPIC);
+                    starMentionVO.setRoomName(starMentionedMessageObject.getRoom().name);
+                    starMentionVO.setRoomId(starMentionedMessageObject.getRoom().id);
                 } else if (starMentionedMessageObject.getRoom().type.equals("chat")) {
                     starMentionVO.setRoomType(JandiConstants.TYPE_DIRECT_MESSAGE);
+
+                    String userId = starMentionedMessageObject.getRoom().name.replaceAll(
+                            EntityManager.getInstance(JandiApplication.getContext()).getMe().getId() + "", "");
+                    userId.replace(":", "");
+
+
+//                    starMentionVO.setRoomName(EntityManager.getInstance(
+//                            JandiApplication.getContext()).getEntityById(Integer.valueOf(userId)).getName());
+//                    starMentionVO.setRoomId(Integer.valueOf(userId));
+                    starMentionVO.setRoomName(starMentionedMessageObject.getRoom().name);
+                    starMentionVO.setRoomId(starMentionedMessageObject.getRoom().id);
                 }
                 starMentionVO.setLinkId(starMentionedMessageObject.getLinkId());
             }
-            
+
 
             if (type.equals("comment")) {
                 starMentionVO.setContentType(StarMentionVO.Type.Comment.getValue());

@@ -8,12 +8,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
-import com.tosslab.jandi.app.views.spannable.ClickableMensionMessageSpannable;
 
 public class FileDetailCollapseCommentView implements CommentViewHolder {
 
@@ -58,28 +58,17 @@ public class FileDetailCollapseCommentView implements CommentViewHolder {
         spannableStringBuilder.append(" ");
         int endIndex = spannableStringBuilder.length();
 
-        boolean hasMention = false;
-        for (MentionObject mention : commentMessage.mentions) {
-            String name = spannableStringBuilder.subSequence(mention.getOffset() + 1,
-                    mention.getLength() + mention.getOffset()).toString();
-            ClickableMensionMessageSpannable spannable1 = new ClickableMensionMessageSpannable(
-                    textViewCommentContent.getContext(), name, mention.getId(), textViewCommentContent.getResources()
-                    .getDimensionPixelSize(R.dimen.jandi_mention_comment_item_font_size));
-            spannableStringBuilder.setSpan(spannable1, mention.getOffset(),
-                    mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            if (!hasMention) {
-                hasMention = true;
-            }
-        }
-        if (hasMention) {
-            LinkifyUtil.setOnLinkClick(textViewCommentContent);
-        }
-
         DateViewSpannable spannable =
                 new DateViewSpannable(textViewCommentContent.getContext(), createTime);
         spannableStringBuilder.setSpan(spannable,
                 startIndex, endIndex,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                textViewCommentContent, spannableStringBuilder, commentMessage.mentions,
+                EntityManager.getInstance(textViewCommentContent.getContext()).getMe().getId())
+                .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
+        spannableStringBuilder = generateMentionMessageUtil.generate();
 
         textViewCommentContent.setText(spannableStringBuilder);
     }

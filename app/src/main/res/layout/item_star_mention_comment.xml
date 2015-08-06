@@ -17,6 +17,7 @@
         android:src="@drawable/jandi_fl_icon_txt" />
 
     <RelativeLayout
+        android:id="@+id/rv_star_mention_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -46,7 +47,9 @@
             android:layout_marginTop="10dp"
             android:ellipsize="end"
             android:gravity="left"
+            android:lineSpacingExtra="2dip"
             android:maxLines="10"
+            android:minHeight="20dp"
             android:text="file"
             android:textColor="@color/jandi_star_mention_item_name_content_text"
             android:textSize="13sp" />
@@ -80,12 +83,16 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/tv_star_mention_file_name"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="16dp"
             android:layout_marginRight="3dp"
             android:text="07/23/2015, 01:20 AM"
             android:textColor="@color/jandi_star_mention_item_date_text"
             android:textSize="13sp" />
 
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_below="@id/rv_star_mention_content"></LinearLayout>
 
 </RelativeLayout>

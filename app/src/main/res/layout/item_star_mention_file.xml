@@ -17,6 +17,7 @@
         android:src="@drawable/jandi_fl_icon_txt" />
 
     <RelativeLayout
+        android:id="@+id/rv_star_mention_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -43,7 +44,7 @@
             android:layout_width="47dp"
             android:layout_height="56.6dp"
             android:layout_below="@id/tv_star_mention_name"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="10dp"
             android:src="@drawable/jandi_fl_icon_audio_dropbox" />
 
         <TextView
@@ -51,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="25dp"
             android:layout_toRightOf="@id/iv_star_file"
             android:ellipsize="middle"
             android:gravity="center_vertical"
@@ -73,5 +74,11 @@
             android:textSize="13sp" />
 
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_below="@id/rv_star_mention_content"></LinearLayout>
+
 
 </RelativeLayout>

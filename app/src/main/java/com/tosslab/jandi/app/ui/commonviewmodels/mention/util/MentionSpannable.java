@@ -43,6 +43,8 @@ public class MentionSpannable extends ReplacementSpan {
 
     }
 
+
+
     @Override
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
         return tvDate.getWidth();

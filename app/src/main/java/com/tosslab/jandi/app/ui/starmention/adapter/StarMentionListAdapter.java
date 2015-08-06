@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.starmention.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,7 @@ import android.view.ViewGroup;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshOldStarMentionedEvent;
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.viewholder.CommentStarMentionViewHolder;
 import com.tosslab.jandi.app.ui.starmention.viewholder.CommonStarMentionViewHolder;
@@ -18,9 +17,8 @@ import com.tosslab.jandi.app.ui.starmention.viewholder.MessageStarMentionViewHol
 import com.tosslab.jandi.app.ui.starmention.viewholder.RecyclerViewFactory;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
-import com.tosslab.jandi.app.utils.LinkifyUtil;
-import com.tosslab.jandi.app.views.spannable.ClickableMensionMessageSpannable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,32 +69,18 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
 
             SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder(starMentionVO.getContent());
 
-            boolean hasMention = false;
-            for (MentionObject mention : starMentionVO.getMentions()) {
-                try {
-                    String name = messageStringBuilder.subSequence(mention.getOffset() + 1,
-                            mention.getLength() + mention.getOffset()).toString();
+            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                    viewHolder.getStarMentionContentView(), messageStringBuilder, starMentionVO.getMentions(),
+                    EntityManager.getInstance(viewHolder.getStarMentionContentView().getContext()).getMe().getId())
+                    .setBackgroundColor(0xFF01a4e7)
+                    .setTextColor(0xFFFFFFFF)
+                    .setPxSize(R.dimen.jandi_mention_star_list_item_font_size);
 
-                    ClickableMensionMessageSpannable spannable1 = new ClickableMensionMessageSpannable(
-                            viewHolder.getStarMentionContentView().getContext(), name, mention.getId(), viewHolder.getStarMentionContentView()
-                            .getResources().getDimensionPixelSize(R.dimen.jandi_mention_message_item_font_size));
-
-                    messageStringBuilder.setSpan(spannable1, mention.getOffset(), mention.getLength() +
-                            mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                } catch (IndexOutOfBoundsException e) {
-                    e.printStackTrace();
-                }
-
-                if (!hasMention) {
-                    hasMention =true;
-                }
-            }
-
-            if (hasMention) {
-                LinkifyUtil.setOnLinkClick(viewHolder.getStarMentionContentView());
-            }
-
+            messageStringBuilder = generateMentionMessageUtil.generate();
+            // for single spannable
+            messageStringBuilder.append(" ");
             viewHolder.getStarMentionContentView().setText(messageStringBuilder);
+
 
         } else if (getItemViewType(position) == StarMentionVO.Type.Comment.getValue()) {
 
@@ -105,30 +89,15 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
             SpannableStringBuilder commentStringBuilder = new SpannableStringBuilder
                     (starMentionVO.getContent());
 
-            boolean hasMention = false;
-            for (MentionObject mention : starMentionVO.getMentions()) {
-                try {
-                    String name = commentStringBuilder.subSequence(mention.getOffset() + 1,
-                            mention.getLength() + mention.getOffset()).toString();
-                    ClickableMensionMessageSpannable spannable1 = new ClickableMensionMessageSpannable(viewHolder.
-                            getStarMentionCommentView().getContext(), name, mention.getId(),
-                            viewHolder.getStarMentionCommentView().getResources()
-                                    .getDimensionPixelSize(R.dimen.jandi_mention_message_item_font_size));
-                    commentStringBuilder.setSpan(spannable1, mention.getOffset(), mention.getLength() +
-                            mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                } catch (IndexOutOfBoundsException e) {
-                    e.printStackTrace();
-                }
-
-                if (!hasMention) {
-                    hasMention = true;
-                }
-            }
-
-            if (hasMention) {
-                LinkifyUtil.setOnLinkClick(viewHolder.getStarMentionCommentView());
-            }
-
+            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                    viewHolder.getStarMentionCommentView(), commentStringBuilder, starMentionVO.getMentions(),
+                    EntityManager.getInstance(viewHolder.getStarMentionCommentView().getContext()).getMe().getId())
+                    .setBackgroundColor(0xFF01a4e7)
+                    .setTextColor(0xFFFFFFFF)
+                    .setPxSize(R.dimen.jandi_mention_star_list_item_font_size);
+            commentStringBuilder = generateMentionMessageUtil.generate();
+            // for single spannable
+            commentStringBuilder.append(" ");
             viewHolder.getStarMentionCommentView().setText(commentStringBuilder);
 
         } else if (getItemViewType(position) == StarMentionVO.Type.File.getValue()) {

@@ -16,29 +16,25 @@ public class MentionMessageSpannable extends ReplacementSpan {
     protected TextView tvDate;
     protected int entityId;
 
-    public MentionMessageSpannable(Context context, String name, int entityId, float pxSize) {
+    public MentionMessageSpannable(Context context, String name, int entityId, float pxSize,
+                                   int textColor, int backgroundColor) {
+
         this.entityId = entityId;
         tvDate = new TextView(context);
         tvDate.setText(name);
         tvDate.setTextColor(0xFF00a6e9);
         tvDate.setBackgroundColor(0xFFdaf2ff);
         tvDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, pxSize);
-
-        prepareView();
-    }
-
-    public MentionMessageSpannable(Context context, String name, int entityId, float pxSize, int textColor, int backgroundColor) {
         this.entityId = entityId;
-
-        tvDate = new TextView(context);
-        tvDate.setText(name);
-        tvDate.setTextColor(textColor);
         if (backgroundColor != -1) {
             tvDate.setBackgroundColor(backgroundColor);
         }
-        tvDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, pxSize);
+        if (textColor != -1) {
+            tvDate.setTextColor(textColor);
+        }
 
         prepareView();
+
     }
 
 
