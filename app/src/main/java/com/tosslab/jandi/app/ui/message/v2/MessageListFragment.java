@@ -71,6 +71,7 @@ import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
@@ -139,6 +140,7 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
+import rx.Observable;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -759,7 +761,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             }
             FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
             // insert to ui
-            messageListPresenter.insertSendingMessage(localId, message, me.getName(), me.getUserLargeProfileUrl());
+            messageListPresenter.insertSendingMessage(localId, message, me.getName(), me
+                    .getUserLargeProfileUrl(), mentionInfos.getMentions());
             // networking...
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, reqSendMessage)));
         }
@@ -967,8 +970,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         DummyMessageLink dummyMessage = messageListPresenter.getDummyMessage(event.getLocalId());
         dummyMessage.setStatus(SendMessage.Status.SENDING.name());
         messageListPresenter.justRefresh();
+        ResMessages.TextMessage dummyMessageContent = (ResMessages.TextMessage) dummyMessage.message;
+
+        List<MentionObject> mentionObjects = new ArrayList<>();
+
+        if (dummyMessageContent.mentions != null) {
+            Observable.from(dummyMessageContent.mentions)
+                    .subscribe(mentionObjects::add);
+        }
+
         sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(event.getLocalId(),
-                new ReqSendMessageV3((((ResMessages.TextMessage) dummyMessage.message).content.body), null))));
+                new ReqSendMessageV3((dummyMessageContent.content.body), mentionObjects))));
     }
 
     public void onEvent(DummyDeleteEvent event) {

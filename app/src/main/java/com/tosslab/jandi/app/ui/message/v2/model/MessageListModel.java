@@ -50,7 +50,6 @@ import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
-import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -345,7 +344,7 @@ public class MessageListModel {
         for (SendMessage link : sendMessage) {
 
             DummyMessageLink dummyMessageLink = new DummyMessageLink(link.getId(), link.getMessage(),
-                    link.getStatus());
+                    link.getStatus(), new ArrayList<>());
             dummyMessageLink.message.writerId = id;
             dummyMessageLink.message.createTime = new Date();
             links.add(dummyMessageLink);

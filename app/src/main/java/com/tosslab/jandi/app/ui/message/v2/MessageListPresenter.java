@@ -41,6 +41,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -503,8 +504,9 @@ public class MessageListPresenter {
         return idx >= 0;
     }
 
-    public void insertSendingMessage(long localId, String message, String name, String userLargeProfileUrl) {
-        DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, message, SendMessage.Status.SENDING.name());
+    public void insertSendingMessage(long localId, String message, String name, String userLargeProfileUrl, List<MentionObject> mentions) {
+        DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, message, SendMessage
+                .Status.SENDING.name(), mentions);
         dummyMessageLink.message.writerId = EntityManager.getInstance(activity).getMe().getId();
         dummyMessageLink.message.createTime = new Date();
         dummyMessageLink.message.updateTime = new Date();
