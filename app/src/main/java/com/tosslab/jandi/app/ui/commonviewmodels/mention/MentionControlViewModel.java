@@ -362,7 +362,7 @@ public class MentionControlViewModel {
     }
 
     public ResultMentionsVO getMentionInfoObject() {
-        return getMentionInfoObject(editText.getText().toString(),
+        return getMentionInfoObject(editText.getText().toString().trim(),
                 selectedMemberHashMap, getSelectableMembersInThis());
     }
 
