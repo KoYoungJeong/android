@@ -174,11 +174,11 @@ public class EventViewHolder implements BodyViewHolder {
         while (iterator.hasNext()) {
             tempEntity = entityManager.getEntityById(iterator.next().getInviteUserId());
             if (tempEntity != null) {
-                first = false;
                 if (!first) {
                     builder.insert(tempIndex, ", ");
                     tempIndex += 2;
                 }
+                first = false;
 
                 ProfileSpannable profileSpannable1 =
                         new ProfileSpannable(tempEntity.getId());

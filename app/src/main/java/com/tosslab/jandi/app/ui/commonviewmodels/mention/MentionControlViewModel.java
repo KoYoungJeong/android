@@ -40,28 +40,16 @@ public class MentionControlViewModel {
 
     public static final String MENTION_TYPE_MESSAGE = "mention_type_message";
     public static final String MENTION_TYPE_FILE_COMMENT = "mention_type_file_comment";
-
-    public interface OnMentionViewShowingListener {
-        void onMentionViewShowing(boolean isShowing);
-    }
-
     private RecyclerView searchMemberListView;
-
     private EditText editText;
-
     // for Message List View
     private RecyclerView messageListView;
-
     // for File comment List View
     private ListView fileCommentListView;
-
     private KeyboardHeightModel keyboardHeightModel;
-
     private SearchMemberModel searchMemberModel;
-
     //MESSAGE OR FILE VIEW TYPE
     private String mentionType = MENTION_TYPE_MESSAGE;
-
     //for textControl
     private int beforeTextCnt = 0;
     private int afterTextCnt = 0;
@@ -69,16 +57,11 @@ public class MentionControlViewModel {
     private String afterText = "";
     private String removedText = "";
     private String currentSearchKeywordString;
-
     private List<Integer> roomIds;
-
     // restore mentioned members using hashmap for time complexity
     private LinkedHashMap<Integer, SearchedItemVO> selectedMemberHashMap;
-
     private ClipboardListener clipboardListener;
-
     private TextWatcher textWatcher;
-
     private OnMentionViewShowingListener onMentionViewShowingListener;
 
     public MentionControlViewModel(Activity activity, RecyclerView searchMemberListView,
@@ -95,6 +78,10 @@ public class MentionControlViewModel {
         this.fileCommentListView = fileCommentListView;
         this.mentionType = MENTION_TYPE_FILE_COMMENT;
         init(activity, searchMemberListView, editText, roomIds, mentionType);
+    }
+
+    public boolean isMentionListVisible() {
+        return searchMemberListView.getVisibility() == View.VISIBLE;
     }
 
     private void init(Activity activity, RecyclerView searchMemberListView, EditText editText,
@@ -315,7 +302,6 @@ public class MentionControlViewModel {
 
     }
 
-
     private ResultMentionsVO getMentionInfoObject(String message,
                                                   LinkedHashMap<Integer, SearchedItemVO> selectedMembers,
                                                   LinkedHashMap<Integer, SearchedItemVO> selectableMembers) {
@@ -411,6 +397,14 @@ public class MentionControlViewModel {
 
     public List<Integer> getRoomIds() {
         return roomIds;
+    }
+
+    public void dismissMentionList() {
+        showListView(false);
+    }
+
+    public interface OnMentionViewShowingListener {
+        void onMentionViewShowing(boolean isShowing);
     }
 
     class ClipboardListener implements

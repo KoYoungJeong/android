@@ -1445,6 +1445,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return true;
         }
 
+        if (mentionControlViewModel.isMentionListVisible()) {
+            mentionControlViewModel.dismissMentionList();
+            return true;
+        }
+
         return false;
     }
 }
