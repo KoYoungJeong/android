@@ -131,6 +131,8 @@ public class JandiSocketServiceModel {
             SocketFileEvent socketFileEvent =
                     objectMapper.readValue(object.toString(), SocketFileDeleteEvent.class);
 
+            MessageRepository.getRepository().updateStatus(socketFileEvent.getFile().getId(), "archived");
+
             postEvent(new DeleteFileEvent(socketFileEvent.getFile().getId()));
         } catch (IOException e) {
             e.printStackTrace();
