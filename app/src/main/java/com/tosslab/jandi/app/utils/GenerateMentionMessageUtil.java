@@ -27,6 +27,7 @@ public class GenerateMentionMessageUtil {
     public GenerateMentionMessageUtil(TextView textView, SpannableStringBuilder stringBuilder,
                                       Collection<MentionObject> mentions) {
 
+        Context context = textView.getContext();
         this.pxSize = context.getResources().getDimensionPixelSize(R.dimen.jandi_mention_message_item_font_size);
         this.textColor = 0xFF00a6e9;
         this.context = context;
