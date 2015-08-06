@@ -71,6 +71,7 @@ import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
@@ -139,6 +140,7 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
+import rx.Observable;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -426,7 +428,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         isRoomInit = true;
 
         if (isForeground) {
-            sendMessage(new NewMessageQueue(messageState));
+            sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
 
     }
@@ -720,11 +722,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Click(R.id.btn_send_message)
     void onSendClick() {
 
-        String message = messageListPresenter.getSendEditText().trim();
+
+        ResultMentionsVO mentionInfos = mentionControlViewModel.getMentionInfoObject();
+        String message = mentionInfos.getMessage();
 
         ReqSendMessageV3 reqSendMessage = null;
 
-        ResultMentionsVO mentionInfos = mentionControlViewModel.getMentionInfoObject();
         if (!TextUtils.isEmpty(message)) {
             if (mentionControlViewModel.hasMentionMember()) {
                 mentionControlViewModel.clear();
@@ -739,22 +742,27 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             StickerRepository.getRepository().upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo), mentionInfos.getMentions())));
         } else {
-            // insert to db //todo 데이터 베이스에 삽입해야함.
-            // insert to db
+
+            if (TextUtils.isEmpty(message)) {
+                return;
+            }
+
+            // TODO 데이터 베이스에 삽입해야함.
             long localId;
             if (messageListModel.isUser(entityId)) {
                 if (roomId > 0) {
-                    localId = messageListModel.insertSendingMessage(roomId, message);
+                    localId = messageListModel.insertSendingMessage(roomId, message, mentionInfos.getMentions());
                 } else {
                     // roomId 를 할당받지 못하면 메세지를 보내지 않음
                     return;
                 }
             } else {
-                localId = messageListModel.insertSendingMessage(entityId, message);
+                localId = messageListModel.insertSendingMessage(entityId, message, mentionInfos.getMentions());
             }
             FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
             // insert to ui
-            messageListPresenter.insertSendingMessage(localId, message, me.getName(), me.getUserLargeProfileUrl());
+            messageListPresenter.insertSendingMessage(localId, message, me.getName(), me
+                    .getUserLargeProfileUrl(), mentionInfos.getMentions());
             // networking...
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, reqSendMessage)));
         }
@@ -962,8 +970,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         DummyMessageLink dummyMessage = messageListPresenter.getDummyMessage(event.getLocalId());
         dummyMessage.setStatus(SendMessage.Status.SENDING.name());
         messageListPresenter.justRefresh();
+        ResMessages.TextMessage dummyMessageContent = (ResMessages.TextMessage) dummyMessage.message;
+
+        List<MentionObject> mentionObjects = new ArrayList<>();
+
+        if (dummyMessageContent.mentions != null) {
+            Observable.from(dummyMessageContent.mentions)
+                    .subscribe(mentionObjects::add);
+        }
+
         sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(event.getLocalId(),
-                new ReqSendMessageV3((((ResMessages.TextMessage) dummyMessage.message).content.body), null))));
+                new ReqSendMessageV3((dummyMessageContent.content.body), mentionObjects))));
     }
 
     public void onEvent(DummyDeleteEvent event) {
