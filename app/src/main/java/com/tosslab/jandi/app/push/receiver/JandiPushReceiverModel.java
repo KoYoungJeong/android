@@ -210,12 +210,12 @@ public class JandiPushReceiverModel {
     private Notification getNotification(Context context,
                                          String notificationTitle,
                                          int teamId, int roomId, String roomType, String roomName,
-                                         String writerName, String message, Bitmap writerProfile,
+                                         String message, Bitmap writerProfile,
                                          int badgeCount) {
 
         int roomTypeInt = getEntityType(roomType);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        builder.setContentTitle(writerName);
+        builder.setContentTitle(notificationTitle);
         builder.setContentText(message);
         if (roomTypeInt == JandiConstants.TYPE_DIRECT_MESSAGE) {
             roomName = context.getString(R.string.jandi_tab_direct_message);
@@ -308,7 +308,7 @@ public class JandiPushReceiverModel {
         Notification notification =
                 getNotification(context, notificationTitle,
                         teamId, roomId, roomType, roomName,
-                        writerName, message, profileImage,
+                        message, profileImage,
                         badgeCount);
 
         sendNotification(context, notification);
