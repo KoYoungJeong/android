@@ -24,7 +24,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/txt_file_detail_create_date"
             android:layout_toRightOf="@+id/img_file_detail_user_profile"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
             android:textSize="@dimen/jandi_file_detail_text_user_name"
             android:textStyle="bold"/>
 
@@ -34,8 +38,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/txt_file_detail_user_name"
-            android:gravity="right"
             android:textColor="@color/jandi_file_detail_date"
             android:textSize="@dimen/jandi_file_detail_text_date"/>
 

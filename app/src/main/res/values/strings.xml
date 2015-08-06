@@ -82,15 +82,11 @@
 
     <!-- 튜토리얼 -->
     <string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
-    <string name="jandi_tutorial_welcome_message">"Our mission is to make your working life simpler, more productive, and more enjoyable, starting with collaboration.
-
-We combined everything you love about messaging apps and cloud storage with powerful search functionality, and put it in the palm of your hand."</string>
+    <string name="jandi_tutorial_welcome_message">"Our mission is to make your working life simpler, more productive, and more enjoyable, starting with collaboration. We combined everything you love about messaging apps and cloud storage with powerful search functionality, and put it in the palm of your hand."</string>
     <string name="jandi_tutorial_topic">"Connect and Engage with Your Entire Team"</string>
     <string name="jandi_tutorial_topic_message">"Open communication channels across the organization with firm-wide topics. Share industry knowledge with functional topics. And centralize your communications around projects in private dedicated spaces."</string>
     <string name="jandi_tutorial_file">"Upload and Share Files with a Few Taps"</string>
-    <string name="jandi_tutorial_file_message">"Share documents, images, and any other files right from your phone or JANDI file drawer.
-
-All of your content is stored and indexed automatically so you can easily find what you're looking for down the road."</string>
+    <string name="jandi_tutorial_file_message">"Share documents, images, and any other files right from your phone or JANDI file drawer. All of your content is stored and indexed automatically so you can easily find what you're looking for down the road."</string>
 
     <!-- Manipulate Entity -->
     <string name="jandi_entity_joined_topic">"My Topics"</string>
@@ -155,13 +151,13 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="err_file_upload_failed">"File could not be uploaded"</string>
 
     <!-- Announcement -->
-    <string name="jandi_announcement_created">"%1$s has updated %2$s's message as the announcement."</string>
-    <string name="jandi_announcement_deleted">"%s has deleted the announcement."</string>
+    <string name="jandi_announcement_created">"%1$s posted %2$s's message as an announcement."</string>
+    <string name="jandi_announcement_deleted">"%s deleted the announcement."</string>
     <string name="jandi_announcement_create_question">"The current announcement will be replaced with this message. Do you wish to continue?"</string>
-    <string name="jandi_announcement_delete_question">"The announcement will be deleted. Do you wish to continue?"</string>
-    <string name="jandi_announcement_create">"Make an announcement"</string>
+    <string name="jandi_announcement_delete_question">"This announcement will be removed. Are you sure you want to continue?"</string>
+    <string name="jandi_announcement_create">Announce</string>
     <string name="jandi_announcement_delete">"Delete"</string>
-    <string name="jandi_announcement_minimize">"Minimize"</string>
+    <string name="jandi_announcement_minimize">"Hide"</string>
 
     <!-- Manipulate CDP -->
     <string name="menu_entity_edit">"Rename"</string>
@@ -413,8 +409,8 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_is_topic_required">"Type*"</string>
     <string name="jandi_topic_description">"Topic description"</string>
     <string name="jandi_explain_topic_description">"Description (optional)"</string>
-    <string name="jandi_topic_leave">"Leave topic"</string>
-    <string name="jandi_topic_delete">"Delete topic"</string>
+    <string name="jandi_topic_leave">"Leave"</string>
+    <string name="jandi_topic_delete">"Delete"</string>
     <string name="jandi_topic_detail">"Topic Info"</string>
     <string name="jandi_chat_detail">"Chat setting"</string>
     <string name="jandi_it_has_no_topic_description">"(There is no topic description)"</string>
@@ -476,4 +472,5 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_starred_unstar_from_item">Are you sure you want to unstar this item?</string>
 
     <string name="jandi_unread_messages_below">"Unread messages below"</string>
+    <string name="jandi_unpinned_message">Unstarred</string>
 </resources>

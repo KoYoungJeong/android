@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.adapter.StarMentionListAdapter;
 import com.tosslab.jandi.app.ui.starmention.presentor.StarMentionListPresentor;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterViews;
@@ -207,6 +208,12 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void onRemoveItem(int position) {
         starMentionListAdapter.removeStarMentionListAt(position);
+    }
+
+    @UiThread
+    @Override
+    public void showSuccessToast(String message) {
+        ColoredToast.show(getActivity(), message);
     }
 
 }

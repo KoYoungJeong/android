@@ -106,7 +106,9 @@ public class AccountRepository {
         try {
             Dao<ResAccountInfo.UserTeam, Integer> dao = helper.getDao(ResAccountInfo.UserTeam
                     .class);
-            return dao.queryBuilder().query();
+            return dao.queryBuilder()
+                    .orderBy("order", true)
+                    .query();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

@@ -70,7 +70,7 @@
     <string name="jandi_tutorial_welcome_message">"JANDI让工作变简单、愉快。 我们将你对通讯软件的要求与云端存储的需求结合，并放在你的手掌上。"</string>
     <string name="jandi_tutorial_topic">"JANDI在一起"</string>
     <string name="jandi_tutorial_topic_message">"在您选择的议题跟组织里的同仁联络，无论是专案上的协作或仅是闲谈。当您需要更多隐私，就邀请特定成员到私人议题及直接传讯里面继续对话。"</string>
-    <string name="jandi_tutorial_file">"简单的几个点击来上传文件"</string>
+    <string name="jandi_tutorial_file">"简单的几个点击上传文件"</string>
     <string name="jandi_tutorial_file_message">"零时间、空间限制，随时从行动装置分享文档、幻灯片、视频及任何文件给所有团队成员。"</string>
 
     <!-- Manipulate Entity -->
@@ -319,20 +319,22 @@
     <string name="jandi_topic_ask_about_deleting">"您确定要删除这个议题？"</string>
     <string name="jandi_create">"建立"</string>
     <string name="jandi_copy_link">"复制链接"</string>
-    <string name="jandi_disabled_user">"这成员已经被暂时关闭"</string>
+    <string name="jandi_disabled_user">"此成员权限已被暂时关闭"</string>
     <string name="jandi_open_browser">"开启一个浏览器"</string>
     <string name="jandi_share_a_topic">"分享在一个议题群组内"</string>
     <string name="jandi_share_externally">"分享頁面"</string>
     <string name="jandi_my_files">"<b>我的文件</b>"</string>
-    <string name="jandi_account_home_help">"您可以凭一个账号加入多个团队
+    <string name="jandi_account_home_help">"无限扩大你的联络网
 
-一个账号可以同时连接多个电子邮件地址。您可以使用其中任何一个登入。
+一组账号可同时连接数个电子邮箱
+并随意切换登入的电子邮箱
 
-给每个团队指定一个电子邮件好使其他团队成员知道如何联系您。"</string>
+确保与其他团队成员的联系不断线
+可针对每个团队各别指定一个电子邮箱"</string>
     <string name="jadi_account_home">"账号首页"</string>
     <string name="jandi_go_to_main">"回到账号首页"</string>
     <string name="jandi_sign_in_ids_explain">"请选择一个电子邮件地址让我们将全部与JANDI相关的电子邮件寄给您。增加其它电子邮件地址以指定给特定团队。"</string>
-    <string name="jandi_disable_user_profile_explain">"這成員已經被暫時關閉。欲知更多細節，請聯係團隊管理者。"</string>
+    <string name="jandi_disable_user_profile_explain">"此成员权限已被暂时关闭。 欲知更多细节，请联络团队管理員。"</string>
     <string name="jandi_share_to_jandi">"分享到JANDI"</string>
     <string name="jandi_no_message_in_topic_dm">"输入信息以开始对话"</string>
     <string name="err_invalid_team_domain">"网域名称无效"</string>
@@ -474,5 +476,6 @@
     <string name="jandi_starred_no_all">还没有人提及你</string>
     <string name="jandi_starred_no_file">没有标示档案</string>
     <string name="jandi_starred_unstar_from_item">你确定要取消标示吗？</string>
+    <string name="jandi_unpinned_message">"已取消标示"</string>
 
 </resources>

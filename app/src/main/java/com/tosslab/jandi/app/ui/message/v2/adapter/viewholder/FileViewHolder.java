@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
-import android.text.Spannable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,11 +13,11 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
+import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
 import de.greenrobot.event.EventBus;
 
@@ -118,8 +117,17 @@ public class FileViewHolder implements BodyViewHolder {
                 fileTypeTextView.setText("");
             } else {
                 fileNameTextView.setText(fileMessage.content.title);
-                fileTypeTextView.setText(FileSizeUtil.fileSizeCalculation(fileMessage.content.size)
-                        + ", " + fileMessage.content.ext);
+                MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
+                switch (sourceType) {
+                    case S3:
+                        fileTypeTextView.setText(FileSizeUtil.fileSizeCalculation(fileMessage.content.size)
+                                + ", " + fileMessage.content.ext);
+                        break;
+                    case Google:
+                    case Dropbox:
+                        fileTypeTextView.setText(fileMessage.content.ext);
+                        break;
+                }
 
                 int mimeTypeIconImage =
                         MimeTypeUtil.getMimeTypeIconImage(
@@ -127,7 +135,6 @@ public class FileViewHolder implements BodyViewHolder {
                 fileImageView.setImageResource(mimeTypeIconImage);
             }
         }
-
 
 
         profileImageView.setOnClickListener(v ->

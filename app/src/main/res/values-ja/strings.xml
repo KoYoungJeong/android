@@ -65,7 +65,7 @@
 
     <!-- Fuzzy -->
     <string name="jandi_action_direct_message">"ダイレクトメッセージ"</string>
-    <string name="jandi_action_starred">"お気に入り"</string>
+    <string name="jandi_action_starred">"スター付き"</string>
 
     <!-- 튜토리얼 -->
     <string name="jandi_tutorial_welcome">"JANDIへようこそ"</string>
@@ -144,9 +144,9 @@
     <!-- Announcement -->
     <string name="jandi_announcement_create">"告知に登録する"</string>
     <string name="jandi_announcement_create_question">"登録されている告知をこのメッセージに変更します。変更しますか？"</string>
-    <string name="jandi_announcement_delete_question">"この告知を削除しますか？削除時トピック内の他のメンバーたちにもこれからこの告知が見えますが、元のメッセージは保存されます"</string>
+    <string name="jandi_announcement_delete_question">"この告知を削除します。続きますか？"</string>
     <string name="jandi_announcement_created">"%1$sさんが%2$sさんのメッセージを告知に登録しました。"</string>
-    <string name="jandi_announcement_deleted">"%sさんが告知を削除しました。hh:mm PM"</string>
+    <string name="jandi_announcement_deleted">"%sさんが告知を削除しました。"</string>
     <string name="jandi_announcement_delete">"削除"</string>
     <string name="jandi_announcement_minimize">"環境設定"</string>
 
@@ -469,21 +469,22 @@
 
     <!-- starred -->
 
-    <string name="jandi_starred_star">お気に入りに追加する</string>
+    <string name="jandi_starred_star">スター付き</string>
     <string name="jandi_mention_mentions">メンション</string>
     <string name="jandi_mention_more">もっと見る</string>
     <string name="jandi_starred_files">ファイルの種類</string>
     <string name="jandi_starred_all">全ての種類</string>
     <string name="jandi_starred_unstar">お気に入りから削除する</string>
     <string name="jandi_starred_undo">取り消し</string>
-    <string name="jandi_starred_unstarred">お気に入りが解除されました</string>
-    <string name="jandi_starred_stars">お気に入り</string>
+    <string name="jandi_starred_unstarred">スター解除</string>
+    <string name="jandi_starred_stars">スター付き</string>
     <string name="jandi_mention_all_topic_members">トピック内</string>
     <string name="jandi_mention_mentioned_you">さんからのメンション</string>
     <string name="jandi_mention_no_mentions">メンションされたことがありません</string>
-    <string name="jandi_starred_no_all">お気に入りのメッセージやファイルがありません</string>
+    <string name="jandi_starred_no_all">スター付きのメッセージやファイルがありません</string>
     <string name="jandi_starred_no_file">スター付きのファイルなし</string>
     <string name="jandi_starred_unstar_from_item">スター付きを解除しましょうか？</string>
+    <string name="jandi_unpinned_message">"スターなし"</string>
 
 
 </resources>

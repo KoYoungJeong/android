@@ -12,8 +12,6 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -33,7 +31,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -52,7 +49,6 @@ import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
-import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
@@ -253,7 +249,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         try {
             int teamId = EntityManager.getInstance(FileDetailActivity.this).getTeamId();
             fileDetailPresenter.unregistStarredMessage(teamId, fileId);
-            // 성공시 메세지
+            showToast(getString(R.string.jandi_unpinned_message));
         } catch (RetrofitError e) {
             e.printStackTrace();
 
@@ -266,7 +262,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         try {
             int teamId = EntityManager.getInstance(FileDetailActivity.this).getTeamId();
             fileDetailPresenter.registStarredMessage(teamId, fileId);
-            //성공시 메세지
+            showToast(getString(R.string.jandi_message_starred));
         } catch (RetrofitError e) {
             e.printStackTrace();
             // 실패시 메세지 필요
@@ -1075,42 +1071,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         searchedItemVO.setType(event.getType());
         MentionControlViewModel mentionControlViewModel = fileDetailPresenter.getMentionControlViewModel();
         mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
-    }
-
-
-    //FIXME ?
-    @Background
-    public void onEvent(MessageStarredEvent event) {
-        if (!isForeground) {
-            return;
-        }
-        switch (event.getAction()) {
-            case STARRED:
-                fileDetailPresenter.registStarredMessage(EntityManager.
-                        getInstance(FileDetailActivity.this).getTeamId(), event.getMessageId());
-
-                new Handler() {
-                    @Override
-                    public void handleMessage(Message msg) {
-                        super.handleMessage(msg);
-                        Toast.makeText(FileDetailActivity.this, R.string.jandi_message_starred, Toast.LENGTH_SHORT).show();
-                        fileDetailPresenter.getFileDetail(fileId, false, true);
-                    }
-                }.sendEmptyMessageDelayed(0, 100);
-                break;
-            case UNSTARRED:
-                fileDetailPresenter.unregistStarredMessage(EntityManager.
-                        getInstance(FileDetailActivity.this).getTeamId(), event.getMessageId());
-                new Handler() {
-                    @Override
-                    public void handleMessage(Message msg) {
-                        super.handleMessage(msg);
-                        fileDetailPresenter.getFileDetail(fileId, false, true);
-                    }
-                }.sendEmptyMessageDelayed(0, 100);
-                break;
-        }
-
     }
 
 }

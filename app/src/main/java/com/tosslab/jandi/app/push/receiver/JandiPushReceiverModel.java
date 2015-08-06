@@ -129,7 +129,7 @@ public class JandiPushReceiverModel {
         }
     }
 
-    public boolean isMyEntityId(Context context, int writerId) {
+    public boolean isMyEntityId(int writerId) {
         List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
 
         for (ResAccountInfo.UserTeam userTeam : userTeams) {
@@ -138,6 +138,60 @@ public class JandiPushReceiverModel {
             }
         }
         return false;
+    }
+
+    public boolean isMentionToMe(List<PushTO.Mention> mentions, ResLeftSideMenu leftSideMenu) {
+        boolean isMentionToMe = false;
+        if (mentions == null || mentions.isEmpty()) {
+            return isMentionToMe;
+        }
+
+        int myTeamMemberId = leftSideMenu.user.id;
+        List<ResLeftSideMenu.Entity> joinEntities = leftSideMenu.joinEntities;
+
+        logJoinEntities(joinEntities);
+
+        for (PushTO.Mention mention : mentions) {
+            int entityId = mention.getId();
+            String mentionType = mention.getType();
+            if ("room".equals(mentionType)) {
+                if (amIJoined(joinEntities, entityId)) {
+                    isMentionToMe = true;
+                    break;
+                }
+            } else {
+                if (myTeamMemberId == entityId) {
+                    isMentionToMe = true;
+                    break;
+                }
+            }
+        }
+
+        return isMentionToMe;
+    }
+
+    private boolean amIJoined(List<ResLeftSideMenu.Entity> joinEntities, int mentionedEntityId) {
+        if (joinEntities != null && !joinEntities.isEmpty()) {
+            for (ResLeftSideMenu.Entity joinEntity : joinEntities) {
+                if (joinEntity.id == mentionedEntityId) {
+                    LogUtil.d(TAG, "I am joined topic.");
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private void logJoinEntities(List<ResLeftSideMenu.Entity> joinEntities) {
+
+        if (joinEntities == null) {
+            LogUtil.e(TAG, "joinEntities == null");
+        } else {
+            for (ResLeftSideMenu.Entity joinEntity : joinEntities) {
+                LogUtil.d(TAG, "topic joinEntityId = " + joinEntity.id);
+            }
+        }
     }
 
     public boolean isPushFromSelectedTeam(Context context, int teamId) {
@@ -153,18 +207,20 @@ public class JandiPushReceiverModel {
         return true;
     }
 
-    private Notification generateNotification(Context context, int teamId,
-                                              int roomId, String roomType, String roomName,
-                                              String writerName, String message, Bitmap writerProfile,
-                                              int badgeCount) {
+    private Notification getNotification(Context context,
+                                         String notificationTitle,
+                                         int teamId, int roomId, String roomType, String roomName,
+                                         String message, Bitmap writerProfile,
+                                         int badgeCount) {
+
         int roomTypeInt = getEntityType(roomType);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        builder.setContentTitle(writerName);
+        builder.setContentTitle(notificationTitle);
         builder.setContentText(message);
         if (roomTypeInt == JandiConstants.TYPE_DIRECT_MESSAGE) {
             roomName = context.getString(R.string.jandi_tab_direct_message);
         }
-        builder.setStyle(getBigTextStyle(writerName, message, roomName));
+        builder.setStyle(getBigTextStyle(notificationTitle, message, roomName));
 
         int led = 0;
 
@@ -215,35 +271,18 @@ public class JandiPushReceiverModel {
         return bigTextStyle;
     }
 
-    public void showNotification(Context context, PushTO.PushInfo pushInfo, int badgeCount) {
-        // 이전 푸쉬 메세지가 현재 푸쉬 메세지보다 더 최근에 작성되었다면 무시.
+    public void showNotification(Context context, PushTO.PushInfo pushInfo,
+                                 boolean isMentionMessage, int badgeCount) {
         String createdAt = pushInfo.getCreatedAt();
-        LogUtil.d(TAG, createdAt);
-        long createdAtTime = DateTransformator.getTimeFromISO(createdAt);
-
-        String lastNotifiedCreatedAt = PushMonitor.getInstance().getLastNotifiedCreatedAt();
-        if (!TextUtils.isEmpty(lastNotifiedCreatedAt)) {
-            LogUtil.i(TAG, lastNotifiedCreatedAt);
-            long preCreatedAtTime = DateTransformator.getTimeFromISO(lastNotifiedCreatedAt);
-            if (createdAtTime < preCreatedAtTime) {
-                LogUtil.i(TAG, "createdAtTime < preCreatedAtTime");
-                return;
-            }
+        if (isPreviousMessage(createdAt)) {
+            return;
         }
+
         PushMonitor.getInstance().setLastNotifiedCreatedAt(createdAt);
 
         String message = pushInfo.getMessageContent();
         String writerName = pushInfo.getWriterName();
         String roomName = pushInfo.getRoomName();
-
-        if (pushInfo.hasMentions()) {
-            StringBuilder sb = new StringBuilder();
-            String mention =
-                    context.getResources().getString(R.string.jandi_mention_push_message, writerName);
-            sb.append(mention + "\n");
-            sb.append(message);
-            message = sb.toString();
-        }
 
         int teamId = pushInfo.getTeamId();
         int roomId = pushInfo.getRoomId();
@@ -260,13 +299,35 @@ public class JandiPushReceiverModel {
             }
         }
 
+        String notificationTitle = writerName;
+        if (isMentionMessage) {
+            notificationTitle =
+                    context.getResources().getString(R.string.jandi_mention_push_message, writerName);
+        }
+
         Notification notification =
-                generateNotification(context, teamId,
-                        roomId, roomType, roomName,
-                        writerName, message, profileImage,
+                getNotification(context, notificationTitle,
+                        teamId, roomId, roomType, roomName,
+                        message, profileImage,
                         badgeCount);
 
         sendNotification(context, notification);
+    }
+
+    private boolean isPreviousMessage(String createdAt) {
+        LogUtil.d(TAG, createdAt);
+        long createdAtTime = DateTransformator.getTimeFromISO(createdAt);
+
+        String lastNotifiedCreatedAt = PushMonitor.getInstance().getLastNotifiedCreatedAt();
+        if (!TextUtils.isEmpty(lastNotifiedCreatedAt)) {
+            LogUtil.i(TAG, lastNotifiedCreatedAt);
+            long preCreatedAtTime = DateTransformator.getTimeFromISO(lastNotifiedCreatedAt);
+            if (createdAtTime < preCreatedAtTime) {
+                LogUtil.i(TAG, "createdAtTime < preCreatedAtTime");
+                return true;
+            }
+        }
+        return false;
     }
 
     void sendNotification(Context context, Notification notification) {

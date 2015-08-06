@@ -208,4 +208,7 @@ public class TopicDetailModel {
                         .build());
     }
 
+    public boolean isDefaultTopic(Context context, int entityId) {
+        return EntityManager.getInstance(context).getDefaultTopicId() == entityId;
+    }
 }
