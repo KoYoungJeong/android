@@ -95,7 +95,7 @@ dependencies {
 
     // Analytics & report
     compile 'com.mixpanel.android:mixpanel-android:4.5.0@aar'
-    compile 'com.parse.bolts:bolts-android:1.2.0'
+    compile 'com.parse.bolts:bolts-android:1.2.1'
 
     // RxJava
     compile 'io.reactivex:rxandroid:0.24.+'
