@@ -58,13 +58,14 @@ public class DummyViewHolder implements BodyViewHolder {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
             builder.append(textMessage.content.body);
         }
+
         SendMessage.Status status = SendMessage.Status.valueOf(dummyMessageLink.getStatus());
         int textColor = nameTextView.getContext().getResources().getColor(R.color.jandi_messages_name);
         switch (status) {
             case FAIL: {
                 builder.append("  ");
                 int beforLenghth = builder.length();
-                Drawable drawable = messageTextView.getContext()
+                Drawable drawable = messageTextView.getContext().getResources()
                         .getDrawable(R.drawable.jandi_icon_message_failure);
                 drawable.setBounds(0, 0,
                         drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -80,7 +81,7 @@ public class DummyViewHolder implements BodyViewHolder {
             case SENDING: {
                 builder.append("  ");
                 int beforLenghth = builder.length();
-                Drawable drawable = messageTextView.getContext()
+                Drawable drawable = messageTextView.getContext().getResources()
                         .getDrawable(R.drawable.jandi_icon_message_sending);
                 drawable.setBounds(0, 0,
                         drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -99,6 +100,7 @@ public class DummyViewHolder implements BodyViewHolder {
                 messageTextView.setTextColor(textColor);
                 break;
         }
+
         messageTextView.setText(builder);
 
     }
