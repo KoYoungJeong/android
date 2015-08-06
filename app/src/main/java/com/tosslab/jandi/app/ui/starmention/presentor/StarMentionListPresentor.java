@@ -3,7 +3,9 @@ package com.tosslab.jandi.app.ui.starmention.presentor;
 import android.app.Activity;
 import android.content.Intent;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
@@ -97,6 +99,8 @@ public class StarMentionListPresentor {
     public void unregistStarredMessage(int teamId, int messageId, int position) {
         try {
             starMentionListModel.unregistStarredMessage(teamId, messageId);
+            view.showSuccessToast(
+                    JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
             view.onRemoveItem(position);
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -111,22 +115,23 @@ public class StarMentionListPresentor {
         return starMentionListModel.isEmpty();
     }
 
-    public static interface View {
+    public interface View {
 
-        public void onAddAndShowList(List<StarMentionVO> starMentionMessageList);
+        void onAddAndShowList(List<StarMentionVO> starMentionMessageList);
 
-        public void onShowMoreProgressBar();
+        void onShowMoreProgressBar();
 
-        public void onDismissMoreProgressBar();
+        void onDismissMoreProgressBar();
 
-        public void onSetNoMoreState();
+        void onSetNoMoreState();
 
-        public void onSetReadyMoreState();
+        void onSetReadyMoreState();
 
-        public void onShowDialog(int teamId, int messageId, int position);
+        void onShowDialog(int teamId, int messageId, int position);
 
-        public void onRemoveItem(int position);
+        void onRemoveItem(int position);
 
+        void showSuccessToast(String message);
     }
 
 }

@@ -471,5 +471,6 @@
     <string name="jandi_starred_no_all">下載電腦版</string>
     <string name="jandi_starred_no_file">沒有標示檔案</string>
     <string name="jandi_starred_unstar_from_item">你確定要取消標示嗎？</string>
+    <string name="jandi_unpinned_message">"已取消標示"</string>
 </resources>
 

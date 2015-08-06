@@ -13,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,7 +20,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -387,7 +385,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
 
-        Log.e("roomId", String.valueOf(roomId));
         List<Integer> roomIds = new ArrayList<>();
         roomIds.add(roomId);
 
@@ -608,7 +605,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e("onDestroy", "onDestroy");
         messageSubscription.unsubscribe();
         EventBus.getDefault().unregister(this);
 
@@ -1373,9 +1369,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             case STARRED:
                 try {
                     messageListModel.registStarredMessage(teamId, messageId);
-                    Toast.makeText(getActivity(), R.string.jandi_message_starred, Toast.LENGTH_SHORT).show();
+                    messageListPresenter.showSuccessToast(getString(R.string.jandi_message_starred));
                     messageListPresenter.modifyStarredInfo(messageId, true);
-                    Log.e("messageId", messageId + "");
                 } catch (RetrofitError e) {
                     e.printStackTrace();
                 }
@@ -1384,8 +1379,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             case UNSTARRED:
                 try {
                     messageListModel.unregistStarredMessage(teamId, messageId);
+                    messageListPresenter.showSuccessToast(getString(R.string.jandi_unpinned_message));
                     messageListPresenter.modifyStarredInfo(messageId, false);
-                    Log.e("messageId", messageId + "");
                 } catch (RetrofitError e) {
                     e.printStackTrace();
                 }
@@ -1399,7 +1394,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         searchedItemVO.setName(event.getName());
         searchedItemVO.setType(event.getType());
         mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
-        Log.e("onEvent-name:", event.getName());
     }
 
     @Background
