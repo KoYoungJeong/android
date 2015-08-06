@@ -428,7 +428,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         isRoomInit = true;
 
         if (isForeground) {
-            sendMessage(new NewMessageQueue(messageState));
+            sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
 
     }
