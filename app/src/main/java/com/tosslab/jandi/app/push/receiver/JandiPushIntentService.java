@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
@@ -47,7 +48,7 @@ public class JandiPushIntentService extends IntentService {
         PushTO.PushInfo pushTOInfo = pushTO.getInfo();
         Context context = getApplicationContext();
         // writerId 가 본인 ID 면 작성자가 본인인 노티이기 때문에 무시한다.
-        if (jandiPushReceiverModel.isMyEntityId(context, pushTOInfo.getWriterId())) {
+        if (jandiPushReceiverModel.isMyEntityId(pushTOInfo.getWriterId())) {
             return;
         }
 
@@ -64,7 +65,7 @@ public class JandiPushIntentService extends IntentService {
         // LeftSideMenu 조회에 실패한 경우
         if (leftSideMenu == null) {
             if (!isShowingEntity && userWantsNotification) {
-                jandiPushReceiverModel.showNotification(context, pushTOInfo, badgeCount);
+                jandiPushReceiverModel.showNotification(context, pushTOInfo, false, badgeCount);
             }
 
             postEvent(roomId, pushTOInfo.getRoomType());
@@ -78,17 +79,19 @@ public class JandiPushIntentService extends IntentService {
             badgeCount = badgeCount + newBadgeCount;
         }
 
-        boolean isMentionMessage = pushTOInfo.hasMentions();
         // 멘션 메시지인 경우 토픽별 푸쉬 on/off 상태는 무시된다.
-        if (isMentionMessage) {
+        boolean isMentionMessageToMe =
+                jandiPushReceiverModel.isMentionToMe(pushTOInfo.getMentions(), leftSideMenu);
+
+        if (isMentionMessageToMe) {
             if (!isShowingEntity && userWantsNotification) {
-                jandiPushReceiverModel.showNotification(context, pushTOInfo, badgeCount);
+                jandiPushReceiverModel.showNotification(context, pushTOInfo, true, badgeCount);
             }
         } else {
             boolean isTopicPushOn = jandiPushReceiverModel.isTopicPushOn(leftSideMenu, roomId);
 
             if (!isShowingEntity && userWantsNotification && isTopicPushOn) {
-                jandiPushReceiverModel.showNotification(context, pushTOInfo, badgeCount);
+                jandiPushReceiverModel.showNotification(context, pushTOInfo, false, badgeCount);
             }
         }
 
