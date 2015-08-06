@@ -826,7 +826,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
     }
 
-    // FIXME
     public void onEvent(TeamInvitationsEvent event) {
         if (!isForeground) {
             return;
@@ -1154,9 +1153,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 TextUtils.equals(messageType, "topic_join") ||
                 TextUtils.equals(messageType, "topic_invite")) {
 
-            if (!isForeground) {
-                return;
-            }
             updateRoomInfo();
         } else {
             if (!isForeground) {
@@ -1177,7 +1173,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         sendMessagePublisherEvent(new UpdateMessageQueue(teamId, message.getId()));
     }
 
-    @Background
     void updateRoomInfo() {
         messageListModel.updateMarkerInfo(teamId, roomId);
         insertEmptyMessage();
