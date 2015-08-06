@@ -26,7 +26,7 @@ import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
-import com.tosslab.jandi.app.views.spannable.MensionMessageSpannable;
+import com.tosslab.jandi.app.views.spannable.ClickableMensionMessageSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import de.greenrobot.event.EventBus;
@@ -212,7 +212,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
             for (MentionObject mention : commentMessage.mentions) {
                 String name = builder.subSequence(mention.getOffset() + 1, mention.getLength() +
                         mention.getOffset()).toString();
-                MensionMessageSpannable spannable1 = new MensionMessageSpannable(commentTextView
+                ClickableMensionMessageSpannable spannable1 = new ClickableMensionMessageSpannable(commentTextView
                         .getContext(), name, mention.getId(),
                         commentTextView.getResources().getDimensionPixelSize(R.dimen.jandi_mention_comment_item_font_size));
                 builder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention

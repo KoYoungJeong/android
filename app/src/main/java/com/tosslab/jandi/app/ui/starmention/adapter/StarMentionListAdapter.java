@@ -20,7 +20,7 @@ import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
-import com.tosslab.jandi.app.views.spannable.MensionMessageSpannable;
+import com.tosslab.jandi.app.views.spannable.ClickableMensionMessageSpannable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +77,7 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
                     String name = messageStringBuilder.subSequence(mention.getOffset() + 1,
                             mention.getLength() + mention.getOffset()).toString();
 
-                    MensionMessageSpannable spannable1 = new MensionMessageSpannable(
+                    ClickableMensionMessageSpannable spannable1 = new ClickableMensionMessageSpannable(
                             viewHolder.getStarMentionContentView().getContext(), name, mention.getId(), viewHolder.getStarMentionContentView()
                             .getResources().getDimensionPixelSize(R.dimen.jandi_mention_message_item_font_size));
 
@@ -110,7 +110,7 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
                 try {
                     String name = commentStringBuilder.subSequence(mention.getOffset() + 1,
                             mention.getLength() + mention.getOffset()).toString();
-                    MensionMessageSpannable spannable1 = new MensionMessageSpannable(viewHolder.
+                    ClickableMensionMessageSpannable spannable1 = new ClickableMensionMessageSpannable(viewHolder.
                             getStarMentionCommentView().getContext(), name, mention.getId(),
                             viewHolder.getStarMentionCommentView().getResources()
                                     .getDimensionPixelSize(R.dimen.jandi_mention_message_item_font_size));

@@ -17,7 +17,7 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPr
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
-import com.tosslab.jandi.app.views.spannable.MensionMessageSpannable;
+import com.tosslab.jandi.app.views.spannable.ClickableMensionMessageSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 /**
@@ -86,7 +86,7 @@ public class PureMessageViewHolder implements BodyViewHolder {
         boolean hasMention = false;
         for (MentionObject mention : textMessage.mentions) {
             String name = builder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
-            MensionMessageSpannable spannable1 = new MensionMessageSpannable(tvMessage.getContext
+            ClickableMensionMessageSpannable spannable1 = new ClickableMensionMessageSpannable(tvMessage.getContext
                     (), name, mention.getId(), tvMessage.getResources().getDimensionPixelSize(R.dimen
                     .jandi_mention_message_item_font_size));
             builder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

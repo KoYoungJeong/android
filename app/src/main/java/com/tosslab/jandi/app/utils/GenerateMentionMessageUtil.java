@@ -7,7 +7,8 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.views.spannable.MensionMessageSpannable;
+import com.tosslab.jandi.app.views.spannable.ClickableMensionMessageSpannable;
+import com.tosslab.jandi.app.views.spannable.MentionMessageSpannable;
 
 import java.util.Collection;
 
@@ -23,28 +24,36 @@ public class GenerateMentionMessageUtil {
     private float pxSize = -1;
     private int textColor = -1;
     private int backgroundColor = -1;
+    private int myId;
 
     public GenerateMentionMessageUtil(TextView textView, SpannableStringBuilder stringBuilder,
-                                      Collection<MentionObject> mentions) {
+                                      Collection<MentionObject> mentions, int myId) {
 
-        Context context = textView.getContext();
+        context = textView.getContext();
         this.textView = textView;
         this.pxSize = context.getResources().getDimensionPixelSize(R.dimen.jandi_mention_message_item_font_size);
         this.textColor = 0xFF00a6e9;
         this.stringBuilder = stringBuilder;
         this.mentions = mentions;
-
+        this.myId = myId;
     }
 
     public SpannableStringBuilder generate() {
         boolean hasMention = false;
+        MentionMessageSpannable spannable = null;
         for (MentionObject mention : mentions) {
             String name = stringBuilder.subSequence(mention.getOffset() + 1,
                     mention.getLength() + mention.getOffset()).toString();
-            MensionMessageSpannable spannable1 = new MensionMessageSpannable(context,
-                    name, mention.getId(), pxSize, textColor, backgroundColor);
-            stringBuilder.setSpan(spannable1, mention.getOffset(),
+            if (mention.getId() == myId) {
+                spannable = new MentionMessageSpannable(context,
+                        name, mention.getId(), pxSize, textColor, 0xFFdaf2ff);
+            } else {
+                spannable = new ClickableMensionMessageSpannable(context,
+                        name, mention.getId(), pxSize, textColor, backgroundColor);
+            }
+            stringBuilder.setSpan(spannable, mention.getOffset(),
                     mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
             if (!hasMention) {
                 hasMention = true;
             }

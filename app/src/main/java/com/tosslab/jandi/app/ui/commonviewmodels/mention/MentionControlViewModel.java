@@ -19,7 +19,7 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.MentionMemberListAdapter;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel_;
-import com.tosslab.jandi.app.ui.commonviewmodels.mention.util.MensionSpannable;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.util.MentionSpannable;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
@@ -280,7 +280,7 @@ public class MentionControlViewModel {
 
         SpannableStringBuilder ssb = new SpannableStringBuilder(editText.getEditableText());
 
-        MensionSpannable spannable = new MensionSpannable(editText.getContext(), searchedItemVO.getName());
+        MentionSpannable spannable = new MentionSpannable(editText.getContext(), searchedItemVO.getName());
 
         StringBuilder convertedTextBuilder = new StringBuilder();
 

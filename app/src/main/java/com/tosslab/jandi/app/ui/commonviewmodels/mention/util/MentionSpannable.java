@@ -1,51 +1,36 @@
-package com.tosslab.jandi.app.views.spannable;
+package com.tosslab.jandi.app.ui.commonviewmodels.mention.util;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.text.style.ReplacementSpan;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.events.RequestUserInfoEvent;
-
-import de.greenrobot.event.EventBus;
+import com.tosslab.jandi.app.R;
 
 /**
  * Created by tee on 15. 7. 20..
  */
-public class MensionMessageSpannable extends ReplacementSpan {
+public class MentionSpannable extends ReplacementSpan {
 
     private TextView tvDate;
-    private int entityId;
 
-    public MensionMessageSpannable(Context context, String name, int entityId, float pxSize) {
+    public MentionSpannable(Context context, String date) {
+
         super();
-        this.entityId = entityId;
 
         tvDate = new TextView(context);
-        tvDate.setText(name);
-        tvDate.setTextColor(0xFF00a6e9);
-        tvDate.setBackgroundColor(0xFFdaf2ff);
-        tvDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, pxSize);
+        tvDate.setText(date);
+        tvDate.setTextColor(0xFFfefefe);
+        tvDate.setBackgroundColor(0xFF01a4e7);
+        tvDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources()
+                .getDimensionPixelSize(R.dimen.jandi_mention_edit_text_item_font_size));
 
         prepareView();
-    }
-
-    public MensionMessageSpannable(Context context, String name, int entityId, float pxSize, int textColor, int backgroundColor) {
-        super();
-        this.entityId = entityId;
-
-        tvDate = new TextView(context);
-        tvDate.setText(name);
-        tvDate.setTextColor(textColor);
-        if (backgroundColor != -1) {
-            tvDate.setBackgroundColor(backgroundColor);
-        }
-        tvDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, pxSize);
-
-        prepareView();
+        Log.e("ss", tvDate.getText().toString());
     }
 
     private void prepareView() {
@@ -73,12 +58,6 @@ public class MensionMessageSpannable extends ReplacementSpan {
         tvDate.draw(canvas);
 
         canvas.restore();
-
-    }
-
-    public void onClick() {
-
-        EventBus.getDefault().post(new RequestUserInfoEvent(entityId));
 
     }
 

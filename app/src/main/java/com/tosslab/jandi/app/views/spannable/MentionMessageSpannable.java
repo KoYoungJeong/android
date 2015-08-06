@@ -1,37 +1,46 @@
-package com.tosslab.jandi.app.ui.commonviewmodels.mention.util;
+package com.tosslab.jandi.app.views.spannable;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.text.style.ReplacementSpan;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.R;
-
 /**
- * Created by tee on 15. 7. 20..
+ * Created by tee on 15. 8. 6..
  */
-public class MensionSpannable extends ReplacementSpan {
+public class MentionMessageSpannable extends ReplacementSpan {
 
-    private TextView tvDate;
+    protected TextView tvDate;
+    protected int entityId;
 
-    public MensionSpannable(Context context, String date) {
-
-        super();
-
+    public MentionMessageSpannable(Context context, String name, int entityId, float pxSize) {
+        this.entityId = entityId;
         tvDate = new TextView(context);
-        tvDate.setText(date);
-        tvDate.setTextColor(0xFFfefefe);
-        tvDate.setBackgroundColor(0xFF01a4e7);
-        tvDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources()
-                .getDimensionPixelSize(R.dimen.jandi_mention_edit_text_item_font_size));
+        tvDate.setText(name);
+        tvDate.setTextColor(0xFF00a6e9);
+        tvDate.setBackgroundColor(0xFFdaf2ff);
+        tvDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, pxSize);
 
         prepareView();
-        Log.e("ss", tvDate.getText().toString());
     }
+
+    public MentionMessageSpannable(Context context, String name, int entityId, float pxSize, int textColor, int backgroundColor) {
+        this.entityId = entityId;
+
+        tvDate = new TextView(context);
+        tvDate.setText(name);
+        tvDate.setTextColor(textColor);
+        if (backgroundColor != -1) {
+            tvDate.setBackgroundColor(backgroundColor);
+        }
+        tvDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, pxSize);
+
+        prepareView();
+    }
+
 
     private void prepareView() {
 

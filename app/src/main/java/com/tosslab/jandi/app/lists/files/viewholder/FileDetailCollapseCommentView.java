@@ -13,7 +13,7 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
-import com.tosslab.jandi.app.views.spannable.MensionMessageSpannable;
+import com.tosslab.jandi.app.views.spannable.ClickableMensionMessageSpannable;
 
 public class FileDetailCollapseCommentView implements CommentViewHolder {
 
@@ -62,7 +62,7 @@ public class FileDetailCollapseCommentView implements CommentViewHolder {
         for (MentionObject mention : commentMessage.mentions) {
             String name = spannableStringBuilder.subSequence(mention.getOffset() + 1,
                     mention.getLength() + mention.getOffset()).toString();
-            MensionMessageSpannable spannable1 = new MensionMessageSpannable(
+            ClickableMensionMessageSpannable spannable1 = new ClickableMensionMessageSpannable(
                     textViewCommentContent.getContext(), name, mention.getId(), textViewCommentContent.getResources()
                     .getDimensionPixelSize(R.dimen.jandi_mention_comment_item_font_size));
             spannableStringBuilder.setSpan(spannable1, mention.getOffset(),

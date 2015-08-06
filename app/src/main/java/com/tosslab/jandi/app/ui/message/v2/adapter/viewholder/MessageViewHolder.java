@@ -133,26 +133,9 @@ public class MessageViewHolder implements BodyViewHolder {
             }
 
 
-            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(messageTextView,
-                    messageStringBuilder, textMessage.mentions);
-
+            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                    messageTextView, messageStringBuilder, textMessage.mentions, entityManager.getMe().getId());
             messageStringBuilder = generateMentionMessageUtil.generate();
-
-//            boolean hasMention = false;
-//            for (MentionObject mention : textMessage.mentions) {
-//                String name = messageStringBuilder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
-//                MensionMessageSpannable spannable1 = new MensionMessageSpannable(messageTextView.getContext(),
-//                        name, mention.getId(),
-//                        messageTextView.getResources().getDimensionPixelSize(R.dimen.jandi_mention_message_item_font_size));
-//                messageStringBuilder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                if (!hasMention) {
-//                    hasMention = true;
-//                }
-//            }
-//
-//            if (hasMention) {
-//                LinkifyUtil.setOnLinkClick(messageTextView);
-//            }
 
             messageTextView.setText(messageStringBuilder);
 
