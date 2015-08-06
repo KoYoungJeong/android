@@ -258,7 +258,7 @@ public class FilePickerModel {
                         .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, true)
-                        .property(PropertyKey.TopicId, entity)
+                        .property(PropertyKey.TopicId, entityId)
                         .property(PropertyKey.FileId, fileId)
                         .build());
     }
