@@ -1,12 +1,13 @@
 package com.tosslab.jandi.app.utils;
 
+import android.text.TextUtils;
+
 import org.codehaus.jackson.map.util.ISO8601DateFormat;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
@@ -25,6 +26,11 @@ public class DateTransformator {
     }
 
     public static long getTimeFromISO(String date) {
+
+        if (TextUtils.isEmpty(date)) {
+            return PARSE_FAIL;
+        }
+
         ISO8601DateFormat isoFormat = new ISO8601DateFormat();
         Date formatDate = null;
         try {

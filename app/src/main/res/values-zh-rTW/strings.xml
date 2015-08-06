@@ -418,9 +418,6 @@
     <string name="jandi_topic_detail">"議題資訊"</string>
     <string name="jandi_explain_topic_description">"說明 (選項)"</string>
 
-    <string name="jandi_turn_on_topic_push">"開啟議題推播通知"</string>
-    <string name="jandi_turn_off_topic_push">"關閉議題推播通知"</string>
-
     <!-- tutorial -->
     <string name="jandi_coach_mark_search_message">搜尋訊息</string>
     <string name="jandi_coach_mark_create_new_topics">建立新議題</string>
@@ -474,5 +471,7 @@
     <string name="jandi_starred_no_file">沒有標示檔案</string>
     <string name="jandi_starred_unstar_from_item">你確定要取消標示嗎？</string>
     <string name="jandi_unpinned_message">"已取消標示"</string>
+    <string name="jandi_topic_notification">"允許議題推播通知"</string>
+    <string name="jandi_profile_picture">"簡介照片"</string>
 </resources>
 

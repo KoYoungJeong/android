@@ -331,7 +331,7 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
         });
 
         Dialog dialog = new AlertDialog.Builder(FileUploadPreviewActivity.this)
-                .setTitle(R.string.jandi_file_search_user)
+                .setTitle(R.string.jandi_title_cdp_to_be_shared)
                 .setView(view)
                 .create();
         dialog.show();
