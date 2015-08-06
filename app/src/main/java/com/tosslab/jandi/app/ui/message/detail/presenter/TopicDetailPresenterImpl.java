@@ -98,6 +98,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                 entityClientManager.disableFavorite(entityId);
 
                 topicDetailModel.trackTopicUnStarSuccess(entityId);
+                view.showSuccessToast(context.getString(R.string.jandi_starred_unstarred));
             } else {
                 entityClientManager.enableFavorite(entityId);
 
