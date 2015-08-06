@@ -7,6 +7,7 @@ import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -38,6 +39,16 @@ public class SendMessageRepository {
             Dao<SendMessage, ?> sendMessageDao = helper.getDao(SendMessage.class);
             sendMessage.setStatus(SendMessage.Status.SENDING.name());
             sendMessageDao.create(sendMessage);
+
+            Dao<MentionObject, ?> mentionObjectDao = helper.getDao(MentionObject.class);
+            DeleteBuilder<MentionObject, ?> deleteBuilder = mentionObjectDao.deleteBuilder();
+            deleteBuilder.where()
+                    .eq("sendMessageOf_id", sendMessage.getId());
+            deleteBuilder.delete();
+
+            for (MentionObject mentionObject : sendMessage.getMentionObjects()) {
+                mentionObjectDao.create(mentionObject);
+            }
             return true;
         } catch (SQLException e) {
             e.printStackTrace();

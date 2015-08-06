@@ -1,7 +1,11 @@
 package com.tosslab.jandi.app.local.orm.domain;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+
+import java.util.Collection;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 23..
@@ -21,6 +25,9 @@ public class SendMessage {
     private String message;
     @DatabaseField
     private String status;
+
+    @ForeignCollectionField
+    private Collection<MentionObject> mentionObjects;
 
     public long getId() {
         return id;
@@ -60,6 +67,14 @@ public class SendMessage {
 
     public void setMessageId(int messageId) {
         this.messageId = messageId;
+    }
+
+    public Collection<MentionObject> getMentionObjects() {
+        return mentionObjects;
+    }
+
+    public void setMentionObjects(Collection<MentionObject> mentionObjects) {
+        this.mentionObjects = mentionObjects;
     }
 
     public enum Status {

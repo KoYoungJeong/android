@@ -2,8 +2,10 @@ package com.tosslab.jandi.app.network.models.commonobject;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -16,12 +18,18 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class MentionObject {
 
+    @JsonIgnore
     @DatabaseField(generatedId = true)
     private long _id;
+    @JsonIgnore
     @DatabaseField(foreign = true)
     private ResMessages.TextMessage textOf;
+    @JsonIgnore
     @DatabaseField(foreign = true)
     private ResMessages.CommentMessage commentOf;
+    @JsonIgnore
+    @DatabaseField(foreign = true)
+    private SendMessage sendMessageOf;
     @DatabaseField
     private int id;
     @DatabaseField
@@ -33,6 +41,7 @@ public class MentionObject {
 
     public MentionObject() {
     }
+
     public MentionObject(int id, String type, int offset, int length) {
         this.id = id;
         this.type = type;
@@ -104,5 +113,13 @@ public class MentionObject {
 
     public void set_id(long _id) {
         this._id = _id;
+    }
+
+    public SendMessage getSendMessageOf() {
+        return sendMessageOf;
+    }
+
+    public void setSendMessageOf(SendMessage sendMessageOf) {
+        this.sendMessageOf = sendMessageOf;
     }
 }

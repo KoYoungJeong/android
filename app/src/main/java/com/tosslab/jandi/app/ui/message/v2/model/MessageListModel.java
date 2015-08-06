@@ -193,7 +193,7 @@ public class MessageListModel {
             ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage(), sendingMessage.getMentions());
 
             SendMessageRepository.getRepository().deleteSendMessage(sendingMessage.getLocalId());
-            
+
             trackMessagePostSuccess();
 
             EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
@@ -218,10 +218,16 @@ public class MessageListModel {
         }
     }
 
-    public long insertSendingMessage(int roomId, String message) {
+    public long insertSendingMessage(int roomId, String message, List<MentionObject> mentions) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setRoomId(roomId);
         sendMessage.setMessage(message);
+        if (mentions != null) {
+            for (MentionObject mention : mentions) {
+                mention.setSendMessageOf(sendMessage);
+            }
+        }
+        sendMessage.setMentionObjects(mentions);
         SendMessageRepository.getRepository().insertSendMessage(sendMessage);
         return sendMessage.getId();
     }
@@ -343,8 +349,17 @@ public class MessageListModel {
         List<ResMessages.Link> links = new ArrayList<>();
         for (SendMessage link : sendMessage) {
 
+            List<MentionObject> mentionObjects = new ArrayList<>();
+
+            Collection<MentionObject> savedMention = link.getMentionObjects();
+            if (savedMention != null) {
+                for (MentionObject mentionObject : savedMention) {
+                    mentionObjects.add(mentionObject);
+                }
+            }
+
             DummyMessageLink dummyMessageLink = new DummyMessageLink(link.getId(), link.getMessage(),
-                    link.getStatus(), new ArrayList<>());
+                    link.getStatus(), mentionObjects);
             dummyMessageLink.message.writerId = id;
             dummyMessageLink.message.createTime = new Date();
             links.add(dummyMessageLink);

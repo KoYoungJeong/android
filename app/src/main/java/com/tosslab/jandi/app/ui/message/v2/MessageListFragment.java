@@ -751,13 +751,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             long localId;
             if (messageListModel.isUser(entityId)) {
                 if (roomId > 0) {
-                    localId = messageListModel.insertSendingMessage(roomId, message);
+                    localId = messageListModel.insertSendingMessage(roomId, message, mentionInfos.getMentions());
                 } else {
                     // roomId 를 할당받지 못하면 메세지를 보내지 않음
                     return;
                 }
             } else {
-                localId = messageListModel.insertSendingMessage(entityId, message);
+                localId = messageListModel.insertSendingMessage(entityId, message, mentionInfos.getMentions());
             }
             FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
             // insert to ui
