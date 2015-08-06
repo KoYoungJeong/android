@@ -285,6 +285,9 @@ public class ResAccountInfo {
         @DatabaseField
         private String status;
 
+        @DatabaseField
+        private int order;
+
         public ResAccountInfo getAccountInfo() {
             return accountInfo;
         }
@@ -352,6 +355,13 @@ public class ResAccountInfo {
                     '}';
         }
 
+        public int getOrder() {
+            return order;
+        }
+
+        public void setOrder(int order) {
+            this.order = order;
+        }
     }
 
     @DatabaseTable(tableName = "account_emails")

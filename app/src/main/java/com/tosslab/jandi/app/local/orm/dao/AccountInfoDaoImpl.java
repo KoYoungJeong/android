@@ -67,11 +67,13 @@ public class AccountInfoDaoImpl extends BaseDaoImpl<ResAccountInfo, String> {
         deleteBuilder.where().eq("accountInfo_id", accountInfo.getId());
         deleteBuilder.delete();
 
+        int order = 1;
         for (ResAccountInfo.UserTeam userTeam : accountInfo.getMemberships()) {
             if (!TextUtils.equals(userTeam.getStatus(), "enabled")) {
                 continue;
             }
             userTeam.setAccountInfo(accountInfo);
+            userTeam.setOrder(order++);
             userTeamDao.create(userTeam);
         }
     }
