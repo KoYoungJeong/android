@@ -28,9 +28,9 @@ public class GenerateMentionMessageUtil {
                                       Collection<MentionObject> mentions) {
 
         Context context = textView.getContext();
+        this.textView = textView;
         this.pxSize = context.getResources().getDimensionPixelSize(R.dimen.jandi_mention_message_item_font_size);
         this.textColor = 0xFF00a6e9;
-        this.context = context;
         this.stringBuilder = stringBuilder;
         this.mentions = mentions;
 
@@ -39,10 +39,12 @@ public class GenerateMentionMessageUtil {
     public SpannableStringBuilder generate() {
         boolean hasMention = false;
         for (MentionObject mention : mentions) {
-            String name = stringBuilder.subSequence(mention.getOffset() + 1, mention.getLength() + mention.getOffset()).toString();
+            String name = stringBuilder.subSequence(mention.getOffset() + 1,
+                    mention.getLength() + mention.getOffset()).toString();
             MensionMessageSpannable spannable1 = new MensionMessageSpannable(context,
                     name, mention.getId(), pxSize, textColor, backgroundColor);
-            stringBuilder.setSpan(spannable1, mention.getOffset(), mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            stringBuilder.setSpan(spannable1, mention.getOffset(),
+                    mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             if (!hasMention) {
                 hasMention = true;
             }
