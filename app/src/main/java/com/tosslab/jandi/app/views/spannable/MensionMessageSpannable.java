@@ -27,7 +27,7 @@ public class MensionMessageSpannable extends ReplacementSpan {
         tvDate = new TextView(context);
         tvDate.setText(name);
         tvDate.setTextColor(0xFF00a6e9);
-//        tvDate.setBackgroundColor(0xFFdaf2ff);
+        tvDate.setBackgroundColor(0xFFdaf2ff);
         tvDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, pxSize);
 
         prepareView();
