@@ -161,7 +161,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/jandi_turn_off_topic_push"
+                    android:text="@string/jandi_topic_notification"
                     android:textColor="@color/jandi_text"
                     android:textSize="@dimen/jandi_text_size_large"/>
 

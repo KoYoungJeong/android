@@ -65,10 +65,7 @@ public class PushTO {
         private int messageId;
         private String messageType;
         private String messageContent;
-
-        // TODO MENTION !
         private List<Mention> mentions;
-
         private int writerId;
         private String writerName;
         private String writerThumb;

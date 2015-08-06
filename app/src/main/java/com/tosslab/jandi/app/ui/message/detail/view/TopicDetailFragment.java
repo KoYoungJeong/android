@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.message.detail.view;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -232,12 +231,6 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @UiThread
     @Override
     public void setTopicPushSwitch(boolean isPushOn) {
-        Resources resources = getActivity().getResources();
-        String pushSettingMessage = isPushOn
-                ? resources.getString(R.string.jandi_turn_off_topic_push)
-                : resources.getString(R.string.jandi_turn_on_topic_push);
-
-        tvSetPush.setText(pushSettingMessage);
         switchSetPush.setChecked(isPushOn);
     }
 

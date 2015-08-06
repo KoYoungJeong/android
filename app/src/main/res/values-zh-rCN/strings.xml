@@ -417,9 +417,6 @@
     <string name="jandi_topic_detail">"议题信息"</string>
     <string name="jandi_explain_topic_description">"描述 (选项)"</string>
 
-    <string name="jandi_turn_on_topic_push">"开启议题推播通知"</string>
-    <string name="jandi_turn_off_topic_push">"关闭议题推播通知"</string>
-
     <!-- tutorial -->
     <string name="jandi_coach_mark_search_message">搜索信息</string>
     <string name="jandi_coach_mark_create_new_topics">建立新议题</string>
@@ -457,7 +454,7 @@
     <string name="jandi_unread_messages_below">"以下为未读信息"</string>
 
 
-    <string name="jandi_profile_picture">简介照片</string>
+    <string name="jandi_profile_picture">"简介照片"</string>
 
 
     <!-- starred / mentioned -->
@@ -477,5 +474,6 @@
     <string name="jandi_starred_no_file">没有标示档案</string>
     <string name="jandi_starred_unstar_from_item">你确定要取消标示吗？</string>
     <string name="jandi_unpinned_message">"已取消标示"</string>
+    <string name="jandi_topic_notification">"允许议题推播通知"</string>
 
 </resources>
