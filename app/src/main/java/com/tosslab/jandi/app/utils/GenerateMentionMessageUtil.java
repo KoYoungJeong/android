@@ -28,7 +28,6 @@ public class GenerateMentionMessageUtil {
 
     public GenerateMentionMessageUtil(TextView textView, SpannableStringBuilder stringBuilder,
                                       Collection<MentionObject> mentions, int myId) {
-
         context = textView.getContext();
         this.textView = textView;
         this.pxSize = context.getResources().getDimensionPixelSize(R.dimen.jandi_mention_message_item_font_size);
@@ -45,7 +44,7 @@ public class GenerateMentionMessageUtil {
             String name = stringBuilder.subSequence(mention.getOffset() + 1,
                     mention.getLength() + mention.getOffset()).toString();
             if (mention.getId() == myId) {
-                spannable = new MentionMessageSpannable(context,
+                spannable = new ClickableMensionMessageSpannable(context,
                         name, mention.getId(), pxSize, textColor, 0xFFdaf2ff);
             } else {
                 spannable = new ClickableMensionMessageSpannable(context,
