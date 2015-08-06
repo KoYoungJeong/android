@@ -122,14 +122,12 @@ public class StarMentionListModel {
 
                     String userId = starMentionedMessageObject.getRoom().name.replaceAll(
                             EntityManager.getInstance(JandiApplication.getContext()).getMe().getId() + "", "");
-                    userId.replace(":", "");
+                    userId = userId.replace(":", "");
 
 
-//                    starMentionVO.setRoomName(EntityManager.getInstance(
-//                            JandiApplication.getContext()).getEntityById(Integer.valueOf(userId)).getName());
-//                    starMentionVO.setRoomId(Integer.valueOf(userId));
-                    starMentionVO.setRoomName(starMentionedMessageObject.getRoom().name);
-                    starMentionVO.setRoomId(starMentionedMessageObject.getRoom().id);
+                    starMentionVO.setRoomName(EntityManager.getInstance(
+                            JandiApplication.getContext()).getEntityById(Integer.valueOf(userId)).getName());
+                    starMentionVO.setRoomId(Integer.valueOf(userId));
                 }
                 starMentionVO.setLinkId(starMentionedMessageObject.getLinkId());
             }
