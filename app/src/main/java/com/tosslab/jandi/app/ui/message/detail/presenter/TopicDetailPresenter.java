@@ -45,8 +45,6 @@ public interface TopicDetailPresenter {
 
         void showFailToast(String message);
 
-        void setEnableTopicDelete(boolean owner);
-
         void showTopicDeleteDialog();
 
         void setTopicPushSwitch(boolean isPushOn);
@@ -58,5 +56,7 @@ public interface TopicDetailPresenter {
         void showTopicNameChangeDialog(int entityId, String entityName, int entityType);
 
         void moveTopicDescriptionEdit();
+
+        void setLeaveVisible(boolean owner, boolean defaultTopic);
     }
 }

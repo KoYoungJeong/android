@@ -77,8 +77,16 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @ViewById(R.id.vg_topic_detail_invite)
     View vgInvite;
+
     @ViewById(R.id.vg_topic_detail_delete)
     View vgDelete;
+    @ViewById(R.id.vg_topic_detail_leave)
+    View vgLeave;
+    @ViewById(R.id.view_topic_detail_leve_to_delete)
+    View viewDividerDelete;
+    @ViewById(R.id.vg_topic_detail_default_message)
+    View vgDefaultMessage;
+
     @ViewById(R.id.iv_topic_detail_starred)
     View ivStarred;
     @ViewById(R.id.switch_topic_detail_set_push)
@@ -86,7 +94,6 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @ViewById(R.id.tv_topic_detail_set_push)
     TextView tvSetPush;
 
-    private boolean owner;
     private ProgressWheel progressWheel;
 
     @AfterInject
@@ -279,6 +286,29 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         tvMemberCount.setText(String.valueOf(topicMemberCount));
     }
 
+    @Override
+    public void setLeaveVisible(boolean owner, boolean defaultTopic) {
+        if (defaultTopic) {
+            vgLeave.setVisibility(View.GONE);
+            vgDelete.setVisibility(View.GONE);
+            vgDefaultMessage.setVisibility(View.VISIBLE);
+            viewDividerDelete.setVisibility(View.GONE);
+
+        } else {
+            vgLeave.setVisibility(View.VISIBLE);
+            if (owner) {
+                viewDividerDelete.setVisibility(View.VISIBLE);
+                vgDelete.setVisibility(View.VISIBLE);
+            } else {
+                viewDividerDelete.setVisibility(View.GONE);
+                vgDelete.setVisibility(View.GONE);
+            }
+            vgDefaultMessage.setVisibility(View.GONE);
+
+
+        }
+    }
+
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showSuccessToast(String message) {
@@ -289,16 +319,6 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @Override
     public void showFailToast(String message) {
         ColoredToast.showWarning(getActivity(), message);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void setEnableTopicDelete(boolean owner) {
-        if (owner) {
-            vgDelete.setVisibility(View.VISIBLE);
-        } else {
-            vgDelete.setVisibility(View.GONE);
-        }
     }
 
     @Override

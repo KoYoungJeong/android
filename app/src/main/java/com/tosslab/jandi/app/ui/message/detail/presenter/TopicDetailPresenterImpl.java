@@ -56,6 +56,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         boolean owner = topicDetailModel.isOwner(context, entityId);
         boolean isTopicPushSubscribe = topicDetailModel.isPushOn(context, entityId);
 
+        boolean defaultTopic = topicDetailModel.isDefaultTopic(context, entityId);
+
         if (TextUtils.isEmpty(topicDescription)) {
             if (owner) {
                 topicDescription = context.getString(R.string.jandi_explain_topic_description);
@@ -68,8 +70,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         view.setStarred(isStarred);
         view.setTopicDescription(topicDescription);
         view.setTopicMemberCount(topicMemberCount);
-        view.setEnableTopicDelete(owner);
         view.setTopicPushSwitch(isTopicPushSubscribe);
+        view.setLeaveVisible(owner, defaultTopic);
     }
 
     @Override
