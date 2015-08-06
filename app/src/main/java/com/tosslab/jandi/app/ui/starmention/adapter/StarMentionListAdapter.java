@@ -72,8 +72,8 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                     viewHolder.getStarMentionContentView(), messageStringBuilder, starMentionVO.getMentions(),
                     EntityManager.getInstance(viewHolder.getStarMentionContentView().getContext()).getMe().getId())
-                    .setBackgroundColor(0xFF01a4e7)
-                    .setTextColor(0xFFFFFFFF)
+                    .setMeBackgroundColor(0xFF01a4e7)
+                    .setMeTextColor(0xFFffffff)
                     .setPxSize(R.dimen.jandi_mention_star_list_item_font_size);
 
             messageStringBuilder = generateMentionMessageUtil.generate();
@@ -92,8 +92,8 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                     viewHolder.getStarMentionCommentView(), commentStringBuilder, starMentionVO.getMentions(),
                     EntityManager.getInstance(viewHolder.getStarMentionCommentView().getContext()).getMe().getId())
-                    .setBackgroundColor(0xFF01a4e7)
-                    .setTextColor(0xFFFFFFFF)
+                    .setMeBackgroundColor(0xFF01a4e7)
+                    .setMeTextColor(0xFFffffff)
                     .setPxSize(R.dimen.jandi_mention_star_list_item_font_size);
             commentStringBuilder = generateMentionMessageUtil.generate();
             // for single spannable

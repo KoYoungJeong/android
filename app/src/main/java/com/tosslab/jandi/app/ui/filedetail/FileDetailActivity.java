@@ -49,6 +49,7 @@ import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
+import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
@@ -163,7 +164,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     private ProgressDialog progressDialog;
     private StickerInfo stickerInfo = NULL_STICKER;
 
-
     @AfterViews
     public void initForm() {
         Sprinkler.with(JandiApplication.getContext())
@@ -225,18 +225,19 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     }
 
     private void addStarredButtonExecution() {
+        boolean isFromStarredButton = true;
         fileHeadManager.getStarredButton().setOnClickListener(v -> {
             LogUtil.e("selected1", v.isSelected() + "");
             if (v.isSelected()) {
                 try {
-                    unregistStarredMessage();
+                    unregistStarredMessage(isFromStarredButton, fileId);
                 } catch (Exception e) {
                     e.printStackTrace();
 
                 }
             } else {
                 try {
-                    registStarredMessage();
+                    registStarredMessage(isFromStarredButton, fileId);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -245,10 +246,15 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     }
 
     @Background
-    void unregistStarredMessage() {
+    void unregistStarredMessage(boolean isFromStarredButton, int id) {
         try {
             int teamId = EntityManager.getInstance(FileDetailActivity.this).getTeamId();
-            fileDetailPresenter.unregistStarredMessage(teamId, fileId);
+            fileDetailPresenter.unregistStarredMessage(teamId, id);
+            if (isFromStarredButton) {
+                fileHeadManager.updateStarred(false);
+            } else {
+                modifyStarredInfo(id, false);
+            }
             showToast(getString(R.string.jandi_unpinned_message));
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -258,23 +264,21 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
 
     @Background
-    void registStarredMessage() {
+    void registStarredMessage(boolean isFromStarredButton, int id) {
         try {
             int teamId = EntityManager.getInstance(FileDetailActivity.this).getTeamId();
-            fileDetailPresenter.registStarredMessage(teamId, fileId);
+            fileDetailPresenter.registStarredMessage(teamId, id);
+            if (isFromStarredButton) {
+                fileHeadManager.updateStarred(true);
+            } else {
+                modifyStarredInfo(id, true);
+            }
             showToast(getString(R.string.jandi_message_starred));
         } catch (RetrofitError e) {
             e.printStackTrace();
             // 실패시 메세지 필요
         }
     }
-
-
-//    @UiThread(propagation = UiThread.Propagation.REUSE)
-//    void starredButtonSelected(boolean selected) {
-//        LogUtil.e("selected", selected + "");
-//        fileHeadManager.getStarredButton().setSelected(selected);
-//    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -989,12 +993,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         return null;
     }
 
-//    @UiThread(propagation = UiThread.Propagation.REUSE)
-//    @Override
-//    public void drawFileSharedEntities(ResMessages.FileMessage resFileDetail) {
-//        fileHeadManager.drawFileSharedEntities(resFileDetail);
-//    }
-
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showManipulateMessageDialogFragment(ResMessages.OriginalMessage item, boolean isMine) {
@@ -1071,6 +1069,32 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         searchedItemVO.setType(event.getType());
         MentionControlViewModel mentionControlViewModel = fileDetailPresenter.getMentionControlViewModel();
         mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
+    }
+
+    public void onEvent(MessageStarredEvent event) {
+        boolean isFromStarredButton = false;
+        switch (event.getAction()) {
+            case STARRED:
+                try {
+                    registStarredMessage(isFromStarredButton, event.getMessageId());
+                } catch (RetrofitError e) {
+                    e.printStackTrace();
+                }
+                break;
+            case UNSTARRED:
+                try {
+                    unregistStarredMessage(isFromStarredButton, event.getMessageId());
+                } catch (RetrofitError e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void modifyStarredInfo(int messageId, boolean isStarred) {
+        int position = fileDetailCommentListAdapter.searchIndexOfMessages(messageId);
+        fileDetailCommentListAdapter.modifyStarredStateByPosition(position, isStarred);
     }
 
 }

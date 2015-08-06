@@ -32,10 +32,6 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
     @RootContext
     Context mContext;
 
-    enum CommentViewType {
-        Comment, PureComment, Sticker, PureSticker
-    }
-
     @AfterInject
     void initAdapter() {
         mMessages = new ArrayList<ResMessages.OriginalMessage>();
@@ -105,10 +101,6 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private static class ViewHolder {
-        CommentViewHolder commentViewHolder;
-    }
-
     @Override
     public int getItemViewType(int position) {
         ResMessages.OriginalMessage currentMessage = getItem(position);
@@ -148,7 +140,6 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
         return CommentViewType.values().length;
     }
 
-
     /**
      * TODO : 로직을 언젠가는 MessageItemListAdapter와 합칠 필요가 있겠음.
      *
@@ -177,7 +168,7 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
     }
 
     // 현재 화면에 뿌려진 메시지들 중에 messageId와 동일한 놈의 index 반환
-    private int searchIndexOfMessages(int commentId) {
+    public int searchIndexOfMessages(int commentId) {
         for (int i = 0; i < mMessages.size(); i++) {
             if (mMessages.get(i).id == commentId)
                 return i;
@@ -185,7 +176,20 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
         return -1;
     }
 
+    public void modifyStarredStateByPosition(int position, boolean isStarred) {
+        mMessages.get(position).isStarred = isStarred;
+        notifyDataSetChanged();
+    }
+
     public void clear() {
         mMessages.clear();
+    }
+
+    enum CommentViewType {
+        Comment, PureComment, Sticker, PureSticker
+    }
+
+    private static class ViewHolder {
+        CommentViewHolder commentViewHolder;
     }
 }
