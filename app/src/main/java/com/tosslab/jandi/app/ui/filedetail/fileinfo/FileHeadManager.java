@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.filedetail.fileinfo;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -21,6 +22,8 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
+import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.EntitySpannable;
 import com.tosslab.jandi.app.views.spannable.MessageSpannable;
 
@@ -173,12 +176,23 @@ public class FileHeadManager {
 
         } else {
 
-            activity.getSupportActionBar().setTitle(fileMessage.content.title);
-            if (fileMessage.content.size > 0) {
-                String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
-                textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.ext);
-            } else {
-                textViewFileContentInfo.setText(fileMessage.content.ext);
+            ActionBar actionBar = activity.getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle(fileMessage.content.title);
+            }
+
+            MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
+
+            String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
+            switch (sourceType) {
+
+                case S3:
+                    textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.ext);
+                    break;
+                case Google:
+                case Dropbox:
+                    textViewFileContentInfo.setText(fileMessage.content.ext);
+                    break;
             }
 
             // 공유 CDP 이름
