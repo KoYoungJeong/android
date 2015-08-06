@@ -720,11 +720,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Click(R.id.btn_send_message)
     void onSendClick() {
 
-        String message = messageListPresenter.getSendEditText().trim();
+
+        ResultMentionsVO mentionInfos = mentionControlViewModel.getMentionInfoObject();
+        String message = mentionInfos.getMessage();
 
         ReqSendMessageV3 reqSendMessage = null;
 
-        ResultMentionsVO mentionInfos = mentionControlViewModel.getMentionInfoObject();
         if (!TextUtils.isEmpty(message)) {
             if (mentionControlViewModel.hasMentionMember()) {
                 mentionControlViewModel.clear();
@@ -739,8 +740,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             StickerRepository.getRepository().upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo), mentionInfos.getMentions())));
         } else {
-            // insert to db //todo 데이터 베이스에 삽입해야함.
-            // insert to db
+
+            if (TextUtils.isEmpty(message)) {
+                return;
+            }
+
+            // TODO 데이터 베이스에 삽입해야함.
             long localId;
             if (messageListModel.isUser(entityId)) {
                 if (roomId > 0) {
