@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.utils.parse;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.parse.ParseException;
@@ -27,7 +26,7 @@ public class ParseUpdateUtil {
     public static final String PARSE_ACTIVATION_ON = "on";
     public static final String PARSE_ACTIVATION_OFF = "off";
 
-    private static final String CHANNEL_ID_PREFIX = "accountId_";
+    public static final String CHANNEL_ID_PREFIX = "accountId_";
 
     public static void addChannelOnServer() {
         Observable.OnSubscribe<String> subscribe = subscriber -> {

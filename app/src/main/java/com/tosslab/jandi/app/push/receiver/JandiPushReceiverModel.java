@@ -48,6 +48,7 @@ import retrofit.RetrofitError;
 @EBean
 public class JandiPushReceiverModel {
     private static final String JSON_KEY_DATA = "com.parse.Data";
+    private static final String JSON_KEY_CHANNEL = "com.parse.Channel";
     public static final String TAG = JandiPushReceiverModel.class.getSimpleName();
 
     @SystemService
@@ -112,6 +113,19 @@ public class JandiPushReceiverModel {
         LogUtil.e(TAG, "badgeCount - " + badgeCount);
         BadgeUtils.setBadge(context, badgeCount);
         JandiPreference.setBadgeCount(context, badgeCount);
+    }
+
+    public boolean isPushForMyAccountId(Bundle extras, String accountId) {
+        if (extras != null && extras.containsKey(JSON_KEY_CHANNEL)) {
+            String value = extras.getString(JSON_KEY_CHANNEL);
+            if (!TextUtils.isEmpty(value)) {
+                LogUtil.d(TAG, value);
+                return value.contains(accountId);
+            } else {
+                LogUtil.e(TAG, "Channel data is empty.");
+            }
+        }
+        return false;
     }
 
     public PushTO parsingPushTO(Bundle extras) {
