@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel_;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -42,14 +43,18 @@ public class MentionControlViewModel {
     public static final String MENTION_TYPE_FILE_COMMENT = "mention_type_file_comment";
     private RecyclerView searchMemberListView;
     private EditText editText;
+
     // for Message List View
     private RecyclerView messageListView;
+
     // for File comment List View
     private ListView fileCommentListView;
     private KeyboardHeightModel keyboardHeightModel;
     private SearchMemberModel searchMemberModel;
-    //MESSAGE OR FILE VIEW TYPE
+
+    //message or file view type
     private String mentionType = MENTION_TYPE_MESSAGE;
+
     //for textControl
     private int beforeTextCnt = 0;
     private int afterTextCnt = 0;
@@ -58,6 +63,7 @@ public class MentionControlViewModel {
     private String removedText = "";
     private String currentSearchKeywordString;
     private List<Integer> roomIds;
+
     // restore mentioned members using hashmap for time complexity
     private LinkedHashMap<Integer, SearchedItemVO> selectedMemberHashMap;
     private ClipboardListener clipboardListener;
@@ -156,7 +162,6 @@ public class MentionControlViewModel {
     }
 
     void afterEditTextChanged(Editable s, TextView tv) {
-        // Something Here
 
         if (beforeTextCnt > afterTextCnt) {
             removedText = returnRemoveText(beforeText, afterText, tv.getSelectionStart());
@@ -176,6 +181,11 @@ public class MentionControlViewModel {
         }
 
         if (result != null) {
+
+//            // no more process already included mention member
+//            if (currentSearchKeywordString != null && result.contains(currentSearchKeywordString)) {
+//                return;
+//            }
 
             currentSearchKeywordString = result;
 
@@ -270,7 +280,7 @@ public class MentionControlViewModel {
     }
 
     public LinkedHashMap<Integer, SearchedItemVO> getSelectableMembersInThis() {
-        return searchMemberModel.getSelectableMembers();
+        return searchMemberModel.getSelectableMembers(roomIds, mentionType);
     }
 
     public void mentionedMemberHighlightInEditText(SearchedItemVO searchedItemVO) {
@@ -425,4 +435,5 @@ public class MentionControlViewModel {
             }
         }
     }
+
 }
