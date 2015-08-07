@@ -1191,10 +1191,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
 
-        if (isFromSearch) {
-            return;
-        }
-
         if (event.getRoom().getId() == roomId) {
             SocketRoomMarkerEvent.Marker marker = event.getMarker();
             MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, marker.getMemberId(), marker
