@@ -24,7 +24,6 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel_;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -181,11 +180,6 @@ public class MentionControlViewModel {
         }
 
         if (result != null) {
-
-//            // no more process already included mention member
-//            if (currentSearchKeywordString != null && result.contains(currentSearchKeywordString)) {
-//                return;
-//            }
 
             currentSearchKeywordString = result;
 
@@ -426,8 +420,6 @@ public class MentionControlViewModel {
             CharSequence pasteData = "";
             ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
             pasteData = item.getText();
-            Log.e("editText", editText.getText().toString());
-            Log.e("pasteData", pasteData.toString());
             if (et.contains(pasteData.toString())) {
                 String convertedMessage = getMentionInfoObject(pasteData.toString()).getMessage();
                 Log.e(convertedMessage, convertedMessage);
