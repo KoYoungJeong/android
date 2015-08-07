@@ -26,7 +26,7 @@ public class MessageStarredEvent {
     }
 
     public enum Action {
-        STARRED, UNSTARRED
+        STARRED, UNSTARRED, DUMMY
     }
 
 }

@@ -34,6 +34,7 @@ public class StarMentionListModel {
     private int pagePerCount = 20;
     private boolean hasMore = false;
     private boolean isEmpty = false;
+    private String currentType = null;
 
     public ResStarMentioned getMentionRawDatas(Integer messageId, int count) throws RetrofitError {
         int teamId = getTeamId(JandiApplication.getContext());
@@ -67,6 +68,8 @@ public class StarMentionListModel {
         starMentionList = new ArrayList<>();
 
         ResStarMentioned resStarMentioned = null;
+
+        currentType = categoryType;
 
         if (categoryType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
             if (isFirstDatas) {
@@ -107,7 +110,6 @@ public class StarMentionListModel {
 
             if (type.equals("text")) {
                 starMentionVO.setContentType(StarMentionVO.Type.Text.getValue());
-
 
                 if (starMentionedMessageObject.getRoom().type.equals("channel")) {
                     starMentionVO.setRoomType(JandiConstants.TYPE_PUBLIC_TOPIC);
@@ -165,6 +167,15 @@ public class StarMentionListModel {
 
         return starMentionList;
 
+    }
+
+    public void refreshList() throws RetrofitError {
+        starMentionList = null;
+        isFirstDatas = true;
+        lastId = 0;
+        pagePerCount = 20;
+        hasMore = false;
+        isEmpty = false;
     }
 
     public boolean isEmpty() {

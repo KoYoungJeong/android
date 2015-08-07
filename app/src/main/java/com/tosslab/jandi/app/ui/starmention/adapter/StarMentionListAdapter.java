@@ -166,6 +166,11 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
         notifyDataSetChanged();
     }
 
+    public void removeStarMentionListAll() {
+        starMentionList = new ArrayList<StarMentionVO>();
+        notifyDataSetChanged();
+    }
+
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }

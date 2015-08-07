@@ -107,6 +107,17 @@ public class StarMentionListPresentor {
         }
     }
 
+    @Background
+    public void refreshList(String listType) {
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        starMentionListModel.refreshList();
+        addMentionMessagesToList(listType);
+    }
+
     public void setView(View view) {
         this.view = view;
     }
