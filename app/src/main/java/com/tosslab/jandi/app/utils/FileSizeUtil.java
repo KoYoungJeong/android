@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.utils;
 
+import android.text.TextUtils;
+
 import java.text.DecimalFormat;
 
 /**
@@ -21,5 +23,19 @@ public class FileSizeUtil {
             retFormat += " " + s[0];
         }
         return retFormat;
+    }
+
+    public static String getDownloadFileName(String fileName, String ext) {
+        String downloadFileName;
+        if (!hasFileExt(fileName) && !TextUtils.isEmpty(ext)) {
+            downloadFileName = fileName + "." + ext;
+        } else {
+            downloadFileName = fileName;
+        }
+        return downloadFileName;
+    }
+
+    private static boolean hasFileExt(String fileName) {
+        return !TextUtils.isEmpty(fileName) && fileName.lastIndexOf(".") > 0;
     }
 }

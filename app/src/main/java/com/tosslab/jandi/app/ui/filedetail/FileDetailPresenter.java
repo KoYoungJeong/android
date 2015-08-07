@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.placeholder.PlaceholderUtil;
@@ -425,7 +426,7 @@ public class FileDetailPresenter {
                 return;
         }
 
-        String fileName = fileDetailModel.getDownloadFileName(content.title, content.ext);
+        String fileName = FileSizeUtil.getDownloadFileName(content.title, content.ext);
 
         view.showDownloadProgressDialog(fileName);
 
@@ -439,7 +440,7 @@ public class FileDetailPresenter {
     @Background
     public void downloadFile(String url, String fileName, final String fileType, String ext, ProgressDialog progressDialog) {
         try {
-            File result = fileDetailModel.download(url, fileName, fileType, progressDialog);
+            File result = fileDetailModel.download(url, fileName, ext, progressDialog);
 
             if (fileDetailModel.isMediaFile(fileType)) {
                 fileDetailModel.addGallery(result, fileType);

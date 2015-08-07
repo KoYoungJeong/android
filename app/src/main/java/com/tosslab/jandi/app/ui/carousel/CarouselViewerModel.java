@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
@@ -52,7 +53,7 @@ public class CarouselViewerModel {
                 fileLinkId, count);
     }
 
-    public File download(String url, String fileName, String fileType, ProgressDialog
+    public File download(String url, String fileName, String ext, ProgressDialog
             progressDialog, Context context) throws ExecutionException, InterruptedException {
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/Jandi");
         dir.mkdirs();
@@ -60,7 +61,7 @@ public class CarouselViewerModel {
         return Ion.with(context)
                 .load(url)
                 .progressDialog(progressDialog)
-                .write(new File(dir, fileName))
+                .write(new File(dir, FileSizeUtil.getDownloadFileName(fileName, ext)))
                 .get();
     }
 

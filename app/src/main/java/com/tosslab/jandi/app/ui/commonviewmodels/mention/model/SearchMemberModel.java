@@ -39,7 +39,6 @@ public class SearchMemberModel {
 
         List<Integer> members = new ArrayList<>();
 
-        // 오류 있음
         Observable.from(topicIds)
                 .subscribe(topicId -> Observable
                                 .from(EntityManager.getInstance(JandiApplication.getContext())
