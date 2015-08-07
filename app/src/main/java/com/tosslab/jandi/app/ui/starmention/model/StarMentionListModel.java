@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.starmention.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -142,6 +143,7 @@ public class StarMentionListModel {
             if (!type.equals("file")) {
                 starMentionVO.setContent(starMentionedMessageObject.getMessage().content.body);
                 starMentionVO.setMentions(starMentionedMessageObject.getMessage().mentions);
+
             }
 
             if (type.equals("file")) {
@@ -153,7 +155,10 @@ public class StarMentionListModel {
                         starMentionedMessageObject.getMessage().content.icon));
             }
 
-            starMentionVO.setUpdatedAt(starMentionedMessageObject.getMessage().createAt);
+            starMentionVO.setUpdatedAt(starMentionedMessageObject.getMessage().createdAt);
+            Log.e("time", starMentionedMessageObject.getMessage().toString() + "");
+
+
             starMentionList.add(starMentionVO);
         }
 

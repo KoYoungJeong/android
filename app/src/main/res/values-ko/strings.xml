@@ -99,7 +99,7 @@
     <string name="jandi_create_privategroup">"비공개 토픽 생성"</string>
     <string name="jandi_modify_channel">"토픽 이름 수정"</string>
     <string name="jandi_modify_private_group">"비공개 토픽 이름 수정"</string>
-    <string name="warn_all_users_are_already_invited">"이미 모든 사용자가 가입되어 있습니다"</string>
+    <string name="warn_all_users_are_already_invited">"이미 모든 멤버가 이 토픽에 참여하고 있습니다."</string>
     <string name="err_entity_create">"생성에 실패하였습니다"</string>
     <string name="err_entity_join">"해당 토픽 참여에 실패하였습니다"</string>
     <string name="err_entity_duplicated_name">"동일한 이름이 존재합니다"</string>
@@ -492,5 +492,7 @@
     <string name="jandi_starred_unstar_from_item">즐겨찾기에서 해제 할까요?</string>
     <string name="jandi_unpinned_message">"즐겨찾기 해제됨"</string>
     <string name="jandi_topic_notification">"알림"</string>
+    <string name="jandi_you_cannot_delete_default_message">"이 토픽은 모든 멤버가 모여있는 기본 토픽으로, 나가거나 삭제할 수 없습니다. "</string>
+    <string name="jandi_this_is_disabled_user_explain">"차단된 멤버입니다. 궁금하신 사항은 팀 관리자에게 문의하세요."</string>
 
 </resources>

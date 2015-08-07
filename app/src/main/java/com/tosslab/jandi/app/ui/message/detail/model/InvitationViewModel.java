@@ -79,6 +79,7 @@ public class InvitationViewModel {
                 .size();
 
         if (teamMemberCountWithoutMe <= 0) {
+            ColoredToast.showWarning(context, context.getString(R.string.warn_all_users_are_already_invited));
             invitationDialogExecutor.execute();
             return;
         }
