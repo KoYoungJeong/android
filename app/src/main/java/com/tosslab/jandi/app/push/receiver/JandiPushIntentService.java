@@ -64,19 +64,20 @@ public class JandiPushIntentService extends IntentService {
 
         // LeftSideMenu 조회에 실패한 경우
         if (leftSideMenu == null) {
+            badgeCount = badgeCount + 1;
             if (!isShowingEntity && userWantsNotification) {
                 jandiPushReceiverModel.showNotification(context, pushTOInfo, false, badgeCount);
             }
 
             postEvent(roomId, pushTOInfo.getRoomType());
+            jandiPushReceiverModel.updateBadgeCount(context, badgeCount);
             return;
         }
 
-        int newBadgeCount = BadgeUtils.getTotalUnreadCount(leftSideMenu);
         if (jandiPushReceiverModel.isPushFromSelectedTeam(context, teamId)) {
-            badgeCount = newBadgeCount;
+            badgeCount = BadgeUtils.getTotalUnreadCount(leftSideMenu);
         } else {
-            badgeCount = badgeCount + newBadgeCount;
+            badgeCount += 1;
         }
 
         // 멘션 메시지인 경우 토픽별 푸쉬 on/off 상태는 무시된다.
@@ -95,18 +96,15 @@ public class JandiPushIntentService extends IntentService {
             }
         }
 
-        if (!postEvent(roomId, pushTOInfo.getRoomType())) {
-            jandiPushReceiverModel.updateBadgeCount(context, badgeCount);
-        }
+        postEvent(roomId, pushTOInfo.getRoomType());
+        jandiPushReceiverModel.updateBadgeCount(context, badgeCount);
     }
 
-    private boolean postEvent(int roomId, String roomType) {
+    private void postEvent(int roomId, String roomType) {
         EventBus eventBus = EventBus.getDefault();
         if (eventBus.hasSubscriberForEvent(MessagePushEvent.class)) {
             eventBus.post(new MessagePushEvent(roomId, roomType));
-            return true;
         }
-        return false;
     }
 
 }

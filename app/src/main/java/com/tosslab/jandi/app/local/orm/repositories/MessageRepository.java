@@ -123,6 +123,27 @@ public class MessageRepository {
         return new ArrayList<>();
     }
 
+    public ResMessages.Link getLastMessage(int roomId) {
+
+        try {
+            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            return helper.getDao(ResMessages.Link.class)
+                    .queryBuilder()
+                    .orderBy("time", false)
+                    .where()
+                    .eq("teamId", teamId)
+                    .and()
+                    .eq("roomId", roomId)
+                    .queryForFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        ResMessages.Link link = new ResMessages.Link();
+        link.id = -1;
+        return link;
+    }
+
     public List<ResMessages.Link> getOldMessages(int roomId, int lastLinkId, long count) {
         try {
             int teamId = AccountRepository.getRepository().getSelectedTeamId();

@@ -107,9 +107,15 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     protected void prepareStickerContent() {
         try {
             Dao<ResMessages.StickerContent, ?> dao = getDao(ResMessages.StickerContent.class);
+
+
             AssetManager assetManager = JandiApplication.getContext().getAssets();
             String[] list = assetManager.list("stickers/default/mozzi");
 
+            if (dao.queryBuilder().query().size() == list.length) {
+                return;
+            }
+            
             List<ResMessages.StickerContent> stickers = new ArrayList<>();
             ResMessages.StickerContent stickerContent;
             for (String file : list) {

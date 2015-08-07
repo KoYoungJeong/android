@@ -619,11 +619,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         fileUploadStateViewModel.registerEventBus();
         PushMonitor.getInstance().register(entityId);
 
-        messageListModel.removeNotificationSameEntityId(entityId);
+        messageListModel.removeNotificationSameEntityId(roomId);
         fileUploadStateViewModel.initDownloadState();
 
         if (isRoomInit) {
-            EventBus.getDefault().post(new MainSelectTopicEvent(entityId));
+            EventBus.getDefault().post(new MainSelectTopicEvent(roomId));
         }
     }
 

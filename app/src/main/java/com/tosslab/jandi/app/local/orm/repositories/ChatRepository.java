@@ -104,4 +104,25 @@ public class ChatRepository {
         }
         return 0;
     }
+
+    public ResChat getChatByRoom(int roomId) {
+        try {
+            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            Dao<ResChat, ?> chatDao = helper.getDao(ResChat.class);
+            return chatDao.queryBuilder()
+                    .orderBy("order", true)
+                    .where()
+                    .eq("teamId", selectedTeamId)
+                    .and()
+                    .eq("roomId", roomId)
+                    .queryForFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        ResChat resChat = new ResChat();
+        resChat.setEntityId(-1);
+        return resChat;
+
+    }
 }

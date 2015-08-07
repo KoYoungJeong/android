@@ -112,7 +112,7 @@ public class MainChatListAdapter extends BaseAdapter {
 
         }
 
-        if (item.getEntityId() == selectedEntity && animStatus == AnimStatus.READY) {
+        if (item.getRoomId() == selectedEntity && animStatus == AnimStatus.READY) {
             animStatus = AnimStatus.IN_ANIM;
             Integer colorFrom = context.getResources().getColor(R.color.transparent);
             Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);

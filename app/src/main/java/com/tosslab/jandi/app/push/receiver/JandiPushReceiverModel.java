@@ -116,11 +116,17 @@ public class JandiPushReceiverModel {
 
     public PushTO parsingPushTO(Bundle extras) {
         if (extras == null || !extras.containsKey(JSON_KEY_DATA)) {
+            LogUtil.e(TAG, "extras has not data.");
             return null;
         }
 
+        LogUtil.i(TAG, "extras data >");
+        LogUtil.d(TAG, extras.toString());
+        LogUtil.i(TAG, "< extras data");
+
         try {
             String jsonData = extras.getString(JSON_KEY_DATA);
+            LogUtil.e(TAG, jsonData);
             ObjectMapper mapper = JacksonMapper.getInstance().getObjectMapper();
             return mapper.readValue(jsonData, PushTO.class);
         } catch (IOException e) {
@@ -213,13 +219,15 @@ public class JandiPushReceiverModel {
                                          String message, Bitmap writerProfile,
                                          int badgeCount) {
 
-        int roomTypeInt = getEntityType(roomType);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle(notificationTitle);
         builder.setContentText(message);
+
+        int roomTypeInt = getEntityType(roomType);
         if (roomTypeInt == JandiConstants.TYPE_DIRECT_MESSAGE) {
             roomName = context.getString(R.string.jandi_tab_direct_message);
         }
+
         builder.setStyle(getBigTextStyle(notificationTitle, message, roomName));
 
         int led = 0;
@@ -248,8 +256,8 @@ public class JandiPushReceiverModel {
         builder.setAutoCancel(true);
         builder.setNumber(badgeCount);
 
-        // 노티를 터치할 경우엔 자동 삭제되나, 노티를 삭제하지 않고 앱으로 진입했을 때, 해당 채팅 방에 들어갈 때만
-        // 이 노티가 삭제되도록...
+        // 노티를 터치할 경우엔 자동 삭제되나, 노티를 삭제하지 않고 앱으로 진입했을 때,
+        // 해당 채팅 방에 들어갈 때만 이 노티가 삭제되도록...
         JandiPreference.setChatIdFromPush(context, roomId);
 
         // 노티를 터치할 경우 실행 intent 설정
@@ -315,6 +323,10 @@ public class JandiPushReceiverModel {
     }
 
     private boolean isPreviousMessage(String createdAt) {
+        if (TextUtils.isEmpty(createdAt)) {
+            LogUtil.e(TAG, "createdAt is empty string.");
+            return false;
+        }
         LogUtil.d(TAG, createdAt);
         long createdAtTime = DateTransformator.getTimeFromISO(createdAt);
 

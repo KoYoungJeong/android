@@ -57,6 +57,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -261,6 +262,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             } else {
                 modifyStarredInfo(id, false);
             }
+            MessageRepository.getRepository().updateStarred(id, false);
+
             showToast(getString(R.string.jandi_unpinned_message));
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -279,6 +282,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             } else {
                 modifyStarredInfo(id, true);
             }
+
+            MessageRepository.getRepository().updateStarred(id, true);
+
             showToast(getString(R.string.jandi_message_starred));
         } catch (RetrofitError e) {
             e.printStackTrace();

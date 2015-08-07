@@ -5,15 +5,22 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
@@ -138,5 +145,53 @@ public class JandiInterfaceModel {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public int getEntityId(int teamId, int roomId) {
+
+        // Topic 인지 확인
+        EntityManager entityManager = EntityManager.getInstance(JandiApplication.getContext());
+        FormattedEntity targetEntity = entityManager.getEntityById(roomId);
+        if (targetEntity != null) {
+            return roomId;
+        }
+
+        // DM 으로 간주
+        ResChat chat = ChatRepository.getRepository().getChatByRoom(roomId);
+
+        if (chat != null && chat.getEntityId() > 0) {
+            // 캐시된 정보로 확인
+            return chat.getCompanionId();
+        } else {
+            // 서버로부터 요청
+            try {
+                ResRoomInfo roomInfo = RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId,
+                        roomId);
+
+                if (roomInfo != null) {
+
+                    int myId = entityManager.getMe().getId();
+
+                    for (int member : roomInfo.getMembers()) {
+                        if (myId != member) {
+                            return member;
+                        }
+                    }
+
+                }
+            } catch (RetrofitError retrofitError) {
+                retrofitError.printStackTrace();
+                return -1;
+            }
+        }
+        return -1;
+
+    }
+
+    public int getCachedLastLinkId(int roomId) {
+
+        ResMessages.Link lastMessage = MessageRepository.getRepository().getLastMessage(roomId);
+
+        return lastMessage.id;
     }
 }

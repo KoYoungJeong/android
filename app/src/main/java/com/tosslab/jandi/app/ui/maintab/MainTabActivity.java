@@ -117,8 +117,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         tabs.setViewPager(mViewPager);
 
         if (selectedEntity > 0) {
-            boolean user = EntityManager.getInstance(getApplicationContext()).getEntityById(selectedEntity).isUser();
-            if (user) {
+            FormattedEntity entity = EntityManager.getInstance(getApplicationContext()).getEntityById(selectedEntity);
+            if (entity == null || entity.isUser()) {
                 mViewPager.setCurrentItem(CHAT_INDEX);
             }
         }
