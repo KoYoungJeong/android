@@ -14,8 +14,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/jandi_fl_icon_txt" />
+        android:layout_marginTop="16dp" />
 
     <RelativeLayout
         android:id="@+id/rv_star_mention_content"
