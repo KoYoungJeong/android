@@ -196,12 +196,7 @@ public class JandiSocketService extends Service {
         });
         eventHashMap.put("connect_team", objects -> {
             LogUtil.d(TAG, "connect_team");
-            ConnectTeam connectTeam = jandiSocketServiceModel.getConnectTeam();
-            if (connectTeam != null) {
-                jandiSocketManager.sendByJson("ping", connectTeam);
-            } else {
-                jandiSocketManager.sendByJson("ping", "");
-            }
+            jandiSocketManager.sendByJson("ping", "");
         });
         eventHashMap.put("pong", objects -> LogUtil.d(TAG, "pong"));
         eventHashMap.put("error_connect_team", objects -> {
