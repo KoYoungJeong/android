@@ -46,6 +46,10 @@ public class MessageSearchModel {
         return AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
     }
 
+    public boolean hasEntity(int entityId) {
+        return EntityManager.getInstance(context).getEntityById(entityId) != null;
+    }
+
     public int getEntityType(int entityId) {
         FormattedEntity entity = EntityManager.getInstance(context).getEntityById(entityId);
         if (entity.isPublicTopic()) {

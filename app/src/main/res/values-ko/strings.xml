@@ -472,6 +472,7 @@
 
     <string name="jandi_profile_picture">프로필 사진</string>
 
+    <string name="jandi_topic_was_removed">"이미 나갔거나 삭제된 토픽이므로 원본을 확인할 수 없습니다."</string>
 
     <!-- starred / mention -->
 

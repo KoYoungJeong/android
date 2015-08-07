@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.login.adapter.IntroMainPagerAdapter;
 import com.tosslab.jandi.app.ui.login.tutorial.IntroTutorialFragment;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.AfterViews;
@@ -48,6 +49,7 @@ public class IntroMainActivity extends AppCompatActivity {
 
         JandiSocketService.stopService(IntroMainActivity.this);
 
+        BadgeUtils.clearBadge(IntroMainActivity.this);
 
     }
 
