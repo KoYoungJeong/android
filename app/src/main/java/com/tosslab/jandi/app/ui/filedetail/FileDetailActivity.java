@@ -229,9 +229,13 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         boolean isFromStarredButton = true;
         fileHeadManager.getStarredButton().setOnClickListener(v -> {
             LogUtil.e("selected1", v.isSelected() + "");
+            //dummy event for notify filestarredList;
+            MessageStarredEvent event =
+                    new MessageStarredEvent(MessageStarredEvent.Action.DUMMY, -1);
             if (v.isSelected()) {
                 try {
                     unregistStarredMessage(isFromStarredButton, fileId);
+                    EventBus.getDefault().post(event);
                 } catch (Exception e) {
                     e.printStackTrace();
 
@@ -239,10 +243,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             } else {
                 try {
                     registStarredMessage(isFromStarredButton, fileId);
+                    EventBus.getDefault().post(event);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+
         });
     }
 

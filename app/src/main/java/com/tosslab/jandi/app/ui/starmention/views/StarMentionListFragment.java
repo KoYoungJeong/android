@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldStarMentionedEvent;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.adapter.StarMentionListAdapter;
@@ -78,19 +79,12 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
 
     private void loadStarMentionList() {
         try {
-            if (listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
-                starMentionListPresentor.addMentionMessagesToList(StarMentionListActivity.TYPE_MENTION_LIST);
-            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_ALL)) {
-                starMentionListPresentor.addMentionMessagesToList(StarMentionListActivity.TYPE_STAR_ALL);
-            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_FILES)) {
-                starMentionListPresentor.addMentionMessagesToList(StarMentionListActivity.TYPE_STAR_FILES);
-            }
+            starMentionListPresentor.addMentionMessagesToList(listType);
         } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private void notifyViewStatus() {
@@ -182,6 +176,11 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
             loadStarMentionList();
         }
 
+    }
+
+    public void onEvent(MessageStarredEvent event) {
+        starMentionListAdapter.removeStarMentionListAll();
+        starMentionListPresentor.refreshList(listType);
     }
 
     @Override

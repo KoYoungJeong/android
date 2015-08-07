@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ly_message_item"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/message_list_selector"
@@ -23,11 +22,10 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="43dp"
         android:layout_marginRight="40dp"
-        android:layout_toLeftOf="@+id/iv_message_sending_status"
         android:gravity="center_vertical"
         android:minHeight="19dp"
         android:text="Text"
         android:textColor="@color/jandi_messages_content"
-        android:textSize="@dimen/jandi_messages_content"/>
+        android:textSize="@dimen/jandi_messages_content" />
 
 </RelativeLayout>

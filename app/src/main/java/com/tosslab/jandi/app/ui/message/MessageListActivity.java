@@ -172,7 +172,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     void initViews() {
         initInformations();
         initTempMessage();
-        clearPushNotification(entityId);
 //        BadgeUtils.clearBadge(mContext); // TODO BUG 현재 Activity 에서 홈버튼으로 돌아가면 아이콘에 뱃지가 0이 됨.
         initProgressWheel();
 
@@ -214,15 +213,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     private void initProgressWheel() {
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
-    }
-
-    private void clearPushNotification(int entityId) {
-        // Notification 선택을 안하고 앱을 선택해서 실행시 Notification 제거
-        if (entityId == JandiPreference.getChatIdFromPush(this)) {
-            NotificationManager notificationManager;
-            notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
-        }
     }
 
     private void setupScrollView() {
