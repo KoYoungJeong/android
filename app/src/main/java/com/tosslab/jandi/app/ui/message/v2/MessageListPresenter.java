@@ -942,6 +942,7 @@ public class MessageListPresenter {
         } else {
             int messageId = lastUpdatedMessage.messageId;
             if (firstLoad) {
+                setUpLastReadLink(myId);
                 moveLastReadLink();
 
                 if (linkList.isEmpty()) {
@@ -956,6 +957,31 @@ public class MessageListPresenter {
             } else {
                 moveToMessage(messageId, 0);
             }
+        }
+
+    }
+
+    private void setUpLastReadLink(int myId) {
+        int lastReadLinkId = messageListAdapter.getLastReadLinkId();
+        int indexOfLinkId = messageListAdapter.indexOfLinkId(lastReadLinkId);
+
+        if (indexOfLinkId < 0) {
+            return;
+        }
+
+        for (int idx = indexOfLinkId, size = messageListAdapter.getCount(); idx < size; ++idx) {
+            ResMessages.Link item = messageListAdapter.getItem(idx);
+
+            if (item.message.writerId == myId) {
+                messageListAdapter.setLastReadLinkId(item.id);
+                continue;
+            } else if (item instanceof DummyMessageLink) {
+                messageListAdapter.setLastReadLinkId(-1);
+                break;
+            } else {
+                break;
+            }
+
         }
 
     }
