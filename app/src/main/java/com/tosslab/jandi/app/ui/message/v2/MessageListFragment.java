@@ -719,17 +719,19 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Click(R.id.btn_send_message)
     void onSendClick() {
 
-        String message = TextUtils.isEmpty(messageEditText.getText()) ?
-                messageEditText.getText().toString() : "";
-        ResultMentionsVO mentionInfos = null;
-        List<MentionObject> mentions = null;
+        String message = messageEditText.getText().toString();
+        List<MentionObject> mentions;
 
         if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
-            mentionInfos = mentionControlViewModel.getMentionInfoObject();
+            ResultMentionsVO mentionInfos = mentionControlViewModel.getMentionInfoObject();
             if (mentionInfos != null) {
                 message = mentionInfos.getMessage();
                 mentions = mentionInfos.getMentions();
+            } else {
+                mentions = new ArrayList<>();
             }
+        } else {
+            mentions = new ArrayList<>();
         }
 
         ReqSendMessageV3 reqSendMessage = null;

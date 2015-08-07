@@ -126,7 +126,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             ResAccountInfo resAccountInfo = accountHomeModel.updateAccountName(newName);
             accountHomeModel.trackChangeAccountNameSuccess(context, resAccountInfo.getId());
 
-            AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+            AccountRepository.getRepository().updateAccountName(newName);
             view.dismissProgressWheel();
             view.setAccountName(newName);
             view.showSuccessToast(context.getString(R.string.jandi_success_update_account_profile));

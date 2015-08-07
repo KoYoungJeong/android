@@ -4,6 +4,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
@@ -224,6 +225,22 @@ public class AccountRepository {
                     .delete();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void updateAccountName(String newName) {
+        lock.lock();
+        try {
+            Dao<ResAccountInfo, ?> dao = helper.getDao(ResAccountInfo.class);
+            UpdateBuilder<ResAccountInfo, ?> updateBuilder = dao.updateBuilder();
+
+            updateBuilder.updateColumnValue("name", newName);
+            updateBuilder.update();
+
+        } catch (SQLException e) {
+
         } finally {
             lock.unlock();
         }

@@ -27,6 +27,7 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -98,11 +99,11 @@ public class FileDetailModel {
         return entityClientManager.getUserProfile(userEntityId);
     }
 
-    public File download(String url, String fileName, String fileType, ProgressDialog progressDialog) throws Exception {
+    public File download(String url, String fileName, String ext, ProgressDialog progressDialog) throws Exception {
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/Jandi");
         dir.mkdirs();
 
-        String downloadFileName = getDownloadFileName(fileName, fileType);
+        String downloadFileName = FileSizeUtil.getDownloadFileName(fileName, ext);
 
         return Ion.with(context)
                 .load(url)
@@ -110,20 +111,6 @@ public class FileDetailModel {
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                 .write(new File(dir, downloadFileName))
                 .get();
-    }
-
-    public String getDownloadFileName(String fileName, String fileType) {
-        String downloadFileName;
-        if (!hasFileExt(fileName)) {
-            downloadFileName = fileName + "." + fileType;
-        } else {
-            downloadFileName = fileName;
-        }
-        return downloadFileName;
-    }
-
-    private boolean hasFileExt(String fileName) {
-        return !TextUtils.isEmpty(fileName) && fileName.lastIndexOf(".") > 0;
     }
 
     public boolean isMyComment(int writerId) {

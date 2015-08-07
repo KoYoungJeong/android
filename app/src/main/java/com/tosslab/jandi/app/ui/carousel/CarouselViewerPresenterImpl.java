@@ -155,7 +155,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
     public void onFileDownload(Context context, CarouselFileInfo fileInfo, ProgressDialog progressDialog) {
         try {
             File downloadFile = carouselViewerModel.download(fileInfo.getFileLinkUrl(),
-                    fileInfo.getFileName(), fileInfo.getFileType(),
+                    fileInfo.getFileName(), fileInfo.getExt(),
                     progressDialog, context.getApplicationContext());
 
             carouselViewerModel.trackDownloadingFile(EntityManager.getInstance(context),
