@@ -109,7 +109,7 @@ public class StarMentionedMessageObject {
         public int feedbackId;
         public String feedbackTitle;
         public int commentCount;
-        public Date createAt;
+        public Date createdAt;
         public Content content;
 
         public Message() {
@@ -124,7 +124,7 @@ public class StarMentionedMessageObject {
                     ", feedbackId=" + feedbackId +
                     ", feedbackTitle='" + feedbackTitle + '\'' +
                     ", commentCount=" + commentCount +
-                    ", createAt=" + createAt +
+                    ", createdAt=" + createdAt +
                     ", content=" + content.toString() +
                     '}';
         }
