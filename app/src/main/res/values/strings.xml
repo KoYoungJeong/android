@@ -417,6 +417,8 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_plz_input_topic_description">"Description (optional)"</string>
     <string name="jandi_save">"Save"</string>
 
+    <string name="jandi_topic_was_removed">"You are no longer in the topic where this item was shared."</string>
+
     <string name="jandi_topic_notification">"Notifications"</string>
 
     <!-- tutorial -->

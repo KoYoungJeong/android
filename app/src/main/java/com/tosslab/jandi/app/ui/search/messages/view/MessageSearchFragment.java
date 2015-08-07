@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.search.messages.view;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
@@ -34,6 +35,7 @@ import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenter
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenterImpl;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
@@ -437,6 +439,13 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     public void showInvalidNetworkDialog() {
         AlertUtil_.getInstance_(getActivity())
                 .showCheckNetworkDialog(getActivity(), null);
+    }
+
+    @UiThread
+    @Override
+    public void showInvalidateEntityToast() {
+        Resources resource = JandiApplication.getContext().getResources();
+        ColoredToast.show(JandiApplication.getContext(), resource.getString(R.string.jandi_topic_was_removed));
     }
 
     @Override

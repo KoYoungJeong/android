@@ -453,9 +453,9 @@
     <string name="jandi_already_in_team">"此电子邮箱已为 %s 的成员"</string>
     <string name="jandi_unread_messages_below">"以下为未读信息"</string>
 
-
     <string name="jandi_profile_picture">"简介照片"</string>
 
+    <string name="jandi_topic_was_removed">"你已不在此标记的议题内"</string>
 
     <!-- starred / mentioned -->
     <string name="jandi_starred_star">标示</string>

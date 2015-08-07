@@ -178,8 +178,13 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
 
     @Override
     public void onRecordClick(SearchResult searchRecord) {
-        int currentTeamId = messageSearchModel.getCurrentTeamId();
         int entityId = searchRecord.getEntityId();
+        if (!messageSearchModel.hasEntity(entityId)) {
+            view.showInvalidateEntityToast();
+            return;
+        }
+
+        int currentTeamId = messageSearchModel.getCurrentTeamId();
         int entityType = messageSearchModel.getEntityType(entityId);
         boolean isStarred = messageSearchModel.isStarredEntity(entityId);
         int linkId = searchRecord.getLinkId();

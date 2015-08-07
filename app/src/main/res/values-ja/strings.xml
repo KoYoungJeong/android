@@ -463,6 +463,7 @@
 
     <string name="jandi_profile_picture">プロフィール画像</string>
 
+    <string name="jandi_topic_was_removed">"すでに参加していないトピックなので原本が表示できません"</string>
 
     <!-- starred -->
 
