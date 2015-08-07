@@ -84,7 +84,11 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                 // 캐시가 없는 경우
                 if (currentItemCount != 0) {
                     // 요청한 링크 ID 이전 값 가져오기
-                    oldMessage = messageListModel.getOldMessage(linkId, itemCount);
+                    try {
+                        oldMessage = messageListModel.getOldMessage(linkId, itemCount);
+                    } catch (RetrofitError retrofitError) {
+                        retrofitError.printStackTrace();
+                    }
                 } else {
                     // 첫 요청이라 판단
                     // 마커 기준 위아래 값 요청
@@ -115,7 +119,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                 }
             }
 
-            if (oldMessage.records == null || oldMessage.records.isEmpty()) {
+            if (oldMessage == null || oldMessage.records == null || oldMessage.records.isEmpty()) {
                 checkItemCountIfException(currentItemCount);
                 return oldMessage;
             }
