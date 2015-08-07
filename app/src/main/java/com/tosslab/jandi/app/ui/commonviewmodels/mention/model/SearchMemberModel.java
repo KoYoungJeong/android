@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.commonviewmodels.mention.model;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -27,12 +28,12 @@ public class SearchMemberModel {
 
     LinkedHashMap<Integer, SearchedItemVO> selectableMembersLinkedHashMap;
 
-    boolean isFirst = true;
+//    boolean isFirst = true;
 
     public List<SearchedItemVO> getUserSearchByName(List<Integer> topicIds, String subNameString,
                                                     LinkedHashMap<Integer, SearchedItemVO>
                                                             alreadySelectedMemberHashMap,
-                                                    String type) {
+                                                    String mentionType) {
 
         if (topicIds == null || topicIds.size() == 0)
             return new ArrayList<>();
@@ -56,7 +57,6 @@ public class SearchMemberModel {
 
         List<SearchedItemVO> searchedItems = new ArrayList<>();
 
-
         Iterator<SearchedItemVO> iterator = Observable.from(members)
                 .map(memberId -> Observable.from(usersWithoutMe)
                         .filter(entity -> !TextUtils.isEmpty(entity.getName())
@@ -79,7 +79,6 @@ public class SearchMemberModel {
 
         while (iterator.hasNext()) {
             SearchedItemVO searchedItem = iterator.next();
-
             if (alreadySelectedMemberHashMap == null ||
                     !alreadySelectedMemberHashMap.containsKey(searchedItem.getId())) {
                 if (searchedItem.getId() != -1) {
@@ -88,7 +87,7 @@ public class SearchMemberModel {
             }
         }
 
-        if (type.equals(MentionControlViewModel.MENTION_TYPE_MESSAGE)
+        if (mentionType.equals(MentionControlViewModel.MENTION_TYPE_MESSAGE)
                 && alreadySelectedMemberHashMap != null
                 && !alreadySelectedMemberHashMap.containsKey(topicIds.get(0))) {
             if (members.size() - 1 > 0 && "All".toLowerCase().contains(subNameString.toLowerCase())) {
@@ -103,12 +102,77 @@ public class SearchMemberModel {
 
         Collections.sort(searchedItems, getChatItemComparator());
 
-        if (isFirst) {
-            setSelectableMembersLinkedHashMap(searchedItems);
-            isFirst = false;
-        }
+
+//        if (isFirst) {
+//        setSelectableMembersLinkedHashMap(searchedItems);
+//            isFirst = false;
+//        }
 
         return searchedItems;
+
+    }
+
+    public void refreshSelectableMembers(List<Integer> topicIds, String mentionType) {
+
+        if (topicIds == null || topicIds.size() == 0)
+            return;
+
+        List<Integer> members = new ArrayList<>();
+
+        Observable.from(topicIds)
+                .subscribe(topicId -> Observable
+                                .from(EntityManager.getInstance(JandiApplication.getContext())
+                                        .getEntityById(topicId).getMembers())
+                                .subscribe(member -> {
+                                            if (!members.contains(member)) {
+                                                members.add(member);
+                                            }
+                                            Log.e("memberId", member + "");
+                                        }
+                                )
+                );
+
+        List<FormattedEntity> usersWithoutMe = EntityManager.getInstance(JandiApplication.getContext())
+                .getFormattedUsersWithoutMe();
+
+        List<SearchedItemVO> searchedItems = new ArrayList<>();
+
+        Iterator<SearchedItemVO> iterator = Observable.from(members)
+                .map(memberId -> Observable.from(usersWithoutMe)
+                        .filter(entity -> !TextUtils.isEmpty(entity.getName()) && entity.getId() == memberId)
+                        .map(entity -> {
+                            SearchedItemVO searchedItem = new SearchedItemVO();
+                            searchedItem.setName(entity.getName())
+                                    .setId(entity.getId())
+                                    .setType("member")
+                                    .setSmallProfileImageUrl(entity.getUserSmallProfileUrl())
+                                    .setEnabled(TextUtils.equals(entity.getUser().status, "enabled"))
+                                    .setStarred(entity.isStarred);
+                            Log.e("memberName", searchedItem.getName());
+                            return searchedItem;
+                        })
+                        .toBlocking()
+                        .firstOrDefault(new SearchedItemVO().setId(-1)))
+                .toBlocking()
+                .getIterator();
+
+        while (iterator.hasNext()) {
+            SearchedItemVO searchedItem = iterator.next();
+            if (searchedItem.getId() != -1) {
+                searchedItems.add(searchedItem);
+            }
+        }
+
+        if (mentionType.equals(MentionControlViewModel.MENTION_TYPE_MESSAGE)) {
+            SearchedItemVO searchedItemForAll = new SearchedItemVO();
+            searchedItemForAll
+                    .setId(topicIds.get(0))
+                    .setName("All")
+                    .setType("room");
+            searchedItems.add(searchedItemForAll);
+        }
+
+        setSelectableMembersLinkedHashMap(searchedItems);
 
     }
 
@@ -149,7 +213,8 @@ public class SearchMemberModel {
         };
     }
 
-    public LinkedHashMap<Integer, SearchedItemVO> getSelectableMembers() {
+    public LinkedHashMap<Integer, SearchedItemVO> getSelectableMembers(List<Integer> topicIds, String mentionType) {
+        refreshSelectableMembers(topicIds, mentionType);
         return selectableMembersLinkedHashMap;
     }
 
