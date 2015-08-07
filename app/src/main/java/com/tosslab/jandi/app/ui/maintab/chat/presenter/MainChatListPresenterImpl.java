@@ -107,7 +107,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
             int selectedEntityPosition = 0;
             int size = chatItems.size();
             for (int idx = 0; idx < size; idx++) {
-                if (chatItems.get(idx).getEntityId() == selectedEntity) {
+                if (chatItems.get(idx).getRoomId() == selectedEntity) {
                     selectedEntityPosition = idx;
                     break;
                 }
@@ -158,7 +158,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         chatItem.unread(0);
         view.refreshListView();
 
-        view.setSelectedItem(chatItem.getEntityId());
+        view.setSelectedItem(chatItem.getRoomId());
         EventBus.getDefault().post(new MainSelectTopicEvent(chatItem.getEntityId()));
 
         int badgeCount = JandiPreference.getBadgeCount(context) - unread;

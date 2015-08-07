@@ -5,9 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResConfig;
@@ -25,8 +23,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
-
-import java.util.List;
 
 import retrofit.RetrofitError;
 
@@ -116,6 +112,7 @@ public class PushInterfaceActivity extends AppCompatActivity {
 
         if (!used) {
             selectedEntityId = entityId;
+
             checkTeamInfo();
         } else {
             selectedEntityId = -1;
@@ -131,10 +128,19 @@ public class PushInterfaceActivity extends AppCompatActivity {
 
         if (jandiInterfaceModel.setupSelectedTeam(teamId)) {
 
+            int roomId = entityId;
+            int targetEntityId = jandiInterfaceModel.getEntityId(teamId, entityId);
+
+            if (targetEntityId > 0) {
+
+                moveMessageListActivity(roomId, targetEntityId);
+            } else {
+                // entity 정보가 없으면 인트로로 이동하도록 지정
+                moveIntroActivity();
+            }
+
             String distictId = EntityManager.getInstance(PushInterfaceActivity.this).getDistictId();
             MixpanelMemberAnalyticsClient.getInstance(PushInterfaceActivity.this, distictId).trackMemberSingingIn();
-
-            moveMessageListActivity();
         } else {
             moveIntroActivity();
         }
@@ -150,21 +156,7 @@ public class PushInterfaceActivity extends AppCompatActivity {
     }
 
     @UiThread
-    void moveMessageListActivity() {
-        FormattedEntity entity = EntityManager.getInstance(PushInterfaceActivity.this).getEntityById(entityId);
-
-        if (entity == null) {
-            moveIntroActivity();
-            return;
-        }
-
-        boolean isUser = entity.isUser();
-        int roomId;
-        if (!isUser) {
-            roomId = entityId;
-        } else {
-            roomId = ChatRepository.getRepository().getChat(entityId).getEntityId();
-        }
+    void moveMessageListActivity(int roomId, int targetEntityId) {
 
         MainTabActivity_.intent(PushInterfaceActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -173,7 +165,7 @@ public class PushInterfaceActivity extends AppCompatActivity {
         MessageListV2Activity_.intent(PushInterfaceActivity.this)
                 .teamId(teamId)
                 .roomId(roomId)
-                .entityId(entityId)
+                .entityId(targetEntityId)
                 .entityType(entityType)
                 .isFromPush(true)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
