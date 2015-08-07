@@ -88,6 +88,10 @@ public class EntitySelectDialogAdatper extends BaseAdapter {
         entityInfoList.add(simpleEntityInfo);
     }
 
+    public void addAll(List<SimpleEntityInfo> simpleEntityInfos) {
+        entityInfoList.addAll(simpleEntityInfos);
+    }
+
     static class ViewHolder {
         TextView textView;
         ImageView imageView;

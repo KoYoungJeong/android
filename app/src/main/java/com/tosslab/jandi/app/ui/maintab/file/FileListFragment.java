@@ -117,6 +117,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     private boolean isForeground;
     private PublishSubject<Integer> initSearchSubject;
     private SearchActivity.OnSearchItemSelect onSearchItemSelect;
+    private SearchActivity.OnSearchText onSearchText;
 
     @AfterInject
     void init() {
@@ -341,6 +342,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
 //        Log.d("INFO", "event setFileType" + event.getServerQuery());
         mSearchQuery.setFileType(event.getServerQuery());
+        if (onSearchText != null) {
+            mSearchQuery.setKeyword(onSearchText.getSearchText());
+        }
         searchedFileItemListAdapter.clearAdapter();
         initSearchSubject.onNext(-1);
         onSearchHeaderReset();
@@ -352,6 +356,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
 //        Log.d("INFO", "event setOwnerType");
         mSearchQuery.setWriter(event.userId);
+        if (onSearchText != null) {
+            mSearchQuery.setKeyword(onSearchText.getSearchText());
+        }
         searchedFileItemListAdapter.clearAdapter();
         initSearchSubject.onNext(-1);
         onSearchHeaderReset();
@@ -363,6 +370,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
 //        Log.d("INFO", "event setEntityType");
         mSearchQuery.setSharedEntity(event.sharedEntityId);
+        if (onSearchText != null) {
+            mSearchQuery.setKeyword(onSearchText.getSearchText());
+        }
         searchedFileItemListAdapter.clearAdapter();
         initSearchSubject.onNext(-1);
         onSearchHeaderReset();
@@ -655,6 +665,11 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     @Override
     public void setOnSearchItemSelect(SearchActivity.OnSearchItemSelect onSearchItemSelect) {
         this.onSearchItemSelect = onSearchItemSelect;
+    }
+
+    @Override
+    public void setOnSearchText(SearchActivity.OnSearchText onSearchText) {
+        this.onSearchText = onSearchText;
     }
 
     private void setHeaderImageViewImage(ViewGroup parentView, int imageResourceId) {

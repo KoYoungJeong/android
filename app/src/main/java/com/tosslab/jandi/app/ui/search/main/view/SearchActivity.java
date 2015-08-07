@@ -170,7 +170,12 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
             searchSelectView.setOnSearchItemSelect(null);
         }
         searchSelectView = messageSearchFragment;
-        searchSelectView.setOnSearchItemSelect(() -> finish());
+        searchSelectView.setOnSearchItemSelect(this::finish);
+        searchSelectView.setOnSearchText(() -> {
+            String searchText = searchEditText.getText().toString();
+            searchQueries[0] = searchText;
+            return searchText;
+        });
 
         setSelectTab(messageTabView, filesTabView);
         setSearchText(searchQueries[0]);
@@ -201,7 +206,12 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
             searchSelectView.setOnSearchItemSelect(null);
         }
         searchSelectView = fileListFragment;
-        searchSelectView.setOnSearchItemSelect(() -> finish());
+        searchSelectView.setOnSearchItemSelect(this::finish);
+        searchSelectView.setOnSearchText(() -> {
+            String searchText = searchEditText.getText().toString();
+            searchQueries[1] = searchText;
+            return searchText;
+        });
 
 
         setSelectTab(filesTabView, messageTabView);
@@ -371,9 +381,15 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         void initSearchLayoutIfFirst();
 
         void setOnSearchItemSelect(OnSearchItemSelect onSearchItemSelect);
+
+        void setOnSearchText(OnSearchText onSearchText);
     }
 
     public interface OnSearchItemSelect {
         void onSearchItemSelect();
+    }
+
+    public interface OnSearchText {
+        String getSearchText();
     }
 }
