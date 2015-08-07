@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.model.StarMentionListModel;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -99,8 +100,9 @@ public class StarMentionListPresentor {
     public void unregistStarredMessage(int teamId, int messageId, int position) {
         try {
             starMentionListModel.unregistStarredMessage(teamId, messageId);
-            view.showSuccessToast(
-                    JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
+            LogUtil.e("teamId", teamId + "");
+            LogUtil.e("messageId", messageId + "");
+            view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
             view.onRemoveItem(position);
         } catch (RetrofitError e) {
             e.printStackTrace();

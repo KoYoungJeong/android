@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.starmention.model;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -55,7 +54,7 @@ public class StarMentionListModel {
 
     }
 
-    public void unregistStarredMessage(int teamId, int messageId) {
+    public void unregistStarredMessage(int teamId, int messageId) throws RetrofitError {
         try {
             RequestApiManager.getInstance()
                     .unregistStarredMessageByTeamApi(teamId, messageId);
@@ -99,6 +98,7 @@ public class StarMentionListModel {
                 messageId = starMentionedMessageObject.getMessage().id;
             } else {
                 messageId = starMentionedMessageObject.getStarredId();
+
             }
 
             FormattedEntity entity = EntityManager.getInstance(JandiApplication.getContext())
@@ -106,12 +106,11 @@ public class StarMentionListModel {
             starMentionVO.setWriterName(entity.getUser().name);
             starMentionVO.setWriterPictureUrl(entity.getUserSmallProfileUrl());
             starMentionVO.setTeamId(starMentionedMessageObject.getTeamId());
-            starMentionVO.setMessageId(messageId);
+            starMentionVO.setMessageId(starMentionedMessageObject.getMessage().id);
             lastId = messageId;
 
             if (type.equals("text")) {
                 starMentionVO.setContentType(StarMentionVO.Type.Text.getValue());
-
                 if (starMentionedMessageObject.getRoom().type.equals("channel")) {
                     starMentionVO.setRoomType(JandiConstants.TYPE_PUBLIC_TOPIC);
                     starMentionVO.setRoomName(starMentionedMessageObject.getRoom().name);
@@ -125,7 +124,6 @@ public class StarMentionListModel {
                     String userId = starMentionedMessageObject.getRoom().name.replaceAll(
                             EntityManager.getInstance(JandiApplication.getContext()).getMe().getId() + "", "");
                     userId = userId.replace(":", "");
-
                     starMentionVO.setRoomName(EntityManager.getInstance(
                             JandiApplication.getContext()).getEntityById(Integer.valueOf(userId)).getName());
                     starMentionVO.setRoomId(Integer.valueOf(userId));
@@ -156,9 +154,6 @@ public class StarMentionListModel {
             }
 
             starMentionVO.setUpdatedAt(starMentionedMessageObject.getMessage().createdAt);
-            Log.e("time", starMentionedMessageObject.getMessage().toString() + "");
-
-
             starMentionList.add(starMentionVO);
         }
 

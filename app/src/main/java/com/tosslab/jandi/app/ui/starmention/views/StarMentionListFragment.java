@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.ui.starmention.adapter.StarMentionListAdapter;
 import com.tosslab.jandi.app.ui.starmention.presentor.StarMentionListPresentor;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterViews;
@@ -188,8 +189,10 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.jandi_starred_unstar_from_item);
+        LogUtil.e("messageId", messageId + "");
 
         builder.setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
+            LogUtil.e("messageId", messageId + "");
             starMentionListPresentor.unregistStarredMessage(teamId, messageId, position);
         });
 

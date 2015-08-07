@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -360,6 +361,8 @@ public class FileDetailModel {
         try {
             RequestApiManager.getInstance()
                     .unregistStarredMessageByTeamApi(teamId, messageId);
+            LogUtil.e("teamId", teamId + "");
+            LogUtil.e("messageId", messageId + "");
         } catch (RetrofitError e) {
             e.printStackTrace();
         }
