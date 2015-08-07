@@ -121,11 +121,9 @@ public class StarMentionListModel {
                     starMentionVO.setRoomId(starMentionedMessageObject.getRoom().id);
                 } else if (starMentionedMessageObject.getRoom().type.equals("chat")) {
                     starMentionVO.setRoomType(JandiConstants.TYPE_DIRECT_MESSAGE);
-
                     String userId = starMentionedMessageObject.getRoom().name.replaceAll(
                             EntityManager.getInstance(JandiApplication.getContext()).getMe().getId() + "", "");
                     userId = userId.replace(":", "");
-
 
                     starMentionVO.setRoomName(EntityManager.getInstance(
                             JandiApplication.getContext()).getEntityById(Integer.valueOf(userId)).getName());
@@ -155,7 +153,7 @@ public class StarMentionListModel {
                         starMentionedMessageObject.getMessage().content.icon));
             }
 
-            starMentionVO.setUpdatedAt(starMentionedMessageObject.getCreatedAt());
+            starMentionVO.setUpdatedAt(starMentionedMessageObject.getMessage().createAt);
             starMentionList.add(starMentionVO);
         }
 

@@ -388,11 +388,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         List<Integer> roomIds = new ArrayList<>();
         roomIds.add(roomId);
 
-
-        mentionControlViewModel = new MentionControlViewModel(getActivity(),
-                rvListSearchMembers, messageEditText, messageListView, roomIds);
-        mentionControlViewModel.setOnMentionViewShowingListener(isShowing ->
-                announcementViewModel.setAnnouncementViewVisibility(!isShowing));
+        if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
+            mentionControlViewModel = new MentionControlViewModel(getActivity(),
+                    rvListSearchMembers, messageEditText, messageListView, roomIds);
+            mentionControlViewModel.setOnMentionViewShowingListener(isShowing ->
+                    announcementViewModel.setAnnouncementViewVisibility(!isShowing));
+        }
     }
 
     @Background
@@ -718,17 +719,25 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Click(R.id.btn_send_message)
     void onSendClick() {
 
+        String message = TextUtils.isEmpty(messageEditText.getText()) ?
+                messageEditText.getText().toString() : "";
+        ResultMentionsVO mentionInfos = null;
+        List<MentionObject> mentions = null;
 
-        ResultMentionsVO mentionInfos = mentionControlViewModel.getMentionInfoObject();
-        String message = mentionInfos.getMessage();
+        if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
+            mentionInfos = mentionControlViewModel.getMentionInfoObject();
+            if (mentionInfos != null) {
+                message = mentionInfos.getMessage();
+                mentions = mentionInfos.getMentions();
+            }
+        }
 
         ReqSendMessageV3 reqSendMessage = null;
 
         if (!TextUtils.isEmpty(message)) {
-            if (mentionControlViewModel.hasMentionMember()) {
+            if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE && mentionControlViewModel.hasMentionMember()) {
                 mentionControlViewModel.clear();
-                reqSendMessage = new ReqSendMessageV3(
-                        mentionInfos.getMessage(), mentionInfos.getMentions());
+                reqSendMessage = new ReqSendMessageV3(message, mentions);
             } else {
                 reqSendMessage = new ReqSendMessageV3(message, null);
             }
@@ -736,9 +745,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
             StickerRepository.getRepository().upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
-            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo), mentionInfos.getMentions())));
+            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo), mentions)));
         } else {
-
             if (TextUtils.isEmpty(message)) {
                 return;
             }
@@ -747,18 +755,18 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             long localId;
             if (messageListModel.isUser(entityId)) {
                 if (roomId > 0) {
-                    localId = messageListModel.insertSendingMessage(roomId, message, mentionInfos.getMentions());
+                    localId = messageListModel.insertSendingMessage(roomId, message, mentions);
                 } else {
                     // roomId 를 할당받지 못하면 메세지를 보내지 않음
                     return;
                 }
             } else {
-                localId = messageListModel.insertSendingMessage(entityId, message, mentionInfos.getMentions());
+                localId = messageListModel.insertSendingMessage(entityId, message, mentions);
             }
             FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
             // insert to ui
-            messageListPresenter.insertSendingMessage(localId, message, me.getName(), me
-                    .getUserLargeProfileUrl(), mentionInfos.getMentions());
+            messageListPresenter.insertSendingMessage(localId, message, me.getName(),
+                    me.getUserLargeProfileUrl(), mentions);
             // networking...
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, reqSendMessage)));
         }
@@ -1433,7 +1441,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return true;
         }
 
-        if (mentionControlViewModel.isMentionListVisible()) {
+        if (mentionControlViewModel != null && mentionControlViewModel.isMentionListVisible()) {
             mentionControlViewModel.dismissMentionList();
             return true;
         }

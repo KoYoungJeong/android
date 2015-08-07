@@ -162,7 +162,6 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
 
     public void removeStarMentionListAt(int position) {
         starMentionList.remove(position);
-
         notifyDataSetChanged();
     }
 

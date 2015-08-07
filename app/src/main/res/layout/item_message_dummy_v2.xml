@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout
-    android:id="@+id/ly_message_item"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ly_message_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/message_list_selector"
@@ -17,7 +17,7 @@
         android:id="@+id/img_message_user_profile"
         android:layout_width="@dimen/jandi_messages_profile_size"
         android:layout_height="@dimen/jandi_messages_profile_size"
-        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"/>
+        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
     <!-- 기본 표시 레이어 -->
     <LinearLayout
         android:id="@+id/ly_message_default"
@@ -37,7 +37,7 @@
             android:text="User name"
             android:textColor="@color/jandi_messages_name"
             android:textSize="@dimen/jandi_messages_user_name"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
     </LinearLayout>
 
@@ -46,14 +46,13 @@
         android:id="@+id/txt_message_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="40dp"
         android:layout_below="@+id/ly_message_default"
-        android:layout_toLeftOf="@+id/iv_message_sending_status"
+        android:layout_marginRight="40dp"
         android:layout_toRightOf="@+id/img_message_user_profile"
         android:minHeight="19dp"
         android:text="Text"
         android:textColor="@color/jandi_messages_content"
-        android:textSize="@dimen/jandi_messages_content"/>
+        android:textSize="@dimen/jandi_messages_content" />
 
 
 </RelativeLayout>
