@@ -155,21 +155,28 @@ public class MarkerRepository {
 
     public ResRoomInfo.MarkerInfo getMyMarker(int roomId, int myId) {
         lock.lock();
+        ResRoomInfo.MarkerInfo markerInfo = null;
         try {
             Dao<ResRoomInfo.MarkerInfo, ?> dao = helper.getDao(ResRoomInfo.MarkerInfo.class);
-            return dao.queryBuilder()
+            markerInfo = dao.queryBuilder()
                     .where()
                     .eq("roomId", roomId)
                     .and()
                     .eq("memberId", myId)
                     .queryForFirst();
+
+
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             lock.unlock();
         }
-        ResRoomInfo.MarkerInfo markerInfo = new ResRoomInfo.MarkerInfo();
-        markerInfo.setLastLinkId(-1);
+
+        if (markerInfo == null) {
+            markerInfo = new ResRoomInfo.MarkerInfo();
+            markerInfo.setLastLinkId(-1);
+        }
+
         return markerInfo;
 
     }
