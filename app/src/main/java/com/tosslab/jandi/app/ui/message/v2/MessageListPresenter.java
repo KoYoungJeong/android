@@ -1043,6 +1043,12 @@ public class MessageListPresenter {
             }
         }
     }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void deleteLinkByMessageId(int messageId) {
+        int position = messageListAdapter.indexByMessageId(messageId);
+        messageListAdapter.remove(position);
+    }
 }
 
 

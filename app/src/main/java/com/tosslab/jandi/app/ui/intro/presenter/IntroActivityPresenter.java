@@ -126,7 +126,11 @@ public class IntroActivityPresenter {
 
     @Background
     void refreshAccountInfo(Context context) {
-        model.refreshAccountInfo(context);
+        try {
+            model.refreshAccountInfo(context);
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
     }
 
     void moveNextActivity(Context context, long initTime, final boolean startForInvite) {

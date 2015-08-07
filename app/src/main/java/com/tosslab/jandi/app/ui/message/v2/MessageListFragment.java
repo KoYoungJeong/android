@@ -1079,6 +1079,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 messageListModel.deleteSticker(messageId, messageType);
                 LogUtil.d("deleteStickerInBackground : succeed");
             }
+            messageListPresenter.deleteLinkByMessageId(messageId);
+            MessageRepository.getRepository().deleteLinkByMessageId(messageId);
 
             messageListModel.trackMessageDeleteSuccess(messageId);
 
