@@ -116,7 +116,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
             }
 
             if (oldMessage.records == null || oldMessage.records.isEmpty()) {
-                checkItemCountIfException(itemCount);
+                checkItemCountIfException(currentItemCount);
                 return oldMessage;
             }
 
