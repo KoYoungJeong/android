@@ -175,10 +175,6 @@ public class PushTO {
             this.createdAt = createdAt;
         }
 
-        public boolean hasMentions() {
-            return mentions != null && !mentions.isEmpty();
-        }
-
         @Override
         public String toString() {
             return "PushInfo{" +
@@ -186,9 +182,9 @@ public class PushTO {
                     ", teamName='" + teamName + '\'' +
                     ", roomId=" + roomId +
                     ", roomName='" + roomName + '\'' +
-                    ", roomType=" + roomType +
+                    ", roomType='" + roomType + '\'' +
                     ", messageId=" + messageId +
-                    ", messageType=" + messageType +
+                    ", messageType='" + messageType + '\'' +
                     ", messageContent='" + messageContent + '\'' +
                     ", mentions=" + mentions +
                     ", writerId=" + writerId +
