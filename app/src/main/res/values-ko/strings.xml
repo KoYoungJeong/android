@@ -493,5 +493,6 @@
     <string name="jandi_unpinned_message">"즐겨찾기 해제됨"</string>
     <string name="jandi_topic_notification">"알림"</string>
     <string name="jandi_you_cannot_delete_default_message">"이 토픽은 모든 멤버가 모여있는 기본 토픽으로, 나가거나 삭제할 수 없습니다. "</string>
+    <string name="jandi_this_is_disabled_user_explain">"차단된 멤버입니다. 궁금하신 사항은 팀 관리자에게 문의하세요."</string>
 
 </resources>

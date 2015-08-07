@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:gravity="center"
-            android:text="This member is no longer a member of your team. Please contact your team owner for further infocation"
+            android:text="@string/jandi_this_is_disabled_user_explain"
             android:textColor="@color/jandi_text_light" />
     </LinearLayout>
 
