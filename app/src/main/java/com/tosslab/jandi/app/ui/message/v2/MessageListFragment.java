@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -24,7 +23,6 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
@@ -43,7 +41,6 @@ import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
-import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.DummyDeleteEvent;
 import com.tosslab.jandi.app.events.messages.DummyRetryEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
@@ -1001,17 +998,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!isForeground) {
             return;
         }
-        DialogFragment newFragment = DeleteMessageDialogFragment.newInstance(event, false);
-        newFragment.show(getFragmentManager(), "dialog");
-    }
-
-    // 삭제 확인
-    public void onEvent(ConfirmDeleteMessageEvent event) {
-        if (!isForeground) {
-            return;
-        }
 
         deleteMessage(event.messageType, event.messageId);
+
     }
 
     public void onEvent(ConfirmCopyMessageEvent event) {
