@@ -26,9 +26,6 @@ import rx.Observable;
 @EBean
 public class SearchMemberModel {
 
-    LinkedHashMap<Integer, SearchedItemVO> selectableMembersLinkedHashMap;
-
-//    boolean isFirst = true;
 
     public List<SearchedItemVO> getUserSearchByName(List<Integer> topicIds, String subNameString,
                                                     LinkedHashMap<Integer, SearchedItemVO>
@@ -102,22 +99,19 @@ public class SearchMemberModel {
 
         Collections.sort(searchedItems, getChatItemComparator());
 
-
-//        if (isFirst) {
-//        setSelectableMembersLinkedHashMap(searchedItems);
-//            isFirst = false;
-//        }
-
         return searchedItems;
 
     }
 
-    public void refreshSelectableMembers(List<Integer> topicIds, String mentionType) {
+    public LinkedHashMap<Integer, SearchedItemVO> getSelectableMembers
+            (List<Integer> topicIds, String mentionType) {
 
         if (topicIds == null || topicIds.size() == 0)
-            return;
+            return new LinkedHashMap<Integer, SearchedItemVO>();
 
         List<Integer> members = new ArrayList<>();
+        LinkedHashMap<Integer, SearchedItemVO> selectableMembersLinkedHashMap
+                = new LinkedHashMap<Integer, SearchedItemVO>();
 
         Observable.from(topicIds)
                 .subscribe(topicId -> Observable
@@ -135,12 +129,10 @@ public class SearchMemberModel {
         List<FormattedEntity> usersWithoutMe = EntityManager.getInstance(JandiApplication.getContext())
                 .getFormattedUsersWithoutMe();
 
-        List<SearchedItemVO> searchedItems = new ArrayList<>();
-
-        Iterator<SearchedItemVO> iterator = Observable.from(members)
-                .map(memberId -> Observable.from(usersWithoutMe)
+        Observable.from(members)
+                .subscribe(memberId -> Observable.from(usersWithoutMe)
                         .filter(entity -> !TextUtils.isEmpty(entity.getName()) && entity.getId() == memberId)
-                        .map(entity -> {
+                        .subscribe(entity -> {
                             SearchedItemVO searchedItem = new SearchedItemVO();
                             searchedItem.setName(entity.getName())
                                     .setId(entity.getId())
@@ -148,20 +140,8 @@ public class SearchMemberModel {
                                     .setSmallProfileImageUrl(entity.getUserSmallProfileUrl())
                                     .setEnabled(TextUtils.equals(entity.getUser().status, "enabled"))
                                     .setStarred(entity.isStarred);
-                            Log.e("memberName", searchedItem.getName());
-                            return searchedItem;
-                        })
-                        .toBlocking()
-                        .firstOrDefault(new SearchedItemVO().setId(-1)))
-                .toBlocking()
-                .getIterator();
-
-        while (iterator.hasNext()) {
-            SearchedItemVO searchedItem = iterator.next();
-            if (searchedItem.getId() != -1) {
-                searchedItems.add(searchedItem);
-            }
-        }
+                            selectableMembersLinkedHashMap.put(searchedItem.getId(), searchedItem);
+                        }));
 
         if (mentionType.equals(MentionControlViewModel.MENTION_TYPE_MESSAGE)) {
             SearchedItemVO searchedItemForAll = new SearchedItemVO();
@@ -169,10 +149,10 @@ public class SearchMemberModel {
                     .setId(topicIds.get(0))
                     .setName("All")
                     .setType("room");
-            searchedItems.add(searchedItemForAll);
+            selectableMembersLinkedHashMap.put(searchedItemForAll.getId(), searchedItemForAll);
         }
 
-        setSelectableMembersLinkedHashMap(searchedItems);
+        return selectableMembersLinkedHashMap;
 
     }
 
@@ -212,17 +192,4 @@ public class SearchMemberModel {
             }
         };
     }
-
-    public LinkedHashMap<Integer, SearchedItemVO> getSelectableMembers(List<Integer> topicIds, String mentionType) {
-        refreshSelectableMembers(topicIds, mentionType);
-        return selectableMembersLinkedHashMap;
-    }
-
-    public void setSelectableMembersLinkedHashMap(List<SearchedItemVO> searchedMemberList) {
-        selectableMembersLinkedHashMap = new LinkedHashMap<>();
-        for (SearchedItemVO searchedMember : searchedMemberList) {
-            selectableMembersLinkedHashMap.put(searchedMember.getId(), searchedMember);
-        }
-    }
-
 }
