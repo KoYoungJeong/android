@@ -89,7 +89,7 @@
     <string name="jandi_create_privategroup">"新規プライベートグループを作成する"</string>
     <string name="jandi_modify_channel">"トピックの名称を変更"</string>
     <string name="jandi_modify_private_group">"グループを編集"</string>
-    <string name="warn_all_users_are_already_invited">"全てのメンバーは既に招待されています"</string>
+    <string name="warn_all_users_are_already_invited">"既にメンバー全員がこのトピックに参加しています"</string>
     <string name="err_entity_create">"作成できませんでした"</string>
     <string name="err_entity_join">"参加できませんでした"</string>
     <string name="err_entity_duplicated_name">"その名前は既に使用されています"</string>
@@ -483,6 +483,8 @@
     <string name="jandi_starred_unstar_from_item">スター付きを解除しましょうか？</string>
     <string name="jandi_unpinned_message">"スターなし"</string>
     <string name="jandi_topic_notification">"トピックからの通知"</string>
+    <string name="jandi_you_cannot_delete_default_message">"基本トピックは削除や退出できません"</string>
+    <string name="jandi_this_is_disabled_user_explain">"このメンバーは現在無効化されています。詳細はチーム管理者にお問い合わせ下さい"</string>
 
 
 </resources>

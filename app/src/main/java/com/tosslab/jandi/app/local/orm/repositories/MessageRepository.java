@@ -222,4 +222,19 @@ public class MessageRepository {
             e.printStackTrace();
         }
     }
+
+    public int deleteLinkByMessageId(int messageId) {
+        try {
+            Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
+
+            DeleteBuilder<ResMessages.Link, ?> deleteBuilder = dao.deleteBuilder();
+            deleteBuilder.where().eq("messageId", messageId);
+
+            return deleteBuilder.delete();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }

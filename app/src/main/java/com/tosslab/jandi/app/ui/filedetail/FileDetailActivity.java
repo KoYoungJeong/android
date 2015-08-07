@@ -35,7 +35,6 @@ import android.widget.RelativeLayout;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
@@ -48,7 +47,6 @@ import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
-import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
@@ -325,16 +323,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         if (!isForeground) {
             return;
         }
-        DialogFragment newFragment = DeleteMessageDialogFragment.newInstance(event, true);
-        newFragment.show(getSupportFragmentManager(), "dialog");
-    }
 
-    // 삭제 확인
-    public void onEvent(ConfirmDeleteMessageEvent event) {
-        if (!isForeground) {
-            return;
-        }
         fileDetailPresenter.deleteComment(fileId, event.messageType, event.messageId, event.feedbackId);
+
     }
 
     public void onEvent(ConfirmCopyMessageEvent event) {

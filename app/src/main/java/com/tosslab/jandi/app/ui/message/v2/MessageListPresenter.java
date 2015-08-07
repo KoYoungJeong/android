@@ -972,7 +972,9 @@ public class MessageListPresenter {
         for (int idx = indexOfLinkId, size = messageListAdapter.getCount(); idx < size; ++idx) {
             ResMessages.Link item = messageListAdapter.getItem(idx);
 
-            if (item.message.writerId == myId) {
+            if (TextUtils.equals(item.status, "event")) {
+                continue;
+            } else if (item.message.writerId == myId) {
                 messageListAdapter.setLastReadLinkId(item.id);
                 continue;
             } else if (item instanceof DummyMessageLink) {
@@ -1023,8 +1025,8 @@ public class MessageListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateMarkerNewMessage(ResMessages newMessage, boolean isLastLinkId, boolean firstLoad) {
+        addAndMove(newMessage.records, firstLoad);
         if (!isLastLinkId) {
-            addAndMove(newMessage.records, firstLoad);
             setNewLoadingComplete();
         } else {
             setNewNoMoreLoading();
@@ -1040,6 +1042,12 @@ public class MessageListPresenter {
                 break;
             }
         }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void deleteLinkByMessageId(int messageId) {
+        int position = messageListAdapter.indexByMessageId(messageId);
+        messageListAdapter.remove(position);
     }
 }
 
