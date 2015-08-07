@@ -409,6 +409,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 }
             }
         }
+        if (!isFromSearch) {
+            int savedLastLinkId = MarkerRepository.getRepository()
+                    .getMyMarker(roomId, messageListModel.getMyId()).getLastLinkId();
+            messageState.setFirstItemId(Math.max(savedLastLinkId, lastMarker));
+        }
 
         messageListPresenter.setMarkerInfo(teamId, roomId);
         messageListModel.updateMarkerInfo(teamId, roomId);
