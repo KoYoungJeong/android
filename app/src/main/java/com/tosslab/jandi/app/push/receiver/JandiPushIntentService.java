@@ -4,12 +4,14 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -36,7 +38,19 @@ public class JandiPushIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        String accountId = AccountUtil.getAccountId(getApplicationContext());
+        if (TextUtils.isEmpty(accountId)) {
+            LogUtil.e(TAG, "Account Id is empty.");
+            return;
+        }
+
         Bundle extras = intent.getExtras();
+
+        if (!jandiPushReceiverModel.isPushForMyAccountId(extras, accountId)) {
+            LogUtil.e(TAG, "Push is not for me.");
+            return;
+        }
+
         PushTO pushTO = jandiPushReceiverModel.parsingPushTO(extras);
         if (pushTO == null) {
             LogUtil.e(TAG, "pushTO == null");
