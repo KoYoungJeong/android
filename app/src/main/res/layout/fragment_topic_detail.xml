@@ -274,7 +274,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:lineSpacingExtra="4dp"
-                    android:text="이 토픽은 모든 멤버가 모여있는 기본 토픽으로써 나가거나 삭제할 수 없습니다."
+                    android:text="@string/jandi_you_cannot_delete_default_message"
                     android:textColor="@color/jandi_text_topic_detail_content"
                     android:textSize="@dimen/jandi_text_size_small"/>
 

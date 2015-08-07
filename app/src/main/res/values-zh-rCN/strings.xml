@@ -475,5 +475,6 @@
     <string name="jandi_starred_unstar_from_item">你确定要取消标示吗？</string>
     <string name="jandi_unpinned_message">"已取消标示"</string>
     <string name="jandi_topic_notification">"允许议题推播通知"</string>
+    <string name="jandi_you_cannot_delete_default_message">"无法离开或删除默认议题"</string>
 
 </resources>

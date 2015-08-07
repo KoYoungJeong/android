@@ -98,7 +98,7 @@
     <string name="jandi_create_privategroup">"Create New Private Topic"</string>
     <string name="jandi_modify_channel">"Rename Public Topic"</string>
     <string name="jandi_modify_private_group">"Rename Private Topic"</string>
-    <string name="warn_all_users_are_already_invited">"All members are already invited"</string>
+    <string name="warn_all_users_are_already_invited">"Everyone on your team member is already in this Topic"</string>
     <string name="err_entity_create">"Create unsuccessful"</string>
     <string name="err_entity_join">"Join unsuccessful"</string>
     <string name="err_entity_duplicated_name">"That name is already taken. Please try again."</string>
@@ -473,4 +473,5 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_unread_messages_below">"Unread messages below"</string>
     <string name="jandi_unpinned_message">Unstarred</string>
     <string name="jandi_profile_picture">"Profile Picture"</string>
+    <string name="jandi_you_cannot_delete_default_message">You cannot delete or leave the default topic</string>
 </resources>
