@@ -53,6 +53,7 @@ import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
+import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
@@ -858,6 +859,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
         filePickerViewModel.selectFileSelector(event.type, MessageListFragment.this, entityId);
+    }
+
+    public void onEvent(NetworkConnectEvent event) {
+        if (event.isConnected()) {
+            if (messageListPresenter.getItemCount() <= 0) {
+                sendMessagePublisherEvent(new OldMessageQueue(messageState));
+                sendMessagePublisherEvent(new NewMessageQueue(messageState));
+            } else {
+                sendMessagePublisherEvent(new NewMessageQueue(messageState));
+            }
+        }
     }
 
     @Override

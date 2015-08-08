@@ -272,6 +272,14 @@
                 <action android:name="com.tosslab.jandi.app.services.SOCKET_SERVICE_RESTART"/>
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".utils.network.NetworkStateBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
         <!-- Google Play Campaign Measurement -->
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService"/>
         <receiver

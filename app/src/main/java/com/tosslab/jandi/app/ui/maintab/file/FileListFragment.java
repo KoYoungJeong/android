@@ -23,6 +23,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
+import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
+import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
@@ -31,6 +33,7 @@ import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
+import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
@@ -401,6 +404,35 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
     }
 
+    public void onEvent(TopicDeleteEvent event) {
+        if (isInSearchActivity()) {
+            return;
+        }
+
+        // 토픽이 삭제되거나 나간 경우 해당 토픽의 파일 접근 여부를 알 수 없으므로
+        // 리로드하도록 처리함
+        int itemCount = searchedFileItemListAdapter.getItemCount();
+        initSearchSubject.onNext(itemCount);
+    }
+
+    public void onEvent(RetrieveTopicListEvent event) {
+        if (isInSearchActivity()) {
+            return;
+        }
+        int itemCount = searchedFileItemListAdapter.getItemCount();
+        initSearchSubject.onNext(itemCount);
+    }
+
+    public void onEVent(NetworkConnectEvent event) {
+        if (isInSearchActivity()) {
+            return;
+        }
+
+        if (event.isConnected() && searchedFileItemListAdapter.getItemCount() <= 0) {
+            initSearchSubject.onNext(-1);
+        }
+    }
+
     private boolean isInSearchActivity() {
         return getActivity() instanceof SearchActivity;
     }
@@ -428,8 +460,8 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         if (!NetworkCheckUtil.isConnected()) {
             fileListPresenter.setInitLoadingViewVisible(View.GONE);
+            fileListPresenter.setEmptyViewVisible(View.GONE);
             fileListPresenter.setSearchEmptryViewVisible(View.VISIBLE);
-            fileListPresenter.setInitLoadingViewVisible(View.GONE);
             return;
         }
 
