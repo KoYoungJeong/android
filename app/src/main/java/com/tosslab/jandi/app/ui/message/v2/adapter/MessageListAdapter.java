@@ -213,10 +213,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
                 messages.remove(link);
             } else if (TextUtils.equals(link.status, "archived")) {
                 int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
-
-                LogUtil.e("tony", "searchedPosition = " + searchedPosition);
-                LogUtil.e("tony", "contentType = " + link.message.contentType);
-
                 // if file type
                 if (TextUtils.equals(link.message.contentType, "file")) {
 

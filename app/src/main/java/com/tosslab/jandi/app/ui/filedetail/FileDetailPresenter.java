@@ -141,10 +141,6 @@ public class FileDetailPresenter {
             }
 
             // 저장하기 (멀티 쓰레딩)
-            ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage();
-            if (TextUtils.equals(fileMessage.status, "archived")) {
-
-            }
             fileDetailModel.saveFileDetailInfo(resFileDetail);
 
             Collections.sort(resFileDetail.messageDetails,

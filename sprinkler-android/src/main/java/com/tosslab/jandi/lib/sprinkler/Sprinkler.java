@@ -51,6 +51,7 @@ public class Sprinkler {
     public static Sprinkler initialize(Application application, boolean forDev, boolean debugMode) {
         IS_FOR_DEV = forDev;
         IS_DEBUG_MODE = debugMode;
+        Log.i(TAG, "Sprinkler initialized. dev version ? " + IS_FOR_DEV);
         Log.i(TAG, "Sprinkler initialized. debug mode ? " + IS_DEBUG_MODE);
         BroadcastReceiver screenOffReceiver = new BroadcastReceiver() {
             @Override
