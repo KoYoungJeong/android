@@ -13,8 +13,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldStarMentionedEvent;
+import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.adapter.StarMentionListAdapter;
 import com.tosslab.jandi.app.ui.starmention.presentor.StarMentionListPresentor;
@@ -179,7 +179,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
 
     }
 
-    public void onEvent(MessageStarredEvent event) {
+    public void onEvent(StarredInfoChangeEvent event) {
         starMentionListAdapter.removeStarMentionListAll();
         starMentionListPresentor.refreshList(listType);
     }

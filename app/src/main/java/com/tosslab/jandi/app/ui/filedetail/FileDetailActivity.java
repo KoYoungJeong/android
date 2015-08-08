@@ -51,6 +51,7 @@ import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
+import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -163,6 +164,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     private ProgressDialog progressDialog;
     private StickerInfo stickerInfo = NULL_STICKER;
 
+    //for prevent too many event concurrently
+    private boolean processingFileStar = false;
+    private boolean processingFileUnstar = false;
+
     @AfterViews
     public void initForm() {
         Sprinkler.with(JandiApplication.getContext())
@@ -224,12 +229,14 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     }
 
     private void addStarredButtonExecution() {
+
         boolean isFromStarredButton = true;
+
         fileHeadManager.getStarredButton().setOnClickListener(v -> {
             LogUtil.e("selected1", v.isSelected() + "");
+
             //dummy event for notify filestarredList;
-            MessageStarredEvent event =
-                    new MessageStarredEvent(MessageStarredEvent.Action.DUMMY, -1);
+            StarredInfoChangeEvent event = new StarredInfoChangeEvent();
             if (v.isSelected()) {
                 try {
                     unregistStarredMessage(isFromStarredButton, fileId);
@@ -248,46 +255,65 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             }
 
         });
+
     }
 
     @Background
     void unregistStarredMessage(boolean isFromStarredButton, int id) {
+
         try {
             int teamId = EntityManager.getInstance(FileDetailActivity.this).getTeamId();
-            fileDetailPresenter.unregistStarredMessage(teamId, id);
-            if (isFromStarredButton) {
-                fileHeadManager.updateStarred(false);
-            } else {
-                modifyStarredInfo(id, false);
-            }
-            MessageRepository.getRepository().updateStarred(id, false);
 
-            showToast(getString(R.string.jandi_unpinned_message));
+            if (isFromStarredButton) {
+                if (!processingFileUnstar) {
+                    processingFileUnstar = true;
+                    fileDetailPresenter.unregistStarredMessage(teamId, id);
+                    fileHeadManager.updateStarred(false);
+                    MessageRepository.getRepository().updateStarred(id, false);
+                    showToast(getString(R.string.jandi_unpinned_message));
+                    processingFileUnstar = false;
+                }
+            } else {
+                fileDetailPresenter.unregistStarredMessage(teamId, id);
+                modifyStarredInfo(id, false);
+                MessageRepository.getRepository().updateStarred(id, false);
+                showToast(getString(R.string.jandi_unpinned_message));
+            }
+
         } catch (RetrofitError e) {
             e.printStackTrace();
 
         }
+
     }
 
 
     @Background
     void registStarredMessage(boolean isFromStarredButton, int id) {
+
         try {
+
             int teamId = EntityManager.getInstance(FileDetailActivity.this).getTeamId();
-            fileDetailPresenter.registStarredMessage(teamId, id);
+
             if (isFromStarredButton) {
-                fileHeadManager.updateStarred(true);
+                if (!processingFileStar) {
+                    processingFileStar = true;
+                    fileDetailPresenter.registStarredMessage(teamId, id);
+                    fileHeadManager.updateStarred(true);
+                    processingFileStar = false;
+                }
             } else {
+                fileDetailPresenter.registStarredMessage(teamId, id);
+                MessageRepository.getRepository().updateStarred(id, true);
+                showToast(getString(R.string.jandi_message_starred));
                 modifyStarredInfo(id, true);
             }
 
-            MessageRepository.getRepository().updateStarred(id, true);
-
-            showToast(getString(R.string.jandi_message_starred));
         } catch (RetrofitError e) {
             e.printStackTrace();
             // 실패시 메세지 필요
         }
+
     }
 
     @Override
@@ -1075,7 +1101,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     }
 
     public void onEvent(MessageStarredEvent event) {
+
         boolean isFromStarredButton = false;
+
         switch (event.getAction()) {
             case STARRED:
                 try {

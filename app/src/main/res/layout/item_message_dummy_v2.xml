@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ly_message_item"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/message_list_selector"
-    android:foreground="?android:attr/selectableItemBackground"
-    android:orientation="horizontal"
-    android:paddingBottom="10dp"
-    android:paddingLeft="@dimen/jandi_messages_padding_left"
-    android:paddingTop="5dp"
-    android:visibility="visible">
-    <!-- 사용자 프로필 사진 -->
-    <ImageView
-        android:id="@+id/img_message_user_profile"
-        android:layout_width="@dimen/jandi_messages_profile_size"
-        android:layout_height="@dimen/jandi_messages_profile_size"
-        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
-    <!-- 기본 표시 레이어 -->
-    <LinearLayout
-        android:id="@+id/ly_message_default"
+    android:orientation="vertical">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/ly_message_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/jandi_messages_default_margin_bottom"
-        android:layout_toRightOf="@+id/img_message_user_profile">
-
+        android:background="@drawable/message_list_selector"
+        android:descendantFocusability="blocksDescendants"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:orientation="horizontal"
+        android:paddingBottom="15dp"
+        android:paddingLeft="@dimen/jandi_messages_padding_left"
+        android:paddingRight="@dimen/jandi_messages_padding_right"
+        android:paddingTop="8dp"
+        android:visibility="visible">
+        <!-- 사용자 프로필 사진 -->
+        <ImageView
+            android:id="@+id/img_message_user_profile"
+            android:layout_width="@dimen/jandi_messages_profile_size"
+            android:layout_height="@dimen/jandi_messages_profile_size"
+            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
+        <!-- 기본 표시 레이어 -->
         <TextView
             android:id="@+id/txt_message_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
             android:layout_marginTop="4dp"
+            android:layout_toRightOf="@+id/img_message_user_profile"
             android:ellipsize="end"
             android:maxWidth="200dp"
             android:singleLine="true"
@@ -39,20 +39,19 @@
             android:textSize="@dimen/jandi_messages_user_name"
             android:textStyle="bold" />
 
-    </LinearLayout>
+        <!-- 실제 메시지 내용 -->
+        <TextView
+            android:id="@+id/txt_message_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_message_user_name"
+            android:layout_marginRight="14dp"
+            android:layout_toRightOf="@+id/img_message_user_profile"
+            android:focusable="false"
+            android:lineSpacingExtra="2dip"
+            android:text="Text"
+            android:textColor="@color/jandi_messages_content"
+            android:textSize="@dimen/jandi_messages_content" />
 
-    <!-- 실제 메시지 내용 -->
-    <TextView
-        android:id="@+id/txt_message_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ly_message_default"
-        android:layout_marginRight="40dp"
-        android:layout_toRightOf="@+id/img_message_user_profile"
-        android:minHeight="19dp"
-        android:text="Text"
-        android:textColor="@color/jandi_messages_content"
-        android:textSize="@dimen/jandi_messages_content" />
-
-
-</RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>
