@@ -27,20 +27,24 @@ public class PhotoViewPresenter {
 
     @Background
     public void loadImage(String url, String imageType, ProgressCallback callback) {
-        if (model.isGif(imageType)) {
-            view.loadImageGif();
-            return;
-        }
 
         File file = model.getFile(url);
         if (file.exists()) {
-            view.loadImage(file);
+            if (model.isGif(imageType)) {
+                view.loadImageGif(file);
+            } else {
+                view.loadImage(file);
+            }
             return;
         }
 
         try {
             File downloadedFile = model.downloadFile(url, file, callback);
-            view.loadImage(downloadedFile);
+            if (model.isGif(imageType)) {
+                view.loadImageGif(downloadedFile);
+            } else {
+                view.loadImage(downloadedFile);
+            }
         } catch (ExecutionException | InterruptedException
                 | IOException e) {
             // 다운로드 로직에서 발생한 Exception (User cancelled and else)
@@ -57,7 +61,7 @@ public class PhotoViewPresenter {
 
         void hideProgress();
 
-        void loadImageGif();
+        void loadImageGif(File file);
 
         <T> void loadImage(T target);
 

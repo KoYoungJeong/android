@@ -26,6 +26,8 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.io.File;
+
 import uk.co.senab.photoview.PhotoView;
 
 /**
@@ -90,15 +92,14 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
     // Gif 일 때는 Ion 이용.(다운로드 불필요)
     @UiThread
     @Override
-    public void loadImageGif() {
+    public void loadImageGif(File file) {
 
         if (getActivity() == null) {
             return;
         }
 
         Ion.with(getActivity())
-                .load(imageUrl)
-                .progress((downloaded, total) -> updateProgress(total, downloaded))
+                .load(file)
                 .intoImageView(photoView)
                 .setCallback((e, result) -> {
                     hideProgress();
