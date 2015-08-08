@@ -8,6 +8,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.tosslab.jandi.app.local.orm.dao.FileMessageDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.LinkDaoImpl;
+import com.tosslab.jandi.app.local.orm.dao.TextMessageDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.AnnounceCreateEventDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.CreateEventDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.InviteEventDaoImpl;
@@ -20,6 +21,7 @@ import com.tosslab.jandi.app.network.jackson.deserialize.message.PrivateTopicCre
 import com.tosslab.jandi.app.network.jackson.deserialize.message.PublicTopicCreateInfoDeserializer;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonSubTypes;
@@ -241,7 +243,7 @@ public class ResMessages {
         }
     }
 
-    @DatabaseTable(tableName = "message_text")
+    @DatabaseTable(tableName = "message_text", daoClass = TextMessageDaoImpl.class)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TextMessage extends OriginalMessage {
@@ -322,6 +324,10 @@ public class ResMessages {
     public static class TextContent {
         @DatabaseField(generatedId = true)
         public long _id;
+
+        @DatabaseField(foreign = true)
+        @JsonIgnore
+        public TextMessage textMessage;
 
         @DatabaseField
         public String body;

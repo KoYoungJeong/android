@@ -459,9 +459,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
                 if (TextUtils.equals(fileDetail.status, "archived")) {
                     isDeleted = true;
-
-                    EventBus.getDefault().post(new DeleteFileEvent(fileDetail.id));
-
                 } else {
                     isDeleted = false;
                 }

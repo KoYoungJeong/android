@@ -7,10 +7,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.photo.presenter.PhotoViewPresenter;
@@ -94,7 +96,7 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
             return;
         }
 
-        Ion.with(this)
+        Ion.with(getActivity())
                 .load(imageUrl)
                 .progress((downloaded, total) -> updateProgress(total, downloaded))
                 .intoImageView(photoView)
@@ -159,9 +161,11 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
             return;
         }
 
-        Glide.with(this)
+        Glide.with(JandiApplication.getContext())
                 .load(target)
                 .fitCenter()
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .error(R.drawable.jandi_fl_icon_deleted)
                 .listener(new RequestListener<T, GlideDrawable>() {
                     @Override

@@ -167,6 +167,7 @@ public class MessageRepository {
     }
 
     public int updateStarred(int messageId, boolean isStarred) {
+        lock.lock();
         try {
             Dao<ResMessages.TextMessage, Integer> textMessageDao = helper.getDao(ResMessages
                     .TextMessage.class);
@@ -193,11 +194,14 @@ public class MessageRepository {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
         return 0;
     }
 
     public void updateStatus(int fileId, String archived) {
+        lock.lock();
         try {
             Dao<ResMessages.FileMessage, Integer> dao = helper.getDao(ResMessages.FileMessage
                     .class);
@@ -210,20 +214,40 @@ public class MessageRepository {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
     }
 
     public void upsertFileMessage(ResMessages.FileMessage fileMessage) {
-        Dao<ResMessages.FileMessage, ?> dao = null;
+        lock.lock();
         try {
-            dao = helper.getDao(ResMessages.FileMessage.class);
+            Dao<ResMessages.FileMessage, ?> dao = helper.getDao(ResMessages.FileMessage.class);
             dao.createOrUpdate(fileMessage);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
     }
 
+    public boolean upsertTextMessage(ResMessages.TextMessage textMessage) {
+        lock.lock();
+        try {
+            Dao<ResMessages.TextMessage, ?> dao = helper.getDao(ResMessages.TextMessage.class);
+            dao.createOrUpdate(textMessage);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+
+        return false;
+    }
+
     public int deleteLinkByMessageId(int messageId) {
+        lock.lock();
         try {
             Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
 
@@ -234,6 +258,8 @@ public class MessageRepository {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
         return 0;
     }

@@ -497,6 +497,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         UpdateMessage updateMessage = (UpdateMessage) messageQueue.getData();
         ResMessages.OriginalMessage message =
                 messageListModel.getMessage(teamId, updateMessage.getMessageId());
+
+        if (message != null && message instanceof ResMessages.TextMessage) {
+            MessageRepository.getRepository().upsertTextMessage((ResMessages.TextMessage) message);
+        }
+
         messageListPresenter.updateMessage(message);
     }
 
