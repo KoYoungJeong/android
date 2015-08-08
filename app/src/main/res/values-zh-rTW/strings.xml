@@ -83,7 +83,7 @@
     <string name="jandi_create_privategroup">"建立新私人議題"</string>
     <string name="jandi_modify_channel">"重新命名議題"</string>
     <string name="jandi_modify_private_group">"重新命名私人議題"</string>
-    <string name="warn_all_users_are_already_invited">"全部使用者已被邀請"</string>
+    <string name="warn_all_users_are_already_invited">"所有的團隊成員已加入此議題"</string>
     <string name="err_entity_create">"建立不成功"</string>
     <string name="err_entity_join">"加入不成功"</string>
     <string name="err_entity_duplicated_name">"這名字已被使用。請再試一次"</string>
