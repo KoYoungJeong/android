@@ -112,7 +112,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
             }
         }
 
-        if (position > 0 && position < getItemCount() - 1) {
+        if (position > 0 && position < getItemCount() - 1 - getDummyMessageCount()) {
             viewHolder.getViewHolder().setLastReadViewVisible(item.id, lastReadLinkId);
         } else {
             viewHolder.getViewHolder().setLastReadViewVisible(0, -1);

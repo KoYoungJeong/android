@@ -930,14 +930,19 @@ public class MessageListPresenter {
     @UiThread
     public void setUpNewMessage(List<ResMessages.Link> linkList, int myId, boolean firstLoad) {
 
+
         int visibleLastItemPosition = getLastVisibleItemPosition();
         int lastItemPosition = getLastItemPosition();
 
         addAll(lastItemPosition, linkList);
+
+        setUpLastReadLink(myId);
+
         int location = linkList.size() - 1;
         if (location < 0) {
             return;
         }
+
         ResMessages.Link lastUpdatedMessage = linkList.get(location);
         if (!firstLoad
                 && visibleLastItemPosition >= 0
@@ -947,7 +952,6 @@ public class MessageListPresenter {
         } else {
             int messageId = lastUpdatedMessage.messageId;
             if (firstLoad) {
-                setUpLastReadLink(myId);
                 moveLastReadLink();
 
                 if (linkList.isEmpty()) {
