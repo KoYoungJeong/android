@@ -74,7 +74,7 @@ public class StarMentionListPresentor {
                     .entityId(starMentionVO.getRoomId())
                     .entityType(starMentionVO.getRoomType())
                     .roomId(starMentionVO.getRoomType() != JandiConstants.TYPE_DIRECT_MESSAGE ?
-                            starMentionVO.getRoomId() : starMentionVO.getRoomType())
+                            starMentionVO.getRoomId() : -1)
                     .isFromSearch(true)
                     .lastMarker(starMentionVO.getLinkId()).start();
         } else if (contentType == StarMentionVO.Type.Comment.getValue()
