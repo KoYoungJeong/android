@@ -101,8 +101,10 @@ public class MentionControlViewModel {
         keyboardHeightModel = KeyboardHeightModel_.getInstance_(activity);
         searchMemberModel = SearchMemberModel_.getInstance_(activity);
 
-        searchMemberListView.setLayoutManager(new LinearLayoutManager(activity,
-                LinearLayoutManager.VERTICAL, false));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(activity,
+                LinearLayoutManager.VERTICAL, false);
+        layoutManager.setStackFromEnd(true);
+        searchMemberListView.setLayoutManager(layoutManager);
         searchMemberListView.setAdapter(new MentionMemberListAdapter(
                 searchMemberModel.getUserSearchByName(null, "", null, mentionType)));
 
