@@ -31,8 +31,7 @@ public class StarMentionListPresentor {
     StarMentionListModel starMentionListModel;
     private View view;
 
-    @Background
-    public void addMentionMessagesToList(String listType) {
+    public void addMentionMessagesToList(String listType) throws RetrofitError {
         if (!starMentionListModel.isFirst()) {
             view.onShowMoreProgressBar();
         }
@@ -117,7 +116,13 @@ public class StarMentionListPresentor {
             e.printStackTrace();
         }
         starMentionListModel.refreshList();
-        addMentionMessagesToList(listType);
+        try {
+            addMentionMessagesToList(listType);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setView(View view) {
