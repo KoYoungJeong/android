@@ -364,7 +364,7 @@
     <string name="jandi_message_ask_about_delete_comment">"您确定要永久删除这留言吗？删除的留言将无法复原。"</string>
     <string name="jandi_message_no_member">"不再单打独斗，现在就邀请所有伙伴加入你的团队！"</string>
     <string name="jandi_file_delete_message">"您确定要删除此文件？ 请注意留言的部分不会被删除。"</string>
-    <string name="jandi_unshared_message">"此文件已经从私人议题中取消分享"</string>
+    <string name="jandi_unshared_message">"你已不在此标记的议题内"</string>
     <string name="jandi_nowhere_shared_file">"文件尚未分享到其它群组"</string>
     <string name="jandi_topic_no_member_1">"此议题目前只有你一人"</string>
     <string name="jandi_topic_no_member_2">"轻触按钮邀请其他成员加入。"</string>
