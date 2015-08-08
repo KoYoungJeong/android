@@ -98,7 +98,6 @@ public class StarMentionListModel {
                 messageId = starMentionedMessageObject.getMessage().id;
             } else {
                 messageId = starMentionedMessageObject.getStarredId();
-
             }
 
             FormattedEntity entity = EntityManager.getInstance(JandiApplication.getContext())
