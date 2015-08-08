@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -130,6 +131,7 @@ public class FileDetailPresenter {
         try {
             ResFileDetail resFileDetail = fileDetailModel.getFileDetailInfo(fileId);
 
+            LogUtil.d("FileDetailActivity", resFileDetail.toString());
 
             for (ResMessages.OriginalMessage messageDetail : resFileDetail.messageDetails) {
                 if (messageDetail instanceof ResMessages.FileMessage) {
@@ -139,6 +141,10 @@ public class FileDetailPresenter {
             }
 
             // 저장하기 (멀티 쓰레딩)
+            ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage();
+            if (TextUtils.equals(fileMessage.status, "archived")) {
+
+            }
             fileDetailModel.saveFileDetailInfo(resFileDetail);
 
             Collections.sort(resFileDetail.messageDetails,

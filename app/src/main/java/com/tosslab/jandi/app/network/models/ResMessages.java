@@ -257,6 +257,10 @@ public class ResMessages {
         @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public LinkPreview linkPreview;
 
+        public TextMessage() {
+            contentType = "text";
+        }
+
         @Override
         public String toString() {
             return "TextMessage{" +
@@ -289,6 +293,10 @@ public class ResMessages {
 
         @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public TextContent content;
+
+        public CommentMessage() {
+            contentType = "comment_message";
+        }
     }
 
     @DatabaseTable(tableName = "message_file", daoClass = FileMessageDaoImpl.class)
@@ -302,6 +310,10 @@ public class ResMessages {
         public FileContent content;
         @DatabaseField
         public int commentCount;
+
+        public FileMessage() {
+            contentType = "file";
+        }
     }
 
     @DatabaseTable(tableName = "message_text_content")
@@ -333,6 +345,10 @@ public class ResMessages {
         public StickerContent content;
         @DatabaseField
         public int version;
+
+        public StickerMessage() {
+            contentType = "sticker";
+        }
     }
 
     @DatabaseTable(tableName = "message_commentsticker")
@@ -346,6 +362,10 @@ public class ResMessages {
         public StickerContent content;
         @DatabaseField
         public int version;
+
+        public CommentStickerMessage() {
+            contentType = "comment_sticker";
+        }
     }
 
     @DatabaseTable(tableName = "message_file_content")
