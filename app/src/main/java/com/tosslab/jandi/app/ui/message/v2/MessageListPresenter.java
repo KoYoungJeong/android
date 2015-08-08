@@ -164,11 +164,14 @@ public class MessageListPresenter {
         messageListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
+                int originItemCount = getItemCount();
                 int itemCountWithoutEvent = getItemCountWithoutEvent();
-                if (itemCountWithoutEvent > 0) {
+                int eventCount = originItemCount - itemCountWithoutEvent;
+                if (itemCountWithoutEvent > 0 || eventCount > 1) {
+                    // create 이벤트외에 다른 이벤트가 생성된 경우
                     emptyMessageView.setVisibility(View.GONE);
                 } else {
-
+                    // 아예 메세지가 없거나 create 이벤트 외에는 생성된 이벤트가 없는 경우
                     if (loadingMessageView.getVisibility() != View.VISIBLE) {
                         emptyMessageView.setVisibility(View.VISIBLE);
                     } else {

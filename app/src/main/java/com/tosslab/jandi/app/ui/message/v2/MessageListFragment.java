@@ -864,8 +864,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public void onEvent(NetworkConnectEvent event) {
         if (event.isConnected()) {
             if (messageListPresenter.getItemCount() <= 0) {
-                sendMessagePublisherEvent(new OldMessageQueue(messageState));
-                sendMessagePublisherEvent(new NewMessageQueue(messageState));
+                // roomId 설정 후...
+                sendInitMessage();
             } else {
                 sendMessagePublisherEvent(new NewMessageQueue(messageState));
             }
