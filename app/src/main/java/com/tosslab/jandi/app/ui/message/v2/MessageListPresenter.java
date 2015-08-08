@@ -39,6 +39,7 @@ import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
@@ -464,7 +465,8 @@ public class MessageListPresenter {
         Log.i("INFO", "updateMessage - " + message.toString());
 
         if (message instanceof ResMessages.TextMessage) {
-            ResMessages.LinkPreview linkPreview = ((ResMessages.TextMessage) message).linkPreview;
+            ResMessages.TextMessage textMessage = (ResMessages.TextMessage) message;
+            ResMessages.LinkPreview linkPreview = textMessage.linkPreview;
             if (linkPreview != null && !linkPreview.isEmpty()) {
                 updateLinkPreviewMessage(message);
             }
@@ -484,6 +486,9 @@ public class MessageListPresenter {
             return;
         }
         link.message = message;
+
+        MessageRepository.getRepository().upsertMessage(link);
+
         messageListAdapter.notifyDataSetChanged();
     }
 
