@@ -1,7 +1,10 @@
 package com.tosslab.jandi.app.events.messages;
 
 /**
- * Created by tonyjs on 15. 8. 8..
+ * Created by tee on 15. 8. 8..
  */
 public class StarredInfoChangeEvent {
+
+    public StarredInfoChangeEvent() {
+    }
 }

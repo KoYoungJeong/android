@@ -28,13 +28,13 @@ import retrofit.RetrofitError;
 @EBean
 public class StarMentionListModel {
 
+    public static final int DEFAULT_COUNT = 20;
+
     List<StarMentionVO> starMentionList;
     private boolean isFirstDatas = true;
     private int lastId = 0;
-    private int pagePerCount = 20;
     private boolean hasMore = false;
     private boolean isEmpty = false;
-    private String currentType = null;
 
     public ResStarMentioned getMentionRawDatas(Integer messageId, int count) throws RetrofitError {
         int teamId = getTeamId(JandiApplication.getContext());
@@ -44,7 +44,7 @@ public class StarMentionListModel {
     public ResStarMentioned getStarredRawDatas(String categoryType, Integer starredId,
                                                int count) throws RetrofitError {
         int teamId = getTeamId(JandiApplication.getContext());
-        if (categoryType.equals(StarMentionListActivity.TYPE_STAR_FILES)) {
+        if (categoryType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
             return RequestApiManager.getInstance().getStarredMessagesByTeamApi(
                     teamId, starredId, count, "file");
         }
@@ -63,25 +63,25 @@ public class StarMentionListModel {
         }
     }
 
-    public List<StarMentionVO> getStarMentionedMessages(String categoryType) throws RetrofitError {
+    public List<StarMentionVO> getStarMentionedMessages(String categoryType, int count) throws RetrofitError {
 
         starMentionList = new ArrayList<>();
 
         ResStarMentioned resStarMentioned = null;
 
-        currentType = categoryType;
+        int requestCount = Math.max(count, DEFAULT_COUNT);
 
         if (categoryType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
             if (isFirstDatas) {
-                resStarMentioned = getMentionRawDatas(null, pagePerCount);
+                resStarMentioned = getMentionRawDatas(null, requestCount);
             } else {
-                resStarMentioned = getMentionRawDatas(lastId, pagePerCount);
+                resStarMentioned = getMentionRawDatas(lastId, requestCount);
             }
         } else {
             if (isFirstDatas) {
-                resStarMentioned = getStarredRawDatas(categoryType, null, pagePerCount);
+                resStarMentioned = getStarredRawDatas(categoryType, null, requestCount);
             } else {
-                resStarMentioned = getStarredRawDatas(categoryType, lastId, pagePerCount);
+                resStarMentioned = getStarredRawDatas(categoryType, lastId, requestCount);
             }
         }
 
@@ -170,7 +170,6 @@ public class StarMentionListModel {
         starMentionList = null;
         isFirstDatas = true;
         lastId = 0;
-        pagePerCount = 20;
         hasMore = false;
         isEmpty = false;
     }

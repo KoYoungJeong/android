@@ -26,8 +26,8 @@ public class StarMentionListActivity extends AppCompatActivity {
 
     public static final String TYPE_STAR_LIST = "type_star_list";
     public static final String TYPE_MENTION_LIST = "type_mention_list";
-    public static final String TYPE_STAR_ALL = "type_star_all";
-    public static final String TYPE_STAR_FILES = "type_star_files";
+    public static final String TYPE_STAR_LIST_OF_ALL = "type_star_all";
+    public static final String TYPE_STAR_LIST_OF_FILES = "type_star_files";
 
     @Extra
     String type;
@@ -111,9 +111,9 @@ public class StarMentionListActivity extends AppCompatActivity {
         } else if (type.equals(TYPE_STAR_LIST)) {
 
             allStarListFragment = (StarMentionListFragment) fragmentManager
-                    .findFragmentByTag(TYPE_STAR_ALL);
+                    .findFragmentByTag(TYPE_STAR_LIST_OF_ALL);
             filesStarListFragment = (StarMentionListFragment) fragmentManager
-                    .findFragmentByTag(TYPE_STAR_FILES);
+                    .findFragmentByTag(TYPE_STAR_LIST_OF_FILES);
 
             if (filesStarListFragment != null && allStarListFragment != null) {
                 return;
@@ -121,16 +121,16 @@ public class StarMentionListActivity extends AppCompatActivity {
 
             if (allStarListFragment == null) {
                 allStarListFragment = StarMentionListFragment_
-                        .builder().listType(TYPE_STAR_ALL).build();
+                        .builder().listType(TYPE_STAR_LIST_OF_ALL).build();
                 fragmentTransaction.add(R.id.star_mention_content,
-                        allStarListFragment, TYPE_STAR_ALL);
+                        allStarListFragment, TYPE_STAR_LIST_OF_ALL);
             }
 
             if (filesStarListFragment == null) {
                 filesStarListFragment = StarMentionListFragment_
-                        .builder().listType(TYPE_STAR_FILES).build();
+                        .builder().listType(TYPE_STAR_LIST_OF_FILES).build();
                 fragmentTransaction.add(R.id.star_mention_content,
-                        filesStarListFragment, TYPE_STAR_FILES);
+                        filesStarListFragment, TYPE_STAR_LIST_OF_FILES);
             }
 
         }
