@@ -1377,6 +1377,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     public void onEvent(MessageStarredEvent event) {
+
+        if (!isForeground) {
+            return;
+        }
+
         int messageId = event.getMessageId();
         switch (event.getAction()) {
             case STARRED:
