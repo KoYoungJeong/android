@@ -76,7 +76,9 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
         }
 
         starMentionListPresentor.setView(this);
-        starMentionList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        starMentionList.setVerticalScrollBarEnabled(true);
+        starMentionList.setLayoutManager(layoutManager);
         starMentionList.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         starMentionListAdapter = new StarMentionListAdapter();
         starMentionListAdapter.setListType(listType);
