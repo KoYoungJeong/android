@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -87,12 +88,12 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     @AfterViews
     void initViews() {
         Sprinkler.with(JandiApplication.getContext())
-            .track(new FutureTrack.Builder()
-                    .event(Event.ScreenView)
-                    .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                    .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                    .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_MEMBER)
-                    .build());
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_MEMBER)
+                        .build());
 
         setupActionbar();
 
@@ -164,6 +165,11 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.clear();
         getMenuInflater().inflate(R.menu.team_info_menu, menu);
+
+        if (type == TYPE_MEMBERS_LIST_TOPIC) {
+            MenuItem menuItem = menu.findItem(R.id.action_invitation);
+            menuItem.setTitle(R.string.jandi_topic_invitation);
+        }
         return true;
     }
 

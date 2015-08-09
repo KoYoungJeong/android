@@ -432,6 +432,7 @@
     <string name="jandi_topic_description">"토픽 설명"</string>
     <string name="jandi_topic_leave">"토픽 나가기"</string>
     <string name="jandi_topic_detail">"토픽 상세정보"</string>
+    <string name="jandi_topic_invitation">"초대하기"</string>
     <string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 
     <!-- tutorial -->

@@ -417,6 +417,7 @@
     <string name="jandi_topic_description">"議題內容"</string>
     <string name="jandi_topic_leave">"離開議題"</string>
     <string name="jandi_topic_detail">"議題資訊"</string>
+    <string name="jandi_topic_invitation">"邀請"</string>
     <string name="jandi_explain_topic_description">"說明 (選項)"</string>
 
     <!-- tutorial -->

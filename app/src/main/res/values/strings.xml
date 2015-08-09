@@ -414,6 +414,7 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_topic_delete">"Delete"</string>
     <string name="jandi_topic_detail">"Topic Info"</string>
     <string name="jandi_chat_detail">"Chat setting"</string>
+    <string name="jandi_topic_invitation">"Invite"</string>
     <string name="jandi_it_has_no_topic_description">"(There is no topic description)"</string>
     <string name="jandi_plz_input_topic_description">"Description (optional)"</string>
     <string name="jandi_save">"Save"</string>
