@@ -1378,6 +1378,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
     }
 
+    @Background
     public void onEvent(MessageStarredEvent event) {
 
         if (!isForeground) {

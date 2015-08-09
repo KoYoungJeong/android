@@ -1,4 +1,5 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,7 +12,7 @@
         style="@style/Jandi.Default.ActionBar"
         android:layout_width="match_parent"
         android:layout_alignParentTop="true"
-        android:visibility="visible" />
+        android:visibility="visible"/>
 
     <ListView
         android:id="@+id/lv_file_detail_comments"
@@ -25,8 +26,7 @@
         android:clipToPadding="false"
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
-        android:paddingBottom="5dp"
-        android:transcriptMode="alwaysScroll" />
+        android:paddingBottom="5dp"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_list_search_members"
@@ -42,7 +42,7 @@
         android:dividerHeight="0dp"
         android:paddingBottom="5dp"
         android:transcriptMode="alwaysScroll"
-        android:visibility="invisible" />
+        android:visibility="invisible"/>
 
 
     <RelativeLayout
@@ -58,7 +58,7 @@
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_centerInParent="true"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"/>
 
         <ImageView
             android:id="@+id/iv_file_detail_preview_sticker_close"
@@ -67,7 +67,7 @@
             android:layout_alignParentRight="true"
             android:padding="15dp"
             android:scaleType="centerInside"
-            android:src="@drawable/jandi_icon_sticker_close" />
+            android:src="@drawable/jandi_icon_sticker_close"/>
 
 
     </RelativeLayout>
@@ -79,7 +79,7 @@
         android:layout_height="1dp"
         android:layout_above="@+id/vg_file_detail_input_comment"
         android:layout_alignWithParentIfMissing="true"
-        android:background="@color/jandi_message_input_border" />
+        android:background="@color/jandi_message_input_border"/>
 
     <RelativeLayout
         android:id="@+id/vg_file_detail_input_comment"
@@ -100,7 +100,7 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/btn_send_message"
             android:hint="@string/comment"
-            android:paddingRight="34dp" />
+            android:paddingRight="34dp"/>
 
         <ImageView
             android:id="@+id/btn_message_sticker"
@@ -113,7 +113,7 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:scaleType="centerInside"
-            android:src="@drawable/btn_sticker" />
+            android:src="@drawable/btn_sticker"/>
 
         <Button
             android:id="@+id/btn_send_message"
@@ -123,7 +123,7 @@
             android:layout_alignTop="@+id/et_message"
             android:layout_centerVertical="true"
             android:layout_marginLeft="6dp"
-            android:text="@string/jandi_message_send" />
+            android:text="@string/jandi_message_send"/>
     </RelativeLayout>
 
     <FrameLayout
@@ -131,6 +131,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
 </RelativeLayout>

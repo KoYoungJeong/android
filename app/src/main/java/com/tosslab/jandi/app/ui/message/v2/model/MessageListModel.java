@@ -525,7 +525,6 @@ public class MessageListModel {
                         .build());
     }
 
-    @Background
     public void registStarredMessage(int teamId, int messageId) {
         try {
             RequestApiManager.getInstance()
@@ -537,7 +536,6 @@ public class MessageListModel {
         }
     }
 
-    @Background
     public void unregistStarredMessage(int teamId, int messageId) {
         try {
             RequestApiManager.getInstance()
