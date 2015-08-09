@@ -5,6 +5,7 @@ import android.content.Context;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -256,6 +257,9 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Background
     void getTeamInfo() {
+
+        refreshAccountInfo();
+
         try {
             List<Team> teamList = accountHomeModel.getTeamInfos(context);
             ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo();
@@ -264,4 +268,14 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             view.showErrorToast(context.getString(R.string.err_network));
         }
     }
+
+    private void refreshAccountInfo() {
+        try {
+            ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+            AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
+    }
+
 }

@@ -623,7 +623,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public void onResume() {
         super.onResume();
         isForeground = true;
-        sendMessagePublisherEvent(new NewMessageQueue(messageState));
         fileUploadStateViewModel.registerEventBus();
         PushMonitor.getInstance().register(entityId);
 
@@ -631,6 +630,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         fileUploadStateViewModel.initDownloadState();
 
         if (isRoomInit) {
+            sendMessagePublisherEvent(new NewMessageQueue(messageState));
             EventBus.getDefault().post(new MainSelectTopicEvent(roomId));
         }
     }
