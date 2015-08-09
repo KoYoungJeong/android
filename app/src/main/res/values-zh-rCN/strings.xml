@@ -83,7 +83,7 @@
     <string name="jandi_create_privategroup">"建立新私人议题"</string>
     <string name="jandi_modify_channel">"重新命名议题"</string>
     <string name="jandi_modify_private_group">"重新命名私人议题"</string>
-    <string name="warn_all_users_are_already_invited">"全部用户已被邀请"</string>
+    <string name="warn_all_users_are_already_invited">"所有的团队成员已加入此议题"</string>
     <string name="err_entity_create">"建立不成功"</string>
     <string name="err_entity_join">"加入不成功"</string>
     <string name="err_entity_duplicated_name">"这名字已被使用。请再试一次"</string>
@@ -333,6 +333,7 @@
 可针对每个团队各别指定一个电子邮箱"</string>
     <string name="jadi_account_home">"账号首页"</string>
     <string name="jandi_go_to_main">"回到账号首页"</string>
+    <string name="jandi_team_switch">"更换团队"</string>
     <string name="jandi_sign_in_ids_explain">"请选择一个电子邮件地址让我们将全部与JANDI相关的电子邮件寄给您。增加其它电子邮件地址以指定给特定团队。"</string>
     <string name="jandi_disable_user_profile_explain">"此成员权限已被暂时关闭。 欲知更多细节，请联络团队管理員。"</string>
     <string name="jandi_share_to_jandi">"分享到JANDI"</string>
@@ -364,7 +365,7 @@
     <string name="jandi_message_ask_about_delete_comment">"您确定要永久删除这留言吗？删除的留言将无法复原。"</string>
     <string name="jandi_message_no_member">"不再单打独斗，现在就邀请所有伙伴加入你的团队！"</string>
     <string name="jandi_file_delete_message">"您确定要删除此文件？ 请注意留言的部分不会被删除。"</string>
-    <string name="jandi_unshared_message">"此文件已经从私人议题中取消分享"</string>
+    <string name="jandi_unshared_message">"你已不在此标记的议题内"</string>
     <string name="jandi_nowhere_shared_file">"文件尚未分享到其它群组"</string>
     <string name="jandi_topic_no_member_1">"此议题目前只有你一人"</string>
     <string name="jandi_topic_no_member_2">"轻触按钮邀请其他成员加入。"</string>

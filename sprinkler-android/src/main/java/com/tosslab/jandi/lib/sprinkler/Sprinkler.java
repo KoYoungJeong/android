@@ -22,6 +22,7 @@ public class Sprinkler {
     public static final String TAG = Logger.makeTag(Sprinkler.class);
 
     public static boolean IS_DEBUG_MODE = true;
+    public static boolean IS_FOR_DEV = true;
     public static final String PREFERENCES_NAME = "sprinkler_preferences";
 
     private static Sprinkler sInstance;
@@ -47,8 +48,10 @@ public class Sprinkler {
         return sInstance;
     }
 
-    public static Sprinkler initialize(Application application, boolean debug) {
-        IS_DEBUG_MODE = debug;
+    public static Sprinkler initialize(Application application, boolean forDev, boolean debugMode) {
+        IS_FOR_DEV = forDev;
+        IS_DEBUG_MODE = debugMode;
+        Log.i(TAG, "Sprinkler initialized. dev version ? " + IS_FOR_DEV);
         Log.i(TAG, "Sprinkler initialized. debug mode ? " + IS_DEBUG_MODE);
         BroadcastReceiver screenOffReceiver = new BroadcastReceiver() {
             @Override

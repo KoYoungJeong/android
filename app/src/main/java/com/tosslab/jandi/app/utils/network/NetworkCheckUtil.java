@@ -11,6 +11,8 @@ import com.tosslab.jandi.app.JandiApplication;
  */
 public class NetworkCheckUtil {
 
+    private NetworkCheckUtil() {}
+
     public static boolean isConnected() {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) JandiApplication.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);

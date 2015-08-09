@@ -26,9 +26,11 @@ import com.tosslab.jandi.app.ui.settings.viewmodel.SettingFragmentViewModel;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -51,6 +53,9 @@ public class SettingsFragment extends PreferenceFragment {
 
     @Bean
     SettingFragmentViewModel settingFragmentViewModel;
+
+    @Bean
+    AlertUtil alertUtil;
 
     @AfterViews
     void init() {
@@ -117,15 +122,25 @@ public class SettingsFragment extends PreferenceFragment {
                     .termMode(TermActivity.Mode.Privacy.name())
                     .start();
         } else if (preference.getKey().equals("setting_logout")) {
-            settingFragmentViewModel.showSignoutDialog(getActivity());
+
+            if (NetworkCheckUtil.isConnected()) {
+                settingFragmentViewModel.showSignoutDialog(getActivity());
+            } else {
+                alertUtil.showCheckNetworkDialog(getActivity(), null);
+            }
+
         }
         return false;
     }
 
     public void onEvent(SignOutEvent event) {
-        trackSignOut();
 
-        startSignOut();
+        if (NetworkCheckUtil.isConnected()) {
+            trackSignOut();
+            startSignOut();
+        } else {
+            alertUtil.showCheckNetworkDialog(getActivity(), null);
+        }
     }
 
     @Background

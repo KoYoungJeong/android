@@ -349,6 +349,7 @@
 특정 팀과 연동된 메일 주소는 언제든 바꿀 수 있습니다."</string>
     <string name="jadi_account_home">"잔디 메인"</string>
     <string name="jandi_go_to_main">"잔디 메인으로"</string>
+    <string name="jandi_team_switch">"팀 전환하기"</string>
     <string name="jandi_disable_user_profile_explain">"차단된 멤버입니다. 궁금하신 사항은 팀 관리자에게 문의하세요."</string>
     <string name="jandi_share_to_jandi">"JANDI에 공유하기"</string>
     <string name="jandi_no_message_in_topic_dm">"아직 메세지가 없습니다.
@@ -380,7 +381,7 @@
     <string name="jandi_message_ask_about_delete_comment">"이 댓글을 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
     <string name="jandi_message_no_member">"아직 팀에 가입한 멤버가 없습니다. 지금 바로 멤버들을 초대하세요."</string>
     <string name="jandi_file_delete_message">"이 파일을 삭제하시겠습니까? 파일의 댓글은 삭제되지 않습니다."</string>
-    <string name="jandi_unshared_message">"이 파일은 이 비공개 토픽에서 공유 해제되어 더 이상 열람하실 수 없습니다"</string>
+    <string name="jandi_unshared_message">"이미 나갔거나 삭제된 토픽이므로 원본을 확인할 수 없습니다."</string>
     <string name="jandi_nowhere_shared_file">"공유된 대화방이 없습니다"</string>
     <string name="jandi_topic_no_member_1">"아직 토픽에 초대된 멤버가 없습니다."</string>
     <string name="jandi_topic_no_member_2">"여기를 터치하시고 토픽에 멤버를 초대해보세요."</string>

@@ -340,6 +340,7 @@
 チームごとに自分のメールアドレスを1つ選んでください。プロファイルに表示されます"</string>
     <string name="jadi_account_home">"ホームに戻る"</string>
     <string name="jandi_go_to_main">"ホームに戻る"</string>
+    <string name="jandi_team_switch">"チーム切替"</string>
     <string name="jandi_sign_in_ids_explain">"JANDIからのメールを受信するメールアドレスを一つ選択してください。メールアドレスを追加しチームごとに使い分けられます"</string>
     <string name="jandi_disable_user_profile_explain">"このメンバーは現在無効化されています。詳細はチーム管理者にお問い合わせ下さい"</string>
     <string name="jandi_share_to_jandi">"JANDIにシェア"</string>
@@ -371,7 +372,7 @@
     <string name="jandi_message_ask_about_delete_comment">"本当に削除しますか？元には戻せません"</string>
     <string name="jandi_message_no_member">"このチームには他のメンバーがいません。新しいメンバーを招待してコラボレーションを始めましょう"</string>
     <string name="jandi_file_delete_message">"ファイルを削除してよいですか？削除後もコメントは残ります"</string>
-    <string name="jandi_unshared_message">"このファイルは非共有化されました"</string>
+    <string name="jandi_unshared_message">"すでに参加していないトピックなので原本が表示できません"</string>
     <string name="jandi_nowhere_shared_file">"共有されたファイルがありません"</string>
     <string name="jandi_topic_no_member_1">"このトピックには他にメンバーがいません。"</string>
     <string name="jandi_topic_no_member_2">"以下のボタンをタップしてメンバーを招待しましょう"</string>

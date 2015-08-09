@@ -133,42 +133,6 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
 
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) contentMessage;
 
-            Dao<ResMessages.OriginalMessage.IntegerWrapper, ?> dao = DaoManager.createDao
-                    (connectionSource, ResMessages
-                            .OriginalMessage.IntegerWrapper.class);
-            DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder
-                    = dao.deleteBuilder();
-
-            deleteBuilder.where().eq("textOf_id", textMessage.id);
-            deleteBuilder.delete();
-
-            for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : textMessage.shareEntities) {
-                shareEntity.setTextOf(textMessage);
-                dao.create(shareEntity);
-            }
-
-            Dao<MentionObject, ?> mentionObjectDao = DaoManager.createDao(connectionSource, MentionObject.class);
-            DeleteBuilder<MentionObject, ?> mentionObjectDeleteBuilder = mentionObjectDao.deleteBuilder();
-            mentionObjectDeleteBuilder.where().eq("textOf_id", textMessage.id);
-            mentionObjectDeleteBuilder.delete();
-
-            for (MentionObject mention : textMessage.mentions) {
-                mention.setTextOf(textMessage);
-                mentionObjectDao.create(mention);
-            }
-
-            Dao<ResMessages.TextContent, ?> textContentDao = DaoManager.createDao
-                    (connectionSource, ResMessages.TextContent
-                            .class);
-            textContentDao.create(textMessage.content);
-
-            if (message.hasLinkPreview()) {
-                Dao<ResMessages.LinkPreview, ?> linkPreviewDao = DaoManager.createDao
-                        (connectionSource, ResMessages
-                                .LinkPreview.class);
-                linkPreviewDao.createOrUpdate(textMessage.linkPreview);
-            }
-
             DaoManager.createDao(connectionSource, ResMessages.TextMessage.class).createOrUpdate
                     (textMessage);
 

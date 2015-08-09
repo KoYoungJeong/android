@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -130,6 +131,7 @@ public class FileDetailPresenter {
         try {
             ResFileDetail resFileDetail = fileDetailModel.getFileDetailInfo(fileId);
 
+            LogUtil.d("FileDetailActivity", resFileDetail.toString());
 
             for (ResMessages.OriginalMessage messageDetail : resFileDetail.messageDetails) {
                 if (messageDetail instanceof ResMessages.FileMessage) {

@@ -111,7 +111,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func0;
 import rx.subjects.PublishSubject;
 
-
 /**
  * Created by justinygchoi on 2014. 7. 19..
  */
@@ -160,6 +159,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     private boolean isMyFile;
     private boolean isDeleted = true;
     private boolean isForeground;
+    private boolean isFromDeleteAction = false;
+
     private ProgressWheel progressWheel;
     private ProgressDialog progressDialog;
     private StickerInfo stickerInfo = NULL_STICKER;
@@ -458,9 +459,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
                 if (TextUtils.equals(fileDetail.status, "archived")) {
                     isDeleted = true;
-
-                    EventBus.getDefault().post(new DeleteFileEvent(fileDetail.id));
-
                 } else {
                     isDeleted = false;
                 }
@@ -646,11 +644,23 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         if (!isForeground) {
             return;
         }
+        isFromDeleteAction = true;
         fileDetailPresenter.deleteFile(event.getFileId(), roomId);
     }
 
     public void onEvent(DeleteFileEvent event) {
+        LogUtil.d("FileDetailActivity", "finishing ? " + isFinishing());
+        if (isFinishing()) {
+            return;
+        }
+
+        LogUtil.d("FileDetailActivity", "isFromDeleteAction ? " + isFromDeleteAction);
+        if (isFromDeleteAction) {
+            return;
+        }
+
         if (fileId == event.getId()) {
+            LogUtil.e("FileDetailActivity", "DeleteFileEvent");
             fileDetailPresenter.getFileDetail(fileId, false, false);
         }
     }
@@ -729,6 +739,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         } else {
             ColoredToast.showError(this, getString(R.string.err_delete_file));
         }
+        isFromDeleteAction = false;
     }
 
     /**

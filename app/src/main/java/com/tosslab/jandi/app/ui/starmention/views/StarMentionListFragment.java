@@ -19,11 +19,14 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.adapter.StarMentionListAdapter;
 import com.tosslab.jandi.app.ui.starmention.presentor.StarMentionListPresentor;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
+import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
@@ -65,8 +68,17 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
 
     @AfterViews
     void initFragment() {
+
+        if (!NetworkCheckUtil.isConnected()) {
+            AlertUtil_.getInstance_(getActivity())
+                    .showCheckNetworkDialog(getActivity(), (dialog, which) -> getActivity().finish());
+            return;
+        }
+
         starMentionListPresentor.setView(this);
-        starMentionList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        starMentionList.setVerticalScrollBarEnabled(true);
+        starMentionList.setLayoutManager(layoutManager);
         starMentionList.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         starMentionListAdapter = new StarMentionListAdapter();
         starMentionListAdapter.setListType(listType);
@@ -78,7 +90,8 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
         }
     }
 
-    private void loadStarMentionList() {
+    @Background
+    void loadStarMentionList() {
         try {
             starMentionListPresentor.addMentionMessagesToList(listType);
         } catch (RetrofitError e) {

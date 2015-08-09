@@ -53,6 +53,7 @@ import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
+import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
@@ -496,6 +497,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         UpdateMessage updateMessage = (UpdateMessage) messageQueue.getData();
         ResMessages.OriginalMessage message =
                 messageListModel.getMessage(teamId, updateMessage.getMessageId());
+
+        if (message != null && message instanceof ResMessages.TextMessage) {
+            MessageRepository.getRepository().upsertTextMessage((ResMessages.TextMessage) message);
+        }
+
         messageListPresenter.updateMessage(message);
     }
 
@@ -617,7 +623,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public void onResume() {
         super.onResume();
         isForeground = true;
-        sendMessagePublisherEvent(new NewMessageQueue(messageState));
         fileUploadStateViewModel.registerEventBus();
         PushMonitor.getInstance().register(entityId);
 
@@ -625,6 +630,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         fileUploadStateViewModel.initDownloadState();
 
         if (isRoomInit) {
+            sendMessagePublisherEvent(new NewMessageQueue(messageState));
             EventBus.getDefault().post(new MainSelectTopicEvent(roomId));
         }
     }
@@ -858,6 +864,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
         filePickerViewModel.selectFileSelector(event.type, MessageListFragment.this, entityId);
+    }
+
+    public void onEvent(NetworkConnectEvent event) {
+        if (event.isConnected()) {
+            if (messageListPresenter.getItemCount() <= 0) {
+                // roomId 설정 후...
+                sendInitMessage();
+            } else {
+                sendMessagePublisherEvent(new NewMessageQueue(messageState));
+            }
+        }
     }
 
     @Override

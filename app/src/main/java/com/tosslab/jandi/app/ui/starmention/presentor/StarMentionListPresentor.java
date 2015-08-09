@@ -31,8 +31,7 @@ public class StarMentionListPresentor {
     StarMentionListModel starMentionListModel;
     private View view;
 
-    @Background
-    public void addMentionMessagesToList(String listType) {
+    public void addMentionMessagesToList(String listType) throws RetrofitError {
         if (!starMentionListModel.isFirst()) {
             view.onShowMoreProgressBar();
         }
@@ -74,7 +73,7 @@ public class StarMentionListPresentor {
                     .entityId(starMentionVO.getRoomId())
                     .entityType(starMentionVO.getRoomType())
                     .roomId(starMentionVO.getRoomType() != JandiConstants.TYPE_DIRECT_MESSAGE ?
-                            starMentionVO.getRoomId() : starMentionVO.getRoomType())
+                            starMentionVO.getRoomId() : -1)
                     .isFromSearch(true)
                     .lastMarker(starMentionVO.getLinkId()).start();
         } else if (contentType == StarMentionVO.Type.Comment.getValue()
@@ -117,7 +116,13 @@ public class StarMentionListPresentor {
             e.printStackTrace();
         }
         starMentionListModel.refreshList();
-        addMentionMessagesToList(listType);
+        try {
+            addMentionMessagesToList(listType);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setView(View view) {

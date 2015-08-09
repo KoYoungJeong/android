@@ -87,7 +87,7 @@ final class RequestManager {
     }
 
     private RequestConfig getRequestConfig() {
-        if (Sprinkler.IS_DEBUG_MODE) {
+        if (Sprinkler.IS_FOR_DEV) {
             return new RequestConfigDev();
         }
         return new RequestConfigRelease();
@@ -97,7 +97,7 @@ final class RequestManager {
 
         @Override
         public String getEndPoint() {
-            return "http://112.219.215.148:50080";
+            return "https://track.jandi.com";
         }
 
         @Override

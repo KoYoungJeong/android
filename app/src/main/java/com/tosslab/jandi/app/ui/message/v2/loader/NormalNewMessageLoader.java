@@ -50,20 +50,22 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         try {
             ResUpdateMessages newMessage = messageListModel.getNewMessage(linkId);
 
-            if (newMessage.updateInfo.messages != null && newMessage.updateInfo.messages.size() > 0) {
+            List<ResMessages.Link> messages = newMessage.updateInfo.messages;
+            if (messages != null && !messages.isEmpty()) {
+                saveToDatabase(roomId, messages);
 
-                saveToDatabase(roomId, newMessage.updateInfo.messages);
-
-                Collections.sort(newMessage.updateInfo.messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
+                Collections.sort(messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
                 messageState.setLastUpdateLinkId(newMessage.lastLinkId);
                 messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), newMessage.lastLinkId);
                 updateMarker();
 
-                messageListPresenter.setUpNewMessage(newMessage.updateInfo.messages,
-                        messageListModel.getMyId(), firstLoad);
-
+                messageListPresenter.setUpNewMessage(messages, messageListModel.getMyId(), linkId, firstLoad);
+            } else {
+                if (firstLoad) {
+                    messageListPresenter.setLastReadLinkId(-1);
+                    messageListPresenter.justRefresh();
+                }
             }
-
             firstLoad = false;
         } catch (RetrofitError e) {
             e.printStackTrace();

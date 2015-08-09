@@ -163,11 +163,14 @@ public class MessageListPresenter {
         messageListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
+                int originItemCount = getItemCount();
                 int itemCountWithoutEvent = getItemCountWithoutEvent();
-                if (itemCountWithoutEvent > 0) {
+                int eventCount = originItemCount - itemCountWithoutEvent;
+                if (itemCountWithoutEvent > 0 || eventCount > 1) {
+                    // create 이벤트외에 다른 이벤트가 생성된 경우
                     emptyMessageView.setVisibility(View.GONE);
                 } else {
-
+                    // 아예 메세지가 없거나 create 이벤트 외에는 생성된 이벤트가 없는 경우
                     if (loadingMessageView.getVisibility() != View.VISIBLE) {
                         emptyMessageView.setVisibility(View.VISIBLE);
                     } else {
@@ -464,7 +467,8 @@ public class MessageListPresenter {
         Log.i("INFO", "updateMessage - " + message.toString());
 
         if (message instanceof ResMessages.TextMessage) {
-            ResMessages.LinkPreview linkPreview = ((ResMessages.TextMessage) message).linkPreview;
+            ResMessages.TextMessage textMessage = (ResMessages.TextMessage) message;
+            ResMessages.LinkPreview linkPreview = textMessage.linkPreview;
             if (linkPreview != null && !linkPreview.isEmpty()) {
                 updateLinkPreviewMessage(message);
             }
@@ -484,6 +488,7 @@ public class MessageListPresenter {
             return;
         }
         link.message = message;
+
         messageListAdapter.notifyDataSetChanged();
     }
 
@@ -923,16 +928,19 @@ public class MessageListPresenter {
     }
 
     @UiThread
-    public void setUpNewMessage(List<ResMessages.Link> linkList, int myId, boolean firstLoad) {
-
+    public void setUpNewMessage(List<ResMessages.Link> linkList, int myId, int lastLinkId, boolean firstLoad) {
         int visibleLastItemPosition = getLastVisibleItemPosition();
         int lastItemPosition = getLastItemPosition();
 
         addAll(lastItemPosition, linkList);
+
+        setUpLastReadLink(myId);
+
         int location = linkList.size() - 1;
         if (location < 0) {
             return;
         }
+
         ResMessages.Link lastUpdatedMessage = linkList.get(location);
         if (!firstLoad
                 && visibleLastItemPosition >= 0
@@ -942,14 +950,11 @@ public class MessageListPresenter {
         } else {
             int messageId = lastUpdatedMessage.messageId;
             if (firstLoad) {
-                setUpLastReadLink(myId);
                 moveLastReadLink();
 
-                if (linkList.isEmpty()) {
-                    setLastReadLinkId(-1);
-                    justRefresh();
-                }
+                setLastReadLinkId(lastLinkId);
 
+                justRefresh();
             } else if (messageId <= 0) {
                 if (lastUpdatedMessage.fromEntity != myId) {
                     moveToMessageById(lastUpdatedMessage.id, 0);

@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -111,7 +112,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
             }
         }
 
-        if (position > 0 && position < getItemCount() - 1) {
+        if (position > 0 && position < getItemCount() - 1 - getDummyMessageCount()) {
             viewHolder.getViewHolder().setLastReadViewVisible(item.id, lastReadLinkId);
         } else {
             viewHolder.getViewHolder().setLastReadViewVisible(0, -1);
@@ -212,7 +213,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
                 messages.remove(link);
             } else if (TextUtils.equals(link.status, "archived")) {
                 int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
-
                 // if file type
                 if (TextUtils.equals(link.message.contentType, "file")) {
 
