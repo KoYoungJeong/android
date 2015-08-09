@@ -174,6 +174,12 @@ public class JandiPreference {
         SharedPreferences pref = getSharedPreferences(context);
         pref.edit().clear().commit();
 
+        isAleadyShowCoachMarkTopic(context);
+        isAleadyShowCoachMarkTopicList(context);
+        isAleadyShowCoachMarkFileList(context);
+        isAleadyShowCoachMarkMore(context);
+        isAleadyShowCoachMarkDirectMessageList(context);
+
         setFirstLogin(context);
     }
 

@@ -52,6 +52,7 @@ import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
+import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
@@ -1390,6 +1391,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                     messageListModel.registStarredMessage(teamId, messageId);
                     messageListPresenter.showSuccessToast(getString(R.string.jandi_message_starred));
                     messageListPresenter.modifyStarredInfo(messageId, true);
+                    EventBus.getDefault().post(new StarredInfoChangeEvent());
                 } catch (RetrofitError e) {
                     e.printStackTrace();
                 }
@@ -1400,6 +1402,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                     messageListModel.unregistStarredMessage(teamId, messageId);
                     messageListPresenter.showSuccessToast(getString(R.string.jandi_unpinned_message));
                     messageListPresenter.modifyStarredInfo(messageId, false);
+                    EventBus.getDefault().post(new StarredInfoChangeEvent());
                 } catch (RetrofitError e) {
                     e.printStackTrace();
                 }
