@@ -5,7 +5,7 @@ import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.koushikdutta.ion.Ion;
+import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshOldStarMentionedEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -18,7 +18,7 @@ import com.tosslab.jandi.app.ui.starmention.viewholder.RecyclerViewFactory;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
-import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.GlideCircleTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,12 +49,13 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
     public void onBindViewHolder(CommonStarMentionViewHolder holder, int position) {
         StarMentionVO starMentionVO = starMentionList.get(position);
 
-        Ion.with(holder.getStarMentionProfileView())
+        Glide.with(holder.getStarMentionProfileView().getContext())
+                .load(starMentionVO.getWriterPictureUrl())
                 .placeholder(R.drawable.jandi_profile)
                 .error(R.drawable.jandi_profile)
-                .transform(new IonCircleTransform())
-                .crossfade(true)
-                .load(starMentionVO.getWriterPictureUrl());
+                .crossFade()
+                .transform(new GlideCircleTransform(holder.getStarMentionProfileView().getContext()))
+                .into(holder.getStarMentionProfileView());
 
         holder.getStarMentionNameView().setText(starMentionVO.getWriterName());
 
@@ -153,9 +154,7 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
             this.starMentionList = new ArrayList<StarMentionVO>();
         }
 
-        for (StarMentionVO starMentionVO : newStarMentionList) {
-            this.starMentionList.add(starMentionVO);
-        }
+        this.starMentionList.addAll(newStarMentionList);
 
         notifyDataSetChanged();
     }
@@ -166,7 +165,7 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
     }
 
     public void removeStarMentionListAll() {
-        starMentionList = new ArrayList<StarMentionVO>();
+        starMentionList.clear();
         notifyDataSetChanged();
     }
 
@@ -193,6 +192,14 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
 
     public void setListType(String listType) {
         this.listType = listType;
+    }
+
+    public StarMentionVO getItem(int position) {
+        return starMentionList.get(position);
+    }
+
+    public StarMentionVO remove(int position) {
+        return starMentionList.remove(position);
     }
 
     private enum MoreState {
