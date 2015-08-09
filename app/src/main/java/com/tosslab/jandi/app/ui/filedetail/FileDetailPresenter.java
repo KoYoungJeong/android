@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -79,7 +78,7 @@ public class FileDetailPresenter {
         this.view = view;
     }
 
-    public boolean onLoadFromCache(int fileId) {
+    public boolean onLoadFromCache(int fileId, int selectMessageId) {
         List<FileDetail> fileDetail = fileDetailModel.getFileDetail(fileId);
         if (fileDetail != null && !fileDetail.isEmpty()) {
             ResMessages.FileMessage file = fileDetail.get(0).getFile();
@@ -104,7 +103,7 @@ public class FileDetailPresenter {
             Collections.sort(fakeFile.messageDetails,
                     (lhs, rhs) -> lhs.createTime.compareTo(rhs.createTime));
 
-            view.loadSuccess(fakeFile, false);
+            view.loadSuccess(fakeFile, false, selectMessageId);
 
             boolean enableUserFromUploader = fileDetailModel.isEnableUserFromUploder(fakeFile);
             view.drawFileWriterState(enableUserFromUploader);
@@ -122,7 +121,7 @@ public class FileDetailPresenter {
      * **********************************************************
      */
     @Background
-    public void getFileDetail(int fileId, boolean isSendAction, boolean showDialog) {
+    public void getFileDetail(int fileId, boolean isSendAction, boolean showDialog, int selectMessageId) {
         LogUtil.d("try to get file detail having ID, " + fileId);
 
         if (showDialog) {
@@ -148,7 +147,7 @@ public class FileDetailPresenter {
 
             view.dismissProgress();
 
-            view.loadSuccess(resFileDetail, isSendAction);
+            view.loadSuccess(resFileDetail, isSendAction, selectMessageId);
 
             boolean enableUserFromUploader = fileDetailModel.isEnableUserFromUploder(resFileDetail);
             view.drawFileWriterState(enableUserFromUploader);
@@ -309,7 +308,7 @@ public class FileDetailPresenter {
             fileDetailModel.sendMessageComment(fileId, message, mentions);
             view.dismissProgress();
 
-            getFileDetail(fileId, true, true);
+            getFileDetail(fileId, true, true, -1);
             LogUtil.d("success to send message");
         } catch (RetrofitError e) {
             LogUtil.e("fail to send message", e);
@@ -328,7 +327,7 @@ public class FileDetailPresenter {
 
             view.dismissProgress();
 
-            getFileDetail(fileId, true, true);
+            getFileDetail(fileId, true, true, -1);
         } catch (RetrofitError e) {
             view.dismissProgress();
             e.printStackTrace();
@@ -350,7 +349,7 @@ public class FileDetailPresenter {
 
             view.dismissProgress();
 
-            getFileDetail(fileId, false, true);
+            getFileDetail(fileId, false, true, -1);
         } catch (RetrofitError e) {
             view.dismissProgress();
         } catch (Exception e) {
@@ -508,7 +507,7 @@ public class FileDetailPresenter {
 
         void drawFileDetail(ResFileDetail resFileDetail, boolean isSendAction);
 
-        void loadSuccess(ResFileDetail resFileDetail, boolean isSendAction);
+        void loadSuccess(ResFileDetail resFileDetail, boolean isSendAction, int selectMessageId);
 
         void showDeleteFileDialog(int fileId);
 

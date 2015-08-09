@@ -123,6 +123,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     int fileId;
 
     @Extra
+    int selectMessageId = -1;
+
+    @Extra
     int roomId = -1;
 
     @Bean
@@ -208,9 +211,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             }
         });
 
-        boolean loadFromCache = fileDetailPresenter.onLoadFromCache(fileId);
+        boolean loadFromCache = fileDetailPresenter.onLoadFromCache(fileId, -1);
         if (NetworkCheckUtil.isConnected()) {
-            fileDetailPresenter.getFileDetail(fileId, false, false);
+            fileDetailPresenter.getFileDetail(fileId, false, false, selectMessageId);
         } else if (!loadFromCache) {
             AlertUtil_.getInstance_(FileDetailActivity.this)
                     .showCheckNetworkDialog(FileDetailActivity.this, (dialog, which) -> finish());
@@ -454,7 +457,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void loadSuccess(ResFileDetail resFileDetail, boolean isSendAction) {
+    public void loadSuccess(ResFileDetail resFileDetail, boolean isSendAction, int selectMessageId) {
         for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
             if (fileDetail instanceof ResMessages.FileMessage) {
 
@@ -476,6 +479,17 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         }
 
         drawFileDetail(resFileDetail, isSendAction);
+
+        if (selectMessageId > 0) {
+            int position = fileDetailCommentListAdapter.findMessagePosition(selectMessageId);
+            if (position >= 0) {
+                lvFileDetailComments.smoothScrollToPosition(position);
+            }
+
+            fileDetailCommentListAdapter.setSelectMessage(selectMessageId);
+            fileDetailCommentListAdapter.notifyDataSetChanged();
+
+        }
 
         fileDetailPresenter.refreshMentionVM(this, getFileMessage(resFileDetail.messageDetails),
                 rvListSearchMembers, etComment, lvFileDetailComments);
@@ -580,7 +594,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                 entityManager.getEntityById(entityIdToBeShared).type,
                 fileMessage);
         clearAdapter();
-        fileDetailPresenter.getFileDetail(fileId, false, true);
+        fileDetailPresenter.getFileDetail(fileId, false, true, -1);
     }
 
     /**
@@ -627,7 +641,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                 entityManager.getEntityById(entityIdToBeUnshared).type,
                 fileMessage);
         clearAdapter();
-        fileDetailPresenter.getFileDetail(fileId, false, true);
+        fileDetailPresenter.getFileDetail(fileId, false, true, -1);
     }
 
     public void onEvent(SocketMessageStarEvent event) {
@@ -662,19 +676,19 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         if (fileId == event.getId()) {
             LogUtil.e("FileDetailActivity", "DeleteFileEvent");
-            fileDetailPresenter.getFileDetail(fileId, false, false);
+            fileDetailPresenter.getFileDetail(fileId, false, false, -1);
         }
     }
 
     public void onEvent(ShareFileEvent event) {
         if (fileId == event.getId()) {
-            fileDetailPresenter.getFileDetail(fileId, false, false);
+            fileDetailPresenter.getFileDetail(fileId, false, false, -1);
         }
     }
 
     public void onEvent(FileCommentRefreshEvent event) {
         if (fileId == event.getId()) {
-            fileDetailPresenter.getFileDetail(fileId, false, false);
+            fileDetailPresenter.getFileDetail(fileId, false, false, -1);
         }
     }
 
@@ -1000,7 +1014,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         fileHeadManager.drawFileWriterState(isEnabled);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void drawFileDetail(ResFileDetail resFileDetail, boolean isSendAction) {
         ResMessages.OriginalMessage fileDetail = getFileMessage(resFileDetail.messageDetails);

@@ -315,11 +315,12 @@ public class MessageListPresenter {
         ColoredToast.showWarning(activity, activity.getString(R.string.warn_no_more_messages));
     }
 
-    public void moveFileDetailActivity(Fragment fragment, int messageId, int roomId) {
+    public void moveFileDetailActivity(Fragment fragment, int messageId, int roomId, int selectMessageId) {
         FileDetailActivity_
                 .intent(fragment)
                 .fileId(messageId)
                 .roomId(roomId)
+                .selectMessageId(selectMessageId)
                 .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         activity.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }

@@ -1,5 +1,9 @@
 package com.tosslab.jandi.app.lists.files.viewholder;
 
+import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.text.Spannable;
@@ -37,6 +41,8 @@ public class FileDetailCommentView implements CommentViewHolder {
 
     View disableCoverView;
 
+    View selectedView;
+
     @Override
     public void init(View rootView) {
         imageViewCommentUserProfile = (ImageView) rootView.findViewById(R.id.img_file_detail_comment_user_profile);
@@ -44,6 +50,7 @@ public class FileDetailCommentView implements CommentViewHolder {
         textViewCommentContent = (TextView) rootView.findViewById(R.id.txt_file_detail_comment_content_2);
         disableLineThrougView = rootView.findViewById(R.id.img_entity_listitem_line_through);
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
+        selectedView = rootView.findViewById(R.id.view_file_detail_comment_anim);
     }
 
     @Override
@@ -113,6 +120,24 @@ public class FileDetailCommentView implements CommentViewHolder {
         spannableStringBuilder = generateMentionMessageUtil.generate();
 
         textViewCommentContent.setText(spannableStringBuilder);
+    }
+
+    @Override
+    public void startAnimation(Animator.AnimatorListener animatorListener) {
+        Context context = selectedView.getContext();
+
+        Integer colorFrom = context.getResources().getColor(R.color.transparent);
+        Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);
+        final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
+        colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
+        colorAnimation.setRepeatCount(1);
+        colorAnimation.addUpdateListener(animator -> selectedView.setBackgroundColor((Integer)
+                animator.getAnimatedValue()));
+
+        colorAnimation.addListener(animatorListener);
+        colorAnimation.start();
+
     }
 
     @Override

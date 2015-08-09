@@ -1,5 +1,9 @@
 package com.tosslab.jandi.app.lists.files.viewholder;
 
+import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.res.Resources;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -18,10 +22,12 @@ import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 public class FileDetailCollapseCommentView implements CommentViewHolder {
 
     TextView textViewCommentContent;
+    private View selectedView;
 
     @Override
     public void init(View rootView) {
         textViewCommentContent = (TextView) rootView.findViewById(R.id.txt_file_detail_collapse_comment_content);
+        selectedView = rootView.findViewById(R.id.view_file_detail_comment_anim);
     }
 
     @Override
@@ -72,6 +78,25 @@ public class FileDetailCollapseCommentView implements CommentViewHolder {
 
         textViewCommentContent.setText(spannableStringBuilder);
     }
+
+    @Override
+    public void startAnimation(Animator.AnimatorListener animatorListener) {
+
+        Context context = selectedView.getContext();
+
+        Integer colorFrom = context.getResources().getColor(R.color.transparent);
+        Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);
+        final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
+        colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
+        colorAnimation.setRepeatCount(1);
+        colorAnimation.addUpdateListener(animator -> selectedView.setBackgroundColor((Integer)
+                animator.getAnimatedValue()));
+
+        colorAnimation.addListener(animatorListener);
+        colorAnimation.start();
+    }
+
 
     @Override
     public int getLayoutResourceId() {

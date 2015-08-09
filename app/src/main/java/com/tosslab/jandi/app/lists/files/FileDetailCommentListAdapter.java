@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.lists.files;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.tosslab.jandi.app.lists.files.viewholder.FileDetailCommentView;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -31,6 +33,8 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
 
     @RootContext
     Context mContext;
+    private int selectMessageId;
+    private AnimStat animStat = AnimStat.START;
 
     @AfterInject
     void initAdapter() {
@@ -96,7 +100,19 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.commentViewHolder.bind(getItem(position));
+        ResMessages.OriginalMessage item = getItem(position);
+        viewHolder.commentViewHolder.bind(item);
+
+        if (item.id == selectMessageId && animStat == AnimStat.START) {
+            viewHolder.commentViewHolder.startAnimation(new SimpleEndAnimatorListener() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    animStat = AnimStat.END;
+                }
+            });
+
+            animStat = AnimStat.ANIM;
+        }
 
         return convertView;
     }
@@ -183,6 +199,26 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
 
     public void clear() {
         mMessages.clear();
+    }
+
+    public int findMessagePosition(int messageId) {
+
+        for (int idx = 0, size = getCount(); idx < size; ++idx) {
+            if (getItem(idx).id == messageId) {
+                return idx;
+            }
+        }
+
+        return -1;
+    }
+
+    public void setSelectMessage(int selectMessageId) {
+        this.selectMessageId = selectMessageId;
+        animStat = AnimStat.START;
+    }
+
+    private enum AnimStat {
+        START, ANIM, END
     }
 
     enum CommentViewType {
