@@ -106,7 +106,11 @@ public class StarMentionListModel {
             starMentionVO.setWriterPictureUrl(entity.getUserSmallProfileUrl());
             starMentionVO.setTeamId(starMentionedMessageObject.getTeamId());
             starMentionVO.setMessageId(starMentionedMessageObject.getMessage().id);
-            lastId = messageId;
+            if (categoryType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
+                lastId = messageId;
+            } else {
+                lastId = starMentionedMessageObject.getStarredId();
+            }
 
             if (type.equals("text")) {
                 starMentionVO.setContentType(StarMentionVO.Type.Text.getValue());

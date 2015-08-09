@@ -88,7 +88,6 @@ public class StarMentionListPresentor {
                 || contentType == StarMentionVO.Type.File.getValue()) {
             FileDetailActivity_
                     .intent(activity)
-                    .selectMessageId(starMentionVO.getMessageId())
                     .fileId(starMentionVO.getFileId())
                     .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         }
