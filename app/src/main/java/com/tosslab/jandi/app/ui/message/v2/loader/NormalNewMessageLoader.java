@@ -81,10 +81,16 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 .observeOn(Schedulers.io())
                 .subscribe(message -> {
                     message.roomId = roomId;
-                    if (!TextUtils.equals(message.status, "event")
-                            && TextUtils.equals(message.message.status, "archived")
-                            && !(message.message instanceof ResMessages.FileMessage)) {
-                        MessageRepository.getRepository().deleteMessage(message.messageId);
+                    if (!TextUtils.equals(message.status, "event")) {
+                        if (TextUtils.equals(message.message.status, "archived")) {
+                            if (!(message.message instanceof ResMessages.FileMessage)) {
+                                MessageRepository.getRepository().deleteMessage(message.messageId);
+                            } else {
+                                MessageRepository.getRepository().upsertFileMessage((ResMessages.FileMessage) message.message);
+                            }
+                        } else {
+                            MessageRepository.getRepository().upsertMessage(message);
+                        }
                     } else {
                         MessageRepository.getRepository().upsertMessage(message);
                     }

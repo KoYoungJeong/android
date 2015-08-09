@@ -1125,6 +1125,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public void onEvent(DeleteFileEvent event) {
 
         messageListPresenter.changeToArchive(event.getId());
+
     }
 
     public void onEvent(FileCommentRefreshEvent event) {

@@ -440,6 +440,7 @@ public class MessageListPresenter {
             ResMessages.Link item = messageListAdapter.getItem(position);
             item.message.status = archivedStatus;
             item.message.createTime = new Date();
+
         }
 
         List<Integer> commentIndexes = messageListAdapter.indexByFeedbackId(messageId);
