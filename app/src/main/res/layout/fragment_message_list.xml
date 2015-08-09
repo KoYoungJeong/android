@@ -217,7 +217,8 @@
             android:layout_toLeftOf="@+id/btn_send_message"
             android:layout_toRightOf="@+id/btn_upload_file"
             android:hint="@string/jandi_message_hint"
-            android:paddingRight="34dp" />
+            android:paddingRight="34dp"
+            android:textCursorDrawable="@null" />
 
         <ImageView
             android:id="@+id/btn_message_sticker"

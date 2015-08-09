@@ -238,6 +238,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
             //dummy event for notify filestarredList;
             StarredInfoChangeEvent event = new StarredInfoChangeEvent();
+
             if (v.isSelected()) {
                 try {
                     unregistStarredMessage(isFromStarredButton, fileId);
@@ -1124,6 +1125,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             case STARRED:
                 try {
                     registStarredMessage(isFromStarredButton, event.getMessageId());
+                    EventBus.getDefault().post(new StarredInfoChangeEvent());
                 } catch (RetrofitError e) {
                     e.printStackTrace();
                 }
@@ -1131,6 +1133,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             case UNSTARRED:
                 try {
                     unregistStarredMessage(isFromStarredButton, event.getMessageId());
+                    EventBus.getDefault().post(new StarredInfoChangeEvent());
                 } catch (RetrofitError e) {
                     e.printStackTrace();
                 }
