@@ -423,6 +423,7 @@
     <string name="jandi_topic_description">"トピック説明"</string>
     <string name="jandi_topic_leave">"このトピックから退出"</string>
     <string name="jandi_topic_detail">"トピックの詳細情報"</string>
+    <string name="jandi_topic_invitation">"招待"</string>
     <string name="jandi_explain_topic_description">"トピックの説明（選択）"</string>
 
     <!-- tutorial -->
