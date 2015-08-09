@@ -17,6 +17,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.RetrofitError;
@@ -31,28 +32,32 @@ public class StarMentionListPresentor {
     StarMentionListModel starMentionListModel;
     private View view;
 
-    public void addMentionMessagesToList(String listType) throws RetrofitError {
+    public void addMentionMessagesToList(String listType) {
         addMentionMessagesToList(listType, StarMentionListModel.DEFAULT_COUNT);
     }
 
-    public void addMentionMessagesToList(String listType, int requestCount) throws RetrofitError {
+    @Background
+    public void addMentionMessagesToList(String listType, int requestCount) {
         if (!starMentionListModel.isFirst()) {
             view.onShowMoreProgressBar();
         }
         try {
+            List<StarMentionVO> starMentionList;
             if (listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
-                List<StarMentionVO> starMentionList = starMentionListModel.
+                starMentionList = starMentionListModel.
                         getStarMentionedMessages(StarMentionListActivity.TYPE_MENTION_LIST, requestCount);
                 view.onAddAndShowList(starMentionList);
             } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL)) {
-                List<StarMentionVO> starMentionList = starMentionListModel.
+                starMentionList = starMentionListModel.
                         getStarMentionedMessages(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL, requestCount);
                 view.onAddAndShowList(starMentionList);
             } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
-                List<StarMentionVO> starMentionList = starMentionListModel.
+                starMentionList = starMentionListModel.
                         getStarMentionedMessages(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, requestCount);
-                view.onAddAndShowList(starMentionList);
+            } else {
+                starMentionList = new ArrayList<>();
             }
+            view.onAddAndShowList(starMentionList);
             if (starMentionListModel.hasMore()) {
                 view.onSetReadyMoreState();
             } else {
@@ -60,10 +65,8 @@ public class StarMentionListPresentor {
             }
         } catch (RetrofitError e) {
             e.printStackTrace();
-            throw e;
         } catch (Exception e) {
             e.printStackTrace();
-            throw e;
         } finally {
             view.onDismissMoreProgressBar();
         }
@@ -85,6 +88,7 @@ public class StarMentionListPresentor {
                 || contentType == StarMentionVO.Type.File.getValue()) {
             FileDetailActivity_
                     .intent(activity)
+                    .selectMessageId(starMentionVO.getMessageId())
                     .fileId(starMentionVO.getFileId())
                     .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         }
@@ -123,14 +127,7 @@ public class StarMentionListPresentor {
         }
 
         starMentionListModel.refreshList();
-
-        try {
-            addMentionMessagesToList(listType);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        addMentionMessagesToList(listType);
     }
 
     @Background
