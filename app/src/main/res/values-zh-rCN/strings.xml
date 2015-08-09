@@ -333,6 +333,7 @@
 可针对每个团队各别指定一个电子邮箱"</string>
     <string name="jadi_account_home">"账号首页"</string>
     <string name="jandi_go_to_main">"回到账号首页"</string>
+    <string name="jandi_team_switch">"更换团队"</string>
     <string name="jandi_sign_in_ids_explain">"请选择一个电子邮件地址让我们将全部与JANDI相关的电子邮件寄给您。增加其它电子邮件地址以指定给特定团队。"</string>
     <string name="jandi_disable_user_profile_explain">"此成员权限已被暂时关闭。 欲知更多细节，请联络团队管理員。"</string>
     <string name="jandi_share_to_jandi">"分享到JANDI"</string>
