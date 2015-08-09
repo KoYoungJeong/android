@@ -17,6 +17,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.RetrofitError;
@@ -31,22 +32,31 @@ public class StarMentionListPresentor {
     StarMentionListModel starMentionListModel;
     private View view;
 
-    public void addMentionMessagesToList(String listType) throws RetrofitError {
+    public void addMentionMessagesToList(String listType) {
+        addMentionMessagesToList(listType, StarMentionListModel.DEFAULT_COUNT);
+    }
+
+    @Background
+    public void addMentionMessagesToList(String listType, int defaultCount) {
         if (!starMentionListModel.isFirst()) {
             view.onShowMoreProgressBar();
         }
         try {
+            List<StarMentionVO> starMentionList;
             if (listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
-                List<StarMentionVO> starMentionList = starMentionListModel.
-                        getStarMentionedMessages(StarMentionListActivity.TYPE_MENTION_LIST);
-                view.onAddAndShowList(starMentionList);
-            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_ALL)) {
-                List<StarMentionVO> starMentionList = starMentionListModel.
-                        getStarMentionedMessages(StarMentionListActivity.TYPE_STAR_ALL);
-                view.onAddAndShowList(starMentionList);
-            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_FILES)) {
-                List<StarMentionVO> starMentionList = starMentionListModel.
-                        getStarMentionedMessages(StarMentionListActivity.TYPE_STAR_FILES);
+                starMentionList = starMentionListModel.
+                        getStarMentionedMessages(StarMentionListActivity.TYPE_MENTION_LIST, defaultCount);
+            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL)) {
+                starMentionList = starMentionListModel.
+                        getStarMentionedMessages(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL, defaultCount);
+            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
+                starMentionList = starMentionListModel.
+                        getStarMentionedMessages(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, defaultCount);
+            } else {
+                starMentionList = new ArrayList<>();
+            }
+
+            if (starMentionList != null) {
                 view.onAddAndShowList(starMentionList);
             }
             if (starMentionListModel.hasMore()) {
@@ -56,12 +66,11 @@ public class StarMentionListPresentor {
             }
         } catch (RetrofitError e) {
             e.printStackTrace();
-            throw e;
         } catch (Exception e) {
             e.printStackTrace();
-            throw e;
+        } finally {
+            view.onDismissMoreProgressBar();
         }
-        view.onDismissMoreProgressBar();
     }
 
     public void executeClickEvent(StarMentionVO starMentionVO, Activity activity) {
@@ -110,19 +119,15 @@ public class StarMentionListPresentor {
 
     @Background
     public void refreshList(String listType) {
+
+        // XXX Why?
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         starMentionListModel.refreshList();
-        try {
-            addMentionMessagesToList(listType);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        addMentionMessagesToList(listType);
     }
 
     public void setView(View view) {
@@ -131,6 +136,12 @@ public class StarMentionListPresentor {
 
     public boolean isEmpty() {
         return starMentionListModel.isEmpty();
+    }
+
+    @Background
+    public void reloadStartList(String listType, int requestCount) {
+        starMentionListModel.refreshList();
+        addMentionMessagesToList(listType, requestCount);
     }
 
     public interface View {

@@ -1113,6 +1113,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     public void onEvent(MessageStarredEvent event) {
 
+        if (!isForeground) {
+            return;
+        }
+
+
         boolean isFromStarredButton = false;
 
         switch (event.getAction()) {

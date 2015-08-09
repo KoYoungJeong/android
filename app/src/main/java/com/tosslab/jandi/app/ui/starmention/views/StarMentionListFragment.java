@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshOldStarMentionedEvent;
+import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.adapter.StarMentionListAdapter;
@@ -26,7 +28,6 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
@@ -36,7 +37,6 @@ import org.androidannotations.annotations.ViewById;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 
 /**
  * Created by tee on 15. 7. 29..
@@ -90,15 +90,8 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
         }
     }
 
-    @Background
     void loadStarMentionList() {
-        try {
-            starMentionListPresentor.addMentionMessagesToList(listType);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        starMentionListPresentor.addMentionMessagesToList(listType);
     }
 
     private void notifyViewStatus() {
@@ -107,9 +100,9 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
             llEmptyListStarMention.setVisibility(View.VISIBLE);
             if (listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
                 tvNoContent.setText(R.string.jandi_mention_no_mentions);
-            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_ALL)) {
+            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL)) {
                 tvNoContent.setText(R.string.jandi_starred_no_all);
-            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_FILES)) {
+            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
                 tvNoContent.setText(R.string.jandi_starred_no_file);
             }
         } else {
@@ -134,9 +127,8 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     }
 
     public void setOnItemLongClickListener() {
-        StarMentionListAdapter.OnItemLongClickListener onItemLongClickListener = (adapter, position) -> {
-            return starMentionListPresentor.executeLongClickEvent(adapter.getItemsByPosition(position), position);
-        };
+        StarMentionListAdapter.OnItemLongClickListener onItemLongClickListener
+                = (adapter, position) -> starMentionListPresentor.executeLongClickEvent(adapter.getItemsByPosition(position), position);
         starMentionListAdapter.setOnItemLongClickListener(onItemLongClickListener);
     }
 
@@ -179,22 +171,45 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
 
     public void onEvent(RefreshOldStarMentionedEvent event) {
 
-        if (event.getType().equals(StarMentionListActivity.TYPE_STAR_FILES)
-                && listType.equals(StarMentionListActivity.TYPE_STAR_FILES)) {
+        if (event.getType().equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)
+                && listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
             loadStarMentionList();
-        } else if (event.getType().equals(StarMentionListActivity.TYPE_STAR_ALL)
-                && listType.equals(StarMentionListActivity.TYPE_STAR_ALL)) {
+        } else if (event.getType().equals(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL)
+                && listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL)) {
             loadStarMentionList();
         } else if (event.getType().equals(StarMentionListActivity.TYPE_MENTION_LIST)
-                && listType.equals(StarMentionListActivity.TYPE_STAR_ALL)) {
+                && listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL)) {
             loadStarMentionList();
         }
 
     }
 
-    public void onEvent(StarredInfoChangeEvent event) {
+    public void onEventMainThread(StarredInfoChangeEvent event) {
         starMentionListAdapter.removeStarMentionListAll();
         starMentionListPresentor.refreshList(listType);
+    }
+
+    public void onEventMainThread(SocketMessageStarEvent event) {
+
+        if (TextUtils.equals(StarMentionListActivity.TYPE_MENTION_LIST, listType)) {
+            return;
+        }
+
+        if (event.isStarred()) {
+            // 현재 검색된 정보 + 1 로 새로 요청
+            int requestCount = starMentionListAdapter.getItemCount() + 1;
+            starMentionListAdapter.removeStarMentionListAll();
+            starMentionListPresentor.reloadStartList(listType, requestCount);
+        } else {
+            // 현재 정보 중 있으면 삭제
+            for (int idx = 0, size = starMentionListAdapter.getItemCount() - 1; idx <= size; ++idx) {
+                if (event.getMessageId() == starMentionListAdapter.getItem(idx).getMessageId()) {
+                    starMentionListAdapter.remove(idx);
+                    break;
+                }
+            }
+            starMentionListAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
