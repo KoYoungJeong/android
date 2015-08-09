@@ -46,11 +46,9 @@ public class StarMentionListPresentor {
             if (listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
                 starMentionList = starMentionListModel.
                         getStarMentionedMessages(StarMentionListActivity.TYPE_MENTION_LIST, requestCount);
-                view.onAddAndShowList(starMentionList);
             } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL)) {
                 starMentionList = starMentionListModel.
                         getStarMentionedMessages(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL, requestCount);
-                view.onAddAndShowList(starMentionList);
             } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
                 starMentionList = starMentionListModel.
                         getStarMentionedMessages(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, requestCount);
