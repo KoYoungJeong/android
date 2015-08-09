@@ -38,6 +38,7 @@
         android:src="@drawable/icon_more_member_guide" />
 
     <TextView
+        android:id="@+id/tv_more_member_guide_icon"
         android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -85,17 +86,16 @@
         android:layout_marginTop="131dp" />
 
     <LinearLayout
+        android:layout_marginTop="40dp"
+        android:layout_below="@id/tv_more_member_guide_icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="50dp"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="47dp"
             android:shadowColor="@color/jandi_coach_mark_text_shadow"
             android:shadowDy="1"
             android:shadowRadius="1"
