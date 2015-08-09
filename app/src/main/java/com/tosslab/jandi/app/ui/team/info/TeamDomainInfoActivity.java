@@ -112,10 +112,14 @@ public class TeamDomainInfoActivity extends AppCompatActivity {
     }
 
 
-    @Background
     @OptionsItem(R.id.action_confirm)
     void confirmTeamDomain() {
         String teamName = teamDomainInfoPresenter.getTeamName();
+        // TODO, FIXME 20자 넘을 때 l10n ?
+        if (teamDomainInfoPresenter.isExceedTeamNameCharacters(teamName)) {
+//            return;
+        }
+
         String teamDomain = teamDomainInfoPresenter.getTeamDomain();
         String myName = userName;
         String myEmail = userEmail;
@@ -128,7 +132,8 @@ public class TeamDomainInfoActivity extends AppCompatActivity {
         createTeam(teamName, teamDomain.toLowerCase(), myName, myEmail);
     }
 
-    private void createTeam(String teamName, String teamDomain, String myName, String myEmail) {
+    @Background
+    void createTeam(String teamName, String teamDomain, String myName, String myEmail) {
         teamDomainInfoPresenter.showProgressWheel();
 
         // Team Creation
