@@ -6,9 +6,8 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.local.database.chats.JandiChatsDatabaseManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
@@ -17,7 +16,6 @@ import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import retrofit.RetrofitError;
@@ -42,12 +40,12 @@ public class MainChatListModel {
     }
 
     public int getMemberId(Context context) {
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         return selectedTeamInfo != null ? selectedTeamInfo.getMemberId() : -1;
     }
 
     public int getTeamId(Context context) {
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         return selectedTeamInfo != null ? selectedTeamInfo.getTeamId() : -1;
     }
 
@@ -59,7 +57,7 @@ public class MainChatListModel {
 
         List<ChatItem> chatItems = new ArrayList<ChatItem>();
 
-        Iterator<ChatItem> iterator = Observable.from(chatList)
+        Observable.from(chatList)
                 .filter(resChat -> EntityManager.getInstance(context).getEntityById(resChat.getCompanionId()) != null)
                 .map(resChat -> {
 
@@ -72,20 +70,16 @@ public class MainChatListModel {
                             .lastMessage(!TextUtils.equals(resChat.getLastMessageStatus(), "archived") ? resChat.getLastMessage() : context.getString(R.string.jandi_deleted_message))
                             .lastMessageId(resChat.getLastMessageId())
                             .name(userEntity.getName())
-                            .starred(JandiEntityDatabaseManager.getInstance(context).isStarredEntity(teamId, resChat.getCompanionId()))
+                            .starred(EntityManager.getInstance(context)
+                                    .getEntityById(resChat.getCompanionId()).isStarred)
                             .unread(resChat.getUnread())
                             .status(TextUtils.equals(userEntity.getUser().status, "enabled"))
                             .photo(userEntity.getUserLargeProfileUrl());
 
                     return chatItem;
                 })
-
-                .toBlocking()
-                .getIterator();
-
-        while (iterator.hasNext()) {
-            chatItems.add(iterator.next());
-        }
+                .collect(() -> chatItems, List::add)
+                .subscribe();
 
         return chatItems;
     }
@@ -100,7 +94,8 @@ public class MainChatListModel {
                 .lastMessage(!TextUtils.equals(resChat.getLastMessageStatus(), "archived") ? resChat.getLastMessage() : context.getString(R.string.jandi_deleted_message))
                 .lastMessageId(resChat.getLastMessageId())
                 .name(userEntity.getName())
-                .starred(JandiEntityDatabaseManager.getInstance(context).isStarredEntity(teamId, resChat.getCompanionId()))
+                .starred(EntityManager.getInstance(context)
+                        .getEntityById(resChat.getCompanionId()).isStarred)
                 .unread(resChat.getUnread())
                 .status(TextUtils.equals(userEntity.getUser().status, "enabled"))
                 .photo(userEntity.getUserLargeProfileUrl());
@@ -108,24 +103,21 @@ public class MainChatListModel {
         return chatItem;
     }
 
-    public List<ChatItem> getSavedChatList(Context context, int teamId) {
-        return JandiChatsDatabaseManager.getInstance(context).getSavedChatItems(teamId);
+    public List<ResChat> getSavedChatList() {
+        return ChatRepository.getRepository().getChats();
     }
 
-    public void saveChatList(Context context, int teamId, List<ChatItem> chatItems) {
-        JandiChatsDatabaseManager.getInstance(context).upsertChatList(teamId, chatItems);
+    public void saveChatList(int teamId, List<ResChat> chatItems) {
+        for (ResChat chatItem : chatItems) {
+            chatItem.setTeamId(teamId);
+        }
+        ChatRepository.getRepository().upsertChats(chatItems);
     }
 
-    public int getRoomId(Context context, int teamId, int userId) {
+    public int getRoomId(int userId) {
 
-        List<ChatItem> savedChatItems = JandiChatsDatabaseManager.getInstance(context).getSavedChatItems(teamId);
+        return ChatRepository.getRepository().getChat(userId).getEntityId();
 
-        ChatItem first = Observable.from(savedChatItems)
-                .filter(chatItem -> chatItem.getEntityId() == userId)
-                .firstOrDefault(new ChatItem())
-                .toBlocking().first();
-
-        return first.getRoomId();
     }
 
     public boolean isStarred(Context context, int entityId) {

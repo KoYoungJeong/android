@@ -19,7 +19,8 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.ProfileSpannable;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 9..
@@ -29,11 +30,13 @@ public class EventViewHolder implements BodyViewHolder {
     public static final String KEY_PARSING_DATA = "parsing_data";
     private TextView eventContentView;
     private Context context;
+    private View lastReadView;
 
     @Override
     public void initView(View rootView) {
         eventContentView = ((TextView) rootView.findViewById(R.id.txt_message_event_title));
         context = rootView.getContext();
+        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -97,6 +100,15 @@ public class EventViewHolder implements BodyViewHolder {
 
     }
 
+    @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        if (currentLinkId == lastReadLinkId) {
+            lastReadView.setVisibility(View.VISIBLE);
+        } else {
+            lastReadView.setVisibility(View.GONE);
+        }
+    }
+
     private void buildCreateEvent(ResMessages.CreateEvent eventInfo,
                                   SpannableStringBuilder builder, EntityManager entityManager) {
         if (eventInfo.createInfo instanceof ResMessages.PublicCreateInfo) {
@@ -155,15 +167,18 @@ public class EventViewHolder implements BodyViewHolder {
         int tempIndex = nameIndexOf;
 
         FormattedEntity tempEntity;
-        List<Integer> inviteUsers = eventInfo.inviteUsers;
+        Collection<ResMessages.InviteEvent.IntegerWrapper> inviteUsers = eventInfo.inviteUsers;
         int size = inviteUsers.size();
-        for (int idx = 0; idx < size; idx++) {
-            tempEntity = entityManager.getEntityById(inviteUsers.get(idx));
+        Iterator<ResMessages.InviteEvent.IntegerWrapper> iterator = inviteUsers.iterator();
+        boolean first = true;
+        while (iterator.hasNext()) {
+            tempEntity = entityManager.getEntityById(iterator.next().getInviteUserId());
             if (tempEntity != null) {
-                if (idx > 0) {
+                if (!first) {
                     builder.insert(tempIndex, ", ");
                     tempIndex += 2;
                 }
+                first = false;
 
                 ProfileSpannable profileSpannable1 =
                         new ProfileSpannable(tempEntity.getId());

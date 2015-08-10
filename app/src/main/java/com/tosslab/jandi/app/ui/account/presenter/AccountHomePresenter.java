@@ -69,5 +69,7 @@ public interface AccountHomePresenter {
         void showTextAlertDialog(String msg, DialogInterface.OnClickListener clickListener);
 
         void invalidAccess();
+
+        void showNetworCheckDialog();
     }
 }

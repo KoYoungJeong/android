@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
+import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
 import de.greenrobot.event.EventBus;
 
@@ -35,6 +36,7 @@ public class FileViewHolder implements BodyViewHolder {
     private View disableLineThroughView;
     private TextView unreadTextView;
     private Context context;
+    private View lastReadView;
 
     private FileViewHolder() {
     }
@@ -59,6 +61,7 @@ public class FileViewHolder implements BodyViewHolder {
 
         unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
         context = rootView.getContext();
+        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -92,7 +95,7 @@ public class FileViewHolder implements BodyViewHolder {
             disableLineThroughView.setVisibility(View.VISIBLE);
         }
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(context,
+        int unreadCount = UnreadCountUtil.getUnreadCount(
                 teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
 
         unreadTextView.setText(String.valueOf(unreadCount));
@@ -114,8 +117,17 @@ public class FileViewHolder implements BodyViewHolder {
                 fileTypeTextView.setText("");
             } else {
                 fileNameTextView.setText(fileMessage.content.title);
-                fileTypeTextView.setText(FileSizeUtil.fileSizeCalculation(fileMessage.content.size)
-                        + ", " + fileMessage.content.ext);
+                MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
+                switch (sourceType) {
+                    case S3:
+                        fileTypeTextView.setText(FileSizeUtil.fileSizeCalculation(fileMessage.content.size)
+                                + ", " + fileMessage.content.ext);
+                        break;
+                    case Google:
+                    case Dropbox:
+                        fileTypeTextView.setText(fileMessage.content.ext);
+                        break;
+                }
 
                 int mimeTypeIconImage =
                         MimeTypeUtil.getMimeTypeIconImage(
@@ -124,10 +136,20 @@ public class FileViewHolder implements BodyViewHolder {
             }
         }
 
+
         profileImageView.setOnClickListener(v ->
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
         nameTextView.setOnClickListener(v ->
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+    }
+
+    @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        if (currentLinkId == lastReadLinkId) {
+            lastReadView.setVisibility(View.VISIBLE);
+        } else {
+            lastReadView.setVisibility(View.GONE);
+        }
     }
 
     @Override

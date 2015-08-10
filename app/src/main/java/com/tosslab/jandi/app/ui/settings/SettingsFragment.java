@@ -10,11 +10,14 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.text.TextUtils;
 
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.parse.ParseInstallation;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -22,10 +25,18 @@ import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.settings.viewmodel.SettingFragmentViewModel;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
+import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -43,6 +54,9 @@ public class SettingsFragment extends PreferenceFragment {
     @Bean
     SettingFragmentViewModel settingFragmentViewModel;
 
+    @Bean
+    AlertUtil alertUtil;
+
     @AfterViews
     void init() {
         settingFragmentViewModel.initProgress(getActivity());
@@ -51,6 +65,14 @@ public class SettingsFragment extends PreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ScreenView, ScreenViewProperty.SETTING)
+                        .build());
 
         addPreferencesFromResource(R.xml.pref_setting);
 
@@ -100,13 +122,25 @@ public class SettingsFragment extends PreferenceFragment {
                     .termMode(TermActivity.Mode.Privacy.name())
                     .start();
         } else if (preference.getKey().equals("setting_logout")) {
-            settingFragmentViewModel.showSignoutDialog(getActivity());
+
+            if (NetworkCheckUtil.isConnected()) {
+                settingFragmentViewModel.showSignoutDialog(getActivity());
+            } else {
+                alertUtil.showCheckNetworkDialog(getActivity(), null);
+            }
+
         }
         return false;
     }
 
     public void onEvent(SignOutEvent event) {
-        startSignOut();
+
+        if (NetworkCheckUtil.isConnected()) {
+            trackSignOut();
+            startSignOut();
+        } else {
+            alertUtil.showCheckNetworkDialog(getActivity(), null);
+        }
     }
 
     @Background
@@ -118,7 +152,7 @@ public class SettingsFragment extends PreferenceFragment {
 
             Activity activity = getActivity();
 
-            ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(activity).getAccountInfo();
+            ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
             MixpanelAccountAnalyticsClient
                     .getInstance(activity, accountInfo.getId())
                     .trackAccountSigningOut()
@@ -146,12 +180,23 @@ public class SettingsFragment extends PreferenceFragment {
         settingFragmentViewModel.returnToLoginActivity(getActivity());
     }
 
+    private void trackSignOut() {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.SignOut)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .build())
+                .flush();
+    }
+
     private void removeSignData() {
         JandiPreference.signOut(getActivity());
 
         ParseUpdateUtil.deleteChannelOnServer();
 
-        JandiAccountDatabaseManager.getInstance(getActivity()).clearAllData();
+        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
+                .clearAllData();
     }
 
     private void setPushSubState(boolean isEnabled) {

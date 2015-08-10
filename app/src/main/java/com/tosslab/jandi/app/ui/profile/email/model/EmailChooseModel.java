@@ -3,13 +3,19 @@ package com.tosslab.jandi.app.ui.profile.email.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.LanguageUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -32,7 +38,7 @@ public class EmailChooseModel {
 
         List<AccountEmail> accountEmails = new ArrayList<AccountEmail>();
 
-        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
+        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
 
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
 
@@ -61,7 +67,7 @@ public class EmailChooseModel {
 
     public boolean isConfirmedEmail(String email) {
 
-        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context.getApplicationContext()).getUserEmails();
+        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
 
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
             if (TextUtils.equals(email, userEmail.getId())) {
@@ -73,7 +79,8 @@ public class EmailChooseModel {
     }
 
     public String getPrimaryEmail() {
-        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context.getApplicationContext()).getUserEmails();
+
+        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
 
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
             if (userEmail.isPrimary()) {
@@ -98,4 +105,45 @@ public class EmailChooseModel {
         return RequestApiManager.getInstance().updatePrimaryEmailByMainRest(new ReqUpdatePrimaryEmailInfo(selectedEmail));
     }
 
+    public void trackChangeAccountEmailSuccess(String accountId) {
+        String email = getPrimaryEmail();
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ChangeAccountPrimaryEmail)
+                        .accountId(accountId)
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.Email, email)
+                        .build());
+    }
+
+    public void trackChangeAccountEmailFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ChangeAccountPrimaryEmail)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
+    public void trackRequestVerifyEmailSuccess() {
+        String email = getPrimaryEmail();
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.RequestVerificationEmail)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.Email, email)
+                        .build());
+    }
+
+    public void trackRequestVerifyEmailFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.RequestVerificationEmail)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
 }

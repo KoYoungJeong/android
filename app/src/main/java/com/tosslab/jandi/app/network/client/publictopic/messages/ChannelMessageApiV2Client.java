@@ -4,7 +4,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
-import com.tosslab.jandi.app.network.models.ReqSendMessage;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
@@ -53,8 +53,9 @@ public interface ChannelMessageApiV2Client {
 
     // 채널에서 Message 생성
     @POST("/channels/{channelId}/message")
-    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon sendPublicTopicMessage(@Body ReqSendMessage message, @Path("channelId") int channelId);
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+    ResCommon sendPublicTopicMessage(@Path("channelId") int channelId, @Query("teamId") int teamId,
+                                     @Body ReqSendMessageV3 reqSendMessageV3);
 
     // 채널에서 Message 수정
     @PUT("/channels/{channelId}/messages/{messageId}")

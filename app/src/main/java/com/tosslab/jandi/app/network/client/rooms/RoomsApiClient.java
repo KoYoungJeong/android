@@ -39,7 +39,7 @@
 //
 //    @Get("/teams/{teamId}/rooms/{roomId}")
 //    @RequiresAuthentication
-//    ResRoomInfo getRoomInfo(int teamId, int roomId);
+//    ResRoomInfo getRoomId(int teamId, int roomId);
 //
 //
 //}

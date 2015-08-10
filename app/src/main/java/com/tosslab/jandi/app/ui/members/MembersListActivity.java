@@ -4,10 +4,16 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Menu;
-import android.widget.ListView;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
@@ -16,8 +22,14 @@ import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.members.adapter.MembersAdapter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -26,6 +38,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.SupposeUiThread;
+import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
@@ -41,17 +54,23 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     public static final int TYPE_MEMBERS_LIST_TEAM = 0x01;
     public static final int TYPE_MEMBERS_LIST_TOPIC = 0x02;
 
-    @Bean(MembersListPresenterImpl.class)
-    MembersListPresenter membersListPresenter;
-
-    @ViewById(R.id.list_topic_member)
-    ListView memberListView;
-
     @Extra
     int entityId;
 
     @Extra
     int type;
+
+    @Bean(MembersListPresenterImpl.class)
+    MembersListPresenter membersListPresenter;
+
+    @ViewById(R.id.list_topic_member)
+    RecyclerView memberListView;
+
+    @ViewById(R.id.vg_topic_member_search_bar)
+    View vgSearchbar;
+
+    @ViewById(R.id.et_topic_member_search)
+    TextView tvSearch;
 
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
@@ -68,11 +87,64 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
 
     @AfterViews
     void initViews() {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_MEMBER)
+                        .build());
+
+        setupActionbar();
+
+        memberListView.setLayoutManager(new LinearLayoutManager(MembersListActivity.this,
+                RecyclerView.VERTICAL, false));
         memberListView.setAdapter(topicMembersAdapter);
         initProgressWheel();
+
+        int scropMaxY = getActionbarHeight();
+
+        if (scropMaxY > 0) {
+            memberListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    final int offset = (int) (dy * .66f);
+
+
+                    final float futureScropViewPosY = vgSearchbar.getY() - offset;
+
+                    if (futureScropViewPosY <= 0) {
+                        vgSearchbar.setY(0);
+                    } else if (futureScropViewPosY >= scropMaxY) {
+                        vgSearchbar.setY(scropMaxY);
+                    } else {
+                        vgSearchbar.setY(futureScropViewPosY);
+                    }
+                }
+            });
+        }
     }
 
-    @AfterViews
+    @TextChange(R.id.et_topic_member_search)
+    void onSearchTextChange(CharSequence text) {
+        membersListPresenter.onSearch(text);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        membersListPresenter.onDestory();
+    }
+
+    private int getActionbarHeight() {
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true);
+
+        return TypedValue.complexToDimensionPixelOffset(typedValue.data, getResources()
+                .getDisplayMetrics());
+
+    }
+
     void setupActionbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
@@ -91,9 +163,12 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        menu.clear();
         getMenuInflater().inflate(R.menu.team_info_menu, menu);
-        if (type != TYPE_MEMBERS_LIST_TEAM) {
-            menu.findItem(R.id.action_invitation).setVisible(false);
+
+        if (type == TYPE_MEMBERS_LIST_TOPIC) {
+            MenuItem menuItem = menu.findItem(R.id.action_invitation);
+            menuItem.setTitle(R.string.jandi_topic_invitation);
         }
         return true;
     }
@@ -113,7 +188,6 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
 
     @SupposeUiThread
     void initProgressWheel() {
-        // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(MembersListActivity.this);
     }
 
@@ -134,11 +208,15 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     }
 
     @OptionsItem(R.id.action_invitation)
-        //FIXME
     void onInviteOptionSelect() {
-        invitationDialogExecutor.execute();
+        if (type == TYPE_MEMBERS_LIST_TEAM) {
+            invitationDialogExecutor.execute();
+        } else {
+            membersListPresenter.inviteMemberToTopic(entityId);
+        }
     }
 
+    @UiThread
     @Override
     public void showListMembers(List<ChatChooseItem> topicMembers) {
         topicMembersAdapter.clear();
@@ -168,5 +246,10 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
                 .isFavorite(isStarred)
                 .isFromPush(false)
                 .startForResult(MainTabActivity.REQ_START_MESSAGE);
+    }
+
+    @Override
+    public String getSearchText() {
+        return tvSearch.getText().toString();
     }
 }

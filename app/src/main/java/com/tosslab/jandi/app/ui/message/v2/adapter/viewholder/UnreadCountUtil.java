@@ -1,11 +1,9 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
-import android.content.Context;
-
-import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 
-import java.util.List;
+import java.util.Collection;
 
 import rx.Observable;
 
@@ -14,12 +12,11 @@ import rx.Observable;
  */
 public class UnreadCountUtil {
 
-    public static int getUnreadCount(Context context,
-                                     int teamId, int roomId, int linkId,
+    public static int getUnreadCount(int teamId, int roomId, int linkId,
                                      int fromEntityId, int myId) {
 
-        List<ResRoomInfo.MarkerInfo> markers =
-                JandiMarkerDatabaseManager.getInstance(context).getMarkers(teamId, roomId);
+        Collection<ResRoomInfo.MarkerInfo> markers =
+                MarkerRepository.getRepository().getRoomMarker(teamId, roomId);
 
         int unreadCount =
                 Observable.from(markers)

@@ -8,10 +8,14 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.domain.FileDetail;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.FileDetailRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -19,10 +23,18 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -30,12 +42,14 @@ import org.androidannotations.annotations.RootContext;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import retrofit.RetrofitError;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 8..
@@ -78,19 +92,19 @@ public class FileDetailModel {
         entityClientManager.unshareMessage(fileId, entityIdToBeUnshared);
     }
 
-    public void sendMessageComment(int fileId, String message) throws RetrofitError {
-        entityClientManager.sendMessageComment(fileId, message);
+    public void sendMessageComment(int fileId, String message, List<MentionObject> mentions) throws RetrofitError {
+        entityClientManager.sendMessageComment(fileId, message, mentions);
     }
 
     public ResLeftSideMenu.User getUserProfile(int userEntityId) throws RetrofitError {
         return entityClientManager.getUserProfile(userEntityId);
     }
 
-    public File download(String url, String fileName, String fileType, ProgressDialog progressDialog) throws Exception {
+    public File download(String url, String fileName, String ext, ProgressDialog progressDialog) throws Exception {
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/Jandi");
         dir.mkdirs();
 
-        String downloadFileName = getDownloadFileName(fileName, fileType);
+        String downloadFileName = FileSizeUtil.getDownloadFileName(fileName, ext);
 
         return Ion.with(context)
                 .load(url)
@@ -98,20 +112,6 @@ public class FileDetailModel {
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                 .write(new File(dir, downloadFileName))
                 .get();
-    }
-
-    public String getDownloadFileName(String fileName, String fileType) {
-        String downloadFileName;
-        if (!hasFileExt(fileName)) {
-            downloadFileName = fileName + "." + fileType;
-        } else {
-            downloadFileName = fileName;
-        }
-        return downloadFileName;
-    }
-
-    private boolean hasFileExt(String fileName) {
-        return !TextUtils.isEmpty(fileName) && fileName.lastIndexOf(".") > 0;
     }
 
     public boolean isMyComment(int writerId) {
@@ -161,35 +161,49 @@ public class FileDetailModel {
             return Collections.emptyList();
         }
 
-        List<Integer> shareEntities = fileMessage.shareEntities;
+        Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities = fileMessage.shareEntities;
 
         EntityManager entityManager = EntityManager.getInstance(context);
 
+        List<Integer> list = new ArrayList<>();
+
         boolean include = false;
         int myEntityId = entityManager.getMe().getId();
-        for (int idx = shareEntities.size() - 1; idx >= 0; idx--) {
-            if (shareEntities.get(idx) == myEntityId) {
+        Iterator<ResMessages.OriginalMessage.IntegerWrapper> iterator = shareEntities.iterator();
+        while (iterator.hasNext()) {
+            int shareEntity = iterator.next().getShareEntity();
+            list.add(shareEntity);
+            if (shareEntity == myEntityId) {
                 include = true;
-                break;
             }
         }
 
         if (!include) {
-            shareEntities.add(myEntityId);
+            list.add(myEntityId);
         }
 
-        List<FormattedEntity> entities = entityManager.retrieveExclusivedEntities(shareEntities);
-
-        Iterator<FormattedEntity> enabledEntities = Observable.from(entities)
-                .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
-                .toBlocking()
-                .getIterator();
+        List<FormattedEntity> entities = entityManager.retrieveExclusivedEntities(list);
 
         List<FormattedEntity> formattedEntities = new ArrayList<>();
 
-        while (enabledEntities.hasNext()) {
-            formattedEntities.add(enabledEntities.next());
-        }
+        Observable.from(entities)
+                .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
+                .toSortedList((formattedEntity, formattedEntity2) -> {
+                    if (formattedEntity.isUser() && formattedEntity2.isUser()) {
+                        return formattedEntity.getName()
+                                .compareToIgnoreCase(formattedEntity2.getName());
+                    } else if (!formattedEntity.isUser() && !formattedEntity2.isUser()) {
+                        return formattedEntity.getName()
+                                .compareToIgnoreCase(formattedEntity2.getName());
+                    } else {
+                        if (formattedEntity.isUser()) {
+                            return 1;
+                        } else {
+                            return -1;
+                        }
+                    }
+                })
+                .subscribe(formattedEntities::addAll);
 
         return formattedEntities;
     }
@@ -215,7 +229,7 @@ public class FileDetailModel {
     public boolean refreshEntity() {
         try {
             ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
-            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context, totalUnreadCount);
             BadgeUtils.setBadge(context, totalUnreadCount);
@@ -230,10 +244,10 @@ public class FileDetailModel {
         }
     }
 
-    public void sendMessageCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment) throws RetrofitError {
+    public void sendMessageCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment, List<MentionObject> mentions) throws RetrofitError {
         try {
-            int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
-            ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerGroupId, stickerId, teamId, fileId, "", comment);
+            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerGroupId, stickerId, teamId, fileId, "", comment, mentions);
             RequestApiManager.getInstance().sendStickerCommentByStickerApi(reqSendSticker);
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -242,4 +256,150 @@ public class FileDetailModel {
         }
     }
 
+    private int getFileId() {
+        return getFileMessage() != null ? getFileMessage().id : -1;
+    }
+
+    public void trackFileDownloadSuccess() {
+        int fileId = getFileId();
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileDownload)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.FileId, fileId)
+                        .build());
+    }
+
+    public void trackFileShareSuccess(int topicId) {
+        int fileId = getFileId();
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileShare)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TopicId, topicId)
+                        .property(PropertyKey.FileId, fileId)
+                        .build());
+    }
+
+    public void trackFileShareFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileShare)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
+    public void trackFileUnShareSuccess(int topicId) {
+        int fileId = getFileId();
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileUnShare)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TopicId, topicId)
+                        .property(PropertyKey.FileId, fileId)
+                        .build());
+    }
+
+    public void trackFileUnShareFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileUnShare)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
+    public void trackFileDeleteSuccess(int topicId) {
+        int fileId = getFileId();
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileDelete)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TopicId, topicId)
+                        .property(PropertyKey.FileId, fileId)
+                        .build());
+    }
+
+    public void trackFileDeleteFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileDelete)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
+    public void registStarredMessage(int teamId, int messageId) throws RetrofitError {
+        try {
+            RequestApiManager.getInstance()
+                    .registStarredMessageByTeamApi(teamId, messageId);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void unregistStarredMessage(int teamId, int messageId) throws RetrofitError {
+        try {
+            RequestApiManager.getInstance()
+                    .unregistStarredMessageByTeamApi(teamId, messageId);
+            LogUtil.e("teamId", teamId + "");
+            LogUtil.e("messageId", messageId + "");
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<FileDetail> getFileDetail(int fileId) {
+        return FileDetailRepository.getRepository().getFileDetail(fileId);
+    }
+
+    public void saveFileDetailInfo(ResFileDetail resFileDetail) {
+        ResMessages.FileMessage fileMessage = getFileMessage();
+
+        MessageRepository.getRepository().upsertFileMessage(fileMessage);
+
+        Observable.from(resFileDetail.messageDetails)
+                .observeOn(Schedulers.io())
+                .onBackpressureBuffer()
+                .filter(originalMessage -> !(originalMessage instanceof ResMessages.FileMessage))
+                .map(originalMessage -> {
+                    FileDetail fileDetail = new FileDetail();
+                    fileDetail.setFile(fileMessage);
+
+                    if (originalMessage instanceof ResMessages.CommentStickerMessage) {
+                        fileDetail.setSticker(((ResMessages.CommentStickerMessage) originalMessage));
+                    } else if (originalMessage instanceof ResMessages.CommentMessage) {
+                        fileDetail.setComment(((ResMessages.CommentMessage) originalMessage));
+                    } else {
+                        return null;
+                    }
+
+                    return fileDetail;
+                })
+                .subscribe(fileDetail ->
+                        FileDetailRepository.getRepository().upsertFileDetail(fileDetail));
+    }
+
+    public int getMyId() {
+        return EntityManager.getInstance(JandiApplication.getContext()).getMe().getId();
+    }
 }

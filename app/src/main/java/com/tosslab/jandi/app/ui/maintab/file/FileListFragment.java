@@ -19,9 +19,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
+import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
+import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
@@ -30,12 +33,13 @@ import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
+import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
@@ -44,10 +48,16 @@ import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -62,7 +72,6 @@ import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.io.File;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -102,17 +111,16 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     InputMethodManager inputMethodManager;
 
     private SearchQuery mSearchQuery;
-    private ProgressWheel mProgressWheel;
 
     /**
      * File tab 을 위한 액션바와 카테고리 선택 다이얼로그, 이벤트 전달
      */
     private int selectedTeamId;
     private boolean isSearchLayoutFirst = true;
-    private File photoFileByCamera;
     private boolean isForeground;
     private PublishSubject<Integer> initSearchSubject;
     private SearchActivity.OnSearchItemSelect onSearchItemSelect;
+    private SearchActivity.OnSearchText onSearchText;
 
     @AfterInject
     void init() {
@@ -138,20 +146,26 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     @AfterViews
     void bindAdapter() {
         LogUtil.d("FileListFragment AfterViews");
+
+        int screenView = getActivity() instanceof SearchActivity
+                ? ScreenViewProperty.FILE_SEARCH : ScreenViewProperty.FILE_PANEL;
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ScreenView, screenView)
+                        .build());
+
         setHasOptionsMenu(true);
-
-        // myToken 획득
-        // Progress Wheel 설정
-        mProgressWheel = new ProgressWheel(getActivity());
-
-        fileListModel.retrieveEntityManager();
 
         // Empty View를 가진 ListView 설정
         actualListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         actualListView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         actualListView.setAdapter(searchedFileItemListAdapter);
 
-        selectedTeamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
+        selectedTeamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
         searchedFileItemListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
             moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position)
@@ -249,6 +263,10 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         int justGetFilesSize;
 
+        if (!NetworkCheckUtil.isConnected()) {
+            return;
+        }
+
         fileListPresenter.showMoreProgressBar();
         try {
             ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
@@ -327,6 +345,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
 //        Log.d("INFO", "event setFileType" + event.getServerQuery());
         mSearchQuery.setFileType(event.getServerQuery());
+        if (onSearchText != null) {
+            mSearchQuery.setKeyword(onSearchText.getSearchText());
+        }
         searchedFileItemListAdapter.clearAdapter();
         initSearchSubject.onNext(-1);
         onSearchHeaderReset();
@@ -338,6 +359,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
 //        Log.d("INFO", "event setOwnerType");
         mSearchQuery.setWriter(event.userId);
+        if (onSearchText != null) {
+            mSearchQuery.setKeyword(onSearchText.getSearchText());
+        }
         searchedFileItemListAdapter.clearAdapter();
         initSearchSubject.onNext(-1);
         onSearchHeaderReset();
@@ -349,6 +373,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
 //        Log.d("INFO", "event setEntityType");
         mSearchQuery.setSharedEntity(event.sharedEntityId);
+        if (onSearchText != null) {
+            mSearchQuery.setKeyword(onSearchText.getSearchText());
+        }
         searchedFileItemListAdapter.clearAdapter();
         initSearchSubject.onNext(-1);
         onSearchHeaderReset();
@@ -377,6 +404,35 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
     }
 
+    public void onEvent(TopicDeleteEvent event) {
+        if (isInSearchActivity()) {
+            return;
+        }
+
+        // 토픽이 삭제되거나 나간 경우 해당 토픽의 파일 접근 여부를 알 수 없으므로
+        // 리로드하도록 처리함
+        int itemCount = searchedFileItemListAdapter.getItemCount();
+        initSearchSubject.onNext(itemCount);
+    }
+
+    public void onEvent(RetrieveTopicListEvent event) {
+        if (isInSearchActivity()) {
+            return;
+        }
+        int itemCount = searchedFileItemListAdapter.getItemCount();
+        initSearchSubject.onNext(itemCount);
+    }
+
+    public void onEVent(NetworkConnectEvent event) {
+        if (isInSearchActivity()) {
+            return;
+        }
+
+        if (event.isConnected() && searchedFileItemListAdapter.getItemCount() <= 0) {
+            initSearchSubject.onNext(-1);
+        }
+    }
+
     private boolean isInSearchActivity() {
         return getActivity() instanceof SearchActivity;
     }
@@ -402,6 +458,13 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         fileListPresenter.setEmptyViewVisible(View.GONE);
         fileListPresenter.setSearchEmptryViewVisible(View.GONE);
 
+        if (!NetworkCheckUtil.isConnected()) {
+            fileListPresenter.setInitLoadingViewVisible(View.GONE);
+            fileListPresenter.setEmptyViewVisible(View.GONE);
+            fileListPresenter.setSearchEmptryViewVisible(View.VISIBLE);
+            return;
+        }
+
         try {
             ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
             reqSearchFile.teamId = selectedTeamId;
@@ -409,6 +472,11 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
                 reqSearchFile.listCount = requestCount;
             }
             ResSearchFile resSearchFile = fileListModel.searchFileList(reqSearchFile);
+
+            String keyword = reqSearchFile.keyword;
+
+            fileListModel.trackFileKeywordSearchSuccess(keyword);
+
             if (resSearchFile.fileCount < reqSearchFile.listCount) {
                 searchedFileItemListAdapter.setNoMoreLoad();
             } else {
@@ -440,11 +508,14 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
             searchSucceed(resSearchFile);
         } catch (RetrofitError e) {
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            fileListModel.trackFileKeywordSearchFail(errorCode);
             e.printStackTrace();
             LogUtil.e("fail to get searched files.", e);
             searchFailed(R.string.err_file_search);
         } catch (Exception e) {
             e.printStackTrace();
+            fileListModel.trackFileKeywordSearchFail(-1);
             searchFailed(R.string.err_file_search);
         }
     }
@@ -626,6 +697,11 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     @Override
     public void setOnSearchItemSelect(SearchActivity.OnSearchItemSelect onSearchItemSelect) {
         this.onSearchItemSelect = onSearchItemSelect;
+    }
+
+    @Override
+    public void setOnSearchText(SearchActivity.OnSearchText onSearchText) {
+        this.onSearchText = onSearchText;
     }
 
     private void setHeaderImageViewImage(ViewGroup parentView, int imageResourceId) {

@@ -8,7 +8,11 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import rx.Observable;
+import rx.functions.Func0;
 
 /**
  * Created by justinygchoi on 2014. 8. 12..
@@ -37,7 +41,8 @@ public class FormattedEntity {
     // Starred
     public boolean isStarred = false;
     private ResLeftSideMenu.Entity entity;
-
+    // Topic Push
+    public boolean isTopicPushOn = true;
 
     public FormattedEntity(ResLeftSideMenu.Channel channel, boolean isJoined) {
         this.entity = channel;
@@ -177,11 +182,20 @@ public class FormattedEntity {
                 : null;
     }
 
-    public List<Integer> getMembers() {
+    public Collection<Integer> getMembers() {
         if (this.type == TYPE_REAL_CHANNEL) {
-            return getChannel().ch_members;
+            return Observable.from(getChannel().ch_members)
+                    .collect((Func0<ArrayList<Integer>>) ArrayList::new,
+                            ArrayList::add)
+                    .toBlocking()
+                    .first();
+
         } else if (this.type == TYPE_REAL_PRIVATE_GROUP) {
-            return getPrivateGroup().pg_members;
+            return Observable.from(getPrivateGroup().pg_members)
+                    .collect((Func0<ArrayList<Integer>>) ArrayList::new,
+                            ArrayList::add)
+                    .toBlocking()
+                    .first();
         } else {
             return null;
         }
@@ -191,10 +205,6 @@ public class FormattedEntity {
         ResLeftSideMenu.User me = getUser();
         return me.u_statusMessage;
     }
-//    public String getUserNickName() {
-//        ResLeftSideMenu.User me = getUser();
-//        return (me.u_nickname != null) ? me.u_nickname : me.name;
-//    }
 
     public String getUserEmail() {
         ResLeftSideMenu.User me = getUser();
@@ -305,7 +315,7 @@ public class FormattedEntity {
         return (this.entity.id == entityId);
     }
 
-    public boolean hasGivenIds(List<Integer> entityIds) {
+    public boolean hasGivenIds(Collection<Integer> entityIds) {
         for (int entityId : entityIds) {
             if (hasGivenId(entityId)) {
                 return true;

@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -81,20 +80,16 @@ public class MessageListV2Activity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (isFromPush) {
-            MainTabActivity_.intent(MessageListV2Activity.this)
-                    .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    .start();
+        if (onBackPressedListener != null && onBackPressedListener.onBackPressed()) {
+            // Do Nothing
         } else {
-            if (onBackPressedListener != null && onBackPressedListener.onBackPressed()) {
-                // Do Nothing
-            } else {
-                super.onBackPressed();
-            }
+            super.onBackPressed();
         }
     }
 
     public interface OnBackPressedListener {
         boolean onBackPressed();
     }
+
+
 }

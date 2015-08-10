@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -49,6 +49,8 @@ public class MainTopicModel {
                         .memberCount(formattedEntity.getMemberCount())
                         .name(formattedEntity.getName())
                         .unreadCount(formattedEntity.alarmCount)
+                        .markerLinkId(formattedEntity.lastLinkId)
+                        .isPushOn(formattedEntity.isTopicPushOn)
                         .build());
     }
 
@@ -67,6 +69,7 @@ public class MainTopicModel {
                     .isStarred(formattedEntity.isStarred)
                     .memberCount(formattedEntity.getMemberCount())
                     .name(formattedEntity.getName())
+                    .markerLinkId(formattedEntity.lastLinkId)
                     .unreadCount(formattedEntity.alarmCount)
                     .build();
         });
@@ -131,7 +134,7 @@ public class MainTopicModel {
     public boolean refreshEntity() {
         try {
             ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
-            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context, totalUnreadCount);
             BadgeUtils.setBadge(context, totalUnreadCount);

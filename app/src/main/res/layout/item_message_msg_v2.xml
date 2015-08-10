@@ -1,84 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout
-    android:id="@+id/ly_message_item"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/message_list_selector"
-    android:descendantFocusability="blocksDescendants"
-    android:foreground="?android:attr/selectableItemBackground"
-    android:orientation="horizontal"
-    android:paddingBottom="10dp"
-    android:paddingLeft="@dimen/jandi_messages_padding_left"
-    android:paddingRight="@dimen/jandi_messages_padding_right"
-    android:paddingTop="8dp"
-    android:visibility="visible">
-    <!-- 사용자 프로필 사진 -->
-    <ImageView
-        android:id="@+id/img_message_user_profile"
-        android:layout_width="@dimen/jandi_messages_profile_size"
-        android:layout_height="@dimen/jandi_messages_profile_size"
-        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"/>
-    <!-- 기본 표시 레이어 -->
+    android:orientation="vertical">
 
-
-    <TextView
-        android:id="@+id/txt_message_user_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/jandi_messages_default_margin_bottom"
-        android:layout_marginTop="4dp"
-        android:layout_toRightOf="@+id/img_message_user_profile"
-        android:ellipsize="end"
-        android:maxWidth="200dp"
-        android:singleLine="true"
-        android:text="User name"
-        android:textColor="@color/jandi_messages_name"
-        android:textSize="@dimen/jandi_messages_user_name"
-        android:textStyle="bold"/>
-
-    <ImageView
-        android:id="@+id/img_entity_listitem_line_through"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/txt_message_user_name"
-        android:layout_alignLeft="@+id/txt_message_user_name"
-        android:layout_alignRight="@+id/txt_message_user_name"
-        android:layout_alignTop="@+id/txt_message_user_name"
-        android:src="@drawable/line_gray"/>
-
-    <View
-        android:id="@+id/view_entity_listitem_warning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/img_message_user_profile"
-        android:layout_alignLeft="@+id/img_message_user_profile"
-        android:layout_alignRight="@+id/img_message_user_profile"
-        android:layout_alignTop="@+id/img_message_user_profile"
-        android:background="#99ffffff"
-        android:visibility="visible"/>
-
-    <!-- 실제 메시지 내용 -->
-    <TextView
-        android:id="@+id/txt_message_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txt_message_user_name"
-        android:layout_toRightOf="@+id/img_message_user_profile"
-        android:focusable="false"
-        android:text="Text"
-        android:textColor="@color/jandi_messages_content"
-        android:textSize="@dimen/jandi_messages_content"/>
-
-    <RelativeLayout
-        android:id="@+id/vg_linkpreview"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/ly_message_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/txt_message_content"
-        android:layout_below="@+id/txt_message_content"
-        android:layout_marginTop="10dp">
+        android:background="@drawable/message_list_selector"
+        android:descendantFocusability="blocksDescendants"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:orientation="horizontal"
+        android:paddingBottom="15dp"
+        android:paddingLeft="@dimen/jandi_messages_padding_left"
+        android:paddingRight="@dimen/jandi_messages_padding_right"
+        android:paddingTop="8dp"
+        android:visibility="visible">
+        <!-- 사용자 프로필 사진 -->
+        <ImageView
+            android:id="@+id/img_message_user_profile"
+            android:layout_width="@dimen/jandi_messages_profile_size"
+            android:layout_height="@dimen/jandi_messages_profile_size"
+            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
+        <!-- 기본 표시 레이어 -->
 
-        <include layout="@layout/item_message_layout_linkpreview_v2"/>
+
+        <TextView
+            android:id="@+id/txt_message_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="4dp"
+            android:layout_toRightOf="@+id/img_message_user_profile"
+            android:ellipsize="end"
+            android:maxWidth="200dp"
+            android:singleLine="true"
+            android:text="User name"
+            android:textColor="@color/jandi_messages_name"
+            android:textSize="@dimen/jandi_messages_user_name"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/img_entity_listitem_line_through"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/txt_message_user_name"
+            android:layout_alignLeft="@+id/txt_message_user_name"
+            android:layout_alignRight="@+id/txt_message_user_name"
+            android:layout_alignTop="@+id/txt_message_user_name"
+            android:src="@drawable/line_gray" />
+
+        <View
+            android:id="@+id/view_entity_listitem_warning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/img_message_user_profile"
+            android:layout_alignLeft="@+id/img_message_user_profile"
+            android:layout_alignRight="@+id/img_message_user_profile"
+            android:layout_alignTop="@+id/img_message_user_profile"
+            android:background="#99ffffff"
+            android:visibility="visible" />
+
+        <!-- 실제 메시지 내용 -->
+        <TextView
+            android:id="@+id/txt_message_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_message_user_name"
+            android:layout_marginRight="14dp"
+            android:layout_toRightOf="@+id/img_message_user_profile"
+            android:focusable="false"
+            android:lineSpacingExtra="2dip"
+            android:text="Text"
+            android:textColor="@color/jandi_messages_content"
+            android:textSize="@dimen/jandi_messages_content" />
+
+        <RelativeLayout
+            android:id="@+id/vg_linkpreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/txt_message_content"
+            android:layout_below="@+id/txt_message_content"
+            android:layout_marginRight="14dp"
+            android:layout_marginTop="10dp">
+
+            <include layout="@layout/item_message_layout_linkpreview_v2" />
+        </RelativeLayout>
     </RelativeLayout>
-</RelativeLayout>
+
+    <include
+        android:id="@+id/vg_message_last_read"
+        layout="@layout/item_message_last_read_v2" />
+
+</LinearLayout>

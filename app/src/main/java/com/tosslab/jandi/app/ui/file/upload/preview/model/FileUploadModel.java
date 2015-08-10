@@ -10,7 +10,6 @@ import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import rx.Observable;
@@ -29,15 +28,27 @@ public class FileUploadModel {
         EntityManager entityManager = EntityManager.getInstance(context);
         List<FormattedEntity> unsharedEntities = entityManager.retrieveExclusivedEntities(Arrays.asList(entityManager.getMe().getId()));
 
-        Iterator<FormattedEntity> enabledEntities = Observable.from(unsharedEntities)
-                .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled")).toBlocking()
-                .getIterator();
-
         List<FormattedEntity> formattedEntities = new ArrayList<>();
 
-        while (enabledEntities.hasNext()) {
-            formattedEntities.add(enabledEntities.next());
-        }
+        Observable.from(unsharedEntities)
+                .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
+                .toSortedList((formattedEntity, formattedEntity2) -> {
+                    if (formattedEntity.isUser() && formattedEntity2.isUser()) {
+                        return formattedEntity.getName()
+                                .compareToIgnoreCase(formattedEntity2.getName());
+                    } else if (!formattedEntity.isUser() && !formattedEntity2.isUser()) {
+                        return formattedEntity.getName()
+                                .compareToIgnoreCase(formattedEntity2.getName());
+                    } else {
+                        if (formattedEntity.isUser()) {
+                            return 1;
+                        } else {
+                            return -1;
+                        }
+                    }
+                })
+                .subscribe(formattedEntities::addAll);
+
 
         return formattedEntities;
     }

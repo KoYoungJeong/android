@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:id="@+id/vg_message_last_read"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="11dp"
+        android:layout_marginRight="11dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/unread_message_marker_bg"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/tv_message_last_read"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:text="@string/jandi_unread_messages_below"
+            android:textColor="@color/text_color_gray"
+            android:textSize="11sp"/>
+    </LinearLayout>
+
+</merge>

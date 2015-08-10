@@ -23,19 +23,25 @@ import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
-import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
+import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
+import com.tosslab.jandi.app.local.orm.domain.SendMessage;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.ReadyMessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
@@ -44,12 +50,16 @@ import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
-import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -59,6 +69,8 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -66,6 +78,8 @@ import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -79,7 +93,6 @@ public class MessageListModel {
     EntityClientManager entityClientManager;
     @Bean
     MessageListTimer messageListTimer;
-
     @RootContext
     AppCompatActivity activity;
 
@@ -173,33 +186,57 @@ public class MessageListModel {
                 .build(item);
     }
 
-    public int sendMessage(long localId, String message) {
-        SendingMessage sendingMessage = new SendingMessage(localId, message);
+    public int sendMessage(long localId, String message, List<MentionObject> mentions) {
+
+        SendingMessage sendingMessage = new SendingMessage(localId, new ReqSendMessageV3(message, mentions));
         try {
-            ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage());
-            JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(sendingMessage.getLocalId());
+            ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage(), sendingMessage.getMentions());
+
+            SendMessageRepository.getRepository().deleteSendMessage(sendingMessage.getLocalId());
+
+            trackMessagePostSuccess();
+
             EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
             return resCommon.id;
         } catch (RetrofitError e) {
             e.printStackTrace();
-            JandiMessageDatabaseManager.getInstance(activity).updateSendState(sendingMessage.getLocalId(), SendingState.Fail);
+            SendMessageRepository.getRepository().updateSendMessageStatus(
+                    sendingMessage.getLocalId(), SendMessage.Status.FAIL);
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            trackMessagePostFail(errorCode);
+            SendMessageRepository.getRepository().updateSendMessageStatus(
+                    sendingMessage.getLocalId(), SendMessage.Status.FAIL);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
             return -1;
         } catch (Exception e) {
-            JandiMessageDatabaseManager.getInstance(activity).updateSendState(sendingMessage.getLocalId(), SendingState.Fail);
+            SendMessageRepository.getRepository().updateSendMessageStatus(
+                    sendingMessage.getLocalId(), SendMessage.Status.FAIL);
+            trackMessagePostFail(-1);
+            SendMessageRepository.getRepository().updateSendMessageStatus(sendingMessage.getLocalId(), SendMessage.Status.FAIL);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
             return -1;
         }
     }
 
-    public long insertSendingMessage(int teamId, int entityId, String message) {
-        return JandiMessageDatabaseManager.getInstance(activity).insertSendMessage(teamId, entityId, message);
+    public long insertSendingMessage(int roomId, String message, List<MentionObject> mentions) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setRoomId(roomId);
+        sendMessage.setMessage(message);
+        if (mentions != null) {
+            for (MentionObject mention : mentions) {
+                mention.setSendMessageOf(sendMessage);
+            }
+        }
+        sendMessage.setMentionObjects(mentions);
+        SendMessageRepository.getRepository().insertSendMessage(sendMessage);
+        return sendMessage.getId();
     }
 
     public boolean isMyMessage(int writerId) {
         return EntityManager.getInstance(activity).getMe().getId() == writerId;
     }
 
+    @Deprecated
     public JsonObject uploadFile(ConfirmFileUploadEvent event, ProgressDialog progressDialog, boolean isPublicTopic) throws ExecutionException, InterruptedException {
         File uploadFile = new File(event.realFilePath);
         String requestURL = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/v2/file";
@@ -216,7 +253,7 @@ public class MessageListModel {
                 .setMultipartParameter("title", event.title)
                 .setMultipartParameter("share", "" + event.entityId)
                 .setMultipartParameter("permission", permissionCode)
-                .setMultipartParameter("teamId", String.valueOf(JandiAccountDatabaseManager.getInstance(activity).getSelectedTeamInfo().getTeamId()));
+                .setMultipartParameter("teamId", String.valueOf(AccountRepository.getRepository().getSelectedTeamInfo().getTeamId()));
 
         // Comment가 함께 등록될 경우 추가
         if (event.comment != null && !event.comment.isEmpty()) {
@@ -235,12 +272,15 @@ public class MessageListModel {
         messageManipulator.setMarker(lastUpdateLinkId);
     }
 
-    public void saveMessages(int teamId, int entityId, List<ResMessages.Link> lastItems) {
-        JandiMessageDatabaseManager.getInstance(activity).upsertMessage(teamId, entityId, lastItems);
+    public void saveMessages(List<ResMessages.Link> lastItems) {
+        MessageRepository.getRepository().upsertMessages(lastItems);
     }
 
-    public void saveTempMessage(int teamId, int entityId, String sendEditText) {
-        JandiMessageDatabaseManager.getInstance(activity).upsertTempMessage(teamId, entityId, sendEditText);
+    public void saveTempMessage(int roomId, String sendEditText) {
+        ReadyMessage readyMessage = new ReadyMessage();
+        readyMessage.setRoomId(roomId);
+        readyMessage.setText(sendEditText);
+        ReadyMessageRepository.getRepository().upsertReadyMessage(readyMessage);
     }
 
     public void deleteTopic(int entityId, int entityType) throws RetrofitError {
@@ -299,26 +339,40 @@ public class MessageListModel {
     }
 
     public void deleteSendingMessage(long localId) {
-        JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(localId);
+        SendMessageRepository.getRepository().deleteSendMessage(localId);
     }
 
-    public List<ResMessages.Link> getDummyMessages(int teamId, int entityId, String name, String userLargeProfileUrl) {
-        List<ResMessages.Link> sendMessage = JandiMessageDatabaseManager.getInstance(activity).getSendMessage(teamId, entityId);
+    public List<ResMessages.Link> getDummyMessages(int roomId) {
+        List<SendMessage> sendMessage = SendMessageRepository.getRepository().getSendMessage
+                (roomId);
         int id = EntityManager.getInstance(activity).getMe().getId();
-        for (ResMessages.Link link : sendMessage) {
+        List<ResMessages.Link> links = new ArrayList<>();
+        for (SendMessage link : sendMessage) {
 
-            link.message.writerId = id;
-            link.message.createTime = new Date();
+            List<MentionObject> mentionObjects = new ArrayList<>();
+
+            Collection<MentionObject> savedMention = link.getMentionObjects();
+            if (savedMention != null) {
+                for (MentionObject mentionObject : savedMention) {
+                    mentionObjects.add(mentionObject);
+                }
+            }
+
+            DummyMessageLink dummyMessageLink = new DummyMessageLink(link.getId(), link.getMessage(),
+                    link.getStatus(), mentionObjects);
+            dummyMessageLink.message.writerId = id;
+            dummyMessageLink.message.createTime = new Date();
+            links.add(dummyMessageLink);
         }
-        return sendMessage;
+        return links;
     }
 
     public boolean isFailedDummyMessage(DummyMessageLink dummyMessageLink) {
-        return dummyMessageLink.getSendingState() == SendingState.Fail;
+        return TextUtils.equals(dummyMessageLink.getStatus(), SendMessage.Status.FAIL.name());
     }
 
     public void deleteDummyMessageAtDatabase(long localId) {
-        JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(localId);
+        SendMessageRepository.getRepository().deleteSendMessage(localId);
     }
 
     public boolean isDefaultTopic(int entityId) {
@@ -366,7 +420,7 @@ public class MessageListModel {
 
         try {
             ResRoomInfo resRoomInfo = RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId, roomId);
-            JandiMarkerDatabaseManager.getInstance(activity.getApplicationContext()).upsertMarkers(resRoomInfo);
+            MarkerRepository.getRepository().upsertRoomInfo(resRoomInfo);
             EventBus.getDefault().post(new RoomMarkerEvent());
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -375,17 +429,17 @@ public class MessageListModel {
     }
 
     public void deleteMarker(int teamId, int roomId, int memberId) {
-        JandiMarkerDatabaseManager.getInstance(activity).deleteMarker(teamId, roomId, memberId);
+        MarkerRepository.getRepository().deleteRoomMarker(roomId, memberId);
     }
 
     public void insertMarker(int teamId, int roomId, int memberId) {
-        JandiMarkerDatabaseManager.getInstance(activity).updateMarker(teamId, roomId, memberId, -1);
+        MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, memberId, -1);
     }
 
     public void updateEntityInfo() {
         try {
             ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
-            JandiEntityDatabaseManager.getInstance(activity).upsertLeftSideMenu(totalEntitiesInfo);
+            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             EntityManager.getInstance(activity).refreshEntity(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(activity, totalUnreadCount);
@@ -397,11 +451,11 @@ public class MessageListModel {
 
     public void upsertMyMarker(int roomId, int lastLinkId) {
         int myId = EntityManager.getInstance(activity).getMe().getId();
-        int teamId = JandiAccountDatabaseManager.getInstance(activity).getSelectedTeamInfo().getTeamId();
-        JandiMarkerDatabaseManager.getInstance(activity).updateMarker(teamId, roomId, myId, lastLinkId);
+        int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
+        MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, myId, lastLinkId);
     }
 
-    public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, String message) {
+    public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, String message, List<MentionObject> mentions) {
 
         FormattedEntity entity = EntityManager.getInstance(activity.getApplicationContext()).getEntityById(entityId);
         String type = null;
@@ -409,16 +463,150 @@ public class MessageListModel {
             type = entity.isPublicTopic() ? JandiConstants.RoomType.TYPE_PUBLIC : entity.isPrivateGroup() ? JandiConstants.RoomType.TYPE_PRIVATE : JandiConstants.RoomType.TYPE_USER;
         }
 
-        ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), teamId, entityId, type, message);
+        ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), teamId, entityId, type, message, mentions);
 
         try {
             RequestApiManager.getInstance().sendStickerByStickerApi(reqSendSticker);
+
+            trackMessagePostSuccess();
+
             return 1;
         } catch (RetrofitError e) {
             e.printStackTrace();
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            trackMessagePostFail(errorCode);
             return -1;
         }
 
     }
 
+    private void trackMessagePostSuccess() {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.MessagePost)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .build())
+                .flush();
+    }
+
+    private void trackMessagePostFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.MessagePost)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build())
+                .flush();
+    }
+
+    public void trackMessageDeleteSuccess(int messageId) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.MessageDelete)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.MessageId, messageId)
+                        .build());
+    }
+
+    public void trackMessageDeleteFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.MessageDelete)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
+    public void registStarredMessage(int teamId, int messageId) {
+        try {
+            RequestApiManager.getInstance()
+                    .registStarredMessageByTeamApi(teamId, messageId);
+            MessageRepository.getRepository().updateStarred(messageId, true);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public void unregistStarredMessage(int teamId, int messageId) {
+        try {
+            RequestApiManager.getInstance()
+                    .unregistStarredMessageByTeamApi(teamId, messageId);
+            MessageRepository.getRepository().updateStarred(messageId, false);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public boolean isUser(int entityId) {
+        return EntityManager
+                .getInstance(JandiApplication.getContext())
+                .getEntityById(entityId).isUser();
+    }
+
+    public String getReadyMessage(int roomId) {
+        return ReadyMessageRepository.getRepository().getReadyMessage(roomId).getText();
+    }
+
+    public void upsertMessages(ResMessages messages) {
+        Observable.from(messages.records)
+                .onBackpressureBuffer()
+                .observeOn(Schedulers.io())
+                .subscribe(link -> {
+                    link.roomId = messages.entityId;
+                    MessageRepository.getRepository().upsertMessage(link);
+                });
+
+
+    }
+
+    public void setRoomId(int roomId) {
+        messageManipulator.setRoomId(roomId);
+    }
+
+    public int getLastReadLinkId(int roomId, int entityId) {
+        if (roomId > 0) {
+            // 기존의 마커 정보 가져오기
+            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            Collection<ResRoomInfo.MarkerInfo> roomMarkers = MarkerRepository.getRepository().getRoomMarker(teamId, roomId);
+            int myEntityId = EntityManager.getInstance(JandiApplication.getContext()).getMe().getId();
+
+            ResRoomInfo.MarkerInfo defaultInfo = new ResRoomInfo.MarkerInfo();
+            ResRoomInfo.MarkerInfo myMarker = Observable.from(roomMarkers)
+                    .filter(markerInfo -> markerInfo.getMemberId() == myEntityId)
+                    .firstOrDefault(defaultInfo)
+                    .toBlocking()
+                    .first();
+
+            if (myMarker != defaultInfo) {
+                return myMarker.getLastLinkId();
+            }
+        }
+
+        // 엔티티 기준으로 정보 가져오기
+        ResLeftSideMenu.User myUser = EntityManager.getInstance(JandiApplication.getContext()).getMe()
+                .getUser();
+
+        Integer lastLinkId = Observable.from(myUser.u_messageMarkers)
+                .filter(messageMarker -> messageMarker.entityId == entityId)
+                .map(messageMarker -> messageMarker.lastLinkId)
+                .firstOrDefault(-1)
+                .toBlocking()
+                .first();
+
+        return lastLinkId;
+    }
+
+    public int getMyId() {
+        return EntityManager.getInstance(JandiApplication.getContext()).getMe().getId();
+    }
 }

@@ -6,7 +6,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +13,13 @@ import android.view.ViewGroup;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
+import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
-import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -48,6 +48,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
     private int teamId;
     private int roomId;
     private int entityId;
+    private int lastReadLinkId;
 
     public MessageListAdapter(Context context) {
         this.context = context;
@@ -55,12 +56,16 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         oldMoreState = MoreState.Idle;
     }
 
-    public void setTeamId(int teamId) {
-        this.teamId = teamId;
+    public int getLastReadLinkId() {
+        return lastReadLinkId;
     }
 
-    public void setRoomId(int roomId) {
-        this.roomId = roomId;
+    public void setLastReadLinkId(int lastReadLinkId) {
+        this.lastReadLinkId = lastReadLinkId;
+    }
+
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
     }
 
     public int getCount() {
@@ -70,12 +75,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
     @Override
     public RecyclerBodyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-
         BodyViewHolder viewHolder = BodyViewFactory.createViewHolder(viewType);
         View convertView = LayoutInflater.from(context).inflate(viewHolder.getLayoutId(), parent, false);
-
         viewHolder.initView(convertView);
-
 
         RecyclerBodyViewHolder recyclerBodyViewHolder = new RecyclerBodyViewHolder(convertView, viewHolder);
 
@@ -92,7 +94,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
             if (markerAnimState == AnimState.Idle) {
                 final View view = viewHolder.itemView;
                 Integer colorFrom = context.getResources().getColor(R.color.white);
-                Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_b2);
+                Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);
                 final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
                 colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
                 colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
@@ -108,6 +110,12 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
                 colorAnimation.start();
                 markerAnimState = AnimState.Loading;
             }
+        }
+
+        if (position > 0 && position < getItemCount() - 1 - getDummyMessageCount()) {
+            viewHolder.getViewHolder().setLastReadViewVisible(item.id, lastReadLinkId);
+        } else {
+            viewHolder.getViewHolder().setLastReadViewVisible(0, -1);
         }
 
         if (position == 0 && oldMoreState == MoreState.Idle) {
@@ -182,7 +190,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
             ResMessages.Link link = messageList.get(idx);
             if (link instanceof DummyMessageLink) {
                 DummyMessageLink dummyLink = (DummyMessageLink) link;
-                if (dummyLink.getSendingState() == SendingState.Complete) {
+                if (TextUtils.equals(dummyLink.getStatus(), SendMessage.Status.COMPLETE.name())) {
                     messageList.remove(idx);
                 }
             } else {
@@ -205,7 +213,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
                 messages.remove(link);
             } else if (TextUtils.equals(link.status, "archived")) {
                 int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
-
                 // if file type
                 if (TextUtils.equals(link.message.contentType, "file")) {
 
@@ -371,10 +378,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
 
     }
 
-    public void updateDummyMessageState(long localId, SendingState state) {
+    public void updateDummyMessageState(long localId, SendMessage.Status state) {
         int dummeMessagePositionByLocalId = getDummeMessagePositionByLocalId(localId);
         if (dummeMessagePositionByLocalId >= 0) {
-            ((DummyMessageLink) getItem(dummeMessagePositionByLocalId)).setSendingState(state);
+            ((DummyMessageLink) getItem(dummeMessagePositionByLocalId)).setStatus(state.name());
         }
     }
 
@@ -440,9 +447,28 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         return roomId;
     }
 
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
+    }
+
     public MessageListAdapter setEntityId(int entityId) {
         this.entityId = entityId;
         return this;
+    }
+
+    public int indexOfLinkId(int linkId) {
+        int size = messageList.size();
+        for (int idx = size - 1; idx >= 0; --idx) {
+            if (messageList.get(idx).id == linkId) {
+                return idx;
+            }
+        }
+        return -1;
+    }
+
+    public void modifyStarredStateByPosition(int position, boolean isStarred) {
+        messageList.get(position).message.isStarred = isStarred;
+        notifyItemChanged(position);
     }
 
     private enum MoreState {

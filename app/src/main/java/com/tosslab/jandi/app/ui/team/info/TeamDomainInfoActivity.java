@@ -6,13 +6,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -50,6 +57,13 @@ public class TeamDomainInfoActivity extends AppCompatActivity {
 
     @AfterViews
     void initView() {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_CREATE)
+                        .build());
+
         MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
                 .pageViewTeamCreate();
         teamDomainInfoPresenter.setTeamCreatable(true);
@@ -98,10 +112,14 @@ public class TeamDomainInfoActivity extends AppCompatActivity {
     }
 
 
-    @Background
     @OptionsItem(R.id.action_confirm)
     void confirmTeamDomain() {
         String teamName = teamDomainInfoPresenter.getTeamName();
+        // TODO, FIXME 20자 넘을 때 l10n ?
+        if (teamDomainInfoPresenter.isExceedTeamNameCharacters(teamName)) {
+//            return;
+        }
+
         String teamDomain = teamDomainInfoPresenter.getTeamDomain();
         String myName = userName;
         String myEmail = userEmail;
@@ -114,23 +132,34 @@ public class TeamDomainInfoActivity extends AppCompatActivity {
         createTeam(teamName, teamDomain.toLowerCase(), myName, myEmail);
     }
 
-    private void createTeam(String teamName, String teamDomain, String myName, String myEmail) {
+    @Background
+    void createTeam(String teamName, String teamDomain, String myName, String myEmail) {
         teamDomainInfoPresenter.showProgressWheel();
 
         // Team Creation
         try {
             ResTeamDetailInfo newTeam = teamDomainInfoModel.createNewTeam(teamName, teamDomain);
 
-            String distictId = newTeam.getInviteTeam().getId() + "-" + newTeam.getInviteTeam().getTeamId();
+            int teamId = newTeam.getInviteTeam().getTeamId();
+            String distictId = newTeam.getInviteTeam().getId() + "-" + teamId;
             MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
                     .pageViewTeamCreateSuccess();
 
-            teamDomainInfoModel.updateTeamInfo(newTeam.getInviteTeam().getTeamId());
+            teamDomainInfoModel.updateTeamInfo(teamId);
+
+            teamDomainInfoModel.trackCreateTeamSuccess(teamId);
+
             teamDomainInfoPresenter.dismissProgressWheel();
             teamDomainInfoPresenter.successCreateTeam(newTeam.getInviteTeam().getName());
 
         } catch (RetrofitError e) {
             e.printStackTrace();
+            int errorCode = -1;
+            if (e.getResponse() != null) {
+                errorCode = e.getResponse().getStatus();
+            }
+            teamDomainInfoModel.trackCreateTeamFail(errorCode);
+
             teamDomainInfoPresenter.dismissProgressWheel();
             if (e.getCause() instanceof ConnectionNotFoundException) {
                 teamDomainInfoPresenter.showFailToast(getString(R.string.err_network));

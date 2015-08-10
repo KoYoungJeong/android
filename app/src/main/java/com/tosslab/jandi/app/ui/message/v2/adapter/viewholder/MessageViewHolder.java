@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
@@ -38,6 +39,7 @@ public class MessageViewHolder implements BodyViewHolder {
     private View disableCoverView;
     private View disableLineThroughView;
     private LinkPreviewViewModel linkPreviewViewModel;
+    private View lastReadView;
 
     @Override
     public void initView(View rootView) {
@@ -50,6 +52,7 @@ public class MessageViewHolder implements BodyViewHolder {
 
         linkPreviewViewModel = new LinkPreviewViewModel(context);
         linkPreviewViewModel.initView(rootView);
+        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -114,7 +117,7 @@ public class MessageViewHolder implements BodyViewHolder {
             messageStringBuilder.setSpan(spannable,
                     startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            int unreadCount = UnreadCountUtil.getUnreadCount(context, teamId, roomId,
+            int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
                     link.id, link.fromEntity, EntityManager.getInstance(context).getMe().getId());
 
             if (unreadCount > 0) {
@@ -129,6 +132,11 @@ public class MessageViewHolder implements BodyViewHolder {
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
+
+            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                    messageTextView, messageStringBuilder, textMessage.mentions, entityManager.getMe().getId());
+            messageStringBuilder = generateMentionMessageUtil.generate();
+
             messageTextView.setText(messageStringBuilder);
 
         }
@@ -138,6 +146,15 @@ public class MessageViewHolder implements BodyViewHolder {
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
 
         linkPreviewViewModel.bindData(link);
+    }
+
+    @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        if (currentLinkId == lastReadLinkId) {
+            lastReadView.setVisibility(View.VISIBLE);
+        } else {
+            lastReadView.setVisibility(View.GONE);
+        }
     }
 
     @Override

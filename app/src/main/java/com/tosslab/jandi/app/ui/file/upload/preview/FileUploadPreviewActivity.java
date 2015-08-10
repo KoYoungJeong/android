@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.file.upload.preview;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -30,6 +29,7 @@ import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadPagerAdapt
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenter;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenterImpl;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
+import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -37,6 +37,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.Fullscreen;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.SystemService;
@@ -48,8 +49,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 import rx.subjects.PublishSubject;
 
 /**
@@ -57,6 +60,7 @@ import rx.subjects.PublishSubject;
  */
 @EActivity(R.layout.activity_file_upload_insert_commnet)
 @OptionsMenu(R.menu.file_insert_comment_menu)
+@Fullscreen
 public class FileUploadPreviewActivity extends AppCompatActivity implements FileUploadPresenter.View {
 
     public static final int REQUEST_CODE = 17863;
@@ -124,11 +128,6 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
                 }, throwable -> {
                 });
 
-        int newUiOptions = View.SYSTEM_UI_FLAG_LOW_PROFILE;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            newUiOptions |= View.SYSTEM_UI_FLAG_FULLSCREEN;
-        }
-        getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
     }
 
     @Override
@@ -163,8 +162,6 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
 
             inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
         }
-
-
     }
 
     @Override
@@ -304,15 +301,44 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
     public void showEntitySelectDialog(List<FormattedEntity> entityList) {
 
 
-        android.view.View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.dialog_select_cdp, null);
+        android.view.View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.dialog_invite_to_topic, null);
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-        final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(getApplicationContext(), entityList);
+        EditText et = (EditText) view.findViewById(R.id.et_cdp_search);
+
+        final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, entityList);
+
+        PublishSubject<String> publishSubject = PublishSubject.create();
+        Subscription subscribe = publishSubject.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
+                .flatMap(s -> {
+                    String searchText = s.toLowerCase();
+
+                    return Observable.from(entityList)
+                            .filter(formattedEntity -> formattedEntity.getName().toLowerCase()
+                                    .contains(searchText))
+                            .collect((Func0<ArrayList<FormattedEntity>>) ArrayList::new, ArrayList::add);
+
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(adapter::setEntities);
+
+        publishSubject.onNext("");
+
+        et.addTextChangedListener(new SimpleTextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                publishSubject.onNext(s.toString());
+            }
+        });
 
         Dialog dialog = new AlertDialog.Builder(FileUploadPreviewActivity.this)
-                .setTitle(R.string.jandi_file_search_user)
+                .setTitle(R.string.jandi_title_cdp_to_be_shared)
                 .setView(view)
                 .create();
         dialog.show();
+
+        dialog.setOnDismissListener(dialog1 -> subscribe.unsubscribe());
+
+        lv.setAdapter(adapter);
 
         lv.setOnItemClickListener((adapterView, view1, position, l) -> {
 
@@ -324,7 +350,6 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
 
             fileUploadPresenter.onEntityUpdate(item);
         });
-        lv.setAdapter(adapter);
     }
 
     @Override

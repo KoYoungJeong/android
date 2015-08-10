@@ -7,10 +7,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.photo.presenter.PhotoViewPresenter;
@@ -23,6 +25,8 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+
+import java.io.File;
 
 import uk.co.senab.photoview.PhotoView;
 
@@ -88,15 +92,14 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
     // Gif 일 때는 Ion 이용.(다운로드 불필요)
     @UiThread
     @Override
-    public void loadImageGif() {
+    public void loadImageGif(File file) {
 
         if (getActivity() == null) {
             return;
         }
 
-        Ion.with(this)
-                .load(imageUrl)
-                .progress((downloaded, total) -> updateProgress(total, downloaded))
+        Ion.with(getActivity())
+                .load(file)
                 .intoImageView(photoView)
                 .setCallback((e, result) -> {
                     hideProgress();
@@ -159,9 +162,11 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
             return;
         }
 
-        Glide.with(this)
+        Glide.with(JandiApplication.getContext())
                 .load(target)
                 .fitCenter()
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .error(R.drawable.jandi_fl_icon_deleted)
                 .listener(new RequestListener<T, GlideDrawable>() {
                     @Override

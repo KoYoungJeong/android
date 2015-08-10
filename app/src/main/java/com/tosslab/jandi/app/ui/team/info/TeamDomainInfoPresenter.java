@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.team.info;
 
 import android.app.Activity;
+import android.text.TextUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
@@ -50,6 +51,10 @@ public class TeamDomainInfoPresenter {
 
     public String getTeamName() {
         return teamNameView.getText().toString();
+    }
+
+    public boolean isExceedTeamNameCharacters(String text) {
+        return !TextUtils.isEmpty(text) && text.length() > 20;
     }
 
     public void setTeamName(String teamName) {

@@ -52,8 +52,6 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
     @Override
     public void onEntitySelect(int currentItem) {
 
-        int entity = fileUploadVOs.get(currentItem).getEntity();
-
         List<FormattedEntity> entityList = fileUploadModel.getEntityInfoWithoutMe(context);
 
         view.showEntitySelectDialog(entityList);

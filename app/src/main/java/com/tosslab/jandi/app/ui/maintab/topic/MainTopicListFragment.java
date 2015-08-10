@@ -10,10 +10,12 @@ import android.view.View;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicRecyclerAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicRecyclerStickyHeaderAdapter;
@@ -25,10 +27,16 @@ import com.tosslab.jandi.app.ui.maintab.topic.presenter.MainTopicListPresenter;
 import com.tosslab.jandi.app.ui.maintab.topic.presenter.MainTopicListPresenterImpl;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -69,6 +77,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     TopicRecyclerAdapter topicListAdapter;
     private ProgressWheel progressWheel;
 
+    private boolean isForeground = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,11 +88,18 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     @Override
     public void onResume() {
         super.onResume();
+        isForeground = true;
         btnFA.setAnimation(null);
         btnFA.setVisibility(View.VISIBLE);
 
         topicListAdapter.startAnimation();
         mainTopicListPresenter.onRefreshTopicList();
+    }
+
+    @Override
+    public void onPause() {
+        isForeground = false;
+        super.onPause();
     }
 
     @Override
@@ -105,6 +121,13 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
     @AfterViews
     void initView() {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ScreenView, ScreenViewProperty.TOPIC_PANEL)
+                        .build());
 
         rvTopic.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvTopic.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
@@ -179,13 +202,14 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     }
 
     @Override
-    public void moveToMessageActivity(int entityId, int entityType, boolean starred, int teamId) {
+    public void moveToMessageActivity(int entityId, int entityType, boolean starred, int teamId, int markerLinkId) {
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityType(entityType)
                 .entityId(entityId)
                 .teamId(teamId)
                 .roomId(entityId)
+                .lastMarker(markerLinkId)
                 .isFavorite(starred)
                 .startForResult(MainTabActivity.REQ_START_MESSAGE);
     }
@@ -292,4 +316,12 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         mainTopicListPresenter.onNewMessage(event);
 
     }
+
+    public void onEvent(SocketTopicPushEvent event) {
+        if (!isForeground) {
+            return;
+        }
+        mainTopicListPresenter.onInitTopics(getActivity());
+    }
+
 }

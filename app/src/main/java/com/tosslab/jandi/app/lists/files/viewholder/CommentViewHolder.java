@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.lists.files.viewholder;
 
+import android.animation.Animator;
 import android.view.View;
 
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -10,6 +11,10 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 public interface CommentViewHolder {
 
     void init(View rootView);
+
     void bind(ResMessages.OriginalMessage originalMessage);
+
+    void startAnimation(Animator.AnimatorListener animatorListener);
+
     int getLayoutResourceId();
 }

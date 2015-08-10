@@ -9,11 +9,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteTopicDialogFragment;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
@@ -24,6 +26,9 @@ import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
@@ -33,6 +38,7 @@ import com.tosslab.jandi.app.ui.message.detail.presenter.TopicDetailPresenter;
 import com.tosslab.jandi.app.ui.message.detail.presenter.TopicDetailPresenterImpl;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -55,7 +61,8 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @FragmentArg
     int entityId;
-
+    @FragmentArg
+    int teamId;
 
     @Bean(TopicDetailPresenterImpl.class)
     TopicDetailPresenter topicDetailPresenter;
@@ -72,11 +79,23 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @ViewById(R.id.vg_topic_detail_invite)
     View vgInvite;
+
     @ViewById(R.id.vg_topic_detail_delete)
     View vgDelete;
+    @ViewById(R.id.vg_topic_detail_leave)
+    View vgLeave;
+    @ViewById(R.id.view_topic_detail_leve_to_delete)
+    View viewDividerDelete;
+    @ViewById(R.id.vg_topic_detail_default_message)
+    View vgDefaultMessage;
+
     @ViewById(R.id.iv_topic_detail_starred)
     View ivStarred;
-    private boolean owner;
+    @ViewById(R.id.switch_topic_detail_set_push)
+    SwitchCompat switchSetPush;
+    @ViewById(R.id.tv_topic_detail_set_push)
+    TextView tvSetPush;
+
     private ProgressWheel progressWheel;
 
     @AfterInject
@@ -134,10 +153,10 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     public void onEvent(ConfirmModifyTopicEvent event) {
-        topicDetailPresenter.onConfirmChangeTopicName(getActivity()
-                , event.topicId
-                , event.inputName
-                , event.topicType);
+        topicDetailPresenter.onConfirmChangeTopicName(getActivity(),
+                event.topicId,
+                event.inputName,
+                event.topicType);
     }
 
     public void onEventMainThread(TopicInfoUpdateEvent event) {
@@ -145,12 +164,31 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     public void onEventMainThread(RetrieveTopicListEvent event) {
+        FormattedEntity entity =
+                EntityManager.getInstance(JandiApplication.getContext()).getEntityById(entityId);
+        if (entity == null) {
+            return;
+        }
         topicDetailPresenter.onInit(getActivity(), entityId);
     }
 
     public void onEventMainThread(TopicDeleteEvent event) {
         if (event.getId() == entityId) {
             leaveTopic();
+        }
+    }
+
+    public void onEventMainThread(SocketTopicPushEvent event) {
+        if (event.getData() == null) {
+            LogUtil.e("SocketTopicPushEvent - event.data is null");
+            return;
+        }
+
+        boolean isPushSubscribe = event.getData().isSubscribe();
+        LogUtil.e("SocketTopicPushEvent - isPushSubscribe ? " + isPushSubscribe);
+
+        if (switchSetPush.isChecked() != isPushSubscribe) {
+            setTopicPushSwitch(isPushSubscribe);
         }
     }
 
@@ -186,6 +224,22 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
                 .type(MembersListActivity.TYPE_MEMBERS_LIST_TOPIC)
                 .entityId(entityId)
                 .start();
+    }
+
+    // Topic Push
+    @Click(R.id.vg_topic_detail_set_push)
+    void onPushClick() {
+        boolean checked = !switchSetPush.isChecked();
+
+        setTopicPushSwitch(checked);
+
+        topicDetailPresenter.updateTopicPushSubscribe(getActivity(), teamId, entityId, checked);
+    }
+
+    @UiThread
+    @Override
+    public void setTopicPushSwitch(boolean isPushOn) {
+        switchSetPush.setChecked(isPushOn);
     }
 
     @OptionsItem(R.id.action_add_member)
@@ -233,6 +287,29 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         tvMemberCount.setText(String.valueOf(topicMemberCount));
     }
 
+    @Override
+    public void setLeaveVisible(boolean owner, boolean defaultTopic) {
+        if (defaultTopic) {
+            vgLeave.setVisibility(View.GONE);
+            vgDelete.setVisibility(View.GONE);
+            vgDefaultMessage.setVisibility(View.VISIBLE);
+            viewDividerDelete.setVisibility(View.GONE);
+
+        } else {
+            vgLeave.setVisibility(View.VISIBLE);
+            if (owner) {
+                viewDividerDelete.setVisibility(View.VISIBLE);
+                vgDelete.setVisibility(View.VISIBLE);
+            } else {
+                viewDividerDelete.setVisibility(View.GONE);
+                vgDelete.setVisibility(View.GONE);
+            }
+            vgDefaultMessage.setVisibility(View.GONE);
+
+
+        }
+    }
+
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showSuccessToast(String message) {
@@ -243,16 +320,6 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @Override
     public void showFailToast(String message) {
         ColoredToast.showWarning(getActivity(), message);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void setEnableTopicDelete(boolean owner) {
-        if (owner) {
-            vgDelete.setVisibility(View.VISIBLE);
-        } else {
-            vgDelete.setVisibility(View.GONE);
-        }
     }
 
     @Override

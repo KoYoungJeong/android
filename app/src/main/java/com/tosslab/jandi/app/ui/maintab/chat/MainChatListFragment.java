@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
+import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
@@ -27,7 +28,13 @@ import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -65,6 +72,9 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     @ViewById(R.id.layout_main_chat_list_empty)
     View emptyView;
 
+    @ViewById(R.id.btn_main_chat_fab)
+    View btnFAB;
+
     MainChatListAdapter mainChatListAdapter;
     private boolean foreground;
 
@@ -77,11 +87,18 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
 
     @AfterViews
     void initViews() {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_PANEL)
+                        .build());
 
         chatListView.setEmptyView(emptyView);
         chatListView.setAdapter(mainChatListAdapter);
 
-        FAButtonUtil.setFAButtonController(chatListView, getView().findViewById(R.id.btn_main_chat_fab));
+        FAButtonUtil.setFAButtonController(chatListView, btnFAB);
 
         mainChatListPresenter.onInitChatList(getActivity(), selectedEntity);
 
@@ -97,8 +114,13 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     public void onResume() {
         super.onResume();
         foreground = true;
+        
+        btnFAB.setAnimation(null);
+        btnFAB.setVisibility(View.VISIBLE);
+
         mainChatListAdapter.startAnimation();
         mainChatListPresenter.onReloadChatList(JandiApplication.getContext());
+
     }
 
     @Override
@@ -148,7 +170,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     }
 
     @Override
-    public void moveMessageActivity(int teamId, int entityId, int roomId, boolean isStarred) {
+    public void moveMessageActivity(int teamId, int entityId, int roomId, boolean isStarred, int lastLinkId) {
         MessageListV2Activity_.intent(getActivity())
                 .teamId(teamId)
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
@@ -156,6 +178,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
                 .roomId(roomId)
                 .isFavorite(isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .lastMarker(lastLinkId)
                 .startForResult(MainTabActivity.REQ_START_MESSAGE);
     }
 
@@ -210,7 +233,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
             return;
         }
 
-        if (TextUtils.equals(event.getEntityType(), "user")) {
+        if(TextUtils.equals(event.getEntityType(), PushTO.RoomType.CHAT.getName())) {
             mainChatListPresenter.onReloadChatList(getActivity());
         }
     }

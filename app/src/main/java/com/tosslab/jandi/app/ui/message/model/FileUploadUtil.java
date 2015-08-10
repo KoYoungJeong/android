@@ -18,7 +18,7 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -32,6 +32,7 @@ import java.net.URLConnection;
 /**
  * Created by Steve SeongUg Jung on 14. 12. 10..
  */
+@Deprecated
 public class FileUploadUtil {
 
     public static void uploadStart(ConfirmFileUploadEvent event, Context context, ChattingInfomations chattingInfomations, final UploadCallback uploadCallback) {
@@ -62,7 +63,7 @@ public class FileUploadUtil {
                 .setMultipartParameter("title", uploadFile.getName())
                 .setMultipartParameter("share", "" + event.entityId)
                 .setMultipartParameter("permission", permissionCode)
-                .setMultipartParameter("teamId", String.valueOf(JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId()));
+                .setMultipartParameter("teamId", String.valueOf(AccountRepository.getRepository().getSelectedTeamInfo().getTeamId()));
 
         // Comment가 함께 등록될 경우 추가
         if (event.comment != null && !event.comment.isEmpty()) {

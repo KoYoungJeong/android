@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.chat.presenter;
 
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 
@@ -35,7 +34,7 @@ public interface MainChatListPresenter {
 
         void setSelectedItem(int selectedEntityId);
 
-        void moveMessageActivity(int teamId, int entityId, int roomId, boolean isStarred);
+        void moveMessageActivity(int teamId, int entityId, int roomId, boolean isStarred, int lastLinkId);
 
         void scrollToPosition(int selectedEntityPosition);
     }

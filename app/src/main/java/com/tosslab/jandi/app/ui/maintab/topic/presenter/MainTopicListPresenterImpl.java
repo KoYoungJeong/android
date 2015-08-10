@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicRecyclerAdapter;
@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -46,10 +47,10 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
     public void onInitTopics(Context context) {
         EntityManager entityManager = EntityManager.getInstance(context);
 
-        Observable<Topic> joinEntities = mainTopicModel.getJoinEntities(entityManager.getJoinedChannels
-                (), entityManager.getGroups());
-        Observable<Topic> unjoinEntities = mainTopicModel.getUnjoinEntities(entityManager
-                .getUnjoinedChannels());
+        Observable<Topic> joinEntities = mainTopicModel.getJoinEntities(
+                entityManager.getJoinedChannels(), entityManager.getGroups());
+        Observable<Topic> unjoinEntities =
+                mainTopicModel.getUnjoinEntities(entityManager.getUnjoinedChannels());
 
         view.setEntities(joinEntities, unjoinEntities);
 
@@ -67,8 +68,11 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
     @Override
     public void onItemClick(Context context, RecyclerView.Adapter adapter, int position) {
         Topic item = ((TopicRecyclerAdapter) adapter).getItem(position);
+        if (item == null) {
+            return;
+        }
         item.setUnreadCount(0);
-        adapter.notifyItemChanged(position);
+        adapter.notifyDataSetChanged();
 
         mainTopicModel.resetBadge(context, item.getEntityId());
         int badgeCount = JandiPreference.getBadgeCount(context) - item.getUnreadCount();
@@ -82,9 +86,10 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
 
         if (item.isJoined() || !item.isPublic()) {
             int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
-            int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo()
+            int teamId = AccountRepository.getRepository().getSelectedTeamInfo()
                     .getTeamId();
-            view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId);
+            view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
+                    item.getMarkerLinkId());
             int selectedEntity = item.getEntityId();
             view.setSelectedItem(selectedEntity);
 
@@ -101,6 +106,12 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
     @Background
     @Override
     public void onJoinTopic(Context context, Topic topic) {
+
+        if (!NetworkCheckUtil.isConnected()) {
+            view.showErrorToast(context.getString(R.string.err_entity_join));
+            return;
+        }
+
         view.showProgressWheel();
 
         String message = context.getString(R.string.jandi_message_join_entity, topic.getName());
@@ -116,9 +127,10 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
                         .trackJoinChannel();
             }
             int entityType = topic.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
-            int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo()
+            int teamId = AccountRepository.getRepository().getSelectedTeamInfo()
                     .getTeamId();
-            view.moveToMessageActivity(topic.getEntityId(), entityType, topic.isStarred(), teamId);
+            view.moveToMessageActivity(topic.getEntityId(), entityType, topic.isStarred(),
+                    teamId, topic.getMarkerLinkId());
             view.setSelectedItem(topic.getEntityId());
 
         } catch (RetrofitError e) {
@@ -153,6 +165,11 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
     public void onItemLongClick(Context context, RecyclerView.Adapter adapter, int position) {
 
         Topic item = ((TopicRecyclerAdapter) adapter).getItem(position);
+
+        if (item == null) {
+            return;
+        }
+
         if (item.isJoined() || !item.isPublic()) {
             view.showEntityMenuDialog(item);
         } else {

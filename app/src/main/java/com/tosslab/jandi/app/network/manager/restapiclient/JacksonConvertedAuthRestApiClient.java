@@ -22,6 +22,8 @@ import com.tosslab.jandi.app.network.client.messages.comments.CommentsApiV2Clien
 import com.tosslab.jandi.app.network.client.messages.comments.ICommentsApiAuth;
 import com.tosslab.jandi.app.network.client.messages.search.IMessageSearchApiAuth;
 import com.tosslab.jandi.app.network.client.messages.search.MessagesSearchApiV2Client;
+import com.tosslab.jandi.app.network.client.platform.IPlatformApiAuth;
+import com.tosslab.jandi.app.network.client.platform.PlatformApiV2Client;
 import com.tosslab.jandi.app.network.client.privatetopic.GroupApiV2Client;
 import com.tosslab.jandi.app.network.client.privatetopic.IGroupApiAuth;
 import com.tosslab.jandi.app.network.client.privatetopic.messages.GroupMessageApiV2Client;
@@ -54,21 +56,26 @@ import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
+import com.tosslab.jandi.app.network.models.ReqModifyComment;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
+import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
+import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
+import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResChat;
@@ -79,10 +86,13 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
+import com.tosslab.jandi.app.network.models.ResRegistStarred;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 
 import java.util.List;
@@ -95,7 +105,7 @@ import retrofit.RetrofitError;
 public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth, IAccountEmailsApiAuth, IAccountPasswordApiAuth,
         IChatApiAuth, IDirectMessageApiAuth, IInvitationApiAuth, IMainRestApiAuth, ICommentsApiAuth, IMessageSearchApiAuth,
         IMessagesApiAuth, IGroupMessageApiAuth, IGroupApiAuth, IProfileApiAuth, IChannelMessageApiAuth, IChannelApiAuth,
-        IRoomsApiAuth, IAccountProfileApiAuth, IStarredEntityApiAuth, IStickerApiAuth, ITeamApiAuth, IFileApiAuth {
+        IRoomsApiAuth, IAccountProfileApiAuth, IStarredEntityApiAuth, IStickerApiAuth, ITeamApiAuth, IFileApiAuth, IPlatformApiAuth {
 
     @Override
     public ResAccountInfo registerNotificationTokenByAccountDeviceApi(ReqNotificationRegister reqNotificationRegister) throws RetrofitError {
@@ -230,8 +240,8 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon sendPublicTopicMessageByChannelMessageApi(ReqSendMessage message, int channelId) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(ChannelMessageApiV2Client.class).create().sendPublicTopicMessage(message, channelId);
+    public ResCommon sendPublicTopicMessageByChannelMessageApi(int channelId, int teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(ChannelMessageApiV2Client.class).create().sendPublicTopicMessage(channelId, teamId, reqSendMessageV3);
     }
 
     @Override
@@ -255,12 +265,12 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon sendMessageCommentByCommentsApi(ReqSendComment comment, int messageId) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(CommentsApiV2Client.class).create().sendMessageComment(comment, messageId);
+    public ResCommon sendMessageCommentByCommentsApi(int messageId, int teamId, ReqSendComment reqSendComment) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(CommentsApiV2Client.class).create().sendMessageComment(messageId, teamId, reqSendComment);
     }
 
     @Override
-    public ResCommon modifyMessageCommentByCommentsApi(ReqSendComment comment, int messageId, int commentId) throws RetrofitError {
+    public ResCommon modifyMessageCommentByCommentsApi(ReqModifyComment comment, int messageId, int commentId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(CommentsApiV2Client.class).create().modifyMessageComment(comment, messageId, commentId);
     }
 
@@ -295,8 +305,10 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon sendDirectMessageByDirectMessageApi(ReqSendMessage message, int userId) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(DirectMessageApiV2Client.class).create().sendDirectMessage(message, userId);
+    public ResCommon sendDirectMessageByDirectMessageApi(int userId, int teamId,
+                                                         ReqSendMessageV3 reqSendMessageV3) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(DirectMessageApiV2Client.class).create()
+                .sendDirectMessage(userId, teamId, reqSendMessageV3);
     }
 
     @Override
@@ -363,8 +375,8 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon sendGroupMessageByGroupMessageApi(ReqSendMessage message, int groupId) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(GroupMessageApiV2Client.class).create().sendGroupMessage(message, groupId);
+    public ResCommon sendGroupMessageByGroupMessageApi(int privateGroupId, int teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(GroupMessageApiV2Client.class).create().sendGroupMessage(privateGroupId, teamId, reqSendMessageV3);
     }
 
     @Override
@@ -420,6 +432,12 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     @Override
     public ResCommon unshareMessageByMessagesApiAuth(ReqUnshareMessage share, int messageId) {
         return RestAdapterBuilder.newInstance(MessagesApiV2Client.class).create().unshareMessage(share, messageId);
+    }
+
+    @Override
+    public ResUpdateMessages getRoomUpdateMessageByMessagesApiAuth(int teamId, int roomId, int currentLinkId) {
+        return RestAdapterBuilder.newInstance(MessagesApiV2Client.class)
+                .create().getRoomUpdateMessage(teamId, roomId, currentLinkId);
     }
 
     @Override
@@ -508,6 +526,11 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
+    public ResCommon updateTopicPushSubscribe(int teamId, int topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().updateTopicPushSubscribe(teamId, topicId, reqUpdateTopicPushSubscribe);
+    }
+
+    @Override
     public ResCommon deleteStickerCommentByStickerApi(int commentId, int teamId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(StickerApiV2Client.class).create().deleteStickerComment(commentId, teamId);
     }
@@ -535,5 +558,31 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     @Override
     public List<ResMessages.FileMessage> searchNewImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
         return RestAdapterBuilder.newInstance(FileApiV2Client.class).create().searchNewImageFile(teamId, roomId, messageId, count);
+    }
+
+    @Override
+    public ResStarMentioned getMentionedMessagesByTeamApi(int teamId, Integer messageId, int count) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getMentionedMessages(teamId, messageId, count);
+    }
+
+    @Override
+    public StarMentionedMessageObject registStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().registStarredMessage(teamId, messageId, new ReqNull());
+    }
+
+    @Override
+    public ResCommon unregistStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().unregistStarredMessage(teamId, messageId);
+    }
+
+    @Override
+    public ResStarMentioned getStarredMessagesByTeamApi(int teamId, Integer starredId, int count, String type) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getStarredMessages(teamId,
+                starredId, count, type);
+    }
+    
+    @Override
+    public ResCommon updatePlatformStatus(ReqUpdatePlatformStatus reqUpdatePlatformStatus) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(PlatformApiV2Client.class).create().updatePlatformStatus(reqUpdatePlatformStatus);
     }
 }

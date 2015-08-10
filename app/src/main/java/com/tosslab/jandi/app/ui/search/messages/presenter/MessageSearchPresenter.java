@@ -19,9 +19,9 @@ public interface MessageSearchPresenter {
 
     void onMemberClick();
 
-    void onSelectEntity(int entityId, String name);
+    void onSelectEntity(int entityId, String name, String searchText);
 
-    void onSelectMember(int memberId, String name);
+    void onSelectMember(int memberId, String name, String searchText);
 
     void onRecordClick(SearchResult searchRecord);
 
@@ -54,5 +54,9 @@ public interface MessageSearchPresenter {
         void showMoreLoadingProgressBar();
 
         void dismissMoreLoadingProgressBar();
+
+        void showInvalidNetworkDialog();
+
+        void showInvalidateEntityToast();
     }
 }

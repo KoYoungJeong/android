@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.local.database.entity;
 
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
@@ -23,28 +24,27 @@ public class JandiEntityDatabaseManagerTest {
 
         BaseInitUtil.initData(Robolectric.application);
 
-        int teamId = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId();
-        JandiAccountDatabaseManager.getInstance(Robolectric.application).updateSelectedTeam(teamId);
+        int teamId = AccountRepository.getRepository().getAccountTeams().get(0).getTeamId();
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
 
         ResLeftSideMenu totalEntitiesInfo = RequestApiManager.getInstance()
                 .getInfosForSideMenuByMainRest(teamId);
 
-        JandiEntityDatabaseManager manager = JandiEntityDatabaseManager.getInstance(Robolectric.application);
-        manager.upsertLeftSideMenu(totalEntitiesInfo);
+        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
 
         for (int idx = 0; idx < 100; ++idx) {
             new Thread(() -> {
                 try {
                     System.out.println(Thread.currentThread().getName() + " : 11111 엔티티 갱신 시작");
-                    manager.upsertLeftSideMenu(totalEntitiesInfo);
+                    LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
                     System.out.println(Thread.currentThread().getName() + " : 11111 엔티티 갱신 종료");
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 System.out.println(Thread.currentThread().getName() + " : 2222 엔티티 로드 시작");
-                manager.getEntityInfoAtWhole(teamId);
+                LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
                 System.out.println(Thread.currentThread().getName() + " : 2222 엔티티 로드 종료");
 
             }).start();

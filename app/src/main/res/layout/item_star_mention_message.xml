@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/message_list_selector"
+    android:minHeight="114dp">
+
+    <ImageView
+        android:id="@+id/iv_star_mention_profile"
+        android:layout_width="43dp"
+        android:layout_height="43dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp" />
+
+    <RelativeLayout
+        android:id="@+id/rv_star_mention_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="17dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_toRightOf="@id/iv_star_mention_profile">
+
+        <TextView
+            android:id="@+id/tv_star_mention_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="Name"
+            android:textColor="@color/jandi_star_mention_item_name_content_text"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_star_mention_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_star_mention_name"
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:gravity="left"
+            android:lineSpacingExtra="2dip"
+            android:maxLines="10"
+            android:minHeight="20dp"
+            android:text="mention"
+            android:textColor="@color/jandi_star_mention_item_name_content_text"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/tv_star_mention_topic_name"
+            android:layout_width="105dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/tv_star_mention_content"
+            android:layout_marginBottom="13dp"
+            android:layout_marginTop="13dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Design team_HQ"
+            android:textColor="@color/jandi_star_mention_item_topic_name_text"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/tv_star_mention_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/tv_star_mention_topic_name"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="3dp"
+            android:text="07/23/2015, 01:20 AM"
+            android:textColor="@color/jandi_star_mention_item_date_text"
+            android:textSize="13sp" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_below="@id/rv_star_mention_content"></LinearLayout>
+
+
+</RelativeLayout>

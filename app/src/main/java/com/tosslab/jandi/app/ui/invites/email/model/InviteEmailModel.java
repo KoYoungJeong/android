@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -37,14 +37,16 @@ public class InviteEmailModel {
 
     public List<ResInvitationMembers> inviteMembers(List<String> invites) throws RetrofitError {
 
-        int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+        int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
         return RequestApiManager.getInstance().inviteToTeamByTeamApi(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage(context.getApplicationContext())));
 
     }
 
     public boolean isInvitedEmail(String emailText) {
-        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
+
+        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository()
+                .getAccountEmails();
 
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
             if (TextUtils.equals(emailText, userEmail.getId())) {

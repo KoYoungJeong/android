@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -19,11 +20,19 @@ import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
+import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
+import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -68,6 +77,15 @@ public class MainMoreFragment extends Fragment {
     @AfterViews
     void initView() {
         LogUtil.d("initView MainMoreFragment");
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ScreenView, ScreenViewProperty.SETTING_PANEL)
+                        .build());
+
         profileIconView = (IconWithTextView) getView().findViewById(R.id.ly_more_profile);
 
         showJandiVersion();
@@ -133,20 +151,36 @@ public class MainMoreFragment extends Fragment {
                 .start();
     }
 
-    @Click(R.id.ly_more_setting)
+    @Click(R.id.rl_more_setting)
     public void moveToSettingActivity() {
         SettingsActivity_.intent(mContext)
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .start();
     }
 
-    @Click(R.id.ly_more_help)
+    @Click(R.id.rl_more_help)
     public void launchHelpPageOnBrowser() {
         InternalWebActivity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .url(getSupportUrlEachLanguage())
                 .hideActionBar(true)
                 .helpSite(true)
+                .start();
+    }
+
+    @Click(R.id.ly_more_mentioned)
+    public void launchHelpPageOnMentioned() {
+        StarMentionListActivity_.intent(getActivity())
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .extra("type", StarMentionListActivity.TYPE_MENTION_LIST)
+                .start();
+    }
+
+    @Click(R.id.ly_more_starred)
+    public void launchHelpPageOnStarred() {
+        StarMentionListActivity_.intent(getActivity())
+                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .extra("type", StarMentionListActivity.TYPE_STAR_LIST)
                 .start();
     }
 

@@ -56,7 +56,7 @@ public class SignUpVerifyPresenter {
             view.showToast(context.getResources().getString(R.string.jandi_welcome_message));
 
             model.setAccountInfo(accountActivate);
-            model.addTrackingCodeSignUp(accountActivate.getAccount());
+            model.trackSignUpSuccessAndFlush(accountActivate.getAccount());
 
             view.moveToAccountHome();
         } catch (VerifyNetworkException e) {
@@ -64,6 +64,7 @@ public class SignUpVerifyPresenter {
 
             LogUtil.d(e.getErrorInfo() + " , Response Body : " + e.httpBody);
             int errCode = e.errCode;
+            model.trackSignUpFailAndFlush(errCode);
             switch (errCode) {
                 case EXPIRED_VERIFICATION_CODE:
                     view.hideResend();

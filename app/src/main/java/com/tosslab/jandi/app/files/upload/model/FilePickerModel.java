@@ -13,20 +13,27 @@ import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.builder.Builders;
 import com.koushikdutta.ion.future.ResponseFuture;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 import org.apache.http.client.methods.HttpPut;
@@ -114,11 +121,11 @@ public class FilePickerModel {
         fragment.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_GALLERY);
     }
 
-    public void openAlbumForActivityResult(Activity activity) {
-        Intent intent = new Intent(Intent.ACTION_PICK,
+    public void openAlbumForActivityResult(Activity activity, int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        activity.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_GALLERY);
+        activity.startActivityForResult(intent, requestCode);
     }
 
     public boolean isOverSize(String... realFilePath) {
@@ -161,6 +168,7 @@ public class FilePickerModel {
     }
 
     public JsonObject uploadFile(Context context, ProgressDialog progressDialog, String realFilePath, boolean isPublicTopic, String title, int entityId, String comment) throws ExecutionException, InterruptedException {
+
         File uploadFile = new File(realFilePath);
         String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/v2/file";
         String permissionCode = (isPublicTopic) ? "744" : "740";
@@ -169,14 +177,13 @@ public class FilePickerModel {
                 .with(context)
                 .load(requestURL)
                 .uploadProgressDialog(progressDialog)
-                .uploadProgress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                 .setMultipartParameter("title", title)
                 .setMultipartParameter("share", String.valueOf(entityId))
                 .setMultipartParameter("permission", permissionCode)
-                .setMultipartParameter("teamId", String.valueOf(JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId()));
+                .setMultipartParameter("teamId", String.valueOf(AccountRepository.getRepository().getSelectedTeamInfo().getTeamId()));
 
         // Comment가 함께 등록될 경우 추가
         if (comment != null && !comment.isEmpty()) {
@@ -207,7 +214,7 @@ public class FilePickerModel {
                 .setMultipartParameter("title", title)
                 .setMultipartParameter("share", String.valueOf(entityId))
                 .setMultipartParameter("permission", permissionCode)
-                .setMultipartParameter("teamId", String.valueOf(JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId()));
+                .setMultipartParameter("teamId", String.valueOf(AccountRepository.getRepository().getSelectedTeamInfo().getTeamId()));
 
         // Comment가 함께 등록될 경우 추가
         if (comment != null && !comment.isEmpty()) {
@@ -242,6 +249,29 @@ public class FilePickerModel {
                     .trackUploadingFile(entityType, result);
         } catch (JSONException e) {
         }
+
+        int fileId = result.get("messageId").getAsInt();
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileUpload)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TopicId, entityId)
+                        .property(PropertyKey.FileId, fileId)
+                        .build());
+    }
+
+    public void trackUploadingFileFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileUpload)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
     }
 
     public String uploadProfilePhoto(Context context, File file) throws ExecutionException, InterruptedException {

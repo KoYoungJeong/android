@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -40,6 +38,7 @@ public class ImageViewHolder implements BodyViewHolder {
     private View disableLineThroughView;
     private TextView unreadTextView;
     private Context context;
+    private View lastReadView;
 
     @Override
     public void initView(View rootView) {
@@ -55,6 +54,7 @@ public class ImageViewHolder implements BodyViewHolder {
 
         unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
         context = rootView.getContext();
+        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class ImageViewHolder implements BodyViewHolder {
             disableLineThroughView.setVisibility(View.VISIBLE);
         }
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(context,
+        int unreadCount = UnreadCountUtil.getUnreadCount(
                 teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
 
         unreadTextView.setText(String.valueOf(unreadCount));
@@ -114,6 +114,7 @@ public class ImageViewHolder implements BodyViewHolder {
                 fileNameTextView.setText(R.string.jandi_deleted_file);
                 fileImageView.setImageResource(R.drawable.jandi_fview_icon_deleted);
                 fileImageView.setClickable(false);
+                fileTypeTextView.setText("");
             } else {
                 if (BitmapUtil.hasImageUrl(fileContent)) {
                     // Google, Dropbox 파일이 인 경우
@@ -123,16 +124,8 @@ public class ImageViewHolder implements BodyViewHolder {
                                 MimeTypeUtil.getMimeTypeIconImage(
                                         fileContent.serverUrl, fileContent.icon);
                         fileImageView.setImageResource(mimeTypeIconImage);
-                        fileImageView.setOnClickListener(view -> {
-                            Intent intent = new Intent(Intent.ACTION_VIEW,
-                                    Uri.parse(
-                                            BitmapUtil.getThumbnailUrlOrOriginal(
-                                                    fileContent, BitmapUtil.Thumbnails.ORIGINAL)));
-                            context.startActivity(intent);
-                        });
+                        fileTypeTextView.setText(fileContent.ext);
                     } else {
-
-                        fileImageView.setClickable(false);
 
                         // small 은 80 x 80 사이즈가 로딩됨 -> medium 으로 로딩
                         String mediumThumb =
@@ -145,16 +138,14 @@ public class ImageViewHolder implements BodyViewHolder {
                                 .error(R.drawable.jandi_fl_icon_img)
                                 .crossFade()
                                 .into(fileImageView);
+                        fileTypeTextView.setText(FileSizeUtil.fileSizeCalculation(fileContent.size) + ", "
+                                + fileContent.ext);
                     }
                 } else {
-                    fileImageView.setClickable(false);
                     fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
                 }
 
                 fileNameTextView.setText(fileContent.title);
-
-                fileTypeTextView.setText(FileSizeUtil.fileSizeCalculation(fileContent.size) + ", "
-                        + fileContent.ext);
             }
 
         }
@@ -162,6 +153,15 @@ public class ImageViewHolder implements BodyViewHolder {
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
         nameTextView.setOnClickListener(v ->
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+    }
+
+    @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        if (currentLinkId == lastReadLinkId) {
+            lastReadView.setVisibility(View.VISIBLE);
+        } else {
+            lastReadView.setVisibility(View.GONE);
+        }
     }
 
     @Override

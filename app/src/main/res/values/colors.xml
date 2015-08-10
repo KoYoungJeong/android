@@ -22,6 +22,7 @@
     <color name="jandi_accent_color_b2">#007eb0</color>
     <color name="jandi_accent_color_50">#1F00A3E1</color>
 
+    <color name="jandi_black_25">#25000000</color>
     <color name="jandi_black_89">#89000000</color>
     <color name="jandi_black_b2">#B2000000</color>
     <color name="jandi_black_de">#de000000</color>
@@ -171,7 +172,7 @@
     <!-- 60 % opacity -->
     <color name="dialog_button_focused">#4Cf3a71e</color>
     <!-- 30 % opacity -->
-    <color name="dialog_button_separator">#25000000</color>
+    <color name="dialog_button_separator">@color/jandi_black_25</color>
     <!-- 7% opacity -->
     <color name="background">#FFA500</color>
 
@@ -204,6 +205,15 @@
 
     <color name="jandi_message_indicator">#D2D2D2</color>
 
+
+    <!-- coach mark -->
     <color name="jandi_coach_mark_text">#FF19c1ff</color>
     <color name="jandi_coach_mark_text_shadow">#DD000000</color>
+
+    <!-- starred / MentionObject-->
+    <color name="jandi_starred_list_line">#FFeeeeee</color>
+    <color name="jandi_star_mention_item_name_content_text">#333333</color>
+    <color name="jandi_star_mention_item_topic_name_text">#02a6eb</color>
+    <color name="jandi_star_mention_item_date_text">#999999</color>
+    <color name="jandi__star_mention_item_divider">#DDDDDD</color>
 </resources>

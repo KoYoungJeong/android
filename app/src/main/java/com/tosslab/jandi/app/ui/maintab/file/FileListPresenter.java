@@ -42,9 +42,11 @@ import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 8..
@@ -216,16 +218,15 @@ public class FileListPresenter {
 
             FormattedEntity me = entityManager.getMe();
 
-            List<FormattedEntity> teamMember = entityManager.getFormattedUsers();
-            for (int idx = teamMember.size() - 1; idx >= 0; idx--) {
-                FormattedEntity formattedEntity = teamMember.get(idx);
-                if (formattedEntity.getId() == me.getId()) {
-                    teamMember.remove(idx);
-                    teamMember.add(0, formattedEntity);
-                } else if (!TextUtils.equals(formattedEntity.getUser().status, "enabled")) {
-                    teamMember.remove(idx);
-                }
-            }
+            List<FormattedEntity> teamMember = new ArrayList<>();
+
+            Observable.from(entityManager.getFormattedUsersWithoutMe())
+                    .filter(formattedEntity -> TextUtils.equals(formattedEntity.getUser().status, "enabled"))
+                    .toSortedList((lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()))
+                    .subscribe(teamMember::addAll);
+
+            teamMember.add(0, me);
+
             final UserEntitySimpleListAdapter adapter = new UserEntitySimpleListAdapter(context, teamMember);
 
             lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -284,19 +285,43 @@ public class FileListPresenter {
 
             View view = LayoutInflater.from(context).inflate(R.layout.dialog_select_cdp, null);
             ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-            List<FormattedEntity> categorizableEntities = entityManager.getCategorizableEntities();
+
             FormattedEntity me = entityManager.getMe();
 
-            for (int idx = categorizableEntities.size() - 1; idx >= 0; idx--) {
-                FormattedEntity formattedEntity = categorizableEntities.get(idx);
-                if (formattedEntity.isUser()) {
-                    if (!TextUtils.equals(formattedEntity.getUser().status, "enabled")) {
-                        categorizableEntities.remove(idx);
-                    } else if (formattedEntity.getId() == me.getId()) {
-                        categorizableEntities.remove(idx);
-                    }
-                }
-            }
+            List<FormattedEntity> categorizableEntities = new ArrayList<>();
+            Observable.from(entityManager.getCategorizableEntities())
+                    .filter(formattedEntity -> {
+                        if (formattedEntity.type == FormattedEntity.TYPE_EVERYWHERE) {
+                            return true;
+                        }
+                        if (!formattedEntity.isUser()) {
+                            return true;
+                        } else if (formattedEntity.getId() == me.getId()) {
+                            return false;
+                        } else if (TextUtils.equals(formattedEntity.getUser().status, "enabled")) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    })
+                    .toSortedList((lhs, rhs) -> {
+                        if (lhs.type == FormattedEntity.TYPE_EVERYWHERE) {
+                            return -1;
+                        } else if (rhs.type == FormattedEntity.TYPE_EVERYWHERE) {
+                            return 1;
+                        }
+
+                        if ((lhs.isUser() && rhs.isUser()) || (!lhs.isUser() && !rhs.isUser())) {
+                            return lhs.getName().compareToIgnoreCase(rhs.getName());
+                        } else {
+                            if (!lhs.isUser()) {
+                                return -1;
+                            } else {
+                                return 1;
+                            }
+                        }
+
+                    }).subscribe(categorizableEntities::addAll);
 
             final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(context, categorizableEntities);
             lv.setAdapter(adapter);

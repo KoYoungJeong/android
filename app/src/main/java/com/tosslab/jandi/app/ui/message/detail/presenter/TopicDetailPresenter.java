@@ -27,6 +27,8 @@ public interface TopicDetailPresenter {
 
     void onConfirmChangeTopicName(Context context, int entityId, String topicName, int entityType);
 
+    void updateTopicPushSubscribe(Context context, int teamId, int entityId, boolean pushOn);
+
     interface View {
 
         void leaveTopic();
@@ -43,9 +45,9 @@ public interface TopicDetailPresenter {
 
         void showFailToast(String message);
 
-        void setEnableTopicDelete(boolean owner);
-
         void showTopicDeleteDialog();
+
+        void setTopicPushSwitch(boolean isPushOn);
 
         void showProgressWheel();
 
@@ -54,5 +56,7 @@ public interface TopicDetailPresenter {
         void showTopicNameChangeDialog(int entityId, String entityName, int entityType);
 
         void moveTopicDescriptionEdit();
+
+        void setLeaveVisible(boolean owner, boolean defaultTopic);
     }
 }

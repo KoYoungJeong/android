@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 
 import de.greenrobot.event.EventBus;
@@ -29,6 +30,7 @@ public class PureCommentViewHolder implements BodyViewHolder {
     private View disableLineThroughView;
     private TextView unreadTextView;
     private Context context;
+    private View lastReadView;
 
     @Override
     public void initView(View rootView) {
@@ -38,6 +40,7 @@ public class PureCommentViewHolder implements BodyViewHolder {
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
         unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
         context = rootView.getContext();
+        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -61,7 +64,7 @@ public class PureCommentViewHolder implements BodyViewHolder {
         nameTextView.setText(fromEntity.name);
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(context,
+        int unreadCount = UnreadCountUtil.getUnreadCount(
                 teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
 
         unreadTextView.setText(String.valueOf(unreadCount));
@@ -80,6 +83,11 @@ public class PureCommentViewHolder implements BodyViewHolder {
 
             boolean hasLink = LinkifyUtil.addLinks(context, spannableStringBuilder);
 
+            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                    commentTextView, spannableStringBuilder, commentMessage.mentions, entityManager.getMe().getId())
+                    .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
+            spannableStringBuilder = generateMentionMessageUtil.generate();
+
             if (hasLink) {
                 commentTextView.setText(
                         Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
@@ -87,10 +95,21 @@ public class PureCommentViewHolder implements BodyViewHolder {
             } else {
                 commentTextView.setText(spannableStringBuilder);
             }
+
+
         }
 
         nameTextView.setOnClickListener(v ->
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+    }
+
+    @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        if (currentLinkId == lastReadLinkId) {
+            lastReadView.setVisibility(View.VISIBLE);
+        } else {
+            lastReadView.setVisibility(View.GONE);
+        }
     }
 
     @Override

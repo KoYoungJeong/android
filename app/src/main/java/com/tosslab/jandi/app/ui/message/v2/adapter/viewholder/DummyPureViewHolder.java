@@ -1,10 +1,14 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.graphics.drawable.Drawable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ImageSpan;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 
@@ -14,14 +18,10 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 public class DummyPureViewHolder implements BodyViewHolder {
 
     private TextView messageTextView;
-    private ProgressBar progressBar;
-    private TextView failAlertTextView;
 
     @Override
     public void initView(View rootView) {
         messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
-        failAlertTextView = (TextView) rootView.findViewById(R.id.txt_message_fail);
-        progressBar = (ProgressBar) rootView.findViewById(R.id.progress_message);
     }
 
     @Override
@@ -29,26 +29,58 @@ public class DummyPureViewHolder implements BodyViewHolder {
 
         DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
-            messageTextView.setText(textMessage.content.body);
+            builder.append(textMessage.content.body);
         }
 
-        switch (dummyMessageLink.getSendingState()) {
-            case Fail:
-                failAlertTextView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
+        SendMessage.Status status = SendMessage.Status.valueOf(dummyMessageLink.getStatus());
+        int textColor = messageTextView.getContext().getResources().getColor(R.color.jandi_messages_name);
+        switch (status) {
+            case FAIL: {
+                builder.append("  ");
+                int beforLenghth = builder.length();
+                Drawable drawable = messageTextView.getContext().getResources()
+                        .getDrawable(R.drawable.jandi_icon_message_failure);
+                drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable
+                        .getIntrinsicHeight());
+                builder.append(" ")
+                        .setSpan(
+                                new ImageSpan(drawable,
+                                        ImageSpan.ALIGN_BASELINE),
+                                beforLenghth, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                messageTextView.setTextColor(textColor);
                 break;
-            case Sending:
-                failAlertTextView.setVisibility(View.GONE);
-                progressBar.setVisibility(View.VISIBLE);
+            }
+            case SENDING: {
+                builder.append("  ");
+                int beforLenghth = builder.length();
+                Drawable drawable = messageTextView.getContext().getResources()
+                        .getDrawable(R.drawable.jandi_icon_message_sending);
+                drawable.setBounds(0, 0,
+                        drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+                builder.append(" ")
+                        .setSpan(
+                                new ImageSpan(drawable,
+                                        ImageSpan.ALIGN_BASELINE),
+                                beforLenghth, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                messageTextView.setTextColor(textColor);
                 break;
-            case Complete:
-                failAlertTextView.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
+            }
+            case COMPLETE:
+                messageTextView.setTextColor(textColor);
                 break;
         }
 
+        messageTextView.setText(builder);
+
+
+    }
+
+    @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
     }
 
     @Override

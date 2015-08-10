@@ -11,6 +11,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -29,7 +30,8 @@ public class MembersModel {
     Context context;
 
     public List<ChatChooseItem> getTopicMembers(int entityId) {
-        List<Integer> members = EntityManager.getInstance(context).getEntityById(entityId).getMembers();
+        Collection<Integer> members = EntityManager.getInstance(context).getEntityById(entityId)
+                .getMembers();
         List<FormattedEntity> formattedUsers = EntityManager.getInstance(context).getFormattedUsers();
 
         Iterator<ChatChooseItem> iterator = Observable.from(members)

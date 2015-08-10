@@ -57,7 +57,7 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
         viewHolder.textViewBadgeCount = (TextView) view.findViewById(R.id.txt_entity_listitem_badge);
         viewHolder.vgBadge = view.findViewById(R.id.vg_entity_listitem_badge);
         viewHolder.ivInfo = (ImageView) view.findViewById(R.id.iv_entity_listitem_info);
-
+        viewHolder.vPushOff = view.findViewById(R.id.v_push_off);
         return viewHolder;
     }
 
@@ -69,6 +69,9 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
     @Override
     public void onBindViewHolder(TopicViewHolder holder, int position) {
         Topic topic = getItem(position);
+        if (topic == null) {
+            return;
+        }
 
         holder.draw(topic);
 
@@ -113,6 +116,9 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
     }
 
     public Topic getItem(int position) {
+        if (getItemCount() <= position) {
+            return null;
+        }
         return topicList.get(position);
     }
 
@@ -168,7 +174,7 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
         private TextView tvMemberCount;
         private TextView textViewBadgeCount;
         private ImageView ivInfo;
-
+        private View vPushOff;
 
         public TopicViewHolder(View itemView) {
             super(itemView);
@@ -194,6 +200,9 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
 
             if (topic.isJoined()) {
                 ivInfo.setVisibility(View.INVISIBLE);
+
+                vPushOff.setVisibility(topic.isPushOn() ? View.GONE : View.VISIBLE);
+
             } else {
                 textViewBadgeCount.setVisibility(View.INVISIBLE);
                 ivInfo.setVisibility(View.VISIBLE);

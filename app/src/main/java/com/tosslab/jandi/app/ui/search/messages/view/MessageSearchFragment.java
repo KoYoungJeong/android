@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.search.messages.view;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
@@ -16,6 +17,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SelectMemberEvent;
@@ -32,8 +34,16 @@ import com.tosslab.jandi.app.ui.search.messages.adapter.MessageSearchResultAdapt
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenterImpl;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
+import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -85,9 +95,18 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     private boolean isFirstLayout = true;
     private boolean isForeground;
     private SearchActivity.OnSearchItemSelect onSearchItemSelect;
+    private SearchActivity.OnSearchText onSearchText;
 
     @AfterViews
     void initObject() {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_SEARCH)
+                        .build());
+
         messageSearchPresenter.setView(this);
 
         FragmentActivity parentActivity = getActivity();
@@ -183,7 +202,13 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
             return;
         }
 
-        messageSearchPresenter.onSelectEntity(event.getEntityId(), event.getName());
+        if (onSearchText != null) {
+            String searchText = onSearchText.getSearchText();
+            messageSearchPresenter.onSelectEntity(event.getEntityId(), event.getName(), searchText);
+        } else {
+            messageSearchPresenter.onSelectEntity(event.getEntityId(), event.getName(), null);
+        }
+
         onSearchHeaderReset();
     }
 
@@ -192,7 +217,12 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
             return;
         }
 
-        messageSearchPresenter.onSelectMember(event.getMemberId(), event.getName());
+        if (onSearchText != null) {
+            String searchText = onSearchText.getSearchText();
+            messageSearchPresenter.onSelectMember(event.getMemberId(), event.getName(), searchText);
+        } else {
+            messageSearchPresenter.onSelectMember(event.getMemberId(), event.getName(), null);
+        }
         onSearchHeaderReset();
     }
 
@@ -233,8 +263,9 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
             List<FormattedEntity> categorizableEntities = entityManager.retrieveAccessableEntities();
 
             FormattedEntity me = entityManager.getMe();
+            adapter.add(new EntitySelectDialogAdatper.SimpleEntityInfo(-1, context.getString(R.string.jandi_file_category_everywhere), -1, ""));
 
-            Iterable<EntitySelectDialogAdatper.SimpleEntityInfo> entityInfoIterable = Observable.from(categorizableEntities)
+            Observable.from(categorizableEntities)
                     .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
                     .filter(entity -> entity.getId() != me.getId())
                     .map(entity -> {
@@ -256,14 +287,26 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                         }
 
                         return new EntitySelectDialogAdatper.SimpleEntityInfo(type, name, id, photo);
-                    }).toBlocking()
-                    .toIterable();
+                    })
+                    .toSortedList((lhs, rhs) -> {
+                        int lhsType = lhs.getType();
+                        int rhsType = rhs.getType();
 
-            adapter.add(new EntitySelectDialogAdatper.SimpleEntityInfo(-1, context.getString(R.string.jandi_file_category_everywhere), -1, ""));
+                        if ((lhsType == JandiConstants.TYPE_DIRECT_MESSAGE &&
+                                rhsType == JandiConstants.TYPE_DIRECT_MESSAGE)
+                                || (lhsType != JandiConstants.TYPE_DIRECT_MESSAGE &&
+                                rhsType != JandiConstants.TYPE_DIRECT_MESSAGE)) {
+                            return lhs.getName().compareToIgnoreCase(rhs.getName());
+                        } else {
+                            if (lhsType != JandiConstants.TYPE_DIRECT_MESSAGE) {
+                                return -1;
+                            } else {
+                                return 1;
+                            }
+                        }
+                    })
+                    .subscribe(adapter::addAll);
 
-            for (EntitySelectDialogAdatper.SimpleEntityInfo simpleEntityInfo : entityInfoIterable) {
-                adapter.add(simpleEntityInfo);
-            }
 
             entitySelectDialog = dialog.create();
         }
@@ -286,17 +329,14 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
             EntityManager entityManager = EntityManager.getInstance(context);
             List<FormattedEntity> formattedUsersWithoutMe = entityManager.getFormattedUsersWithoutMe();
 
-            Iterable<MemberSelectDialogAdapter.SimpleMemberInfo> simpleMemberInfoIterable = Observable.from(formattedUsersWithoutMe)
+            List<MemberSelectDialogAdapter.SimpleMemberInfo> simpleMemberInfos = new ArrayList<>();
+
+            Observable.from(formattedUsersWithoutMe)
                     .filter(entity -> TextUtils.equals(entity.getUser().status, "enabled"))
                     .map(entity -> new MemberSelectDialogAdapter.SimpleMemberInfo(entity.getId(), entity.getName(), entity.getUserSmallProfileUrl()))
-                    .toBlocking()
-                    .toIterable();
+                    .toSortedList((lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()))
+                    .subscribe(simpleMemberInfos::addAll);
 
-            List<MemberSelectDialogAdapter.SimpleMemberInfo> simpleMemberInfos = new ArrayList<MemberSelectDialogAdapter.SimpleMemberInfo>();
-
-            for (MemberSelectDialogAdapter.SimpleMemberInfo simpleMemberInfo : simpleMemberInfoIterable) {
-                simpleMemberInfos.add(simpleMemberInfo);
-            }
 
             FormattedEntity me = entityManager.getMe();
 
@@ -394,6 +434,20 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         animation.startNow();
     }
 
+    @UiThread
+    @Override
+    public void showInvalidNetworkDialog() {
+        AlertUtil_.getInstance_(getActivity())
+                .showCheckNetworkDialog(getActivity(), null);
+    }
+
+    @UiThread
+    @Override
+    public void showInvalidateEntityToast() {
+        Resources resource = JandiApplication.getContext().getResources();
+        ColoredToast.show(JandiApplication.getContext(), resource.getString(R.string.jandi_topic_was_removed));
+    }
+
     @Override
     public void onNewQuery(String query) {
         if (TextUtils.isEmpty(query) || TextUtils.getTrimmedLength(query) <= 0) {
@@ -419,5 +473,10 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     @Override
     public void setOnSearchItemSelect(SearchActivity.OnSearchItemSelect onSearchItemSelect) {
         this.onSearchItemSelect = onSearchItemSelect;
+    }
+
+    @Override
+    public void setOnSearchText(SearchActivity.OnSearchText onSearchText) {
+        this.onSearchText = onSearchText;
     }
 }

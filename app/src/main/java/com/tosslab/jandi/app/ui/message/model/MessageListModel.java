@@ -4,7 +4,9 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
-import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
+import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.ReadyMessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
 import org.androidannotations.annotations.Background;
@@ -42,18 +44,21 @@ public class MessageListModel {
             }
         }
 
-        JandiMessageDatabaseManager.getInstance(context).upsertMessage(teamId, entityId, links);
+        MessageRepository.getRepository().upsertMessages(links);
     }
 
-    public List<ResMessages.Link> getCachedMessage(int teamId, int entityId) {
-        return JandiMessageDatabaseManager.getInstance(context).getSavedMessages(teamId, entityId);
+    public List<ResMessages.Link> getCachedMessage(int entityId) {
+        return MessageRepository.getRepository().getMessages(entityId);
     }
 
-    public void saveTempMessage(int teamId, int entityId, String message) {
-        JandiMessageDatabaseManager.getInstance(context).upsertTempMessage(teamId, entityId, message);
+    public void saveTempMessage(int entityId, String message) {
+        ReadyMessage readyMessage = new ReadyMessage();
+        readyMessage.setRoomId(entityId);
+        readyMessage.setText(message);
+        ReadyMessageRepository.getRepository().upsertReadyMessage(readyMessage);
     }
 
-    public String getTempMessage(int teamId, int entityId) {
-        return JandiMessageDatabaseManager.getInstance(context).getTempMessage(teamId, entityId);
+    public String getTempMessage(int entityId) {
+        return ReadyMessageRepository.getRepository().getReadyMessage(entityId).getText();
     }
 }

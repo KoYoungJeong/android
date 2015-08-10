@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.filedetail.fileinfo;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -21,11 +22,16 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
+import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.EntitySpannable;
 import com.tosslab.jandi.app.views.spannable.MessageSpannable;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.UiThread;
+
+import java.util.Iterator;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 29..
@@ -45,11 +51,11 @@ public class FileHeadManager {
     private View disableLineThroughView;
     private View disableCoverView;
 
+    private ImageView btnFileDetailStarred;
     private ImageView imageViewPhotoFile;
     private ImageView iconFileType;
     private LinearLayout fileInfoLayout;
     private int roomId;
-
 
     public View getHeaderView() {
         View header = LayoutInflater.from(activity).inflate(R.layout.activity_file_detail_header, null, false);
@@ -63,7 +69,7 @@ public class FileHeadManager {
         iconFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
         disableLineThroughView = header.findViewById(R.id.img_entity_listitem_line_through);
         disableCoverView = header.findViewById(R.id.view_entity_listitem_warning);
-
+        btnFileDetailStarred = (ImageView) header.findViewById(R.id.bt_file_detail_starred);
         return header;
     }
 
@@ -101,8 +107,9 @@ public class FileHeadManager {
             spannableStringBuilder.append(" ");
             int firstLength = spannableStringBuilder.length();
 
-            for (int idx = 0; idx < nSharedEntities; idx++) {
-                FormattedEntity sharedEntity = mEntityManager.getEntityById(resFileDetail.shareEntities.get(idx));
+            Iterator<ResMessages.OriginalMessage.IntegerWrapper> iterator = resFileDetail.shareEntities.iterator();
+            while (iterator.hasNext()) {
+                FormattedEntity sharedEntity = mEntityManager.getEntityById(iterator.next().getShareEntity());
 
                 if (sharedEntity == null) {
                     continue;
@@ -127,7 +134,8 @@ public class FileHeadManager {
                 int length = spannableStringBuilder.length();
                 spannableStringBuilder.append(sharedEntity.getName());
 
-                spannableStringBuilder.setSpan(entitySpannable, length, length + sharedEntity.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(entitySpannable, length,
+                        length + sharedEntity.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 
             }
@@ -154,6 +162,8 @@ public class FileHeadManager {
         imageViewUserProfile.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileMessage.writerId).build().show(activity.getSupportFragmentManager(), "dialog"));
         textViewUserName.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileMessage.writerId).build().show(activity.getSupportFragmentManager(), "dialog"));
 
+        btnFileDetailStarred.setSelected(fileMessage.isStarred);
+
         // 파일
         String createTime = DateTransformator.getTimeString(fileMessage.createTime);
         textViewFileCreateDate.setText(createTime);
@@ -166,12 +176,23 @@ public class FileHeadManager {
 
         } else {
 
-            activity.getSupportActionBar().setTitle(fileMessage.content.title);
-            if (fileMessage.content.size > 0) {
-                String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
-                textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.ext);
-            } else {
-                textViewFileContentInfo.setText(fileMessage.content.ext);
+            ActionBar actionBar = activity.getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle(fileMessage.content.title);
+            }
+
+            MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
+
+            String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
+            switch (sourceType) {
+
+                case S3:
+                    textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.ext);
+                    break;
+                case Google:
+                case Dropbox:
+                    textViewFileContentInfo.setText(fileMessage.content.ext);
+                    break;
             }
 
             // 공유 CDP 이름
@@ -191,8 +212,17 @@ public class FileHeadManager {
         }
     }
 
+    public ImageView getStarredButton() {
+        return btnFileDetailStarred;
+    }
+
     public void setRoomId(int roomId) {
 
         this.roomId = roomId;
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void updateStarred(boolean starred) {
+        btnFileDetailStarred.setSelected(starred);
     }
 }

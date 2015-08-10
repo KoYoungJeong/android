@@ -75,9 +75,9 @@ public class MessageItem {
     }
 
     public String getFeedbackFileName() {
-        if (mLink.feedback != null) {
-            return ((ResMessages.FileMessage) mLink.feedback).content.name;
-        }
+//        if (mLink.feedbackId > 0) {
+//            return ((ResMessages.FileMessage) mLink.feedback).content.name;
+//        }
         return null;
     }
 

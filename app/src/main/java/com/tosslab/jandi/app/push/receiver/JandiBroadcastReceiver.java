@@ -4,9 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 /**

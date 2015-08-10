@@ -15,8 +15,10 @@ public class Topic {
     private boolean isPublic;
     private String description;
     private boolean selected;
+    private int markerLinkId;
+    private boolean isPushOn;
 
-    public Topic(String name, boolean isStarred, boolean isJoined, int entityId, int memberCount, int unreadCount, boolean isPublic, String description, int creatorId) {
+    public Topic(String name, boolean isStarred, boolean isJoined, int entityId, int memberCount, int unreadCount, boolean isPublic, String description, int creatorId, int markerLinkId, boolean isPushOn) {
         this.name = name;
         this.isStarred = isStarred;
         this.isJoined = isJoined;
@@ -26,6 +28,16 @@ public class Topic {
         this.isPublic = isPublic;
         this.description = description;
         this.creatorId = creatorId;
+        this.markerLinkId = markerLinkId;
+        this.isPushOn = isPushOn;
+    }
+
+    public int getMarkerLinkId() {
+        return markerLinkId;
+    }
+
+    public void setMarkerLinkId(int markerLinkId) {
+        this.markerLinkId = markerLinkId;
     }
 
     public String getName() {
@@ -96,12 +108,20 @@ public class Topic {
         return creatorId;
     }
 
+    public boolean isSelected() {
+        return selected;
+    }
+
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
 
-    public boolean isSelected() {
-        return selected;
+    public boolean isPushOn() {
+        return isPushOn;
+    }
+
+    public void setIsPushOn(boolean isPushOn) {
+        this.isPushOn = isPushOn;
     }
 
     public static class Builder {
@@ -114,6 +134,8 @@ public class Topic {
         private boolean isPublic;
         private String description;
         private int creatorId;
+        private int markerLinkId;
+        private boolean isPushOn;
 
         public Builder name(String name) {
             this.name = name;
@@ -155,14 +177,24 @@ public class Topic {
             return this;
         }
 
-        public Topic build() {
-            return new Topic(name, isStarred, isJoined, entityId, memberCount, unreadCount,
-                    isPublic, description, creatorId);
-        }
-
         public Builder creatorId(int creatorId) {
             this.creatorId = creatorId;
             return this;
+        }
+
+        public Builder markerLinkId(int markerLinkId) {
+            this.markerLinkId = markerLinkId;
+            return this;
+        }
+
+        public Builder isPushOn(boolean isPushOn) {
+            this.isPushOn = isPushOn;
+            return this;
+        }
+
+        public Topic build() {
+            return new Topic(name, isStarred, isJoined, entityId, memberCount, unreadCount,
+                    isPublic, description, creatorId, markerLinkId, isPushOn);
         }
     }
 }

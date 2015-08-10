@@ -24,12 +24,13 @@ import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
+import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
@@ -43,6 +44,7 @@ import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -56,7 +58,6 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
-import rx.Observable;
 
 /**
  * Created by justinygchoi on 2014. 8. 11..
@@ -67,7 +68,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     public static final int CHAT_INDEX = 1;
     public static final int REQ_START_MESSAGE = 1211;
     @Bean
-    EntityClientManager mEntityClientManager;
+    EntityClientManager entityClientManager;
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
     @SystemService
@@ -80,10 +81,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     private Context mContext;
     private EntityManager mEntityManager;
     private MainTabPagerAdapter mMainTabPagerAdapter;
-    private ViewPager mViewPager;
     private boolean isFirst = true;    // poor implementation
-    private String invitationUrl;
-    private String teamName;
 
     @AfterViews
     void initView() {
@@ -94,7 +92,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
 
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(mContext).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
         setupActionBar(selectedTeamInfo.getName());
 
@@ -107,7 +105,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         tabViews[2] = getLayoutInflater().inflate(R.layout.tab_file, null);
         tabViews[3] = getLayoutInflater().inflate(R.layout.tab_more, null);
         mMainTabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabViews, selectedEntity);
-        mViewPager = (ViewPager) findViewById(R.id.pager_main_tab);
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.pager_main_tab);
         mViewPager.setOverScrollMode(ViewPager.OVER_SCROLL_NEVER);
         mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(mMainTabPagerAdapter);
@@ -119,8 +117,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         tabs.setViewPager(mViewPager);
 
         if (selectedEntity > 0) {
-            boolean user = EntityManager.getInstance(getApplicationContext()).getEntityById(selectedEntity).isUser();
-            if (user) {
+            FormattedEntity entity = EntityManager.getInstance(getApplicationContext()).getEntityById(selectedEntity);
+            if (entity == null || entity.isUser()) {
                 mViewPager.setCurrentItem(CHAT_INDEX);
             }
         }
@@ -159,7 +157,11 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         }
 
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
-        getEntities();
+        // onResume -> AfterViews 로 이동
+        // (소켓에서 필요한 갱신을 다 처리한다고 간주)
+        if (NetworkCheckUtil.isConnected()) {
+            getEntities();
+        }
     }
 
     private void showInvitePopup() {
@@ -210,7 +212,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         // Entity의 리스트를 획득하여 저장한다.
         EventBus.getDefault().register(this);
 
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         setupActionBar(selectedTeamInfo.getName());
 
         TutorialCoachMarkUtil.showCoachMarkTopicListIfNotShown(this);
@@ -238,16 +240,11 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     /**
      * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
      */
-    @UiThread
-    public void getEntities() {
-        getEntitiesInBackground();
-    }
-
     @Background
-    public void getEntitiesInBackground() {
+    public void getEntities() {
         try {
-            ResLeftSideMenu resLeftSideMenu = mEntityClientManager.getTotalEntitiesInfo();
-            JandiEntityDatabaseManager.getInstance(MainTabActivity.this).upsertLeftSideMenu(resLeftSideMenu);
+            ResLeftSideMenu resLeftSideMenu = entityClientManager.getTotalEntitiesInfo();
+            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
             BadgeUtils.setBadge(MainTabActivity.this, totalUnreadCount);
             JandiPreference.setBadgeCount(MainTabActivity.this, totalUnreadCount);
@@ -317,18 +314,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         invitationDialogExecutor.execute();
     }
 
-    private String getOwnerName() {
-        List<FormattedEntity> users = EntityManager.getInstance(mContext).getFormattedUsers();
-        FormattedEntity tempDefaultEntity = new FormattedEntity();
-        FormattedEntity owner = Observable.from(users)
-                .filter(formattedEntity ->
-                        TextUtils.equals(formattedEntity.getUser().u_authority, "owner"))
-                .firstOrDefault(tempDefaultEntity)
-                .toBlocking()
-                .first();
-        return owner.getUser().name;
-    }
-
     @UiThread
     public void showTextDialog(String alertText) {
         new AlertDialog.Builder(this)
@@ -341,7 +326,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     public void onEvent(MessagePushEvent event) {
         LogUtil.d("MainTabAcitivity.MessagePushEventCall");
-        if (!TextUtils.equals(event.getEntityType(), "user")) {
+        if (!TextUtils.equals(event.getEntityType(), PushTO.RoomType.CHAT.getName())) {
             getEntities();
         }
     }
@@ -364,7 +349,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     }
 
     public void onEvent(TeamInfoChangeEvent event) {
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         setupActionBar(selectedTeamInfo.getName());
 
     }
@@ -375,4 +360,5 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                         R.string.jandi_service_maintenance, (dialog, which) -> finish(),
                         false);
     }
+
 }

@@ -3,9 +3,9 @@ package com.tosslab.jandi.app.ui.account.presenter;
 import android.content.Context;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -50,18 +51,24 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     @AfterViews
     void initViews() {
 
-        if (!accountHomeModel.checkAccount(context)) {
+        if (!accountHomeModel.checkAccount()) {
             view.invalidAccess();
-            return ;
+            return;
         }
 
         getAccountInfo();
-        getTeamInfo();
+
+        if (NetworkCheckUtil.isConnected()) {
+            getTeamInfo();
+        } else {
+            view.showNetworCheckDialog();
+        }
+
     }
 
     private void getAccountInfo() {
-        String accountName = accountHomeModel.getAccountName(context);
-        ResAccountInfo.UserEmail accountEmail = accountHomeModel.getSelectedEmailInfo(context);
+        String accountName = accountHomeModel.getAccountName();
+        ResAccountInfo.UserEmail accountEmail = accountHomeModel.getSelectedEmailInfo();
 
         view.setAccountName(accountName);
 
@@ -82,15 +89,21 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showProgressWheel();
 
         try {
-            accountHomeModel.updateSelectTeam(context, teamId);
-            ResLeftSideMenu entityInfo = accountHomeModel.getEntityInfo(context, teamId);
+            accountHomeModel.updateSelectTeam(teamId);
+            ResLeftSideMenu entityInfo = accountHomeModel.getEntityInfo(teamId);
             accountHomeModel.updateEntityInfo(context, entityInfo);
             view.dismissProgressWheel();
+
+            // Track Team List Sign In (with flush)
+            accountHomeModel.trackLaunchTeamSuccess(teamId);
             view.moveSelectedTeam(firstJoin);
         } catch (RetrofitError e) {
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            accountHomeModel.trackLaunchTeamFail(errorCode);
             view.dismissProgressWheel();
             e.printStackTrace();
         } catch (Exception e) {
+            accountHomeModel.trackLaunchTeamFail(-1);
             view.dismissProgressWheel();
             e.printStackTrace();
         }
@@ -111,22 +124,28 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     public void onChangeName(String newName) {
         view.showProgressWheel();
         try {
-            ResAccountInfo resAccountInfo = accountHomeModel.updateAccountName(context, newName);
-            MixpanelAccountAnalyticsClient
-                    .getInstance(context, resAccountInfo.getId())
-                    .trackSetAccount();
+            ResAccountInfo resAccountInfo = accountHomeModel.updateAccountName(newName);
+            accountHomeModel.trackChangeAccountNameSuccess(context, resAccountInfo.getId());
 
-            JandiAccountDatabaseManager.getInstance(context).upsertAccountInfo(resAccountInfo);
+            AccountRepository.getRepository().updateAccountName(newName);
             view.dismissProgressWheel();
             view.setAccountName(newName);
             view.showSuccessToast(context.getString(R.string.jandi_success_update_account_profile));
         } catch (RetrofitError e) {
+            int errorCode = -1;
+            if (e.getResponse() != null) {
+                errorCode = e.getResponse().getStatus();
+            }
+
+            accountHomeModel.trackChangeAccountNameFail(errorCode);
+
             view.dismissProgressWheel();
             if (e.getCause() instanceof ConnectionNotFoundException) {
                 view.showErrorToast(context.getResources().getString(R.string.err_network));
             }
             e.printStackTrace();
         } catch (Exception e) {
+            accountHomeModel.trackChangeAccountNameFail(-1);
             view.dismissProgressWheel();
             e.printStackTrace();
         }
@@ -135,7 +154,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     @Override
     public void onTeamCreateAcceptResult() {
 
-        ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo(context);
+        ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo();
         onJoinedTeamSelect(selectedTeamInfo.getTeamId(), true);
     }
 
@@ -147,7 +166,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Override
     public void onEmailChooseResult() {
-        ResAccountInfo.UserEmail selectedEmailInfo = accountHomeModel.getSelectedEmailInfo(context);
+        ResAccountInfo.UserEmail selectedEmailInfo = accountHomeModel.getSelectedEmailInfo();
         if (selectedEmailInfo != null) {
             view.setUserEmailText(selectedEmailInfo.getId());
         }
@@ -238,12 +257,25 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Background
     void getTeamInfo() {
+
+        refreshAccountInfo();
+
         try {
             List<Team> teamList = accountHomeModel.getTeamInfos(context);
-            ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo(context);
+            ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo();
             view.setTeamInfo((ArrayList<Team>) teamList, selectedTeamInfo);
         } catch (RetrofitError e) {
             view.showErrorToast(context.getString(R.string.err_network));
         }
     }
+
+    private void refreshAccountInfo() {
+        try {
+            ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+            AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
+    }
+
 }

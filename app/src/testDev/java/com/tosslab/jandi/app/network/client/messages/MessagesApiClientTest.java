@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network.client.messages;
 
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
@@ -45,7 +45,7 @@ public class MessagesApiClientTest {
 
     private ResLeftSideMenu getSideMenu() {
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().
-                getInfosForSideMenuByMainRest(JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId());
+                getInfosForSideMenuByMainRest(AccountRepository.getRepository().getAccountTeams().get(0).getTeamId());
 
         return infosForSideMenu;
     }

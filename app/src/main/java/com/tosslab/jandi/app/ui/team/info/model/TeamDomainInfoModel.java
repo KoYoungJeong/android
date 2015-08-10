@@ -3,12 +3,18 @@ package com.tosslab.jandi.app.ui.team.info.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -44,7 +50,8 @@ public class TeamDomainInfoModel {
     }
 
     public List<ResAccountInfo.UserEmail> initUserEmailInfo() {
-        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
+
+        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
 
         Iterator<ResAccountInfo.UserEmail> confirmed = Observable.from(userEmails)
                 .filter(userEmail -> TextUtils.equals(userEmail.getStatus(), "confirmed"))
@@ -63,7 +70,7 @@ public class TeamDomainInfoModel {
     @SupposeBackground
     public ResTeamDetailInfo acceptOrDclineInvite(String invitationId, String type) throws RetrofitError {
 
-        ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(context).getAccountInfo();
+        ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
 
         if (accountInfo == null) {
             return null;
@@ -84,15 +91,34 @@ public class TeamDomainInfoModel {
     public void updateTeamInfo(int teamId) {
 
         ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-        JandiAccountDatabaseManager databaseManager = JandiAccountDatabaseManager.getInstance(context);
-        databaseManager.upsertAccountAllInfo(resAccountInfo);
-        databaseManager.updateSelectedTeam(teamId);
+        AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
     }
 
     public String getUserName() {
-        return JandiAccountDatabaseManager.getInstance(context).getAccountInfo().getName();
+        return AccountRepository.getRepository().getAccountInfo().getName();
+    }
+    
+    public void trackCreateTeamSuccess(int teamId) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.CreateTeam)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TeamId, teamId)
+                        .build());
     }
 
+    public void trackCreateTeamFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.CreateTeam)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+    
     public interface Callback {
         void onTeamCreateSuccess(String name, int memberId, int teamId);
 

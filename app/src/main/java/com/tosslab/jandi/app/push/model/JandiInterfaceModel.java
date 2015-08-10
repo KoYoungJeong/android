@@ -2,15 +2,25 @@ package com.tosslab.jandi.app.push.model;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResChat;
+import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
@@ -34,15 +44,30 @@ public class JandiInterfaceModel {
     @SystemService
     ActivityManager activityManager;
 
+    public int getInstalledAppVersion(Context context) {
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            String packageName = context.getPackageName();
+            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // should never happen
+            return 0;
+        }
+    }
+
+    public ResConfig getConfigInfo() throws RetrofitError {
+        return RequestApiManager.getInstance().getConfigByMainRest();
+    }
+
     public void refreshAccountInfo() throws RetrofitError {
         ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
-        JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(resAccountInfo);
-
+        AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
         EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
-        JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
         JandiPreference.setBadgeCount(context, totalUnreadCount);
         BadgeUtils.setBadge(context, totalUnreadCount);
@@ -57,13 +82,13 @@ public class JandiInterfaceModel {
     }
 
     public boolean hasTeamInfo(int teamId) {
-        ResAccountInfo.UserTeam teamInfo = JandiAccountDatabaseManager.getInstance(context).getTeamInfo(teamId);
+        ResAccountInfo.UserTeam teamInfo = AccountRepository.getRepository().getTeamInfo(teamId);
 
         if (teamInfo == null) {
 
             try {
                 refreshAccountInfo();
-                teamInfo = JandiAccountDatabaseManager.getInstance(context).getTeamInfo(teamId);
+                teamInfo = AccountRepository.getRepository().getTeamInfo(teamId);
 
                 if (teamInfo == null) {
                     return false;
@@ -80,11 +105,11 @@ public class JandiInterfaceModel {
 
     public boolean setupSelectedTeam(int teamId) {
 
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
         if ((selectedTeamInfo == null || selectedTeamInfo.getTeamId() != teamId)) {
 
-            JandiAccountDatabaseManager.getInstance(context).updateSelectedTeam(teamId);
+            AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
             return getEntityInfo();
 
@@ -107,7 +132,7 @@ public class JandiInterfaceModel {
         try {
             EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
             ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
-            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context, totalUnreadCount);
             BadgeUtils.setBadge(context, totalUnreadCount);
@@ -120,5 +145,53 @@ public class JandiInterfaceModel {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public int getEntityId(int teamId, int roomId) {
+
+        // Topic 인지 확인
+        EntityManager entityManager = EntityManager.getInstance(JandiApplication.getContext());
+        FormattedEntity targetEntity = entityManager.getEntityById(roomId);
+        if (targetEntity != null) {
+            return roomId;
+        }
+
+        // DM 으로 간주
+        ResChat chat = ChatRepository.getRepository().getChatByRoom(roomId);
+
+        if (chat != null && chat.getEntityId() > 0) {
+            // 캐시된 정보로 확인
+            return chat.getCompanionId();
+        } else {
+            // 서버로부터 요청
+            try {
+                ResRoomInfo roomInfo = RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId,
+                        roomId);
+
+                if (roomInfo != null) {
+
+                    int myId = entityManager.getMe().getId();
+
+                    for (int member : roomInfo.getMembers()) {
+                        if (myId != member) {
+                            return member;
+                        }
+                    }
+
+                }
+            } catch (RetrofitError retrofitError) {
+                retrofitError.printStackTrace();
+                return -1;
+            }
+        }
+        return -1;
+
+    }
+
+    public int getCachedLastLinkId(int roomId) {
+
+        ResMessages.Link lastMessage = MessageRepository.getRepository().getLastMessage(roomId);
+
+        return lastMessage.id;
     }
 }

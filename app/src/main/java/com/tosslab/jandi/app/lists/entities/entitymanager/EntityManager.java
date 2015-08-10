@@ -4,8 +4,8 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -49,8 +49,7 @@ public class EntityManager {
     private List<FormattedEntity> mSortedGroups = null;
 
     protected EntityManager(Context context) {
-        int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
-        ResLeftSideMenu resLeftSideMenu = JandiEntityDatabaseManager.getInstance(context).getEntityInfoAtWhole(teamId);
+        ResLeftSideMenu resLeftSideMenu = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu();
         if (resLeftSideMenu != null) {
             init(resLeftSideMenu);
         }
@@ -87,11 +86,11 @@ public class EntityManager {
 
     public void refreshEntity(Context context) {
 
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
         if (selectedTeamInfo != null) {
             int teamId = selectedTeamInfo.getTeamId();
-            ResLeftSideMenu resLeftSideMenu = JandiEntityDatabaseManager.getInstance(context).getEntityInfoAtWhole(teamId);
+            ResLeftSideMenu resLeftSideMenu = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu();
             init(resLeftSideMenu);
         }
     }
@@ -112,6 +111,7 @@ public class EntityManager {
             entity.lastLinkId = marker.lastLinkId;
             entity.alarmCount = marker.alarmCount;
             entity.announcementOpened = marker.announcementOpened;
+            entity.isTopicPushOn = marker.subscribe;
         }
         return entity;
     }
@@ -119,9 +119,10 @@ public class EntityManager {
     private synchronized void arrangeEntities(ResLeftSideMenu resLeftSideMenu) {
         // HashTable 로 빼야하나? 즐겨찾기처럼 길이가 작을 경우 어떤게 더 유리한지 모르겠넹~
         LogUtil.d("EntityManger.arrangeEntities");
-        List<Integer> starredEntities = (resLeftSideMenu.user.u_starredEntities != null)
-                ? resLeftSideMenu.user.u_starredEntities
-                : new ArrayList<Integer>();
+        Collection<Integer> starredEntities =
+                (resLeftSideMenu.user.u_starredEntities != null)
+                        ? resLeftSideMenu.user.u_starredEntities
+                        : new ArrayList<Integer>();
 
         // Unjoined topic 혹은 User 리스트 정리
         for (ResLeftSideMenu.Entity entity : resLeftSideMenu.entities) {
@@ -274,7 +275,7 @@ public class EntityManager {
         return new FormattedEntity(mMe);
     }
 
-    public String  getDistictId() {
+    public String getDistictId() {
         // FIXME Why null???
         if (mMe != null && mMyTeam != null) {
             return mMe.id + "-" + mMyTeam.id;
@@ -315,7 +316,8 @@ public class EntityManager {
         return retrieveByGivenEntities(givenEntityIds, false);
     }
 
-    private List<FormattedEntity> retrieveByGivenEntities(List<Integer> givenEntityIds, boolean includable) {
+    private List<FormattedEntity> retrieveByGivenEntities(List<Integer> givenEntityIds, boolean
+            includable) {
         List<FormattedEntity> accessableEntities = retrieveAccessableEntities();
         ArrayList<FormattedEntity> retCdpItems = new ArrayList<FormattedEntity>();
 
@@ -369,10 +371,18 @@ public class EntityManager {
         return extractExclusivedUser(entity.getMembers());
     }
 
-    private List<FormattedEntity> extractExclusivedUser(List<Integer> joinedMembers) {
+    private List<FormattedEntity> extractExclusivedUser(Collection<Integer> joinedMembers) {
         ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
 
         Observable.merge(Observable.from(mStarredUsers.values()), Observable.from(mUsers.values()))
+                .filter(formattedEntity ->
+                                Observable.from(joinedMembers)
+                                        .filter(entityRef -> entityRef == formattedEntity.getId())
+                                        .map(entityRef -> false)
+                                        .firstOrDefault(true)
+                                        .toBlocking()
+                                        .first()
+                )
                 .filter(formattedEntity -> !joinedMembers.contains(formattedEntity.getId()))
                 .collect(() -> ret, (formattedEntities
                         , formattedEntity1) -> formattedEntities.add(formattedEntity1))

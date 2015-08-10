@@ -70,7 +70,7 @@
     <string name="jandi_tutorial_welcome_message">"JANDI讓工作變簡單、愉快。我們將你對通訊軟體的要求與雲端存儲的需求結合，並放在你的手掌上。"</string>
     <string name="jandi_tutorial_topic">"JANDI在一起"</string>
     <string name="jandi_tutorial_topic_message">"在您選擇的議題跟組織裏的同仁聯絡，無論是專案上的協作或僅是閑談。當您需要更多隱私，就邀請特定成員到私人議題及直接傳訊裏面繼續對話。"</string>
-    <string name="jandi_tutorial_file">"簡單的幾個點擊來上傳檔案"</string>
+    <string name="jandi_tutorial_file">"簡單的幾個點擊上傳檔案"</string>
     <string name="jandi_tutorial_file_message">"零時間、空間限制，隨時從行動裝置分享文件、簡報、視頻及任何檔案給所有團隊成員。"</string>
 
     <!-- Manipulate Entity -->
@@ -83,7 +83,7 @@
     <string name="jandi_create_privategroup">"建立新私人議題"</string>
     <string name="jandi_modify_channel">"重新命名議題"</string>
     <string name="jandi_modify_private_group">"重新命名私人議題"</string>
-    <string name="warn_all_users_are_already_invited">"全部使用者已被邀請"</string>
+    <string name="warn_all_users_are_already_invited">"所有的團隊成員已加入此議題"</string>
     <string name="err_entity_create">"建立不成功"</string>
     <string name="err_entity_join">"加入不成功"</string>
     <string name="err_entity_duplicated_name">"這名字已被使用。請再試一次"</string>
@@ -154,6 +154,9 @@
     <string name="modify_message">"編輯訊息"</string>
     <string name="today">"今天"</string>
 
+    <!-- Mention -->
+    <string name="jandi_mention_push_message">"%s 提到你"</string>
+
     <!-- File Detail Activity -->
     <string name="jandi_action_download">"下載"</string>
     <string name="jandi_action_unshare">"取消分享"</string>
@@ -166,6 +169,8 @@
     <string name="err_share">"檔案無法分享"</string>
     <string name="err_unshare">"檔案無法取消分享"</string>
     <string name="err_delete_file">"檔案無法刪除"</string>
+    <string name="err_file_has_not_been_shared">"檔案尚未分享到其它群組"</string>
+    <string name="err_file_already_shared_all_topics">"檔案已分享於所有你加入的議題中"</string>
 
     <!-- File Upload -->
     <string name="title_file_upload">"上傳檔案"</string>
@@ -315,20 +320,23 @@
     <string name="jandi_topic_ask_about_deleting">"您確定要刪除這個議題？"</string>
     <string name="jandi_create">"建立"</string>
     <string name="jandi_copy_link">"複製連結"</string>
-    <string name="jandi_disabled_user">"這成員已經被暫時關閉"</string>
+    <string name="jandi_disabled_user">"此成員權限已被暫時關閉"</string>
     <string name="jandi_open_browser">"開啓一個瀏覽器"</string>
     <string name="jandi_share_a_topic">"分享在一個議題群組内"</string>
     <string name="jandi_share_externally">"分享頁面"</string>
     <string name="jandi_my_files">"<b>我的檔案</b>"</string>
-    <string name="jandi_account_home_help">"您可以憑一個帳號加入多個團隊
+    <string name="jandi_account_home_help">"無限擴大你的聯絡網
 
-一個帳號可以同時連接多個電子郵件地址。您可以使用其中任何一個登入。
+一組帳號可同時連接數個電子郵箱
+並隨意切換登入的電子郵箱
 
-給每個團隊指定一個電子郵件好使其他團隊成員知道如何聯係您。"</string>
+確保與其他團隊成員的聯繫不斷線
+可針對每個團隊各別指定一個電子郵箱"</string>
     <string name="jadi_account_home">"帳號首頁"</string>
     <string name="jandi_go_to_main">"回到帳號首頁"</string>
+    <string name="jandi_team_switch">"更換團隊"</string>
     <string name="jandi_sign_in_ids_explain">"請選擇一個電子郵件地址讓我們將全部與JANDI相關的電子郵件寄給您。增加其它電子郵件地址以指定給特定團隊。"</string>
-    <string name="jandi_disable_user_profile_explain">"这成员已经被暂时关闭。欲知更多细节，请联系团队管理者。"</string>
+    <string name="jandi_disable_user_profile_explain">"此成員權限已被暫時關閉。欲知更多細節，請聯絡團隊管理員。"</string>
     <string name="jandi_share_to_jandi">"分享到JANDI"</string>
     <string name="jandi_no_message_in_topic_dm">"輸入訊息以開始對話"</string>
     <string name="err_invalid_team_domain">"網域名稱無效"</string>
@@ -358,7 +366,7 @@
     <string name="jandi_message_ask_about_delete_comment">"您確定要永久刪除這留言嗎？刪除的留言將無法回復。"</string>
     <string name="jandi_message_no_member">"不再單打獨鬥，現在就邀請所有夥伴加入你的團隊！"</string>
     <string name="jandi_file_delete_message">"您確定要刪除這此檔案？ 請注意留言的部分不會被刪除。"</string>
-    <string name="jandi_unshared_message">"此檔案已經從私人議題中取消分享"</string>
+    <string name="jandi_unshared_message">"此信息/文件已被标示"</string>
     <string name="jandi_nowhere_shared_file">"檔案尚未分享到其它群組"</string>
     <string name="jandi_topic_no_member_1">"此議題目前只有你一人"</string>
     <string name="jandi_topic_no_member_2">"輕觸按鈕邀請其他成員加入。"</string>
@@ -409,8 +417,8 @@
     <string name="jandi_topic_description">"議題內容"</string>
     <string name="jandi_topic_leave">"離開議題"</string>
     <string name="jandi_topic_detail">"議題資訊"</string>
+    <string name="jandi_topic_invitation">"邀請"</string>
     <string name="jandi_explain_topic_description">"說明 (選項)"</string>
-    <string name="jandi_topic_starred">"標記議題"</string>
 
     <!-- tutorial -->
     <string name="jandi_coach_mark_search_message">搜尋訊息</string>
@@ -446,5 +454,30 @@
     <string name="jandi_coach_mark_more_explain3"></string>
     <string name="jandi_chat_detail">"聊天設定"</string>
     <string name="jandi_already_in_team">"此電子郵箱已為 %s 的成員"</string>
+    <string name="jandi_unread_messages_below">"以下為未讀訊息"</string>
+
+    <string name="jandi_topic_was_removed">"此信息/文件已被标示"</string>
+
+    <!-- starred / mention-->
+    <string name="jandi_starred_star">標示</string>
+    <string name="jandi_mention_mentions">提及</string>
+    <string name="jandi_mention_more">更多</string>
+    <string name="jandi_starred_files">檔案類別</string>
+    <string name="jandi_starred_all">全部類別</string>
+    <string name="jandi_starred_unstar">取消標示</string>
+    <string name="jandi_starred_undo">復原</string>
+    <string name="jandi_starred_unstarred">已取消標示</string>
+    <string name="jandi_starred_stars">已標示</string>
+    <string name="jandi_mention_all_topic_members">議題成員</string>
+    <string name="jandi_mention_mentioned_you">提到你</string>
+    <string name="jandi_mention_no_mentions">還沒有人提到你</string>
+    <string name="jandi_starred_no_all">下載電腦版</string>
+    <string name="jandi_starred_no_file">沒有標示檔案</string>
+    <string name="jandi_starred_unstar_from_item">你確定要取消標示嗎？</string>
+    <string name="jandi_unpinned_message">"已取消標示"</string>
+    <string name="jandi_topic_notification">"允許議題推播通知"</string>
+    <string name="jandi_profile_picture">"簡介照片"</string>
+    <string name="jandi_you_cannot_delete_default_message">"無法離開或刪除預設議題"</string>
+    <string name="jandi_this_is_disabled_user_explain">"此成員權限已被暫時關閉。欲知更多細節，請聯絡團隊管理員。"</string>
 </resources>
 

@@ -4,19 +4,22 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+
+import java.util.List;
 
 import retrofit.RetrofitError;
 
@@ -26,7 +29,8 @@ import retrofit.RetrofitError;
 // TODO Must be seperate logic
 @EBean
 public class MessageManipulator {
-    private static final int NUMBER_OF_MESSAGES = 20;
+    public static final int NUMBER_OF_MESSAGES = 20;
+    public static final int MAX_OF_MESSAGES = 300;
 
     @RootContext
     Context context;
@@ -34,10 +38,11 @@ public class MessageManipulator {
     int entityType;
     int entityId;
     private int selectedTeamId;
+    private int roomId;
 
     @AfterInject
     void initSelectedTeam() {
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         selectedTeamId = selectedTeamInfo.getTeamId();
     }
 
@@ -47,26 +52,30 @@ public class MessageManipulator {
     }
 
     public ResMessages getMessages(final int firstItemId, int count) throws RetrofitError {
-        final int requestCount = Math.max(NUMBER_OF_MESSAGES, count);
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
                 if (firstItemId > 0) {
-                    return RequestApiManager.getInstance().getPublicTopicMessagesByChannelMessageApi(selectedTeamId, entityId, firstItemId, requestCount);
+                    return RequestApiManager.getInstance()
+                            .getPublicTopicMessagesByChannelMessageApi(selectedTeamId, entityId,
+                                    firstItemId, count);
                 } else {
-                    return RequestApiManager.getInstance().getPublicTopicMessagesByChannelMessageApi(selectedTeamId, entityId);
+                    return RequestApiManager.getInstance()
+                            .getPublicTopicMessagesByChannelMessageApi(selectedTeamId, entityId, firstItemId, count);
                 }
             case JandiConstants.TYPE_DIRECT_MESSAGE:
                 if (firstItemId > 0) {
-                    return RequestApiManager.getInstance().getDirectMessagesByDirectMessageApi(selectedTeamId, entityId, firstItemId, requestCount);
+                    return RequestApiManager.getInstance().getDirectMessagesByDirectMessageApi
+                            (selectedTeamId, entityId, firstItemId, count);
                 } else {
-                    return RequestApiManager.getInstance().getDirectMessagesByDirectMessageApi(selectedTeamId, entityId);
+                    return RequestApiManager.getInstance().getDirectMessagesByDirectMessageApi(selectedTeamId, entityId, firstItemId, count);
                 }
             case JandiConstants.TYPE_PRIVATE_TOPIC:
                 if (firstItemId > 0) {
-                    return RequestApiManager.getInstance().getGroupMessagesByGroupMessageApi(selectedTeamId, entityId, firstItemId, requestCount);
+                    return RequestApiManager.getInstance().getGroupMessagesByGroupMessageApi
+                            (selectedTeamId, entityId, firstItemId, count);
                 } else {
-                    return RequestApiManager.getInstance().getGroupMessagesByGroupMessageApi(selectedTeamId, entityId);
+                    return RequestApiManager.getInstance().getGroupMessagesByGroupMessageApi(selectedTeamId, entityId, firstItemId, count);
                 }
             default:
                 return null;
@@ -76,17 +85,9 @@ public class MessageManipulator {
     }
 
     public ResUpdateMessages updateMessages(final int fromCurrentId) throws RetrofitError {
-        switch (entityType) {
-            case JandiConstants.TYPE_PUBLIC_TOPIC:
-                LogUtil.e(String.valueOf("selectedTeamId:" + selectedTeamId + "EntityId:" + entityId + "fromCurrentId:" + fromCurrentId));
-                return RequestApiManager.getInstance().getPublicTopicUpdatedMessagesByChannelMessageApi(selectedTeamId, entityId, fromCurrentId);
-            case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return RequestApiManager.getInstance().getDirectMessagesUpdatedByDirectMessageApi(selectedTeamId, entityId, fromCurrentId);
-            case JandiConstants.TYPE_PRIVATE_TOPIC:
-                return RequestApiManager.getInstance().getGroupMessagesUpdatedByGroupMessageApi(selectedTeamId, entityId, fromCurrentId);
-            default:
-                return null;
-        }
+
+        return RequestApiManager.getInstance().getRoomUpdateMessageByMessagesApiAuth
+                (selectedTeamId, roomId, fromCurrentId);
     }
 
     public ResCommon setMarker(final int lastLinkId) throws RetrofitError {
@@ -108,7 +109,7 @@ public class MessageManipulator {
         return RequestApiManager.getInstance().setMarkerByMainRest(entityId, reqSetMarker);
     }
 
-    public ResCommon sendMessage(String message) throws RetrofitError {
+    public ResCommon sendMessage(String message, List<MentionObject> mentions) throws RetrofitError {
         final ReqSendMessage sendingMessage = new ReqSendMessage();
         sendingMessage.teamId = selectedTeamId;
         sendingMessage.type = "string";
@@ -116,11 +117,11 @@ public class MessageManipulator {
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
-                return RequestApiManager.getInstance().sendPublicTopicMessageByChannelMessageApi(sendingMessage, entityId);
+                return RequestApiManager.getInstance().sendPublicTopicMessageByChannelMessageApi(entityId, selectedTeamId, new ReqSendMessageV3(message, mentions));
             case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return RequestApiManager.getInstance().sendDirectMessageByDirectMessageApi(sendingMessage, entityId);
+                return RequestApiManager.getInstance().sendDirectMessageByDirectMessageApi(entityId, selectedTeamId, new ReqSendMessageV3(message, null));
             case JandiConstants.TYPE_PRIVATE_TOPIC:
-                return RequestApiManager.getInstance().sendGroupMessageByGroupMessageApi(sendingMessage, entityId);
+                return RequestApiManager.getInstance().sendGroupMessageByGroupMessageApi(entityId, selectedTeamId, new ReqSendMessageV3(message, mentions));
             default:
                 return null;
         }
@@ -189,5 +190,9 @@ public class MessageManipulator {
 
     public ResMessages.OriginalMessage getMessage(int teamId, int messageId) throws RetrofitError {
         return RequestApiManager.getInstance().getMessage(teamId, messageId);
+    }
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 }

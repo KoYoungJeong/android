@@ -65,7 +65,7 @@
 
     <!-- Fuzzy -->
     <string name="jandi_action_direct_message">"ダイレクトメッセージ"</string>
-    <string name="jandi_action_starred">"お気に入り"</string>
+    <string name="jandi_action_starred">"スター付き"</string>
 
     <!-- 튜토리얼 -->
     <string name="jandi_tutorial_welcome">"JANDIへようこそ"</string>
@@ -89,7 +89,7 @@
     <string name="jandi_create_privategroup">"新規プライベートグループを作成する"</string>
     <string name="jandi_modify_channel">"トピックの名称を変更"</string>
     <string name="jandi_modify_private_group">"グループを編集"</string>
-    <string name="warn_all_users_are_already_invited">"全てのメンバーは既に招待されています"</string>
+    <string name="warn_all_users_are_already_invited">"既にメンバー全員がこのトピックに参加しています"</string>
     <string name="err_entity_create">"作成できませんでした"</string>
     <string name="err_entity_join">"参加できませんでした"</string>
     <string name="err_entity_duplicated_name">"その名前は既に使用されています"</string>
@@ -144,9 +144,9 @@
     <!-- Announcement -->
     <string name="jandi_announcement_create">"告知に登録する"</string>
     <string name="jandi_announcement_create_question">"登録されている告知をこのメッセージに変更します。変更しますか？"</string>
-    <string name="jandi_announcement_delete_question">"この告知を削除しますか？削除時トピック内の他のメンバーたちにもこれからこの告知が見えますが、元のメッセージは保存されます"</string>
+    <string name="jandi_announcement_delete_question">"この告知を削除します。続きますか？"</string>
     <string name="jandi_announcement_created">"%1$sさんが%2$sさんのメッセージを告知に登録しました。"</string>
-    <string name="jandi_announcement_deleted">"%sさんが告知を削除しました。hh:mm PM"</string>
+    <string name="jandi_announcement_deleted">"%sさんが告知を削除しました。"</string>
     <string name="jandi_announcement_delete">"削除"</string>
     <string name="jandi_announcement_minimize">"環境設定"</string>
 
@@ -160,6 +160,9 @@
     <string name="modify_message">"メッセージを編集する"</string>
     <string name="today">"今日"</string>
 
+    <!-- Mention -->
+    <string name="jandi_mention_push_message">"%sさんからのメンション"</string>
+
     <!-- File Detail Activity -->
     <string name="jandi_action_download">"ダウンロード"</string>
     <string name="jandi_action_unshare">"非共有"</string>
@@ -172,6 +175,8 @@
     <string name="err_share">"ファイルが共有できませんでした"</string>
     <string name="err_unshare">"ファイルが非共有にできませんでした"</string>
     <string name="err_delete_file">"ファイルが削除できませんでした"</string>
+    <string name="err_file_has_not_been_shared">"共有されたファイルがありません"</string>
+    <string name="err_file_already_shared_all_topics">"このファイルは既に参加されているすべてのトピックに共有されています"</string>
 
     <!-- File Upload -->
     <string name="title_file_upload">"ファイルをアップロード"</string>
@@ -335,6 +340,7 @@
 チームごとに自分のメールアドレスを1つ選んでください。プロファイルに表示されます"</string>
     <string name="jadi_account_home">"ホームに戻る"</string>
     <string name="jandi_go_to_main">"ホームに戻る"</string>
+    <string name="jandi_team_switch">"チーム切替"</string>
     <string name="jandi_sign_in_ids_explain">"JANDIからのメールを受信するメールアドレスを一つ選択してください。メールアドレスを追加しチームごとに使い分けられます"</string>
     <string name="jandi_disable_user_profile_explain">"このメンバーは現在無効化されています。詳細はチーム管理者にお問い合わせ下さい"</string>
     <string name="jandi_share_to_jandi">"JANDIにシェア"</string>
@@ -366,7 +372,7 @@
     <string name="jandi_message_ask_about_delete_comment">"本当に削除しますか？元には戻せません"</string>
     <string name="jandi_message_no_member">"このチームには他のメンバーがいません。新しいメンバーを招待してコラボレーションを始めましょう"</string>
     <string name="jandi_file_delete_message">"ファイルを削除してよいですか？削除後もコメントは残ります"</string>
-    <string name="jandi_unshared_message">"このファイルは非共有化されました"</string>
+    <string name="jandi_unshared_message">"すでに参加していないトピックなので原本が表示できません"</string>
     <string name="jandi_nowhere_shared_file">"共有されたファイルがありません"</string>
     <string name="jandi_topic_no_member_1">"このトピックには他にメンバーがいません。"</string>
     <string name="jandi_topic_no_member_2">"以下のボタンをタップしてメンバーを招待しましょう"</string>
@@ -417,8 +423,8 @@
     <string name="jandi_topic_description">"トピック説明"</string>
     <string name="jandi_topic_leave">"このトピックから退出"</string>
     <string name="jandi_topic_detail">"トピックの詳細情報"</string>
+    <string name="jandi_topic_invitation">"招待"</string>
     <string name="jandi_explain_topic_description">"トピックの説明（選択）"</string>
-    <string name="jandi_topic_starred">"このトピックをお気に入りに追加する"</string>
 
     <!-- tutorial -->
     <string name="jandi_coach_mark_search_message">トピックメッセー\nジ検索</string>
@@ -455,5 +461,33 @@
     <string name="jandi_coach_mark_more_explain3">ように他のチームメンバーを招待してみましょう！</string>
     <string name="jandi_chat_detail">"トピック設定"</string>
     <string name="jandi_already_in_team">"このメールはすでに%sのメンバーです"</string>
+    <string name="jandi_unread_messages_below">"ここから未読メッセージ"</string>
+
+    <string name="jandi_profile_picture">プロフィール画像</string>
+
+    <string name="jandi_topic_was_removed">"すでに参加していないトピックなので原本が表示できません"</string>
+
+    <!-- starred -->
+
+    <string name="jandi_starred_star">スター付き</string>
+    <string name="jandi_mention_mentions">メンション</string>
+    <string name="jandi_mention_more">もっと見る</string>
+    <string name="jandi_starred_files">ファイルの種類</string>
+    <string name="jandi_starred_all">全ての種類</string>
+    <string name="jandi_starred_unstar">お気に入りから削除する</string>
+    <string name="jandi_starred_undo">取り消し</string>
+    <string name="jandi_starred_unstarred">スター解除</string>
+    <string name="jandi_starred_stars">スター付き</string>
+    <string name="jandi_mention_all_topic_members">トピック内</string>
+    <string name="jandi_mention_mentioned_you">さんからのメンション</string>
+    <string name="jandi_mention_no_mentions">メンションされたことがありません</string>
+    <string name="jandi_starred_no_all">スター付きのメッセージやファイルがありません</string>
+    <string name="jandi_starred_no_file">スター付きのファイルなし</string>
+    <string name="jandi_starred_unstar_from_item">スター付きを解除しましょうか？</string>
+    <string name="jandi_unpinned_message">"スターなし"</string>
+    <string name="jandi_topic_notification">"トピックからの通知"</string>
+    <string name="jandi_you_cannot_delete_default_message">"基本トピックは削除や退出できません"</string>
+    <string name="jandi_this_is_disabled_user_explain">"このメンバーは現在無効化されています。詳細はチーム管理者にお問い合わせ下さい"</string>
+
 
 </resources>

@@ -4,41 +4,30 @@ package com.tosslab.jandi.app.ui.maintab.file.model;
  * Created by Steve SeongUg Jung on 15. 1. 8..
  */
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.google.gson.JsonObject;
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.builder.Builders;
-import com.koushikdutta.ion.future.ResponseFuture;
-import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
-import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.database.file.JandiFileDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.UserAgentUtil;
+import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.json.JSONException;
 
-import java.io.File;
-import java.net.URLConnection;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import retrofit.RetrofitError;
 
@@ -67,20 +56,6 @@ public class FileListModel {
         JandiFileDatabaseManager.getInstance(context).upsertFiles(teamId, fileMessages);
     }
 
-    public ResSearchFile getFiles(int teamId) {
-        return JandiFileDatabaseManager.getInstance(context).getFiles(teamId);
-    }
-
-    public EntityManager retrieveEntityManager() {
-        EntityManager entityManager = EntityManager.getInstance(context);
-
-        if (entityManager != null) {
-            return entityManager;
-        }
-
-        return null;
-    }
-
     public List<ResMessages.OriginalMessage> descSortByCreateTime(List<ResMessages.OriginalMessage> links) {
         List<ResMessages.OriginalMessage> ret = new ArrayList<ResMessages.OriginalMessage>(links);
 
@@ -99,11 +74,6 @@ public class FileListModel {
         return ret;
     }
 
-    public boolean isOverSize(String realFilePath) {
-        File uploadFile = new File(realFilePath);
-        return uploadFile.exists() && uploadFile.length() > FilePickerModel.MAX_FILE_SIZE;
-    }
-
     public boolean isDefaultSearchQuery(ReqSearchFile searchFile) {
         return searchFile.sharedEntityId == -1 &&
                 searchFile.startMessageId == -1 &&
@@ -119,43 +89,31 @@ public class FileListModel {
                 TextUtils.equals(searchFile.writerId, "all");
     }
 
-    public JsonObject uploadFile(ConfirmFileUploadEvent event, ProgressDialog progressDialog, boolean isPublicTopic) throws ExecutionException, InterruptedException {
-        File uploadFile = new File(event.realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/v2/file";
-        String permissionCode = (isPublicTopic) ? "744" : "740";
-        Builders.Any.M ionBuilder
-                = Ion
-                .with(context)
-                .load(requestURL)
-                .uploadProgressDialog(progressDialog)
-                .progress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
-                .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
-                .setMultipartParameter("title", event.title)
-                .setMultipartParameter("share", "" + event.entityId)
-                .setMultipartParameter("permission", permissionCode)
-                .setMultipartParameter("teamId", String.valueOf(JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId()));
-
-        // Comment가 함께 등록될 경우 추가
-        if (event.comment != null && !event.comment.isEmpty()) {
-            ionBuilder.setMultipartParameter("comment", event.comment);
+    public void trackFileKeywordSearchSuccess(String keyword) {
+        try {
+            keyword = URLEncoder.encode(keyword, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
 
-        ResponseFuture<JsonObject> responseFuture = ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
-                .asJsonObject();
-
-        progressDialog.setOnCancelListener(dialog -> responseFuture.cancel());
-        JsonObject userFile = responseFuture.get();
-
-        return userFile;
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileKeywordSearch)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.SearchKeyword, keyword)
+                        .build());
     }
 
-    public void trackUploadingFile(int entityType, JsonObject result) {
-
-        try {
-            MixpanelMemberAnalyticsClient.getInstance(context, EntityManager.getInstance(context).getDistictId()).trackUploadingFile(entityType, result);
-        } catch (JSONException e) {
-        }
+    public void trackFileKeywordSearchFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileKeywordSearch)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
     }
 }

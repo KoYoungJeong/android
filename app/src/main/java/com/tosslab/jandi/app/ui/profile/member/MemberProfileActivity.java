@@ -1,9 +1,9 @@
 package com.tosslab.jandi.app.ui.profile.member;
 
 import android.app.DialogFragment;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.soundcloud.android.crop.Crop;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
@@ -20,17 +22,22 @@ import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.files.upload.ProfileFileUploadViewModelImpl;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
-import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.AlertUtil;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -39,6 +46,9 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.UiThread;
+
+import java.io.File;
+import java.io.IOException;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
@@ -58,8 +68,18 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     @Bean(ProfileFileUploadViewModelImpl.class)
     FilePickerViewModel filePickerViewModel;
 
+    @Bean
+    AlertUtil alertUtil;
+
     @AfterViews
     void bindAdapter() {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ScreenView, ScreenViewProperty.PROFILE)
+                        .build());
 
         setupActionBar();
 
@@ -82,10 +102,6 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                return true;
-            case R.id.action_update_profile:
-                ProgressDialog progressDialog = new ProgressDialog(MemberProfileActivity.this);
-                onUpdateProfile(progressDialog);
                 return true;
         }
 
@@ -121,7 +137,12 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     void getProfileInBackground() {
         memberProfileView.showProgressWheel();
         try {
-            ResLeftSideMenu.User me = memberProfileModel.getProfile();
+            ResLeftSideMenu.User me;
+            if (!NetworkCheckUtil.isConnected()) {
+                me = memberProfileModel.getSavedProfile(JandiApplication.getContext());
+            } else {
+                me = memberProfileModel.getProfile();
+            }
             memberProfileView.displayProfile(me);
         } catch (RetrofitError e) {
             LogUtil.e("get profile failed", e);
@@ -142,57 +163,78 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     @Click(R.id.profile_user_status_message)
     void editStatusMessage(View view) {
         // 닉네임
-        memberProfileView.launchEditDialog(
-                EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS,
-                ((TextView) view)
-        );
+        if (NetworkCheckUtil.isConnected()) {
+            memberProfileView.launchEditDialog(
+                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS,
+                    ((TextView) view)
+            );
+        }
     }
 
     @Click(R.id.profile_user_phone_number)
     void editPhoneNumber(View view) {
         // 핸드폰 번호
-        memberProfileView.launchEditDialog(
-                EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE,
-                ((TextView) view)
-        );
+        if (NetworkCheckUtil.isConnected()) {
+            memberProfileView.launchEditDialog(
+                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE,
+                    ((TextView) view)
+            );
+        }
     }
 
     @Click(R.id.profile_user_realname)
     void editName(View view) {
-        memberProfileView.launchEditDialog(
-                EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME,
-                ((TextView) view)
-        );
+        if (NetworkCheckUtil.isConnected()) {
+            memberProfileView.launchEditDialog(
+                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME,
+                    ((TextView) view)
+            );
+        }
     }
 
     @Click(R.id.profile_user_division)
     void editDivision(View view) {
         // 부서
-        memberProfileView.launchEditDialog(
-                EditTextDialogFragment.ACTION_MODIFY_PROFILE_DIVISION,
-                ((TextView) view)
-        );
+        if (NetworkCheckUtil.isConnected()) {
+            memberProfileView.launchEditDialog(
+                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_DIVISION,
+                    ((TextView) view)
+            );
+        }
     }
 
     @Click(R.id.profile_user_position)
     void editPosition(View view) {
         // 직책
-        memberProfileView.launchEditDialog(
-                EditTextDialogFragment.ACTION_MODIFY_PROFILE_POSITION,
-                ((TextView) view)
-        );
+        if (NetworkCheckUtil.isConnected()) {
+            memberProfileView.launchEditDialog(
+                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_POSITION,
+                    ((TextView) view)
+            );
+        }
     }
 
     @Click(R.id.profile_user_email)
     void editEmail(View view) {
-        String[] accountEmails = memberProfileModel.getAccountEmails();
-        String email = memberProfileView.getEmail();
-        memberProfileView.showEmailChooseDialog(accountEmails, email);
+        if (NetworkCheckUtil.isConnected()) {
+            String[] accountEmails = memberProfileModel.getAccountEmails();
+            String email = memberProfileView.getEmail();
+            memberProfileView.showEmailChooseDialog(accountEmails, email);
+        }
+    }
+
+    @Click(R.id.profile_photo)
+    void getPicture() {
+        // 프로필 사진
+        filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, MemberProfileActivity.this);
+
     }
 
     public void onEvent(MemberEmailChangeEvent event) {
-        memberProfileView.updateEmailTextColor(event.getEmail());
-        uploadEmail(event.getEmail());
+        if (NetworkCheckUtil.isConnected()) {
+            memberProfileView.updateEmailTextColor(event.getEmail());
+            uploadEmail(event.getEmail());
+        }
     }
 
     public void onEvent(ProfileChangeEvent event) {
@@ -212,6 +254,13 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     }
 
     public void onEvent(ConfirmModifyProfileEvent event) {
+
+
+        if (!NetworkCheckUtil.isConnected()) {
+            alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
+            return;
+        }
+
         memberProfileView.updateProfileTextColor(event.actionType, event.inputMessage);
         if (event.actionType == EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME) {
             updateProfileName(event.inputMessage);
@@ -231,7 +280,6 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
                     reqUpdateProfile.position = event.inputMessage;
                     break;
             }
-
 
             updateProfileExtraInfo(reqUpdateProfile);
         }
@@ -275,6 +323,12 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
     @Background
     void uploadEmail(String email) {
+
+        if (!NetworkCheckUtil.isConnected()) {
+            alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
+            return;
+        }
+
         try {
             memberProfileModel.updateProfileEmail(email);
             memberProfileView.updateProfileSucceed();
@@ -284,43 +338,9 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         }
     }
 
-    @Background
-    void onUpdateProfile(ProgressDialog progressDialog) {
-        // TODO Refactoring...
-
-        memberProfileView.showProgressWheel();
-
-        try {
-            ResLeftSideMenu entitiesInfo = EntityClientManager_.getInstance_(MemberProfileActivity.this).getTotalEntitiesInfo();
-            JandiEntityDatabaseManager.getInstance(MemberProfileActivity.this).upsertLeftSideMenu(entitiesInfo);
-            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
-            JandiPreference.setBadgeCount(MemberProfileActivity.this, totalUnreadCount);
-            BadgeUtils.setBadge(MemberProfileActivity.this, totalUnreadCount);
-            EntityManager.getInstance(MemberProfileActivity.this).refreshEntity(entitiesInfo);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-        }
-
-        memberProfileView.dismissProgressWheel();
-
-
-    }
-
     @UiThread
     void upateOptionMenu() {
         invalidateOptionsMenu();
-    }
-
-    /**
-     * *********************************************************
-     * 프로필 사진 업로드
-     * **********************************************************
-     */
-    @Click(R.id.profile_photo)
-    void getPicture() {
-
-        filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, MemberProfileActivity.this);
-
     }
 
     @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_GALLERY)
@@ -330,6 +350,34 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         }
 
         String filePath = filePickerViewModel.getFilePath(getApplicationContext(), FilePickerViewModel.TYPE_UPLOAD_GALLERY, imageData).get(0);
+        if (!TextUtils.isEmpty(filePath)) {
+            try {
+                Crop.of(Uri.fromFile(new File(filePath)),
+                        Uri.fromFile(File.createTempFile("temp_", ".jpg",
+                                new File(GoogleImagePickerUtil.getDownloadPath()))))
+                        .asSquare()
+                        .start(MemberProfileActivity.this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @OnActivityResult(Crop.REQUEST_CROP)
+    public void onImageCropResult(int resultCode, Intent imageData) {
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+
+        if (!NetworkCheckUtil.isConnected()) {
+            alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
+            return;
+        }
+
+        Uri output = Crop.getOutput(imageData);
+
+        String filePath = output.getPath();
         if (!TextUtils.isEmpty(filePath)) {
             filePickerViewModel.startUpload(MemberProfileActivity.this, null, -1, filePath, null);
         }

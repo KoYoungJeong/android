@@ -13,7 +13,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.MessageManipulator_;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
@@ -30,7 +30,6 @@ import org.json.JSONException;
 import java.io.File;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -55,7 +54,9 @@ public class ShareModel {
         entities.addAll(entityManager.getGroups());
         entities.addAll(entityManager.getFormattedUsersWithoutMe());
 
-        Iterator<EntityInfo> iterator = Observable.from(entities)
+        List<EntityInfo> entityInfos = new ArrayList<EntityInfo>();
+
+        Observable.from(entities)
                 .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
                 .map(entity -> {
 
@@ -69,17 +70,27 @@ public class ShareModel {
                     } else {
                         userLargeProfileUrl = "";
                     }
-                    return new EntityInfo(entity.getId(), entity.getName(), publicTopic, privateGroup, userLargeProfileUrl);
+                    return new EntityInfo(entity.getId(), entity.getName(), publicTopic,
+                            privateGroup, user, userLargeProfileUrl);
 
                 })
-                .toBlocking()
-                .getIterator();
+                .toSortedList((formattedEntity, formattedEntity2) -> {
+                    if (formattedEntity.isUser() && formattedEntity2.isUser()) {
+                        return formattedEntity.getName()
+                                .compareToIgnoreCase(formattedEntity2.getName());
+                    } else if (!formattedEntity.isUser() && !formattedEntity2.isUser()) {
+                        return formattedEntity.getName()
+                                .compareToIgnoreCase(formattedEntity2.getName());
+                    } else {
+                        if (formattedEntity.isUser()) {
+                            return 1;
+                        } else {
+                            return -1;
+                        }
+                    }
+                })
+                .subscribe(entityInfos::addAll);
 
-        List<EntityInfo> entityInfos = new ArrayList<EntityInfo>();
-
-        while (iterator.hasNext()) {
-            entityInfos.add(iterator.next());
-        }
 
         return entityInfos;
 
@@ -100,12 +111,12 @@ public class ShareModel {
         }
         messageManipulator.initEntity(entityType, entity.getEntityId());
 
-        messageManipulator.sendMessage(messageText);
+        messageManipulator.sendMessage(messageText, null);
 
     }
 
     public int getTeamId() {
-        return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+        return AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
     }
 
     public boolean isStarredEntity(int entityId) {
@@ -129,14 +140,13 @@ public class ShareModel {
                 .with(context)
                 .load(requestURL)
                 .uploadProgressDialog(progressDialog)
-                .progress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                 .setMultipartParameter("title", titleText)
                 .setMultipartParameter("share", "" + entityInfo.getEntityId())
                 .setMultipartParameter("permission", permissionCode)
-                .setMultipartParameter("teamId", String.valueOf(JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId()));
+                .setMultipartParameter("teamId", String.valueOf(AccountRepository.getRepository().getSelectedTeamInfo().getTeamId()));
 
         // Comment가 함께 등록될 경우 추가
         if (!TextUtils.isEmpty(commentText)) {
@@ -158,5 +168,13 @@ public class ShareModel {
             MixpanelMemberAnalyticsClient.getInstance(context, EntityManager.getInstance(context).getDistictId()).trackUploadingFile(entityType, result);
         } catch (JSONException e) {
         }
+    }
+
+    public String getFilePath(String uriString) {
+        return Uri.parse(uriString).getPath();
+    }
+
+    public boolean isFileUri(String uriString) {
+        return !TextUtils.isEmpty(uriString) && uriString.startsWith("file://");
     }
 }

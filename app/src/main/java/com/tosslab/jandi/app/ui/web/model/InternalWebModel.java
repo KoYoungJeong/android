@@ -73,6 +73,6 @@ public class InternalWebModel {
     public void sendMessage(int entityId, int entityType, String text) throws RetrofitError {
         MessageManipulator messageManipulator = MessageManipulator_.getInstance_(context);
         messageManipulator.initEntity(entityType, entityId);
-        messageManipulator.sendMessage(text);
+        messageManipulator.sendMessage(text, null);
     }
 }

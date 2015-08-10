@@ -26,6 +26,7 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
     private ImageView ivSticker;
     private View disableLineThroughView;
     private TextView unreadTextView;
+    private View lastReadView;
 
     @Override
     public void initView(View rootView) {
@@ -34,6 +35,8 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
         ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_nested_comment_content);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
         unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
+        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
+
     }
 
     @Override
@@ -59,7 +62,7 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
         nameTextView.setText(fromEntity.name);
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(),
+        int unreadCount = UnreadCountUtil.getUnreadCount(
                 teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
 
         unreadTextView.setText(String.valueOf(unreadCount));
@@ -74,6 +77,15 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
         nameTextView.setOnClickListener(v ->
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
 
+    }
+
+    @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        if (currentLinkId == lastReadLinkId) {
+            lastReadView.setVisibility(View.VISIBLE);
+        } else {
+            lastReadView.setVisibility(View.GONE);
+        }
     }
 
     @Override

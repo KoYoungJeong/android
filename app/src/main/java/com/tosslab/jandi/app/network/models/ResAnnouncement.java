@@ -1,24 +1,34 @@
 package com.tosslab.jandi.app.network.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-import java.util.Date;
-
-/**
- * Created by tonyjs on 15. 6. 24..
- */
+@DatabaseTable(tableName = "announce_info")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResAnnouncement {
+    @DatabaseField
     private int teamId;
-    private int topicId;
+    @DatabaseField(id = true)
+    @JsonProperty("topicId")
+    private int roomId;
+    @DatabaseField
     private String status;
+    @DatabaseField
     private int messageId;
+    @DatabaseField
     private int writerId;
+    @DatabaseField
     private String content;
+    @DatabaseField
     private String writtenAt;
+    @DatabaseField
     private int creatorId;
+    @DatabaseField
     private String createdAt;
 
     public int getTeamId() {
@@ -29,12 +39,12 @@ public class ResAnnouncement {
         this.teamId = teamId;
     }
 
-    public int getTopicId() {
-        return topicId;
+    public int getRoomId() {
+        return roomId;
     }
 
-    public void setTopicId(int topicId) {
-        this.topicId = topicId;
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 
     public String getStatus() {
@@ -97,7 +107,7 @@ public class ResAnnouncement {
     public String toString() {
         return "ResAnnouncement{" +
                 "teamId=" + teamId +
-                ", topicId=" + topicId +
+                ", roomId=" + roomId +
                 ", status='" + status + '\'' +
                 ", messageId=" + messageId +
                 ", writerId=" + writerId +

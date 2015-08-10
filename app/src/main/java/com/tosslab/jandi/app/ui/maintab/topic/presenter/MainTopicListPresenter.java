@@ -37,7 +37,7 @@ public interface MainTopicListPresenter {
 
         List<Topic> getJoinedTopics();
 
-        void moveToMessageActivity(int entityId, int entityType, boolean starred, int teamId);
+        void moveToMessageActivity(int entityId, int entityType, boolean starred, int teamId, int markerLinkId);
 
         void setSelectedItem(int selectedEntity);
 

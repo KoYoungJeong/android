@@ -31,6 +31,8 @@ public class StickerViewHolder implements BodyViewHolder {
     private TextView tvUnread;
     private TextView tvDate;
 
+    private View lastReadView;
+
     @Override
     public void initView(View rootView) {
         profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
@@ -40,6 +42,7 @@ public class StickerViewHolder implements BodyViewHolder {
         ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_sticker);
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -75,7 +78,7 @@ public class StickerViewHolder implements BodyViewHolder {
         nameTextView.setText(fromEntity.name);
         tvDate.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(tvUnread.getContext(), teamId, roomId,
+        int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
                 link.id, link.fromEntity, EntityManager.getInstance(tvUnread.getContext()).getMe().getId());
 
         tvUnread.setText(String.valueOf(unreadCount));
@@ -94,6 +97,15 @@ public class StickerViewHolder implements BodyViewHolder {
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
         nameTextView.setOnClickListener(v ->
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+    }
+
+    @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        if (currentLinkId == lastReadLinkId) {
+            lastReadView.setVisibility(View.VISIBLE);
+        } else {
+            lastReadView.setVisibility(View.GONE);
+        }
     }
 
     @Override

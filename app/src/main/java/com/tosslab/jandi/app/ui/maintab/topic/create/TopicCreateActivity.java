@@ -11,11 +11,13 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.maintab.topic.create.model.TopicCreateModel;
+import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -29,6 +31,7 @@ import org.androidannotations.annotations.TextChange;
 import org.json.JSONException;
 
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -93,6 +96,12 @@ public class TopicCreateActivity extends AppCompatActivity {
 
         String topicTitle = topicCreatePresenter.getTopicTitle();
 
+        if (!NetworkCheckUtil.isConnected()) {
+            AlertUtil_.getInstance_(TopicCreateActivity.this)
+                    .showCheckNetworkDialog(TopicCreateActivity.this, null);
+            return;
+        }
+
         if (topicCreateModel.validTitle(topicTitle)) {
             return;
         }
@@ -121,16 +130,23 @@ public class TopicCreateActivity extends AppCompatActivity {
             topicCreatePresenter.dismissProgressWheel();
 
             EntityManager.getInstance(TopicCreateActivity.this).refreshEntity(TopicCreateActivity.this);
-            int teamId = JandiAccountDatabaseManager.getInstance(TopicCreateActivity.this).getSelectedTeamInfo().getTeamId();
+            int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
+
+            topicCreateModel.trackTopicCreateSuccess(topic.id);
+
             topicCreatePresenter.createTopicSuccess(teamId, topic.id, topicTitle, publicSelected);
         } catch (RetrofitError e) {
             topicCreatePresenter.dismissProgressWheel();
-            if (e.getResponse() != null && e.getResponse().getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
+            final Response response = e.getResponse();
+            int errorCode = response != null ? response.getStatus() : -1;
+            topicCreateModel.trackTopicCreateFail(errorCode);
+            if (response != null && response.getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
                 topicCreatePresenter.createTopicFailed(R.string.err_entity_duplicated_name);
             } else {
                 topicCreatePresenter.createTopicFailed(R.string.err_entity_create);
             }
         } catch (Exception e) {
+            topicCreateModel.trackTopicCreateFail(-1);
             topicCreatePresenter.dismissProgressWheel();
             topicCreatePresenter.createTopicFailed(R.string.err_entity_create);
         }

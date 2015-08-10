@@ -5,12 +5,15 @@ import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
+import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 
 import java.util.List;
 
@@ -37,4 +40,14 @@ public interface ITeamApiLoader {
 
     IExecutor<ResMessages.OriginalMessage> loadGetMessage(int teamId, int topicId);
 
+    IExecutor<ResStarMentioned> loadGetMentionedMessagesByTeamApi(int teamId, Integer messageId, int count);
+
+    IExecutor<StarMentionedMessageObject> loadRegistStarredMessageByTeamApi(int teamId, int messageId);
+
+    IExecutor<ResCommon> loadUnregistStarredMessageByTeamApi(int teamId, int messageId);
+
+    IExecutor<ResStarMentioned> loadGetStarredMessagesByTeamApi(int teamId, Integer starredId,
+                                                                int count, String type);
+
+    IExecutor<ResCommon> loadUpdateTopicPushSubscribe(int teamId, int topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe);
 }

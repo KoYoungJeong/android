@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
 
@@ -44,14 +44,15 @@ public class MainShareModel {
             return MainShareActivity.IntentType.Image;
         } else if (TextUtils.equals(type, "text/plain")) {
             return MainShareActivity.IntentType.Text;
+        } else {
+            return MainShareActivity.IntentType.Etc;
         }
 
-        return null;
     }
 
     public boolean hasTeamInfo() {
 
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
         return selectedTeamInfo != null;
     }

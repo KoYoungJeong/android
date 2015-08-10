@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
@@ -20,15 +21,18 @@ import com.tosslab.jandi.app.views.spannable.NameSpannable;
 public class CollapseCommentViewHolder implements BodyViewHolder {
 
     private TextView tvMessage;
+    private View lastReadView;
 
     @Override
     public void initView(View rootView) {
         tvMessage = (TextView) rootView.findViewById(R.id.tv_pure_comment_content);
+        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
     public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
-        String message = ((ResMessages.CommentMessage) link.message).content.body;
+        ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
+        String message = commentMessage.content.body;
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
         builder.append(message);
@@ -46,16 +50,23 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
 
         Resources resources = context.getResources();
 
+        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                tvMessage, builder, commentMessage.mentions,
+                EntityManager.getInstance(tvMessage.getContext()).getMe().getId())
+                .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
+        builder = generateMentionMessageUtil.generate();
+
+
         int startIndex = builder.length();
-        builder.append(DateTransformator.getTimeStringForSimple(link.message.createTime));
+        builder.append(DateTransformator.getTimeStringForSimple(commentMessage.createTime));
         int endIndex = builder.length();
 
         DateViewSpannable spannable =
                 new DateViewSpannable(tvMessage.getContext(),
-                        DateTransformator.getTimeStringForSimple(link.message.createTime));
+                        DateTransformator.getTimeStringForSimple(commentMessage.createTime));
         builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(context, teamId, roomId,
+        int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
                 link.id, link.fromEntity, EntityManager.getInstance(context).getMe().getId());
 
         if (unreadCount > 0) {
@@ -71,6 +82,15 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
         }
 
         tvMessage.setText(builder);
+    }
+
+    @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        if (currentLinkId == lastReadLinkId) {
+            lastReadView.setVisibility(View.VISIBLE);
+        } else {
+            lastReadView.setVisibility(View.GONE);
+        }
     }
 
     @Override

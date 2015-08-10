@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.lists.files;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.tosslab.jandi.app.lists.files.viewholder.FileDetailCommentView;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -31,10 +33,8 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
 
     @RootContext
     Context mContext;
-
-    enum CommentViewType {
-        Comment, PureComment, Sticker, PureSticker
-    }
+    private int selectMessageId;
+    private AnimStat animStat = AnimStat.START;
 
     @AfterInject
     void initAdapter() {
@@ -100,13 +100,21 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.commentViewHolder.bind(getItem(position));
+        ResMessages.OriginalMessage item = getItem(position);
+        viewHolder.commentViewHolder.bind(item);
+
+        if (item.id == selectMessageId && animStat == AnimStat.START) {
+            viewHolder.commentViewHolder.startAnimation(new SimpleEndAnimatorListener() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    animStat = AnimStat.END;
+                }
+            });
+
+            animStat = AnimStat.ANIM;
+        }
 
         return convertView;
-    }
-
-    private static class ViewHolder {
-        CommentViewHolder commentViewHolder;
     }
 
     @Override
@@ -148,7 +156,6 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
         return CommentViewType.values().length;
     }
 
-
     /**
      * TODO : 로직을 언젠가는 MessageItemListAdapter와 합칠 필요가 있겠음.
      *
@@ -177,7 +184,7 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
     }
 
     // 현재 화면에 뿌려진 메시지들 중에 messageId와 동일한 놈의 index 반환
-    private int searchIndexOfMessages(int commentId) {
+    public int searchIndexOfMessages(int commentId) {
         for (int i = 0; i < mMessages.size(); i++) {
             if (mMessages.get(i).id == commentId)
                 return i;
@@ -185,7 +192,40 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
         return -1;
     }
 
+    public void modifyStarredStateByPosition(int position, boolean isStarred) {
+        mMessages.get(position).isStarred = isStarred;
+        notifyDataSetChanged();
+    }
+
     public void clear() {
         mMessages.clear();
+    }
+
+    public int findMessagePosition(int messageId) {
+
+        for (int idx = 0, size = getCount(); idx < size; ++idx) {
+            if (getItem(idx).id == messageId) {
+                return idx;
+            }
+        }
+
+        return -1;
+    }
+
+    public void setSelectMessage(int selectMessageId) {
+        this.selectMessageId = selectMessageId;
+        animStat = AnimStat.START;
+    }
+
+    private enum AnimStat {
+        START, ANIM, END
+    }
+
+    enum CommentViewType {
+        Comment, PureComment, Sticker, PureSticker
+    }
+
+    private static class ViewHolder {
+        CommentViewHolder commentViewHolder;
     }
 }

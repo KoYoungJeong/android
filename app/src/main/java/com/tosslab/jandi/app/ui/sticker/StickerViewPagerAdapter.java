@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.models.sticker.ResSticker;
+import com.tosslab.jandi.app.network.models.ResMessages;
 
 import java.util.List;
 
@@ -21,9 +21,9 @@ class StickerViewPagerAdapter extends PagerAdapter {
     public static final int STICKER_MAX_VIEW = 8;
     private final Context context;
     private final StickerViewModel.OnStickerClick onStickerClick;
-    private List<ResSticker> stickers;
+    private List<ResMessages.StickerContent> stickers;
 
-    protected StickerViewPagerAdapter(Context context, List<ResSticker> stickers, StickerViewModel.OnStickerClick onStickerClick) {
+    protected StickerViewPagerAdapter(Context context, List<ResMessages.StickerContent> stickers, StickerViewModel.OnStickerClick onStickerClick) {
         this.context = context;
         this.stickers = stickers;
         this.onStickerClick = onStickerClick;
@@ -102,18 +102,19 @@ class StickerViewPagerAdapter extends PagerAdapter {
                 childBottom.addView(child);
             }
 
-            final ResSticker resSticker = stickers.get(idx + page * STICKER_MAX_VIEW);
+            final ResMessages.StickerContent resSticker = stickers.get(idx + page * STICKER_MAX_VIEW);
 
             child.setOnClickListener(v -> {
                 if (onStickerClick != null) {
-                    onStickerClick.onStickerClick(resSticker.getGroupId(), resSticker.getId());
+                    onStickerClick.onStickerClick(resSticker.groupId, resSticker.stickerId);
                 }
             });
 
             StickerManager.LoadOptions options = new StickerManager.LoadOptions();
             options.isClickImage = true;
             options.isFadeAnimation = false;
-            StickerManager.getInstance().loadSticker(child, resSticker.getGroupId(), resSticker.getId(), options);
+            StickerManager.getInstance()
+                    .loadSticker(child, resSticker.groupId, resSticker.stickerId, options);
 
         }
 

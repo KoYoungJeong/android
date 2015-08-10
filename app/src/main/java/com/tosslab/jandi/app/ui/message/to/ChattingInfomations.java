@@ -13,14 +13,16 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 public class ChattingInfomations {
     public int entityType;
     private final Context context;
+    public int teamId;
     public int entityId;
     public boolean isMyEntity;
     public boolean isFavorite;
     public String entityName;
     public boolean willBeFinishedFromPush;
 
-    public ChattingInfomations(Context context, int entityId, int entityType, boolean isFromPush, boolean isFavorite) {
+    public ChattingInfomations(Context context, int teamId, int entityId, int entityType, boolean isFromPush, boolean isFavorite) {
         this.context = context;
+        this.teamId = teamId;
         this.entityId = entityId;
         this.entityType = entityType;
         this.willBeFinishedFromPush = isFromPush;

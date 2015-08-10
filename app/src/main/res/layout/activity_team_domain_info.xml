@@ -24,6 +24,7 @@
         <EditText
             android:id="@+id/et_team_detail_info_team_name"
             style="@style/JandiTeam.EditText"
+            android:maxLength="20"
             android:hint="@string/jandi_new_team_name" />
 
         <LinearLayout

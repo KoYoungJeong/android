@@ -48,8 +48,8 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -152,9 +152,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         mEntityManager = EntityManager.getInstance(mContext);
 
         if (isFromPush) {
-            ResAccountInfo.UserTeam teamInfo = JandiAccountDatabaseManager.getInstance(mContext).getTeamInfo(teamId);
+            ResAccountInfo.UserTeam teamInfo = AccountRepository.getRepository().getTeamInfo(teamId);
             if (teamInfo != null) {
-                JandiAccountDatabaseManager.getInstance(mContext).updateSelectedTeam(teamId);
+                AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
             }
         }
 
@@ -162,7 +162,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
         mMessageItemConverter = new MessageItemConverter();
 
-        mChattingInformations = new ChattingInfomations(mContext, entityId, entityType, isFromPush, isFavorite);
+        mChattingInformations = new ChattingInfomations(mContext, teamId, entityId, entityType, isFromPush, isFavorite);
         messageManipulator.initEntity(
                 mChattingInformations.entityType, mChattingInformations.entityId);
 
@@ -172,7 +172,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     void initViews() {
         initInformations();
         initTempMessage();
-        clearPushNotification(entityId);
 //        BadgeUtils.clearBadge(mContext); // TODO BUG 현재 Activity 에서 홈버튼으로 돌아가면 아이콘에 뱃지가 0이 됨.
         initProgressWheel();
 
@@ -183,14 +182,14 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     private void initTempMessage() {
-        String tempMessage = messageListModel.getTempMessage(teamId, entityId);
+        String tempMessage = messageListModel.getTempMessage(entityId);
         etMessage.setText(tempMessage);
         etMessage.setSelection(etMessage.getText().length());
     }
 
     private void showCachedMessage() {
 
-        List<ResMessages.Link> cachedMessage = messageListModel.getCachedMessage(teamId, entityId);
+        List<ResMessages.Link> cachedMessage = messageListModel.getCachedMessage(entityId);
 
         mMessageItemConverter.insertMessageItem(cachedMessage);
         messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
@@ -214,15 +213,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     private void initProgressWheel() {
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
-    }
-
-    private void clearPushNotification(int entityId) {
-        // Notification 선택을 안하고 앱을 선택해서 실행시 Notification 제거
-        if (entityId == JandiPreference.getChatIdFromPush(this)) {
-            NotificationManager notificationManager;
-            notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
-        }
     }
 
     private void setupScrollView() {
@@ -329,7 +319,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         super.onStop();
 
         messageListModel.saveMessagesForCache(teamId, entityId, messageItemListAdapter);
-        messageListModel.saveTempMessage(teamId, entityId, etMessage.getText().toString());
+        messageListModel.saveTempMessage(entityId, etMessage.getText().toString());
     }
 
     @Override
@@ -425,7 +415,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         try {
             // TODO Temp TeamId
             ResLeftSideMenu resLeftSideMenu = mEntityClientManager.getTotalEntitiesInfo();
-            JandiEntityDatabaseManager.getInstance(MessageListActivity.this).upsertLeftSideMenu(resLeftSideMenu);
+            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
             JandiPreference.setBadgeCount(MessageListActivity.this, totalUnreadCount);
             BadgeUtils.setBadge(MessageListActivity.this, totalUnreadCount);
@@ -684,7 +674,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     public void sendMessageInBackground(String message) {
         try {
-            messageManipulator.sendMessage(message);
+            //messageManipulator.sendMessage(message);
             LogUtil.d("sendMessageInBackground : succeed");
             sendMessageSucceed();
         } catch (RetrofitError e) {

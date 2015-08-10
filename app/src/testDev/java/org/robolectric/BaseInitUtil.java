@@ -2,7 +2,7 @@ package org.robolectric;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
@@ -30,10 +30,9 @@ public class BaseInitUtil {
         TokenUtil.saveTokenInfoByPassword(accessToken);
 
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-        JandiAccountDatabaseManager.getInstance(context).upsertAccountDevices(accountInfo.getDevices());
-        JandiAccountDatabaseManager.getInstance(context).upsertAccountTeams(accountInfo.getMemberships());
-        JandiAccountDatabaseManager.getInstance(context).upsertAccountEmail(accountInfo.getEmails());
-        JandiAccountDatabaseManager.getInstance(context).upsertAccountInfo(accountInfo);
+        int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
+        AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
     }
 
     public static void logOn() {

@@ -14,29 +14,52 @@
         android:layout_below="@+id/ll_messages_disable_alert"
         android:scrollbars="vertical" />
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_list_search_members"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/space_messages_divider"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_below="@+id/ll_messages_disable_alert"
+        android:scrollbars="vertical"
+        android:visibility="invisible" />
+
     <LinearLayout
-        android:id="@+id/vg_message_upload_file"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/list_messages"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:orientation="vertical">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_message_upload_file"
+        <LinearLayout
+            android:id="@+id/vg_message_upload_file"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@color/jandi_primary_color"
-            android:clipToPadding="false"
-            android:paddingBottom="10dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:paddingTop="10dp" />
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/list_messages"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        <com.tosslab.jandi.app.views.listeners.WebLoadingBar
-            android:id="@+id/loading_message_upload_file"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_message_upload_file"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@color/jandi_primary_color"
+                android:clipToPadding="false"
+                android:paddingBottom="10dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="10dp" />
+
+            <com.tosslab.jandi.app.views.listeners.WebLoadingBar
+                android:id="@+id/loading_message_upload_file"
+                android:layout_width="match_parent"
+                android:layout_height="4dp" />
+        </LinearLayout>
+
+        <include
+            android:id="@+id/vg_announcement"
+            layout="@layout/layout_announcement"
             android:layout_width="match_parent"
-            android:layout_height="4dp" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <include
@@ -169,10 +192,11 @@
     <RelativeLayout
         android:id="@+id/ll_messages"
         android:layout_width="match_parent"
-        android:layout_height="63dp"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/vg_message_sticker_selector"
         android:layout_alignWithParentIfMissing="true"
-        android:background="@color/jandi_messages_bottom_bg">
+        android:background="@color/jandi_messages_bottom_bg"
+        android:minHeight="63dp">
 
         <ImageButton
             android:id="@+id/btn_upload_file"
@@ -193,7 +217,8 @@
             android:layout_toLeftOf="@+id/btn_send_message"
             android:layout_toRightOf="@+id/btn_upload_file"
             android:hint="@string/jandi_message_hint"
-            android:paddingRight="34dp" />
+            android:paddingRight="34dp"
+            android:textCursorDrawable="@null" />
 
         <ImageView
             android:id="@+id/btn_message_sticker"
@@ -274,10 +299,4 @@
         style="@style/Jandi.Default.ActionBar"
         android:layout_width="match_parent" />
 
-    <include
-        android:id="@+id/vg_announcement"
-        layout="@layout/layout_announcement"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layout_search_bar" />
 </RelativeLayout>

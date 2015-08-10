@@ -1,31 +1,24 @@
 package com.tosslab.jandi.app.utils.parse;
 
-import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
-import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
 import rx.Observable;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 9..
  */
 public class ParseUpdateUtil {
+    public static final String TAG = "JANDI.ParseUpdateUtils";
 
     public static final String PARSE_MY_ENTITY_ID = "myEntityId";
     public static final String PARSE_CHANNELS = "channels";
@@ -33,91 +26,62 @@ public class ParseUpdateUtil {
     public static final String PARSE_ACTIVATION_ON = "on";
     public static final String PARSE_ACTIVATION_OFF = "off";
 
-    public static void updateParseWithoutSelectedTeam(Context context) {
-        List<ResAccountInfo.UserTeam> userTeams = getUserTeams(context);
+    public static final String CHANNEL_ID_PREFIX = "accountId_";
 
-        Observable.from(userTeams)
-                .onBackpressureBuffer()
+    public static void addChannelOnServer() {
+        Observable.OnSubscribe<String> subscribe = subscriber -> {
+            ResAccountInfo accountInfo =
+                    AccountRepository.getRepository().getAccountInfo();
+            String accountId = accountInfo != null ? accountInfo.getId() : null;
+            if (TextUtils.isEmpty(accountId)) {
+                subscriber.onError(new NullPointerException("accountId"));
+            } else {
+                subscriber.onNext(CHANNEL_ID_PREFIX + accountId);
+            }
+            subscriber.onCompleted();
+        };
+        Observable.create(subscribe)
                 .observeOn(Schedulers.io())
-                .map(userTeam -> {
-                    LogUtil.d("UpdateParseWithoutSelectedTeam");
-                    try {
-                        return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(userTeam.getTeamId());
-                    } catch (RetrofitError retrofitError) {
-                        retrofitError.printStackTrace();
-                        return null;
-                    }
-                })
-                .filter(resLeftSideMenu1 -> resLeftSideMenu1 != null)
-                .map(resLeftSideMenu -> {
-                    int myId = resLeftSideMenu.user.id;
+                .subscribe(accountId -> {
+                    ParseInstallation currentInstallation = ParseInstallation.getCurrentInstallation();
+                    int memberId = AccountRepository.getRepository().getSelectedTeamInfo().getMemberId();
+                    currentInstallation.put(PARSE_MY_ENTITY_ID, memberId);
 
-                    List<String> subscribeList = new ArrayList<String>();
-                    String parseChannel;
-                    for (ResLeftSideMenu.Entity joinEntity : resLeftSideMenu.joinEntities) {
-                        if (joinEntity instanceof ResLeftSideMenu.Channel) {
-                            parseChannel = JandiConstants.PUSH_CHANNEL_PREFIX + joinEntity.id;
-                        } else if (joinEntity instanceof ResLeftSideMenu.PrivateGroup) {
-                            parseChannel = JandiConstants.PUSH_CHANNEL_PREFIX + joinEntity.id;
-                        } else {
-                            parseChannel = "";
-                        }
-
-                        if (!TextUtils.isEmpty(parseChannel)) {
-                            subscribeList.add(parseChannel);
-                        }
-                    }
-
-                    for (ResLeftSideMenu.Entity entity : resLeftSideMenu.entities) {
-                        if (entity instanceof ResLeftSideMenu.User) {
-                            parseChannel = JandiConstants.PUSH_CHANNEL_PREFIX + entity.id + "-" + myId;
-                            subscribeList.add(parseChannel);
-                        }
-
-                    }
-
-                    return subscribeList;
-                })
-                .collect(() -> new ArrayList<String>(), (collector, values) -> collector.addAll(values))
-                .filter(subscribeList -> !subscribeList.isEmpty())
-                .subscribe(new Action1<List<String>>() {
-                    @Override
-                    public void call(List<String> subscriber) {
-                        ParseInstallation currentInstallation = ParseInstallation.getCurrentInstallation();
-                        int memberId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getMemberId();
-                        currentInstallation.put(PARSE_MY_ENTITY_ID, memberId);
-                        if (currentInstallation.containsKey(PARSE_CHANNELS)) {
-                            List<String> savedChannels = (List<String>) currentInstallation.get(PARSE_CHANNELS);
-                            List<String> removeChannles = new ArrayList<String>();
-                            for (int idx = savedChannels.size() - 1; idx >= 0; idx--) {
-                                String savedChannel = savedChannels.get(idx);
-                                if (!subscriber.contains(savedChannel)) {
-                                    removeChannles.add(savedChannel);
+                    // 이전 채널 중 accountId 와 맞지 않는 채널이 있으면 지운다.
+                    if (currentInstallation.containsKey(PARSE_CHANNELS)) {
+                        List<String> savedChannels = (List<String>) currentInstallation.get(PARSE_CHANNELS);
+                        if (savedChannels != null && !savedChannels.isEmpty()) {
+                            List<String> listForRemove = new ArrayList<String>();
+                            for (String channel : savedChannels) {
+                                if (!channel.contains(accountId)) {
+                                    listForRemove.add(channel);
                                 }
                             }
-                            try {
-                                currentInstallation.removeAll(PARSE_CHANNELS, removeChannles);
-                                currentInstallation.save();
-                            } catch (ParseException e) {
-                                e.printStackTrace();
+                            if (!listForRemove.isEmpty()) {
+                                try {
+                                    currentInstallation.removeAll(PARSE_CHANNELS, listForRemove);
+                                    currentInstallation.save();
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
+                    }
 
-                        try {
-                            currentInstallation.addAllUnique(PARSE_CHANNELS, subscriber);
-                            currentInstallation.save();
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
+                    try {
+                        List<String> channels = new ArrayList<String>();
+                        channels.add(accountId);
+
+                        currentInstallation.addAllUnique(PARSE_CHANNELS, channels);
+                        currentInstallation.save();
+
+                        LogUtil.i(TAG, accountId + " add channel success.");
+                    } catch (Exception e) {
+                        LogUtil.e(TAG, e.getMessage());
                     }
                 }, throwable -> {
-                    LogUtil.e("Parse Error", throwable);
-
-                    Crashlytics.log(Log.ERROR
-                            , "Parse Push"
-                            , "Push Regist Fail" + throwable.getMessage());
+                    LogUtil.e(TAG, throwable.toString());
                 });
-
     }
 
     public static void deleteChannelOnServer() {
@@ -128,10 +92,6 @@ public class ParseUpdateUtil {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-    }
-
-    private static List<ResAccountInfo.UserTeam> getUserTeams(Context context) {
-        return JandiAccountDatabaseManager.getInstance(context).getUserTeams();
     }
 
 }

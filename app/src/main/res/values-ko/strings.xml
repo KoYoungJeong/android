@@ -92,14 +92,14 @@
     <!-- Manipulate Entity -->
     <string name="jandi_entity_joined_topic">"참여한 토픽"</string>
     <string name="jandi_entity_unjoined_topic">"참여하지 않은 토픽"</string>
-    <string name="jandi_entity_create_entity_name">"사용자 이름"</string>
+    <string name="jandi_entity_create_entity_name">"사용자 성함"</string>
     <string name="jandi_message_create_entity">"%1$s을 생성하였습니다"</string>
     <string name="jandi_message_invite_entity">"%1$d 명의 사용자를 초대했습니다"</string>
     <string name="jandi_create_channel">"토픽 생성"</string>
     <string name="jandi_create_privategroup">"비공개 토픽 생성"</string>
     <string name="jandi_modify_channel">"토픽 이름 수정"</string>
     <string name="jandi_modify_private_group">"비공개 토픽 이름 수정"</string>
-    <string name="warn_all_users_are_already_invited">"이미 모든 사용자가 가입되어 있습니다"</string>
+    <string name="warn_all_users_are_already_invited">"이미 모든 멤버가 이 토픽에 참여하고 있습니다."</string>
     <string name="err_entity_create">"생성에 실패하였습니다"</string>
     <string name="err_entity_join">"해당 토픽 참여에 실패하였습니다"</string>
     <string name="err_entity_duplicated_name">"동일한 이름이 존재합니다"</string>
@@ -170,6 +170,9 @@
     <string name="modify_message">"Message 수정"</string>
     <string name="today">"오늘"</string>
 
+    <!-- Mention -->
+    <string name="jandi_mention_push_message">"%s 님의 멘션"</string>
+
     <!-- File Detail Activity -->
     <string name="jandi_action_download">"다운로드"</string>
     <string name="jandi_action_unshare">"공유 해제"</string>
@@ -182,6 +185,8 @@
     <string name="err_share">"공유에 실패했습니다. 다시 시도해 주세요"</string>
     <string name="err_unshare">"공유 해제에 실패했습니다. 다시 시도해 주세요"</string>
     <string name="err_delete_file">"파일 삭제에 실패했습니다. 다시 시도해 주세요"</string>
+    <string name="err_file_has_not_been_shared">"공유된 대화방이 없습니다"</string>
+    <string name="err_file_already_shared_all_topics">"이미 참여중인 모든 토픽에 공유된 파일입니다."</string>
 
     <!-- File Upload -->
     <string name="title_file_upload">"파일 업로드"</string>
@@ -208,9 +213,9 @@
     <string name="jandi_file_category_pdf">"PDFs"</string>
     <string name="jandi_file_category_everyone">"<b>모든 팀원</b>"</string>
     <string name="jandi_file_category_everywhere">"<b>모든 대화방</b>"</string>
-    <string name="jandi_file_search_type">"어떤 타입의 파일을 검색할까요?"</string>
-    <string name="jandi_file_search_user">"누가 올린 파일을 검색할까요?"</string>
-    <string name="jandi_file_search_entity">"어디에 공유된 파일을 검색할까요?"</string>
+    <string name="jandi_file_search_type">"파일 타입을 선택해주세요."</string>
+    <string name="jandi_file_search_user">"팀원을 선택해주세요."</string>
+    <string name="jandi_file_search_entity">"검색을 원하는 토픽 혹은 멤버를 선택해주세요."</string>
     <string name="warn_no_more_files">"더 이상 검색된 파일이 없습니다"</string>
     <string name="err_file_search">"파일 검색에 실패했습니다"</string>
     <string name="jandi_setting_push">"알림 설정"</string>
@@ -298,8 +303,8 @@
     <string name="jandi_unstarred">"즐겨찾기 해제"</string>
     <string name="jandi_starred">"즐겨찾기 추가"</string>
     <string name="jandi_message_leave_private_topic">"비공개 토픽을 나가시면 초대를 받지 않는한 다시 참여하실 수 없습니다. 나가시겠습니까?"</string>
-    <string name="jandi_topic_title_hint">"제목"</string>
-    <string name="jandi_topic_title">"제목"</string>
+    <string name="jandi_topic_title_hint">"이름"</string>
+    <string name="jandi_topic_title">"이름"</string>
     <string name="jandi_fail_web_token">"로그인 중 에러가 발생했습니다. 다시 시도해 주세요."</string>
     <string name="sent_auth_email_short">"이메일이 성공적으로 발송되었습니다. 지금 메일함을 확인해주세요."</string>
     <string name="jandi_switch_team">"팀 이동하기"</string>
@@ -344,6 +349,7 @@
 특정 팀과 연동된 메일 주소는 언제든 바꿀 수 있습니다."</string>
     <string name="jadi_account_home">"잔디 메인"</string>
     <string name="jandi_go_to_main">"잔디 메인으로"</string>
+    <string name="jandi_team_switch">"팀 전환하기"</string>
     <string name="jandi_disable_user_profile_explain">"차단된 멤버입니다. 궁금하신 사항은 팀 관리자에게 문의하세요."</string>
     <string name="jandi_share_to_jandi">"JANDI에 공유하기"</string>
     <string name="jandi_no_message_in_topic_dm">"아직 메세지가 없습니다.
@@ -375,7 +381,7 @@
     <string name="jandi_message_ask_about_delete_comment">"이 댓글을 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
     <string name="jandi_message_no_member">"아직 팀에 가입한 멤버가 없습니다. 지금 바로 멤버들을 초대하세요."</string>
     <string name="jandi_file_delete_message">"이 파일을 삭제하시겠습니까? 파일의 댓글은 삭제되지 않습니다."</string>
-    <string name="jandi_unshared_message">"이 파일은 이 비공개 토픽에서 공유 해제되어 더 이상 열람하실 수 없습니다"</string>
+    <string name="jandi_unshared_message">"이미 나갔거나 삭제된 토픽이므로 원본을 확인할 수 없습니다."</string>
     <string name="jandi_nowhere_shared_file">"공유된 대화방이 없습니다"</string>
     <string name="jandi_topic_no_member_1">"아직 토픽에 초대된 멤버가 없습니다."</string>
     <string name="jandi_topic_no_member_2">"여기를 터치하시고 토픽에 멤버를 초대해보세요."</string>
@@ -426,8 +432,8 @@
     <string name="jandi_topic_description">"토픽 설명"</string>
     <string name="jandi_topic_leave">"토픽 나가기"</string>
     <string name="jandi_topic_detail">"토픽 상세정보"</string>
+    <string name="jandi_topic_invitation">"초대하기"</string>
     <string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
-    <string name="jandi_topic_starred">"즐겨찾기"</string>
 
     <!-- tutorial -->
     <string name="jandi_coach_mark_search_message">토픽 메시지 검색</string>
@@ -464,6 +470,32 @@
     <string name="jandi_coach_mark_more_explain3">팀 멤버 초대를 잊지 말아주세요!</string>
     <string name="jandi_chat_detail">"대화창 설정"</string>
     <string name="jandi_already_in_team">"이 이메일 주소는 이미 %s의 멤버입니다."</string>
+    <string name="jandi_unread_messages_below">"여기까지 읽었습니다."</string>
 
+    <string name="jandi_profile_picture">프로필 사진</string>
+
+    <string name="jandi_topic_was_removed">"이미 나갔거나 삭제된 토픽이므로 원본을 확인할 수 없습니다."</string>
+
+    <!-- starred / mention -->
+
+    <string name="jandi_starred_star">즐겨찾기</string>
+    <string name="jandi_mention_mentions">멘션</string>
+    <string name="jandi_mention_more">더보기</string>
+    <string name="jandi_starred_files">파일 타입</string>
+    <string name="jandi_starred_all">모든 타입</string>
+    <string name="jandi_starred_unstar">즐겨찾기 해제</string>
+    <string name="jandi_starred_undo">취소</string>
+    <string name="jandi_starred_unstarred">즐겨찾기 해제됨</string>
+    <string name="jandi_starred_stars">즐겨찾기</string>
+    <string name="jandi_mention_all_topic_members">모든 토픽 멤버</string>
+    <string name="jandi_mention_mentioned_you">님의 멘션</string>
+    <string name="jandi_mention_no_mentions">아직 다른 팀 멤버로부터 받은 멘션이 없습니다.</string>
+    <string name="jandi_starred_no_all">즐겨찾기 한 메시지나 파일이 없습니다.</string>
+    <string name="jandi_starred_no_file">즐겨찾기 한 파일이 없습니다.</string>
+    <string name="jandi_starred_unstar_from_item">즐겨찾기에서 해제 할까요?</string>
+    <string name="jandi_unpinned_message">"즐겨찾기 해제됨"</string>
+    <string name="jandi_topic_notification">"알림"</string>
+    <string name="jandi_you_cannot_delete_default_message">"이 토픽은 모든 멤버가 모여있는 기본 토픽으로, 나가거나 삭제할 수 없습니다. "</string>
+    <string name="jandi_this_is_disabled_user_explain">"차단된 멤버입니다. 궁금하신 사항은 팀 관리자에게 문의하세요."</string>
 
 </resources>

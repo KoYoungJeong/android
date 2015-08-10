@@ -4,7 +4,7 @@ import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.jayway.awaitility.Awaitility;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
@@ -36,8 +36,8 @@ public class JandiSocketManagerTest {
         socketManager = JandiSocketManager.getInstance();
 
         BaseInitUtil.initData(Robolectric.application);
-        ResAccountInfo.UserTeam userTeam = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0);
-        JandiAccountDatabaseManager.getInstance(Robolectric.application).updateSelectedTeam(userTeam.getTeamId());
+        ResAccountInfo.UserTeam userTeam = AccountRepository.getRepository().getAccountTeams().get(0);
+        AccountRepository.getRepository().updateSelectedTeamInfo(userTeam.getTeamId());
     }
 
     @Test
@@ -53,9 +53,8 @@ public class JandiSocketManagerTest {
             @Override
             public void call(Object... args) {
                 System.out.println(args[0]);
-                JandiAccountDatabaseManager accountDatabaseManager = JandiAccountDatabaseManager.getInstance(Robolectric.application);
-                ResAccountInfo.UserTeam userTeam = accountDatabaseManager.getSelectedTeamInfo();
-                String name = accountDatabaseManager.getAccountInfo().getName();
+                ResAccountInfo.UserTeam userTeam = AccountRepository.getRepository().getSelectedTeamInfo();
+                String name = AccountRepository.getRepository().getAccountInfo().getName();
 
                 ConnectTeam connectTeam = new ConnectTeam("", UserAgentUtil.getDefaultUserAgent
                         (Robolectric.application), userTeam.getTeamId(),
@@ -311,9 +310,8 @@ public class JandiSocketManagerTest {
             public void callback(Object... objects) {
 
                 printEventObject(objects, "Check Connect");
-                JandiAccountDatabaseManager accountDatabaseManager = JandiAccountDatabaseManager.getInstance(Robolectric.application);
-                ResAccountInfo.UserTeam userTeam = accountDatabaseManager.getSelectedTeamInfo();
-                String name = accountDatabaseManager.getAccountInfo().getName();
+                ResAccountInfo.UserTeam userTeam = AccountRepository.getRepository().getSelectedTeamInfo();
+                String name = AccountRepository.getRepository().getAccountInfo().getName();
 
                 ConnectTeam connectTeam = new ConnectTeam("", UserAgentUtil.getDefaultUserAgent
                         (Robolectric.application), userTeam.getTeamId(),

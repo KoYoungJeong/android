@@ -3,17 +3,24 @@ package com.tosslab.jandi.app.ui.account.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 
@@ -32,7 +39,7 @@ public class AccountHomeModel {
 
         ArrayList<Team> teams = new ArrayList<Team>();
 
-        List<ResAccountInfo.UserTeam> userTeams = JandiAccountDatabaseManager.getInstance(context).getUserTeams();
+        List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
 
         teams.addAll(convertJoinedTeamList(userTeams));
 
@@ -80,20 +87,20 @@ public class AccountHomeModel {
 
     }
 
-    public ResAccountInfo updateAccountName(Context context, String newName) throws RetrofitError {
+    public ResAccountInfo updateAccountName(String newName) throws RetrofitError {
         return RequestApiManager.getInstance().changeNameByAccountProfileApi(new ReqProfileName(newName));
     }
 
-    public void updateSelectTeam(Context context, int teamId) {
-        JandiAccountDatabaseManager.getInstance(context).updateSelectedTeam(teamId);
+    public void updateSelectTeam(int teamId) {
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
     }
 
-    public ResLeftSideMenu getEntityInfo(final Context context, int teamId) throws RetrofitError {
+    public ResLeftSideMenu getEntityInfo(int teamId) throws RetrofitError {
         return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
     }
 
     public EntityManager updateEntityInfo(Context context, ResLeftSideMenu entityInfo) {
-        JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(entityInfo);
+        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entityInfo);
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entityInfo);
         JandiPreference.setBadgeCount(context, totalUnreadCount);
         BadgeUtils.setBadge(context, totalUnreadCount);
@@ -103,12 +110,13 @@ public class AccountHomeModel {
         return entityManager;
     }
 
-    public ResAccountInfo.UserTeam getSelectedTeamInfo(Context context) {
-        return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+    public ResAccountInfo.UserTeam getSelectedTeamInfo() {
+        return AccountRepository.getRepository().getSelectedTeamInfo();
     }
 
-    public ResAccountInfo.UserEmail getSelectedEmailInfo(Context context) {
-        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
+    public ResAccountInfo.UserEmail getSelectedEmailInfo() {
+        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository()
+                .getAccountEmails();
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
             if (userEmail.isPrimary()) {
                 return userEmail;
@@ -117,11 +125,55 @@ public class AccountHomeModel {
         return null;
     }
 
-    public String getAccountName(Context context) {
-        return JandiAccountDatabaseManager.getInstance(context).getAccountInfo().getName();
+    public String getAccountName() {
+        return AccountRepository.getRepository().getAccountInfo().getName();
     }
 
-    public boolean checkAccount(Context context) {
-        return JandiAccountDatabaseManager.getInstance(context).getAccountInfo() != null;
+    public boolean checkAccount() {
+        return AccountRepository.getRepository().getAccountInfo() != null;
     }
+
+    public void trackLaunchTeamSuccess(int teamId) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.LaunchTeam)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TeamId, teamId)
+                        .build());
+    }
+
+    public void trackLaunchTeamFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.LaunchTeam)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
+    public void trackChangeAccountNameSuccess(Context context, String accountId) {
+        MixpanelAccountAnalyticsClient
+                .getInstance(context, accountId)
+                .trackSetAccount();
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ChangeAccountName)
+                        .accountId(accountId)
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .build());
+    }
+
+    public void trackChangeAccountNameFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ChangeAccountName)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
 }

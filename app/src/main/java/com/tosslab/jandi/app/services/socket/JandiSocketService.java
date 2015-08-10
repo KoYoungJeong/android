@@ -6,8 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,6 +16,7 @@ import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -197,7 +196,9 @@ public class JandiSocketService extends Service {
         });
         eventHashMap.put("connect_team", objects -> {
             LogUtil.d(TAG, "connect_team");
+            jandiSocketManager.sendByJson("ping", "");
         });
+        eventHashMap.put("pong", objects -> LogUtil.d(TAG, "pong"));
         eventHashMap.put("error_connect_team", objects -> {
             LogUtil.e(TAG, "Get Error - error_connect_team");
             sendBroadcastForRestart();
@@ -206,6 +207,14 @@ public class JandiSocketService extends Service {
         EventListener messageRefreshListener = objects ->
                 jandiSocketServiceModel.refreshMessage(objects[0]);
         eventHashMap.put("message", messageRefreshListener);
+
+        EventListener messageStarredListener = objects ->
+                jandiSocketServiceModel.refreshStarredMessage(objects[0]);
+        eventHashMap.put("message_starred", messageStarredListener);
+
+        EventListener messageUnstarredListener = objects ->
+                jandiSocketServiceModel.refreshUnstarredMessage(objects[0]);
+        eventHashMap.put("message_unstarred", messageUnstarredListener);
 
         EventListener markerUpdateListener = objects ->
                 jandiSocketServiceModel.updateMarker(objects[0]);
@@ -219,6 +228,10 @@ public class JandiSocketService extends Service {
         EventListener linkPreviewMessageUpdateListener =
                 objects -> jandiSocketServiceModel.updateLinkPreviewMessage(objects[0]);
         eventHashMap.put("link_preview_created", linkPreviewMessageUpdateListener);
+
+        EventListener topicTopicPushSubscribeUpdateListener =
+                objects -> jandiSocketServiceModel.updateTopicPushSubscribe(objects[0]);
+        eventHashMap.put("room_subscription_updated", topicTopicPushSubscribeUpdateListener);
 
     }
 
@@ -268,10 +281,7 @@ public class JandiSocketService extends Service {
     }
 
     private boolean isActiveNetwork() {
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        return NetworkCheckUtil.isConnected();
     }
 
     synchronized private void trySocketConnect() {

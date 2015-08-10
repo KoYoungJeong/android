@@ -4,17 +4,20 @@ import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
+import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResRegistStarred;
+import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 
 import java.util.List;
 
 import retrofit.RetrofitError;
-import retrofit.http.Path;
 
 /**
  * Created by tee on 15. 6. 23..
@@ -38,4 +41,16 @@ public interface ITeamApiAuth {
     ResCommon deleteAnnouncement(int teamId, int topicId) throws RetrofitError;
 
     ResMessages.OriginalMessage getMessage(int teamId, int messageId) throws RetrofitError;
+
+    ResStarMentioned getMentionedMessagesByTeamApi(int teamId, Integer messageId, int count) throws RetrofitError;
+
+    StarMentionedMessageObject registStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError;
+
+    ResCommon unregistStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError;
+
+    ResStarMentioned getStarredMessagesByTeamApi(int teamId, Integer starredId,
+                                                 int count, String type) throws RetrofitError;
+
+
+    ResCommon updateTopicPushSubscribe(int teamId, int topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe) throws RetrofitError;
 }

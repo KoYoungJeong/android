@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.model.MessageSearchModel;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -44,7 +45,7 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
     @Override
     public void onInitEntityId(int entityId) {
         String entityName = messageSearchModel.getEntityName(entityId);
-        onSelectEntity(entityId, entityName);
+        onSelectEntity(entityId, entityName, "");
     }
 
     @Override
@@ -57,6 +58,12 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
     public void onSearchRequest(String query) {
 
         BackgroundExecutor.cancelAll(MORE_SEARCH_TASK, true);
+
+        if (!NetworkCheckUtil.isConnected()) {
+            view.showInvalidNetworkDialog();
+            return;
+        }
+
         view.clearSearchResult();
         view.showLoading(query);
 
@@ -70,12 +77,17 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
             List<SearchResult> searchResults = messageSearchModel.convertSearchResult(resMessageSearch.getSearchRecords(), searchQeuryInfo.getQuery());
             view.setQueryResult(query, resMessageSearch.getQueryCursor().getTotalCount());
             view.addSearchResult(searchResults);
+
+            messageSearchModel.trackMessageKeywordSearchSuccess(query);
+
             if (resMessageSearch.getQueryCursor().getRecordCount() >= ITEM_PER_PAGE) {
                 view.setOnLoadingReady();
             } else {
                 view.setOnLoadingEnd();
             }
         } catch (RetrofitError e) {
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            messageSearchModel.trackMessageKeywordSearchFail(errorCode);
             e.printStackTrace();
         }
 
@@ -84,6 +96,11 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
     @Override
     @Background(id = MORE_SEARCH_TASK)
     public void onMoreSearchRequest() {
+
+        if (!NetworkCheckUtil.isConnected()) {
+            view.showInvalidNetworkDialog();
+            return;
+        }
 
         view.showMoreLoadingProgressBar();
 
@@ -118,36 +135,56 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
     }
 
     @Override
-    public void onSelectEntity(int entityId, String name) {
+    public void onSelectEntity(int entityId, String name, String searchText) {
 
         view.setEntityName(name);
         searchQeuryInfo.entityId(entityId);
 
-        if (TextUtils.isEmpty(searchQeuryInfo.getQuery())) {
+        String targetText;
+        if (searchText == null) {
+            targetText = searchQeuryInfo.getQuery();
+        } else {
+            targetText = searchText;
+        }
+
+        if (TextUtils.isEmpty(targetText)) {
             return;
         }
 
         view.clearSearchResult();
-        onSearchRequest(searchQeuryInfo.getQuery());
+        onSearchRequest(targetText);
     }
 
     @Override
-    public void onSelectMember(int memberId, String name) {
+    public void onSelectMember(int memberId, String name, String searchText) {
         view.setMemberName(name);
         searchQeuryInfo.writerId(memberId);
 
-        if (TextUtils.isEmpty(searchQeuryInfo.getQuery())) {
+        String targetText;
+
+        if (searchText == null) {
+            targetText = searchQeuryInfo.getQuery();
+        } else {
+            targetText = searchText;
+        }
+
+        if (TextUtils.isEmpty(targetText)) {
             return;
         }
 
         view.clearSearchResult();
-        onSearchRequest(searchQeuryInfo.getQuery());
+        onSearchRequest(targetText);
     }
 
     @Override
     public void onRecordClick(SearchResult searchRecord) {
-        int currentTeamId = messageSearchModel.getCurrentTeamId();
         int entityId = searchRecord.getEntityId();
+        if (!messageSearchModel.hasEntity(entityId)) {
+            view.showInvalidateEntityToast();
+            return;
+        }
+
+        int currentTeamId = messageSearchModel.getCurrentTeamId();
         int entityType = messageSearchModel.getEntityType(entityId);
         boolean isStarred = messageSearchModel.isStarredEntity(entityId);
         int linkId = searchRecord.getLinkId();

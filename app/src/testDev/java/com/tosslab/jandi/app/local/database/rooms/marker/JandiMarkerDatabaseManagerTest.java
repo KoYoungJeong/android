@@ -1,7 +1,8 @@
 package com.tosslab.jandi.app.local.database.rooms.marker;
 
 import com.jayway.awaitility.Awaitility;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
@@ -14,11 +15,11 @@ import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -27,20 +28,17 @@ import static org.junit.Assert.assertThat;
 @RunWith(RobolectricGradleTestRunner.class)
 public class JandiMarkerDatabaseManagerTest {
 
-    private JandiMarkerDatabaseManager databaseManager;
-
     @Before
     public void setUp() throws Exception {
 
         BaseInitUtil.initData(Robolectric.application);
 
-        databaseManager = JandiMarkerDatabaseManager.getInstance(Robolectric.application);
     }
 
     @Test
     public void testMultiThreadUpsert() throws Exception {
 
-        ResAccountInfo.UserTeam userTeam = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0);
+        ResAccountInfo.UserTeam userTeam = AccountRepository.getRepository().getAccountTeams().get(0);
         int teamId = userTeam.getTeamId();
         List<ResChat> chatList = RequestApiManager.getInstance().getChatListByChatApi(teamId);
         ResRoomInfo roomInfo = RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId, chatList.get(0).getEntityId());
@@ -49,14 +47,14 @@ public class JandiMarkerDatabaseManagerTest {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                databaseManager.upsertMarkers(roomInfo);
+                MarkerRepository.getRepository().upsertRoomInfo(roomInfo);
                 System.out.println("Complete to Upsert");
                 finish[0] = true;
             }
         }).start();
 
         for (ResRoomInfo.MarkerInfo markerInfo : roomInfo.getMarkers()) {
-            databaseManager.updateMarker(teamId, chatList.get(0).getEntityId(), markerInfo.getMemberId(), markerInfo.getLastLinkId());
+            MarkerRepository.getRepository().upsertRoomMarker(teamId, chatList.get(0).getEntityId(), markerInfo.getMemberId(), markerInfo.getLastLinkId());
         }
 
         finish[1] = true;
@@ -69,7 +67,7 @@ public class JandiMarkerDatabaseManagerTest {
             }
         });
 
-        List<ResRoomInfo.MarkerInfo> markers = databaseManager.getMarkers(teamId, chatList.get(0).getEntityId());
+        Collection<ResRoomInfo.MarkerInfo> markers = MarkerRepository.getRepository().getRoomMarker(teamId, chatList.get(0).getEntityId());
 
         assertThat(markers.size(), is(2));
     }
@@ -83,37 +81,39 @@ public class JandiMarkerDatabaseManagerTest {
         int newMarker = 101;
 
         // 현재 마커 추가
-        long count = databaseManager.updateMarker(exampleKey, exampleKey, exampleKey, currentMarker);
+        boolean count = MarkerRepository.getRepository().upsertRoomMarker(exampleKey, exampleKey, exampleKey,
+                currentMarker);
 
-        assertThat(count, not(0));
+        assertThat(count, is(true));
 
-        List<ResRoomInfo.MarkerInfo> markers = databaseManager.getMarkers(exampleKey, exampleKey);
+        Collection<ResRoomInfo.MarkerInfo> markers = MarkerRepository.getRepository().getRoomMarker(exampleKey,
+                exampleKey);
 
         // 현재 마커 확인
         assertThat(markers.size(), is(1));
-        assertThat(markers.get(0).getLastLinkId(), is(currentMarker));
+        assertThat(markers.iterator().next().getLastLinkId(), is(currentMarker));
 
         // 예전 마커 추가
-        count = databaseManager.updateMarker(exampleKey, exampleKey, exampleKey, oldMarker);
-        assertThat(count, not(0));
+        count = MarkerRepository.getRepository().upsertRoomMarker(exampleKey, exampleKey, exampleKey, oldMarker);
+        assertThat(count, is(true));
 
-        markers = databaseManager.getMarkers(exampleKey, exampleKey);
+        markers = MarkerRepository.getRepository().getRoomMarker(exampleKey, exampleKey);
 
         // 예전 마커 갱신 안됐는지 확인
         assertThat(markers.size(), is(1));
-        assertThat(markers.get(0).getLastLinkId(), is(currentMarker));
+        assertThat(markers.iterator().next().getLastLinkId(), is(currentMarker));
 
 
         // 새로운 마커 추가
-        count = databaseManager.updateMarker(exampleKey, exampleKey, exampleKey, newMarker);
+        count = MarkerRepository.getRepository().upsertRoomMarker(exampleKey, exampleKey, exampleKey, newMarker);
 
-        assertThat(count, not(0));
+        assertThat(count, is(true));
 
-        markers = databaseManager.getMarkers(exampleKey, exampleKey);
+        markers = MarkerRepository.getRepository().getRoomMarker(exampleKey, exampleKey);
 
         // 새로운 마커 확인
         assertThat(markers.size(), is(1));
-        assertThat(markers.get(0).getLastLinkId(), is(newMarker));
+        assertThat(markers.iterator().next().getLastLinkId(), is(newMarker));
 
 
     }

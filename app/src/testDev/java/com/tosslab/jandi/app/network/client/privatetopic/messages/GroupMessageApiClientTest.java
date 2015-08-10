@@ -1,10 +1,11 @@
 package com.tosslab.jandi.app.network.client.privatetopic.messages;
 
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -51,8 +52,7 @@ public class GroupMessageApiClientTest {
     private ResLeftSideMenu getSideMenu() {
 
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().
-                getInfosForSideMenuByMainRest(JandiAccountDatabaseManager.
-                        getInstance(Robolectric.application).getUserTeams().get(0).getTeamId());
+                getInfosForSideMenuByMainRest(AccountRepository.getRepository().getAccountTeams().get(0).getTeamId());
 
         return infosForSideMenu;
     }
@@ -114,11 +114,9 @@ public class GroupMessageApiClientTest {
         ResLeftSideMenu.PrivateGroup privateTopic = getPrivateTopic();
 
         ReqSendMessage reqSendMessage = new ReqSendMessage();
-        reqSendMessage.teamId = sideMenu.team.id;
-        reqSendMessage.type = "string";
-        reqSendMessage.content = "create_" + new Timestamp(System.currentTimeMillis());
+        ReqSendMessageV3 reqSendMessageV3 = new ReqSendMessageV3("create_" + new Timestamp(System.currentTimeMillis()), null);
         ResCommon resCommon = RequestApiManager.getInstance().
-                sendGroupMessageByGroupMessageApi(reqSendMessage, privateTopic.id);
+                sendGroupMessageByGroupMessageApi(privateTopic.id, reqSendMessage.teamId, reqSendMessageV3);
 
         assertThat(resCommon, is(notNullValue()));
 

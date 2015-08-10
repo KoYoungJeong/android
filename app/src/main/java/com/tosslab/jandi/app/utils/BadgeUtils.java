@@ -27,8 +27,7 @@ public class BadgeUtils {
 
         int totalUnread = 0;
 
-        List<ResLeftSideMenu.AlarmInfo> alarmInfos = resLeftSideMenu.alarmInfos;
-        Iterator<ResLeftSideMenu.AlarmInfo> alarmInfoIterator = Observable.from(alarmInfos)
+        Iterator<ResLeftSideMenu.AlarmInfo> alarmInfoIterator = Observable.from(resLeftSideMenu.alarmInfos)
                 .filter(alarmInfo -> {
 
                     if (TextUtils.equals(alarmInfo.entityType, "chat")) {
@@ -38,7 +37,8 @@ public class BadgeUtils {
                         ResLeftSideMenu.Entity entity = Observable.from(resLeftSideMenu.joinEntities)
                                 .filter(joinEntity -> alarmInfo.entityId == joinEntity.id)
                                 .toBlocking()
-                                .firstOrDefault(new ResLeftSideMenu.Entity());
+                                .firstOrDefault(new ResLeftSideMenu.Entity() {
+                                });
 
                         return entity.id != 0;
                     }
