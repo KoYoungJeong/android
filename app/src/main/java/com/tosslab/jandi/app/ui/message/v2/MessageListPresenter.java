@@ -954,8 +954,6 @@ public class MessageListPresenter {
             if (firstLoad) {
                 moveLastReadLink();
 
-                setLastReadLinkId(lastLinkId);
-
                 justRefresh();
             } else if (messageId <= 0) {
                 if (lastUpdatedMessage.fromEntity != myId) {
