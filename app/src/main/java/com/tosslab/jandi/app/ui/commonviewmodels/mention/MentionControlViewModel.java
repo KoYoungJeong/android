@@ -454,6 +454,7 @@ public class MentionControlViewModel {
                 }
                 Log.e(convertedMessage, convertedMessage);
                 setTextOnClip(convertedMessage);
+                
             }
         }
     }
