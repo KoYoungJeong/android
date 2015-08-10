@@ -954,8 +954,6 @@ public class MessageListPresenter {
             if (firstLoad) {
                 moveLastReadLink();
 
-                setLastReadLinkId(lastLinkId);
-
                 justRefresh();
             } else if (messageId <= 0) {
                 if (lastUpdatedMessage.fromEntity != myId) {
@@ -1055,6 +1053,10 @@ public class MessageListPresenter {
     public void deleteLinkByMessageId(int messageId) {
         int position = messageListAdapter.indexByMessageId(messageId);
         messageListAdapter.remove(position);
+    }
+
+    public boolean isLastOfLastReadPosition() {
+        return messageListAdapter.isLastOfLastReadPosition();
     }
 }
 
