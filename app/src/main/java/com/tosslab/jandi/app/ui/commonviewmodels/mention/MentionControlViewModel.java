@@ -74,7 +74,7 @@ public class MentionControlViewModel {
                                    List<Integer> roomIds) {
         this.messageListView = messageListView;
         this.mentionType = MENTION_TYPE_MESSAGE;
-        init(activity, searchMemberListView, editText, roomIds, mentionType);
+        init(activity, searchMemberListView, editText, roomIds);
     }
 
     public MentionControlViewModel(Activity activity, RecyclerView searchMemberListView,
@@ -82,15 +82,11 @@ public class MentionControlViewModel {
                                    List<Integer> roomIds) {
         this.fileCommentListView = fileCommentListView;
         this.mentionType = MENTION_TYPE_FILE_COMMENT;
-        init(activity, searchMemberListView, editText, roomIds, mentionType);
-    }
-
-    public boolean isMentionListVisible() {
-        return searchMemberListView.getVisibility() == View.VISIBLE;
+        init(activity, searchMemberListView, editText, roomIds);
     }
 
     private void init(Activity activity, RecyclerView searchMemberListView, EditText editText,
-                      List<Integer> roomIds, String mentionType) {
+                      List<Integer> roomIds) {
 
         this.searchMemberListView = searchMemberListView;
         this.editText = editText;
@@ -101,12 +97,14 @@ public class MentionControlViewModel {
         keyboardHeightModel = KeyboardHeightModel_.getInstance_(activity);
         searchMemberModel = SearchMemberModel_.getInstance_(activity);
 
+        refreshSelectableMembers(roomIds);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity,
                 LinearLayoutManager.VERTICAL, false);
         layoutManager.setStackFromEnd(true);
         searchMemberListView.setLayoutManager(layoutManager);
         searchMemberListView.setAdapter(new MentionMemberListAdapter(
-                searchMemberModel.getUserSearchByName(null, "", null, mentionType)));
+                searchMemberModel.getUserSearchByName("", null)));
 
         if (keyboardHeightModel.getOnKeyboardShowListener() == null) {
             keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
@@ -152,7 +150,6 @@ public class MentionControlViewModel {
     }
 
     void editTextChanged(CharSequence s, TextView tv, int before, int start, int count) {
-        // Something Here
         afterTextCnt = count;
         afterText = s.toString();
     }
@@ -180,7 +177,7 @@ public class MentionControlViewModel {
 
             currentSearchKeywordString = result;
 
-            showSearchMembersInfo(currentSearchKeywordString, getMentionType());
+            showSearchMembersInfo(currentSearchKeywordString);
 
             if (getMembersListByAdapter().size() > 0) {
                 showListView(true);
@@ -196,12 +193,11 @@ public class MentionControlViewModel {
 
     }
 
-    private void showSearchMembersInfo(String searchString, String type) {
+    private void showSearchMembersInfo(String searchString) {
         MentionMemberListAdapter mentionMemberListAdapter =
                 (MentionMemberListAdapter) searchMemberListView.getAdapter();
         mentionMemberListAdapter.setSearchedMembersList(
-                searchMemberModel.getUserSearchByName(getRoomIds(),
-                        searchString, selectedMemberHashMap, type));
+                searchMemberModel.getUserSearchByName(searchString, selectedMemberHashMap));
     }
 
     private void removeAllMemberList() {
@@ -271,7 +267,11 @@ public class MentionControlViewModel {
     }
 
     public LinkedHashMap<Integer, SearchedItemVO> getSelectableMembersInThis() {
-        return searchMemberModel.getSelectableMembers(roomIds, mentionType);
+        return searchMemberModel.getSelectableMembers();
+    }
+
+    public void refreshSelectableMembers(List<Integer> roomIds) {
+        searchMemberModel.refreshSelectableMembers(roomIds, mentionType);
     }
 
     public void mentionedMemberHighlightInEditText(SearchedItemVO searchedItemVO) {
@@ -367,6 +367,8 @@ public class MentionControlViewModel {
                 selectedMemberHashMap, getSelectableMembersInThis());
     }
 
+
+    // use to get converted message for clipboard
     public ResultMentionsVO getMentionInfoObject(String string) {
         return getMentionInfoObject(string,
                 selectedMemberHashMap, getSelectableMembersInThis());
@@ -381,6 +383,15 @@ public class MentionControlViewModel {
 
     public void clear() {
         selectedMemberHashMap.clear();
+    }
+
+
+    public boolean isMentionListVisible() {
+        return searchMemberListView.getVisibility() == View.VISIBLE;
+    }
+
+    public void dismissMentionList() {
+        showListView(false);
     }
 
     public void setTextOnClip(String pasteData) {
@@ -403,18 +414,6 @@ public class MentionControlViewModel {
         ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
                 .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
         clipBoard.addPrimaryClipChangedListener(clipboardListener);
-    }
-
-    public String getMentionType() {
-        return mentionType;
-    }
-
-    public List<Integer> getRoomIds() {
-        return roomIds;
-    }
-
-    public void dismissMentionList() {
-        showListView(false);
     }
 
     public interface OnMentionViewShowingListener {

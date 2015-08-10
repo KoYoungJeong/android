@@ -384,17 +384,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
 
-        List<Integer> roomIds = new ArrayList<>();
-        roomIds.add(roomId);
-
-        if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
-            mentionControlViewModel = new MentionControlViewModel(getActivity(),
-                    rvListSearchMembers, messageEditText, messageListView, roomIds);
-            mentionControlViewModel.setOnMentionViewShowingListener(isShowing ->
-                    announcementViewModel.setAnnouncementViewVisibility(!isShowing));
-            // copy txt from mentioned edittext message
-            mentionControlViewModel.registClipboardListener();
-        }
+//        List<Integer> roomIds = new ArrayList<>();
+//        roomIds.add(roomId);
+//
+//        if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
+//            mentionControlViewModel = new MentionControlViewModel(getActivity(),
+//                    rvListSearchMembers, messageEditText, messageListView, roomIds);
+//            mentionControlViewModel.setOnMentionViewShowingListener(isShowing ->
+//                    announcementViewModel.setAnnouncementViewVisibility(!isShowing));
+//            // copy txt from mentioned edittext message
+//            mentionControlViewModel.registClipboardListener();
+//        }
 
     }
 
@@ -640,6 +640,22 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (isRoomInit) {
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
             EventBus.getDefault().post(new MainSelectTopicEvent(roomId));
+        }
+
+        List<Integer> roomIds = new ArrayList<>();
+        roomIds.add(roomId);
+
+        if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
+            if (mentionControlViewModel == null) {
+                mentionControlViewModel = new MentionControlViewModel(getActivity(),
+                        rvListSearchMembers, messageEditText, messageListView, roomIds);
+                mentionControlViewModel.setOnMentionViewShowingListener(isShowing ->
+                        announcementViewModel.setAnnouncementViewVisibility(!isShowing));
+                // copy txt from mentioned edittext message
+                mentionControlViewModel.registClipboardListener();
+            } else {
+                mentionControlViewModel.refreshSelectableMembers(roomIds);
+            }
         }
     }
 
