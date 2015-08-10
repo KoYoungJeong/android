@@ -211,10 +211,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             }
         });
 
-        boolean loadFromCache = fileDetailPresenter.onLoadFromCache(fileId, -1);
         if (NetworkCheckUtil.isConnected()) {
             fileDetailPresenter.getFileDetail(fileId, false, false, selectMessageId);
-        } else if (!loadFromCache) {
+        } else if (!fileDetailPresenter.onLoadFromCache(fileId, selectMessageId)) {
             AlertUtil_.getInstance_(FileDetailActivity.this)
                     .showCheckNetworkDialog(FileDetailActivity.this, (dialog, which) -> finish());
         }
@@ -484,7 +483,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         if (selectMessageId > 0) {
             int position = fileDetailCommentListAdapter.findMessagePosition(selectMessageId);
             if (position >= 0) {
-                lvFileDetailComments.smoothScrollToPosition(position);
+                lvFileDetailComments.smoothScrollToPosition(position + 1);
             }
 
             fileDetailCommentListAdapter.setSelectMessage(selectMessageId);
