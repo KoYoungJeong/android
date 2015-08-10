@@ -69,12 +69,15 @@ public class MentionControlViewModel {
     private TextWatcher textWatcher;
     private OnMentionViewShowingListener onMentionViewShowingListener;
 
+    // 클립 보드에서 CUT(잘라내기) 시 해당 정보를 한꺼번에 잃기 때문에 저장할 필요성이 있음.
+    private LinkedHashMap<Integer, SearchedItemVO> cloneSelectedMemberHashMap;
+
     public MentionControlViewModel(Activity activity, RecyclerView searchMemberListView,
                                    EditText editText, RecyclerView messageListView,
                                    List<Integer> roomIds) {
         this.messageListView = messageListView;
         this.mentionType = MENTION_TYPE_MESSAGE;
-        init(activity, searchMemberListView, editText, roomIds, mentionType);
+        init(activity, searchMemberListView, editText, roomIds);
     }
 
     public MentionControlViewModel(Activity activity, RecyclerView searchMemberListView,
@@ -82,15 +85,11 @@ public class MentionControlViewModel {
                                    List<Integer> roomIds) {
         this.fileCommentListView = fileCommentListView;
         this.mentionType = MENTION_TYPE_FILE_COMMENT;
-        init(activity, searchMemberListView, editText, roomIds, mentionType);
-    }
-
-    public boolean isMentionListVisible() {
-        return searchMemberListView.getVisibility() == View.VISIBLE;
+        init(activity, searchMemberListView, editText, roomIds);
     }
 
     private void init(Activity activity, RecyclerView searchMemberListView, EditText editText,
-                      List<Integer> roomIds, String mentionType) {
+                      List<Integer> roomIds) {
 
         this.searchMemberListView = searchMemberListView;
         this.editText = editText;
@@ -101,12 +100,14 @@ public class MentionControlViewModel {
         keyboardHeightModel = KeyboardHeightModel_.getInstance_(activity);
         searchMemberModel = SearchMemberModel_.getInstance_(activity);
 
+        refreshSelectableMembers(roomIds);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity,
                 LinearLayoutManager.VERTICAL, false);
         layoutManager.setStackFromEnd(true);
         searchMemberListView.setLayoutManager(layoutManager);
         searchMemberListView.setAdapter(new MentionMemberListAdapter(
-                searchMemberModel.getUserSearchByName(null, "", null, mentionType)));
+                searchMemberModel.getUserSearchByName("", null)));
 
         if (keyboardHeightModel.getOnKeyboardShowListener() == null) {
             keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
@@ -117,11 +118,6 @@ public class MentionControlViewModel {
         }
 
         selectedMemberHashMap = new LinkedHashMap<>();
-
-        clipboardListener = new ClipboardListener();
-        ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
-                .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
-        clipBoard.addPrimaryClipChangedListener(clipboardListener);
 
     }
 
@@ -153,13 +149,16 @@ public class MentionControlViewModel {
     void beforeEditTextChanged(TextView tv, CharSequence s, int start, int count,
                                int after) {
         beforeTextCnt = count;
+        cloneSelectedMemberHashMap = (LinkedHashMap<Integer, SearchedItemVO>) selectedMemberHashMap.clone();
         beforeText = s.toString();
     }
 
     void editTextChanged(CharSequence s, TextView tv, int before, int start, int count) {
-        // Something Here
         afterTextCnt = count;
         afterText = s.toString();
+        if (s.length() == 0) {
+            selectedMemberHashMap.clear();
+        }
     }
 
     void afterEditTextChanged(Editable s, TextView tv) {
@@ -185,7 +184,7 @@ public class MentionControlViewModel {
 
             currentSearchKeywordString = result;
 
-            showSearchMembersInfo(currentSearchKeywordString, getMentionType());
+            showSearchMembersInfo(currentSearchKeywordString);
 
             if (getMembersListByAdapter().size() > 0) {
                 showListView(true);
@@ -199,14 +198,14 @@ public class MentionControlViewModel {
             showListView(false);
         }
 
+
     }
 
-    private void showSearchMembersInfo(String searchString, String type) {
+    private void showSearchMembersInfo(String searchString) {
         MentionMemberListAdapter mentionMemberListAdapter =
                 (MentionMemberListAdapter) searchMemberListView.getAdapter();
         mentionMemberListAdapter.setSearchedMembersList(
-                searchMemberModel.getUserSearchByName(getRoomIds(),
-                        searchString, selectedMemberHashMap, type));
+                searchMemberModel.getUserSearchByName(searchString, selectedMemberHashMap));
     }
 
     private void removeAllMemberList() {
@@ -251,7 +250,6 @@ public class MentionControlViewModel {
         }
 
         String removedText = beforeText;
-        String remainText = afterText;
         removedText = removedText.replace(afterText.substring(0, currentSelection), "");
         removedText = removedText.replace(afterText.substring(currentSelection, afterText.length()), "");
 
@@ -276,7 +274,11 @@ public class MentionControlViewModel {
     }
 
     public LinkedHashMap<Integer, SearchedItemVO> getSelectableMembersInThis() {
-        return searchMemberModel.getSelectableMembers(roomIds, mentionType);
+        return searchMemberModel.getSelectableMembers();
+    }
+
+    public void refreshSelectableMembers(List<Integer> roomIds) {
+        searchMemberModel.refreshSelectableMembers(roomIds, mentionType);
     }
 
     public void mentionedMemberHighlightInEditText(SearchedItemVO searchedItemVO) {
@@ -325,7 +327,6 @@ public class MentionControlViewModel {
 
         while (matcher.find()) {
             findId = matcher.group(2);
-            Log.e("id", String.valueOf(findId));
             if (selectedMembers.get(new Integer(findId)) != null) {
                 orderedSearchedMember.put(new Integer(findId),
                         selectableMembers.get(new Integer(findId)));
@@ -372,7 +373,10 @@ public class MentionControlViewModel {
                 selectedMemberHashMap, getSelectableMembersInThis());
     }
 
-    public ResultMentionsVO getMentionInfoObject(String string) {
+
+    // use to get converted message for clipboard
+    public ResultMentionsVO getMentionInfoObject(
+            String string, LinkedHashMap<Integer, SearchedItemVO> selectedMemberHashMap) {
         return getMentionInfoObject(string,
                 selectedMemberHashMap, getSelectableMembersInThis());
     }
@@ -388,6 +392,15 @@ public class MentionControlViewModel {
         selectedMemberHashMap.clear();
     }
 
+
+    public boolean isMentionListVisible() {
+        return searchMemberListView.getVisibility() == View.VISIBLE;
+    }
+
+    public void dismissMentionList() {
+        showListView(false);
+    }
+
     public void setTextOnClip(String pasteData) {
         ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
                 .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
@@ -397,16 +410,17 @@ public class MentionControlViewModel {
         clipBoard.addPrimaryClipChangedListener(clipboardListener);
     }
 
-    public String getMentionType() {
-        return mentionType;
+    public void removeClipboardListener() {
+        ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
+                .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
+        clipBoard.removePrimaryClipChangedListener(clipboardListener);
     }
 
-    public List<Integer> getRoomIds() {
-        return roomIds;
-    }
-
-    public void dismissMentionList() {
-        showListView(false);
+    public void registClipboardListener() {
+        clipboardListener = new ClipboardListener();
+        ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
+                .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
+        clipBoard.addPrimaryClipChangedListener(clipboardListener);
     }
 
     public interface OnMentionViewShowingListener {
@@ -416,16 +430,31 @@ public class MentionControlViewModel {
     class ClipboardListener implements
             ClipboardManager.OnPrimaryClipChangedListener {
         public void onPrimaryClipChanged() {
-            String et = editText.getText().toString();
+            // if U cut the string in the editText, editText already removed all string.
+            String et = null;
+            boolean isCut = false;
+            if (afterText.length() == 0 && beforeText.length() > 0) {
+                et = beforeText;
+                isCut = true;
+            } else {
+                et = editText.getText().toString();
+            }
+            Log.e("et", et);
             ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
                     .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
             CharSequence pasteData = "";
             ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
             pasteData = item.getText();
             if (et.contains(pasteData.toString())) {
-                String convertedMessage = getMentionInfoObject(pasteData.toString()).getMessage();
+                String convertedMessage = null;
+                if (isCut) {
+                    convertedMessage = getMentionInfoObject(et, cloneSelectedMemberHashMap).getMessage();
+                } else {
+                    convertedMessage = getMentionInfoObject(et, selectedMemberHashMap).getMessage();
+                }
                 Log.e(convertedMessage, convertedMessage);
                 setTextOnClip(convertedMessage);
+                
             }
         }
     }

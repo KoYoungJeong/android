@@ -427,6 +427,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
+        fileDetailPresenter.removeClipboardListenerforMention();
         super.onDestroy();
     }
 
