@@ -118,11 +118,6 @@ public class MentionControlViewModel {
 
         selectedMemberHashMap = new LinkedHashMap<>();
 
-        clipboardListener = new ClipboardListener();
-        ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
-                .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
-        clipBoard.addPrimaryClipChangedListener(clipboardListener);
-
     }
 
     public void setOnMentionViewShowingListener(OnMentionViewShowingListener listener) {
@@ -394,6 +389,19 @@ public class MentionControlViewModel {
         clipBoard.removePrimaryClipChangedListener(clipboardListener);
         android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", pasteData);
         clipBoard.setPrimaryClip(clip);
+        clipBoard.addPrimaryClipChangedListener(clipboardListener);
+    }
+
+    public void removeClipboardListener() {
+        ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
+                .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
+        clipBoard.removePrimaryClipChangedListener(clipboardListener);
+    }
+
+    public void registClipboardListener() {
+        clipboardListener = new ClipboardListener();
+        ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
+                .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
         clipBoard.addPrimaryClipChangedListener(clipboardListener);
     }
 

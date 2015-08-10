@@ -392,7 +392,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                     rvListSearchMembers, messageEditText, messageListView, roomIds);
             mentionControlViewModel.setOnMentionViewShowingListener(isShowing ->
                     announcementViewModel.setAnnouncementViewVisibility(!isShowing));
+            // copy txt from mentioned edittext message
+            mentionControlViewModel.registClipboardListener();
         }
+
     }
 
     @Background
@@ -618,6 +621,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageSubscription.unsubscribe();
         EventBus.getDefault().unregister(this);
 
+        // u must release listener for mentioned copy
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.removeClipboardListener();
+        }
     }
 
     @Override
