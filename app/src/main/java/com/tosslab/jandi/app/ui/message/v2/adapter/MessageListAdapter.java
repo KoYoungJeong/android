@@ -48,7 +48,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
     private int teamId;
     private int roomId;
     private int entityId;
-    private int lastReadLinkId;
+    private int lastReadLinkId = -1;
 
     public MessageListAdapter(Context context) {
         this.context = context;
@@ -469,6 +469,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
     public void modifyStarredStateByPosition(int position, boolean isStarred) {
         messageList.get(position).message.isStarred = isStarred;
         notifyItemChanged(position);
+    }
+
+    public boolean isLastOfLastReadPosition() {
+        return indexOfLinkId(lastReadLinkId) == getCount() - 1;
     }
 
     private enum MoreState {

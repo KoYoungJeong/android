@@ -482,8 +482,21 @@ public class FileDetailPresenter {
         if (mentionControlViewModel == null) {
             mentionControlViewModel = new MentionControlViewModel(activity,
                     searchMemberListView, editText, fileCommentListView, sharedTopicIds);
+            registClipboardListenerforMention();
         }
         mentionControlViewModel.clear();
+    }
+
+    public void registClipboardListenerforMention() {
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.registClipboardListener();
+        }
+    }
+
+    public void removeClipboardListenerforMention() {
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.removeClipboardListener();
+        }
     }
 
     public ResultMentionsVO getMentionInfo() {

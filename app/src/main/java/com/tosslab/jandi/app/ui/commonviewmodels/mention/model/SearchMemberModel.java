@@ -27,73 +27,37 @@ import rx.Observable;
 public class SearchMemberModel {
 
 
-    public List<SearchedItemVO> getUserSearchByName(List<Integer> topicIds, String subNameString,
+    LinkedHashMap<Integer, SearchedItemVO> selectableMembersLinkedHashMap;
+
+    public List<SearchedItemVO> getUserSearchByName(String subNameString,
                                                     LinkedHashMap<Integer, SearchedItemVO>
-                                                            alreadySelectedMemberHashMap,
-                                                    String mentionType) {
+                                                            alreadySelectedMemberHashMap) {
 
-        if (topicIds == null || topicIds.size() == 0)
-            return new ArrayList<>();
-
-        List<Integer> members = new ArrayList<>();
-
-        Observable.from(topicIds)
-                .subscribe(topicId -> Observable
-                                .from(EntityManager.getInstance(JandiApplication.getContext())
-                                        .getEntityById(topicId).getMembers())
-                                .subscribe(member -> {
-                                            if (!members.contains(member)) {
-                                                members.add(member);
-                                            }
-                                        }
-                                )
-                );
-
-        List<FormattedEntity> usersWithoutMe = EntityManager.getInstance(JandiApplication.getContext())
-                .getFormattedUsersWithoutMe();
-
+        LinkedHashMap<Integer, SearchedItemVO> searchedItemsHashMap;
         List<SearchedItemVO> searchedItems = new ArrayList<>();
 
-        Iterator<SearchedItemVO> iterator = Observable.from(members)
-                .map(memberId -> Observable.from(usersWithoutMe)
-                        .filter(entity -> !TextUtils.isEmpty(entity.getName())
-                                && entity.getName().toLowerCase().contains(subNameString.toLowerCase())
-                                && entity.getId() == memberId)
-                        .map(entity -> {
-                            SearchedItemVO searchedItem = new SearchedItemVO();
-                            searchedItem.setName(entity.getName())
-                                    .setId(entity.getId())
-                                    .setType("member")
-                                    .setSmallProfileImageUrl(entity.getUserSmallProfileUrl())
-                                    .setEnabled(TextUtils.equals(entity.getUser().status, "enabled"))
-                                    .setStarred(entity.isStarred);
-                            return searchedItem;
-                        })
-                        .toBlocking()
-                        .firstOrDefault(new SearchedItemVO().setId(-1)))
-                .toBlocking()
-                .getIterator();
+        if (selectableMembersLinkedHashMap == null || selectableMembersLinkedHashMap.size() == 0) {
+            return searchedItems;
+        } else {
+            searchedItemsHashMap =
+                    (LinkedHashMap<Integer, SearchedItemVO>) selectableMembersLinkedHashMap.clone();
+        }
 
-        while (iterator.hasNext()) {
-            SearchedItemVO searchedItem = iterator.next();
-            if (alreadySelectedMemberHashMap == null ||
-                    !alreadySelectedMemberHashMap.containsKey(searchedItem.getId())) {
-                if (searchedItem.getId() != -1) {
-                    searchedItems.add(searchedItem);
-                }
+        if (alreadySelectedMemberHashMap != null) {
+            Iterator selectableMembersKeySet = alreadySelectedMemberHashMap.keySet().iterator();
+            while (selectableMembersKeySet.hasNext()) {
+                Integer key = (Integer) selectableMembersKeySet.next();
+                searchedItemsHashMap.remove(key);
             }
         }
 
-        if (mentionType.equals(MentionControlViewModel.MENTION_TYPE_MESSAGE)
-                && alreadySelectedMemberHashMap != null
-                && !alreadySelectedMemberHashMap.containsKey(topicIds.get(0))) {
-            if (members.size() - 1 > 0 && "All".toLowerCase().contains(subNameString.toLowerCase())) {
-                SearchedItemVO searchedItemForAll = new SearchedItemVO();
-                searchedItemForAll
-                        .setId(topicIds.get(0))
-                        .setName("All")
-                        .setType("room");
-                searchedItems.add(searchedItemForAll);
+        Iterator searchedItemsKeySet = searchedItemsHashMap.keySet().iterator();
+
+        while (searchedItemsKeySet.hasNext()) {
+            Integer key = (Integer) searchedItemsKeySet.next();
+            if (selectableMembersLinkedHashMap.get(key).getName()
+                    .toLowerCase().contains(subNameString.toLowerCase())) {
+                searchedItems.add(selectableMembersLinkedHashMap.get(key));
             }
         }
 
@@ -103,14 +67,16 @@ public class SearchMemberModel {
 
     }
 
-    public LinkedHashMap<Integer, SearchedItemVO> getSelectableMembers
+    public void refreshSelectableMembers
             (List<Integer> topicIds, String mentionType) {
 
-        if (topicIds == null || topicIds.size() == 0)
-            return new LinkedHashMap<Integer, SearchedItemVO>();
+        if (topicIds == null || topicIds.size() == 0) {
+            selectableMembersLinkedHashMap = new LinkedHashMap<Integer, SearchedItemVO>();
+        }
 
         List<Integer> members = new ArrayList<>();
-        LinkedHashMap<Integer, SearchedItemVO> selectableMembersLinkedHashMap
+
+        selectableMembersLinkedHashMap
                 = new LinkedHashMap<Integer, SearchedItemVO>();
 
         Observable.from(topicIds)
@@ -152,8 +118,10 @@ public class SearchMemberModel {
             selectableMembersLinkedHashMap.put(searchedItemForAll.getId(), searchedItemForAll);
         }
 
-        return selectableMembersLinkedHashMap;
+    }
 
+    public LinkedHashMap<Integer, SearchedItemVO> getSelectableMembers() {
+        return selectableMembersLinkedHashMap;
     }
 
     private Comparator<SearchedItemVO> getChatItemComparator() {
