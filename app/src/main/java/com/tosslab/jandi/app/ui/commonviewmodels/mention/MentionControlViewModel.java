@@ -156,6 +156,9 @@ public class MentionControlViewModel {
     void editTextChanged(CharSequence s, TextView tv, int before, int start, int count) {
         afterTextCnt = count;
         afterText = s.toString();
+        if (s.length() == 0) {
+            selectedMemberHashMap.clear();
+        }
     }
 
     void afterEditTextChanged(Editable s, TextView tv) {
@@ -247,7 +250,6 @@ public class MentionControlViewModel {
         }
 
         String removedText = beforeText;
-        String remainText = afterText;
         removedText = removedText.replace(afterText.substring(0, currentSelection), "");
         removedText = removedText.replace(afterText.substring(currentSelection, afterText.length()), "");
 
