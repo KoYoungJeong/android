@@ -69,6 +69,9 @@ public class MentionControlViewModel {
     private TextWatcher textWatcher;
     private OnMentionViewShowingListener onMentionViewShowingListener;
 
+    // 클립 보드에서 CUT(잘라내기) 시 해당 정보를 한꺼번에 잃기 때문에 저장할 필요성이 있음.
+    private LinkedHashMap<Integer, SearchedItemVO> cloneSelectedMemberHashMap;
+
     public MentionControlViewModel(Activity activity, RecyclerView searchMemberListView,
                                    EditText editText, RecyclerView messageListView,
                                    List<Integer> roomIds) {
@@ -146,6 +149,7 @@ public class MentionControlViewModel {
     void beforeEditTextChanged(TextView tv, CharSequence s, int start, int count,
                                int after) {
         beforeTextCnt = count;
+        cloneSelectedMemberHashMap = (LinkedHashMap<Integer, SearchedItemVO>) selectedMemberHashMap.clone();
         beforeText = s.toString();
     }
 
@@ -190,6 +194,7 @@ public class MentionControlViewModel {
             removeAllMemberList();
             showListView(false);
         }
+
 
     }
 
@@ -320,7 +325,6 @@ public class MentionControlViewModel {
 
         while (matcher.find()) {
             findId = matcher.group(2);
-            Log.e("id", String.valueOf(findId));
             if (selectedMembers.get(new Integer(findId)) != null) {
                 orderedSearchedMember.put(new Integer(findId),
                         selectableMembers.get(new Integer(findId)));
@@ -369,7 +373,8 @@ public class MentionControlViewModel {
 
 
     // use to get converted message for clipboard
-    public ResultMentionsVO getMentionInfoObject(String string) {
+    public ResultMentionsVO getMentionInfoObject(
+            String string, LinkedHashMap<Integer, SearchedItemVO> selectedMemberHashMap) {
         return getMentionInfoObject(string,
                 selectedMemberHashMap, getSelectableMembersInThis());
     }
@@ -423,14 +428,28 @@ public class MentionControlViewModel {
     class ClipboardListener implements
             ClipboardManager.OnPrimaryClipChangedListener {
         public void onPrimaryClipChanged() {
-            String et = editText.getText().toString();
+            // if U cut the string in the editText, editText already removed all string.
+            String et = null;
+            boolean isCut = false;
+            if (afterText.length() == 0 && beforeText.length() > 0) {
+                et = beforeText;
+                isCut = true;
+            } else {
+                et = editText.getText().toString();
+            }
+            Log.e("et", et);
             ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
                     .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
             CharSequence pasteData = "";
             ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
             pasteData = item.getText();
             if (et.contains(pasteData.toString())) {
-                String convertedMessage = getMentionInfoObject(pasteData.toString()).getMessage();
+                String convertedMessage = null;
+                if (isCut) {
+                    convertedMessage = getMentionInfoObject(et, cloneSelectedMemberHashMap).getMessage();
+                } else {
+                    convertedMessage = getMentionInfoObject(et, selectedMemberHashMap).getMessage();
+                }
                 Log.e(convertedMessage, convertedMessage);
                 setTextOnClip(convertedMessage);
             }
