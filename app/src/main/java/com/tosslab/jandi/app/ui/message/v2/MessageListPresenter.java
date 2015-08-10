@@ -1056,6 +1056,10 @@ public class MessageListPresenter {
         int position = messageListAdapter.indexByMessageId(messageId);
         messageListAdapter.remove(position);
     }
+
+    public boolean isLastOfLastReadPosition() {
+        return messageListAdapter.isLastOfLastReadPosition();
+    }
 }
 
 
