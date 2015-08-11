@@ -40,6 +40,9 @@ public class MentionControlViewModel {
 
     public static final String MENTION_TYPE_MESSAGE = "mention_type_message";
     public static final String MENTION_TYPE_FILE_COMMENT = "mention_type_file_comment";
+    public static final int MENTION_MEMBER_DELETE = 0x01;
+    public static final int MENTION_MEMBER_INSERT = 0x02;
+
     private RecyclerView searchMemberListView;
     private EditText editText;
 
@@ -189,7 +192,7 @@ public class MentionControlViewModel {
 
             }
 
-            restoreOrDeleteSelectedMentionMemberInfo(1, removedText);
+            restoreOrDeleteSelectedMentionMemberInfo(MENTION_MEMBER_DELETE, removedText);
 
         }
 
@@ -197,7 +200,7 @@ public class MentionControlViewModel {
         int appendCharIndex = tv.getSelectionStart();
         CharSequence cs = e.subSequence(0, appendCharIndex);
 
-        String mentionedName = getMentionedName(cs);
+        String mentionedName = getMentionSearchName(cs);
 
         if (mentionedName != null) {
 
@@ -218,7 +221,7 @@ public class MentionControlViewModel {
 
     }
 
-    public String getMentionedName(CharSequence cs) {
+    public String getMentionSearchName(CharSequence cs) {
         Pattern p = Pattern.compile("(?:(?:^|\\s)([@\\uff20]((?:[^@\\uff20]){0,30})))$");
         Matcher matcher = p.matcher(cs);
         String result = null;
@@ -296,17 +299,17 @@ public class MentionControlViewModel {
         return removedText;
     }
 
-    private void restoreOrDeleteSelectedMentionMemberInfo(int type, String rawMemberText) {
+    private void restoreOrDeleteSelectedMentionMemberInfo(int request, String rawMemberText) {
         if (rawMemberText != null) {
             String id = "";
             Pattern p = Pattern.compile("(?:@)([^\\u2063].+)(?:\\u2063)(\\d+)(?:\\u2063)");
             Matcher matcher = p.matcher(rawMemberText);
             while (matcher.find()) {
                 id = matcher.group(2);
-                if (type == 0) {
+                if (request == MENTION_MEMBER_INSERT) {
                     selectedMemberHashMap.put(new Integer(id),
                             getAllSelectableMembers().get(new Integer(id)));
-                } else if (type == 1) {
+                } else if (request == MENTION_MEMBER_DELETE) {
                     selectedMemberHashMap.remove(Integer.valueOf(id));
                 }
             }
@@ -338,7 +341,7 @@ public class MentionControlViewModel {
                 .append(searchedItemVO.getId())
                 .append("\u2063");
 
-        restoreOrDeleteSelectedMentionMemberInfo(0, "@" + convertedTextBuilder);
+        restoreOrDeleteSelectedMentionMemberInfo(MENTION_MEMBER_INSERT, "@" + convertedTextBuilder);
 
         ssb.replace(startIndex, selectionIndex, convertedTextBuilder);
 
@@ -402,6 +405,7 @@ public class MentionControlViewModel {
             int length = name.length() + 1;
             MentionObject mentionInfo = new MentionObject(key, type, offset, length);
             mentions.add(mentionInfo);
+
         }
 
         return new ResultMentionsVO(builder.toString(), mentions);
@@ -412,7 +416,6 @@ public class MentionControlViewModel {
         return getMentionInfoObject(editText.getText().toString().trim(),
                 selectedMemberHashMap, getAllSelectableMembers());
     }
-
 
     // use to get converted message for clipboard
     public ResultMentionsVO getMentionInfoObject(
@@ -471,6 +474,7 @@ public class MentionControlViewModel {
     class ClipboardListener implements
             ClipboardManager.OnPrimaryClipChangedListener {
         public void onPrimaryClipChanged() {
+
             // if U cut the string in the editText, editText already removed all string.
             String et = null;
             boolean isCut = false;
@@ -497,6 +501,7 @@ public class MentionControlViewModel {
                 setTextOnClip(convertedMessage);
 
             }
+
         }
     }
 
