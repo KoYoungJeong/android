@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.lists.entities;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -13,8 +12,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class EntityManagerTest {
 
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
     }
 
     @Test
@@ -40,7 +39,7 @@ public class EntityManagerTest {
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(infosForSideMenu);
 
-        EntityManager instance = EntityManager.getInstance(Robolectric.application);
+        EntityManager instance = EntityManager.getInstance(RuntimeEnvironment.application);
 
         List<FormattedEntity> formattedUsersWithoutMe = instance.getFormattedUsersWithoutMe();
 

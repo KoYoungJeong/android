@@ -6,15 +6,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-@Config(manifest = "app/src/main/AndroidManifest.xml", emulateSdk = 18)
+@Config(manifest = "app/src/main/AndroidManifest.xml", sdk =18)
 @RunWith(RobolectricGradleTestRunner.class)
 public class MessageSearchModelTest {
 
@@ -22,8 +22,8 @@ public class MessageSearchModelTest {
 
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData(Robolectric.application);
-        messageSearchModel = MessageSearchModel_.getInstance_(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
+        messageSearchModel = MessageSearchModel_.getInstance_(RuntimeEnvironment.application);
     }
 
     @Test

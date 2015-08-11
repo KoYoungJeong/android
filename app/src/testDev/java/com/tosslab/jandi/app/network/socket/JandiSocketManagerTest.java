@@ -16,8 +16,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -35,7 +35,7 @@ public class JandiSocketManagerTest {
     public void setUp() throws Exception {
         socketManager = JandiSocketManager.getInstance();
 
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
         ResAccountInfo.UserTeam userTeam = AccountRepository.getRepository().getAccountTeams().get(0);
         AccountRepository.getRepository().updateSelectedTeamInfo(userTeam.getTeamId());
     }
@@ -57,7 +57,7 @@ public class JandiSocketManagerTest {
                 String name = AccountRepository.getRepository().getAccountInfo().getName();
 
                 ConnectTeam connectTeam = new ConnectTeam("", UserAgentUtil.getDefaultUserAgent
-                        (Robolectric.application), userTeam.getTeamId(),
+                        (RuntimeEnvironment.application), userTeam.getTeamId(),
                         userTeam.getName(), userTeam.getMemberId(), name);
                 System.out.println("Connect Team Name : " + userTeam.getName());
 
@@ -314,7 +314,7 @@ public class JandiSocketManagerTest {
                 String name = AccountRepository.getRepository().getAccountInfo().getName();
 
                 ConnectTeam connectTeam = new ConnectTeam("", UserAgentUtil.getDefaultUserAgent
-                        (Robolectric.application), userTeam.getTeamId(),
+                        (RuntimeEnvironment.application), userTeam.getTeamId(),
                         userTeam.getName(), userTeam.getMemberId(), name);
                 System.out.println("Connect Team Name : " + userTeam.getName());
 

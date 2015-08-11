@@ -11,7 +11,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.shadows.httpclient.FakeHttp;
 
 import java.util.concurrent.Callable;
 
@@ -39,7 +41,7 @@ public class IntroActivityModelTest {
 
         introActivityModel = IntroActivityModel_.getInstance_(introActivity_);
 
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        FakeHttp.getFakeHttpLayer().interceptHttpRequests(false);
 
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
@@ -51,7 +53,7 @@ public class IntroActivityModelTest {
     public void testCheckNewVersion() throws Exception {
 
         // When : Check app version to server
-        introActivityModel.checkNewVersion(Robolectric.application);
+        introActivityModel.checkNewVersion(RuntimeEnvironment.application);
 
         await().until(new Callable<Boolean>() {
             @Override
@@ -68,7 +70,7 @@ public class IntroActivityModelTest {
     public void testRetrieveThisAppVersion() throws Exception {
 
         // When : Get app version
-        int versionCode = introActivityModel.getInstalledAppVersion(Robolectric.application);
+        int versionCode = introActivityModel.getInstalledAppVersion(RuntimeEnvironment.application);
 
         // Then : Maybe....show update dialog..Because AndroidManifest.xml is not defined.
         assertThat(versionCode > 0, is(true));

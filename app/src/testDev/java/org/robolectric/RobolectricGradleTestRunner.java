@@ -2,6 +2,8 @@ package org.robolectric;
 
 import org.junit.runners.model.InitializationError;
 import org.robolectric.annotation.Config;
+import org.robolectric.manifest.AndroidManifest;
+import org.robolectric.manifest.AndroidManifestExt;
 import org.robolectric.res.Fs;
 
 /**

@@ -13,8 +13,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,12 +39,12 @@ public class MessageRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
     }
 
     @After
     public void tearDown() throws Exception {
-        OpenHelperManager.getHelper(Robolectric.application, OrmDatabaseHelper.class)
+        OpenHelperManager.getHelper(RuntimeEnvironment.application, OrmDatabaseHelper.class)
                 .getDao(ResMessages.Link.class)
                 .deleteBuilder()
                 .delete();

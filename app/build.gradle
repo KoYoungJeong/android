@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 apply plugin: 'android-apt'     // Android-Annotation
-apply plugin: 'org.robolectric'     // Android-Test
 apply plugin: 'me.tatarka.retrolambda'  //RetroLamda
 apply plugin: 'aar-link-sources'
 apply from: 'valid.gradle'       // Gradle Propertie Valid Check
@@ -46,7 +45,6 @@ checkstyle {
 dependencies {
 
     repositories {
-        mavenCentral()
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
     }
@@ -100,7 +98,8 @@ dependencies {
     compile 'io.reactivex:rxandroid:0.24.+'
 
     // Test : Robolectric, Junit4
-    testCompile 'org.robolectric:robolectric:2.4'
+    testCompile 'org.robolectric:robolectric:3.0'
+    testCompile 'org.robolectric:shadows-httpclient:3.0'
     testCompile 'com.jayway.awaitility:awaitility:1.6.+'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-all:1.10.+'
@@ -172,16 +171,16 @@ android {
         }
     }
 
-    packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/license.txt'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/notice.txt'
-        exclude 'META-INF/ASL2.0'
-    }
+    packagingOptions.excludes = [
+            'META-INF/DEPENDENCIES',
+            'META-INF/LICENSE',
+            'META-INF/LICENSE.txt',
+            'META-INF/license.txt',
+            'META-INF/NOTICE',
+            'META-INF/NOTICE.txt',
+            'META-INF/notice.txt',
+            'META-INF/ASL2.0'
+    ]
 
     signingConfigs {
         release {
@@ -226,23 +225,6 @@ apt {
     }
 }
 
-robolectric {
-    // configure the set of classes for JUnit tests
-    include '**/*Test.class'
-
-    // configure max heap size of the test JVM
-    maxHeapSize = "2048m"
-
-    ignoreFailures true
-
-}
-
-project.gradle.taskGraph.whenReady {
-    testDevDebug {
-        ignoreFailures = true
-    }
-}
-
 retrolambda {
     jdk java8_home
     oldJdk java6_home
@@ -259,7 +241,7 @@ def coverageSourceDirs = [
 // This differs per what flavors buildTypes etc.
 // But this example shows the 'testDebug'
 // which is standard for Robolectric
-task jacocoTestReport(type: JacocoReport, dependsOn: "testDevDebug") {
+task jacocoTestReport(type: JacocoReport, dependsOn: "testDevDebugUnitTest") {
     group = "Reporting"
     description = "Generate Jacoco coverage reports after running tests."
     reports {
@@ -295,6 +277,6 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDevDebug") {
 
     afterEvaluate {
         // just clean up coveralls dashboard, following reports are not of interest
-        testDevDebug.reports.junitXml.enabled = false
+        testDevDebugUnitTest.reports.junitXml.enabled = false
     }
 }

@@ -11,9 +11,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.shadows.httpclient.FakeHttp;
 
 import java.util.List;
 
@@ -31,14 +32,14 @@ public class FileApiClientTest {
     public void setUp() throws Exception {
 
 
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
 
         int teamId = AccountRepository.getRepository().getAccountTeams().get(0).getTeamId();
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
         sideMenu = getSideMenu();
 
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        FakeHttp.getFakeHttpLayer().interceptHttpRequests(false);
 
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;

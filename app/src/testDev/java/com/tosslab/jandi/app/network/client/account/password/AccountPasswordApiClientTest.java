@@ -12,9 +12,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.shadows.httpclient.FakeHttp;
 
 import retrofit.RetrofitError;
 
@@ -35,7 +36,7 @@ public class AccountPasswordApiClientTest {
 
         sideMenu = getSideMenu();
 
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        FakeHttp.getFakeHttpLayer().interceptHttpRequests(false);
 
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
@@ -54,7 +55,7 @@ public class AccountPasswordApiClientTest {
 
         ResCommon resCommon = null;
         try {
-            resCommon = RequestApiManager.getInstance().resetPasswordByAccountPasswordApi(new ReqAccountEmail(BaseInitUtil.TEST_ID, LanguageUtil.getLanguage(Robolectric.application)));
+            resCommon = RequestApiManager.getInstance().resetPasswordByAccountPasswordApi(new ReqAccountEmail(BaseInitUtil.TEST_ID, LanguageUtil.getLanguage(RuntimeEnvironment.application)));
         } catch (RetrofitError e) {
             fail(e.getResponse().getBody().toString());
         }

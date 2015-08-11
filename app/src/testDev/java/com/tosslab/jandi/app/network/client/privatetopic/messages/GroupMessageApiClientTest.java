@@ -17,8 +17,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.sql.Timestamp;
 
@@ -37,7 +37,7 @@ public class GroupMessageApiClientTest {
     @Before
     public void setUp() throws Exception {
 
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
 
         sideMenu = getSideMenu();
 
@@ -45,7 +45,7 @@ public class GroupMessageApiClientTest {
 
     @After
     public void tearDown() throws Exception {
-        JandiDatabaseOpenHelper.getInstance(Robolectric.application).getWritableDatabase().close();
+        JandiDatabaseOpenHelper.getInstance(RuntimeEnvironment.application).getWritableDatabase().close();
     }
 
 

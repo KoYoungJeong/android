@@ -7,8 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class ChatRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
 
         int memberId = AccountRepository.getRepository().getSelectedTeamInfo().getMemberId();
         originChats = RequestApiManager.getInstance().getChatListByChatApi(memberId);

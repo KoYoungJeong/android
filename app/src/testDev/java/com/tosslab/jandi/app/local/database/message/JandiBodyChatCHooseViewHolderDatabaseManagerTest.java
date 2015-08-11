@@ -17,8 +17,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +30,12 @@ public class JandiBodyChatCHooseViewHolderDatabaseManagerTest {
 
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
     }
 
     @After
     public void tearDown() throws Exception {
-        JandiDatabaseOpenHelper.getInstance(Robolectric.application).getWritableDatabase().close();
+        JandiDatabaseOpenHelper.getInstance(RuntimeEnvironment.application).getWritableDatabase().close();
     }
 
 
@@ -47,7 +47,7 @@ public class JandiBodyChatCHooseViewHolderDatabaseManagerTest {
 
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
 
-        MessageManipulator messageManipulator = MessageManipulator_.getInstance_(Robolectric.application);
+        MessageManipulator messageManipulator = MessageManipulator_.getInstance_(RuntimeEnvironment.application);
         int entityId = infosForSideMenu.joinEntities.iterator().next().id;
         messageManipulator.initEntity(JandiConstants.TYPE_PUBLIC_TOPIC, entityId);
         ResMessages messages = messageManipulator.getMessages(-1, 20);

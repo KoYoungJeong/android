@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.shadows.httpclient.FakeHttp;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 19..
@@ -41,7 +42,7 @@ public class BaseInitUtil {
     }
 
     public static void httpOn() {
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        FakeHttp.getFakeHttpLayer().interceptHttpRequests(false);
     }
 
 

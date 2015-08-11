@@ -9,8 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import rx.Observable;
 
@@ -29,12 +29,12 @@ public class TopicCreateModelTest {
 
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
 
         int teamId = AccountRepository.getRepository().getAccountTeams().get(0).getTeamId();
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
-        topicCreateModel = TopicCreateModel_.getInstance_(Robolectric.application);
+        topicCreateModel = TopicCreateModel_.getInstance_(RuntimeEnvironment.application);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class TopicCreateModelTest {
         int createdId = topic.id;
 
         ResLeftSideMenu totalEntitiesInfo = EntityClientManager_
-                .getInstance_(Robolectric.application)
+                .getInstance_(RuntimeEnvironment.application)
                 .getTotalEntitiesInfo();
 
         ResLeftSideMenu.Entity defaultValue = new ResLeftSideMenu.Entity() {};
@@ -59,7 +59,7 @@ public class TopicCreateModelTest {
                 .toBlocking().first();
 
         EntityClientManager_
-                .getInstance_(Robolectric.application)
+                .getInstance_(RuntimeEnvironment.application)
                 .deletePrivateGroup(createdId);
 
         if (createdEntity == defaultValue) {
@@ -85,7 +85,7 @@ public class TopicCreateModelTest {
         int createdId = topic.id;
 
         ResLeftSideMenu totalEntitiesInfo = EntityClientManager_
-                .getInstance_(Robolectric.application)
+                .getInstance_(RuntimeEnvironment.application)
                 .getTotalEntitiesInfo();
 
         ResLeftSideMenu.Entity defaultValue = new ResLeftSideMenu.Entity() {};
@@ -95,7 +95,7 @@ public class TopicCreateModelTest {
                 .toBlocking().first();
 
         EntityClientManager_
-                .getInstance_(Robolectric.application)
+                .getInstance_(RuntimeEnvironment.application)
                 .deleteChannel(createdId);
 
         if (createdEntity == defaultValue) {

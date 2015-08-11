@@ -12,8 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -26,7 +26,7 @@ public class ChannelApiClientTest {
     @Before
     public void setUp() throws Exception {
 
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
 
     }
 
@@ -52,7 +52,7 @@ public class ChannelApiClientTest {
 
     @After
     public void tearDown() throws Exception {
-        JandiDatabaseOpenHelper.getInstance(Robolectric.application).getWritableDatabase().close();
+        JandiDatabaseOpenHelper.getInstance(RuntimeEnvironment.application).getWritableDatabase().close();
     }
 
 

@@ -8,8 +8,8 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import static com.jayway.awaitility.Awaitility.await;
 
@@ -22,7 +22,7 @@ public class JandiEntityDatabaseManagerTest {
     @Test
     public void testMultiThread() throws Exception {
 
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
 
         int teamId = AccountRepository.getRepository().getAccountTeams().get(0).getTeamId();
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);

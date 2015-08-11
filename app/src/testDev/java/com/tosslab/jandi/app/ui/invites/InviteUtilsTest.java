@@ -8,8 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowLog;
 
 /**
@@ -21,8 +21,8 @@ public class InviteUtilsTest {
 
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData(Robolectric.application);
-        teamDomainInfoModel = TeamDomainInfoModel_.getInstance_(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
+        teamDomainInfoModel = TeamDomainInfoModel_.getInstance_(RuntimeEnvironment.application);
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
     }

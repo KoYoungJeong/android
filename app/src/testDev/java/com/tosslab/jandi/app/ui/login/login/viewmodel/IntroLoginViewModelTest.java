@@ -17,9 +17,11 @@ import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.Shadows;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowInputMethodManager;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.shadows.httpclient.FakeHttp;
 
 import java.util.ArrayList;
 
@@ -46,7 +48,7 @@ public class IntroLoginViewModelTest {
         introLoginViewModel = introLoginFragment.introLoginViewModel;
 
         // Real Connect Dev Server
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        FakeHttp.getFakeHttpLayer().interceptHttpRequests(false);
 
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
@@ -89,7 +91,7 @@ public class IntroLoginViewModelTest {
         introLoginViewModel.loginSuccess(BaseInitUtil.TEST_ID);
 
         // then : started TeamSelectionActivity
-        ShadowActivity shadowActivity = Robolectric.shadowOf(introLoginFragment.getActivity());
+        ShadowActivity shadowActivity = Shadows.shadowOf(introLoginFragment.getActivity());
         Intent nextStartedActivity = shadowActivity.getNextStartedActivity();
         assertThat(nextStartedActivity.getComponent().getClassName(), is(equalTo(AccountHomeActivity_.class.getName())));
 
@@ -114,7 +116,7 @@ public class IntroLoginViewModelTest {
         introLoginViewModel.moveToTeamSelectionActivity(BaseInitUtil.TEST_ID);
 
         // then : started TeamSelectionActivity
-        ShadowActivity shadowActivity = Robolectric.shadowOf(introLoginFragment.getActivity());
+        ShadowActivity shadowActivity = Shadows.shadowOf(introLoginFragment.getActivity());
         Intent nextStartedActivity = shadowActivity.getNextStartedActivity();
         assertThat(nextStartedActivity.getComponent().getClassName(), is(equalTo(AccountHomeActivity_.class.getName())));
 
@@ -143,7 +145,7 @@ public class IntroLoginViewModelTest {
         introLoginViewModel.hideKeypad();
 
         // then : check to hide keypad
-        ShadowInputMethodManager shadowInputMethodManager = Robolectric.shadowOf(introLoginViewModel.imm);
+        ShadowInputMethodManager shadowInputMethodManager = Shadows.shadowOf(introLoginViewModel.imm);
         assertThat(shadowInputMethodManager.isSoftInputVisible(), is(false));
 
     }

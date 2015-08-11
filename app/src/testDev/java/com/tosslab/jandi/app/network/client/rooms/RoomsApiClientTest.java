@@ -11,8 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class RoomsApiClientTest {
 
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
     }
 
     @Test
@@ -34,7 +34,7 @@ public class RoomsApiClientTest {
         List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
         AccountRepository.getRepository().updateSelectedTeamInfo(userTeams.get(0).getTeamId());
 
-        EntityClientManager_ entityClientManager = EntityClientManager_.getInstance_(Robolectric.application);
+        EntityClientManager_ entityClientManager = EntityClientManager_.getInstance_(RuntimeEnvironment.application);
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
 
         ResRoomInfo roomInfo = RequestApiManager.getInstance().getRoomInfoByRoomsApi(totalEntitiesInfo.team.id, totalEntitiesInfo.team.t_defaultChannelId);

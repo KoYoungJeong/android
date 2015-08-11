@@ -3,8 +3,8 @@ package com.tosslab.jandi.app.ui.maintab.more;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.Locale;
 
@@ -23,7 +23,7 @@ public class MainMoreFragmentTest {
     public void setUp() throws Exception {
 
         mainMoreFragment = MainMoreFragment_.builder().build();
-        mainMoreFragment.mContext = Robolectric.application;
+        mainMoreFragment.mContext = RuntimeEnvironment.application;
 
     }
 
@@ -31,7 +31,7 @@ public class MainMoreFragmentTest {
     public void testSupportUrlEachLanguage() throws Exception {
         {
             //중국어
-            Robolectric.application.getResources().getConfiguration().locale = Locale.SIMPLIFIED_CHINESE;
+            RuntimeEnvironment.application.getResources().getConfiguration().locale = Locale.SIMPLIFIED_CHINESE;
 
             String supportUrlEachLanguage = mainMoreFragment.getSupportUrlEachLanguage();
             System.out.println(supportUrlEachLanguage);
@@ -39,7 +39,7 @@ public class MainMoreFragmentTest {
         }
         {
             //타이완
-            Robolectric.application.getResources().getConfiguration().locale = Locale.TRADITIONAL_CHINESE;
+            RuntimeEnvironment.application.getResources().getConfiguration().locale = Locale.TRADITIONAL_CHINESE;
 
             String supportUrlEachLanguage = mainMoreFragment.getSupportUrlEachLanguage();
             System.out.println(supportUrlEachLanguage);
@@ -47,7 +47,7 @@ public class MainMoreFragmentTest {
         }
         {
             //일본어
-            Robolectric.application.getResources().getConfiguration().locale = Locale.JAPAN;
+            RuntimeEnvironment.application.getResources().getConfiguration().locale = Locale.JAPAN;
 
             String supportUrlEachLanguage = mainMoreFragment.getSupportUrlEachLanguage();
             System.out.println(supportUrlEachLanguage);
@@ -55,7 +55,7 @@ public class MainMoreFragmentTest {
         }
         {
             //영어
-            Robolectric.application.getResources().getConfiguration().locale = Locale.ENGLISH;
+            RuntimeEnvironment.application.getResources().getConfiguration().locale = Locale.ENGLISH;
 
             String supportUrlEachLanguage = mainMoreFragment.getSupportUrlEachLanguage();
             System.out.println(supportUrlEachLanguage);
@@ -63,7 +63,7 @@ public class MainMoreFragmentTest {
         }
         {
             //한국어
-            Robolectric.application.getResources().getConfiguration().locale = Locale.KOREA;
+            RuntimeEnvironment.application.getResources().getConfiguration().locale = Locale.KOREA;
 
             String supportUrlEachLanguage = mainMoreFragment.getSupportUrlEachLanguage();
             System.out.println(supportUrlEachLanguage);
