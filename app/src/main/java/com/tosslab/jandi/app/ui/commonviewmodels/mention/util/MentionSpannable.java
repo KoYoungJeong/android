@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.text.style.ReplacementSpan;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
@@ -30,7 +29,6 @@ public class MentionSpannable extends ReplacementSpan {
                 .getDimensionPixelSize(R.dimen.jandi_mention_edit_text_item_font_size));
 
         prepareView();
-        Log.e("ss", tvDate.getText().toString());
     }
 
     private void prepareView() {
@@ -42,7 +40,6 @@ public class MentionSpannable extends ReplacementSpan {
         tvDate.layout(0, 0, tvDate.getMeasuredWidth(), tvDate.getMeasuredHeight());
 
     }
-
 
 
     @Override

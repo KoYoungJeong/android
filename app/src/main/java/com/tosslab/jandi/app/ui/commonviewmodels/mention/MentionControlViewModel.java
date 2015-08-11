@@ -15,15 +15,16 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.MentionMemberListAdapter;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel_;
-import com.tosslab.jandi.app.ui.commonviewmodels.mention.util.MentionSpannable;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel_;
+import com.tosslab.jandi.app.views.spannable.MentionMessageSpannable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -234,7 +235,7 @@ public class MentionControlViewModel {
     //for only google keyboard issue
     private String findMentionedMemberForGoogleKeyboard(String rawMemberText) {
         if (rawMemberText != null) {
-            Pattern p = Pattern.compile("(?:@)([^\\u2063]+)(?:\\u2063)(\\d+)$");
+            Pattern p = Pattern.compile("@([^@]+)(?:\\u2063)(\\d+)$");
             Matcher matcher = p.matcher(rawMemberText);
             while (matcher.find()) {
                 String find = matcher.group(0);
@@ -331,7 +332,14 @@ public class MentionControlViewModel {
 
         SpannableStringBuilder ssb = new SpannableStringBuilder(editText.getEditableText());
 
-        MentionSpannable spannable = new MentionSpannable(editText.getContext(), searchedItemVO.getName());
+        MentionMessageSpannable spannable = new MentionMessageSpannable(
+                editText.getContext(),
+                searchedItemVO.getName(),
+                editText.getContext().getResources()
+                        .getDimensionPixelSize(R.dimen.jandi_mention_edit_text_item_font_size),
+                0xFFfefefe,
+                0xFF01a4e7
+        );
 
         StringBuilder convertedTextBuilder = new StringBuilder();
 

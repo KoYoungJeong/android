@@ -14,9 +14,12 @@ import de.greenrobot.event.EventBus;
  */
 public class ClickableMensionMessageSpannable extends MentionMessageSpannable {
 
+    private int entityId;
+
     public ClickableMensionMessageSpannable(Context context, String name, int entityId, float pxSize,
                                             int textColor, int backgroundColor) {
-        super(context, name, entityId, pxSize, textColor, backgroundColor);
+        super(context, name, pxSize, textColor, backgroundColor);
+        this.entityId = entityId;
     }
 
     public void onClick() {
