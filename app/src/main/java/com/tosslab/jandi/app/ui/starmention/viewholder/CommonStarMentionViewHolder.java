@@ -5,7 +5,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
+import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 /**
  * Created by tee on 15. 8. 2..
@@ -50,4 +54,19 @@ public class CommonStarMentionViewHolder extends RecyclerView.ViewHolder {
                 ", convertView=" + convertView +
                 '}';
     }
+
+    public void bindView(StarMentionVO starMentionVO) {
+
+        Ion.with(this.getStarMentionProfileView())
+                .placeholder(R.drawable.jandi_profile)
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .load(starMentionVO.getWriterPictureUrl());
+
+        this.getStarMentionNameView().setText(starMentionVO.getWriterName());
+        String updateTime = DateTransformator.getTimeString(starMentionVO.getUpdatedAt());
+        this.getStarMentionDateView().setText(updateTime);
+
+    }
+
 }

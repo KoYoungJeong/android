@@ -163,6 +163,7 @@ public class MentionControlViewModel {
 
     void afterEditTextChanged(Editable s, TextView tv) {
 
+        // this is something removed case
         if (beforeTextCnt > afterTextCnt) {
             String tempString = findMentionedMemberForGoogleKeyboard(
                     afterText.substring(0, tv.getSelectionStart()));
@@ -184,8 +185,7 @@ public class MentionControlViewModel {
         Editable e = tv.getEditableText();
         int appendCharIndex = tv.getSelectionStart();
         CharSequence cs = e.subSequence(0, appendCharIndex);
-        Pattern p = Pattern.compile("(?:(?:^|\\s)([@\\uff20]((?:[^@\\uff20]|[\\!'#%&'\\(\\)*\\+,\\" +
-                "\\\\-\\.\\/:;<=>\\?\\[\\]\\^_{|}~\\$][^ ]){0,30})))$");
+        Pattern p = Pattern.compile("(?:(?:^|\\s)([@\\uff20]((?:[^@\\uff20]){0,30})))$");
         Matcher matcher = p.matcher(cs);
         String result = null;
 
@@ -290,7 +290,7 @@ public class MentionControlViewModel {
                 id = matcher.group(2);
                 if (type == 0) {
                     selectedMemberHashMap.put(new Integer(id),
-                            getSelectableMembersInThis().get(new Integer(id)));
+                            getAllSelectableMembers().get(new Integer(id)));
                 } else if (type == 1) {
                     selectedMemberHashMap.remove(Integer.valueOf(id));
                 }
@@ -298,8 +298,8 @@ public class MentionControlViewModel {
         }
     }
 
-    public LinkedHashMap<Integer, SearchedItemVO> getSelectableMembersInThis() {
-        return searchMemberModel.getSelectableMembers();
+    public LinkedHashMap<Integer, SearchedItemVO> getAllSelectableMembers() {
+        return searchMemberModel.getAllSelectableMembers();
     }
 
     public void refreshSelectableMembers(List<Integer> roomIds) {
@@ -395,7 +395,7 @@ public class MentionControlViewModel {
 
     public ResultMentionsVO getMentionInfoObject() {
         return getMentionInfoObject(editText.getText().toString().trim(),
-                selectedMemberHashMap, getSelectableMembersInThis());
+                selectedMemberHashMap, getAllSelectableMembers());
     }
 
 
@@ -403,7 +403,7 @@ public class MentionControlViewModel {
     public ResultMentionsVO getMentionInfoObject(
             String string, LinkedHashMap<Integer, SearchedItemVO> selectedMemberHashMap) {
         return getMentionInfoObject(string,
-                selectedMemberHashMap, getSelectableMembersInThis());
+                selectedMemberHashMap, getAllSelectableMembers());
     }
 
     public boolean hasMentionMember() {
@@ -448,6 +448,7 @@ public class MentionControlViewModel {
         clipBoard.addPrimaryClipChangedListener(clipboardListener);
     }
 
+    // for control announcement view
     public interface OnMentionViewShowingListener {
         void onMentionViewShowing(boolean isShowing);
     }

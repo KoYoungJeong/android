@@ -5,6 +5,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 
 /**
  * Created by tee on 15. 7. 29..
@@ -33,5 +34,12 @@ public class FileStarMentionViewHolder extends CommonStarMentionViewHolder {
         return "FileStarMentionViewHolder{" +
                 ", starMentionFileName=" + starMentionFileNameView +
                 '}';
+    }
+
+    @Override
+    public void bindView(StarMentionVO starMentionVO) {
+        super.bindView(starMentionVO);
+        this.getStarMentionFileNameView().setText(starMentionVO.getFileName());
+        this.getStarFileTypeView().setImageResource(starMentionVO.getImageResource());
     }
 }

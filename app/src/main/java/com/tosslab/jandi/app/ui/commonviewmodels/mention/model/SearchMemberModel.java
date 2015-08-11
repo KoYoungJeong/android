@@ -120,7 +120,7 @@ public class SearchMemberModel {
 
     }
 
-    public LinkedHashMap<Integer, SearchedItemVO> getSelectableMembers() {
+    public LinkedHashMap<Integer, SearchedItemVO> getAllSelectableMembers() {
         return selectableMembersLinkedHashMap;
     }
 
