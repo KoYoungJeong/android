@@ -146,8 +146,7 @@ public class MentionControlViewModel {
         );
     }
 
-    void beforeEditTextChanged(TextView tv, CharSequence s, int start, int count,
-                               int after) {
+    void beforeEditTextChanged(TextView tv, CharSequence s, int start, int count, int after) {
         beforeTextCnt = count;
         cloneSelectedMemberHashMap = (LinkedHashMap<Integer, SearchedItemVO>) selectedMemberHashMap.clone();
         beforeText = s.toString();
@@ -165,9 +164,16 @@ public class MentionControlViewModel {
 
         // this is something removed case
         if (beforeTextCnt > afterTextCnt) {
+
+            // 특정 폰( EX. NEXUS 5 )에서는 별도의 처리가 필요하다.
+            // 기본적으로 멘션된 이름은 삭제시 블록이 한번에 지워지지만
+            // 특정 폰에서는 블록에서 삭제 시도할 때 블록안의 내용을 하나씩 지워나간다.
+            // 따라서 지워진 글자의 앞부분이 멘션 블록이라고 판단되면 블록 전체를 날려버리고
+            // REMOVED TEXT를 멘션 블록으로 치환하는 코드를 삽입하였다.
             String tempString = findMentionedMemberForGoogleKeyboard(
                     afterText.substring(0, tv.getSelectionStart()));
             if (tempString != null) {
+
                 editText.removeTextChangedListener(textWatcher);
                 int starIndex = tv.getSelectionStart() - tempString.length();
                 int endIndex = tv.getSelectionStart();
@@ -176,41 +182,50 @@ public class MentionControlViewModel {
                 removedText = tempString;
                 editText.addTextChangedListener(textWatcher);
                 editText.setSelection(starIndex);
+
             } else {
+
                 removedText = returnRemoveText(beforeText, afterText, tv.getSelectionStart());
+
             }
+
             restoreOrDeleteSelectedMentionMemberInfo(1, removedText);
+
         }
 
         Editable e = tv.getEditableText();
         int appendCharIndex = tv.getSelectionStart();
         CharSequence cs = e.subSequence(0, appendCharIndex);
-        Pattern p = Pattern.compile("(?:(?:^|\\s)([@\\uff20]((?:[^@\\uff20]){0,30})))$");
-        Matcher matcher = p.matcher(cs);
-        String result = null;
 
-        while (matcher.find()) {
-            result = matcher.group(2);
-        }
+        String mentionedName = getMentionedName(cs);
 
-        if (result != null) {
+        if (mentionedName != null) {
 
-            currentSearchKeywordString = result;
-
+            currentSearchKeywordString = mentionedName;
             showSearchMembersInfo(currentSearchKeywordString);
-
             if (getMembersListByAdapter().size() > 0) {
                 showListView(true);
             } else {
                 showListView(false);
             }
 
-
         } else {
+
             removeAllMemberList();
             showListView(false);
+
         }
 
+    }
+
+    public String getMentionedName(CharSequence cs) {
+        Pattern p = Pattern.compile("(?:(?:^|\\s)([@\\uff20]((?:[^@\\uff20]){0,30})))$");
+        Matcher matcher = p.matcher(cs);
+        String result = null;
+        while (matcher.find()) {
+            result = matcher.group(2);
+        }
+        return result;
     }
 
     //for only google keyboard issue
