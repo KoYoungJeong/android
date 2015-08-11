@@ -45,6 +45,7 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -86,6 +87,9 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @AfterViews
     void initView() {
         LogUtil.d("시작은 여기");
+
+        ParseUpdateUtil.addChannelOnServer();
+
         mContext = getApplicationContext();
         mEntityManager = EntityManager.getInstance(mContext);
 

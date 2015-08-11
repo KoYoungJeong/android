@@ -211,24 +211,38 @@ public class SettingsFragment extends PreferenceFragment {
 
     void onPushNotification() {
         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        if (installation.containsKey(ParseUpdateUtil.PARSE_ACTIVATION)) {
+            String isPushOn = (String) installation.get(ParseUpdateUtil.PARSE_ACTIVATION);
+            if (TextUtils.equals(isPushOn, ParseUpdateUtil.PARSE_ACTIVATION_ON)) {
+                return;
+            }
+        }
+
         installation.put(ParseUpdateUtil.PARSE_ACTIVATION, ParseUpdateUtil.PARSE_ACTIVATION_ON);
         installation.saveEventually(e -> {
             Activity activity = getActivity();
             if (activity != null && !(activity.isFinishing())) {
-                ColoredToast.show(activity
-                        , activity.getString(R.string.jandi_setting_push_subscription_ok));
+                ColoredToast.show(activity,
+                        activity.getString(R.string.jandi_setting_push_subscription_ok));
             }
         });
     }
 
     void offPushNotification() {
         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        if (installation.containsKey(ParseUpdateUtil.PARSE_ACTIVATION)) {
+            String isPushOff = (String) installation.get(ParseUpdateUtil.PARSE_ACTIVATION);
+            if (TextUtils.equals(isPushOff, ParseUpdateUtil.PARSE_ACTIVATION_OFF)) {
+                return;
+            }
+        }
+
         installation.put(ParseUpdateUtil.PARSE_ACTIVATION, ParseUpdateUtil.PARSE_ACTIVATION_OFF);
         installation.saveEventually(e -> {
             Activity activity = getActivity();
             if (activity != null && !(activity.isFinishing())) {
-                ColoredToast.show(activity
-                        , activity.getString(R.string.jandi_setting_push_subscription_cancel));
+                ColoredToast.show(activity,
+                        activity.getString(R.string.jandi_setting_push_subscription_cancel));
             }
         });
     }
