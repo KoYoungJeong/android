@@ -263,4 +263,24 @@ public class MessageRepository {
         }
         return 0;
     }
+
+    public ResMessages.FileMessage getFileMessage(int fileId) {
+        lock.lock();
+
+        try {
+
+            Dao<ResMessages.FileMessage, ?> dao = helper.getDao(ResMessages.FileMessage.class);
+
+            return dao.queryBuilder()
+                    .where()
+                    .eq("id", fileId)
+                    .queryForFirst();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+        return null;
+    }
 }
