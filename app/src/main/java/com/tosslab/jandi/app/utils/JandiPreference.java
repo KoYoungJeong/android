@@ -32,6 +32,30 @@ public class JandiPreference {
     private static final String PREF_COACH_MARK_FILE_LIST = "coach_mark_file_list";
     private static final String PREF_COACH_MARK_DIRECT_MESSAGE_LIST = "coach_mark_direct_messege_list";
 
+    // PARSE
+    private static final String PREF_OLD_PARSE_CHANNEL_DELETED = "old_parse_channel_deleted";
+    private static final String PREF_OLD_PARSE_FILE_CACHE_DELETED = "old_parse_file_cache_deleted";
+
+    public static boolean isOldParseFileCacheDeleted(Context context) {
+        SharedPreferences pref = getSharedPreferences(context);
+        return pref.getBoolean(PREF_OLD_PARSE_FILE_CACHE_DELETED, false);
+    }
+
+    public static void setOldParseFileCacheDeleted(Context context, boolean delete) {
+        SharedPreferences pref = getSharedPreferences(context);
+        pref.edit().putBoolean(PREF_OLD_PARSE_FILE_CACHE_DELETED, delete).commit();
+    }
+
+    public static boolean isOldParseChannelDeleted(Context context) {
+        SharedPreferences pref = getSharedPreferences(context);
+        return pref.getBoolean(PREF_OLD_PARSE_CHANNEL_DELETED, false);
+    }
+
+    public static void setOldParseChannelDeleted(Context context, boolean delete) {
+        SharedPreferences pref = getSharedPreferences(context);
+        pref.edit().putBoolean(PREF_OLD_PARSE_CHANNEL_DELETED, delete).commit();
+    }
+
     public static boolean isAleadyShowCoachMarkTopic(Context context) {
         if (!getSharedPreferences(context).getBoolean(PREF_COACH_MARK_TOPIC, false)) {
             getSharedPreferences(context).edit()
