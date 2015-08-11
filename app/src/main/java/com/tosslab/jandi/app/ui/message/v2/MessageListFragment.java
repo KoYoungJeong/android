@@ -674,7 +674,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (roomId > 0) {
             messageListModel.saveTempMessage(roomId, messageListPresenter.getSendEditText());
         }
-        PushMonitor.getInstance().unregister(entityId);
+        PushMonitor.getInstance().unregister(roomId);
 
         super.onPause();
     }
