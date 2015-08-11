@@ -632,9 +632,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         super.onResume();
         isForeground = true;
         fileUploadStateViewModel.registerEventBus();
-        PushMonitor.getInstance().register(entityId);
 
+        PushMonitor.getInstance().register(roomId);
         messageListModel.removeNotificationSameEntityId(roomId);
+
         fileUploadStateViewModel.initDownloadState();
 
         if (isRoomInit) {
