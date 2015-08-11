@@ -28,6 +28,13 @@ public class AnnouncementRepository {
         return repository;
     }
 
+    /**
+     * It's for Only TestCode.
+     */
+    public static void release() {
+        repository = null;
+    }
+
     public boolean upsertAnnounce(ResAnnouncement announcement) {
         try {
             Dao<ResAnnouncement, ?> announcementDao = helper.getDao(ResAnnouncement.class);

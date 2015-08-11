@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.network.client.publictopic;
 
-import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
@@ -12,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import static org.hamcrest.core.Is.is;
@@ -20,7 +19,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class ChannelApiClientTest {
 
     @Before
@@ -52,7 +51,8 @@ public class ChannelApiClientTest {
 
     @After
     public void tearDown() throws Exception {
-        JandiDatabaseOpenHelper.getInstance(RuntimeEnvironment.application).getWritableDatabase().close();
+        BaseInitUtil.releaseDatabase();
+
     }
 
 

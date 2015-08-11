@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.more;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import java.util.Locale;
@@ -14,7 +14,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Created by Bill MinWook Heo on 15. 5. 20..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class MainMoreFragmentTest {
 
     private MainMoreFragment mainMoreFragment;

@@ -215,8 +215,17 @@ android {
     dexOptions {
         javaMaxHeapSize "2048M"
     }
+
+    testOptions {
+
+    }
 }
 
+project.gradle.taskGraph.whenReady {
+    testDevDebugUnitTest {
+        ignoreFailures = true
+    }
+}
 
 apt {
     arguments {

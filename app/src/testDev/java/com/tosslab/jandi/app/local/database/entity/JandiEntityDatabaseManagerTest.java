@@ -5,10 +5,11 @@ import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import static com.jayway.awaitility.Awaitility.await;
@@ -16,7 +17,7 @@ import static com.jayway.awaitility.Awaitility.await;
 /**
  * Created by Steve SeongUg Jung on 15. 6. 30..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class JandiEntityDatabaseManagerTest {
 
     @Test
@@ -57,6 +58,13 @@ public class JandiEntityDatabaseManagerTest {
                 e.printStackTrace();
             }
         });
+
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
+
 
     }
 }

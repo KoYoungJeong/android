@@ -37,6 +37,13 @@ public class MessageRepository {
         return repository;
     }
 
+    /**
+     * It's for Only TestCode.
+     */
+    public static void release() {
+        repository = null;
+    }
+
     public boolean upsertMessages(List<ResMessages.Link> messages) {
         lock.lock();
         try {

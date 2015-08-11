@@ -2,11 +2,12 @@ package com.tosslab.jandi.app.utils;
 
 import com.tosslab.jandi.app.network.models.ResMessages;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import static org.hamcrest.core.Is.is;
@@ -16,7 +17,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Created by tonyjs on 15. 5. 31..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class BitmapUtilTest {
 
     private ResMessages.FileContent content;
@@ -30,6 +31,13 @@ public class BitmapUtilTest {
         ResMessages.ThumbnailUrls extraInfo = null;
         content.extraInfo = extraInfo;
     }
+
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
+
+    }
+
 
     @Test
     public void testGetThumbNailUrlOrOriginal() throws Exception {

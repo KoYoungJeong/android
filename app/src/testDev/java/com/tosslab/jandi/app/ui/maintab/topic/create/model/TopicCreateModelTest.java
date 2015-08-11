@@ -5,11 +5,12 @@ import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import rx.Observable;
@@ -22,7 +23,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Created by Steve SeongUg Jung on 15. 7. 6..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class TopicCreateModelTest {
 
     private TopicCreateModel topicCreateModel;
@@ -35,6 +36,11 @@ public class TopicCreateModelTest {
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
         topicCreateModel = TopicCreateModel_.getInstance_(RuntimeEnvironment.application);
+    }
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
+
     }
 
     @Test

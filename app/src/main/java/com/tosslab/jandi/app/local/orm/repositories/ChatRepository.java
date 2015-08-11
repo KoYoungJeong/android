@@ -31,6 +31,13 @@ public class ChatRepository {
         return repository;
     }
 
+    /**
+     * It's for Only TestCode.
+     */
+    public static void release() {
+        repository = null;
+    }
+
     public boolean upsertChats(List<ResChat> chats) {
         try {
             int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();

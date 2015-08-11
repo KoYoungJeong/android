@@ -11,12 +11,13 @@ import com.tosslab.jandi.app.network.socket.events.EventListener;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import static junit.framework.Assert.fail;
 
 @Ignore
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class JandiSocketManagerTest {
 
     private JandiSocketManager socketManager;
@@ -38,6 +39,13 @@ public class JandiSocketManagerTest {
         BaseInitUtil.initData(RuntimeEnvironment.application);
         ResAccountInfo.UserTeam userTeam = AccountRepository.getRepository().getAccountTeams().get(0);
         AccountRepository.getRepository().updateSelectedTeamInfo(userTeam.getTeamId());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
+
+
     }
 
     @Test

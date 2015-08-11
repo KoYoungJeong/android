@@ -4,11 +4,12 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import java.util.Collection;
@@ -22,7 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Created by Steve SeongUg Jung on 15. 7. 23..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class MarkerRepositoryTest {
 
     private ResRoomInfo originRoomInfo;
@@ -39,6 +40,11 @@ public class MarkerRepositoryTest {
         roomId = leftSideMenu.team.t_defaultChannelId;
 
         originRoomInfo = RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId, roomId);
+    }
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
+
     }
 
     @Test

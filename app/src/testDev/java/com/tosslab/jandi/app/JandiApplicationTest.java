@@ -3,7 +3,7 @@ package com.tosslab.jandi.app;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import static org.hamcrest.core.Is.is;
@@ -12,7 +12,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 /**
  * Created by Steve SeongUg Jung on 14. 12. 1..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class JandiApplicationTest {
 
     @Test

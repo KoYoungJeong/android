@@ -1,8 +1,10 @@
 package com.tosslab.jandi.app.utils;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.BaseInitUtil;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import java.util.Locale;
@@ -13,8 +15,15 @@ import static org.junit.Assert.assertThat;
 /**
  * Created by Bill MinWook Heo on 15. 5. 20..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class LanguageUtilTest {
+
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
+
+    }
+
 
     @Test
     public void TestGetLanguage() {
