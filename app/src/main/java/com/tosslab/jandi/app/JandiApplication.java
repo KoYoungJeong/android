@@ -5,14 +5,17 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
+import com.parse.ParseACL;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -24,6 +27,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.api.BackgroundExecutor;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 
@@ -57,6 +61,12 @@ public class JandiApplication extends MultiDexApplication {
 
         JandiApplication.setContext(getApplicationContext());
 
+        boolean oldParseFileCacheDeleted = JandiPreference.isOldParseFileCacheDeleted(this);
+        if (!oldParseFileCacheDeleted) {
+            ParseUpdateUtil.removeFileAndCacheIfNeed(this);
+            JandiPreference.setOldParseFileCacheDeleted(this, true);
+        }
+
         // For Parse Push Notification
         Parse.initialize(this,
                 JandiConstantsForFlavors.PARSE_APPLICATION_ID,
@@ -69,6 +79,12 @@ public class JandiApplication extends MultiDexApplication {
         Sprinkler.initialize(this, BuildConfig.FLAVOR.contains("dev"), BuildConfig.DEBUG);
 
         registerActivityLifecycleCallbacks(new JandiLifecycleCallbacks());
+
+        boolean oldParseChannelDeleted = JandiPreference.isOldParseChannelDeleted(this);
+        if (!oldParseChannelDeleted) {
+            ParseUpdateUtil.refreshChannelOnServer();
+            JandiPreference.setOldParseChannelDeleted(this, true);
+        }
     }
 
     synchronized public Tracker getTracker(TrackerName trackerId) {
