@@ -164,7 +164,20 @@ public class MentionControlViewModel {
     void afterEditTextChanged(Editable s, TextView tv) {
 
         if (beforeTextCnt > afterTextCnt) {
-            removedText = returnRemoveText(beforeText, afterText, tv.getSelectionStart());
+            String tempString = findMentionedMemberForGoogleKeyboard(
+                    afterText.substring(0, tv.getSelectionStart()));
+            if (tempString != null) {
+                editText.removeTextChangedListener(textWatcher);
+                int starIndex = tv.getSelectionStart() - tempString.length();
+                int endIndex = tv.getSelectionStart();
+                editText.setText(s.delete(starIndex, endIndex));
+                tempString += "\u2063";
+                removedText = tempString;
+                editText.addTextChangedListener(textWatcher);
+                editText.setSelection(starIndex);
+            } else {
+                removedText = returnRemoveText(beforeText, afterText, tv.getSelectionStart());
+            }
             restoreOrDeleteSelectedMentionMemberInfo(1, removedText);
         }
 
@@ -198,7 +211,19 @@ public class MentionControlViewModel {
             showListView(false);
         }
 
+    }
 
+    //for only google keyboard issue
+    private String findMentionedMemberForGoogleKeyboard(String rawMemberText) {
+        if (rawMemberText != null) {
+            Pattern p = Pattern.compile("(?:@)([^\\u2063]+)(?:\\u2063)(\\d+)$");
+            Matcher matcher = p.matcher(rawMemberText);
+            while (matcher.find()) {
+                String find = matcher.group(0);
+                return find;
+            }
+        }
+        return null;
     }
 
     private void showSearchMembersInfo(String searchString) {
@@ -454,7 +479,7 @@ public class MentionControlViewModel {
                 }
                 Log.e(convertedMessage, convertedMessage);
                 setTextOnClip(convertedMessage);
-                
+
             }
         }
     }

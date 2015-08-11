@@ -5,7 +5,7 @@ import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshOldStarMentionedEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -18,7 +18,7 @@ import com.tosslab.jandi.app.ui.starmention.viewholder.RecyclerViewFactory;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,13 +49,11 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
     public void onBindViewHolder(CommonStarMentionViewHolder holder, int position) {
         StarMentionVO starMentionVO = starMentionList.get(position);
 
-        Glide.with(holder.getStarMentionProfileView().getContext())
-                .load(starMentionVO.getWriterPictureUrl())
+        Ion.with(holder.getStarMentionProfileView())
                 .placeholder(R.drawable.jandi_profile)
                 .error(R.drawable.jandi_profile)
-                .crossFade()
-                .transform(new GlideCircleTransform(holder.getStarMentionProfileView().getContext()))
-                .into(holder.getStarMentionProfileView());
+                .transform(new IonCircleTransform())
+                .load(starMentionVO.getWriterPictureUrl());
 
         holder.getStarMentionNameView().setText(starMentionVO.getWriterName());
 
