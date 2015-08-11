@@ -303,7 +303,7 @@ public class MentionControlViewModel {
     private void restoreOrDeleteSelectedMentionMemberInfo(int request, String rawMemberText) {
         if (rawMemberText != null) {
             String id = "";
-            Pattern p = Pattern.compile("(?:@)([^\\u2063].+)(?:\\u2063)(\\d+)(?:\\u2063)");
+            Pattern p = Pattern.compile("(?:@)([^@]+)(?:\\u2063)(\\d+)(?:\\u2063)");
             Matcher matcher = p.matcher(rawMemberText);
             while (matcher.find()) {
                 id = matcher.group(2);
