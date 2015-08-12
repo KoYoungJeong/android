@@ -19,7 +19,6 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -217,7 +216,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
                 if (TextUtils.equals(link.message.contentType, "file")) {
 
                     if (searchedPosition >= 0) {
-                        messageList.set(searchedPosition, link);
+                        ResMessages.Link originLink = messageList.get(searchedPosition);
+                        originLink.message = link.message;
+                        originLink.status = "archived";
                         messages.remove(link);
                     }
                     // if cannot find same object, will be add to list.
