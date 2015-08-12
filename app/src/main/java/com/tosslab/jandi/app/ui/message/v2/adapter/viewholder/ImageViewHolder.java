@@ -118,6 +118,7 @@ public class ImageViewHolder implements BodyViewHolder {
                     SourceTypeUtil.getSourceType(fileContent.serverUrl);
 
             if (fromEntity.id != fileMessage.writerId) {
+                tvUploader.setVisibility(View.VISIBLE);
                 String shared = tvUploader.getContext().getString(R.string.jandi_shared);
                 String name = EntityManager.getInstance(JandiApplication.getContext())
                         .getEntityById(fileMessage.writerId).getName();

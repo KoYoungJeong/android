@@ -120,6 +120,7 @@ public class FileViewHolder implements BodyViewHolder {
             ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
 
             if (fromEntity.id != fileMessage.writerId) {
+                tvUploader.setVisibility(View.VISIBLE);
                 String shared = tvUploader.getContext().getString(R.string.jandi_shared);
                 String name = EntityManager.getInstance(JandiApplication.getContext())
                         .getEntityById(fileMessage.writerId).getName();
