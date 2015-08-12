@@ -150,7 +150,7 @@ public class FileViewHolder implements BodyViewHolder {
             if (TextUtils.equals(link.message.status, "archived")) {
                 fileNameTextView.setText(R.string.jandi_deleted_file);
                 fileImageView.setImageResource(R.drawable.jandi_fl_icon_deleted);
-                fileTypeTextView.setText("");
+                fileTypeTextView.setVisibility(View.GONE);
             } else {
                 fileNameTextView.setText(fileMessage.content.title);
                 MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
@@ -169,6 +169,7 @@ public class FileViewHolder implements BodyViewHolder {
                         MimeTypeUtil.getMimeTypeIconImage(
                                 fileMessage.content.serverUrl, fileMessage.content.icon);
                 fileImageView.setImageResource(mimeTypeIconImage);
+                fileTypeTextView.setVisibility(View.VISIBLE);
             }
         }
 
