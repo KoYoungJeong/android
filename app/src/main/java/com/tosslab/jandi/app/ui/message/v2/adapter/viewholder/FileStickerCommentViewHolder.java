@@ -42,6 +42,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
     private TextView unreadTextView;
     private Context context;
     private View lastReadView;
+    private View fileImageRound;
 
     @Override
     public void initView(View rootView) {
@@ -55,6 +56,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
         ivSticker = (ImageView) rootView.findViewById(R.id.iv_sticker_message_commented_content);
 
         fileImageView = (ImageView) rootView.findViewById(R.id.img_message_commented_photo);
+        fileImageRound = rootView.findViewById(R.id.img_message_commented_photo_round);
 
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
@@ -116,6 +118,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
 
         if (link.feedback instanceof ResMessages.FileMessage) {
+            fileImageRound.setVisibility(View.GONE);
 
             ResMessages.FileMessage feedbackFileMessage = (ResMessages.FileMessage) link.feedback;
             fileImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -159,7 +162,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                                 });
                                 break;
                             default:
-                                fileImageView.setBackgroundResource(R.drawable.jandi_message_image_frame);
+                                fileImageRound.setVisibility(View.VISIBLE);
                                 Ion.with(fileImageView)
                                         .placeholder(R.drawable.jandi_fl_icon_img)
                                         .error(R.drawable.jandi_fl_icon_img)

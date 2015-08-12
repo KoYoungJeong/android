@@ -46,6 +46,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
     private View disableLineThroughView;
     private Context context;
     private View lastReadView;
+    private View fileImageRound;
 
     @Override
     public void initView(View rootView) {
@@ -58,6 +59,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
         commentTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_content);
 
         fileImageView = (ImageView) rootView.findViewById(R.id.img_message_commented_photo);
+        fileImageRound = rootView.findViewById(R.id.img_message_commented_photo_round);
 
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
@@ -108,6 +110,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
             ResMessages.FileMessage feedbackFileMessage = (ResMessages.FileMessage) link.feedback;
 
             fileImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            fileImageRound.setVisibility(View.GONE);
             if (TextUtils.equals(link.feedback.status, "archived")) {
                 fileOwnerTextView.setVisibility(View.INVISIBLE);
                 fileOwnerPostfixTextView.setVisibility(View.INVISIBLE);
@@ -148,7 +151,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 });
                                 break;
                             default:
-                                fileImageView.setBackgroundResource(R.drawable.jandi_message_image_frame);
+                                fileImageRound.setVisibility(View.VISIBLE);
                                 Ion.with(fileImageView)
                                         .placeholder(R.drawable.jandi_fl_icon_img)
                                         .error(R.drawable.jandi_fl_icon_img)

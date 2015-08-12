@@ -44,7 +44,6 @@
             android:textStyle="bold"/>
 
 
-
         <ImageView
             android:id="@+id/img_entity_listitem_line_through"
             android:layout_width="wrap_content"
@@ -79,8 +78,18 @@
                 android:id="@+id/img_message_commented_photo"
                 android:layout_width="@dimen/jandi_messages_image_size"
                 android:layout_height="@dimen/jandi_messages_image_size"
-                android:layout_marginRight="12dp"
-                android:src="@drawable/jandi_fl_icon_deleted"/>
+                android:layout_marginRight="12dp"/>
+
+            <View
+                android:id="@+id/img_message_commented_photo_round"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/img_message_commented_photo"
+                android:layout_alignLeft="@+id/img_message_commented_photo"
+                android:layout_alignRight="@+id/img_message_commented_photo"
+                android:layout_alignTop="@+id/img_message_commented_photo"
+                android:background="@drawable/jandi_message_image_frame"/>
+
 
             <TextView
                 android:id="@+id/txt_message_commented_prefix"

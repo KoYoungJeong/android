@@ -137,6 +137,7 @@ public class ImageViewHolder implements BodyViewHolder {
                                 .placeholder(R.drawable.jandi_fl_icon_img)
                                 .error(R.drawable.jandi_fl_icon_img)
                                 .crossFade()
+                                .centerCrop()
                                 .into(fileImageView);
                         fileTypeTextView.setText(FileSizeUtil.fileSizeCalculation(fileContent.size) + ", "
                                 + fileContent.ext);
