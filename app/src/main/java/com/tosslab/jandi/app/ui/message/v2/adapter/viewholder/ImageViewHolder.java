@@ -1,13 +1,18 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -20,6 +25,7 @@ import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
+import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import de.greenrobot.event.EventBus;
 
@@ -34,6 +40,7 @@ public class ImageViewHolder implements BodyViewHolder {
     private ImageView fileImageView;
     private TextView fileNameTextView;
     private TextView fileTypeTextView;
+    private TextView tvUploader;
     private View disableCoverView;
     private View disableLineThroughView;
     private TextView unreadTextView;
@@ -49,6 +56,7 @@ public class ImageViewHolder implements BodyViewHolder {
         fileImageView = (ImageView) rootView.findViewById(R.id.iv_message_photo);
         fileNameTextView = (TextView) rootView.findViewById(R.id.txt_message_image_file_name);
         fileTypeTextView = (TextView) rootView.findViewById(R.id.txt_img_file_type);
+        tvUploader = (TextView) rootView.findViewById(R.id.txt_img_file_uploader);
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
 
@@ -108,6 +116,33 @@ public class ImageViewHolder implements BodyViewHolder {
             ResMessages.FileContent fileContent = fileMessage.content;
             MimeTypeUtil.SourceType sourceType =
                     SourceTypeUtil.getSourceType(fileContent.serverUrl);
+
+            if (fromEntity.id != fileMessage.writerId) {
+                String shared = tvUploader.getContext().getString(R.string.jandi_shared);
+                String name = EntityManager.getInstance(JandiApplication.getContext())
+                        .getEntityById(fileMessage.writerId).getName();
+                String ofFile = tvUploader.getContext().getString(R.string.jandi_who_of_file);
+
+                SpannableStringBuilder builder = new SpannableStringBuilder();
+                builder.append(shared).append(" ");
+                int startIdx = builder.length();
+                builder.append(name);
+                int lastIdx = builder.length();
+                builder.append(ofFile);
+
+                int textSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 11f, tvUploader
+                        .getResources().getDisplayMetrics());
+
+                builder.setSpan(new NameSpannable(textSize, Color.BLACK),
+                        startIdx,
+                        lastIdx,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                tvUploader.setText(builder);
+            } else {
+                tvUploader.setVisibility(View.GONE);
+
+            }
 
             if (TextUtils.equals(fileMessage.status, "archived")) {
 

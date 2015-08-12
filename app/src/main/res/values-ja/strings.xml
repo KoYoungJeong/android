@@ -488,6 +488,8 @@
     <string name="jandi_topic_notification">"トピックからの通知"</string>
     <string name="jandi_you_cannot_delete_default_message">"基本トピックは削除や退出できません"</string>
     <string name="jandi_this_is_disabled_user_explain">"このメンバーは現在無効化されています。詳細はチーム管理者にお問い合わせ下さい"</string>
+    <string name="jandi_who_of_file">"さんのファイル"</string>
+    <string name="jandi_shared">"共有"</string>
 
 
 </resources>

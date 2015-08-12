@@ -118,6 +118,16 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/txt_img_file_uploader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="Shared Andrew's file"
+                        android:textColor="#999999"
+                        android:textSize="11sp"/>
+
+                    <TextView
                         android:id="@+id/txt_message_image_file_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
