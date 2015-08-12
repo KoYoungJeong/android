@@ -60,7 +60,7 @@ public class GenerateMentionMessageUtil {
         }
 
         if (hasMention) {
-            LinkifyUtil.setOnLinkClick(textView);
+//            LinkifyUtil.setOnLinkClick(textView);
         }
 
         return stringBuilder;
