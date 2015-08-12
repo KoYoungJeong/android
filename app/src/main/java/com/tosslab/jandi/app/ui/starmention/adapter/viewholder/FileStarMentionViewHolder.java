@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.starmention.viewholder;
+package com.tosslab.jandi.app.ui.starmention.adapter.viewholder;
 
 import android.view.View;
 import android.widget.ImageView;

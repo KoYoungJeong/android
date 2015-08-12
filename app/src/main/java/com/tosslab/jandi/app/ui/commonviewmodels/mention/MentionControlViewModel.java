@@ -73,7 +73,7 @@ public class MentionControlViewModel {
     private TextWatcher textWatcher;
     private OnMentionViewShowingListener onMentionViewShowingListener;
 
-    // 클립 보드에서 CUT(잘라내기) 시 해당 정보를 한꺼번에 잃기 때문에 저장할 필요성이 있음.
+    // 클립 보드에서 CUT(잘라내기) 시 해당 정보를 한꺼번에 잃기 때문에 사본을 저장할 필요성 있음.
     private LinkedHashMap<Integer, SearchedItemVO> cloneSelectedMemberHashMap;
 
     public MentionControlViewModel(Activity activity, RecyclerView searchMemberListView,

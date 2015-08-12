@@ -5,8 +5,8 @@ import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.events.messages.RefreshOldStarMentionedEvent;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
-import com.tosslab.jandi.app.ui.starmention.viewholder.CommonStarMentionViewHolder;
-import com.tosslab.jandi.app.ui.starmention.viewholder.RecyclerViewFactory;
+import com.tosslab.jandi.app.ui.starmention.adapter.viewholder.CommonStarMentionViewHolder;
+import com.tosslab.jandi.app.ui.starmention.adapter.viewholder.RecyclerViewFactory;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 
 import java.util.ArrayList;
@@ -36,6 +36,7 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
 
     @Override
     public void onBindViewHolder(CommonStarMentionViewHolder holder, int position) {
+
         StarMentionVO starMentionVO = starMentionList.get(position);
 
         holder.bindView(starMentionVO);
@@ -56,7 +57,6 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
 
         if (position == getItemCount() - 1 && moreState == MoreState.Idle) {
             moreState = MoreState.Loading;
-
             EventBus.getDefault().post(new RefreshOldStarMentionedEvent(getListType()));
         }
 

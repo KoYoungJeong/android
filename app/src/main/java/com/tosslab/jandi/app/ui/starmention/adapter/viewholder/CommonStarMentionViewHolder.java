@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.starmention.viewholder;
+package com.tosslab.jandi.app.ui.starmention.adapter.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
