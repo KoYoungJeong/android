@@ -6,10 +6,12 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/vg_message_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
-        android:descendantFocusability="blocksDescendants"
+        android:clickable="true"
+        android:focusable="true"
         android:paddingBottom="12dp"
         android:paddingLeft="58dp"
         android:paddingRight="@dimen/jandi_messages_padding_right">

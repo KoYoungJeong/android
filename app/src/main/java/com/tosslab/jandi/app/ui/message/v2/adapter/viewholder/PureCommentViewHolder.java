@@ -31,9 +31,11 @@ public class PureCommentViewHolder implements BodyViewHolder {
     private TextView unreadTextView;
     private Context context;
     private View lastReadView;
+    private View contentView;
 
     @Override
     public void initView(View rootView) {
+        contentView = rootView.findViewById(R.id.vg_message_item);
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_nested_comment_user_name);
         dateTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_create_date);
         commentTextView = (TextView) rootView.findViewById(R.id.txt_message_nested_comment_content);
@@ -116,6 +118,20 @@ public class PureCommentViewHolder implements BodyViewHolder {
     public int getLayoutId() {
         return R.layout.item_message_cmt_without_file_v2;
 
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        if (contentView != null && itemClickListener != null) {
+            contentView.setOnClickListener(itemClickListener);
+        }
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        if (contentView != null && itemLongClickListener != null) {
+            contentView.setOnLongClickListener(itemLongClickListener);
+        }
     }
 
 }

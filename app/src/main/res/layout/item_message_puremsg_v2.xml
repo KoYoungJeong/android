@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
+        android:id="@+id/vg_message_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/message_list_selector"
-        android:descendantFocusability="blocksDescendants"
-        android:foreground="?android:attr/selectableItemBackground"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
         android:paddingBottom="15dp"
         android:paddingLeft="58dp"
         android:paddingRight="@dimen/jandi_messages_padding_right">
@@ -24,7 +26,7 @@
             android:minHeight="19dp"
             android:text="Text"
             android:textColor="@color/jandi_messages_content"
-            android:textSize="@dimen/jandi_messages_content" />
+            android:textSize="@dimen/jandi_messages_content"/>
 
         <RelativeLayout
             android:id="@+id/vg_linkpreview"
@@ -34,11 +36,11 @@
             android:layout_marginRight="14dp"
             android:layout_marginTop="10dp">
 
-            <include layout="@layout/item_message_layout_linkpreview_v2" />
+            <include layout="@layout/item_message_layout_linkpreview_v2"/>
         </RelativeLayout>
 
     </RelativeLayout>
 
-    <include layout="@layout/item_message_last_read_v2" />
+    <include layout="@layout/item_message_last_read_v2"/>
 
 </LinearLayout>
