@@ -12,9 +12,10 @@
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
-        android:paddingBottom="12dp"
+        android:paddingBottom="10dp"
         android:paddingLeft="58dp"
-        android:paddingRight="@dimen/jandi_messages_padding_right">
+        android:paddingRight="@dimen/jandi_messages_padding_right"
+        android:paddingTop="8dp">
 
         <ImageView
             android:id="@+id/iv_pure_sticker_comment_content"

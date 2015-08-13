@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/vg_message_item"
@@ -12,7 +12,7 @@
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
-        android:paddingBottom="15dp"
+        android:paddingBottom="10dp"
         android:paddingLeft="@dimen/jandi_messages_padding_left"
         android:paddingRight="@dimen/jandi_messages_padding_right"
         android:paddingTop="8dp"
@@ -22,7 +22,7 @@
             android:id="@+id/img_message_user_profile"
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
-            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
+            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"/>
         <!-- 기본 표시 레이어 -->
 
 
@@ -39,7 +39,7 @@
             android:text="User name"
             android:textColor="@color/jandi_messages_name"
             android:textSize="@dimen/jandi_messages_user_name"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <ImageView
             android:id="@+id/img_entity_listitem_line_through"
@@ -49,7 +49,7 @@
             android:layout_alignLeft="@+id/txt_message_user_name"
             android:layout_alignRight="@+id/txt_message_user_name"
             android:layout_alignTop="@+id/txt_message_user_name"
-            android:src="@drawable/line_gray" />
+            android:src="@drawable/line_gray"/>
 
         <View
             android:id="@+id/view_entity_listitem_warning"
@@ -60,7 +60,7 @@
             android:layout_alignRight="@+id/img_message_user_profile"
             android:layout_alignTop="@+id/img_message_user_profile"
             android:background="#99ffffff"
-            android:visibility="visible" />
+            android:visibility="visible"/>
 
         <!-- 실제 메시지 내용 -->
         <TextView
@@ -74,7 +74,7 @@
             android:lineSpacingExtra="2dip"
             android:text="Text"
             android:textColor="@color/jandi_messages_content"
-            android:textSize="@dimen/jandi_messages_content" />
+            android:textSize="@dimen/jandi_messages_content"/>
 
         <RelativeLayout
             android:id="@+id/vg_linkpreview"
@@ -85,12 +85,12 @@
             android:layout_marginRight="14dp"
             android:layout_marginTop="10dp">
 
-            <include layout="@layout/item_message_layout_linkpreview_v2" />
+            <include layout="@layout/item_message_layout_linkpreview_v2"/>
         </RelativeLayout>
     </RelativeLayout>
 
     <include
         android:id="@+id/vg_message_last_read"
-        layout="@layout/item_message_last_read_v2" />
+        layout="@layout/item_message_last_read_v2"/>
 
 </LinearLayout>
