@@ -22,16 +22,16 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
-import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
+import com.tosslab.jandi.app.ui.selector.room.RoomSelector;
+import com.tosslab.jandi.app.ui.selector.room.RoomSelectorImpl_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
@@ -276,85 +276,17 @@ public class FileListPresenter {
      * @param textVew
      */
     private void showEntityDialog(final TextView textVew) {
+        RoomSelector roomSelector = RoomSelectorImpl_.getInstance_(context);
+        roomSelector.setOnRoomSelectListener(new RoomSelector.OnRoomSelectListener() {
+            @Override
+            public void onRoomSelect(FormattedEntity item) {
 
-        if (mEntitySelectDialog != null && mEntitySelectDialog.isShowing()) {
-            return;
-        }
+                System.out.println("Selected Item : " + item.getName());
 
-        if (mEntitySelectDialog == null) {
-
-            View view = LayoutInflater.from(context).inflate(R.layout.dialog_select_cdp, null);
-            ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-
-            FormattedEntity me = entityManager.getMe();
-
-            List<FormattedEntity> categorizableEntities = new ArrayList<>();
-            Observable.from(entityManager.getCategorizableEntities())
-                    .filter(formattedEntity -> {
-                        if (formattedEntity.type == FormattedEntity.TYPE_EVERYWHERE) {
-                            return true;
-                        }
-                        if (!formattedEntity.isUser()) {
-                            return true;
-                        } else if (formattedEntity.getId() == me.getId()) {
-                            return false;
-                        } else if (TextUtils.equals(formattedEntity.getUser().status, "enabled")) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    })
-                    .toSortedList((lhs, rhs) -> {
-                        if (lhs.type == FormattedEntity.TYPE_EVERYWHERE) {
-                            return -1;
-                        } else if (rhs.type == FormattedEntity.TYPE_EVERYWHERE) {
-                            return 1;
-                        }
-
-                        if ((lhs.isUser() && rhs.isUser()) || (!lhs.isUser() && !rhs.isUser())) {
-                            return lhs.getName().compareToIgnoreCase(rhs.getName());
-                        } else {
-                            if (!lhs.isUser()) {
-                                return -1;
-                            } else {
-                                return 1;
-                            }
-                        }
-
-                    }).subscribe(categorizableEntities::addAll);
-
-            final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(context, categorizableEntities);
-            lv.setAdapter(adapter);
-            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    if (mEntitySelectDialog != null)
-                        mEntitySelectDialog.dismiss();
-
-                    int sharedEntityId = CategorizingAsEntity.EVERYWHERE;
-
-                    if (i <= 0) {
-                        // 첫번째는 "Everywhere"인 더미 entity
-                        mCurrentEntityCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everywhere);
-                    } else {
-                        FormattedEntity sharedEntity = adapter.getItem(i);
-                        sharedEntityId = sharedEntity.getId();
-                        mCurrentEntityCategorizingAccodingBy = sharedEntity.getName();
-                    }
-                    textVew.setText(mCurrentEntityCategorizingAccodingBy);
-                    textVew.invalidate();
-                    EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
-                }
-            });
-
-            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-            dialog.setTitle(R.string.jandi_file_search_entity);
-            dialog.setView(view);
-            mEntitySelectDialog = dialog.show();
-            mEntitySelectDialog.setCanceledOnTouchOutside(true);
-        } else {
-            mEntitySelectDialog.show();
-        }
+                roomSelector.dismiss();
+            }
+        });
+        roomSelector.show(((View) textVew.getParent().getParent()));
     }
 
     private View getHeaderViewAsAllUser() {

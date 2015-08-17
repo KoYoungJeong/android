@@ -1,5 +1,10 @@
 <resources>
 
+    <style name="PopupAnimation">
+        <item name="android:windowEnterAnimation">@anim/popup_show</item>
+        <item name="android:windowExitAnimation">@anim/popup_hide</item>
+    </style>
+
     <style name="ProgressWheel" parent="@android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -28,7 +33,7 @@
         <item name="pstsDeactivateTextColor">@color/jandi_text_light</item>
     </style>
 
-    <style name="JandiStyle" />
+    <style name="JandiStyle"/>
 
     <style name="JandiStyle.Button.Dynamic" parent="JandiStyle">
         <item name="android:layout_width">match_parent</item>
@@ -144,7 +149,7 @@
         <item name="android:textSize">14dp</item>
     </style>
 
-    <style name="JandiSignUp" />
+    <style name="JandiSignUp"/>
 
     <style name="JandiSignUp.EditText" parent="JandiSignUp">
         <item name="android:layout_width">wrap_content</item>
@@ -244,7 +249,7 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="JandiTopic" />
+    <style name="JandiTopic"/>
 
     <style name="JandiTopic.Create.TextView.Type" parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
@@ -283,7 +288,7 @@
     </style>
 
 
-    <style name="JandiMemberProfile" />
+    <style name="JandiMemberProfile"/>
 
     <style name="JandiMemberProfile.Layout.Default" parent="JandiMemberProfile">
         <item name="android:layout_width">match_parent</item>
@@ -335,7 +340,7 @@
         <!--<item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>-->
     </style>
 
-    <style name="JandiSticker" />
+    <style name="JandiSticker"/>
 
     <style name="JandiSticker.Group" parent="JandiSticker">
         <item name="android:layout_width">63dp</item>
@@ -344,7 +349,7 @@
         <item name="android:background">@drawable/bg_sticker_group</item>
     </style>
 
-    <style name="ImageCarousel" />
+    <style name="ImageCarousel"/>
 
     <style name="ImageCarousel.Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
@@ -361,7 +366,7 @@
         <item name="android:textSize">12sp</item>
     </style>
 
-    <style name="JandiTopicDetail" />
+    <style name="JandiTopicDetail"/>
 
     <style name="JandiTopicDetail.Layout">
         <item name="android:layout_marginLeft">8dp</item>
