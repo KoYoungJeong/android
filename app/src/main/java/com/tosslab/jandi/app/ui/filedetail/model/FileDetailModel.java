@@ -49,7 +49,6 @@ import java.util.List;
 
 import retrofit.RetrofitError;
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 8..
@@ -65,16 +64,6 @@ public class FileDetailModel {
 
     @Bean
     EntityClientManager entityClientManager;
-
-    private ResMessages.FileMessage fileMessage;
-
-    public ResMessages.FileMessage getFileMessage() {
-        return fileMessage;
-    }
-
-    public void setFileMessage(ResMessages.FileMessage fileMessage) {
-        this.fileMessage = fileMessage;
-    }
 
     public void deleteFile(int fileId) throws RetrofitError {
         entityClientManager.deleteFile(fileId);
@@ -156,7 +145,7 @@ public class FileDetailModel {
         return context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
     }
 
-    public List<FormattedEntity> getUnsharedEntities() {
+    public List<FormattedEntity> getUnsharedEntities(ResMessages.FileMessage fileMessage) {
         if (fileMessage == null) {
             return Collections.emptyList();
         }
@@ -208,18 +197,6 @@ public class FileDetailModel {
         return formattedEntities;
     }
 
-    public boolean isEnableUserFromUploder(ResFileDetail resFileDetail) {
-
-        for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
-            if (fileDetail instanceof ResMessages.FileMessage) {
-                final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
-
-                return TextUtils.equals(EntityManager.getInstance(context).getEntityById(fileMessage.writerId).getUser().status, "enabled");
-            }
-        }
-        return false;
-    }
-
     public ResCommon joinEntity(FormattedEntity entityId) throws RetrofitError {
 
         return entityClientManager.joinChannel(entityId.getChannel().id);
@@ -256,12 +233,7 @@ public class FileDetailModel {
         }
     }
 
-    private int getFileId() {
-        return getFileMessage() != null ? getFileMessage().id : -1;
-    }
-
-    public void trackFileDownloadSuccess() {
-        int fileId = getFileId();
+    public void trackFileDownloadSuccess(int fileId) {
 
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
@@ -273,8 +245,7 @@ public class FileDetailModel {
                         .build());
     }
 
-    public void trackFileShareSuccess(int topicId) {
-        int fileId = getFileId();
+    public void trackFileShareSuccess(int topicId, int fileId) {
 
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
@@ -298,8 +269,7 @@ public class FileDetailModel {
                         .build());
     }
 
-    public void trackFileUnShareSuccess(int topicId) {
-        int fileId = getFileId();
+    public void trackFileUnShareSuccess(int topicId, int fileId) {
 
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
@@ -323,8 +293,7 @@ public class FileDetailModel {
                         .build());
     }
 
-    public void trackFileDeleteSuccess(int topicId) {
-        int fileId = getFileId();
+    public void trackFileDeleteSuccess(int topicId, int fileId) {
 
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
@@ -373,13 +342,11 @@ public class FileDetailModel {
     }
 
     public void saveFileDetailInfo(ResFileDetail resFileDetail) {
-        ResMessages.FileMessage fileMessage = getFileMessage();
+        ResMessages.FileMessage fileMessage = extractFileMssage(resFileDetail.messageDetails);
 
         MessageRepository.getRepository().upsertFileMessage(fileMessage);
 
         Observable.from(resFileDetail.messageDetails)
-                .observeOn(Schedulers.io())
-                .onBackpressureBuffer()
                 .filter(originalMessage -> !(originalMessage instanceof ResMessages.FileMessage))
                 .map(originalMessage -> {
                     FileDetail fileDetail = new FileDetail();
@@ -401,5 +368,40 @@ public class FileDetailModel {
 
     public int getMyId() {
         return EntityManager.getInstance(JandiApplication.getContext()).getMe().getId();
+    }
+
+    public ResMessages.FileMessage extractFileMssage(List<ResMessages.OriginalMessage> messageList) {
+
+        ResMessages.FileMessage defaultValue = new ResMessages.FileMessage();
+        ResMessages.FileMessage fileMessage = Observable.from(messageList)
+                .filter(originalMessage -> originalMessage instanceof ResMessages.FileMessage)
+                .firstOrDefault(defaultValue)
+                .map(originalMessage1 -> ((ResMessages.FileMessage) originalMessage1))
+                .toBlocking()
+                .first();
+
+        if (fileMessage == defaultValue) {
+            return null;
+        }
+
+        return fileMessage;
+
+    }
+
+    public List<ResMessages.OriginalMessage> extractCommentMessage(List<ResMessages.OriginalMessage> messageList) {
+
+        List<ResMessages.OriginalMessage> sortedCommentMessages = new ArrayList<>();
+
+        Observable.from(messageList)
+                .filter(originalMessage -> !(originalMessage instanceof ResMessages.FileMessage))
+                .toSortedList((lhs, rhs) -> lhs.createTime.compareTo(rhs.createTime))
+                .subscribe(originalMessages -> sortedCommentMessages.addAll(originalMessages));
+
+        return sortedCommentMessages;
+    }
+
+    public ResMessages.FileMessage getFileMessage(int fileId) {
+
+        return MessageRepository.getRepository().getFileMessage(fileId);
     }
 }
