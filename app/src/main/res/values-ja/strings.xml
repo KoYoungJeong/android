@@ -30,7 +30,7 @@
 
     <!-- Login -->
     <string name="jandi_action_start">"新規アカウント作成"</string>
-    <string name="jandi_action_login">"ログインする"</string>
+    <string name="jandi_action_login">"ログイン"</string>
     <string name="jandi_select_team">"チームを選択してください"</string>
     <string name="jandi_user_id">"メールアドレス"</string>
     <string name="jandi_user_password">"パスワード"</string>
