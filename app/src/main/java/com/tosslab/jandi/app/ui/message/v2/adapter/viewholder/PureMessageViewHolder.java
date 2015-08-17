@@ -87,7 +87,7 @@ public class PureMessageViewHolder implements BodyViewHolder {
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 tvMessage, builder, textMessage.mentions,
                 EntityManager.getInstance(context).getMe().getId());
-        builder = generateMentionMessageUtil.generate();
+        builder = generateMentionMessageUtil.generate(true);
 
         tvMessage.setText(builder);
 

@@ -54,7 +54,7 @@ public class CommentStarMentionViewHolder extends CommonStarMentionViewHolder {
                 .setMeTextColor(0xFFffffff)
                 .setPxSize(R.dimen.jandi_mention_star_list_item_font_size);
 
-        commentStringBuilder = generateMentionMessageUtil.generate();
+        commentStringBuilder = generateMentionMessageUtil.generate(false);
         // for single spannable
         commentStringBuilder.append(" ");
         this.getStarMentionCommentView().setText(commentStringBuilder);

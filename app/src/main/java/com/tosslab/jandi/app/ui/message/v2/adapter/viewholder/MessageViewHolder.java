@@ -137,7 +137,7 @@ public class MessageViewHolder implements BodyViewHolder {
 
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                     messageTextView, messageStringBuilder, textMessage.mentions, entityManager.getMe().getId());
-            messageStringBuilder = generateMentionMessageUtil.generate();
+            messageStringBuilder = generateMentionMessageUtil.generate(true);
 
             messageTextView.setText(messageStringBuilder);
 

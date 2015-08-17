@@ -38,7 +38,7 @@ public class GenerateMentionMessageUtil {
         this.myId = myId;
     }
 
-    public SpannableStringBuilder generate() {
+    public SpannableStringBuilder generate(boolean mentionClick) {
         boolean hasMention = false;
         MentionMessageSpannable spannable = null;
         for (MentionObject mention : mentions) {
@@ -59,8 +59,8 @@ public class GenerateMentionMessageUtil {
             }
         }
 
-        if (hasMention) {
-//            LinkifyUtil.setOnLinkClick(textView);
+        if (mentionClick && hasMention) {
+            LinkifyUtil.setOnLinkClick(textView);
         }
 
         return stringBuilder;

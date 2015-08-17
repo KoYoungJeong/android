@@ -56,7 +56,7 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
                 tvMessage, builder, commentMessage.mentions,
                 EntityManager.getInstance(tvMessage.getContext()).getMe().getId())
                 .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
-        builder = generateMentionMessageUtil.generate();
+        builder = generateMentionMessageUtil.generate(true);
 
 
         int startIndex = builder.length();

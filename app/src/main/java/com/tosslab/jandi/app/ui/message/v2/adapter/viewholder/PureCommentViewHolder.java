@@ -88,7 +88,7 @@ public class PureCommentViewHolder implements BodyViewHolder {
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                     commentTextView, spannableStringBuilder, commentMessage.mentions, entityManager.getMe().getId())
                     .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
-            spannableStringBuilder = generateMentionMessageUtil.generate();
+            spannableStringBuilder = generateMentionMessageUtil.generate(true);
 
             if (hasLink) {
                 commentTextView.setText(

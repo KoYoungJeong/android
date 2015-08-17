@@ -215,7 +215,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                     commentTextView, builder, commentMessage.mentions, entityManager.getMe().getId())
                     .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
-            builder = generateMentionMessageUtil.generate();
+            builder = generateMentionMessageUtil.generate(true);
 
 
             if (hasLink) {
