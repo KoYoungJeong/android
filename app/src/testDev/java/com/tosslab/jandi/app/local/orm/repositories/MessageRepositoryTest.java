@@ -13,8 +13,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Created by Steve SeongUg Jung on 15. 7. 21..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class MessageRepositoryTest {
 
     public static final int ROOM_ID = 11162328;
@@ -39,15 +39,16 @@ public class MessageRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
     }
 
     @After
     public void tearDown() throws Exception {
-        OpenHelperManager.getHelper(Robolectric.application, OrmDatabaseHelper.class)
+        OpenHelperManager.getHelper(RuntimeEnvironment.application, OrmDatabaseHelper.class)
                 .getDao(ResMessages.Link.class)
                 .deleteBuilder()
                 .delete();
+        BaseInitUtil.releaseDatabase();
 
     }
 

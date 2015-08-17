@@ -577,17 +577,10 @@ public class MessageListModel {
         if (roomId > 0) {
             // 기존의 마커 정보 가져오기
             int teamId = AccountRepository.getRepository().getSelectedTeamId();
-            Collection<ResRoomInfo.MarkerInfo> roomMarkers = MarkerRepository.getRepository().getRoomMarker(teamId, roomId);
-            int myEntityId = EntityManager.getInstance(JandiApplication.getContext()).getMe().getId();
+            ResRoomInfo.MarkerInfo myMarker = MarkerRepository.getRepository()
+                    .getMyMarker(roomId, entityId);
 
-            ResRoomInfo.MarkerInfo defaultInfo = new ResRoomInfo.MarkerInfo();
-            ResRoomInfo.MarkerInfo myMarker = Observable.from(roomMarkers)
-                    .filter(markerInfo -> markerInfo.getMemberId() == myEntityId)
-                    .firstOrDefault(defaultInfo)
-                    .toBlocking()
-                    .first();
-
-            if (myMarker != defaultInfo) {
+            if (myMarker != null && myMarker.getLastLinkId() > 0) {
                 return myMarker.getLastLinkId();
             }
         }

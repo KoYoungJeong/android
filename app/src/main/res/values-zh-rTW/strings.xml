@@ -479,5 +479,7 @@
     <string name="jandi_profile_picture">"簡介照片"</string>
     <string name="jandi_you_cannot_delete_default_message">"無法離開或刪除預設議題"</string>
     <string name="jandi_this_is_disabled_user_explain">"此成員權限已被暫時關閉。欲知更多細節，請聯絡團隊管理員。"</string>
+    <string name="jandi_who_of_file">"共享檔案"</string>
+    <string name="jandi_shared">"分享過"</string>
 </resources>
 

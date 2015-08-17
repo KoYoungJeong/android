@@ -19,9 +19,11 @@ public class CollapseStickerCommentViewHolder implements BodyViewHolder {
     private TextView tvCreatedTime;
     private TextView tvUnreadCount;
     private View lastReadView;
+    private View contentView;
 
     @Override
     public void initView(View rootView) {
+        contentView = rootView.findViewById(R.id.vg_message_item);
         ivSticker = (ImageView) rootView.findViewById(R.id.iv_pure_sticker_comment_content);
         tvCreatedTime = (TextView) rootView.findViewById(R.id.tv_pure_sticker_comment_create_date);
         tvUnreadCount = (TextView) rootView.findViewById(R.id.tv_pure_sticker_comment_unread);
@@ -58,5 +60,19 @@ public class CollapseStickerCommentViewHolder implements BodyViewHolder {
     @Override
     public int getLayoutId() {
         return R.layout.item_message_pure_sticker_cmt_without_file_v2;
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        if (contentView != null && itemClickListener != null) {
+            contentView.setOnClickListener(itemClickListener);
+        }
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        if (contentView != null && itemLongClickListener != null) {
+            contentView.setOnLongClickListener(itemLongClickListener);
+        }
     }
 }

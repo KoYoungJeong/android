@@ -7,7 +7,7 @@ import com.tosslab.jandi.app.network.manager.apiexecutor.AwaitablePool;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertFalse;
 /**
  * Created by Steve SeongUg Jung on 15. 6. 26..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class AwaitablePoolTest {
 
     private AwaitablePool awaitablePool;

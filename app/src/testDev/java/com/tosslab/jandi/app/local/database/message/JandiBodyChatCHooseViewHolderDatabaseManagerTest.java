@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.local.database.message;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
-import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
@@ -17,25 +16,25 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class JandiBodyChatCHooseViewHolderDatabaseManagerTest {
 
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
     }
 
     @After
     public void tearDown() throws Exception {
-        JandiDatabaseOpenHelper.getInstance(Robolectric.application).getWritableDatabase().close();
+        BaseInitUtil.releaseDatabase();
     }
 
 
@@ -47,7 +46,7 @@ public class JandiBodyChatCHooseViewHolderDatabaseManagerTest {
 
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
 
-        MessageManipulator messageManipulator = MessageManipulator_.getInstance_(Robolectric.application);
+        MessageManipulator messageManipulator = MessageManipulator_.getInstance_(RuntimeEnvironment.application);
         int entityId = infosForSideMenu.joinEntities.iterator().next().id;
         messageManipulator.initEntity(JandiConstants.TYPE_PUBLIC_TOPIC, entityId);
         ResMessages messages = messageManipulator.getMessages(-1, 20);

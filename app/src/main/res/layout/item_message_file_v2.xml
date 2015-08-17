@@ -6,12 +6,12 @@
     android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/ly_message_item"
-        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/vg_message_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/message_list_selector"
-        android:foreground="?android:attr/selectableItemBackground"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
         android:orientation="horizontal"
         android:paddingBottom="10dp"
         android:paddingLeft="@dimen/jandi_messages_padding_left"
@@ -87,12 +87,25 @@
             android:background="#99ffffff"
             android:visibility="visible"/>
 
+        <TextView
+            android:id="@+id/txt_img_file_uploader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/ry_message_common_file"
+            android:layout_below="@+id/txt_message_user_name"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="Shared Andrew's file"
+            android:layout_marginLeft="4dp"
+            android:textColor="#999999"
+            android:textSize="11sp"/>
+
 
         <RelativeLayout
             android:id="@+id/ry_message_common_file"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_below="@+id/txt_message_user_name"
+            android:layout_below="@+id/txt_img_file_uploader"
             android:layout_marginBottom="14dp"
             android:layout_marginRight="@dimen/jandi_messages_padding_right"
             android:layout_marginTop="5dp"
@@ -114,13 +127,14 @@
                 android:layout_toRightOf="@id/img_message_common_file"
                 android:orientation="vertical">
 
+
                 <TextView
                     android:id="@+id/txt_message_common_file_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:text="file name asjhdklajdlkjhsdlkajsdhflkjahsdf"
+                    android:text="jfile name asjhdklajdlkjhsdlkajsdhflkjahsdf"
                     android:textColor="@color/jandi_messages_file_name"
                     android:textSize="17sp"
                     android:textStyle="bold"/>

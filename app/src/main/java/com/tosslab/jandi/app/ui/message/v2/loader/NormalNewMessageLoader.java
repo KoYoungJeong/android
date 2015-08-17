@@ -61,7 +61,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
 
                 messageListPresenter.setUpNewMessage(messages, messageListModel.getMyId(), linkId, firstLoad);
             } else {
-                if (firstLoad) {
+                if (firstLoad && messageListPresenter.isLastOfLastReadPosition()) {
                     messageListPresenter.setLastReadLinkId(-1);
                     messageListPresenter.justRefresh();
                 }

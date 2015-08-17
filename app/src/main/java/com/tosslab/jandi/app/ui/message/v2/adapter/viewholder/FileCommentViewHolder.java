@@ -46,9 +46,12 @@ public class FileCommentViewHolder implements BodyViewHolder {
     private View disableLineThroughView;
     private Context context;
     private View lastReadView;
+    private View fileImageRound;
+    private View contentView;
 
     @Override
     public void initView(View rootView) {
+        contentView = rootView.findViewById(R.id.vg_message_item);
         profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
 
@@ -58,6 +61,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
         commentTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_content);
 
         fileImageView = (ImageView) rootView.findViewById(R.id.img_message_commented_photo);
+        fileImageRound = rootView.findViewById(R.id.img_message_commented_photo_round);
 
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
@@ -108,9 +112,10 @@ public class FileCommentViewHolder implements BodyViewHolder {
             ResMessages.FileMessage feedbackFileMessage = (ResMessages.FileMessage) link.feedback;
 
             fileImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            fileImageRound.setVisibility(View.GONE);
             if (TextUtils.equals(link.feedback.status, "archived")) {
-                fileOwnerTextView.setVisibility(View.INVISIBLE);
-                fileOwnerPostfixTextView.setVisibility(View.INVISIBLE);
+                fileOwnerTextView.setVisibility(View.GONE);
+                fileOwnerPostfixTextView.setVisibility(View.GONE);
 
                 fileNameTextView.setText(R.string.jandi_deleted_file);
                 fileImageView.setBackgroundDrawable(null);
@@ -148,7 +153,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 });
                                 break;
                             default:
-                                fileImageView.setBackgroundResource(R.drawable.jandi_message_image_frame);
+                                fileImageRound.setVisibility(View.VISIBLE);
                                 Ion.with(fileImageView)
                                         .placeholder(R.drawable.jandi_fl_icon_img)
                                         .error(R.drawable.jandi_fl_icon_img)
@@ -242,6 +247,20 @@ public class FileCommentViewHolder implements BodyViewHolder {
     @Override
     public int getLayoutId() {
         return R.layout.item_message_cmt_with_file_v2;
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        if (contentView != null && itemClickListener != null) {
+            contentView.setOnClickListener(itemClickListener);
+        }
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        if (contentView != null && itemLongClickListener != null) {
+            contentView.setOnLongClickListener(itemLongClickListener);
+        }
     }
 
 }

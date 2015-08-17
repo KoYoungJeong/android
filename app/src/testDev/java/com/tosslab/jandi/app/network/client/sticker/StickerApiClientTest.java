@@ -13,12 +13,13 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +29,19 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by Steve SeongUg Jung on 15. 6. 8..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class StickerApiClientTest {
 
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
+
+
     }
 
     @Test
@@ -43,7 +51,7 @@ public class StickerApiClientTest {
         int teamId = userTeams.get(0).getTeamId();
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
-        EntityClientManager entityClientManager = EntityClientManager_.getInstance_(Robolectric.application);
+        EntityClientManager entityClientManager = EntityClientManager_.getInstance_(RuntimeEnvironment.application);
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
 
         ResLeftSideMenu.Entity entity = totalEntitiesInfo.entities.iterator().next();

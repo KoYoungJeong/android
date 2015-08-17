@@ -1,13 +1,18 @@
 package com.tosslab.jandi.app.utils.parse;
 
+import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +33,38 @@ public class ParseUpdateUtil {
 
     public static final String CHANNEL_ID_PREFIX = "accountId_";
 
+    public static void removeFileAndCacheIfNeed(Context context) {
+        File parseDir = context.getDir("Parse", 0);
+        if (parseDir != null && parseDir.exists()) {
+            LogUtil.e(TAG, "delete Parse dir");
+
+            File[] files = parseDir.listFiles();
+            if (files != null && files.length > 0) {
+                for (File file : files) {
+                    LogUtil.d(TAG, file.getName());
+                    file.delete();
+                }
+            }
+            parseDir.delete();
+        }
+
+        File parseCacheDir = new File(context.getCacheDir(), "com.parse");
+        if (parseCacheDir.exists()) {
+            LogUtil.e(TAG, "delete com.parse cache dir");
+            parseCacheDir.delete();
+        }
+
+        File parseFileDir = new File(context.getFilesDir(), "com.parse");
+        if (parseFileDir.exists()) {
+            LogUtil.e(TAG, "delete com.parse files dir");
+            parseFileDir.delete();
+        }
+    }
+
+
     public static void addChannelOnServer() {
         Observable.OnSubscribe<String> subscribe = subscriber -> {
-            ResAccountInfo accountInfo =
-                    AccountRepository.getRepository().getAccountInfo();
-            String accountId = accountInfo != null ? accountInfo.getId() : null;
+            String accountId = AccountUtil.getAccountId(JandiApplication.getContext());
             if (TextUtils.isEmpty(accountId)) {
                 subscriber.onError(new NullPointerException("accountId"));
             } else {
@@ -92,6 +124,44 @@ public class ParseUpdateUtil {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void refreshChannelOnServer() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ParseInstallation currentInstallation = ParseInstallation.getCurrentInstallation();
+
+                try {
+                    LogUtil.e(TAG, "remove start !");
+                    currentInstallation.remove(PARSE_CHANNELS);
+                    currentInstallation.save();
+                    LogUtil.e(TAG, "remove end !");
+                } catch (ParseException e) {
+                    LogUtil.e(TAG, Log.getStackTraceString(e));
+                }
+
+                try {
+                    String accountId = AccountUtil.getAccountId(JandiApplication.getContext());
+                    if (!TextUtils.isEmpty(accountId)) {
+                        accountId = CHANNEL_ID_PREFIX + accountId;
+
+                        List<String> channels = new ArrayList<String>();
+                        channels.add(accountId);
+
+                        LogUtil.e(TAG, "add start - " + accountId);
+                        currentInstallation.addAllUnique(PARSE_CHANNELS, channels);
+                        currentInstallation.save();
+                        LogUtil.e(TAG, "add end - " + accountId);
+                    } else {
+                        LogUtil.e(TAG, "add fail - accountId is empty.");
+                    }
+                } catch (ParseException e) {
+                    LogUtil.e(TAG, Log.getStackTraceString(e));
+                }
+
+            }
+        }).start();
     }
 
 }

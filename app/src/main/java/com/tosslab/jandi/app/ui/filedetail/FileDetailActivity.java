@@ -51,14 +51,11 @@ import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
-import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
-import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
-import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
@@ -87,7 +84,6 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
@@ -104,12 +100,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func0;
 import rx.subjects.PublishSubject;
+
+import static org.androidannotations.annotations.UiThread.Propagation;
 
 /**
  * Created by justinygchoi on 2014. 7. 19..
@@ -167,10 +164,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     private ProgressWheel progressWheel;
     private ProgressDialog progressDialog;
     private StickerInfo stickerInfo = NULL_STICKER;
-
-    //for prevent too many event concurrently
-    private boolean processingFileStar = false;
-    private boolean processingFileUnstar = false;
 
     @AfterViews
     public void initForm() {
@@ -233,90 +226,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     private void addStarredButtonExecution() {
 
-        boolean isFromStarredButton = true;
-
         fileHeadManager.getStarredButton().setOnClickListener(v -> {
-            LogUtil.e("selected1", v.isSelected() + "");
-
-            //dummy event for notify filestarredList;
-            StarredInfoChangeEvent event = new StarredInfoChangeEvent();
-
-            if (v.isSelected()) {
-                try {
-                    unregistStarredMessage(isFromStarredButton, fileId);
-                    EventBus.getDefault().post(event);
-                } catch (Exception e) {
-                    e.printStackTrace();
-
-                }
-            } else {
-                try {
-                    registStarredMessage(isFromStarredButton, fileId);
-                    EventBus.getDefault().post(event);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            boolean starred = v.isSelected();
+            updateFileStarred(!starred);
+            fileDetailPresenter.changeStarredFileMessageState(fileId, !starred);
 
         });
-
-    }
-
-    @Background
-    void unregistStarredMessage(boolean isFromStarredButton, int id) {
-
-        try {
-            int teamId = EntityManager.getInstance(FileDetailActivity.this).getTeamId();
-
-            if (isFromStarredButton) {
-                if (!processingFileUnstar) {
-                    processingFileUnstar = true;
-                    fileDetailPresenter.unregistStarredMessage(teamId, id);
-                    fileHeadManager.updateStarred(false);
-                    MessageRepository.getRepository().updateStarred(id, false);
-                    showToast(getString(R.string.jandi_unpinned_message));
-                    processingFileUnstar = false;
-                }
-            } else {
-                fileDetailPresenter.unregistStarredMessage(teamId, id);
-                modifyStarredInfo(id, false);
-                MessageRepository.getRepository().updateStarred(id, false);
-                showToast(getString(R.string.jandi_unpinned_message));
-            }
-
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-
-        }
-
-    }
-
-
-    @Background
-    void registStarredMessage(boolean isFromStarredButton, int id) {
-
-        try {
-
-            int teamId = EntityManager.getInstance(FileDetailActivity.this).getTeamId();
-
-            if (isFromStarredButton) {
-                if (!processingFileStar) {
-                    processingFileStar = true;
-                    fileDetailPresenter.registStarredMessage(teamId, id);
-                    fileHeadManager.updateStarred(true);
-                    processingFileStar = false;
-                }
-            } else {
-                fileDetailPresenter.registStarredMessage(teamId, id);
-                MessageRepository.getRepository().updateStarred(id, true);
-                showToast(getString(R.string.jandi_message_starred));
-                modifyStarredInfo(id, true);
-            }
-
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            // 실패시 메세지 필요
-        }
 
     }
 
@@ -366,7 +281,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     }
 
     public void onEventMainThread(TopicDeleteEvent event) {
-        fileDetailPresenter.checkSharedEntity(event.getId());
+        fileDetailPresenter.checkSharedEntity(event.getId(), fileId);
     }
 
     private void setUpActionBar() {
@@ -449,40 +364,22 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         setSendButtonSelected(inputLength > 0);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void finishOnMainThread() {
         finish();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(propagation = Propagation.REUSE)
     @Override
-    public void loadSuccess(ResFileDetail resFileDetail, boolean isSendAction, int selectMessageId) {
-        for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
-            if (fileDetail instanceof ResMessages.FileMessage) {
+    public void loadSuccess(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages, boolean isSendAction, int selectMessageId) {
 
-                if (TextUtils.equals(fileDetail.status, "archived")) {
-                    isDeleted = true;
-                } else {
-                    isDeleted = false;
-                }
-
-                if (fileDetail.writerId == EntityManager.getInstance(FileDetailActivity.this).getMe().getId()) {
-                    isMyFile = true;
-                } else {
-                    isMyFile = false;
-                }
-
-                invalidateOptionsMenu();
-                break;
-            }
-        }
-
-        drawFileDetail(resFileDetail, isSendAction);
+        drawFileDetail(fileMessage, commentMessages, isSendAction);
 
         if (selectMessageId > 0) {
             int position = fileDetailCommentListAdapter.findMessagePosition(selectMessageId);
             if (position >= 0) {
+                // 헤더를 포함하기 때문에 +1 한다.
                 lvFileDetailComments.smoothScrollToPosition(position + 1);
             }
 
@@ -491,8 +388,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         }
 
-        fileDetailPresenter.refreshMentionVM(this, getFileMessage(resFileDetail.messageDetails),
-                rvListSearchMembers, etComment, lvFileDetailComments);
+        // XXX what mean Mention VM?
+        fileDetailPresenter.refreshMentionVM(this, fileMessage, rvListSearchMembers, etComment, lvFileDetailComments);
     }
 
     /**
@@ -501,7 +398,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
      * **********************************************************
      */
     void clickShareButton() {
-        fileDetailPresenter.onClickShare();
+        fileDetailPresenter.onClickShare(fileId);
     }
 
     @Override
@@ -603,7 +500,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
      * **********************************************************
      */
     void clickUnShareButton() {
-        fileDetailPresenter.onClickUnShare();
+        fileDetailPresenter.onClickUnShare(fileId);
     }
 
     @Override
@@ -785,13 +682,13 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         etComment.setText("");
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void hideSoftKeyboard() {
         inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void showKeyboard() {
         inputMethodManager.showSoftInput(etComment, InputMethodManager.SHOW_IMPLICIT);
@@ -831,19 +728,19 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         showKeyboard();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void showStickerPreview() {
         vgStickerPreview.setVisibility(View.VISIBLE);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void loadSticker(StickerInfo stickerInfo) {
         StickerManager.getInstance().loadStickerDefaultOption(ivStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void dismissStickerPreview() {
         vgStickerPreview.setVisibility(View.GONE);
@@ -856,7 +753,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
      */
     public void download() {
         initProgressDialog();
-        fileDetailPresenter.onClickDownload(progressDialog);
+        fileDetailPresenter.onClickDownload(progressDialog, fileId);
     }
 
     @UiThread
@@ -877,7 +774,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void showDownloadProgressDialog(String fileName) {
         initProgressDialog();
@@ -905,7 +802,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                 fileDownloadStartEvent.getFileName(),
                 fileDownloadStartEvent.getFileType(),
                 fileDownloadStartEvent.getExt(),
-                progressDialog);
+                progressDialog, fileId);
     }
 
     @UiThread
@@ -944,10 +841,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     }
 
     /**
-     * *********************************************************
      * 사용자 프로필 보기
-     * TODO Background 는 공통으로 빼고 Success, Fail 리스너를 둘 것.
-     * **********************************************************
      */
     public void onEvent(RequestUserInfoEvent event) {
         if (!isForeground) {
@@ -1008,18 +902,15 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                 .create().show();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void drawFileWriterState(boolean isEnabled) {
         fileHeadManager.drawFileWriterState(isEnabled);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(propagation = Propagation.REUSE)
     @Override
-    public void drawFileDetail(ResFileDetail resFileDetail, boolean isSendAction) {
-        ResMessages.OriginalMessage fileDetail = getFileMessage(resFileDetail.messageDetails);
-        //todo
-        final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
+    public void drawFileDetail(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages, boolean isSendAction) {
 
         fileHeadManager.setFileInfo(fileMessage);
 
@@ -1029,8 +920,22 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             getSupportActionBar().setTitle(R.string.jandi_deleted_file);
         }
 
+        if (TextUtils.equals(fileMessage.status, "archived")) {
+            isDeleted = true;
+        } else {
+            isDeleted = false;
+        }
+
+        if (fileMessage.writerId == EntityManager.getInstance(FileDetailActivity.this).getMe().getId()) {
+            isMyFile = true;
+        } else {
+            isMyFile = false;
+        }
+
+        invalidateOptionsMenu();
+
         fileDetailCommentListAdapter.clear();
-        fileDetailCommentListAdapter.updateFileComments(resFileDetail);
+        fileDetailCommentListAdapter.updateFileComments(commentMessages);
         fileDetailCommentListAdapter.notifyDataSetChanged();
 
         if (isSendAction) {
@@ -1038,20 +943,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         }
     }
 
-    private ResMessages.OriginalMessage getFileMessage(List<ResMessages.OriginalMessage> messageDetails) {
-        for (ResMessages.OriginalMessage messageDetail : messageDetails) {
-            if (messageDetail instanceof ResMessages.FileMessage) {
-                return messageDetail;
-            }
-        }
-
-        return null;
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void showManipulateMessageDialogFragment(ResMessages.OriginalMessage item, boolean isMine) {
-        DialogFragment newFragment = null;
+        DialogFragment newFragment;
         if (item instanceof ResMessages.CommentMessage) {
             newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage(
                     (ResMessages.CommentMessage) item, isMine);
@@ -1065,7 +960,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         newFragment.show(getSupportFragmentManager(), "dioalog");
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void setSendButtonSelected(boolean selected) {
         btnSend.setSelected(selected);
@@ -1132,33 +1027,29 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             return;
         }
 
-
-        boolean isFromStarredButton = false;
+        int messageId = event.getMessageId();
 
         switch (event.getAction()) {
             case STARRED:
-                try {
-                    registStarredMessage(isFromStarredButton, event.getMessageId());
-                    EventBus.getDefault().post(new StarredInfoChangeEvent());
-                } catch (RetrofitError e) {
-                    e.printStackTrace();
-                }
+                fileDetailPresenter.registStarredComment(messageId);
                 break;
             case UNSTARRED:
-                try {
-                    unregistStarredMessage(isFromStarredButton, event.getMessageId());
-                    EventBus.getDefault().post(new StarredInfoChangeEvent());
-                } catch (RetrofitError e) {
-                    e.printStackTrace();
-                }
+                fileDetailPresenter.unregistStarredComment(messageId);
                 break;
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
     public void modifyStarredInfo(int messageId, boolean isStarred) {
         int position = fileDetailCommentListAdapter.searchIndexOfMessages(messageId);
         fileDetailCommentListAdapter.modifyStarredStateByPosition(position, isStarred);
+    }
+
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
+    public void updateFileStarred(boolean starred) {
+        fileHeadManager.updateStarred(starred);
     }
 
 }

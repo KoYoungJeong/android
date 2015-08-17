@@ -5,13 +5,17 @@ import android.util.Log;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.BaseInitUtil;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.shadows.httpclient.FakeHttp;
 
 import java.util.concurrent.Callable;
 
@@ -25,7 +29,7 @@ import static com.jayway.awaitility.Awaitility.await;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class IntroActivityModelTest {
 
     private boolean isCalled;
@@ -39,10 +43,15 @@ public class IntroActivityModelTest {
 
         introActivityModel = IntroActivityModel_.getInstance_(introActivity_);
 
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        FakeHttp.getFakeHttpLayer().interceptHttpRequests(false);
 
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
+
+    }
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
 
     }
 
@@ -51,7 +60,7 @@ public class IntroActivityModelTest {
     public void testCheckNewVersion() throws Exception {
 
         // When : Check app version to server
-        introActivityModel.checkNewVersion(Robolectric.application);
+        introActivityModel.checkNewVersion(RuntimeEnvironment.application);
 
         await().until(new Callable<Boolean>() {
             @Override
@@ -68,7 +77,7 @@ public class IntroActivityModelTest {
     public void testRetrieveThisAppVersion() throws Exception {
 
         // When : Get app version
-        int versionCode = introActivityModel.getInstalledAppVersion(Robolectric.application);
+        int versionCode = introActivityModel.getInstalledAppVersion(RuntimeEnvironment.application);
 
         // Then : Maybe....show update dialog..Because AndroidManifest.xml is not defined.
         assertThat(versionCode > 0, is(true));

@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.utils;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -10,7 +10,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Created by justinygchoi on 14. 12. 11..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class PasswordCheckerTest {
     @Test
     public void testHasCapitalLetterShouldReturnTrue() {

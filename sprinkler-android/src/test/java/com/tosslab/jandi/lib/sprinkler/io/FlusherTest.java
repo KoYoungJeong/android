@@ -6,21 +6,23 @@ import com.google.gson.Gson;
 import com.tosslab.jandi.lib.sprinkler.SprinklerTestApplication;
 import com.tosslab.jandi.lib.sprinkler.io.model.Track;
 
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.httpclient.FakeHttp;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by tonyjs on 15. 7. 23..
@@ -28,7 +30,7 @@ import static org.junit.Assert.*;
 @Config(
         application = SprinklerTestApplication.class,
         manifest = "src/main/AndroidManifest.xml",
-        emulateSdk = 18
+        sdk =18
 )
 @RunWith(RobolectricTestRunner.class)
 public class FlusherTest {
@@ -37,9 +39,10 @@ public class FlusherTest {
     private Tracker tracker;
     @Before
     public void setup() throws Exception {
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
 
-        tracker = new Tracker(Robolectric.application);
+        FakeHttp.getFakeHttpLayer().interceptHttpRequests(false);
+
+        tracker = new Tracker(RuntimeEnvironment.application);
 
         for (int i = 0; i < 30; i++) {
             final int index = i;
@@ -54,7 +57,7 @@ public class FlusherTest {
             tracker.insert(index + " event", identifiers, "android", identifiers, new Date().getTime());
         }
 
-        flusher = new Flusher(Robolectric.application);
+        flusher = new Flusher(RuntimeEnvironment.application);
     }
 
     @Test

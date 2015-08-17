@@ -25,9 +25,11 @@ public class DummyViewHolder implements BodyViewHolder {
     private ImageView profileImageView;
     private TextView nameTextView;
     private TextView messageTextView;
+    private View contentView;
 
     @Override
     public void initView(View rootView) {
+        contentView = rootView.findViewById(R.id.vg_message_item);
         profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
         messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
@@ -114,6 +116,20 @@ public class DummyViewHolder implements BodyViewHolder {
     public int getLayoutId() {
         return R.layout.item_message_dummy_v2;
 
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        if (contentView != null && itemClickListener != null) {
+            contentView.setOnClickListener(itemClickListener);
+        }
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        if (contentView != null && itemLongClickListener != null) {
+            contentView.setOnLongClickListener(itemLongClickListener);
+        }
     }
 
 }

@@ -2,13 +2,15 @@ package org.robolectric;
 
 import org.junit.runners.model.InitializationError;
 import org.robolectric.annotation.Config;
+import org.robolectric.manifest.AndroidManifest;
+import org.robolectric.manifest.AndroidManifestExt;
 import org.robolectric.res.Fs;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 01.
  */
-public class RobolectricGradleTestRunner extends RobolectricTestRunner {
-    public RobolectricGradleTestRunner(Class<?> testClass) throws InitializationError {
+public class JandiRobolectricGradleTestRunner extends RobolectricGradleTestRunner {
+    public JandiRobolectricGradleTestRunner(Class<?> testClass) throws InitializationError {
         super(testClass);
     }
 
@@ -29,7 +31,8 @@ public class RobolectricGradleTestRunner extends RobolectricTestRunner {
         String flavorPath = "/dev/debug";
         String manifestPath = hasAppDir ? "src/main/AndroidManifest.xml" : "app/src/main/AndroidManifest.xml";
         final String manifestProperty = _manifestProperty == null ? manifestPath : _manifestProperty;
-        final String resProperty = _resProperty == null ? buildPath + "/res" + flavorPath : _resProperty;
+        final String resProperty = _resProperty == null ? buildPath + "/res/merged" + flavorPath :
+                _resProperty;
         final String assetsProperty = _assetsProperty == null ? buildPath + "/assets" + flavorPath : _assetsProperty;
 //        final String packageProperty = _androidPackage == null ? "com.tosslab.jandi.app.dev" : _androidPackage; // System.getProperty("android.package");
 

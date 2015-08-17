@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.lists.files.viewholder.FileDetailCollapseCommentVie
 import com.tosslab.jandi.app.lists.files.viewholder.FileDetailCollapseStickerCommentView;
 import com.tosslab.jandi.app.lists.files.viewholder.FileDetailCommentStickerView;
 import com.tosslab.jandi.app.lists.files.viewholder.FileDetailCommentView;
-import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
@@ -156,25 +155,12 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
         return CommentViewType.values().length;
     }
 
-    /**
-     * TODO : 로직을 언젠가는 MessageItemListAdapter와 합칠 필요가 있겠음.
-     *
-     * @param resFileDetail
-     */
-    public void updateFileComments(ResFileDetail resFileDetail) {
-        for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
-            if (fileDetail instanceof ResMessages.FileMessage) {
-                continue;
-            }
+    public void updateFileComments(List<ResMessages.OriginalMessage> commentMessages) {
+        for (ResMessages.OriginalMessage fileDetail : commentMessages) {
 
-            if (fileDetail.status.equals("created") || fileDetail.status.equals("shared")) {
+            if (!fileDetail.status.equals("archived")) {
                 mMessages.add(fileDetail);
-            } else if (fileDetail.status.equals("edited")) {
-                int position = searchIndexOfMessages(fileDetail.id);
-                if (position >= 0) {
-                    mMessages.set(position, fileDetail);
-                }
-            } else if (fileDetail.status.equals("archived")) {
+            } else {
                 int position = searchIndexOfMessages(fileDetail.id);
                 if (position >= 0) {
                     mMessages.remove(position);

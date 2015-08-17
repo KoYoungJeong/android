@@ -35,6 +35,13 @@ public class StickerRepository {
         return repository;
     }
 
+    /**
+     * It's for Only TestCode.
+     */
+    public static void release() {
+        repository = null;
+    }
+
     public List<ResMessages.StickerContent> getStickers() {
         try {
             return helper.getDao(ResMessages.StickerContent.class)

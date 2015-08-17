@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
@@ -96,7 +97,6 @@ public class FileHeadManager {
         int teamId = mEntityManager.getTeamId();
 
         if (resFileDetail.shareEntities != null && !resFileDetail.shareEntities.isEmpty()) {
-            int nSharedEntities = resFileDetail.shareEntities.size();
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
             int shareTextSize = (int) activity.getResources().getDimension(R.dimen.jandi_text_size_small);
             int shareTextColor = activity.getResources().getColor(R.color.file_type);
@@ -210,6 +210,15 @@ public class FileHeadManager {
                 thumbLoader.loadThumb(fileMessage);
             }
         }
+
+        boolean enabledUser = isEnabledUser(fileMessage.writerId);
+        drawFileWriterState(enabledUser);
+    }
+
+    private boolean isEnabledUser(int writerId) {
+        EntityManager entityManager = EntityManager.getInstance(JandiApplication.getContext());
+        String userStatus = entityManager.getEntityById(writerId).getUser().status;
+        return TextUtils.equals(userStatus, "enabled");
     }
 
     public ImageView getStarredButton() {

@@ -39,6 +39,13 @@ public class AccountRepository {
         return repository;
     }
 
+    /**
+     * It's for Only TestCode.
+     */
+    public static void release() {
+        repository = null;
+    }
+
     public void upsertAccountAllInfo(ResAccountInfo accountInfo) {
         lock.lock();
         try {

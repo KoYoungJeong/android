@@ -27,9 +27,11 @@ public class PureMessageViewHolder implements BodyViewHolder {
     private TextView tvMessage;
     private LinkPreviewViewModel linkPreviewViewModel;
     private View lastReadView;
+    private View contentView;
 
     @Override
     public void initView(View rootView) {
+        contentView = rootView.findViewById(R.id.vg_message_item);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         linkPreviewViewModel = new LinkPreviewViewModel(rootView.getContext());
         linkPreviewViewModel.initView(rootView);
@@ -106,5 +108,19 @@ public class PureMessageViewHolder implements BodyViewHolder {
     @Override
     public int getLayoutId() {
         return R.layout.item_message_puremsg_v2;
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        if (contentView != null && itemClickListener != null) {
+            contentView.setOnClickListener(itemClickListener);
+        }
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        if (contentView != null && itemLongClickListener != null) {
+            contentView.setOnLongClickListener(itemLongClickListener);
+        }
     }
 }

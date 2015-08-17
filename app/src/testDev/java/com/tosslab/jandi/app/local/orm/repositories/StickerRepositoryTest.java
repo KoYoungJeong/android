@@ -2,9 +2,11 @@ package com.tosslab.jandi.app.local.orm.repositories;
 
 import com.tosslab.jandi.app.network.models.ResMessages;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.BaseInitUtil;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 
 import java.util.List;
 
@@ -15,8 +17,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Created by Steve SeongUg Jung on 15. 7. 23..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class StickerRepositoryTest {
+
+
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
+
+    }
 
     @Test
     public void testSticker() throws Exception {

@@ -10,16 +10,17 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
+import org.robolectric.Shadows;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.shadows.httpclient.FakeHttp;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class SettingFragmentViewModelTest {
 
     private SettingsActivity settingsActivity_;
@@ -30,14 +31,7 @@ public class SettingFragmentViewModelTest {
     @Before
     public void setUp() throws Exception {
 
-        // PreferenceFragment problem?????
-
-//        settingsActivity_ = Robolectric.buildActivity(SettingsActivity_.class).create().visible().start().resume().get();
-//        settingsFragment = (SettingsFragment) settingsActivity_.getFragmentManager().findFragmentById(android.R.id.content);
-//        settingFragmentViewModel = settingsFragment.settingFragmentViewModel;
-
-        // Real Connect Dev Server
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        FakeHttp.getFakeHttpLayer().interceptHttpRequests(false);
 
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
@@ -65,7 +59,7 @@ public class SettingFragmentViewModelTest {
 
 
         // Then : next Activity is IntroActivity
-        ShadowActivity shadowPreferenceActivity = Robolectric.shadowOf(settingsActivity_);
+        ShadowActivity shadowPreferenceActivity = Shadows.shadowOf(settingsActivity_);
         Intent nextStartedActivity = shadowPreferenceActivity.getNextStartedActivity();
 
         assertThat(nextStartedActivity.getComponent().getClassName(), is(equalTo(IntroActivity_.class.getName())));

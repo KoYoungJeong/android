@@ -8,12 +8,13 @@ import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +29,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Created by Steve SeongUg Jung on 15. 7. 27..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class FileDetailRepositoryTest {
 
     private ResFileDetail fileDetail;
 
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
 
         ReqSearchFile reqSearchFile = new ReqSearchFile();
         reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
@@ -60,8 +61,13 @@ public class FileDetailRepositoryTest {
         }
 
         int fileId = testFile.id;
-        fileDetail = EntityClientManager_.getInstance_(Robolectric.application).getFileDetail(fileId);
+        fileDetail = EntityClientManager_.getInstance_(RuntimeEnvironment.application).getFileDetail(fileId);
 
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
     }
 
     @Test
