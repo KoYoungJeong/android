@@ -20,9 +20,11 @@ public class PureStickerViewHolder implements BodyViewHolder {
     private TextView tvDate;
     private TextView tvUnread;
     private View lastReadView;
+    private View contentView;
 
     @Override
     public void initView(View rootView) {
+        contentView = rootView.findViewById(R.id.vg_message_item);
         ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_sticker);
         tvDate = (TextView) rootView.findViewById(R.id.txt_message_create_date);
         tvUnread = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
@@ -67,5 +69,19 @@ public class PureStickerViewHolder implements BodyViewHolder {
     @Override
     public int getLayoutId() {
         return R.layout.item_message_pure_sticker_v2;
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        if (contentView != null && itemClickListener != null) {
+            contentView.setOnClickListener(itemClickListener);
+        }
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        if (contentView != null && itemLongClickListener != null) {
+            contentView.setOnLongClickListener(itemLongClickListener);
+        }
     }
 }

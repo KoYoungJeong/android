@@ -17,6 +17,10 @@ public interface BodyViewHolder {
 
     int getLayoutId();
 
+    void setOnItemClickListener(View.OnClickListener itemClickListener);
+
+    void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener);
+
     enum Type {
         Message, PureMessage, PureLinkPreviewMessage,
         Sticker, PureSticker,
