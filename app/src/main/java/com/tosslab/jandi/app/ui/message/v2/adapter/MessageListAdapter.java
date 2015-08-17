@@ -210,7 +210,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
                 if (TextUtils.equals(link.message.contentType, "file")) {
 
                     if (searchedPosition >= 0) {
-                        messageList.set(searchedPosition, link);
+                        ResMessages.Link originLink = messageList.get(searchedPosition);
+                        originLink.message = link.message;
+                        originLink.status = "archived";
                         messages.remove(link);
                     }
                     // if cannot find same object, will be add to list.
