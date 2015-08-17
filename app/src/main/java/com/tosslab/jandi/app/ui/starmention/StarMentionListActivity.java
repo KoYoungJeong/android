@@ -105,6 +105,7 @@ public class StarMentionListActivity extends AppCompatActivity {
 
             mentionListFragment = StarMentionListFragment_.builder()
                     .listType(TYPE_MENTION_LIST).build();
+
             fragmentTransaction.add(R.id.star_mention_content,
                     mentionListFragment, TYPE_MENTION_LIST);
 
@@ -162,6 +163,7 @@ public class StarMentionListActivity extends AppCompatActivity {
             fragmentTransaction.hide(allStarListFragment);
             fragmentTransaction.show(filesStarListFragment);
         }
+
         fragmentTransaction.commit();
     }
 
