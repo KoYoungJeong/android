@@ -41,8 +41,6 @@ public class MentionControlViewModel {
 
     public static final String MENTION_TYPE_MESSAGE = "mention_type_message";
     public static final String MENTION_TYPE_FILE_COMMENT = "mention_type_file_comment";
-    public static final int MENTION_MEMBER_DELETE = 0x01;
-    public static final int MENTION_MEMBER_INSERT = 0x02;
 
     private RecyclerView searchMemberListView;
     private EditText editText;
@@ -76,23 +74,38 @@ public class MentionControlViewModel {
     // 클립 보드에서 CUT(잘라내기) 시 해당 정보를 한꺼번에 잃기 때문에 사본을 저장할 필요성 있음.
     private LinkedHashMap<Integer, SearchedItemVO> cloneSelectedMemberHashMap;
 
-    public MentionControlViewModel(Activity activity, RecyclerView searchMemberListView,
-                                   EditText editText, RecyclerView messageListView,
-                                   List<Integer> roomIds) {
-        this.messageListView = messageListView;
-        this.mentionType = MENTION_TYPE_MESSAGE;
+    public MentionControlViewModel(Activity activity,
+                                   EditText editText,
+                                   RecyclerView searchMemberListView, View listView,
+                                   List<Integer> roomIds,
+                                   String mentionType) {
+
+        this.mentionType = mentionType;
+        if (mentionType.equals(MENTION_TYPE_MESSAGE)) {
+            this.messageListView = (RecyclerView) listView;
+        } else if (mentionType.equals(MENTION_TYPE_FILE_COMMENT)) {
+            this.fileCommentListView = (ListView) listView;
+        }
+
         init(activity, searchMemberListView, editText, roomIds);
+
     }
 
-    public MentionControlViewModel(Activity activity, RecyclerView searchMemberListView,
-                                   EditText editText, ListView fileCommentListView,
-                                   List<Integer> roomIds) {
-        this.fileCommentListView = fileCommentListView;
-        this.mentionType = MENTION_TYPE_FILE_COMMENT;
-        init(activity, searchMemberListView, editText, roomIds);
+    public static MentionControlViewModel newInstance(Activity activity,
+                                                      EditText editText,
+                                                      RecyclerView searchMemberListView, View listView,
+                                                      List<Integer> roomIds,
+                                                      String mentionType) {
+        return new MentionControlViewModel(activity,
+                editText,
+                searchMemberListView, listView,
+                roomIds,
+                mentionType);
     }
 
-    private void init(Activity activity, RecyclerView searchMemberListView, EditText editText,
+    private void init(Activity activity,
+                      RecyclerView searchMemberListView,
+                      EditText editText,
                       List<Integer> roomIds) {
 
         this.searchMemberListView = searchMemberListView;
@@ -193,7 +206,7 @@ public class MentionControlViewModel {
 
             }
 
-            restoreOrDeleteSelectedMentionMemberInfo(MENTION_MEMBER_DELETE, removedText);
+            removeSelectedMentionMemberInfo(removedText);
 
         }
 
@@ -222,6 +235,7 @@ public class MentionControlViewModel {
 
     }
 
+    // @ 이후로 부터 검색에 필요한 이름을 얻어오는 메서드
     public String getMentionSearchName(CharSequence cs) {
         Pattern p = Pattern.compile("(?:(?:^|\\s)([@\\uff20]((?:[^@\\uff20]){0,30})))$");
         Matcher matcher = p.matcher(cs);
@@ -245,6 +259,7 @@ public class MentionControlViewModel {
         return null;
     }
 
+    // 실제 화면에 멘션 가능한 사람들을 보여주는 메서드
     private void showSearchMembersInfo(String searchString) {
         MentionMemberListAdapter mentionMemberListAdapter =
                 (MentionMemberListAdapter) searchMemberListView.getAdapter();
@@ -252,12 +267,14 @@ public class MentionControlViewModel {
                 searchMemberModel.getUserSearchByName(searchString, selectedMemberHashMap));
     }
 
+    // 검색 대상 리스트를 모두 삭제하는 메서드
     private void removeAllMemberList() {
         MentionMemberListAdapter mentionMemberListAdapter =
                 (MentionMemberListAdapter) searchMemberListView.getAdapter();
         mentionMemberListAdapter.clearMembersList();
     }
 
+    // 멘션 가능한 멤버 리스트 뷰의 view단을 컨트롤 하는 메서드
     private void showListView(boolean isShow) {
 
         if (isShow) {
@@ -288,6 +305,7 @@ public class MentionControlViewModel {
         return mentionMemberListAdapter.getSearchedMembersList();
     }
 
+    // edit텍스트로 부터 삭제된 텍스트를 얻어오는 메서드
     private String returnRemoveText(String beforeText, String afterText, int currentSelection) {
         if (beforeTextCnt <= afterTextCnt) {
             return null;
@@ -300,31 +318,44 @@ public class MentionControlViewModel {
         return removedText;
     }
 
-    private void restoreOrDeleteSelectedMentionMemberInfo(int request, String rawMemberText) {
+    // 멘션된 멤버를 Collection에 저장하는 메서드
+    private void restoreSelectedMentionMemberInfo(String rawMemberText) {
         if (rawMemberText != null) {
             String id = "";
             Pattern p = Pattern.compile("(?:@)([^@]+)(?:\\u2063)(\\d+)(?:\\u2063)");
             Matcher matcher = p.matcher(rawMemberText);
             while (matcher.find()) {
                 id = matcher.group(2);
-                if (request == MENTION_MEMBER_INSERT) {
-                    selectedMemberHashMap.put(new Integer(id),
-                            getAllSelectableMembers().get(new Integer(id)));
-                } else if (request == MENTION_MEMBER_DELETE) {
-                    selectedMemberHashMap.remove(Integer.valueOf(id));
-                }
+                selectedMemberHashMap.put(new Integer(id),
+                        getAllSelectableMembers().get(new Integer(id)));
             }
         }
     }
 
+    // 멘션된 멤버를 메모리에서 제거하는 메서드
+    private void removeSelectedMentionMemberInfo(String rawMemberText) {
+        if (rawMemberText != null) {
+            String id = "";
+            Pattern p = Pattern.compile("(?:@)([^@]+)(?:\\u2063)(\\d+)(?:\\u2063)");
+            Matcher matcher = p.matcher(rawMemberText);
+            while (matcher.find()) {
+                id = matcher.group(2);
+                selectedMemberHashMap.remove(Integer.valueOf(id));
+            }
+        }
+    }
+
+    // 현재 토픽 또는 파일에서 멘션 가능한 모든 멤버들을 얻어오는 메서드
     public LinkedHashMap<Integer, SearchedItemVO> getAllSelectableMembers() {
         return searchMemberModel.getAllSelectableMembers();
     }
 
+    // 토픽 또는 파일의 정보 갱신으로 새로운 멘션가능한 멤버들을 얻어오는 메서드
     public void refreshSelectableMembers(List<Integer> roomIds) {
         searchMemberModel.refreshSelectableMembers(roomIds, mentionType);
     }
 
+    // 멘션된 멤버들을 editText 뷰 단에서 하일라이트 처리하는 로직
     public void mentionedMemberHighlightInEditText(SearchedItemVO searchedItemVO) {
 
         int selectionIndex = editText.getSelectionStart();
@@ -349,7 +380,7 @@ public class MentionControlViewModel {
                 .append(searchedItemVO.getId())
                 .append("\u2063");
 
-        restoreOrDeleteSelectedMentionMemberInfo(MENTION_MEMBER_INSERT, "@" + convertedTextBuilder);
+        restoreSelectedMentionMemberInfo("@" + convertedTextBuilder);
 
         ssb.replace(startIndex, selectionIndex, convertedTextBuilder);
 
@@ -361,6 +392,7 @@ public class MentionControlViewModel {
 
     }
 
+    // 현재까지의 editText에서 멘션 가공된 message와 mention object 리스트를 얻어오는 메서드
     private ResultMentionsVO getMentionInfoObject(String message,
                                                   LinkedHashMap<Integer, SearchedItemVO> selectedMembers,
                                                   LinkedHashMap<Integer, SearchedItemVO> selectableMembers) {
@@ -443,7 +475,6 @@ public class MentionControlViewModel {
         selectedMemberHashMap.clear();
     }
 
-
     public boolean isMentionListVisible() {
         return searchMemberListView.getVisibility() == View.VISIBLE;
     }
@@ -456,7 +487,8 @@ public class MentionControlViewModel {
         ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
                 .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
         clipBoard.removePrimaryClipChangedListener(clipboardListener);
-        android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", pasteData);
+        android.content.ClipData clip =
+                android.content.ClipData.newPlainText("Copied Text", pasteData);
         clipBoard.setPrimaryClip(clip);
         clipBoard.addPrimaryClipChangedListener(clipboardListener);
     }
@@ -479,6 +511,7 @@ public class MentionControlViewModel {
         void onMentionViewShowing(boolean isShowing);
     }
 
+    // 가공되지 않은 스트링이 클립보드에 복사되면 안되므로 별도의 처리 진행
     class ClipboardListener implements
             ClipboardManager.OnPrimaryClipChangedListener {
         public void onPrimaryClipChanged() {
@@ -503,13 +536,14 @@ public class MentionControlViewModel {
             if (et.contains(pasteData.toString())) {
                 String convertedMessage = null;
                 if (isCut) {
-                    convertedMessage = getMentionInfoObject(et, cloneSelectedMemberHashMap).getMessage();
+                    convertedMessage =
+                            getMentionInfoObject(et, cloneSelectedMemberHashMap).getMessage();
                 } else {
-                    convertedMessage = getMentionInfoObject(et, selectedMemberHashMap).getMessage();
+                    convertedMessage =
+                            getMentionInfoObject(et, selectedMemberHashMap).getMessage();
                 }
                 Log.e(convertedMessage, convertedMessage);
                 setTextOnClip(convertedMessage);
-
             }
 
         }

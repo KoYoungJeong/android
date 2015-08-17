@@ -26,7 +26,6 @@ import rx.Observable;
 @EBean
 public class SearchMemberModel {
 
-
     LinkedHashMap<Integer, SearchedItemVO> selectableMembersLinkedHashMap;
 
     public List<SearchedItemVO> getUserSearchByName(String subNameString,
@@ -75,9 +74,6 @@ public class SearchMemberModel {
         }
 
         List<Integer> members = new ArrayList<>();
-
-        selectableMembersLinkedHashMap
-                = new LinkedHashMap<Integer, SearchedItemVO>();
 
         Observable.from(topicIds)
                 .subscribe(topicId -> Observable
