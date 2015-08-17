@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.network.client.messages;
 
-import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
@@ -15,8 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import retrofit.RetrofitError;
 
@@ -25,7 +24,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class MessagesApiClientTest {
 
     private ResLeftSideMenu sideMenu;
@@ -33,14 +32,15 @@ public class MessagesApiClientTest {
     @Before
     public void setUp() throws Exception {
 
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
         sideMenu = getSideMenu();
 
     }
 
     @After
     public void tearDown() throws Exception {
-        JandiDatabaseOpenHelper.getInstance(Robolectric.application).getWritableDatabase().close();
+        BaseInitUtil.releaseDatabase();
+
     }
 
     private ResLeftSideMenu getSideMenu() {

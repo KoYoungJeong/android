@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.rxjava;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 
 import java.util.concurrent.TimeUnit;
 
@@ -11,7 +11,7 @@ import rx.subjects.PublishSubject;
 
 import static com.jayway.awaitility.Awaitility.await;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class RxjavaTest {
     @Test
     public void testPublish_collect_throttleTimeout() throws Exception {

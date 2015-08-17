@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'org.robolectric'     // Android-Test
 
 
 android {
@@ -33,19 +32,8 @@ dependencies {
 
 //    compile 'com.google.android.gms:play-services-base:7.5.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
-    testCompile 'org.robolectric:robolectric:2.4'
+    testCompile 'org.robolectric:robolectric:3.0'
+    testCompile 'org.robolectric:shadows-httpclient:3.0'
     testCompile 'com.jayway.awaitility:awaitility:1.6.+'
     testCompile 'junit:junit:4.12'
-}
-
-
-robolectric {
-    // configure the set of classes for JUnit tests
-    include '**/*Test.class'
-
-    // configure max heap size of the test JVM
-    maxHeapSize = "2048m"
-
-    ignoreFailures true
-
 }

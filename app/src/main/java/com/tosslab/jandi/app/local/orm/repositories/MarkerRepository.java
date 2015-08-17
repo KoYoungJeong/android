@@ -34,6 +34,13 @@ public class MarkerRepository {
         return repository;
     }
 
+    /**
+     * It's for Only TestCode.
+     */
+    public static void release() {
+        repository = null;
+    }
+
     public boolean upsertRoomInfo(ResRoomInfo roomInfo) {
         lock.lock();
         try {

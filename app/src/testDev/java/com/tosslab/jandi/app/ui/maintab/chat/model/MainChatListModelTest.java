@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.maintab.chat.model;
 
 import android.app.Application;
 
-import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -18,8 +17,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.List;
 
@@ -27,13 +26,13 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class MainChatListModelTest {
     Application application;
 
     @Before
     public void setUp() throws Exception {
-        application = Robolectric.application;
+        application = RuntimeEnvironment.application;
         BaseInitUtil.initData(application);
 
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
@@ -42,7 +41,8 @@ public class MainChatListModelTest {
 
     @After
     public void tearDown() throws Exception {
-        JandiDatabaseOpenHelper.getInstance(Robolectric.application).getWritableDatabase().close();
+        BaseInitUtil.releaseDatabase();
+
     }
 
 

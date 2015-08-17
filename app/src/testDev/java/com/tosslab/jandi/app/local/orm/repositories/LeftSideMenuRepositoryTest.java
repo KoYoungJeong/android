@@ -7,17 +7,18 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class LeftSideMenuRepositoryTest {
 
     private ResAccountInfo originAccountInfo;
@@ -37,6 +38,11 @@ public class LeftSideMenuRepositoryTest {
         AccountRepository.getRepository().updateSelectedTeamInfo(userTeam.getTeamId());
 
         leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(userTeam.getTeamId());
+
+    }
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
 
     }
 

@@ -34,6 +34,12 @@ public class LeftSideMenuRepository {
         return repository;
     }
 
+    /**
+     * It's for Only TestCode.
+     */
+    public static void release() {
+        repository = null;
+    }
 
     public boolean upsertLeftSideMenu(ResLeftSideMenu leftSideMenu) {
         lock.lock();

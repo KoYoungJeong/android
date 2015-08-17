@@ -8,12 +8,13 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,13 +30,20 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Steve SeongUg Jung on 15. 6. 10..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class ParseUpdateUtilTest {
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
 
     }
+
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
+
+    }
+
 
     @Test
     public void testRxJavaCollect() throws Exception {

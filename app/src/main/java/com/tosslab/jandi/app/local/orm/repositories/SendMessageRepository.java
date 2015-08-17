@@ -33,6 +33,12 @@ public class SendMessageRepository {
         return repository;
     }
 
+    /**
+     * It's for Only TestCode.
+     */
+    public static void release() {
+        repository = null;
+    }
 
     public boolean insertSendMessage(SendMessage sendMessage) {
         try {

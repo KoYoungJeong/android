@@ -1,4 +1,4 @@
-package org.robolectric;
+package org.robolectric.manifest;
 
 import android.os.Build;
 

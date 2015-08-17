@@ -6,11 +6,12 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 
 import java.util.Iterator;
 import java.util.List;
@@ -27,11 +28,10 @@ import static org.hamcrest.core.IsNull.nullValue;
 /**
  * Created by Steve SeongUg Jung on 15. 7. 20..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class AccountRepositoryTest {
 
 
-    private AccountRepository repository;
     private ResAccountInfo originAccountInfo;
 
     @Before
@@ -44,16 +44,20 @@ public class AccountRepositoryTest {
         TokenUtil.saveTokenInfoByPassword(accessToken);
         originAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
-        repository = AccountRepository.getRepository();
-        repository.upsertAccountAllInfo(originAccountInfo);
+        AccountRepository.getRepository().upsertAccountAllInfo(originAccountInfo);
 
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
     }
 
     @Test
     public void testUpsertAccountInfo() throws Exception {
 
 
-        ResAccountInfo resAccountInfo = repository.getAccountInfo();
+        ResAccountInfo resAccountInfo = AccountRepository.getRepository().getAccountInfo();
 
         assertThat(resAccountInfo, is(notNullValue()));
         assertThat(resAccountInfo.getId(), is(originAccountInfo.getId()));
@@ -68,9 +72,9 @@ public class AccountRepositoryTest {
                 is(originAccountInfo.getThumbnailInfo().getSmallThumbnailUrl()));
 
 
-        repository.upsertAccountAllInfo(originAccountInfo);
+        AccountRepository.getRepository().upsertAccountAllInfo(originAccountInfo);
 
-        ResAccountInfo accountInfo2 = repository.getAccountInfo();
+        ResAccountInfo accountInfo2 = AccountRepository.getRepository().getAccountInfo();
 
         assertThat(originAccountInfo.getEmails().size(), is(equalTo(accountInfo2.getEmails().size())));
     }
@@ -80,10 +84,10 @@ public class AccountRepositoryTest {
 
         int teamId = originAccountInfo.getMemberships().iterator().next().getTeamId();
 
-        repository.updateSelectedTeamInfo(teamId);
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
-        assertThat(repository.getSelectedTeamId(), is(equalTo(teamId)));
-        assertThat(repository.getSelectedTeamInfo().getTeamId(), is(equalTo(teamId)));
+        assertThat(AccountRepository.getRepository().getSelectedTeamId(), is(equalTo(teamId)));
+        assertThat(AccountRepository.getRepository().getSelectedTeamInfo().getTeamId(), is(equalTo(teamId)));
 
 
     }
@@ -92,7 +96,7 @@ public class AccountRepositoryTest {
     public void testGetTeamInfo() throws Exception {
         ResAccountInfo.UserTeam team = originAccountInfo.getMemberships().iterator().next();
         int teamId = team.getTeamId();
-        ResAccountInfo.UserTeam teamInfo = repository.getTeamInfo(teamId);
+        ResAccountInfo.UserTeam teamInfo = AccountRepository.getRepository().getTeamInfo(teamId);
 
         assertThat(team.getTeamId(), is(equalTo(teamInfo.getTeamId())));
         assertThat(team.getMemberId(), is(equalTo(teamInfo.getMemberId())));
@@ -105,7 +109,7 @@ public class AccountRepositoryTest {
     @Test
     public void testGetAccountEmails() throws Exception {
 
-        List<ResAccountInfo.UserEmail> accountEmails = repository.getAccountEmails();
+        List<ResAccountInfo.UserEmail> accountEmails = AccountRepository.getRepository().getAccountEmails();
 
         assertThat(accountEmails.size(), is(equalTo(originAccountInfo.getEmails().size())));
 
@@ -117,10 +121,10 @@ public class AccountRepositoryTest {
     @Test
     public void testDeleteAccountInfo() throws Exception {
 
-        repository.deleteAccountInfo();
+        AccountRepository.getRepository().deleteAccountInfo();
 
 
-        ResAccountInfo accountInfo = repository.getAccountInfo();
+        ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
 
         assertThat(accountInfo, is(nullValue()));
     }
@@ -128,7 +132,7 @@ public class AccountRepositoryTest {
     @Test
     public void testGetAccountTeams() throws Exception {
 
-        List<ResAccountInfo.UserTeam> accountTeams = repository.getAccountTeams();
+        List<ResAccountInfo.UserTeam> accountTeams = AccountRepository.getRepository().getAccountTeams();
 
         assertThat(accountTeams.size(), is(equalTo(originAccountInfo.getMemberships().size())));
 
@@ -148,9 +152,9 @@ public class AccountRepositoryTest {
         ResAccountInfo.UserTeam next = originAccountInfo.getMemberships().iterator().next();
         int teamId = next.getTeamId();
 
-        repository.updateSelectedTeamInfo(teamId);
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
-        ResAccountInfo.UserTeam selectedTeamInfo = repository.getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
         assertThat(selectedTeamInfo.getTeamDomain(), is(equalTo(next.getTeamDomain())));
         assertThat(selectedTeamInfo.getTeamId(), is(equalTo(next.getTeamId())));
@@ -161,12 +165,12 @@ public class AccountRepositoryTest {
     @Test
     public void testUpsertUserEmail() throws Exception {
 
-        List<ResAccountInfo.UserEmail> accountEmails = repository.getAccountEmails();
+        List<ResAccountInfo.UserEmail> accountEmails = AccountRepository.getRepository().getAccountEmails();
         ResAccountInfo.UserEmail remove = accountEmails.remove(0);
 
-        repository.upsertUserEmail(accountEmails);
+        AccountRepository.getRepository().upsertUserEmail(accountEmails);
 
-        List<ResAccountInfo.UserEmail> newAccountEmails = repository.getAccountEmails();
+        List<ResAccountInfo.UserEmail> newAccountEmails = AccountRepository.getRepository().getAccountEmails();
 
         Observable.from(newAccountEmails)
                 .filter(userEmail -> userEmail.getId().equals(remove.getId()))

@@ -5,19 +5,21 @@ import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.BaseInitUtil;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.shadows.httpclient.FakeHttp;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class StarredEntityApiClientTest {
 
 
@@ -28,10 +30,15 @@ public class StarredEntityApiClientTest {
 
         sideMenu = getSideMenu();
 
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        FakeHttp.getFakeHttpLayer().interceptHttpRequests(false);
 
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
+
+    }
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
 
     }
 

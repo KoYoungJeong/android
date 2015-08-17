@@ -6,15 +6,16 @@ import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.shadows.httpclient.FakeHttp;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class IntroLoginModelTest {
 
 
@@ -27,7 +28,7 @@ public class IntroLoginModelTest {
         introLoginModel = IntroLoginModel_.getInstance_(introMainActivity);
 
         // Real Connect Dev Server
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        FakeHttp.getFakeHttpLayer().interceptHttpRequests(false);
 
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
