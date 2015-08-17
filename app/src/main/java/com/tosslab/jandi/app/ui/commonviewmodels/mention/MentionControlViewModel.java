@@ -80,7 +80,6 @@ public class MentionControlViewModel {
                                    List<Integer> roomIds,
                                    String mentionType) {
 
-        this.mentionType = mentionType;
         if (mentionType.equals(MENTION_TYPE_MESSAGE)) {
             this.messageListView = (RecyclerView) listView;
         } else if (mentionType.equals(MENTION_TYPE_FILE_COMMENT)) {
