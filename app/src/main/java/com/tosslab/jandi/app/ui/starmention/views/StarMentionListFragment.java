@@ -91,7 +91,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     }
 
     void loadStarMentionList() {
-        starMentionListPresentor.addMentionMessagesToList(listType);
+        starMentionListPresentor.addStarMentionMessagesToList(listType);
     }
 
     private void notifyViewStatus() {
@@ -170,18 +170,9 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     }
 
     public void onEvent(RefreshOldStarMentionedEvent event) {
-
-        if (event.getType().equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)
-                && listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
-            loadStarMentionList();
-        } else if (event.getType().equals(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL)
-                && listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL)) {
-            loadStarMentionList();
-        } else if (event.getType().equals(StarMentionListActivity.TYPE_MENTION_LIST)
-                && listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL)) {
+        if (event.getType().equals(listType)) {
             loadStarMentionList();
         }
-
     }
 
     public void onEventMainThread(StarredInfoChangeEvent event) {

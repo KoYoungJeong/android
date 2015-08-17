@@ -67,7 +67,7 @@ public class SearchMemberModel {
 
     }
 
-    public void refreshSelectableMembers
+    public LinkedHashMap<Integer, SearchedItemVO> refreshSelectableMembers
             (List<Integer> topicIds, String mentionType) {
 
         if (topicIds == null || topicIds.size() == 0) {
@@ -117,6 +117,8 @@ public class SearchMemberModel {
                     .setType("room");
             selectableMembersLinkedHashMap.put(searchedItemForAll.getId(), searchedItemForAll);
         }
+
+        return selectableMembersLinkedHashMap;
 
     }
 

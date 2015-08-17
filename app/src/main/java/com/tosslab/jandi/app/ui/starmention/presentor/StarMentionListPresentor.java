@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.model.StarMentionListModel;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 
@@ -16,7 +15,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.RetrofitError;
@@ -31,29 +29,19 @@ public class StarMentionListPresentor {
     StarMentionListModel starMentionListModel;
     private View view;
 
-    public void addMentionMessagesToList(String listType) {
-        addMentionMessagesToList(listType, StarMentionListModel.DEFAULT_COUNT);
+    public void addStarMentionMessagesToList(String listType) {
+        addStarMentionMessagesToList(listType, StarMentionListModel.DEFAULT_COUNT);
     }
 
     @Background
-    public void addMentionMessagesToList(String listType, int requestCount) {
+    public void addStarMentionMessagesToList(String listType, int requestCount) {
         if (!starMentionListModel.isFirst()) {
             view.onShowMoreProgressBar();
         }
         try {
             List<StarMentionVO> starMentionList;
-            if (listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
-                starMentionList = starMentionListModel.
-                        getStarMentionedMessages(StarMentionListActivity.TYPE_MENTION_LIST, requestCount);
-            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL)) {
-                starMentionList = starMentionListModel.
-                        getStarMentionedMessages(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL, requestCount);
-            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
-                starMentionList = starMentionListModel.
-                        getStarMentionedMessages(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, requestCount);
-            } else {
-                starMentionList = new ArrayList<>();
-            }
+            starMentionList = starMentionListModel.
+                    getStarMentionedMessages(listType, requestCount);
             view.onAddAndShowList(starMentionList);
             if (starMentionListModel.hasMore()) {
                 view.onSetReadyMoreState();
@@ -122,14 +110,14 @@ public class StarMentionListPresentor {
         }
 
         starMentionListModel.refreshList();
-        addMentionMessagesToList(listType);
+        addStarMentionMessagesToList(listType);
 
     }
 
     @Background
     public void reloadStartList(String listType, int requestCount) {
         starMentionListModel.refreshList();
-        addMentionMessagesToList(listType, requestCount);
+        addStarMentionMessagesToList(listType, requestCount);
     }
 
     public void setView(View view) {

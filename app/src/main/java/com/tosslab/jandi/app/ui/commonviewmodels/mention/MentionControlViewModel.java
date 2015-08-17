@@ -294,7 +294,7 @@ public class MentionControlViewModel {
         }
 
         String removedText = beforeText;
-        removedText = removedText.replace(afterText.substring(0, currentSelection), "");
+        removedText = removedText.substring(currentSelection, removedText.length());
         removedText = removedText.replace(afterText.substring(currentSelection, afterText.length()), "");
 
         return removedText;
@@ -483,6 +483,9 @@ public class MentionControlViewModel {
             ClipboardManager.OnPrimaryClipChangedListener {
         public void onPrimaryClipChanged() {
 
+            if (editText == null)
+                return;
+
             // if U cut the string in the editText, editText already removed all string.
             String et = null;
             boolean isCut = false;
@@ -492,7 +495,6 @@ public class MentionControlViewModel {
             } else {
                 et = editText.getText().toString();
             }
-            Log.e("et", et);
             ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
                     .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
             CharSequence pasteData = "";
