@@ -13,13 +13,12 @@ import org.androidannotations.annotations.UiThread;
 /**
  * Created by tonyjs on 15. 7. 9..
  */
-@EBean
 public class AlertUtil {
 
     private static final int NONE_RES_ID = -1;
 
-    public void showCheckNetworkDialog(Activity activity,
-                                       DialogInterface.OnClickListener confirmListener) {
+    public static void showCheckNetworkDialog(Activity activity,
+                                              DialogInterface.OnClickListener confirmListener) {
         showDialog(activity,
                 NONE_RES_ID, R.string.err_network,
                 R.string.jandi_confirm, confirmListener,
@@ -28,9 +27,9 @@ public class AlertUtil {
                 false);
     }
 
-    public void showConfirmDialog(Activity activity, int messageResId,
-                                  DialogInterface.OnClickListener confirmListener,
-                                  boolean cancelable) {
+    public static void showConfirmDialog(Activity activity, int messageResId,
+                                         DialogInterface.OnClickListener confirmListener,
+                                         boolean cancelable) {
         showDialog(activity,
                 NONE_RES_ID, messageResId,
                 R.string.jandi_confirm, confirmListener,
@@ -39,9 +38,9 @@ public class AlertUtil {
                 cancelable);
     }
 
-    public void showConfirmDialog(Activity activity, int titleResId, int messageResId,
-                                  DialogInterface.OnClickListener confirmListener,
-                                  boolean cancelable) {
+    public static void showConfirmDialog(Activity activity, int titleResId, int messageResId,
+                                         DialogInterface.OnClickListener confirmListener,
+                                         boolean cancelable) {
         showDialog(activity,
                 titleResId, messageResId,
                 R.string.jandi_confirm, confirmListener,
@@ -50,13 +49,12 @@ public class AlertUtil {
                 cancelable);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    void showDialog(Activity activity,
-                            int titleResId, int messageResId,
-                            int positiveResId, DialogInterface.OnClickListener positiveListener,
-                            int neutralResId, DialogInterface.OnClickListener neutralListener,
-                            int negativeResId, DialogInterface.OnClickListener negativeListener,
-                            boolean cancelable) {
+    static void showDialog(Activity activity,
+                           int titleResId, int messageResId,
+                           int positiveResId, DialogInterface.OnClickListener positiveListener,
+                           int neutralResId, DialogInterface.OnClickListener neutralListener,
+                           int negativeResId, DialogInterface.OnClickListener negativeListener,
+                           boolean cancelable) {
         if (activity == null || activity.isFinishing()) {
             return;
         }

@@ -61,7 +61,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         if (NetworkCheckUtil.isConnected()) {
             getTeamInfo();
         } else {
-            view.showNetworCheckDialog();
+            view.showCheckNetworkDialog();
         }
 
     }

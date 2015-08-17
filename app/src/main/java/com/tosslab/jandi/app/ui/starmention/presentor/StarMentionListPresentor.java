@@ -145,6 +145,8 @@ public class StarMentionListPresentor {
         void onRemoveItem(int position);
 
         void showSuccessToast(String message);
+
+        void showCheckNetworkDialog();
     }
 
 }

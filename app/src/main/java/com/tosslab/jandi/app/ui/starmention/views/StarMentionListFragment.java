@@ -21,7 +21,7 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.adapter.StarMentionListAdapter;
 import com.tosslab.jandi.app.ui.starmention.presentor.StarMentionListPresentor;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
-import com.tosslab.jandi.app.utils.AlertUtil_;
+import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -70,8 +70,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     void initFragment() {
 
         if (!NetworkCheckUtil.isConnected()) {
-            AlertUtil_.getInstance_(getActivity())
-                    .showCheckNetworkDialog(getActivity(), (dialog, which) -> getActivity().finish());
+            showCheckNetworkDialog();
             return;
         }
 
@@ -235,6 +234,12 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     @Override
     public void showSuccessToast(String message) {
         ColoredToast.show(getActivity(), message);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showCheckNetworkDialog() {
+        AlertUtil.showCheckNetworkDialog(getActivity(), (dialog, which) -> getActivity().finish());
     }
 
 }

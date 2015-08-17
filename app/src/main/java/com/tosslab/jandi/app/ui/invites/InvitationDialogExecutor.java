@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
-import com.tosslab.jandi.app.utils.AlertUtil_;
+import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -46,8 +46,7 @@ public class InvitationDialogExecutor {
     public void execute() {
 
         if (!NetworkCheckUtil.isConnected()) {
-            AlertUtil_.getInstance_(activity)
-                    .showCheckNetworkDialog(activity, null);
+            showCheckNetworkDialog();
             return;
         }
 
@@ -123,6 +122,11 @@ public class InvitationDialogExecutor {
 
         if (progressWheel != null && !progressWheel.isShowing())
             progressWheel.show();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void showCheckNetworkDialog() {
+        AlertUtil.showCheckNetworkDialog(activity, null);
     }
 
     private String getOwnerName() {

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -132,6 +133,11 @@ public class TopicCreateView {
 
         activity.finish();
 
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showCheckNetworkDialog() {
+        AlertUtil.showCheckNetworkDialog(activity, null);
     }
 
     public void setTitleCount(int length) {

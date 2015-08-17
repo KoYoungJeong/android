@@ -15,7 +15,6 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.maintab.topic.create.model.TopicCreateModel;
-import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -97,8 +96,7 @@ public class TopicCreateActivity extends AppCompatActivity {
         String topicTitle = topicCreatePresenter.getTopicTitle();
 
         if (!NetworkCheckUtil.isConnected()) {
-            AlertUtil_.getInstance_(TopicCreateActivity.this)
-                    .showCheckNetworkDialog(TopicCreateActivity.this, null);
+            topicCreatePresenter.showCheckNetworkDialog();
             return;
         }
 

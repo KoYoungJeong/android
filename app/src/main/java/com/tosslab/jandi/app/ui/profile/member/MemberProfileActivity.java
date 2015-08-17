@@ -27,7 +27,6 @@ import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
-import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
@@ -67,9 +66,6 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
     @Bean(ProfileFileUploadViewModelImpl.class)
     FilePickerViewModel filePickerViewModel;
-
-    @Bean
-    AlertUtil alertUtil;
 
     @AfterViews
     void bindAdapter() {
@@ -257,7 +253,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
 
         if (!NetworkCheckUtil.isConnected()) {
-            alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
+            memberProfileView.showCheckNetworkDialog();
             return;
         }
 
@@ -325,7 +321,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     void uploadEmail(String email) {
 
         if (!NetworkCheckUtil.isConnected()) {
-            alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
+            memberProfileView.showCheckNetworkDialog();
             return;
         }
 
@@ -371,7 +367,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         }
 
         if (!NetworkCheckUtil.isConnected()) {
-            alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
+            memberProfileView.showCheckNetworkDialog();
             return;
         }
 

@@ -69,7 +69,7 @@ import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.AlertUtil_;
+import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -207,8 +207,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         if (NetworkCheckUtil.isConnected()) {
             fileDetailPresenter.getFileDetail(fileId, false, false, selectMessageId);
         } else if (!fileDetailPresenter.onLoadFromCache(fileId, selectMessageId)) {
-            AlertUtil_.getInstance_(FileDetailActivity.this)
-                    .showCheckNetworkDialog(FileDetailActivity.this, (dialog, which) -> finish());
+            showCheckNetworkDialog();
         }
 
 
@@ -390,6 +389,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         // XXX what mean Mention VM?
         fileDetailPresenter.refreshMentionVM(this, fileMessage, rvListSearchMembers, etComment, lvFileDetailComments);
+    }
+
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
+    public void showCheckNetworkDialog() {
+        AlertUtil.showCheckNetworkDialog(FileDetailActivity.this, (dialog, which) -> finish());
     }
 
     /**

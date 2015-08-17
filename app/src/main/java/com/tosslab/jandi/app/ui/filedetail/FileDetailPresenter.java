@@ -600,6 +600,8 @@ public class FileDetailPresenter {
 
         void loadSuccess(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages, boolean isSendAction, int selectMessageId);
 
+        void showCheckNetworkDialog();
+
         void showDeleteFileDialog(int fileId);
 
         void showUserInfoDialog(FormattedEntity user);

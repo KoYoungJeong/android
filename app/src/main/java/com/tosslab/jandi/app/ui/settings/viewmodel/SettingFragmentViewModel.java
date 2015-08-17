@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
+import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -76,5 +77,10 @@ public class SettingFragmentViewModel {
         IntroActivity_.intent(context)
                 .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .start();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showCheckNetworkDialog(Activity activity) {
+        AlertUtil.showCheckNetworkDialog(activity, null);
     }
 }

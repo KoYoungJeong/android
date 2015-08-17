@@ -1,6 +1,4 @@
-package com.tosslab.jandi.app.ui.settings;/**
- * Created by justinygchoi on 2014. 7. 18..
- */
+package com.tosslab.jandi.app.ui.settings;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -53,9 +51,6 @@ public class SettingsFragment extends PreferenceFragment {
 
     @Bean
     SettingFragmentViewModel settingFragmentViewModel;
-
-    @Bean
-    AlertUtil alertUtil;
 
     @AfterViews
     void init() {
@@ -126,7 +121,7 @@ public class SettingsFragment extends PreferenceFragment {
             if (NetworkCheckUtil.isConnected()) {
                 settingFragmentViewModel.showSignoutDialog(getActivity());
             } else {
-                alertUtil.showCheckNetworkDialog(getActivity(), null);
+                settingFragmentViewModel.showCheckNetworkDialog(getActivity());
             }
 
         }
@@ -139,7 +134,7 @@ public class SettingsFragment extends PreferenceFragment {
             trackSignOut();
             startSignOut();
         } else {
-            alertUtil.showCheckNetworkDialog(getActivity(), null);
+            settingFragmentViewModel.showCheckNetworkDialog(getActivity());
         }
     }
 
