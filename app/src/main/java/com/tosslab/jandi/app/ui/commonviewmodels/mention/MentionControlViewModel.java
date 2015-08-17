@@ -42,14 +42,14 @@ public class MentionControlViewModel {
     public static final String MENTION_TYPE_MESSAGE = "mention_type_message";
     public static final String MENTION_TYPE_FILE_COMMENT = "mention_type_file_comment";
 
-    private RecyclerView searchMemberListView;
-    private EditText editText;
+    private RecyclerView lvSearchMember;
+    private EditText etMessage;
 
     // for Message List View
-    private RecyclerView messageListView;
+    private RecyclerView lvMessage;
 
     // for File comment List View
-    private ListView fileCommentListView;
+    private ListView lvFileComment;
     private KeyboardHeightModel keyboardHeightModel;
     private SearchMemberModel searchMemberModel;
 
@@ -77,40 +77,40 @@ public class MentionControlViewModel {
 
     public MentionControlViewModel(Activity activity,
                                    EditText editText,
-                                   RecyclerView searchMemberListView, View listView,
+                                   RecyclerView lvSearchMember, View lvMessage,
                                    List<Integer> roomIds,
                                    String mentionType) {
 
         this.mentionType = mentionType;
         if (mentionType.equals(MENTION_TYPE_MESSAGE)) {
-            this.messageListView = (RecyclerView) listView;
+            this.lvMessage = (RecyclerView) lvMessage;
         } else if (mentionType.equals(MENTION_TYPE_FILE_COMMENT)) {
-            this.fileCommentListView = (ListView) listView;
+            this.lvFileComment = (ListView) lvMessage;
         }
 
-        init(activity, searchMemberListView, editText, roomIds);
+        init(activity, lvSearchMember, editText, roomIds);
 
     }
 
     public static MentionControlViewModel newInstance(Activity activity,
                                                       EditText editText,
-                                                      RecyclerView searchMemberListView, View listView,
+                                                      RecyclerView lvSearchMember, View lvMessage,
                                                       List<Integer> roomIds,
                                                       String mentionType) {
         return new MentionControlViewModel(activity,
                 editText,
-                searchMemberListView, listView,
+                lvSearchMember, lvMessage,
                 roomIds,
                 mentionType);
     }
 
     private void init(Activity activity,
-                      RecyclerView searchMemberListView,
+                      RecyclerView lvSearchMember,
                       EditText editText,
                       List<Integer> roomIds) {
 
-        this.searchMemberListView = searchMemberListView;
-        this.editText = editText;
+        this.lvSearchMember = lvSearchMember;
+        this.etMessage = editText;
         this.roomIds = roomIds;
 
         addTextWatcher(editText);
@@ -123,8 +123,8 @@ public class MentionControlViewModel {
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity,
                 LinearLayoutManager.VERTICAL, false);
         layoutManager.setStackFromEnd(true);
-        searchMemberListView.setLayoutManager(layoutManager);
-        searchMemberListView.setAdapter(new MentionMemberListAdapter(
+        lvSearchMember.setLayoutManager(layoutManager);
+        lvSearchMember.setAdapter(new MentionMemberListAdapter(
                 searchMemberModel.getUserSearchByName("", null)));
 
         if (keyboardHeightModel.getOnKeyboardShowListener() == null) {
@@ -192,14 +192,14 @@ public class MentionControlViewModel {
                     afterText.substring(0, tv.getSelectionStart()));
             if (tempString != null) {
 
-                editText.removeTextChangedListener(textWatcher);
+                etMessage.removeTextChangedListener(textWatcher);
                 int starIndex = tv.getSelectionStart() - tempString.length();
                 int endIndex = tv.getSelectionStart();
-                editText.setText(s.delete(starIndex, endIndex));
+                etMessage.setText(s.delete(starIndex, endIndex));
                 tempString += "\u2063";
                 removedText = tempString;
-                editText.addTextChangedListener(textWatcher);
-                editText.setSelection(starIndex);
+                etMessage.addTextChangedListener(textWatcher);
+                etMessage.setSelection(starIndex);
 
             } else {
 
@@ -263,7 +263,7 @@ public class MentionControlViewModel {
     // 실제 화면에 멘션 가능한 사람들을 보여주는 메서드
     private void showSearchMembersInfo(String searchString) {
         MentionMemberListAdapter mentionMemberListAdapter =
-                (MentionMemberListAdapter) searchMemberListView.getAdapter();
+                (MentionMemberListAdapter) lvSearchMember.getAdapter();
         mentionMemberListAdapter.setSearchedMembersList(
                 searchMemberModel.getUserSearchByName(searchString, selectedMemberHashMap));
     }
@@ -271,7 +271,7 @@ public class MentionControlViewModel {
     // 검색 대상 리스트를 모두 삭제하는 메서드
     private void removeAllMemberList() {
         MentionMemberListAdapter mentionMemberListAdapter =
-                (MentionMemberListAdapter) searchMemberListView.getAdapter();
+                (MentionMemberListAdapter) lvSearchMember.getAdapter();
         mentionMemberListAdapter.clearMembersList();
     }
 
@@ -279,18 +279,18 @@ public class MentionControlViewModel {
     private void showListView(boolean isShow) {
 
         if (isShow) {
-            searchMemberListView.setVisibility(View.VISIBLE);
-            if (messageListView != null) {
-                messageListView.setVisibility(View.INVISIBLE);
-            } else if (fileCommentListView != null) {
-                fileCommentListView.setVisibility(View.INVISIBLE);
+            lvSearchMember.setVisibility(View.VISIBLE);
+            if (lvMessage != null) {
+                lvMessage.setVisibility(View.INVISIBLE);
+            } else if (lvFileComment != null) {
+                lvFileComment.setVisibility(View.INVISIBLE);
             }
         } else {
-            searchMemberListView.setVisibility(View.INVISIBLE);
-            if (messageListView != null) {
-                messageListView.setVisibility(View.VISIBLE);
-            } else if (fileCommentListView != null) {
-                fileCommentListView.setVisibility(View.VISIBLE);
+            lvSearchMember.setVisibility(View.INVISIBLE);
+            if (lvMessage != null) {
+                lvMessage.setVisibility(View.VISIBLE);
+            } else if (lvFileComment != null) {
+                lvFileComment.setVisibility(View.VISIBLE);
             }
         }
 
@@ -302,11 +302,11 @@ public class MentionControlViewModel {
 
     public List<SearchedItemVO> getMembersListByAdapter() {
         MentionMemberListAdapter mentionMemberListAdapter =
-                (MentionMemberListAdapter) searchMemberListView.getAdapter();
+                (MentionMemberListAdapter) lvSearchMember.getAdapter();
         return mentionMemberListAdapter.getSearchedMembersList();
     }
 
-    // edit텍스트로 부터 삭제된 텍스트를 얻어오는 메서드
+    // editText로 부터 삭제된 스트링을 얻어오는 메서드
     private String returnRemoveText(String beforeText, String afterText, int currentSelection) {
         if (beforeTextCnt <= afterTextCnt) {
             return null;
@@ -319,7 +319,7 @@ public class MentionControlViewModel {
         return removedText;
     }
 
-    // 멘션된 멤버를 Collection에 저장하는 메서드
+    // 멘션된 멤버를 리스트에 저장하는 메서드
     private void restoreSelectedMentionMemberInfo(String rawMemberText) {
         if (rawMemberText != null) {
             String id = "";
@@ -333,7 +333,7 @@ public class MentionControlViewModel {
         }
     }
 
-    // 멘션된 멤버를 메모리에서 제거하는 메서드
+    // 멘션된 멤버를 리스트에서 제거하는 메서드
     private void removeSelectedMentionMemberInfo(String rawMemberText) {
         if (rawMemberText != null) {
             String id = "";
@@ -351,23 +351,23 @@ public class MentionControlViewModel {
         return searchMemberModel.getAllSelectableMembers();
     }
 
-    // 토픽 또는 파일의 정보 갱신으로 새로운 멘션가능한 멤버들을 얻어오는 메서드
+    // 토픽 또는 파일의 정보 갱신으로 갱신된 멘션가능한 멤버들을 얻어오는 메서드
     public void refreshSelectableMembers(List<Integer> roomIds) {
         searchMemberModel.refreshSelectableMembers(roomIds, mentionType);
     }
 
-    // 멘션된 멤버들을 editText 뷰 단에서 하일라이트 처리하는 로직
+    // 멘션된 멤버들을 etMessage 뷰 단에서 하일라이트 처리하는 로직
     public void mentionedMemberHighlightInEditText(SearchedItemVO searchedItemVO) {
 
-        int selectionIndex = editText.getSelectionStart();
+        int selectionIndex = etMessage.getSelectionStart();
         int startIndex = selectionIndex - currentSearchKeywordString.length();
 
-        SpannableStringBuilder ssb = new SpannableStringBuilder(editText.getEditableText());
+        SpannableStringBuilder ssb = new SpannableStringBuilder(etMessage.getEditableText());
 
         MentionMessageSpannable spannable = new MentionMessageSpannable(
-                editText.getContext(),
+                etMessage.getContext(),
                 searchedItemVO.getName(),
-                editText.getContext().getResources()
+                etMessage.getContext().getResources()
                         .getDimensionPixelSize(R.dimen.jandi_mention_edit_text_item_font_size),
                 0xFFfefefe,
                 0xFF01a4e7
@@ -388,8 +388,8 @@ public class MentionControlViewModel {
         ssb.setSpan(spannable, startIndex - 1, startIndex + convertedTextBuilder.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        editText.setText(ssb, TextView.BufferType.SPANNABLE);
-        editText.setSelection(startIndex + convertedTextBuilder.length());
+        etMessage.setText(ssb, TextView.BufferType.SPANNABLE);
+        etMessage.setSelection(startIndex + convertedTextBuilder.length());
 
     }
 
@@ -454,7 +454,7 @@ public class MentionControlViewModel {
     }
 
     public ResultMentionsVO getMentionInfoObject() {
-        return getMentionInfoObject(editText.getText().toString().trim(),
+        return getMentionInfoObject(etMessage.getText().toString().trim(),
                 selectedMemberHashMap, getAllSelectableMembers());
     }
 
@@ -477,7 +477,7 @@ public class MentionControlViewModel {
     }
 
     public boolean isMentionListVisible() {
-        return searchMemberListView.getVisibility() == View.VISIBLE;
+        return lvSearchMember.getVisibility() == View.VISIBLE;
     }
 
     public void dismissMentionList() {
@@ -485,8 +485,8 @@ public class MentionControlViewModel {
     }
 
     public void setTextOnClip(String pasteData) {
-        ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
-                .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
+        ClipboardManager clipBoard = (ClipboardManager) etMessage.getContext()
+                .getSystemService(etMessage.getContext().CLIPBOARD_SERVICE);
         clipBoard.removePrimaryClipChangedListener(clipboardListener);
         android.content.ClipData clip =
                 android.content.ClipData.newPlainText("Copied Text", pasteData);
@@ -495,15 +495,15 @@ public class MentionControlViewModel {
     }
 
     public void removeClipboardListener() {
-        ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
-                .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
+        ClipboardManager clipBoard = (ClipboardManager) etMessage.getContext()
+                .getSystemService(etMessage.getContext().CLIPBOARD_SERVICE);
         clipBoard.removePrimaryClipChangedListener(clipboardListener);
     }
 
     public void registClipboardListener() {
         clipboardListener = new ClipboardListener();
-        ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
-                .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
+        ClipboardManager clipBoard = (ClipboardManager) etMessage.getContext()
+                .getSystemService(etMessage.getContext().CLIPBOARD_SERVICE);
         clipBoard.addPrimaryClipChangedListener(clipboardListener);
     }
 
@@ -517,20 +517,20 @@ public class MentionControlViewModel {
             ClipboardManager.OnPrimaryClipChangedListener {
         public void onPrimaryClipChanged() {
 
-            if (editText == null)
+            if (etMessage == null)
                 return;
 
-            // if U cut the string in the editText, editText already removed all string.
+            // if U cut the string in the etMessage, etMessage already removed all string.
             String et = null;
             boolean isCut = false;
             if (afterText.length() == 0 && beforeText.length() > 0) {
                 et = beforeText;
                 isCut = true;
             } else {
-                et = editText.getText().toString();
+                et = etMessage.getText().toString();
             }
-            ClipboardManager clipBoard = (ClipboardManager) editText.getContext()
-                    .getSystemService(editText.getContext().CLIPBOARD_SERVICE);
+            ClipboardManager clipBoard = (ClipboardManager) etMessage.getContext()
+                    .getSystemService(etMessage.getContext().CLIPBOARD_SERVICE);
             CharSequence pasteData = "";
             ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
             pasteData = item.getText();
