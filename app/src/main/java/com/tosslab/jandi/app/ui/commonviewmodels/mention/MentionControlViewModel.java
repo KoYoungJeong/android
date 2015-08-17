@@ -71,6 +71,7 @@ public class MentionControlViewModel {
     private TextWatcher textWatcher;
     private OnMentionViewShowingListener onMentionViewShowingListener;
 
+    // 멘션 선택된 멤버 리스트의 사본
     // 클립 보드에서 CUT(잘라내기) 시 해당 정보를 한꺼번에 잃기 때문에 사본을 저장할 필요성 있음.
     private LinkedHashMap<Integer, SearchedItemVO> cloneSelectedMemberHashMap;
 
@@ -80,6 +81,7 @@ public class MentionControlViewModel {
                                    List<Integer> roomIds,
                                    String mentionType) {
 
+        this.mentionType = mentionType;
         if (mentionType.equals(MENTION_TYPE_MESSAGE)) {
             this.messageListView = (RecyclerView) listView;
         } else if (mentionType.equals(MENTION_TYPE_FILE_COMMENT)) {
