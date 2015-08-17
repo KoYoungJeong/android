@@ -479,5 +479,7 @@
     <string name="jandi_topic_notification">"允许议题推播通知"</string>
     <string name="jandi_you_cannot_delete_default_message">"无法离开或删除默认议题"</string>
     <string name="jandi_this_is_disabled_user_explain">"此成员权限已被暂时关闭。 欲知更多细节，请联络团队管理员。"</string>
+    <string name="jandi_who_of_file">"共享文件"</string>
+    <string name="jandi_shared">"分享过"</string>
 
 </resources>

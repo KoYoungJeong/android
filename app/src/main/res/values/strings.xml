@@ -479,4 +479,7 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_profile_picture">"Profile Picture"</string>
     <string name="jandi_you_cannot_delete_default_message">You cannot delete or leave the default topic</string>
     <string name="jandi_this_is_disabled_user_explain">"This member has been temporarily disabled. Please contact the team administrator for more information."</string>
+    <string name="jandi_who_of_file">"\'s file"</string>
+    <string name="jandi_shared">"Shared"</string>
+    <string name="jandi_commented_on">Commented on</string>
 </resources>

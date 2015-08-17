@@ -109,8 +109,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
             fileImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             if (TextUtils.equals(link.feedback.status, "archived")) {
-                fileOwnerTextView.setVisibility(View.INVISIBLE);
-                fileOwnerPostfixTextView.setVisibility(View.INVISIBLE);
+                fileOwnerTextView.setVisibility(View.GONE);
+                fileOwnerPostfixTextView.setVisibility(View.GONE);
 
                 fileNameTextView.setText(R.string.jandi_deleted_file);
                 fileImageView.setBackgroundDrawable(null);

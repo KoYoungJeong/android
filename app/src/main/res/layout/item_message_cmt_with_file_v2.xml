@@ -98,7 +98,7 @@
                         android:id="@+id/txt_message_commented_prefix"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Commented on "
+                        android:text="@string/jandi_commented_on"
                         android:textColor="@color/jandi_text_light"
                         android:textSize="@dimen/jandi_messages_comment"/>
 
@@ -117,7 +117,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@id/txt_message_commented_owner"
-                        android:text="'s file"
+                        android:text="@string/jandi_who_of_file"
                         android:textColor="@color/jandi_text_light"
                         android:textSize="@dimen/jandi_messages_comment"/>
                 </LinearLayout>
