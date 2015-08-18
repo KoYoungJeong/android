@@ -5,6 +5,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.widget.PopupWindowCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,17 +14,15 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.utils.BitmapUtil;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
-
-import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,15 +30,18 @@ import java.util.List;
 
 import rx.Observable;
 
-@EBean
 public class RoomSelectorImpl implements RoomSelector {
 
 
     private OnRoomSelectListener onRoomSelectListener;
     private PopupWindow popupWindow;
+    private OnRoomDismissListener onRoomDismissListener;
 
     @Override
     public void show(View roomView) {
+
+        dismiss();
+
         Context context = roomView.getContext();
         View rootView = LayoutInflater.from(context).inflate(R.layout.layout_room_selector, null);
 
@@ -91,6 +93,15 @@ public class RoomSelectorImpl implements RoomSelector {
         });
 
         popupWindow.setAnimationStyle(R.style.PopupAnimation);
+        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                if (onRoomDismissListener != null) {
+                    onRoomDismissListener.onRoomDismiss();
+                }
+            }
+        });
+
         topicView.performClick();
 
         PopupWindowCompat.showAsDropDown(popupWindow, roomView, 0, 0, Gravity.TOP | Gravity.START);
@@ -114,6 +125,8 @@ public class RoomSelectorImpl implements RoomSelector {
         return Observable.merge(
                 Observable.from(EntityManager.getInstance(JandiApplication.getContext()).getFormattedUsersWithoutMe()),
                 Observable.from(Arrays.asList(new FormattedEntity(FormattedEntity.TYPE_EVERYWHERE))))
+                .filter(formattedEntity -> formattedEntity.type == FormattedEntity.TYPE_EVERYWHERE
+                        || TextUtils.equals(formattedEntity.getUser().status, "enabled"))
                 .toSortedList((lhs, rhs) -> {
                     if (lhs.type == FormattedEntity.TYPE_EVERYWHERE) {
                         return -1;
@@ -154,6 +167,11 @@ public class RoomSelectorImpl implements RoomSelector {
         this.onRoomSelectListener = onRoomSelectListener;
     }
 
+    @Override
+    public void setOnRoomDismissListener(OnRoomDismissListener onRoomDismissListener) {
+        this.onRoomDismissListener = onRoomDismissListener;
+    }
+
     private static class RoomRecyclerAdapter extends RecyclerView.Adapter<RoomViewHolder> {
 
         private final Context context;
@@ -184,22 +202,35 @@ public class RoomSelectorImpl implements RoomSelector {
 
             FormattedEntity item = getItem(position);
 
-            holder.tvName.setText(item.getName());
-            if (item.isUser()) {
-
-                Glide.with(JandiApplication.getContext())
-                        .load(BitmapUtil.getFileUrl(item.getUserSmallProfileUrl()))
+            if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
+                holder.ivIcon.setImageResource(R.drawable.icon_search_all);
+                holder.tvName.setText(R.string.jandi_file_category_everywhere);
+            } else if (item.isUser()) {
+                Ion.with(holder.ivIcon)
+                        .placeholder(R.drawable.jandi_profile_comment)
+                        .error(R.drawable.jandi_profile_comment)
                         .fitCenter()
-                        .crossFade()
-                        .transform(new GlideCircleTransform(holder.ivIcon.getContext()))
-                        .into(holder.ivIcon);
+                        .transform(new IonCircleTransform())
+                        .crossfade(true)
+                        .load(BitmapUtil.getFileUrl(item.getUserSmallProfileUrl()));
 
-                holder.ivIcon.setImageResource(R.drawable.jandi_icon_user);
+                holder.tvName.setText(item.getName());
             } else if (item.isPublicTopic()) {
-                holder.ivIcon.setImageResource(R.drawable.icon_topic);
+                if (item.isStarred) {
+                    holder.ivIcon.setImageResource(R.drawable.icon_topic_f);
+                } else {
+                    holder.ivIcon.setImageResource(R.drawable.icon_topic);
+                }
+                holder.tvName.setText(item.getName());
             } else {
-                holder.ivIcon.setImageResource(R.drawable.icon_topic_private);
+                if (item.isStarred) {
+                    holder.ivIcon.setImageResource(R.drawable.icon_topic_private_f);
+                } else {
+                    holder.ivIcon.setImageResource(R.drawable.icon_topic_private);
+                }
+                holder.tvName.setText(item.getName());
             }
+
 
             holder.itemView.setOnClickListener(v -> {
                 if (onRecyclerItemClickListener != null) {

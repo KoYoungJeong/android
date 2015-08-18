@@ -12,8 +12,14 @@ public interface RoomSelector {
 
     void setOnRoomSelectListener(OnRoomSelectListener onRoomSelectListener);
 
+    void setOnRoomDismissListener(OnRoomDismissListener onRoomDismissListener);
+
     interface OnRoomSelectListener {
         void onRoomSelect(FormattedEntity item);
+    }
+
+    interface OnRoomDismissListener {
+        void onRoomDismiss();
     }
 
 }

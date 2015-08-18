@@ -41,7 +41,7 @@ public class RoomSelectorImplTest {
         ResLeftSideMenu leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
 
-        selectorImpl = RoomSelectorImpl_.getInstance_(RuntimeEnvironment.application);
+        selectorImpl = new RoomSelectorImpl();
     }
 
     @After
