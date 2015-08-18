@@ -38,6 +38,7 @@
     <color name="jandi_intro_edittext_bg">#e5e5e5</color>
     <color name="jandi_text_topic_detail_content">#FF6E6E6E</color>
 
+    <color name="jandi_border_gray_light">#939393</color>
     <color name="jandi_text_hint">#FFBDBDBD</color>
 
     <!-- Actionbar menu -->
@@ -216,4 +217,7 @@
     <color name="jandi_star_mention_item_topic_name_text">#02a6eb</color>
     <color name="jandi_star_mention_item_date_text">#999999</color>
     <color name="jandi__star_mention_item_divider">#DDDDDD</color>
+
+    <color name="jandi_deleted_file_image_background">#FFE9E9E9</color>
+
 </resources>

@@ -482,4 +482,5 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_who_of_file">"\'s file"</string>
     <string name="jandi_shared">"Shared"</string>
     <string name="jandi_commented_on">Commented on</string>
+    <string name="jandi_file_deleted_with_date">"%s, file was deleted."</string>
 </resources>

@@ -57,6 +57,8 @@ public class FileHeadManager {
     private ImageView iconFileType;
     private LinearLayout fileInfoLayout;
     private int roomId;
+    private View vgDeleted;
+    private TextView tvDeletedDate;
 
     public View getHeaderView() {
         View header = LayoutInflater.from(activity).inflate(R.layout.activity_file_detail_header, null, false);
@@ -71,6 +73,9 @@ public class FileHeadManager {
         disableLineThroughView = header.findViewById(R.id.img_entity_listitem_line_through);
         disableCoverView = header.findViewById(R.id.view_entity_listitem_warning);
         btnFileDetailStarred = (ImageView) header.findViewById(R.id.bt_file_detail_starred);
+
+        vgDeleted = header.findViewById(R.id.vg_file_detail_deleted);
+        tvDeletedDate = ((TextView) header.findViewById(R.id.tv_file_detail_deleted_date));
         return header;
     }
 
@@ -172,9 +177,16 @@ public class FileHeadManager {
 
             imageViewPhotoFile.setImageResource(R.drawable.jandi_fl_icon_deleted);
             imageViewPhotoFile.setOnClickListener(null);
+            imageViewPhotoFile.setVisibility(View.GONE);
             fileInfoLayout.setVisibility(View.GONE);
 
+            vgDeleted.setVisibility(View.VISIBLE);
+            String timeString = DateTransformator.getTimeString(fileMessage.updateTime, DateTransformator.FORMAT_YYYYMMDD_HHMM_A);
+            String deletedDate = tvDeletedDate.getResources().getString(R.string.jandi_file_deleted_with_date, timeString);
+            tvDeletedDate.setText(deletedDate);
+
         } else {
+            vgDeleted.setVisibility(View.GONE);
 
             ActionBar actionBar = activity.getSupportActionBar();
             if (actionBar != null) {
