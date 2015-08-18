@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -37,7 +36,6 @@ import com.tosslab.jandi.app.ui.selector.user.UserSelectorImpl;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -85,10 +83,6 @@ public class FileListPresenter {
     String mCurrentEntityCategorizingAccodingBy = null;
     private String mCurrentUserNameCategorizingAccodingBy = null;
     private String mCurrentFileTypeCategorizingAccodingBy = null;
-    private AlertDialog mFileTypeSelectDialog;
-    private AlertDialog mUserSelectDialog;  // 사용자별 검색시 사용할 리스트 다이얼로그
-    private AlertDialog mEntitySelectDialog;
-    private EntityManager entityManager;
 
     public void setEntityIdForCategorizing(int entityIdForCategorizing) {
         this.entityIdForCategorizing = entityIdForCategorizing;
@@ -96,11 +90,6 @@ public class FileListPresenter {
 
     public void setCurrentEntityCategorizingAccodingBy(String mCurrentEntityCategorizingAccodingBy) {
         this.mCurrentEntityCategorizingAccodingBy = mCurrentEntityCategorizingAccodingBy;
-    }
-
-    @AfterInject
-    void initObject() {
-        entityManager = EntityManager.getInstance(context);
     }
 
     @AfterViews
