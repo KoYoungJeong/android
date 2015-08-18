@@ -20,7 +20,6 @@ import com.tosslab.jandi.app.utils.UserAgentUtil;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.apache.http.client.methods.HttpPut;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -62,7 +61,7 @@ public class MemberProfileModel {
                 = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/members/" + entityManager.getMe().getId() + "/profile/photo";
 
         return Ion.with(context)
-                .load(HttpPut.METHOD_NAME, requestURL)
+                .load("PUT", requestURL)
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))

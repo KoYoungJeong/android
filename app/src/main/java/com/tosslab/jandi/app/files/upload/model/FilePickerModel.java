@@ -36,7 +36,6 @@ import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
-import org.apache.http.client.methods.HttpPut;
 import org.json.JSONException;
 
 import java.io.File;
@@ -282,7 +281,7 @@ public class FilePickerModel {
                 = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/members/" + entityManager.getMe().getId() + "/profile/photo";
 
         return Ion.with(context)
-                .load(HttpPut.METHOD_NAME, requestURL)
+                .load("PUT", requestURL)
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
