@@ -218,7 +218,7 @@ public class MessageListPresenter {
             setGotoLatestLayoutVisible();
         }
 
-        setEditTextKeyListener();
+//        setEditTextKeyListener();
 
     }
 
