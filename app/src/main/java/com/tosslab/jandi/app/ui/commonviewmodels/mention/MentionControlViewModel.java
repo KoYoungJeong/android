@@ -10,6 +10,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -50,6 +51,7 @@ public class MentionControlViewModel {
 
     // for File comment List View
     private ListView lvFileComment;
+
     private KeyboardHeightModel keyboardHeightModel;
     private SearchMemberModel searchMemberModel;
 
@@ -372,6 +374,11 @@ public class MentionControlViewModel {
                 0xFFfefefe,
                 0xFF01a4e7
         );
+
+        float maginDp = 50;
+        float marginPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                maginDp, etMessage.getContext().getResources().getDisplayMetrics());
+        spannable.setViewMaxWidthSize(etMessage.getWidth() - (int) marginPx);
 
         StringBuilder convertedTextBuilder = new StringBuilder();
 

@@ -7,10 +7,13 @@ import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 4..
@@ -75,6 +78,12 @@ public class DummyPureViewHolder implements BodyViewHolder {
                 messageTextView.setTextColor(textColor);
                 break;
         }
+
+
+        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                messageTextView, builder, ((DummyMessageLink) link).getMentions(),
+                EntityManager.getInstance(JandiApplication.getContext()).getMe().getId());
+        builder = generateMentionMessageUtil.generate();
 
         messageTextView.setText(builder);
 

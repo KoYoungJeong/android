@@ -13,6 +13,7 @@ public class DummyMessageLink extends ResMessages.Link {
 
     private final long localId;
     private String status;
+    private List<MentionObject> mentions;
 
     public DummyMessageLink(long localId, String message, String status, List<MentionObject> mentions) {
         this.localId = localId;
@@ -27,6 +28,7 @@ public class DummyMessageLink extends ResMessages.Link {
         this.time = new Date(System.currentTimeMillis());
         this.message = textMessage;
         this.status = status;
+        this.mentions = mentions;
     }
 
     public long getLocalId() {
@@ -49,5 +51,7 @@ public class DummyMessageLink extends ResMessages.Link {
         this.status = status;
     }
 
-
+    public List<MentionObject> getMentions() {
+        return mentions;
+    }
 }
