@@ -42,8 +42,14 @@ public class GenerateMentionMessageUtil {
         boolean hasMention = false;
         MentionMessageSpannable spannable = null;
         for (MentionObject mention : mentions) {
-            String name = stringBuilder.subSequence(mention.getOffset() + 1,
-                    mention.getLength() + mention.getOffset()).toString();
+            String name = null;
+            try {
+                name = stringBuilder.subSequence(mention.getOffset() + 1,
+                        mention.getLength() + mention.getOffset()).toString();
+            } catch (Exception e) {
+                e.printStackTrace();
+                continue;
+            }
             if (mention.getId() == myId) {
                 spannable = new ClickableMensionMessageSpannable(context,
                         name, mention.getId(), pxSize, meTextColor, meBackgroundColor);
