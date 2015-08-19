@@ -206,6 +206,8 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
             } else {
                 textViewBadgeCount.setVisibility(View.INVISIBLE);
                 ivInfo.setVisibility(View.VISIBLE);
+
+                vPushOff.setVisibility(View.GONE);
             }
 
             if (topic.isPublic()) {
