@@ -1,26 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/layout_search_bar"
-        android:layout_width="match_parent"
         style="@style/Jandi.Default.ActionBar"
-        android:visibility="visible" />
+        android:layout_width="match_parent"
+        android:visibility="visible"/>
 
 
     <com.tosslab.jandi.app.utils.PagerSlidingTabStrip
         android:id="@+id/sliding_tabs"
         style="@style/PagerSlidingTabStrip"
         android:layout_width="match_parent"
-        android:layout_height="56dp" />
+        android:layout_height="56dp"
+        android:layout_below="@+id/layout_search_bar"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager_main_tab"
         android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="1" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:layout_below="@+id/sliding_tabs"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sliding_tabs">
+
+        <LinearLayout
+            android:id="@+id/vg_main_offline"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/jandi_network_disconnect_height"
+            android:background="@color/jandi_black_89"
+            android:gravity="center_vertical"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Could not connect to network"
+                android:textColor="@color/white"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:src="@drawable/bar_icon_close"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
