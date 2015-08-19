@@ -41,7 +41,7 @@ public class MembersModel {
 
                             ChatChooseItem chatChooseItem = new ChatChooseItem();
                             return chatChooseItem.entityId(entity.getId())
-                                    .email(entity.getUserEmail())
+                                    .email(entity.getUserStatusMessage())
                                     .photoUrl(entity.getUserLargeProfileUrl())
                                     .starred(entity.isStarred)
                                     .enabled(TextUtils.equals(entity.getUser().status, "enabled"))
@@ -89,7 +89,7 @@ public class MembersModel {
                 .map(entity -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
                     return chatChooseItem.entityId(entity.getId())
-                            .email(entity.getUserEmail())
+                            .email(entity.getUserStatusMessage())
                             .photoUrl(entity.getUserLargeProfileUrl())
                             .starred(entity.isStarred)
                             .enabled(TextUtils.equals(entity.getUser().status, "enabled"))

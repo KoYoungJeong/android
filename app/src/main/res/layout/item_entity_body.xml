@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/jandi_entity_item_title_margin_left"
-    android:orientation="horizontal">
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/jandi_entity_item_title_margin_left"
+                android:orientation="horizontal">
 
 
     <ImageView
@@ -11,104 +11,80 @@
         android:layout_height="@dimen/jandi_entity_item_icon"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:src="@drawable/jandi_topic_icon" />
+        android:layout_marginRight="17dp"
+        android:src="@drawable/jandi_topic_icon"/>
 
     <ImageView
         android:id="@+id/img_entity_listitem_fav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/img_entity_listitem_icon"
-        android:layout_alignTop="@+id/img_entity_listitem_icon"
-        android:layout_marginLeft="-3dp"
-        android:layout_marginTop="-1dp"
-        android:src="@drawable/jandi_icon_fav" />
+        android:layout_alignBottom="@+id/img_entity_listitem_icon"
+        android:layout_alignRight="@+id/img_entity_listitem_icon"
+        android:layout_marginBottom="-2dp"
+        android:layout_marginRight="-2dp"
+        android:src="@drawable/icon_team_member_star"/>
 
-
-    <TextView
-        android:id="@+id/txt_entity_listitem_user_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/vg_entity_listitem_name"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@+id/vg_entity_listitem_name"
-        android:layout_marginRight="16dp"
-        android:layout_toLeftOf="@+id/txt_entity_listitem_badge"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:text="0 users"
-        android:textColor="#666666"
-        android:textSize="@dimen/jandi_entity_item_subtitle_font" />
-
-    <RelativeLayout
-        android:id="@+id/vg_entity_listitem_name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/img_entity_listitem_icon"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_marginBottom="@dimen/jandi_entity_item_title_margin_bottom"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="-6dp"
-        android:layout_toLeftOf="@+id/txt_entity_listitem_badge"
-        android:layout_toRightOf="@+id/img_entity_listitem_icon">
+        android:layout_centerVertical="true"
+        android:layout_marginRight="56dp"
+        android:layout_toRightOf="@+id/img_entity_listitem_icon"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/vg_entity_listitem_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/txt_entity_listitem_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="Topic Name"
+                android:textColor="@color/jandi_text"
+                android:textSize="@dimen/jandi_text_size_large"
+                android:textStyle="bold"/>
+
+            <ImageView
+                android:id="@+id/img_entity_listitem_line_through"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/txt_entity_listitem_name"
+                android:layout_alignLeft="@+id/txt_entity_listitem_name"
+                android:layout_alignRight="@+id/txt_entity_listitem_name"
+                android:layout_alignTop="@+id/txt_entity_listitem_name"
+                android:src="@drawable/line_black"/>
+
+        </RelativeLayout>
 
         <TextView
-            android:id="@+id/txt_entity_listitem_name"
-            android:layout_width="wrap_content"
+            android:id="@+id/txt_entity_listitem_user_count"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/vg_entity_listitem_name"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_below="@+id/vg_entity_listitem_name"
+            android:layout_marginRight="56dp"
+            android:layout_marginTop="5dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="Topic Name"
-            android:textColor="#333333"
-            android:textSize="@dimen/jandi_entity_item_title_font"
-            android:textStyle="bold" />
+            android:text="So Good"
+            android:textColor="@color/jandi_text_light"
+            android:textSize="@dimen/jandi_text_size_small"/>
 
-        <ImageView
-            android:id="@+id/img_entity_listitem_line_through"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/txt_entity_listitem_name"
-            android:layout_alignLeft="@+id/txt_entity_listitem_name"
-            android:layout_alignRight="@+id/txt_entity_listitem_name"
-            android:layout_alignTop="@+id/txt_entity_listitem_name"
-            android:src="@drawable/line_black" />
+    </LinearLayout>
 
-        <ImageView
-            android:id="@+id/img_entity_listitem_warning"
-            android:layout_width="30dp"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/img_entity_listitem_line_through"
-            android:layout_alignTop="@+id/img_entity_listitem_line_through"
-            android:layout_toRightOf="@+id/img_entity_listitem_line_through"
-            android:scaleType="centerInside"
-            android:src="@drawable/alert_disabled_members" />
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/txt_entity_listitem_badge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/jandi_badge_starred"
-        android:gravity="center"
-        android:minHeight="24dp"
-        android:minWidth="24dp"
-        android:padding="4dp"
-        android:text="0"
-        android:textColor="@color/jandi_text_white"
-        android:textSize="@dimen/jandi_entity_badge_font"
-        android:textStyle="bold"
-        android:visibility="gone" />
 
     <View
         android:id="@+id/view_entity_listitem_warning"
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_entity_item_height"
-        android:background="#99ffffff"
-        android:visibility="gone" />
+        android:background="#66ffffff"
+        android:visibility="gone"/>
 
 </RelativeLayout>

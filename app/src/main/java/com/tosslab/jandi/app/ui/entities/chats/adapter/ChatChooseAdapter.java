@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.entities.chats.adapter;
 
 import android.content.Context;
 import android.support.v4.util.Pair;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,9 +129,7 @@ public class ChatChooseAdapter extends BaseAdapter {
             chatCHooseViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
             chatCHooseViewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
             chatCHooseViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_user_count);
-            chatCHooseViewHolder.textViewBadgeCount = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
             chatCHooseViewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
-            chatCHooseViewHolder.disableWarningView = convertView.findViewById(R.id.img_entity_listitem_warning);
             chatCHooseViewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
 
 
@@ -140,11 +139,15 @@ public class ChatChooseAdapter extends BaseAdapter {
             chatCHooseViewHolder = (ChatCHooseViewHolder) convertView.getTag(R.id.chatchoose_item);
         }
 
-        chatCHooseViewHolder.textViewBadgeCount.setVisibility(View.GONE);
-
         ChatChooseItem item = getItem(position);
 
         chatCHooseViewHolder.textViewName.setText(item.getName());
+
+        if (!TextUtils.isEmpty(item.getEmail())) {
+            chatCHooseViewHolder.textViewAdditional.setVisibility(View.VISIBLE);
+        } else {
+            chatCHooseViewHolder.textViewAdditional.setVisibility(View.GONE);
+        }
         chatCHooseViewHolder.textViewAdditional.setText(item.getEmail());
 
         if (item.isStarred()) {
@@ -153,19 +156,12 @@ public class ChatChooseAdapter extends BaseAdapter {
             chatCHooseViewHolder.imageViewFavorite.setVisibility(View.GONE);
         }
 
-
         if (item.isEnabled()) {
-
             chatCHooseViewHolder.disableLineThrouthView.setVisibility(View.GONE);
-            chatCHooseViewHolder.disableWarningView.setVisibility(View.GONE);
             chatCHooseViewHolder.disableCoverView.setVisibility(View.GONE);
-
         } else {
-
             chatCHooseViewHolder.disableLineThrouthView.setVisibility(View.VISIBLE);
-            chatCHooseViewHolder.disableWarningView.setVisibility(View.VISIBLE);
             chatCHooseViewHolder.disableCoverView.setVisibility(View.VISIBLE);
-
         }
 
         chatCHooseViewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
@@ -217,9 +213,7 @@ public class ChatChooseAdapter extends BaseAdapter {
         public ImageView imageViewFavorite;
         public TextView textViewName;
         public TextView textViewAdditional;
-        public TextView textViewBadgeCount;
         public View disableLineThrouthView;
-        public View disableWarningView;
         public View disableCoverView;
     }
 
