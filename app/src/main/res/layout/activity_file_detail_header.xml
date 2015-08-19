@@ -77,8 +77,7 @@
         <ImageView
             android:id="@+id/img_file_detail_photo"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/jandi_down_img"/>
+            android:layout_height="match_parent"/>
 
         <LinearLayout
             android:id="@+id/vg_file_detail_deleted"
