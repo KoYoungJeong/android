@@ -481,5 +481,6 @@
     <string name="jandi_this_is_disabled_user_explain">"此成员权限已被暂时关闭。 欲知更多细节，请联络团队管理员。"</string>
     <string name="jandi_who_of_file">"共享文件"</string>
     <string name="jandi_shared">"分享过"</string>
+    <string name="jandi_starmention_no_longer_in_topic">你已不在此标记的议题内</string>
 
 </resources>

@@ -481,5 +481,7 @@
     <string name="jandi_this_is_disabled_user_explain">"此成員權限已被暫時關閉。欲知更多細節，請聯絡團隊管理員。"</string>
     <string name="jandi_who_of_file">"共享檔案"</string>
     <string name="jandi_shared">"分享過"</string>
+    <string name="jandi_starmention_no_longer_in_topic">此信息/文件已被标示</string>
+
 </resources>
 
