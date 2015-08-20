@@ -203,7 +203,7 @@ public class Regex {
             VALID_TCO_URL = Pattern.compile("^https?:\\/\\/t\\.co\\/[a-z0-9]+", Pattern.CASE_INSENSITIVE);
             VALID_CASHTAG = Pattern.compile("(^|" + UNICODE_SPACES + ")(" + DOLLAR_SIGN_CHAR + ")(" + CASHTAG + ")" + "(?=$|\\s|\\p{Punct})", Pattern.CASE_INSENSITIVE);
             VALID_DOMAIN = Pattern.compile(URL_VALID_DOMAIN, Pattern.CASE_INSENSITIVE);
-            VALID_IP_URL = Pattern.compile("((?:(http|https|Http|Https|rtsp|Rtsp):\\/\\/(\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b)))");
+            VALID_IP_URL = Pattern.compile("((?:(https?):\\/\\/(\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b)))");
         }
     }
 
