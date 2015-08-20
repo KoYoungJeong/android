@@ -142,7 +142,7 @@ public class ChatsChooseFragment extends Fragment {
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
         getActivity().finish();
-        EntityManager entityManager = EntityManager.getInstance(getActivity());
+        EntityManager entityManager = EntityManager.getInstance();
         MessageListV2Activity_.intent(getActivity())
                 .teamId(entityManager.getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)

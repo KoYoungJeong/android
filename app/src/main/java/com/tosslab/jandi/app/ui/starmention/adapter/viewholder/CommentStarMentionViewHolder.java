@@ -49,7 +49,7 @@ public class CommentStarMentionViewHolder extends CommonStarMentionViewHolder {
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 this.getStarMentionCommentView(), commentStringBuilder, starMentionVO.getMentions(),
-                EntityManager.getInstance(this.getStarMentionCommentView().getContext()).getMe().getId())
+                EntityManager.getInstance().getMe().getId())
                 .setMeBackgroundColor(0xFF01a4e7)
                 .setMeTextColor(0xFFffffff)
                 .setBackgroundColor(0x00ffffff)

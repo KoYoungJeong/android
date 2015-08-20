@@ -389,7 +389,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Background
     void sendInitMessage() {
         if (roomId <= 0) {
-            boolean user = EntityManager.getInstance(JandiApplication.getContext()).getEntityById(entityId).isUser();
+            boolean user = EntityManager.getInstance().getEntityById(entityId).isUser();
 
             if (!user) {
                 roomId = entityId;
@@ -514,7 +514,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void insertEmptyMessage() {
-        EntityManager entityManager = EntityManager.getInstance(getActivity());
+        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entity = entityManager.getEntityById(entityId);
         if (entity != null && !entity.isUser()) {
             int topicMemberCount = entity.getMemberCount();
@@ -551,7 +551,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
-        actionBar.setTitle(EntityManager.getInstance(getActivity()).getEntityNameById(entityId));
+        actionBar.setTitle(EntityManager.getInstance().getEntityNameById(entityId));
     }
 
     @Override
@@ -571,7 +571,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        FormattedEntity entityById = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+        FormattedEntity entityById = EntityManager.getInstance().getEntityById(entityId);
         boolean isStarred;
         isStarred = entityById != null ? entityById.isStarred : false;
         ChattingInfomations infomations =
@@ -789,7 +789,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             } else {
                 localId = messageListModel.insertSendingMessage(entityId, message, mentions);
             }
-            FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
+            FormattedEntity me = EntityManager.getInstance().getMe();
             // insert to ui
             messageListPresenter.insertSendingMessage(localId, message, me.getName(),
                     me.getUserLargeProfileUrl(), mentions);
@@ -1072,7 +1072,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
 
-        EntityManager entityManager = EntityManager.getInstance(getActivity());
+        EntityManager entityManager = EntityManager.getInstance();
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .teamId(entityManager.getTeamId())
@@ -1263,7 +1263,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     public void onEvent(TopicInfoUpdateEvent event) {
         if (event.getId() == entityId) {
-            FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+            FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
             isFavorite = entity.isStarred;
             refreshActionbar();
             if (isForeground) {
@@ -1282,7 +1282,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     public void onEvent(MemberStarredEvent memberStarredEvent) {
         if (memberStarredEvent.getId() == entityId) {
-            FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+            FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
             isFavorite = entity.isStarred;
             refreshActionbar();
         }
@@ -1317,7 +1317,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             modifyEntitySucceed(event.inputName);
 
             messageListModel.trackChangingEntityName(entityType);
-            EntityManager.getInstance(getActivity()).getEntityById(entityId).getEntity().name = event.inputName;
+            EntityManager.getInstance().getEntityById(entityId).getEntity().name = event.inputName;
 
         } catch (RetrofitError e) {
             if (e.getResponse() != null && e.getResponse().getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {

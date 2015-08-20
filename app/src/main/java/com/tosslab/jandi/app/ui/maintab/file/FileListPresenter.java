@@ -102,7 +102,7 @@ public class FileListPresenter {
 
     @AfterInject
     void initObject() {
-        entityManager = EntityManager.getInstance(context);
+        entityManager = EntityManager.getInstance();
     }
 
     @AfterViews

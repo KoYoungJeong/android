@@ -54,7 +54,7 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 tvMessage, builder, commentMessage.mentions,
-                EntityManager.getInstance(tvMessage.getContext()).getMe().getId())
+                EntityManager.getInstance().getMe().getId())
                 .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
         builder = generateMentionMessageUtil.generate();
 
@@ -69,7 +69,7 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
         builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance(context).getMe().getId());
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
 
         if (unreadCount > 0) {
             NameSpannable unreadCountSpannable =

@@ -47,11 +47,11 @@ public class MessageSearchModel {
     }
 
     public boolean hasEntity(int entityId) {
-        return EntityManager.getInstance(context).getEntityById(entityId) != null;
+        return EntityManager.getInstance().getEntityById(entityId) != null;
     }
 
     public int getEntityType(int entityId) {
-        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         if (entity.isPublicTopic()) {
             return JandiConstants.TYPE_PUBLIC_TOPIC;
         } else if (entity.isPrivateGroup()) {
@@ -62,7 +62,7 @@ public class MessageSearchModel {
     }
 
     public boolean isStarredEntity(int entityId) {
-        return EntityManager.getInstance(context).getEntityById(entityId).isStarred;
+        return EntityManager.getInstance().getEntityById(entityId).isStarred;
     }
 
     public List<SearchResult> convertSearchResult(List<ResMessageSearch.SearchRecord> searchRecordList, String query) {
@@ -106,7 +106,7 @@ public class MessageSearchModel {
     }
 
     public String getEntityName(int entityId) {
-        return EntityManager.getInstance(context).getEntityNameById(entityId);
+        return EntityManager.getInstance().getEntityNameById(entityId);
     }
 
     public void trackMessageKeywordSearchSuccess(String keyword) {

@@ -21,7 +21,6 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
@@ -164,7 +163,7 @@ public class FilePickerModel {
 
     public boolean isPublicEntity(Context context, int entityId) {
 
-        return EntityManager.getInstance(context).getEntityById(entityId).isPublicTopic();
+        return EntityManager.getInstance().getEntityById(entityId).isPublicTopic();
     }
 
     public JsonObject uploadFile(Context context, ProgressDialog progressDialog, String realFilePath, boolean isPublicTopic, String title, int entityId, String comment) throws ExecutionException, InterruptedException {
@@ -230,7 +229,7 @@ public class FilePickerModel {
 
     public void trackUploadingFile(Context context, int entityId, JsonObject result) {
 
-        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
         int entityType;
         if (entity.isPublicTopic()) {
@@ -245,7 +244,7 @@ public class FilePickerModel {
 
         try {
             MixpanelMemberAnalyticsClient
-                    .getInstance(context, EntityManager.getInstance(context).getDistictId())
+                    .getInstance(context, EntityManager.getInstance().getDistictId())
                     .trackUploadingFile(entityType, result);
         } catch (JSONException e) {
         }
@@ -276,7 +275,7 @@ public class FilePickerModel {
 
     public String uploadProfilePhoto(Context context, File file) throws ExecutionException, InterruptedException {
 
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
 
         String requestURL
                 = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/members/" + entityManager.getMe().getId() + "/profile/photo";

@@ -91,7 +91,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         ParseUpdateUtil.addChannelOnServer();
 
         mContext = getApplicationContext();
-        mEntityManager = EntityManager.getInstance(mContext);
+        mEntityManager = EntityManager.getInstance();
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
@@ -121,7 +121,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         tabs.setViewPager(mViewPager);
 
         if (selectedEntity > 0) {
-            FormattedEntity entity = EntityManager.getInstance(getApplicationContext()).getEntityById(selectedEntity);
+            FormattedEntity entity = EntityManager.getInstance().getEntityById(selectedEntity);
             if (entity == null || entity.isUser()) {
                 mViewPager.setCurrentItem(CHAT_INDEX);
             }
@@ -193,7 +193,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     }
 
     private boolean needInvitePopup() {
-        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance(MainTabActivity.this).getFormattedUsersWithoutMe();
+        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe();
         return JandiPreference.isInvitePopup(MainTabActivity.this) && (formattedUsersWithoutMe == null || formattedUsersWithoutMe.isEmpty());
     }
 
@@ -252,7 +252,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
             BadgeUtils.setBadge(MainTabActivity.this, totalUnreadCount);
             JandiPreference.setBadgeCount(MainTabActivity.this, totalUnreadCount);
-            mEntityManager.refreshEntity(resLeftSideMenu);
+            mEntityManager.refreshEntity();
             getEntitiesSucceed(resLeftSideMenu);
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -283,7 +283,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @UiThread
     public void getEntitiesSucceed(ResLeftSideMenu resLeftSideMenu) {
         mProgressWheel.dismiss();
-        mEntityManager = EntityManager.getInstance(MainTabActivity.this);
+        mEntityManager = EntityManager.getInstance();
         trackSigningIn(mEntityManager);
         getSupportActionBar().setTitle(mEntityManager.getTeamName());
         JandiPreference.setMyEntityId(this, mEntityManager.getMe().getId());

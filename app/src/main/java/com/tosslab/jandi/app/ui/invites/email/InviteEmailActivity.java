@@ -91,7 +91,7 @@ public class InviteEmailActivity extends BaseAnalyticsActivity
     @Override
     protected void onResume() {
         super.onResume();
-        EntityManager entityManager = EntityManager.getInstance(InviteEmailActivity.this);
+        EntityManager entityManager = EntityManager.getInstance();
         trackGaInviteMember(entityManager.getDistictId());
     }
 

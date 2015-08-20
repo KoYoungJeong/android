@@ -38,7 +38,7 @@ public class AnnouncementModel {
     }
 
     public boolean isAnnouncementOpened(int entityId) {
-        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         return entity.announcementOpened;
     }
 
@@ -69,7 +69,7 @@ public class AnnouncementModel {
 
     @Background
     public void updateAnnouncementStatus(int teamId, int topicId, boolean isOpened) {
-        int memberId = EntityManager.getInstance(context).getMe().getUser().id;
+        int memberId = EntityManager.getInstance().getMe().getUser().id;
 
         try {
             ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus =

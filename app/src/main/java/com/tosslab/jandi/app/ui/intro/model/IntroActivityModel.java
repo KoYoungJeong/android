@@ -126,8 +126,7 @@ public class IntroActivityModel {
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context.getApplicationContext(), totalUnreadCount);
             BadgeUtils.setBadge(context.getApplicationContext(), totalUnreadCount);
-            EntityManager.getInstance(context.getApplicationContext())
-                    .refreshEntity(context.getApplicationContext());
+            EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -164,7 +163,7 @@ public class IntroActivityModel {
         cursor.moveToFirst();
         return cursor.getInt(0);
     }
-    
+
     public void trackAutoSignInSuccessAndFlush(boolean hasTeamSelected) {
         FutureTrack.Builder builder = new FutureTrack.Builder()
                 .event(Event.SignIn)

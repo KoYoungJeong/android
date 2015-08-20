@@ -30,7 +30,7 @@ public class ChatChooseModel {
     Context context;
 
     public List<ChatChooseItem> getEnableUsers() {
-        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance(context).getFormattedUsersWithoutMe();
+        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe();
 
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
 
@@ -100,7 +100,7 @@ public class ChatChooseModel {
 
     public List<ChatChooseItem> getChatListWithoutMe(String name) {
 
-        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance(context).getFormattedUsersWithoutMe();
+        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe();
 
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
 
@@ -137,12 +137,12 @@ public class ChatChooseModel {
     }
 
     public boolean isStarred(int entityId) {
-        return EntityManager.getInstance(context).getEntityById(entityId).isStarred;
+        return EntityManager.getInstance().getEntityById(entityId).isStarred;
     }
 
     public boolean hasDisabledUsers() {
 
-        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance(context).getFormattedUsersWithoutMe();
+        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe();
 
         Boolean hasDisabled = Observable.from(formattedUsersWithoutMe)
                 .filter(entity -> !TextUtils.equals(entity.getUser().status, "enabled"))
@@ -156,7 +156,7 @@ public class ChatChooseModel {
     }
 
     public List<ChatChooseItem> getDisableUsers() {
-        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance(context).getFormattedUsersWithoutMe();
+        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe();
 
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
 

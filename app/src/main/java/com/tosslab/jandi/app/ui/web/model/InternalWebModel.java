@@ -41,7 +41,7 @@ public class InternalWebModel {
     }
 
     public List<FormattedEntity> getEntities() {
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         List<FormattedEntity> joinedChannels = entityManager.getJoinedChannels();
         List<FormattedEntity> groups = entityManager.getGroups();
         List<FormattedEntity> formattedUsersWithoutMe = entityManager.getFormattedUsersWithoutMe();

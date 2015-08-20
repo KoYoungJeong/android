@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.members.presenter;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -139,7 +138,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     }
 
     public void onEventMainThread(final RequestMoveDirectMessageEvent event) {
-        EntityManager entityManager = EntityManager.getInstance(JandiApplication.getContext());
+        EntityManager entityManager = EntityManager.getInstance();
         view.moveDirectMessageActivity(entityManager.getTeamId(), event.userId, entityManager.getEntityById(event.userId).isStarred);
     }
 

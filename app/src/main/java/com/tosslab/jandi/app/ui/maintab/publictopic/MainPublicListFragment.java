@@ -116,7 +116,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
     }
 
     private void retrieveEntityList() {
-        EntityManager entityManager = EntityManager.getInstance(getActivity());
+        EntityManager entityManager = EntityManager.getInstance();
         if (entityManager != null) {
             mEntityManager = entityManager;
             mEntityListAdapter.retrieveChildList(

@@ -33,7 +33,7 @@ public class EntityMenuDialogModel {
     EntityClientManager entityClientManager;
 
     public FormattedEntity getEntity(int entityId) {
-        return EntityManager.getInstance(context).getEntityById(entityId);
+        return EntityManager.getInstance().getEntityById(entityId);
     }
 
     public void requestStarred(int entityId) throws RetrofitError {
@@ -58,7 +58,7 @@ public class EntityMenuDialogModel {
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
         JandiPreference.setBadgeCount(context, totalUnreadCount);
         BadgeUtils.setBadge(context, totalUnreadCount);
-        EntityManager.getInstance(context).refreshEntity(context);
+        EntityManager.getInstance().refreshEntity();
     }
 
     public ResCommon requestDeleteChat(int memberId, int entityId) throws RetrofitError {
@@ -66,7 +66,7 @@ public class EntityMenuDialogModel {
     }
 
     public void leaveEntity(boolean publicTopic) {
-        String distictId = EntityManager.getInstance(context).getDistictId();
+        String distictId = EntityManager.getInstance().getDistictId();
         try {
             MixpanelMemberAnalyticsClient
                     .getInstance(context, distictId)
@@ -76,6 +76,6 @@ public class EntityMenuDialogModel {
     }
 
     public boolean isDefaultTopic(int entityId) {
-        return EntityManager.getInstance(context).getDefaultTopicId() == entityId;
+        return EntityManager.getInstance().getDefaultTopicId() == entityId;
     }
 }

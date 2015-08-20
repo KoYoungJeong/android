@@ -35,8 +35,8 @@ import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenter
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenterImpl;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.AlertUtil_;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -249,7 +249,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         if (entitySelectDialog == null) {
 
             Context context = getActivity();
-            EntityManager entityManager = EntityManager.getInstance(context);
+            EntityManager entityManager = EntityManager.getInstance();
 
             AlertDialog.Builder dialog = new AlertDialog.Builder(context);
             dialog.setTitle(R.string.jandi_file_search_entity);
@@ -326,7 +326,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
             dialogBuilder.setTitle(R.string.jandi_file_search_user);
             MemberSelectDialogAdapter adapter = new MemberSelectDialogAdapter(context);
 
-            EntityManager entityManager = EntityManager.getInstance(context);
+            EntityManager entityManager = EntityManager.getInstance();
             List<FormattedEntity> formattedUsersWithoutMe = entityManager.getFormattedUsersWithoutMe();
 
             List<MemberSelectDialogAdapter.SimpleMemberInfo> simpleMemberInfos = new ArrayList<>();

@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
@@ -89,7 +88,7 @@ public class FileHeadManager {
         if (resFileDetail == null) {
             return;
         }
-        EntityManager mEntityManager = EntityManager.getInstance(activity);
+        EntityManager mEntityManager = EntityManager.getInstance();
         if (mEntityManager == null) {
             return;
         }
@@ -149,7 +148,7 @@ public class FileHeadManager {
 
     public void setFileInfo(ResMessages.FileMessage fileMessage) {
         // 사용자
-        FormattedEntity writer = EntityManager.getInstance(activity).getEntityById(fileMessage.writerId);
+        FormattedEntity writer = EntityManager.getInstance().getEntityById(fileMessage.writerId);
         String profileUrl = writer.getUserSmallProfileUrl();
         Ion.with(imageViewUserProfile)
                 .placeholder(R.drawable.jandi_profile)
@@ -216,7 +215,7 @@ public class FileHeadManager {
     }
 
     private boolean isEnabledUser(int writerId) {
-        EntityManager entityManager = EntityManager.getInstance(JandiApplication.getContext());
+        EntityManager entityManager = EntityManager.getInstance();
         String userStatus = entityManager.getEntityById(writerId).getUser().status;
         return TextUtils.equals(userStatus, "enabled");
     }

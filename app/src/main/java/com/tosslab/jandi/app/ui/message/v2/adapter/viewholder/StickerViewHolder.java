@@ -51,7 +51,7 @@ public class StickerViewHolder implements BodyViewHolder {
     public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
         int fromEntityId = link.fromEntity;
 
-        FormattedEntity entity = EntityManager.getInstance(profileImageView.getContext()).getEntityById(fromEntityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
         String profileUrl = entity.getUserLargeProfileUrl();
@@ -63,7 +63,7 @@ public class StickerViewHolder implements BodyViewHolder {
                 .crossfade(true)
                 .load(profileUrl);
 
-        EntityManager entityManager = EntityManager.getInstance(nameTextView.getContext());
+        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById != null ? entityById.getUser() : null;
         if (user != null && TextUtils.equals(user.status, "enabled")) {
@@ -81,7 +81,7 @@ public class StickerViewHolder implements BodyViewHolder {
         tvDate.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
 
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance(tvUnread.getContext()).getMe().getId());
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
 
         tvUnread.setText(String.valueOf(unreadCount));
         if (unreadCount > 0) {

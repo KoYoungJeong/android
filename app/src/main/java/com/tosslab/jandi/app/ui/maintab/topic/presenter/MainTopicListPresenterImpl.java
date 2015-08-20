@@ -45,7 +45,7 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
 
     @Override
     public void onInitTopics(Context context) {
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
 
         Observable<Topic> joinEntities = mainTopicModel.getJoinEntities(
                 entityManager.getJoinedChannels(), entityManager.getGroups());
@@ -120,7 +120,7 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
         try {
             mainTopicModel.joinPublicTopic(topic.getEntityId());
             mainTopicModel.refreshEntity();
-            EntityManager entityManager = EntityManager.getInstance(context);
+            EntityManager entityManager = EntityManager.getInstance();
             if (entityManager != null) {
                 MixpanelMemberAnalyticsClient
                         .getInstance(context, entityManager.getDistictId())

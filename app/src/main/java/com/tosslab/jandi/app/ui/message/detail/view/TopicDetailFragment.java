@@ -15,7 +15,6 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteTopicDialogFragment;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
@@ -165,7 +164,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     public void onEventMainThread(RetrieveTopicListEvent event) {
         FormattedEntity entity =
-                EntityManager.getInstance(JandiApplication.getContext()).getEntityById(entityId);
+                EntityManager.getInstance().getEntityById(entityId);
         if (entity == null) {
             return;
         }

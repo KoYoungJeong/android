@@ -106,7 +106,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                 view.showSuccessToast(context.getString(R.string.jandi_message_starred));
             }
 
-            EntityManager.getInstance(context).getEntityById(entityId).isStarred = !isStarred;
+            EntityManager.getInstance().getEntityById(entityId).isStarred = !isStarred;
 
             view.setStarred(!isStarred);
 
@@ -176,7 +176,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             view.setTopicName(topicName);
 
             topicDetailModel.trackChangingEntityName(context, entityId, entityType);
-            EntityManager.getInstance(context).getEntityById(entityId).getEntity().name = topicName;
+            EntityManager.getInstance().getEntityById(entityId).getEntity().name = topicName;
             EventBus.getDefault().post(new TopicInfoUpdateEvent(entityId));
 
         } catch (RetrofitError e) {

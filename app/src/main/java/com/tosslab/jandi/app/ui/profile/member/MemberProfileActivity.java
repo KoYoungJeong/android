@@ -27,8 +27,8 @@ import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
-import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -384,7 +384,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     }
 
     private String getDistictId() {
-        EntityManager entityManager = EntityManager.getInstance(MemberProfileActivity.this);
+        EntityManager entityManager = EntityManager.getInstance();
         return entityManager.getDistictId();
     }
 }

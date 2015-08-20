@@ -69,7 +69,7 @@ class LeaveEntityCommand implements MenuCommand {
             } else if (chattingInfomations.isPrivateTopic()) {
                 mEntityClientManager.leavePrivateGroup(chattingInfomations.entityId);
             } else if (chattingInfomations.isDirectMessage()) {
-                int memberId = EntityManager.getInstance(activity).getMe().getId();
+                int memberId = EntityManager.getInstance().getMe().getId();
                 RequestApiManager.getInstance().deleteChatByChatApi(memberId, chattingInfomations.entityId);
             }
             trackLeavingEntity(chattingInfomations.entityType);
@@ -84,7 +84,7 @@ class LeaveEntityCommand implements MenuCommand {
     }
 
     private void trackLeavingEntity(int entityType) {
-        String distictId = EntityManager.getInstance(activity).getDistictId();
+        String distictId = EntityManager.getInstance().getDistictId();
         try {
             MixpanelMemberAnalyticsClient
                     .getInstance(activity, distictId)

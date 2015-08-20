@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -42,7 +41,7 @@ public class DummyViewHolder implements BodyViewHolder {
 
         DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
-        FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext())
+        FormattedEntity entity = EntityManager.getInstance()
                 .getEntityById(dummyMessageLink.message.writerId);
 
         String profileUrl = entity.getUserLargeProfileUrl();
@@ -107,7 +106,7 @@ public class DummyViewHolder implements BodyViewHolder {
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 messageTextView, builder, ((DummyMessageLink) link).getMentions(),
-                EntityManager.getInstance(JandiApplication.getContext()).getMe().getId());
+                EntityManager.getInstance().getMe().getId());
         builder = generateMentionMessageUtil.generate();
 
         messageTextView.setText(builder);

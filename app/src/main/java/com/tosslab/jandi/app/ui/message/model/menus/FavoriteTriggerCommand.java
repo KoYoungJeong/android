@@ -46,7 +46,7 @@ class FavoriteTriggerCommand implements MenuCommand {
             chattingInfomations.isFavorite = true;
         }
 
-        EntityManager.getInstance(activity).getEntityById(chattingInfomations.entityId).isStarred = chattingInfomations.isFavorite;
+        EntityManager.getInstance().getEntityById(chattingInfomations.entityId).isStarred = chattingInfomations.isFavorite;
         EventBus.getDefault().post(new TopicInfoUpdateEvent(chattingInfomations.entityId));
 
 

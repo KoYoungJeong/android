@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.message.v2.loader;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
@@ -62,7 +61,7 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
                     int lastLinkId = newMessage.records.get(newMessage.records.size() - 1).id;
                     messageState.setLastUpdateLinkId(lastLinkId);
 
-                    int myId = EntityManager.getInstance(JandiApplication.getContext()).getMe().getId();
+                    int myId = EntityManager.getInstance().getMe().getId();
                     ResRoomInfo.MarkerInfo myMarker = MarkerRepository.getRepository().getMyMarker(roomId, myId);
 
                     if (myMarker.getLastLinkId() < lastLinkId) {

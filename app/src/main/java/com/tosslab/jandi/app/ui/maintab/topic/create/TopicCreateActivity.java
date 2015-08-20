@@ -115,7 +115,7 @@ public class TopicCreateActivity extends AppCompatActivity {
             ResCommon topic = topicCreateModel.createTopic(topicTitle, publicSelected, topicDescriptionText);
 
             try {
-                EntityManager mEntityManager = EntityManager.getInstance(TopicCreateActivity.this);
+                EntityManager mEntityManager = EntityManager.getInstance();
                 if (mEntityManager != null) {
                     MixpanelMemberAnalyticsClient
                             .getInstance(TopicCreateActivity.this, mEntityManager.getDistictId())
@@ -129,7 +129,7 @@ public class TopicCreateActivity extends AppCompatActivity {
 
             topicCreatePresenter.dismissProgressWheel();
 
-            EntityManager.getInstance(TopicCreateActivity.this).refreshEntity(TopicCreateActivity.this);
+            EntityManager.getInstance().refreshEntity();
             int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
             topicCreateModel.trackTopicCreateSuccess(topic.id);

@@ -71,7 +71,7 @@ public class MainMoreFragment extends Fragment {
     void init() {
         LogUtil.d("MainMoreFragment");
         mContext = getActivity();
-        mEntityManager = EntityManager.getInstance(getActivity());
+        mEntityManager = EntityManager.getInstance();
     }
 
     @AfterViews

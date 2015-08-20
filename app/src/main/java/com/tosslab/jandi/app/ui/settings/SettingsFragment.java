@@ -159,7 +159,7 @@ public class SettingsFragment extends PreferenceFragment {
                     .flush()
                     .clear();
 
-            EntityManager entityManager = EntityManager.getInstance(activity);
+            EntityManager entityManager = EntityManager.getInstance();
 
             MixpanelMemberAnalyticsClient
                     .getInstance(activity, entityManager.getDistictId())

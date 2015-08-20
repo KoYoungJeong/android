@@ -38,7 +38,7 @@ public class CollapseStickerCommentViewHolder implements BodyViewHolder {
 
         tvCreatedTime.setText(DateTransformator.getTimeStringForSimple(message.createTime));
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance(tvUnreadCount.getContext()).getMe().getId());
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
 
         if (unreadCount > 0) {
             tvUnreadCount.setText(String.valueOf(unreadCount));

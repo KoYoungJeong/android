@@ -7,7 +7,6 @@ import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
@@ -82,7 +81,7 @@ public class DummyPureViewHolder implements BodyViewHolder {
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 messageTextView, builder, ((DummyMessageLink) link).getMentions(),
-                EntityManager.getInstance(JandiApplication.getContext()).getMe().getId());
+                EntityManager.getInstance().getMe().getId());
         builder = generateMentionMessageUtil.generate();
 
         messageTextView.setText(builder);

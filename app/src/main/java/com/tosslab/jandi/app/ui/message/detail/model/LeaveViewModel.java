@@ -48,7 +48,7 @@ public class LeaveViewModel {
     }
 
     public void leave() {
-        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         if (entity.isPublicTopic() || entity.isUser()) {
             leaveEntityInBackground(entity);
         } else {
@@ -76,7 +76,7 @@ public class LeaveViewModel {
             } else if (entity.isPrivateGroup()) {
                 entityClientManager.leavePrivateGroup(entityId);
             } else if (entity.isUser()) {
-                int memberId = EntityManager.getInstance(context).getMe().getId();
+                int memberId = EntityManager.getInstance().getMe().getId();
                 RequestApiManager.getInstance().deleteChatByChatApi(memberId, entityId);
             }
             trackLeavingEntity(entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity
@@ -99,7 +99,7 @@ public class LeaveViewModel {
     }
 
     private void trackLeavingEntity(int entityType) {
-        String distictId = EntityManager.getInstance(context).getDistictId();
+        String distictId = EntityManager.getInstance().getDistictId();
         try {
             MixpanelMemberAnalyticsClient
                     .getInstance(context, distictId)

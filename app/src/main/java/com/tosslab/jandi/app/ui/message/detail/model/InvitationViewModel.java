@@ -74,7 +74,7 @@ public class InvitationViewModel {
     @UiThread
     public void inviteMembersToEntity() {
 
-        int teamMemberCountWithoutMe = EntityManager.getInstance(context)
+        int teamMemberCountWithoutMe = EntityManager.getInstance()
                 .getFormattedUsersWithoutMe()
                 .size();
 
@@ -156,7 +156,7 @@ public class InvitationViewModel {
     }
 
     private List<FormattedEntity> getUnjoinedEntities(Context context) {
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entity = entityManager.getEntityById(entityId);
         int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity
                 .isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
@@ -176,7 +176,7 @@ public class InvitationViewModel {
     public void inviteInBackground(Context context, List<Integer> invitedUsers) {
         try {
 
-            FormattedEntity entity = EntityManager.getInstance(context).getEntityById(entityId);
+            FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
             if (entity.isPublicTopic()) {
                 mEntityClientManager.inviteChannel(entityId, invitedUsers);
@@ -186,7 +186,7 @@ public class InvitationViewModel {
 
             ResLeftSideMenu resLeftSideMenu = mEntityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
-            EntityManager.getInstance(this.context).refreshEntity(resLeftSideMenu);
+            EntityManager.getInstance().refreshEntity();
             EventBus.getDefault().post(new InvitationSuccessEvent());
 
             trackTopicMemberInviteSuccess(invitedUsers.size());

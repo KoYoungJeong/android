@@ -52,7 +52,7 @@ public class TopicDescriptionEditActivity extends AppCompatActivity {
 
         setUpActionbar();
 
-        FormattedEntity entity = EntityManager.getInstance(TopicDescriptionEditActivity.this).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
         if (entity.isUser()) {
             finish();
@@ -99,7 +99,7 @@ public class TopicDescriptionEditActivity extends AppCompatActivity {
     @OptionsItem(R.id.action_topic_description_save)
     @Background
     void onSaveOptionSelected() {
-        FormattedEntity entity = EntityManager.getInstance(TopicDescriptionEditActivity.this).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
         String description = etDescpription.getText().toString().trim();
 
