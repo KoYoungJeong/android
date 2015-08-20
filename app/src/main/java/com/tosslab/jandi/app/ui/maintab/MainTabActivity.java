@@ -11,9 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -40,6 +37,7 @@ import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -51,7 +49,6 @@ import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
-import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -87,8 +84,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     @ViewById(R.id.vg_main_offline)
     View vgOffline;
-
     int selectedEntity = -1;
+    private OfflineLayer offlineLayer;
     private ProgressWheel mProgressWheel;
     private Context mContext;
     private EntityManager mEntityManager;
@@ -171,13 +168,13 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             showInvitePopup();
         }
 
+        offlineLayer = new OfflineLayer(vgOffline);
+
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
         // onResume -> AfterViews 로 이동
         // (소켓에서 필요한 갱신을 다 처리한다고 간주)
         if (NetworkCheckUtil.isConnected()) {
             getEntities();
-        } else {
-            showOfflineView();
         }
     }
 
@@ -223,70 +220,18 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     @Click(R.id.vg_main_offline)
     void onOfflineClick() {
-        dismissOfflineView();
-    }
-
-    private void dismissOfflineView() {
-
-        if (vgOffline.getVisibility() != View.VISIBLE) {
-            return;
-        }
-
-        if (vgOffline.getAnimation() != null && !vgOffline.getAnimation().hasEnded()) {
-            return;
-        }
-
-        Animation animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, -1f);
-
-        animation.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
-        animation.setInterpolator(JandiApplication.getContext(), android.R.anim.decelerate_interpolator);
-        animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
-        animation.setFillAfter(true);
-
-        animation.setAnimationListener(new SimpleEndAnimationListener() {
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                vgOffline.setVisibility(View.GONE);
-            }
-        });
-
-        vgOffline.startAnimation(animation);
-    }
-
-    private void showOfflineView() {
-
-        if (vgOffline.getVisibility() == View.VISIBLE) {
-            return;
-        }
-
-
-        if (vgOffline.getAnimation() != null && !vgOffline.getAnimation().hasEnded()) {
-            return;
-        }
-
-        vgOffline.setVisibility(View.VISIBLE);
-
-        Animation animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, -1f,
-                Animation.RELATIVE_TO_SELF, 0f);
-
-        animation.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
-        animation.setInterpolator(JandiApplication.getContext(), android.R.anim.decelerate_interpolator);
-        animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
-        animation.setFillAfter(true);
-
-        vgOffline.startAnimation(animation);
+        offlineLayer.dismissOfflineView();
     }
 
     public void onEventMainThread(NetworkConnectEvent event) {
+        // TODO show toast
+
         if (event.isConnected()) {
-            dismissOfflineView();
+            offlineLayer.dismissOfflineView();
         } else {
-            showOfflineView();
+            offlineLayer.showOfflineView();
+            ColoredToast.showGray(MainTabActivity.this, JandiApplication.getContext().getString(R
+                    .string.jandi_msg_network_offline_warn));
         }
     }
 
@@ -302,6 +247,12 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         setupActionBar(selectedTeamInfo.getName());
 
         TutorialCoachMarkUtil.showCoachMarkTopicListIfNotShown(this);
+
+        if (NetworkCheckUtil.isConnected()) {
+            offlineLayer.dismissOfflineView();
+        } else {
+            offlineLayer.showOfflineView();
+        }
     }
 
 

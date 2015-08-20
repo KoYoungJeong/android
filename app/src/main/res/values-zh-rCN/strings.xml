@@ -481,5 +481,7 @@
     <string name="jandi_this_is_disabled_user_explain">"此成员权限已被暂时关闭。 欲知更多细节，请联络团队管理员。"</string>
     <string name="jandi_who_of_file">"共享文件"</string>
     <string name="jandi_shared">"分享过"</string>
+    <string name="jandi_msg_network_offline">"联机中断。"</string>
+    <string name="jandi_msg_network_offline_warn">"目前为无网络状态 JANDI会于连上网络后，"</string>
 
 </resources>

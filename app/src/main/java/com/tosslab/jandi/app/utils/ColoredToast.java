@@ -18,6 +18,15 @@ public class ColoredToast {
         superToast.show();
     }
 
+    public static void showGray(Context context, String message) {
+        SuperToast superToast = new SuperToast(context);
+        superToast.setText(message);
+        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
+        superToast.setBackground(SuperToast.Background.GRAY);
+        superToast.setTextColor(Color.WHITE);
+        superToast.show();
+    }
+
     public static void showLong(Context context, String message) {
         SuperToast superToast = new SuperToast(context);
         superToast.setText(message);

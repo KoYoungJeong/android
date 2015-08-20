@@ -40,18 +40,7 @@
             android:paddingRight="15dp"
             android:visibility="gone">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Could not connect to network"
-                android:textColor="@color/white"/>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:src="@drawable/bar_icon_close"/>
+            <include layout="@layout/layout_network_offline"/>
 
         </LinearLayout>
     </LinearLayout>
