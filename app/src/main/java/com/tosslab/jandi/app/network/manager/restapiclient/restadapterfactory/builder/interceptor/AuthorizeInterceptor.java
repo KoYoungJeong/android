@@ -10,6 +10,6 @@ import retrofit.RequestInterceptor;
 public class AuthorizeInterceptor implements Interceptor {
     @Override
     public void intercept(RequestInterceptor.RequestFacade request) {
-        request.addHeader("Authorization", TokenUtil.getRequestAuthentication().getHeaderValue());
+        request.addHeader("Authorization", TokenUtil.getRequestAuthentication().second);
     }
 }

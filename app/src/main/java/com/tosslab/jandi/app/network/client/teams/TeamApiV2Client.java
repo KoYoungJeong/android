@@ -17,7 +17,6 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
-import com.tosslab.jandi.app.network.spring.JandiV3HttpMessageConverter;
 
 import java.util.List;
 
@@ -36,7 +35,7 @@ import retrofit.http.Query;
 public interface TeamApiV2Client {
 
     @POST("/teams")
-    @Headers("Accept:" + JandiV3HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
     ResTeamDetailInfo createNewTeam(@Body ReqCreateNewTeam req);
 
     @GET("/teams/{teamId}/members/{memberId}")
