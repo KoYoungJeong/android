@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.utils;
 
 import android.content.Context;
-import android.support.v4.util.Pair;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -53,9 +52,10 @@ public class TokenUtil {
         JandiPreference.setRefreshToken(JandiApplication.getContext(), "");
     }
 
-    public static Pair<String, String> getRequestAuthentication() {
-        return new Pair<>(JandiPreference.getAccessTokenType(JandiApplication.getContext()),
-                JandiPreference.getAccessToken(JandiApplication.getContext()));
+    public static String getRequestAuthentication() {
+        Context context = JandiApplication.getContext();
+        return String.format("%s %s", JandiPreference.getAccessTokenType(context),
+                JandiPreference.getAccessToken(context));
     }
 
 }

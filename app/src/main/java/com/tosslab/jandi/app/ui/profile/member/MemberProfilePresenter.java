@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
@@ -130,7 +129,7 @@ public class MemberProfilePresenter {
                 && activity != null
                 && !activity.isFinishing()) {
             Glide.with(activity)
-                    .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileImageUrlPath)
+                    .load(profileImageUrlPath)
                     .placeholder(R.drawable.jandi_profile)
                     .error(R.drawable.jandi_profile)
                     .transform(new GlideCircleTransform(activity))

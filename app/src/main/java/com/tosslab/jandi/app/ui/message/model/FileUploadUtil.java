@@ -56,7 +56,7 @@ public class FileUploadUtil {
                         progressDialog.setProgress((int) (downloaded / total));
                     }
                 })
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().second)
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
                 .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                 .setMultipartParameter("title", uploadFile.getName())
