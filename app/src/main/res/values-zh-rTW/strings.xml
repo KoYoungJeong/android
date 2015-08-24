@@ -483,5 +483,7 @@
     <string name="jandi_shared">"分享過"</string>
     <string name="jandi_file_downloaded_into">"檔案下載至  %s"</string>
     <string name="jandi_file_deleted_with_date">"%s 檔案已刪除"</string>
+    <string name="jandi_starmention_no_longer_in_topic">此信息/文件已被标示</string>
+
 </resources>
 

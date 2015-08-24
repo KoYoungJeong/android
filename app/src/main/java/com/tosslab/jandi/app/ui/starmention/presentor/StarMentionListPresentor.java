@@ -2,10 +2,13 @@ package com.tosslab.jandi.app.ui.starmention.presentor;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.widget.Toast;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.starmention.model.StarMentionListModel;
@@ -60,15 +63,30 @@ public class StarMentionListPresentor {
     public void executeClickEvent(StarMentionVO starMentionVO, Activity activity) {
         int contentType = starMentionVO.getContentType();
         if (contentType == StarMentionVO.Type.Text.getValue()) {
-            MessageListV2Activity_.intent(activity)
-                    .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    .teamId(starMentionVO.getTeamId())
-                    .entityId(starMentionVO.getRoomId())
-                    .entityType(starMentionVO.getRoomType())
-                    .roomId(starMentionVO.getRoomType() != JandiConstants.TYPE_DIRECT_MESSAGE ?
-                            starMentionVO.getRoomId() : -1)
-                    .isFromSearch(true)
-                    .lastMarker(starMentionVO.getLinkId()).start();
+            boolean isJoinedTopic = false;
+            EntityManager entityManager = EntityManager.getInstance(JandiApplication.getContext());
+            FormattedEntity formattedEntity = entityManager.getEntityById(starMentionVO.getRoomId());
+            if (formattedEntity != null) {
+                for (Integer memberId : formattedEntity.getMembers()) {
+                    if (memberId == entityManager.getMe().getId()) {
+                        isJoinedTopic = true;
+                    }
+                }
+            }
+            if (isJoinedTopic) {
+                MessageListV2Activity_.intent(activity)
+                        .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        .teamId(starMentionVO.getTeamId())
+                        .entityId(starMentionVO.getRoomId())
+                        .entityType(starMentionVO.getRoomType())
+                        .roomId(starMentionVO.getRoomType() != JandiConstants.TYPE_DIRECT_MESSAGE ?
+                                starMentionVO.getRoomId() : -1)
+                        .isFromSearch(true)
+                        .lastMarker(starMentionVO.getLinkId()).start();
+            } else {
+                Toast.makeText(activity,
+                        R.string.jandi_starmention_no_longer_in_topic, Toast.LENGTH_SHORT).show();
+            }
         } else if (contentType == StarMentionVO.Type.Comment.getValue()
                 || contentType == StarMentionVO.Type.File.getValue()) {
             FileDetailActivity_
