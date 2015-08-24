@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
@@ -20,6 +21,7 @@ import com.tosslab.jandi.app.events.ServiceMaintenanceEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
+import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -35,6 +37,7 @@ import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -50,9 +53,12 @@ import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
 
@@ -76,7 +82,10 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
 
+    @ViewById(R.id.vg_main_offline)
+    View vgOffline;
     int selectedEntity = -1;
+    private OfflineLayer offlineLayer;
     private ProgressWheel mProgressWheel;
     private Context mContext;
     private EntityManager mEntityManager;
@@ -159,6 +168,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             showInvitePopup();
         }
 
+        offlineLayer = new OfflineLayer(vgOffline);
+
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
         // onResume -> AfterViews 로 이동
         // (소켓에서 필요한 갱신을 다 처리한다고 간주)
@@ -207,6 +218,23 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         actionBar.setTitle(teamName);
     }
 
+    @Click(R.id.vg_main_offline)
+    void onOfflineClick() {
+        offlineLayer.dismissOfflineView();
+    }
+
+    public void onEventMainThread(NetworkConnectEvent event) {
+        // TODO show toast
+
+        if (event.isConnected()) {
+            offlineLayer.dismissOfflineView();
+        } else {
+            offlineLayer.showOfflineView();
+            ColoredToast.showGray(MainTabActivity.this, JandiApplication.getContext().getString(R
+                    .string.jandi_msg_network_offline_warn));
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -219,6 +247,12 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         setupActionBar(selectedTeamInfo.getName());
 
         TutorialCoachMarkUtil.showCoachMarkTopicListIfNotShown(this);
+
+        if (NetworkCheckUtil.isConnected()) {
+            offlineLayer.dismissOfflineView();
+        } else {
+            offlineLayer.showOfflineView();
+        }
     }
 
 

@@ -562,6 +562,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     }
 
+    @Click(R.id.vg_message_offline)
+    void onOfflineLayerClick() {
+        messageListPresenter.dismissOfflineLayer();
+    }
+
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void insertEmptyMessage() {
         EntityManager entityManager = EntityManager.getInstance(getActivity());
@@ -698,6 +703,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             } else {
                 mentionControlViewModel.refreshSelectableMembers(roomIds);
             }
+        }
+
+        if (NetworkCheckUtil.isConnected()) {
+            messageListPresenter.dismissOfflineLayer();
+        } else {
+            messageListPresenter.showOfflineLayer();
         }
     }
 
@@ -933,6 +944,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             } else {
                 sendMessagePublisherEvent(new NewMessageQueue(messageState));
             }
+
+            messageListPresenter.dismissOfflineLayer();
+
+        } else {
+
+            messageListPresenter.showOfflineLayer();
+
+            if (isForeground) {
+                messageListPresenter.showGrayToast(JandiApplication.getContext().getString(R.string.jandi_msg_network_offline_warn));
+            }
+
         }
     }
 

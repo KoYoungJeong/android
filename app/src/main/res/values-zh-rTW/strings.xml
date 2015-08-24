@@ -485,5 +485,7 @@
     <string name="jandi_file_deleted_with_date">"%s 檔案已刪除"</string>
     <string name="jandi_starmention_no_longer_in_topic">此信息/文件已被标示</string>
 
+    <string name="jandi_msg_network_offline">"連線中斷。"</string>
+    <string name="jandi_msg_network_offline_warn">"目前為無網路狀態 JANDI會於連上網路後，"</string>
 </resources>
 

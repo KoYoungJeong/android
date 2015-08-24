@@ -31,6 +31,7 @@ public class JandiPreference {
     private static final String PREF_COACH_MARK_MORE = "coach_mark_more";
     private static final String PREF_COACH_MARK_FILE_LIST = "coach_mark_file_list";
     private static final String PREF_COACH_MARK_DIRECT_MESSAGE_LIST = "coach_mark_direct_messege_list";
+    private static final String PREF_LAST_NETWORK_CONNECT = "last_network_connect_state";
 
     // PARSE
     private static final String PREF_OLD_PARSE_CHANNEL_DELETED = "old_parse_channel_deleted";
@@ -247,5 +248,23 @@ public class JandiPreference {
 
     public static int getKeyboardHeight(Context context) {
         return getSharedPreferences(context).getInt(PREF_KEYBOARD_HEIGHT, 0);
+    }
+
+    /**
+     * 마지막 네트워크 접속 상태 값
+     * @param context
+     * @param state 0 : disconnected, 1 : connected
+     */
+    public static void setLastNetworkConnect(Context context, int state) {
+        getSharedPreferences(context).edit().putInt(PREF_LAST_NETWORK_CONNECT, state).commit();
+    }
+
+    /**
+     * 마지막 네트워크 접속 상태 값
+     * @param context
+     * @return 0 : disconnected, 1 : conntected, -1 : not setting
+     */
+    public static int getLastNetworkConnect(Context context) {
+        return getSharedPreferences(context).getInt(PREF_LAST_NETWORK_CONNECT, -1);
     }
 }
