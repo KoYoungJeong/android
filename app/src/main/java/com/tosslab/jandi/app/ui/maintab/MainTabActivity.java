@@ -58,7 +58,6 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
 

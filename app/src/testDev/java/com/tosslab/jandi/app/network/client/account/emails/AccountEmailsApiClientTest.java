@@ -15,7 +15,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
 import org.robolectric.shadows.httpclient.FakeHttp;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import retrofit.RetrofitError;
 
@@ -53,12 +52,7 @@ public class AccountEmailsApiClientTest {
     @Test
     public void testRequestAddEmail() throws Exception {
         ResAccountInfo resAccountInfo = null;
-        try {
-            resAccountInfo = RequestApiManager.getInstance().requestAddEmailByAccountEmailApi(new ReqAccountEmail(SAMPLE_EMAIL));
-
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
-        }
+        resAccountInfo = RequestApiManager.getInstance().requestAddEmailByAccountEmailApi(new ReqAccountEmail(SAMPLE_EMAIL));
 
         assertThat(resAccountInfo, is(notNullValue()));
     }

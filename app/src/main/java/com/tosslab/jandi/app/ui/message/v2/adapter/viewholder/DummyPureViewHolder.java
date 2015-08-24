@@ -83,7 +83,7 @@ public class DummyPureViewHolder implements BodyViewHolder {
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 messageTextView, builder, ((DummyMessageLink) link).getMentions(),
                 EntityManager.getInstance(JandiApplication.getContext()).getMe().getId());
-        builder = generateMentionMessageUtil.generate();
+        builder = generateMentionMessageUtil.generate(false);
 
         messageTextView.setText(builder);
 
