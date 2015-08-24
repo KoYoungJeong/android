@@ -37,5 +37,7 @@ public interface MainChatListPresenter {
         void moveMessageActivity(int teamId, int entityId, int roomId, boolean isStarred, int lastLinkId);
 
         void scrollToPosition(int selectedEntityPosition);
+
+        void startSelectedItemAnimation();
     }
 }

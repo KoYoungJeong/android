@@ -116,7 +116,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         topicListAdapter.setHasStableIds(true);
 
         mainTopicListPresenter.setView(this);
-        mainTopicListPresenter.onInitTopics(getActivity());
     }
 
     @AfterViews
@@ -156,6 +155,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         });
 
         mainTopicListPresenter.onFocusTopic(selectedEntity);
+        mainTopicListPresenter.onInitTopics(getActivity(), selectedEntity);
 
     }
 
@@ -219,6 +219,13 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     public void setSelectedItem(int selectedEntity) {
         this.selectedEntity = selectedEntity;
         topicListAdapter.setSelectedEntity(selectedEntity);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void startAnimationSelectedItem() {
+        topicListAdapter.startAnimation();
+        topicListAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -303,7 +310,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
     public void onEventMainThread(RetrieveTopicListEvent event) {
 
-        mainTopicListPresenter.onInitTopics(getActivity());
+        mainTopicListPresenter.onInitTopics(getActivity(), selectedEntity);
         setSelectedItem(selectedEntity);
 
     }
@@ -321,7 +328,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         if (!isForeground) {
             return;
         }
-        mainTopicListPresenter.onInitTopics(getActivity());
+        mainTopicListPresenter.onInitTopics(getActivity(), selectedEntity);
     }
 
 }

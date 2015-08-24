@@ -103,6 +103,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
             view.setChatItems(chatItems);
 
             view.setSelectedItem(selectedEntity);
+            view.startSelectedItemAnimation();
 
             int selectedEntityPosition = 0;
             int size = chatItems.size();

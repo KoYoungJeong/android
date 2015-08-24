@@ -114,7 +114,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     public void onResume() {
         super.onResume();
         foreground = true;
-        
+
         btnFAB.setAnimation(null);
         btnFAB.setVisibility(View.VISIBLE);
 
@@ -191,6 +191,13 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         }
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void startSelectedItemAnimation() {
+        mainChatListAdapter.startAnimation();
+        mainChatListAdapter.notifyDataSetChanged();
+    }
+
 
     public void onEventMainThread(ProfileDetailEvent event) {
         if (foreground) {
@@ -233,7 +240,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
             return;
         }
 
-        if(TextUtils.equals(event.getEntityType(), PushTO.RoomType.CHAT.getName())) {
+        if (TextUtils.equals(event.getEntityType(), PushTO.RoomType.CHAT.getName())) {
             mainChatListPresenter.onReloadChatList(getActivity());
         }
     }
