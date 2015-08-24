@@ -9,12 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 /**
@@ -102,6 +104,11 @@ public class DummyViewHolder implements BodyViewHolder {
                 messageTextView.setTextColor(textColor);
                 break;
         }
+
+        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                messageTextView, builder, ((DummyMessageLink) link).getMentions(),
+                EntityManager.getInstance(JandiApplication.getContext()).getMe().getId());
+        builder = generateMentionMessageUtil.generate();
 
         messageTextView.setText(builder);
 

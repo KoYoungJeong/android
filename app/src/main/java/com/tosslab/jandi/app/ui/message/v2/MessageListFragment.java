@@ -351,18 +351,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
 
-//        List<Integer> roomIds = new ArrayList<>();
-//        roomIds.add(roomId);
-//
-//        if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
-//            mentionControlViewModel = new MentionControlViewModel(getActivity(),
-//                    rvListSearchMembers, messageEditText, messageListView, roomIds);
-//            mentionControlViewModel.setOnMentionViewShowingListener(isShowing ->
-//                    announcementViewModel.setAnnouncementViewVisibility(!isShowing));
-//            // copy txt from mentioned edittext message
-//            mentionControlViewModel.registClipboardListener();
-//        }
-
     }
 
     private void initKeyboardEvent() {
@@ -698,8 +686,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
             if (mentionControlViewModel == null) {
-                mentionControlViewModel = new MentionControlViewModel(getActivity(),
-                        rvListSearchMembers, messageEditText, messageListView, roomIds);
+                mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(),
+                        messageEditText, rvListSearchMembers, messageListView,
+                        roomIds,
+                        MentionControlViewModel.MENTION_TYPE_MESSAGE);
+
                 mentionControlViewModel.setOnMentionViewShowingListener(isShowing ->
                         announcementViewModel.setAnnouncementViewVisibility(!isShowing));
                 // copy txt from mentioned edittext message

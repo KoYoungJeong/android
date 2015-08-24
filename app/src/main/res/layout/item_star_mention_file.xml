@@ -55,9 +55,10 @@
             android:layout_toRightOf="@id/iv_star_file"
             android:ellipsize="middle"
             android:gravity="center_vertical"
+            android:textStyle="bold"
             android:maxLines="2"
             android:text="Design team_HQ423142314123412342314213"
-            android:textColor="@color/jandi_star_mention_item_topic_name_text"
+            android:textColor="@color/black"
             android:textSize="13sp" />
 
         <TextView

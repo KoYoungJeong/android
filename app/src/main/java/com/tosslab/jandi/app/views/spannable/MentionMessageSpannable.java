@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.views.spannable;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.text.TextUtils;
 import android.text.style.ReplacementSpan;
 import android.util.TypedValue;
 import android.view.View;
@@ -15,6 +16,7 @@ public class MentionMessageSpannable extends ReplacementSpan {
 
     protected TextView textView;
 
+    private int maxWidth = -1;
 
     public MentionMessageSpannable(Context context, String name, float pxSize,
                                    int textColor, int backgroundColor) {
@@ -24,11 +26,14 @@ public class MentionMessageSpannable extends ReplacementSpan {
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, pxSize);
         textView.setBackgroundColor(backgroundColor);
         textView.setTextColor(textColor);
-
         prepareView();
 
     }
 
+    public void setViewMaxWidthSize(int px) {
+        maxWidth = px;
+        prepareView();
+    }
 
     private void prepareView() {
 
@@ -36,7 +41,13 @@ public class MentionMessageSpannable extends ReplacementSpan {
         int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
 
         textView.measure(widthSpec, heightSpec);
-        textView.layout(0, 0, textView.getMeasuredWidth(), textView.getMeasuredHeight());
+
+        if (maxWidth != -1 && textView.getMeasuredWidth() > maxWidth) {
+            textView.layout(0, 0, maxWidth, textView.getMeasuredHeight());
+            textView.setEllipsize(TextUtils.TruncateAt.END);
+        } else {
+            textView.layout(0, 0, textView.getMeasuredWidth(), textView.getMeasuredHeight());
+        }
 
     }
 

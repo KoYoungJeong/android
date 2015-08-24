@@ -500,8 +500,10 @@ public class FileDetailPresenter {
                 activity.getApplicationContext(), fileMessage);
 
         if (mentionControlViewModel == null) {
-            mentionControlViewModel = new MentionControlViewModel(activity,
-                    searchMemberListView, editText, fileCommentListView, sharedTopicIds);
+            mentionControlViewModel = MentionControlViewModel.newInstance(activity,
+                    editText, searchMemberListView, fileCommentListView,
+                    sharedTopicIds,
+                    MentionControlViewModel.MENTION_TYPE_FILE_COMMENT);
             registClipboardListenerforMention();
         }
         mentionControlViewModel.clear();

@@ -51,7 +51,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     TextView tvNoContent;
 
     @ViewById(R.id.rv_star_mention)
-    RecyclerView starMentionList;
+    RecyclerView lvStarMention;
 
     @ViewById(R.id.ll_empty_list_star_mention)
     LinearLayout llEmptyListStarMention;
@@ -76,12 +76,12 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
 
         starMentionListPresentor.setView(this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        starMentionList.setVerticalScrollBarEnabled(true);
-        starMentionList.setLayoutManager(layoutManager);
-        starMentionList.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+        lvStarMention.setVerticalScrollBarEnabled(true);
+        lvStarMention.setLayoutManager(layoutManager);
+        lvStarMention.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         starMentionListAdapter = new StarMentionListAdapter();
         starMentionListAdapter.setListType(listType);
-        starMentionList.setAdapter(starMentionListAdapter);
+        lvStarMention.setAdapter(starMentionListAdapter);
         loadStarMentionList();
         setOnItemClickListener();
         if (!listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
@@ -95,7 +95,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
 
     private void notifyViewStatus() {
         if (starMentionListPresentor.isEmpty()) {
-            starMentionList.setVisibility(View.GONE);
+            lvStarMention.setVisibility(View.GONE);
             llEmptyListStarMention.setVisibility(View.VISIBLE);
             if (listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
                 tvNoContent.setText(R.string.jandi_mention_no_mentions);
@@ -105,7 +105,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
                 tvNoContent.setText(R.string.jandi_starred_no_file);
             }
         } else {
-            starMentionList.setVisibility(View.VISIBLE);
+            lvStarMention.setVisibility(View.VISIBLE);
             llEmptyListStarMention.setVisibility(View.GONE);
         }
     }
@@ -120,14 +120,14 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     public void setOnItemClickListener() {
         StarMentionListAdapter.OnItemClickListener onItemClickListener = (adapter, position) -> {
             starMentionListPresentor.executeClickEvent(adapter.getItemsByPosition(position), getActivity());
-
         };
         starMentionListAdapter.setOnItemClickListener(onItemClickListener);
     }
 
     public void setOnItemLongClickListener() {
         StarMentionListAdapter.OnItemLongClickListener onItemLongClickListener
-                = (adapter, position) -> starMentionListPresentor.executeLongClickEvent(adapter.getItemsByPosition(position), position);
+                = (adapter, position) -> starMentionListPresentor.executeLongClickEvent(
+                adapter.getItemsByPosition(position), position);
         starMentionListAdapter.setOnItemLongClickListener(onItemLongClickListener);
     }
 
