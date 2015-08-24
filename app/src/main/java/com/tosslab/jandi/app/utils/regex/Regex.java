@@ -37,7 +37,6 @@ public class Regex {
      */
 
     public static final Pattern VALID_URL;
-    public static final Pattern VALID_IP_URL;
     public static final int VALID_URL_GROUP_ALL = 1;
     public static final int VALID_URL_GROUP_BEFORE = 2;
     public static final int VALID_URL_GROUP_URL = 3;
@@ -112,6 +111,7 @@ public class Regex {
     private static final String URL_VALID_UNICODE_CHARS = "[.[^\\p{Punct}\\s\\p{Z}\\p{InGeneralPunctuation}]]";
     private static final String URL_PUNYCODE = "(?:xn--[0-9a-z]+)";
     private static final String SPECIAL_URL_VALID_CCTLD = "(?:(?:" + "co|tv" + ")(?=[^\\p{Alnum}@]|$))";
+    private static final String URL_VALID_IP = "((?:(\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b)))";
     private static final String URL_VALID_DOMAIN =
             "(?:" +                                                   // subdomains + domain + TLD
                     URL_VALID_SUBDOMAIN + "+" + URL_VALID_DOMAIN_NAME +   // e.g. www.twitter.com, foo.co.jp, bar.co.uk
@@ -174,7 +174,7 @@ public class Regex {
                     "(" + URL_VALID_PRECEEDING_CHARS + ")" +                       //  $2 Preceeding chracter
                     "(" +                                                          //  $3 URL
                     "(https?://)?" +                                             //  $4 Protocol (optional)
-                    "(" + URL_VALID_DOMAIN + ")" +                               //  $5 Domain(s)
+                    "(" + URL_VALID_DOMAIN + "|" + URL_VALID_IP + ")" +                               //  $5 Domain(s)
                     "(?::(" + URL_VALID_PORT_NUMBER + "))?" +                     //  $6 Port number (optional)
                     "(/" +
                     URL_VALID_PATH + "*+" +
@@ -203,7 +203,6 @@ public class Regex {
             VALID_TCO_URL = Pattern.compile("^https?:\\/\\/t\\.co\\/[a-z0-9]+", Pattern.CASE_INSENSITIVE);
             VALID_CASHTAG = Pattern.compile("(^|" + UNICODE_SPACES + ")(" + DOLLAR_SIGN_CHAR + ")(" + CASHTAG + ")" + "(?=$|\\s|\\p{Punct})", Pattern.CASE_INSENSITIVE);
             VALID_DOMAIN = Pattern.compile(URL_VALID_DOMAIN, Pattern.CASE_INSENSITIVE);
-            VALID_IP_URL = Pattern.compile("((?:(https?):\\/\\/(\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b)))");
         }
     }
 
