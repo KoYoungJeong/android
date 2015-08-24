@@ -66,11 +66,17 @@ public class StarMentionListPresentor {
             boolean isJoinedTopic = false;
             EntityManager entityManager = EntityManager.getInstance(JandiApplication.getContext());
             FormattedEntity formattedEntity = entityManager.getEntityById(starMentionVO.getRoomId());
+
             if (formattedEntity != null) {
-                for (Integer memberId : formattedEntity.getMembers()) {
-                    if (memberId == entityManager.getMe().getId()) {
-                        isJoinedTopic = true;
+
+                if (!formattedEntity.isUser()) {
+                    for (Integer memberId : formattedEntity.getMembers()) {
+                        if (memberId == entityManager.getMe().getId()) {
+                            isJoinedTopic = true;
+                        }
                     }
+                } else {
+                    isJoinedTopic = true;
                 }
             }
             if (isJoinedTopic) {
