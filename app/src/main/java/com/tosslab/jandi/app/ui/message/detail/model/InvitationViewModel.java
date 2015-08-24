@@ -20,7 +20,6 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -52,8 +51,6 @@ import rx.subjects.PublishSubject;
 public class InvitationViewModel {
 
     @Bean
-    InvitationDialogExecutor invitationDialogExecutor;
-    @Bean
     EntityClientManager mEntityClientManager;
 
     private Context context;
@@ -80,7 +77,6 @@ public class InvitationViewModel {
 
         if (teamMemberCountWithoutMe <= 0) {
             ColoredToast.showWarning(context, context.getString(R.string.warn_all_users_are_already_invited));
-            invitationDialogExecutor.execute();
             return;
         }
         final UnjoinedUserListAdapter adapter = new UnjoinedUserListAdapter(context);
