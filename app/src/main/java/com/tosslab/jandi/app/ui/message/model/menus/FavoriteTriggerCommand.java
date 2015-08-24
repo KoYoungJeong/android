@@ -14,7 +14,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
-import org.springframework.web.client.RestClientException;
 
 import de.greenrobot.event.EventBus;
 
@@ -65,8 +64,6 @@ class FavoriteTriggerCommand implements MenuCommand {
                 mEntityClientManager.enableFavorite(chattingInfomations.entityId);
             }
             enableFavoriteSucceed();
-        } catch (RestClientException e) {
-            LogUtil.e("enable favorite failed", e);
         } catch (Exception e) {
             LogUtil.e("enable favorite failed", e);
         }
@@ -83,8 +80,6 @@ class FavoriteTriggerCommand implements MenuCommand {
             if (chattingInfomations.entityId > 0) {
                 mEntityClientManager.disableFavorite(chattingInfomations.entityId);
             }
-        } catch (RestClientException e) {
-            LogUtil.e("disable favorite failed", e);
         } catch (Exception e) {
             LogUtil.e("disable favorite failed", e);
         }

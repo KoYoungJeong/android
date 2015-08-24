@@ -53,7 +53,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
 
@@ -266,9 +265,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                     getEntitiesFailed(getString(R.string.err_service_connection));
                 }
             }
-        } catch (ResourceAccessException e) {
-            e.printStackTrace();
-            getEntitiesFailed(getString(R.string.err_service_connection));
         } catch (Exception e) {
             e.printStackTrace();
             getEntitiesFailed(getString(R.string.err_service_connection));

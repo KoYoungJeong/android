@@ -5,7 +5,6 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 17..
@@ -53,8 +52,10 @@ public class TokenUtil {
         JandiPreference.setRefreshToken(JandiApplication.getContext(), "");
     }
 
-    public static JandiV2HttpAuthentication getRequestAuthentication() {
-        return new JandiV2HttpAuthentication(JandiPreference.getAccessTokenType(JandiApplication.getContext()), JandiPreference.getAccessToken(JandiApplication.getContext()));
+    public static String getRequestAuthentication() {
+        Context context = JandiApplication.getContext();
+        return String.format("%s %s", JandiPreference.getAccessTokenType(context),
+                JandiPreference.getAccessToken(context));
     }
 
 }
