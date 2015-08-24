@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -243,6 +244,17 @@ public class FileDetailModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.FileId, fileId)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.FileDelete.name())
+                            .setAction("ResponseSuccess")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackFileShareSuccess(int topicId, int fileId) {
@@ -256,6 +268,17 @@ public class FileDetailModel {
                         .property(PropertyKey.TopicId, topicId)
                         .property(PropertyKey.FileId, fileId)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.FileShare.name())
+                            .setAction("ResponseSuccess")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackFileShareFail(int errorCode) {
@@ -267,6 +290,17 @@ public class FileDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.FileShare.name())
+                            .setAction("ResponseFail")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackFileUnShareSuccess(int topicId, int fileId) {
@@ -280,6 +314,16 @@ public class FileDetailModel {
                         .property(PropertyKey.TopicId, topicId)
                         .property(PropertyKey.FileId, fileId)
                         .build());
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.FileUnShare.name())
+                            .setAction("ResponseSuccess")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackFileUnShareFail(int errorCode) {
@@ -291,6 +335,17 @@ public class FileDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.FileUnShare.name())
+                            .setAction("ResponseFail")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackFileDeleteSuccess(int topicId, int fileId) {
@@ -304,6 +359,17 @@ public class FileDetailModel {
                         .property(PropertyKey.TopicId, topicId)
                         .property(PropertyKey.FileId, fileId)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.FileDelete.name())
+                            .setAction("ResponseSuccess")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackFileDeleteFail(int errorCode) {
@@ -315,6 +381,17 @@ public class FileDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.FileDelete.name())
+                            .setAction("ResponseFail")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void registStarredMessage(int teamId, int messageId) throws RetrofitError {

@@ -14,8 +14,7 @@
         tools:replace="android:icon">
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/origin_play_service_version"
-            tools:replace="android:value" />
+            android:value="@integer/google_play_services_version"/>
 
         <meta-data
             android:name="com.mixpanel.android.MPConfig.FlushInterval"

@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.gms.google-services'
 
 apply plugin: 'android-apt'     // Android-Annotation
 apply plugin: 'me.tatarka.retrolambda'  //RetroLamda

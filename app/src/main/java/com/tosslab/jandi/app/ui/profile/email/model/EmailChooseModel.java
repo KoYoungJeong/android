@@ -3,8 +3,9 @@ package com.tosslab.jandi.app.ui.profile.email.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.google.android.gms.analytics.HitBuilders;
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
@@ -114,6 +115,17 @@ public class EmailChooseModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.Email, email)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.ChangeAccountPrimaryEmail.name())
+                            .setAction("ResponseSuccess")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackChangeAccountEmailFail(int errorCode) {
@@ -124,6 +136,17 @@ public class EmailChooseModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.ChangeAccountPrimaryEmail.name())
+                            .setAction("ResponseFail")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackRequestVerifyEmailSuccess() {
@@ -135,6 +158,17 @@ public class EmailChooseModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.Email, email)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.RequestVerificationEmail.name())
+                            .setAction("ResponseSuccess")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackRequestVerifyEmailFail(int errorCode) {
@@ -145,5 +179,16 @@ public class EmailChooseModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.RequestVerificationEmail.name())
+                            .setAction("ResponseFail")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

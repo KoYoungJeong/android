@@ -8,6 +8,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.text.TextUtils;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
@@ -24,7 +25,6 @@ import com.tosslab.jandi.app.ui.settings.viewmodel.SettingFragmentViewModel;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -183,6 +183,16 @@ public class SettingsFragment extends PreferenceFragment {
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .build())
                 .flush();
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.SignOut.name())
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void removeSignData() {

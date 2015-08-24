@@ -3,8 +3,9 @@ package com.tosslab.jandi.app.ui.team.info.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.google.android.gms.analytics.HitBuilders;
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
@@ -107,6 +108,17 @@ public class TeamDomainInfoModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TeamId, teamId)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.CreateTeam.name())
+                            .setAction("ResponseSuccess")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackCreateTeamFail(int errorCode) {
@@ -117,6 +129,17 @@ public class TeamDomainInfoModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.CreateTeam.name())
+                            .setAction("ResponseFail")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
     
     public interface Callback {

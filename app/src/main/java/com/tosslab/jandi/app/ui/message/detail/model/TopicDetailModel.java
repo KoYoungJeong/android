@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.detail.model;
 
 import android.content.Context;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -101,6 +102,16 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, entityId)
                         .build());
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.TopicDelete.name())
+                            .setAction("ResponseSuccess")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackTopicDeleteFail(int errorCode) {
@@ -112,6 +123,16 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.TopicDelete.name())
+                            .setAction("ResponseFail")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void modifyTopicName(int entityType, int entityId, String inputName) throws RetrofitError {
@@ -151,6 +172,17 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, entityId)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.TopicNameChange.name())
+                            .setAction("ResponseSuccess")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackChangingEntityNameFail(int errorCode) {
@@ -162,6 +194,17 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.TopicId, errorCode)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.TopicNameChange.name())
+                            .setAction("ResponseFail")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackTopicStarSuccess(int topicId) {
@@ -173,6 +216,16 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, topicId)
                         .build());
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.TopicStar.name())
+                            .setAction("ResponseSuccess")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackTopicUnStarSuccess(int topicId) {
@@ -184,6 +237,17 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, topicId)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.TopicUnStar.name())
+                            .setAction("ResponseSuccess")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackTopicStarFail(int errorCode) {
@@ -195,6 +259,16 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.TopicStar.name())
+                            .setAction("ResponseFail")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackTopicUnStarFail(int errorCode) {
@@ -206,6 +280,17 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.TopicUnStar.name())
+                            .setAction("ResponseFail")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public boolean isDefaultTopic(Context context, int entityId) {

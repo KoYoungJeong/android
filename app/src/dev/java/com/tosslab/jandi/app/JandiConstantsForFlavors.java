@@ -4,7 +4,7 @@ package com.tosslab.jandi.app;
  * Created by justinygchoi on 14. 10. 31..
  */
 public class JandiConstantsForFlavors {
-    public static final String GA_TRACK_ID = "UA-54051037-2";
+    public static final String GA_TRACK_ID = "UA-29745379-2";
     public static final String MIXPANEL_MEMBER_TRACK_ID = "081e1e9730e547f43bdbf59be36a4e31";
     public static final String MIXPANEL_ACCOUNT_TRACK_ID = "322e7bff6504a2f680c0f2d4a3545319";
     public static final String NEWRELIC_TOKEN_ID = "";

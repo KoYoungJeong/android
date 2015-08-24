@@ -8,16 +8,17 @@ import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
-import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
 import org.androidannotations.api.BackgroundExecutor;
 
@@ -86,10 +87,13 @@ public class JandiApplication extends MultiDexApplication {
         if (!mTrackers.containsKey(trackerId)) {
 
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            Tracker t = (trackerId == TrackerName.APP_TRACKER)
-                    ? analytics.newTracker(JandiConstantsForFlavors.GA_TRACK_ID)
-                    : analytics.newTracker(R.xml.global_tracker);
-            mTrackers.put(trackerId, t);
+            analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
+
+            Tracker tracker = analytics.newTracker(JandiConstantsForFlavors.GA_TRACK_ID);
+            tracker.enableAutoActivityTracking(true);
+            tracker.enableAdvertisingIdCollection(true);
+
+            mTrackers.put(trackerId, tracker);
 
         }
         return mTrackers.get(trackerId);

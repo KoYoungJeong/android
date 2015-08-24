@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
@@ -258,6 +259,17 @@ public class FilePickerModel {
                         .property(PropertyKey.TopicId, entityId)
                         .property(PropertyKey.FileId, fileId)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.FileUpload.name())
+                            .setAction("ResponseSuccess")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackUploadingFileFail(int errorCode) {
@@ -269,6 +281,17 @@ public class FilePickerModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.FileUpload.name())
+                            .setAction("ResponseFail")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public String uploadProfilePhoto(Context context, File file) throws ExecutionException, InterruptedException {

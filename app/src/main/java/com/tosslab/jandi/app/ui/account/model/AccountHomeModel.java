@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.account.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -141,6 +142,16 @@ public class AccountHomeModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TeamId, teamId)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.LaunchTeam.name())
+                            .setAction(PropertyKey.ResponseSuccess.name())
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void trackLaunchTeamFail(int errorCode) {
@@ -151,6 +162,17 @@ public class AccountHomeModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.LaunchTeam.name())
+                            .setAction("ResponseFail")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackChangeAccountNameSuccess(Context context, String accountId) {
@@ -164,6 +186,16 @@ public class AccountHomeModel {
                         .accountId(accountId)
                         .property(PropertyKey.ResponseSuccess, true)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.ChangeAccountName.name())
+                            .setAction("ResponseSuccess")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void trackChangeAccountNameFail(int errorCode) {
@@ -174,6 +206,18 @@ public class AccountHomeModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.ChangeAccountName.name())
+                            .setAction("ResponseFail")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 }

@@ -488,6 +488,17 @@ public class MessageListModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .build())
                 .flush();
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.MessagePost.name())
+                            .setAction("ResponseSuccess")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void trackMessagePostFail(int errorCode) {
@@ -500,6 +511,16 @@ public class MessageListModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build())
                 .flush();
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.MessagePost.name())
+                            .setAction("ResponseFail")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackMessageDeleteSuccess(int messageId) {
@@ -511,6 +532,17 @@ public class MessageListModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.MessageId, messageId)
                         .build());
+
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.MessageDelete.name())
+                            .setAction("ResponseSuccess")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void trackMessageDeleteFail(int errorCode) {
@@ -522,6 +554,16 @@ public class MessageListModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+        try {
+            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
+                    .send(new HitBuilders.EventBuilder()
+                            .setCategory(Event.MessageDelete.name())
+                            .setAction("ResponseFail")
+                            .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void registStarredMessage(int teamId, int messageId) {
