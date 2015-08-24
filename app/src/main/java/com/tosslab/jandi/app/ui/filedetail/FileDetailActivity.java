@@ -820,7 +820,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         intent.setDataAndType(Uri.fromFile(file), getFileType(file, fileType));
         try {
             startActivity(intent);
-            ColoredToast.show(FileDetailActivity.this, file.getPath());
+            ColoredToast.show(FileDetailActivity.this, getString(R.string.jandi_file_downloaded_into, file.getPath()));
         } catch (ActivityNotFoundException e) {
             String rawString = getString(R.string.err_unsupported_file_type);
             String formatString = String.format(rawString, file);
