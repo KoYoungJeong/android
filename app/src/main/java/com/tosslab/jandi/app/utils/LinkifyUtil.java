@@ -31,7 +31,6 @@ public class LinkifyUtil {
                     + "\\-\\.\\+\\!\\*\\'\\(\\)\\,\\_])|(?:\\%[a-fA-F0-9]{2}))*)?"
                     + "(?:\\b|$)"); // and finally, a word boundary or end of
 
-
     public static final boolean addLinks(Context context, Spannable text) {
 
         Matcher matcher = Regex.VALID_URL.matcher(text);
@@ -64,6 +63,22 @@ public class LinkifyUtil {
             JandiURLSpan span = new JandiURLSpan(context, url, color);
 
             text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        matcher = Regex.VALID_IP_URL.matcher(text);
+
+        while (matcher.find()) {
+
+            String url = matcher.group(0);
+            int start = matcher.start(0);
+            int end = matcher.end(0);
+
+            hasLink = true;
+
+            JandiURLSpan span = new JandiURLSpan(context, url, color);
+
+            text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
         }
 
         return hasLink;
