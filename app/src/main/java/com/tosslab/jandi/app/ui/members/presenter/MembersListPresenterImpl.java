@@ -83,15 +83,18 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                                 .toSortedList((chatChooseItem, chatChooseItem2) ->
                                         chatChooseItem.getName().toLowerCase()
                                                 .compareTo(chatChooseItem2.getName().toLowerCase()))
-                                .subscribe(chatChooseItems1 -> chatChooseItems.addAll(chatChooseItems1));
+                                .subscribe(new Action1<List<ChatChooseItem>>() {
+                                    @Override
+                                    public void call(List<ChatChooseItem> collection) {
+                                        chatChooseItems.addAll(collection);
+                                    }
+                                });
                         return chatChooseItems;
                     }
                 })
                 .subscribe(new Action1<List<ChatChooseItem>>() {
                     @Override
-                    public void call(List<ChatChooseItem> topicMembers) {
-                        view.showListMembers(topicMembers);
-                    }
+                    public void call(List<ChatChooseItem> topicMembers) {view.showListMembers(topicMembers);}
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
