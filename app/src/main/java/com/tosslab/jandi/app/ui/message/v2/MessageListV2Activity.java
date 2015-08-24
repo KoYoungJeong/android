@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -36,6 +38,7 @@ public class MessageListV2Activity extends AppCompatActivity {
     int roomId;
 
     private OnBackPressedListener onBackPressedListener;
+    private OnKeyPressListener onKeyPressListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +79,10 @@ public class MessageListV2Activity extends AppCompatActivity {
         if (messageListFragment instanceof OnBackPressedListener) {
             onBackPressedListener = (OnBackPressedListener) messageListFragment;
         }
+
+        if (messageListFragment instanceof OnKeyPressListener) {
+            onKeyPressListener = ((OnKeyPressListener) messageListFragment);
+        }
     }
 
     @Override
@@ -87,9 +94,27 @@ public class MessageListV2Activity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+
+        LogUtil.d("dispatchKeyEvent : " + event.getKeyCode() + ", Action : " + event.getAction());
+
+        if (onKeyPressListener != null) {
+            boolean consumed = onKeyPressListener.onKey(event.getKeyCode(), event);
+            if (consumed) {
+                return true;
+            }
+        }
+
+
+        return super.dispatchKeyEvent(event);
+    }
+
     public interface OnBackPressedListener {
         boolean onBackPressed();
     }
 
-
+    public interface OnKeyPressListener {
+        boolean onKey(int keyCode, KeyEvent event);
+    }
 }

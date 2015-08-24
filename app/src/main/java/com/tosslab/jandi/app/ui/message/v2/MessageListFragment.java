@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -111,6 +113,7 @@ import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -146,7 +149,8 @@ import rx.subjects.PublishSubject;
  * Created by Steve SeongUg Jung on 15. 1. 20..
  */
 @EFragment(R.layout.fragment_message_list)
-public class MessageListFragment extends Fragment implements MessageListV2Activity.OnBackPressedListener {
+public class MessageListFragment extends Fragment implements MessageListV2Activity
+        .OnBackPressedListener, MessageListV2Activity.OnKeyPressListener {
 
     public static final String EXTRA_FILE_DELETE = "file_delete";
     public static final String EXTRA_FILE_ID = "file_id";
@@ -315,6 +319,107 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         setUpActionbar();
         setHasOptionsMenu(true);
 
+        initMessageList();
+
+        messageListModel.setEntityInfo(entityType, entityId);
+
+        String tempMessage;
+        if (messageListModel.isUser(entityId)) {
+
+            if (roomId > 0) {
+                tempMessage = messageListModel.getReadyMessage(roomId);
+            } else {
+                tempMessage = "";
+            }
+        } else {
+            tempMessage = messageListModel.getReadyMessage(entityId);
+
+        }
+        messageListPresenter.setSendEditText(tempMessage);
+
+        if (!messageListModel.isEnabledIfUser(entityId)) {
+            messageListPresenter.disableChat();
+        }
+
+        initKeyboardEvent();
+
+        initStickerViewModel();
+
+        insertEmptyMessage();
+
+        initAnnouncementListeners();
+
+        sendInitMessage();
+
+        TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
+
+//        List<Integer> roomIds = new ArrayList<>();
+//        roomIds.add(roomId);
+//
+//        if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
+//            mentionControlViewModel = new MentionControlViewModel(getActivity(),
+//                    rvListSearchMembers, messageEditText, messageListView, roomIds);
+//            mentionControlViewModel.setOnMentionViewShowingListener(isShowing ->
+//                    announcementViewModel.setAnnouncementViewVisibility(!isShowing));
+//            // copy txt from mentioned edittext message
+//            mentionControlViewModel.registClipboardListener();
+//        }
+
+    }
+
+    private void initKeyboardEvent() {
+
+        messageEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+
+                LogUtil.d("In messageEditText KeyCode : " + keyCode);
+
+                if (keyCode == KeyEvent.KEYCODE_ENTER
+                        && getResources().getConfiguration().keyboard != Configuration
+                        .KEYBOARD_NOKEYS) {
+
+                    if (!event.isShiftPressed()) {
+                        onSendClick();
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+
+                if (event.getAction() != KeyEvent.ACTION_DOWN) {
+                    //We only look at ACTION_DOWN in this code, assuming that ACTION_UP is redundant.
+                    // If not, adjust accordingly.
+                    return false;
+                } else if (event.getUnicodeChar() ==
+                        (int) EditableAccomodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
+                    //We are ignoring this character, and we want everyone else to ignore it, too, so
+                    // we return true indicating that we have handled it (by ignoring it).
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+    }
+
+    private void initStickerViewModel() {
+        stickerViewModel.setOnStickerClick(new StickerViewModel.OnStickerClick() {
+            @Override
+            public void onStickerClick(int groupId, String stickerId) {
+                StickerInfo oldSticker = stickerInfo;
+                stickerInfo = new StickerInfo();
+                stickerInfo.setStickerGroupId(groupId);
+                stickerInfo.setStickerId(stickerId);
+                showStickerPreview(oldSticker, stickerInfo);
+                messageListPresenter.setEnableSendButton(true);
+            }
+        });
+    }
+
+    private void initMessageList() {
         messageListPresenter.setOnItemClickListener(new MessageListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(RecyclerView.Adapter adapter, int position) {
@@ -343,59 +448,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 }
             }
         });
-
-        messageListModel.setEntityInfo(entityType, entityId);
-
-        String tempMessage;
-        if (messageListModel.isUser(entityId)) {
-
-            if (roomId > 0) {
-                tempMessage = messageListModel.getReadyMessage(roomId);
-            } else {
-                tempMessage = "";
-            }
-        } else {
-            tempMessage = messageListModel.getReadyMessage(entityId);
-
-        }
-        messageListPresenter.setSendEditText(tempMessage);
-
-        if (!messageListModel.isEnabledIfUser(entityId)) {
-            messageListPresenter.disableChat();
-        }
-
-        stickerViewModel.setOnStickerClick(new StickerViewModel.OnStickerClick() {
-            @Override
-            public void onStickerClick(int groupId, String stickerId) {
-                StickerInfo oldSticker = stickerInfo;
-                stickerInfo = new StickerInfo();
-                stickerInfo.setStickerGroupId(groupId);
-                stickerInfo.setStickerId(stickerId);
-                showStickerPreview(oldSticker, stickerInfo);
-                messageListPresenter.setEnableSendButton(true);
-            }
-        });
-
-        insertEmptyMessage();
-
-        initAnnouncementListeners();
-
-        sendInitMessage();
-
-        TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
-
-//        List<Integer> roomIds = new ArrayList<>();
-//        roomIds.add(roomId);
-//
-//        if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
-//            mentionControlViewModel = new MentionControlViewModel(getActivity(),
-//                    rvListSearchMembers, messageEditText, messageListView, roomIds);
-//            mentionControlViewModel.setOnMentionViewShowingListener(isShowing ->
-//                    announcementViewModel.setAnnouncementViewVisibility(!isShowing));
-//            // copy txt from mentioned edittext message
-//            mentionControlViewModel.registClipboardListener();
-//        }
-
     }
 
     @Background
@@ -1489,6 +1541,22 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (mentionControlViewModel != null && mentionControlViewModel.isMentionListVisible()) {
             mentionControlViewModel.dismissMentionList();
             return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean onKey(int keyCode, KeyEvent event) {
+
+        if ((keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_POUND)
+                || (keyCode >= KeyEvent.KEYCODE_A && keyCode <= KeyEvent.KEYCODE_PERIOD)
+                || (keyCode >= KeyEvent.KEYCODE_GRAVE && keyCode <= KeyEvent.KEYCODE_AT)) {
+            if (!messageEditText.isFocused()) {
+                messageEditText.requestFocus();
+                messageEditText.setSelection(messageEditText.getText().length());
+                return true;
+            }
         }
 
         return false;
