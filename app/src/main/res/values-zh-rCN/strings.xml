@@ -482,5 +482,6 @@
     <string name="jandi_who_of_file">"共享文件"</string>
     <string name="jandi_shared">"分享过"</string>
     <string name="jandi_file_downloaded_into">"文件下载至 %s"</string>
+    <string name="jandi_file_deleted_with_date">"%s 文件已删除"</string>
 
 </resources>

@@ -484,4 +484,6 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_commented_on">Commented on</string>
 
     <string name="jandi_file_downloaded_into">"File downloaded to %s"</string>
+    <string name="jandi_commented_on">"Commented on "</string>
+    <string name="jandi_file_deleted_with_date">"%s, file was deleted."</string>
 </resources>
