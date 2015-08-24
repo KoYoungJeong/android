@@ -118,6 +118,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 fileOwnerPostfixTextView.setVisibility(View.GONE);
 
                 fileNameTextView.setText(R.string.jandi_deleted_file);
+                fileNameTextView.setTextColor(fileNameTextView.getResources().getColor(R.color
+                        .jandi_text_light));
                 fileImageView.setBackgroundDrawable(null);
                 fileImageView.setImageResource(R.drawable.jandi_fl_icon_deleted);
                 fileImageView.setOnClickListener(null);
@@ -125,6 +127,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 fileOwnerTextView.setText(feedbackUser.name);
                 ResMessages.FileContent content = feedbackFileMessage.content;
                 fileNameTextView.setText(content.title);
+                fileNameTextView.setTextColor(fileNameTextView.getResources().getColor(R.color
+                        .jandi_messages_file_name));
 
                 fileOwnerTextView.setVisibility(View.VISIBLE);
                 fileOwnerPostfixTextView.setVisibility(View.VISIBLE);

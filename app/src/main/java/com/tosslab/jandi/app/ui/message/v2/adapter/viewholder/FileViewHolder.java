@@ -153,7 +153,10 @@ public class FileViewHolder implements BodyViewHolder {
                 fileNameTextView.setText(R.string.jandi_deleted_file);
                 fileImageView.setImageResource(R.drawable.jandi_fl_icon_deleted);
                 fileTypeTextView.setVisibility(View.GONE);
+                fileNameTextView.setTextColor(fileNameTextView.getResources().getColor(R.color
+                        .jandi_text_light));
             } else {
+                fileNameTextView.setTextColor(fileNameTextView.getResources().getColor(R.color.jandi_messages_file_name));
                 fileNameTextView.setText(fileMessage.content.title);
                 MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
                 switch (sourceType) {
