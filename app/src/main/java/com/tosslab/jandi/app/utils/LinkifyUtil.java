@@ -65,22 +65,6 @@ public class LinkifyUtil {
             text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        matcher = Regex.VALID_IP_URL.matcher(text);
-
-        while (matcher.find()) {
-
-            String url = matcher.group(0);
-            int start = matcher.start(0);
-            int end = matcher.end(0);
-
-            hasLink = true;
-
-            JandiURLSpan span = new JandiURLSpan(context, url, color);
-
-            text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        }
-
         return hasLink;
     }
 

@@ -100,6 +100,7 @@ public class DummyViewHolder implements BodyViewHolder {
                 break;
             }
             case COMPLETE:
+                builder.append(" ");
                 nameTextView.setTextColor(textColor);
                 messageTextView.setTextColor(textColor);
                 break;

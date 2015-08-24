@@ -75,6 +75,7 @@ public class DummyPureViewHolder implements BodyViewHolder {
                 break;
             }
             case COMPLETE:
+                builder.append(" ");
                 messageTextView.setTextColor(textColor);
                 break;
         }

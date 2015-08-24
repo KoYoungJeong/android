@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -23,7 +22,7 @@
             android:id="@+id/img_message_user_profile"
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
-            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"/>
+            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
         <!-- 기본 표시 레이어 -->
         <TextView
             android:id="@+id/txt_message_user_name"
@@ -38,7 +37,7 @@
             android:text="User name"
             android:textColor="@color/jandi_messages_name"
             android:textSize="@dimen/jandi_messages_user_name"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <!-- 실제 메시지 내용 -->
         <TextView
@@ -50,9 +49,10 @@
             android:layout_toRightOf="@+id/img_message_user_profile"
             android:focusable="false"
             android:lineSpacingExtra="2dip"
+            android:minHeight="19dp"
             android:text="Text"
             android:textColor="@color/jandi_messages_content"
-            android:textSize="@dimen/jandi_messages_content"/>
+            android:textSize="@dimen/jandi_messages_content" />
 
     </RelativeLayout>
 </LinearLayout>
