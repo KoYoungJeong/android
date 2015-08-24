@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.lists.entities.entitymanager;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -89,14 +90,16 @@ public class EntityManager {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
         if (selectedTeamInfo != null) {
-            int teamId = selectedTeamInfo.getTeamId();
             ResLeftSideMenu resLeftSideMenu = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu();
-            init(resLeftSideMenu);
+            if (resLeftSideMenu != null) {
+                init(resLeftSideMenu);
+            }
         }
     }
 
     public void refreshEntity(ResLeftSideMenu resLeftSideMenu) {
-        init(resLeftSideMenu);
+        // TODO 임시로 코드 추가
+        refreshEntity(JandiApplication.getContext());
     }
 
     /**
