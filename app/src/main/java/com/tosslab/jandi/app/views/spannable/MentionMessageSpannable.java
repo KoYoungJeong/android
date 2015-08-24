@@ -44,6 +44,7 @@ public class MentionMessageSpannable extends ReplacementSpan {
 
         if (maxWidth != -1 && textView.getMeasuredWidth() > maxWidth) {
             textView.layout(0, 0, maxWidth, textView.getMeasuredHeight());
+            textView.setMaxLines(1);
             textView.setEllipsize(TextUtils.TruncateAt.END);
         } else {
             textView.layout(0, 0, textView.getMeasuredWidth(), textView.getMeasuredHeight());
