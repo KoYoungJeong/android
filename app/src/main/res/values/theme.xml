@@ -6,7 +6,6 @@
         <item name="android:windowEnableSplitTouch">false</item>
         <item name="android:splitMotionEvents">false</item>
 
-        <item name="searchViewStyle">@style/JandiSearchView</item>
         <item name="colorPrimary">@color/jandi_primary_color</item>
         <item name="colorPrimaryDark">@color/jandi_primary_dark_color</item>
         <item name="colorAccent">@color/jandi_accent_color</item>
@@ -57,9 +56,4 @@
         <item name="colorPrimaryDark">@color/backgournd_photo_actionbar</item>
     </style>
 
-    <style name="JandiSearchView" parent="Widget.AppCompat.SearchView">
-        <item name="layout">@layout/view_search_view</item>
-        <item name="closeIcon">@drawable/jandi_actionb_remove</item>
-        <item name="queryBackground">@drawable/jandi_textfield_activated_holo_dark</item>
-    </style>
 </resources>

@@ -121,7 +121,7 @@
             android:id="@+id/icon_file_detail_content_type"
             android:layout_width="@dimen/jandi_file_detail_file_icon_width"
             android:layout_height="@dimen/jandi_file_detail_file_icon_height"
-            android:background="@drawable/jandi_fview_icon_etc"/>
+            android:background="@drawable/jandi_fl_icon_audio"/>
 
         <RelativeLayout
             android:layout_width="match_parent"

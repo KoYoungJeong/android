@@ -93,10 +93,10 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/ry_message_common_file"
             android:layout_below="@+id/txt_message_user_name"
+            android:layout_marginLeft="4dp"
             android:ellipsize="end"
             android:singleLine="true"
             android:text="Shared Andrew's file"
-            android:layout_marginLeft="4dp"
             android:textColor="#999999"
             android:textSize="11sp"/>
 
@@ -116,8 +116,7 @@
                 android:layout_width="@dimen/jandi_messages_image_size"
                 android:layout_height="@dimen/jandi_messages_image_size"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="8dp"
-                android:src="@drawable/jandi_sicon_text"/>
+                android:layout_marginRight="8dp"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
