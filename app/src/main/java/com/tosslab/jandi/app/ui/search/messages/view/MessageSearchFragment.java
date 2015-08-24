@@ -1,12 +1,10 @@
 package com.tosslab.jandi.app.ui.search.messages.view;
 
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -25,15 +23,16 @@ import com.tosslab.jandi.app.events.search.MoreSearchRequestEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.events.search.SelectEntityEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
-import com.tosslab.jandi.app.ui.search.messages.adapter.EntitySelectDialogAdatper;
-import com.tosslab.jandi.app.ui.search.messages.adapter.MemberSelectDialogAdapter;
 import com.tosslab.jandi.app.ui.search.messages.adapter.MessageSearchResultAdapter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenterImpl;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
+import com.tosslab.jandi.app.ui.selector.room.RoomSelector;
+import com.tosslab.jandi.app.ui.selector.room.RoomSelectorImpl;
+import com.tosslab.jandi.app.ui.selector.user.UserSelector;
+import com.tosslab.jandi.app.ui.selector.user.UserSelectorImpl;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -53,11 +52,9 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 10..
@@ -77,17 +74,20 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     @ViewById(R.id.txt_search_scope_where)
     TextView entityTextView;
 
+    @ViewById(R.id.layout_search_scope_where)
+    View vgEntity;
+
     @ViewById(R.id.txt_search_scope_who)
     TextView memberTextView;
+
+    @ViewById(R.id.layout_search_scope_who)
+    View vgMember;
 
     @ViewById(R.id.layout_search_scope)
     View scopeView;
 
     @ViewById(R.id.progress_message_search)
     ProgressBar progressBar;
-
-    private Dialog memberSelectDialog;
-    private Dialog entitySelectDialog;
 
     private MessageSearchResultAdapter messageSearchResultAdapter;
     private int scropMaxY;
@@ -242,120 +242,58 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
     @Override
     public void showEntityDialog() {
-        if (entitySelectDialog != null && entitySelectDialog.isShowing()) {
-            return;
-        }
 
-        if (entitySelectDialog == null) {
+        setUpCategoryView(vgEntity, entityTextView, true);
 
-            Context context = getActivity();
-            EntityManager entityManager = EntityManager.getInstance(context);
+        RoomSelector roomSelector = new RoomSelectorImpl();
 
-            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-            dialog.setTitle(R.string.jandi_file_search_entity);
-
-            EntitySelectDialogAdatper adapter = new EntitySelectDialogAdatper(context);
-            dialog.setAdapter(adapter, (dialog1, which) -> {
-                EntitySelectDialogAdatper.SimpleEntityInfo item = ((EntitySelectDialogAdatper) ((AlertDialog) dialog1).getListView().getAdapter()).getItem(which);
+        roomSelector.setOnRoomSelectListener(item -> {
+            if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
+                EventBus.getDefault().post(new SelectEntityEvent(-1, getString(R.string.jandi_file_category_everywhere)));
+            } else {
                 EventBus.getDefault().post(new SelectEntityEvent(item.getId(), item.getName()));
-            });
+            }
+            roomSelector.dismiss();
+        });
 
-            List<FormattedEntity> categorizableEntities = entityManager.retrieveAccessableEntities();
+        roomSelector.setOnRoomDismissListener(
+                () -> setUpCategoryView(vgEntity, entityTextView, false));
 
-            FormattedEntity me = entityManager.getMe();
-            adapter.add(new EntitySelectDialogAdatper.SimpleEntityInfo(-1, context.getString(R.string.jandi_file_category_everywhere), -1, ""));
-
-            Observable.from(categorizableEntities)
-                    .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
-                    .filter(entity -> entity.getId() != me.getId())
-                    .map(entity -> {
-
-                        int id = entity.getId();
-                        String name = entity.getName();
-                        int type;
-                        String photo;
-
-                        if (entity.isPublicTopic()) {
-                            type = JandiConstants.TYPE_PUBLIC_TOPIC;
-                            photo = "";
-                        } else if (entity.isPrivateGroup()) {
-                            type = JandiConstants.TYPE_PRIVATE_TOPIC;
-                            photo = "";
-                        } else {
-                            type = JandiConstants.TYPE_DIRECT_MESSAGE;
-                            photo = entity.getUserSmallProfileUrl();
-                        }
-
-                        return new EntitySelectDialogAdatper.SimpleEntityInfo(type, name, id, photo);
-                    })
-                    .toSortedList((lhs, rhs) -> {
-                        int lhsType = lhs.getType();
-                        int rhsType = rhs.getType();
-
-                        if ((lhsType == JandiConstants.TYPE_DIRECT_MESSAGE &&
-                                rhsType == JandiConstants.TYPE_DIRECT_MESSAGE)
-                                || (lhsType != JandiConstants.TYPE_DIRECT_MESSAGE &&
-                                rhsType != JandiConstants.TYPE_DIRECT_MESSAGE)) {
-                            return lhs.getName().compareToIgnoreCase(rhs.getName());
-                        } else {
-                            if (lhsType != JandiConstants.TYPE_DIRECT_MESSAGE) {
-                                return -1;
-                            } else {
-                                return 1;
-                            }
-                        }
-                    })
-                    .subscribe(adapter::addAll);
-
-
-            entitySelectDialog = dialog.create();
-        }
-        entitySelectDialog.show();
+        roomSelector.show(vgEntity);
     }
 
     @Override
     public void showMemberDialog() {
-        if (memberSelectDialog != null && memberSelectDialog.isShowing()) {
-            return;
+        setUpCategoryView(vgMember, memberTextView, true);
+
+        UserSelector userSelector = new UserSelectorImpl();
+        userSelector.setOnUserSelectListener(new UserSelector.OnUserSelectListener() {
+            @Override
+            public void onUserSelect(FormattedEntity item) {
+                if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
+                    EventBus.getDefault().post(new SelectMemberEvent(-1, getString(R.string.jandi_file_category_everyone)));
+                } else {
+                    EventBus.getDefault().post(new SelectMemberEvent(item.getId(), item.getName()));
+                }
+                userSelector.dismiss();
+            }
+        });
+
+        userSelector.setOnUserDismissListener(
+                () -> setUpCategoryView(vgMember, memberTextView, false));
+
+        userSelector.show(vgMember);
+    }
+
+    private void setUpCategoryView(View backgroundView, TextView textView, boolean isFocused) {
+        if (isFocused) {
+            backgroundView.setBackgroundColor(backgroundView.getResources().getColor(R.color.jandi_primary_color_focus));
+            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.jandi_arrow_up, 0);
+        } else {
+            backgroundView.setBackgroundColor(Color.TRANSPARENT);
+            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.jandi_arrow_down, 0);
+
         }
-
-        if (memberSelectDialog == null) {
-
-            Context context = getActivity();
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-            dialogBuilder.setTitle(R.string.jandi_file_search_user);
-            MemberSelectDialogAdapter adapter = new MemberSelectDialogAdapter(context);
-
-            EntityManager entityManager = EntityManager.getInstance(context);
-            List<FormattedEntity> formattedUsersWithoutMe = entityManager.getFormattedUsersWithoutMe();
-
-            List<MemberSelectDialogAdapter.SimpleMemberInfo> simpleMemberInfos = new ArrayList<>();
-
-            Observable.from(formattedUsersWithoutMe)
-                    .filter(entity -> TextUtils.equals(entity.getUser().status, "enabled"))
-                    .map(entity -> new MemberSelectDialogAdapter.SimpleMemberInfo(entity.getId(), entity.getName(), entity.getUserSmallProfileUrl()))
-                    .toSortedList((lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()))
-                    .subscribe(simpleMemberInfos::addAll);
-
-
-            FormattedEntity me = entityManager.getMe();
-
-            simpleMemberInfos.add(0, new MemberSelectDialogAdapter.SimpleMemberInfo(me.getId(), me.getName(), me.getUserSmallProfileUrl()));
-            simpleMemberInfos.add(0, new MemberSelectDialogAdapter.SimpleMemberInfo(0, context.getString(R.string.jandi_file_category_everyone), ""));
-
-            adapter.addAll(simpleMemberInfos);
-
-            dialogBuilder.setAdapter(adapter, (dialog, which) -> {
-
-                MemberSelectDialogAdapter dialogAdapter = (MemberSelectDialogAdapter) ((AlertDialog) dialog).getListView().getAdapter();
-                MemberSelectDialogAdapter.SimpleMemberInfo item = dialogAdapter.getItem(which);
-
-                EventBus.getDefault().post(new SelectMemberEvent(item.getMemberId(), item.getName()));
-            });
-
-            memberSelectDialog = dialogBuilder.create();
-        }
-        memberSelectDialog.show();
     }
 
     @Override
