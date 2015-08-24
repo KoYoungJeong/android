@@ -807,19 +807,21 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                 fileDownloadStartEvent.getFileName(),
                 fileDownloadStartEvent.getFileType(),
                 fileDownloadStartEvent.getExt(),
-                progressDialog, fileId);
+                progressDialog, fileId, true);
     }
 
     @UiThread
     @Override
-    public void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage) {
+    public void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage, boolean execute) {
         trackDownloadingFile(entityManager, fileMessage);
 
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(file), getFileType(file, fileType));
         try {
-            startActivity(intent);
+            if (execute) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(file), getFileType(file, fileType));
+                startActivity(intent);
+            }
             ColoredToast.show(FileDetailActivity.this, getString(R.string.jandi_file_downloaded_into, file.getPath()));
         } catch (ActivityNotFoundException e) {
             String rawString = getString(R.string.err_unsupported_file_type);

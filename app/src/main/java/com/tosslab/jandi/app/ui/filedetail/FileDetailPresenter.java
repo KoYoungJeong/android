@@ -455,11 +455,11 @@ public class FileDetailPresenter {
                 content.title,
                 content.type,
                 content.ext,
-                progressDialog, fileId);
+                progressDialog, fileId, false);
     }
 
     @Background
-    public void downloadFile(String url, String fileName, final String fileType, String ext, ProgressDialog progressDialog, int fileId) {
+    public void downloadFile(String url, String fileName, final String fileType, String ext, ProgressDialog progressDialog, int fileId, boolean execute) {
         try {
             File result = fileDetailModel.download(url, fileName, ext, progressDialog);
 
@@ -470,7 +470,8 @@ public class FileDetailPresenter {
             fileDetailModel.trackFileDownloadSuccess(fileId);
 
             view.dismissDownloadProgressDialog();
-            view.onDownloadFileSucceed(result, fileType, fileDetailModel.getFileMessage(fileId));
+            view.onDownloadFileSucceed(result, fileType, fileDetailModel.getFileMessage(fileId),
+                    execute);
         } catch (Exception e) {
             LogUtil.e("Download failed", e);
             view.dismissDownloadProgressDialog();
@@ -622,7 +623,7 @@ public class FileDetailPresenter {
 
         void onDeleteFileSucceed(boolean isOk);
 
-        void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage);
+        void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage, boolean execute);
 
         void onGetProfileFailed();
 
