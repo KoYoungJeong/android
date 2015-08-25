@@ -60,7 +60,7 @@ public class UserInfoDialogFragment extends DialogFragment {
 
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
 
-        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
         if (TextUtils.equals(entity.getUser().status, "enabled")) {
             return createEnabledUserDialog();
@@ -72,7 +72,7 @@ public class UserInfoDialogFragment extends DialogFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
         if (TextUtils.equals(entity.getUser().status, "enabled")) {
             setUpEnabledProfile(entity);
@@ -98,7 +98,7 @@ public class UserInfoDialogFragment extends DialogFragment {
             return;
         }
 
-        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
         setProfileStarred(entity.isStarred);
 
@@ -107,7 +107,7 @@ public class UserInfoDialogFragment extends DialogFragment {
     public void onEvent(ProfileChangeEvent event) {
         if (event.getMember().id == entityId) {
             FormattedEntity entityById =
-                    EntityManager.getInstance(getActivity()).getEntityById(entityId);
+                    EntityManager.getInstance().getEntityById(entityId);
 
             setUpEnabledProfile(entityById);
         }
@@ -122,7 +122,7 @@ public class UserInfoDialogFragment extends DialogFragment {
         final String userPhoneNumber = entity.getUserPhoneNumber();
         final String userEmail = entity.getUserEmail();
         final String userProfileUrl = entity.getUserLargeProfileUrl();
-        final boolean isMe = EntityManager.getInstance(getActivity()).isMe(entityId);
+        final boolean isMe = EntityManager.getInstance().isMe(entityId);
         final boolean isStarred = entity.isStarred;
 
 
@@ -320,7 +320,7 @@ public class UserInfoDialogFragment extends DialogFragment {
     @Background
     void onStarClick(int entityId) {
 
-        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
         try {
             if (entity.isStarred) {

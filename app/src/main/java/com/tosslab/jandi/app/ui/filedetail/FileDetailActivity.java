@@ -183,7 +183,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         progressWheel = new ProgressWheel(this);
 
-        entityManager = EntityManager.getInstance(this);
+        entityManager = EntityManager.getInstance();
 
         fileDetailPresenter.setView(this);
 
@@ -471,11 +471,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                 .setPositiveButton(R.string.jandi_confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        FormattedEntity entity = EntityManager.getInstance(FileDetailActivity.this)
+                        FormattedEntity entity = EntityManager.getInstance()
                                 .getEntityById(entityIdToBeShared);
 
                         MessageListV2Activity_.intent(FileDetailActivity.this)
-                                .teamId(EntityManager.getInstance(FileDetailActivity.this).getTeamId())
+                                .teamId(EntityManager.getInstance().getTeamId())
                                 .entityId(entityIdToBeShared)
                                 .entityType(entity.type)
                                 .roomId(entity.isUser() ? -1 : entityIdToBeShared)
@@ -601,7 +601,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         int entityId = event.getEntityId();
 
-        EntityManager entityManager = EntityManager.getInstance(FileDetailActivity.this);
+        EntityManager entityManager = EntityManager.getInstance();
 
         FormattedEntity entity = entityManager.getEntityById(entityId);
 
@@ -871,7 +871,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             return;
         }
 
-        EntityManager entityManager = EntityManager.getInstance(FileDetailActivity.this);
+        EntityManager entityManager = EntityManager.getInstance();
         MessageListV2Activity_.intent(FileDetailActivity.this)
                 .teamId(entityManager.getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
@@ -933,7 +933,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             isDeleted = false;
         }
 
-        if (fileMessage.writerId == EntityManager.getInstance(FileDetailActivity.this).getMe().getId()) {
+        if (fileMessage.writerId == EntityManager.getInstance().getMe().getId()) {
             isMyFile = true;
         } else {
             isMyFile = false;

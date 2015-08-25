@@ -47,7 +47,7 @@ public class EntityManagerTest {
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(infosForSideMenu);
 
-        EntityManager instance = EntityManager.getInstance(RuntimeEnvironment.application);
+        EntityManager instance = EntityManager.getInstance();
 
         List<FormattedEntity> formattedUsersWithoutMe = instance.getFormattedUsersWithoutMe();
 

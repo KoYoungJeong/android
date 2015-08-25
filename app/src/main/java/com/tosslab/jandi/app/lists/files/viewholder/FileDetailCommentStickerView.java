@@ -53,10 +53,10 @@ public class FileDetailCommentStickerView implements CommentViewHolder {
         ResMessages.CommentStickerMessage commentMessage = (ResMessages.CommentStickerMessage) originalMessage;
 
         // 프로필
-        final FormattedEntity writer = EntityManager.getInstance(imageViewCommentUserProfile.getContext()).getEntityById(commentMessage.writerId);
+        final FormattedEntity writer = EntityManager.getInstance().getEntityById(commentMessage.writerId);
 
         String profileUrl = writer.getUserSmallProfileUrl();
-        EntityManager entityManager = EntityManager.getInstance(imageViewCommentUserProfile.getContext());
+        EntityManager entityManager = EntityManager.getInstance();
         if (TextUtils.equals(entityManager.getEntityById(commentMessage.writerId).getUser().status, "enabled")) {
             disableLineThrougView.setVisibility(View.GONE);
             disableCoverView.setVisibility(View.GONE);

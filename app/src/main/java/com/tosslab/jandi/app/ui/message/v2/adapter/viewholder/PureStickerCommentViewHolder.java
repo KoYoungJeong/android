@@ -47,10 +47,10 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
 
         ResMessages.CommentStickerMessage stickerMessage = (ResMessages.CommentStickerMessage) link.message;
 
-        FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext()).getEntityById(fromEntityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
-        EntityManager entityManager = EntityManager.getInstance(nameTextView.getContext());
+        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById.getUser();
         if (entityById != null && user != null && TextUtils.equals(user.status, "enabled")) {

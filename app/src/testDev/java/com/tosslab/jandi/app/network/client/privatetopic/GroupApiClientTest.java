@@ -119,9 +119,9 @@ public class GroupApiClientTest {
         }
 
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(279);
-        EntityManager.getInstance(RuntimeEnvironment.application).refreshEntity(infosForSideMenu);
+        EntityManager.getInstance().refreshEntity(infosForSideMenu);
 
-        FormattedEntity entity = EntityManager.getInstance(RuntimeEnvironment.application).getEntityById(privateTopic.id);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(privateTopic.id);
         assertThat(entity.getName(), is(reqCreateTopic.name));
         assertThat(((ResLeftSideMenu.PrivateGroup) entity.getEntity()).description, is(oldDescription));
 
@@ -151,9 +151,9 @@ public class GroupApiClientTest {
         }
 
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(279);
-        EntityManager.getInstance(RuntimeEnvironment.application).refreshEntity(infosForSideMenu);
+        EntityManager.getInstance().refreshEntity(infosForSideMenu);
 
-        FormattedEntity entity = EntityManager.getInstance(RuntimeEnvironment.application).getEntityById(privateTopic.id);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(privateTopic.id);
         assertThat(entity.getName(), is(oldName));
         assertThat(((ResLeftSideMenu.PrivateGroup) entity.getEntity()).description,
                 is(reqCreateTopic.description));

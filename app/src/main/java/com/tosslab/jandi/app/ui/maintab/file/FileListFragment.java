@@ -128,7 +128,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         mSearchQuery = new SearchQuery();
         if (entityIdForCategorizing >= 0) {
             mSearchQuery.setSharedEntity(entityIdForCategorizing);
-            mCurrentEntityCategorizingAccodingBy = EntityManager.getInstance(getActivity())
+            mCurrentEntityCategorizingAccodingBy = EntityManager.getInstance()
                     .getEntityById(entityIdForCategorizing).getName();
         }
         fileListPresenter.setEntityIdForCategorizing(entityIdForCategorizing);

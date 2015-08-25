@@ -136,7 +136,7 @@ public class PushInterfaceActivity extends AppCompatActivity {
                 moveIntroActivity();
             }
 
-            String distictId = EntityManager.getInstance(PushInterfaceActivity.this).getDistictId();
+            String distictId = EntityManager.getInstance().getDistictId();
             MixpanelMemberAnalyticsClient.getInstance(PushInterfaceActivity.this, distictId).trackMemberSingingIn();
         } else {
             moveIntroActivity();

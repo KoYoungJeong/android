@@ -64,7 +64,7 @@ public class StarMentionListPresentor {
         int contentType = starMentionVO.getContentType();
         if (contentType == StarMentionVO.Type.Text.getValue()) {
             boolean isJoinedTopic = false;
-            EntityManager entityManager = EntityManager.getInstance(JandiApplication.getContext());
+            EntityManager entityManager = EntityManager.getInstance();
             FormattedEntity formattedEntity = entityManager.getEntityById(starMentionVO.getRoomId());
 
             if (formattedEntity != null) {

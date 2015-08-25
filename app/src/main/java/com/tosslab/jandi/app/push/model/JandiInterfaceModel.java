@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -120,7 +119,7 @@ public class JandiInterfaceModel {
             }
 
             try {
-                EntityManager.getInstance(context);
+                EntityManager.getInstance();
                 return true;
             } catch (Exception e) {
                 return getEntityInfo();
@@ -136,7 +135,7 @@ public class JandiInterfaceModel {
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context, totalUnreadCount);
             BadgeUtils.setBadge(context, totalUnreadCount);
-            EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
+            EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -150,7 +149,7 @@ public class JandiInterfaceModel {
     public int getEntityId(int teamId, int roomId) {
 
         // Topic 인지 확인
-        EntityManager entityManager = EntityManager.getInstance(JandiApplication.getContext());
+        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity targetEntity = entityManager.getEntityById(roomId);
         if (targetEntity != null) {
             return roomId;

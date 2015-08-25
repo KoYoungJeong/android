@@ -16,17 +16,17 @@ class EntityManagerLockProxy extends EntityManager {
 
     private Lock lock;
 
-    protected EntityManagerLockProxy(Context context) {
-        super(context);
+    protected EntityManagerLockProxy() {
+        super();
         lock = new ReentrantLock();
 
     }
 
     @Override
-    public void refreshEntity(Context context) {
+    public void refreshEntity() {
         lock.lock();
         try {
-            super.refreshEntity(context);
+            super.refreshEntity();
         } finally {
             lock.unlock();
         }

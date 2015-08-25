@@ -70,7 +70,7 @@ public class PureMessageViewHolder implements BodyViewHolder {
         builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance(context).getMe().getId());
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
 
         if (unreadCount > 0) {
             NameSpannable unreadCountSpannable =
@@ -86,7 +86,7 @@ public class PureMessageViewHolder implements BodyViewHolder {
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 tvMessage, builder, textMessage.mentions,
-                EntityManager.getInstance(context).getMe().getId());
+                EntityManager.getInstance().getMe().getId());
         builder = generateMentionMessageUtil.generate(true);
 
         tvMessage.setText(builder);

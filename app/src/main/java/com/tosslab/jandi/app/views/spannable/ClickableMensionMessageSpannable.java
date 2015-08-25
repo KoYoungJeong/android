@@ -24,7 +24,7 @@ public class ClickableMensionMessageSpannable extends MentionMessageSpannable {
 
     public void onClick() {
 
-        FormattedEntity entity = EntityManager.getInstance(JandiApplication.getContext())
+        FormattedEntity entity = EntityManager.getInstance()
                 .getEntityById(entityId);
 
         if (entity != null && entity.isUser()) {

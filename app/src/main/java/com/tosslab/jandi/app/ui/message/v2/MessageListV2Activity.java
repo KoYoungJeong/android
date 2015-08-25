@@ -52,7 +52,7 @@ public class MessageListV2Activity extends AppCompatActivity {
 
     void initViews() {
         if (teamId <= 0) {
-            teamId = EntityManager.getInstance(MessageListV2Activity.this).getTeamId();
+            teamId = EntityManager.getInstance().getTeamId();
         }
 
         Fragment messageListFragment = getSupportFragmentManager()

@@ -40,7 +40,7 @@ class InviteCommand implements MenuCommand {
         this.activity = activity;
         this.mEntityClientManager = mEntityClientManager;
         this.chattingInfomations = chattingInfomations;
-        entityManager = EntityManager.getInstance(activity);
+        entityManager = EntityManager.getInstance();
 
         progressWheel = new ProgressWheel(activity);
     }

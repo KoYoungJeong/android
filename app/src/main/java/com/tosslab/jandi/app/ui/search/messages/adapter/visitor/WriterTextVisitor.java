@@ -25,7 +25,7 @@ public class WriterTextVisitor implements TextVisitor {
 
     @Override
     public void visit(SpannableStringBuilder builder, ResMessageSearch.Record record) {
-        FormattedEntity formattedEntity = EntityManager.getInstance(context).getEntityById(record.getMemberId());
+        FormattedEntity formattedEntity = EntityManager.getInstance().getEntityById(record.getMemberId());
 
         if (formattedEntity == null) {
             return;

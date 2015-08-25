@@ -51,7 +51,7 @@ public class MessageStarMentionViewHolder extends CommonStarMentionViewHolder {
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 this.getStarMentionContentView(), messageStringBuilder, starMentionVO.getMentions(),
-                EntityManager.getInstance(this.getStarMentionContentView().getContext()).getMe().getId())
+                EntityManager.getInstance().getMe().getId())
                 .setMeBackgroundColor(0xFF01a4e7)
                 .setMeTextColor(0xFFffffff)
                 .setBackgroundColor(0x00ffffff)

@@ -102,7 +102,7 @@ public class CarouselViewerModel {
                         .size(fileMessage.content.size)
                         .fileCreateTime(
                                 DateTransformator.getTimeString(fileMessage.createTime))
-                        .fileWriter(EntityManager.getInstance(context)
+                        .fileWriter(EntityManager.getInstance()
                                 .getEntityNameById(fileMessage.writerId))
                         .create()).collect(() -> fileInfos, List::add)
                 .subscribe();

@@ -1,8 +1,5 @@
 package com.tosslab.jandi.app.lists.entities.entitymanager;
 
-import android.content.Context;
-
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -49,16 +46,16 @@ public class EntityManager {
     private List<FormattedEntity> mSortedUsersWithoutMe = null;
     private List<FormattedEntity> mSortedGroups = null;
 
-    protected EntityManager(Context context) {
+    protected EntityManager() {
         ResLeftSideMenu resLeftSideMenu = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu();
         if (resLeftSideMenu != null) {
             init(resLeftSideMenu);
         }
     }
 
-    public static synchronized EntityManager getInstance(Context context) {
+    public static synchronized EntityManager getInstance() {
         if (entityManager == null) {
-            entityManager = new EntityManagerLockProxy(context);
+            entityManager = new EntityManagerLockProxy();
         }
         return entityManager;
     }
@@ -85,21 +82,20 @@ public class EntityManager {
         arrangeEntities(resLeftSideMenu);
     }
 
-    public void refreshEntity(Context context) {
+    public void refreshEntity() {
 
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
         if (selectedTeamInfo != null) {
+            int teamId = selectedTeamInfo.getTeamId();
             ResLeftSideMenu resLeftSideMenu = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu();
-            if (resLeftSideMenu != null) {
-                init(resLeftSideMenu);
-            }
+            init(resLeftSideMenu);
         }
     }
 
+    // for only test! Don't use this method in nonTest Code
     public void refreshEntity(ResLeftSideMenu resLeftSideMenu) {
-        // TODO 임시로 코드 추가
-        refreshEntity(JandiApplication.getContext());
+        init(resLeftSideMenu);
     }
 
     /**
@@ -119,7 +115,7 @@ public class EntityManager {
         return entity;
     }
 
-    private synchronized void arrangeEntities(ResLeftSideMenu resLeftSideMenu) {
+    private void arrangeEntities(ResLeftSideMenu resLeftSideMenu) {
         // HashTable 로 빼야하나? 즐겨찾기처럼 길이가 작을 경우 어떤게 더 유리한지 모르겠넹~
         LogUtil.d("EntityManger.arrangeEntities");
         Collection<Integer> starredEntities =

@@ -105,7 +105,7 @@ public class FileDetailModel {
     }
 
     public boolean isMyComment(int writerId) {
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
 
         if (entityManager == null) {
             return false;
@@ -153,7 +153,7 @@ public class FileDetailModel {
 
         Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities = fileMessage.shareEntities;
 
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
 
         List<Integer> list = new ArrayList<>();
 
@@ -211,7 +211,7 @@ public class FileDetailModel {
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context, totalUnreadCount);
             BadgeUtils.setBadge(context, totalUnreadCount);
-            EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
+            EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -444,7 +444,7 @@ public class FileDetailModel {
     }
 
     public int getMyId() {
-        return EntityManager.getInstance(JandiApplication.getContext()).getMe().getId();
+        return EntityManager.getInstance().getMe().getId();
     }
 
     public ResMessages.FileMessage extractFileMssage(List<ResMessages.OriginalMessage> messageList) {

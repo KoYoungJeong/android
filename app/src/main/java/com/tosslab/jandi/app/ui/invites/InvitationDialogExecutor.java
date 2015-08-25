@@ -50,7 +50,7 @@ public class InvitationDialogExecutor {
             return;
         }
 
-        entityManager = EntityManager.getInstance(activity);
+        entityManager = EntityManager.getInstance();
         showProgressWheel();
 
         try {

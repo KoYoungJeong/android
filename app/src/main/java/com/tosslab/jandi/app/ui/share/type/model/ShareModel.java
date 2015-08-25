@@ -48,7 +48,7 @@ public class ShareModel {
 
         List<FormattedEntity> entities = new ArrayList<FormattedEntity>();
 
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         entities.addAll(entityManager.getJoinedChannels());
         entities.addAll(entityManager.getGroups());
         entities.addAll(entityManager.getFormattedUsersWithoutMe());
@@ -119,7 +119,7 @@ public class ShareModel {
     }
 
     public boolean isStarredEntity(int entityId) {
-        return EntityManager.getInstance(context).getEntityById(entityId).isStarred;
+        return EntityManager.getInstance().getEntityById(entityId).isStarred;
     }
 
     public String getImagePath(String uriString) {
@@ -164,7 +164,7 @@ public class ShareModel {
     public void trackUploadingFile(int entityType, JsonObject result) {
 
         try {
-            MixpanelMemberAnalyticsClient.getInstance(context, EntityManager.getInstance(context).getDistictId()).trackUploadingFile(entityType, result);
+            MixpanelMemberAnalyticsClient.getInstance(context, EntityManager.getInstance().getDistictId()).trackUploadingFile(entityType, result);
         } catch (JSONException e) {
         }
     }

@@ -88,7 +88,7 @@ public class FileDetailPresenter {
     public List<Integer> getSharedTopicIds(Context context, ResMessages.OriginalMessage fileDetail) {
         List<Integer> sharedTopicIds = new ArrayList<>();
 
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
 
         for (ResMessages.OriginalMessage.IntegerWrapper entity : ((ResMessages.FileMessage) fileDetail).shareEntities) {
             FormattedEntity formattedEntity = entityManager.getEntityById(entity.getShareEntity());
@@ -301,7 +301,7 @@ public class FileDetailPresenter {
         view.showProgress();
 
         try {
-            EntityManager entityManager = EntityManager.getInstance(activity);
+            EntityManager entityManager = EntityManager.getInstance();
             fileDetailModel.joinEntity(entityId);
 
             MixpanelMemberAnalyticsClient

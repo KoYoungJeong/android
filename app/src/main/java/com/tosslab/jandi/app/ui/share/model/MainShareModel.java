@@ -60,7 +60,7 @@ public class MainShareModel {
     public boolean hasEntityInfo() {
 
         try {
-            EntityManager entityManager = EntityManager.getInstance(context);
+            EntityManager entityManager = EntityManager.getInstance();
             return entityManager != null;
         } catch (Exception e) {
 

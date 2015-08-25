@@ -187,7 +187,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
             if (!isUser) {
                 entityMenuDialogModel.requestLeaveEntity(entityId, publicTopic);
             } else {
-                int memberId = EntityManager.getInstance(getActivity()).getMe().getId();
+                int memberId = EntityManager.getInstance().getMe().getId();
                 entityMenuDialogModel.requestDeleteChat(memberId, entityId);
             }
             entityMenuDialogModel.refreshEntities();

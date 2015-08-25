@@ -148,7 +148,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     void initInformations() {
         mContext = getApplicationContext();
-        mEntityManager = EntityManager.getInstance(mContext);
+        mEntityManager = EntityManager.getInstance();
 
         if (isFromPush) {
             ResAccountInfo.UserTeam teamInfo = AccountRepository.getRepository().getTeamInfo(teamId);
@@ -425,7 +425,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @UiThread
     public void getEntitiesSucceed(ResLeftSideMenu resLeftSideMenu) {
-        mEntityManager = EntityManager.getInstance(MessageListActivity.this);
+        mEntityManager = EntityManager.getInstance();
         FormattedEntity entity = mEntityManager.getEntityById(mChattingInformations.entityId);
         if (entity == null) {
             getEntitiesFailed(getString(R.string.err_messages_invaild_entity));

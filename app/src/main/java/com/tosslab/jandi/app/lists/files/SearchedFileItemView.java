@@ -51,7 +51,7 @@ public class SearchedFileItemView extends RelativeLayout {
         String searchedFileName = searchedFile.content.title;
         textViewSearchedFileName.setText(searchedFileName);
 
-        FormattedEntity entityById = EntityManager.getInstance(mContext).getEntityById(searchedFile.writerId);
+        FormattedEntity entityById = EntityManager.getInstance().getEntityById(searchedFile.writerId);
 
         String searchedFileOwnerName = entityById.getName();
 

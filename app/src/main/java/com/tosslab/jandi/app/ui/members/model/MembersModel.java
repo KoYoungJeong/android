@@ -30,9 +30,9 @@ public class MembersModel {
     Context context;
 
     public List<ChatChooseItem> getTopicMembers(int entityId) {
-        Collection<Integer> members = EntityManager.getInstance(context).getEntityById(entityId)
+        Collection<Integer> members = EntityManager.getInstance().getEntityById(entityId)
                 .getMembers();
-        List<FormattedEntity> formattedUsers = EntityManager.getInstance(context).getFormattedUsers();
+        List<FormattedEntity> formattedUsers = EntityManager.getInstance().getFormattedUsers();
 
         Iterator<ChatChooseItem> iterator = Observable.from(members)
                 .map(memberEntityId -> Observable.from(formattedUsers)
@@ -82,7 +82,7 @@ public class MembersModel {
 
     public List<ChatChooseItem> getTeamMembers() {
 
-        List<FormattedEntity> formattedUsers = EntityManager.getInstance(context).getFormattedUsers();
+        List<FormattedEntity> formattedUsers = EntityManager.getInstance().getFormattedUsers();
 
         List<ChatChooseItem> chatChooseItems = new ArrayList<>();
         Observable.from(formattedUsers)

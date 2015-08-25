@@ -66,7 +66,7 @@ public class UnjoinTopicDialog extends DialogFragment {
 
         tvTitle.setText(name);
         tvMemberCount.setText(String.valueOf(memberCount));
-        tvHost.setText(EntityManager.getInstance(getActivity()).getEntityNameById(creatorId));
+        tvHost.setText(EntityManager.getInstance().getEntityNameById(creatorId));
 
         if (TextUtils.isEmpty(description)) {
             tvDescription.setText(R.string.jandi_it_has_no_topic_description);

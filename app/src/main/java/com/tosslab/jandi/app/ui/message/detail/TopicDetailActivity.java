@@ -28,7 +28,7 @@ public class TopicDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FormattedEntity entity = EntityManager.getInstance(TopicDetailActivity.this).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
         boolean isDirectMessage = entity.isUser();
 

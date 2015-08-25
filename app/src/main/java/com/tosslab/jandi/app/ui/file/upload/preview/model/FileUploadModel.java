@@ -25,8 +25,9 @@ public class FileUploadModel {
     }
 
     public List<FormattedEntity> getEntityInfoWithoutMe(Context context) {
-        EntityManager entityManager = EntityManager.getInstance(context);
-        List<FormattedEntity> unsharedEntities = entityManager.retrieveExclusivedEntities(Arrays.asList(entityManager.getMe().getId()));
+        EntityManager entityManager = EntityManager.getInstance();
+        List<FormattedEntity> unsharedEntities = entityManager
+                .retrieveExclusivedEntities(Arrays.asList(entityManager.getMe().getId()));
 
         List<FormattedEntity> formattedEntities = new ArrayList<>();
 
@@ -55,7 +56,7 @@ public class FileUploadModel {
 
     public String getEntityString(Context context, int selectedEntityIdToBeShared) {
 
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entity = entityManager.getEntityById(selectedEntityIdToBeShared);
 
         String originEntityName = entity.getName();
@@ -73,6 +74,6 @@ public class FileUploadModel {
     }
 
     public boolean isValid(Context context, int selectedEntityIdToBeShared) {
-        return EntityManager.getInstance(context).getEntityById(selectedEntityIdToBeShared) != null;
+        return EntityManager.getInstance().getEntityById(selectedEntityIdToBeShared) != null;
     }
 }

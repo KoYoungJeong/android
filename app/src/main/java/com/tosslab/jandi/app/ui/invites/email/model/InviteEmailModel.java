@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.invites.email.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -53,7 +52,7 @@ public class InviteEmailModel {
                 return true;
             }
         }
-        List<FormattedEntity> users = EntityManager.getInstance(context).getFormattedUsersWithoutMe();
+        List<FormattedEntity> users = EntityManager.getInstance().getFormattedUsersWithoutMe();
 
         Boolean isContain = Observable.from(users)
                 .filter(entity -> TextUtils.equals(entity.getUserEmail(), emailText))
@@ -66,6 +65,6 @@ public class InviteEmailModel {
     }
 
     public String getCurrentTeamName() {
-        return EntityManager.getInstance(JandiApplication.getContext()).getTeamName();
+        return EntityManager.getInstance().getTeamName();
     }
 }

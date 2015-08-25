@@ -58,10 +58,10 @@ public class MainChatListModel {
         List<ChatItem> chatItems = new ArrayList<ChatItem>();
 
         Observable.from(chatList)
-                .filter(resChat -> EntityManager.getInstance(context).getEntityById(resChat.getCompanionId()) != null)
+                .filter(resChat -> EntityManager.getInstance().getEntityById(resChat.getCompanionId()) != null)
                 .map(resChat -> {
 
-                    FormattedEntity userEntity = EntityManager.getInstance(context).getEntityById(resChat.getCompanionId());
+                    FormattedEntity userEntity = EntityManager.getInstance().getEntityById(resChat.getCompanionId());
 
                     ChatItem chatItem = new ChatItem();
                     chatItem.entityId(userEntity.getId())
@@ -70,7 +70,7 @@ public class MainChatListModel {
                             .lastMessage(!TextUtils.equals(resChat.getLastMessageStatus(), "archived") ? resChat.getLastMessage() : context.getString(R.string.jandi_deleted_message))
                             .lastMessageId(resChat.getLastMessageId())
                             .name(userEntity.getName())
-                            .starred(EntityManager.getInstance(context)
+                            .starred(EntityManager.getInstance()
                                     .getEntityById(resChat.getCompanionId()).isStarred)
                             .unread(resChat.getUnread())
                             .status(TextUtils.equals(userEntity.getUser().status, "enabled"))
@@ -85,7 +85,7 @@ public class MainChatListModel {
     }
 
     public ChatItem convertChatItem(Context context, int teamId, ResChat resChat) {
-        FormattedEntity userEntity = EntityManager.getInstance(context).getEntityById(resChat.getCompanionId());
+        FormattedEntity userEntity = EntityManager.getInstance().getEntityById(resChat.getCompanionId());
 
         ChatItem chatItem = new ChatItem();
         chatItem.entityId(userEntity.getId())
@@ -94,7 +94,7 @@ public class MainChatListModel {
                 .lastMessage(!TextUtils.equals(resChat.getLastMessageStatus(), "archived") ? resChat.getLastMessage() : context.getString(R.string.jandi_deleted_message))
                 .lastMessageId(resChat.getLastMessageId())
                 .name(userEntity.getName())
-                .starred(EntityManager.getInstance(context)
+                .starred(EntityManager.getInstance()
                         .getEntityById(resChat.getCompanionId()).isStarred)
                 .unread(resChat.getUnread())
                 .status(TextUtils.equals(userEntity.getUser().status, "enabled"))
@@ -121,6 +121,6 @@ public class MainChatListModel {
     }
 
     public boolean isStarred(Context context, int entityId) {
-        return EntityManager.getInstance(context).getEntityById(entityId).isStarred;
+        return EntityManager.getInstance().getEntityById(entityId).isStarred;
     }
 }

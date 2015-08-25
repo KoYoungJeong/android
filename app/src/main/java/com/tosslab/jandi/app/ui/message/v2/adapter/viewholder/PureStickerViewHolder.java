@@ -45,7 +45,7 @@ public class PureStickerViewHolder implements BodyViewHolder {
         tvDate.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
 
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance(tvUnread.getContext()).getMe().getId());
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
 
         tvUnread.setText(String.valueOf(unreadCount));
         if (unreadCount > 0) {

@@ -526,7 +526,7 @@ public class MessageListPresenter {
     public void insertSendingMessage(long localId, String message, String name, String userLargeProfileUrl, List<MentionObject> mentions) {
         DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, message, SendMessage
                 .Status.SENDING.name(), mentions);
-        dummyMessageLink.message.writerId = EntityManager.getInstance(activity).getMe().getId();
+        dummyMessageLink.message.writerId = EntityManager.getInstance().getMe().getId();
         dummyMessageLink.message.createTime = new Date();
         dummyMessageLink.message.updateTime = new Date();
 
@@ -586,7 +586,7 @@ public class MessageListPresenter {
             return;
         }
 
-        FormattedEntity entityById = EntityManager.getInstance(activity).getEntityById(item.message.writerId);
+        FormattedEntity entityById = EntityManager.getInstance().getEntityById(item.message.writerId);
         previewNameView.setText(entityById.getName());
 
         ResLeftSideMenu.User user = entityById.getUser();
@@ -736,7 +736,7 @@ public class MessageListPresenter {
     }
 
     private String getOwnerName() {
-        List<FormattedEntity> users = EntityManager.getInstance(activity).getFormattedUsers();
+        List<FormattedEntity> users = EntityManager.getInstance().getFormattedUsers();
         FormattedEntity tempDefaultEntity = new FormattedEntity();
         FormattedEntity owner = Observable.from(users)
                 .filter(formattedEntity ->

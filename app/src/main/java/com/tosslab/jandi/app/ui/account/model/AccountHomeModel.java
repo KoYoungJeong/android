@@ -106,8 +106,8 @@ public class AccountHomeModel {
         JandiPreference.setBadgeCount(context, totalUnreadCount);
         BadgeUtils.setBadge(context, totalUnreadCount);
 
-        EntityManager entityManager = EntityManager.getInstance(context);
-        entityManager.refreshEntity(entityInfo);
+        EntityManager entityManager = EntityManager.getInstance();
+        entityManager.refreshEntity();
         return entityManager;
     }
 

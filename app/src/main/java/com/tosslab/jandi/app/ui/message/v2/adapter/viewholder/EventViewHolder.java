@@ -48,7 +48,7 @@ public class EventViewHolder implements BodyViewHolder {
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
 
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
 
         if (eventInfo instanceof ResMessages.AnnouncementCreateEvent) {
             buildAnnouncementCreateEvent((ResMessages.AnnouncementCreateEvent) eventInfo,
@@ -196,7 +196,7 @@ public class EventViewHolder implements BodyViewHolder {
 
     private void buildJoinEvent(SpannableStringBuilder builder, int fromEntity) {
         FormattedEntity entity =
-                EntityManager.getInstance(context).getEntityById(fromEntity);
+                EntityManager.getInstance().getEntityById(fromEntity);
         String name;
         if (entity != null) {
             name = entity.getName();
@@ -216,7 +216,7 @@ public class EventViewHolder implements BodyViewHolder {
 
     private void buildLeaveEvent(SpannableStringBuilder builder, int fromEntity) {
         FormattedEntity entity =
-                EntityManager.getInstance(context).getEntityById(fromEntity);
+                EntityManager.getInstance().getEntityById(fromEntity);
         String name = entity.getName();
 
         ProfileSpannable profileSpannable = new ProfileSpannable(fromEntity);

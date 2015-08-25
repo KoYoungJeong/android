@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.koushikdutta.ion.Ion;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -73,7 +72,7 @@ public class ImageViewHolder implements BodyViewHolder {
         int fromEntityId = link.fromEntity;
 
         FormattedEntity entity =
-                EntityManager.getInstance(context).getEntityById(fromEntityId);
+                EntityManager.getInstance().getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
         String profileUrl = entity.getUserLargeProfileUrl();
@@ -85,7 +84,7 @@ public class ImageViewHolder implements BodyViewHolder {
                 .crossfade(true)
                 .load(profileUrl);
 
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById != null ? entityById.getUser() : null;
         if (user != null && TextUtils.equals(user.status, "enabled")) {
@@ -122,7 +121,7 @@ public class ImageViewHolder implements BodyViewHolder {
             if (fromEntity.id != fileMessage.writerId) {
                 tvUploader.setVisibility(View.VISIBLE);
                 String shared = tvUploader.getContext().getString(R.string.jandi_shared);
-                String name = EntityManager.getInstance(JandiApplication.getContext())
+                String name = EntityManager.getInstance()
                         .getEntityById(fileMessage.writerId).getName();
                 String ofFile = tvUploader.getContext().getString(R.string.jandi_who_of_file);
 

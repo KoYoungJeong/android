@@ -42,7 +42,7 @@ public class DummyViewHolder implements BodyViewHolder {
 
         DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
-        FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext())
+        FormattedEntity entity = EntityManager.getInstance()
                 .getEntityById(dummyMessageLink.message.writerId);
 
         String profileUrl = entity.getUserLargeProfileUrl();
@@ -108,7 +108,7 @@ public class DummyViewHolder implements BodyViewHolder {
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 messageTextView, builder, ((DummyMessageLink) link).getMentions(),
-                EntityManager.getInstance(JandiApplication.getContext()).getMe().getId());
+                EntityManager.getInstance().getMe().getId());
         builder = generateMentionMessageUtil.generate(false);
 
         messageTextView.setText(builder);
