@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -127,6 +128,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, ScreenViewProperty.TOPIC_PANEL)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName("TOPIC_PANEL");
 
         rvTopic.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvTopic.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));

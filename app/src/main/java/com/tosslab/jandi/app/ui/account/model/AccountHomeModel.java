@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.account.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.google.android.gms.analytics.HitBuilders;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -18,6 +17,7 @@ import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -143,15 +143,7 @@ public class AccountHomeModel {
                         .property(PropertyKey.TeamId, teamId)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.LaunchTeam.name())
-                            .setAction(PropertyKey.ResponseSuccess.name())
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        GoogleAnalyticsUtil.sendEvent(Event.LaunchTeam.name(), PropertyKey.ResponseSuccess.name());
     }
 
     public void trackLaunchTeamFail(int errorCode) {
@@ -163,15 +155,7 @@ public class AccountHomeModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.LaunchTeam.name())
-                            .setAction("ResponseFail")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        GoogleAnalyticsUtil.sendEvent(Event.LaunchTeam.name(), "ResponseFail");
 
     }
 
@@ -187,15 +171,7 @@ public class AccountHomeModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.ChangeAccountName.name())
-                            .setAction("ResponseSuccess")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        GoogleAnalyticsUtil.sendEvent(Event.ChangeAccountName.name(), "ResponseSuccess");
     }
 
     public void trackChangeAccountNameFail(int errorCode) {
@@ -207,16 +183,8 @@ public class AccountHomeModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.ChangeAccountName.name())
-                            .setAction("ResponseFail")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
+        GoogleAnalyticsUtil.sendEvent(Event.ChangeAccountName.name(), "ResponseFail");
 
     }
 

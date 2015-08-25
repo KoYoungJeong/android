@@ -50,6 +50,7 @@ import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
@@ -157,6 +158,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, screenView)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName(
+                screenView == ScreenViewProperty.FILE_SEARCH ?"FILE_SEARCH" : "FILE_PANEL");
 
         setHasOptionsMenu(true);
 
@@ -524,6 +528,21 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     void onUploadClick() {
         DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
         fileUploadTypeDialog.show(getFragmentManager(), "dialog");
+    }
+
+    @Click(R.id.ly_file_list_where)
+    void onEntityClick() {
+        fileListPresenter.showEntityDialog();
+    }
+
+    @Click(R.id.ly_file_list_whom)
+    void onUserClick() {
+        fileListPresenter.showUsersDialog();
+    }
+
+    @Click(R.id.ly_file_list_type)
+    void onFileTypeClick() {
+        fileListPresenter.showFileTypeDialog();
     }
 
     public void onEvent(RequestFileUploadEvent event) {

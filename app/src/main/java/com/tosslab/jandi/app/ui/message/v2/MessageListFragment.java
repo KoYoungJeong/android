@@ -111,6 +111,7 @@ import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -313,6 +314,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, screenView)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName(screenView == ScreenViewProperty.PRIVIATE_TOPIC ?
+                "PRIVATE_TOPIC" : "PUBLIC_TOPIC");
 
         setUpActionbar();
         setHasOptionsMenu(true);

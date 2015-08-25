@@ -73,6 +73,7 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
@@ -174,6 +175,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_DETAIL)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName("FILE_DETAIL");
 
         setUpActionBar();
 

@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -94,6 +95,8 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_PANEL)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName("MESSAGE_PANEL");
 
         chatListView.setEmptyView(emptyView);
         chatListView.setAdapter(mainChatListAdapter);

@@ -7,7 +7,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
-import com.google.android.gms.analytics.HitBuilders;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -31,6 +30,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -245,15 +245,7 @@ public class FileDetailModel {
                         .property(PropertyKey.FileId, fileId)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.FileDelete.name())
-                            .setAction("ResponseSuccess")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        GoogleAnalyticsUtil.sendEvent(Event.FileDownload.name(), "ResponseSuccess");
 
     }
 
@@ -269,15 +261,7 @@ public class FileDetailModel {
                         .property(PropertyKey.FileId, fileId)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.FileShare.name())
-                            .setAction("ResponseSuccess")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        GoogleAnalyticsUtil.sendEvent(Event.FileShare.name(), "ResponseSuccess");
 
     }
 
@@ -291,15 +275,7 @@ public class FileDetailModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.FileShare.name())
-                            .setAction("ResponseFail")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        GoogleAnalyticsUtil.sendEvent(Event.FileShare.name(), "ResponseFail");
 
     }
 
@@ -314,15 +290,8 @@ public class FileDetailModel {
                         .property(PropertyKey.TopicId, topicId)
                         .property(PropertyKey.FileId, fileId)
                         .build());
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.FileUnShare.name())
-                            .setAction("ResponseSuccess")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        GoogleAnalyticsUtil.sendEvent(Event.FileUnShare.name(), "ResponseSuccess");
 
     }
 
@@ -336,15 +305,7 @@ public class FileDetailModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.FileUnShare.name())
-                            .setAction("ResponseFail")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        GoogleAnalyticsUtil.sendEvent(Event.FileUnShare.name(), "ResponseFail");
 
     }
 
@@ -360,15 +321,7 @@ public class FileDetailModel {
                         .property(PropertyKey.FileId, fileId)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.FileDelete.name())
-                            .setAction("ResponseSuccess")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        GoogleAnalyticsUtil.sendEvent(Event.FileDelete.name(), "ResponseSuccess");
 
     }
 
@@ -382,15 +335,7 @@ public class FileDetailModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.FileDelete.name())
-                            .setAction("ResponseFail")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        GoogleAnalyticsUtil.sendEvent(Event.FileDelete.name(), "ResponseFail");
 
     }
 

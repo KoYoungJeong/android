@@ -36,6 +36,7 @@ import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenter
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
@@ -106,6 +107,8 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_SEARCH)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName("MESSAGE_SEARCH");
 
         messageSearchPresenter.setView(this);
 

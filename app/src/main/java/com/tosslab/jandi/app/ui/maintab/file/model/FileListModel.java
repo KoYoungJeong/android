@@ -7,7 +7,6 @@ package com.tosslab.jandi.app.ui.maintab.file.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.google.android.gms.analytics.HitBuilders;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.database.file.JandiFileDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -15,6 +14,7 @@ import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -106,16 +106,7 @@ public class FileListModel {
                         .property(PropertyKey.SearchKeyword, keyword)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.FileKeywordSearch.name())
-                            .setAction("ResponseSuccess")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        GoogleAnalyticsUtil.sendEvent(Event.FileKeywordSearch.name(), "ResponseSuccess");
     }
 
     public void trackFileKeywordSearchFail(int errorCode) {
@@ -128,15 +119,6 @@ public class FileListModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.FileKeywordSearch.name())
-                            .setAction("ResponseFail")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        GoogleAnalyticsUtil.sendEvent(Event.FileKeywordSearch.name(), "ResponseFail");
     }
 }
