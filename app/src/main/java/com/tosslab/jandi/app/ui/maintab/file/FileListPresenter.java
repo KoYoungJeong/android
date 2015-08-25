@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -54,16 +53,10 @@ public class FileListPresenter {
     Context context;
 
     // 카테코리 탭
-    @ViewById(R.id.ly_file_list_where)
-    LinearLayout linearLayoutFileListWhere;
     @ViewById(R.id.txt_file_list_where)
     TextView textViewFileListWhere;
-    @ViewById(R.id.ly_file_list_whom)
-    LinearLayout linearLayoutFileListWhom;
     @ViewById(R.id.txt_file_list_whom)
     TextView textViewFileListWhom;
-    @ViewById(R.id.ly_file_list_type)
-    LinearLayout linearLayoutFileListType;
     @ViewById(R.id.txt_file_list_type)
     TextView textViewFileListType;
 
@@ -106,12 +99,6 @@ public class FileListPresenter {
                         ? context.getString(R.string.jandi_file_category_all)
                         : mCurrentFileTypeCategorizingAccodingBy
         );
-        linearLayoutFileListType.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showFileTypeDialog(textViewFileListType);
-            }
-        });
     }
 
     private void setSpinnerAsCategorizingAccodingByWhom() {
@@ -120,12 +107,6 @@ public class FileListPresenter {
                         ? context.getString(R.string.jandi_file_category_everyone)
                         : mCurrentUserNameCategorizingAccodingBy
         );
-        linearLayoutFileListWhom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showUsersDialog(textViewFileListWhom);
-            }
-        });
     }
 
     private void setSpinnerAsCategorizingAccodingByWhere() {
@@ -134,36 +115,30 @@ public class FileListPresenter {
                         ? context.getString(R.string.jandi_file_category_everywhere)
                         : mCurrentEntityCategorizingAccodingBy
         );
-        linearLayoutFileListWhere.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showEntityDialog(textViewFileListWhere);
-            }
-        });
     }
 
-    private void showFileTypeDialog(final TextView textVewFileType) {
-        setUpTypeTextView(textVewFileType, true);
+    public void showFileTypeDialog() {
+        setUpTypeTextView(textViewFileListType, true);
 
         FileTypeSelector fileSelector = new FileTypeSelectorImpl();
         fileSelector.setOnFileTypeSelectListener(position -> {
 
             mCurrentFileTypeCategorizingAccodingBy =
                     context.getString(CategorizedMenuOfFileType.stringTitleResourceList[position]);
-            textVewFileType.setText(mCurrentFileTypeCategorizingAccodingBy);
-            textVewFileType.invalidate();
+            textViewFileListType.setText(mCurrentFileTypeCategorizingAccodingBy);
+            textViewFileListType.invalidate();
             EventBus.getDefault().post(new CategorizedMenuOfFileType(position));
 
             fileSelector.dismiss();
         });
 
-        fileSelector.setOnFileTypeDismissListener(() -> setUpTypeTextView(textVewFileType, false));
-        fileSelector.show(((View) textVewFileType.getParent().getParent()));
+        fileSelector.setOnFileTypeDismissListener(() -> setUpTypeTextView(textViewFileListType, false));
+        fileSelector.show(((View) textViewFileListType.getParent().getParent()));
     }
 
-    private void showUsersDialog(final TextView textViewUser) {
+    public void showUsersDialog() {
 
-        setUpTypeTextView(textViewUser, true);
+        setUpTypeTextView(textViewFileListWhom, true);
 
 
         UserSelector userSelector = new UserSelectorImpl();
@@ -174,16 +149,16 @@ public class FileListPresenter {
 
                 if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
                     mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everyone);
-                    textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
+                    textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
                     EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
                 } else if (item.getId() ==
                         EntityManager.getInstance(JandiApplication.getContext()).getMe().getId()) {
                     mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_my_files);
-                    textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
+                    textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
                     EventBus.getDefault().post(new CategorizingAsOwner(item.getId()));
                 } else {
                     mCurrentUserNameCategorizingAccodingBy = item.getName();
-                    textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
+                    textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
                     EventBus.getDefault().post(new CategorizingAsOwner(item.getId()));
                 }
                 userSelector.dismiss();
@@ -191,14 +166,14 @@ public class FileListPresenter {
             }
         });
 
-        userSelector.setOnUserDismissListener(() -> setUpTypeTextView(textViewUser, false));
+        userSelector.setOnUserDismissListener(() -> setUpTypeTextView(textViewFileListWhom, false));
 
-        userSelector.show(((View) textViewUser.getParent().getParent()));
+        userSelector.show(((View) textViewFileListWhom.getParent().getParent()));
     }
 
-    private void showEntityDialog(final TextView textVew) {
+    public void showEntityDialog() {
 
-        setUpTypeTextView(textVew, true);
+        setUpTypeTextView(textViewFileListWhere, true);
 
         RoomSelector roomSelector = new RoomSelectorImpl();
         roomSelector.setOnRoomSelectListener(new RoomSelector.OnRoomSelectListener() {
@@ -214,16 +189,16 @@ public class FileListPresenter {
                     sharedEntityId = item.getId();
                     mCurrentEntityCategorizingAccodingBy = item.getName();
                 }
-                textVew.setText(mCurrentEntityCategorizingAccodingBy);
-                textVew.invalidate();
+                textViewFileListWhere.setText(mCurrentEntityCategorizingAccodingBy);
+                textViewFileListWhere.invalidate();
                 EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
                 roomSelector.dismiss();
 
             }
         });
 
-        roomSelector.setOnRoomDismissListener(() -> setUpTypeTextView(textVew, false));
-        roomSelector.show(((View) textVew.getParent().getParent()));
+        roomSelector.setOnRoomDismissListener(() -> setUpTypeTextView(textViewFileListWhere, false));
+        roomSelector.show(((View) textViewFileListWhere.getParent().getParent()));
     }
 
     private void setUpTypeTextView(TextView textVew, boolean isFocused) {

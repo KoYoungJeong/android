@@ -526,6 +526,21 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         fileUploadTypeDialog.show(getFragmentManager(), "dialog");
     }
 
+    @Click(R.id.ly_file_list_where)
+    void onEntityClick() {
+        fileListPresenter.showEntityDialog();
+    }
+
+    @Click(R.id.ly_file_list_whom)
+    void onUserClick() {
+        fileListPresenter.showUsersDialog();
+    }
+
+    @Click(R.id.ly_file_list_type)
+    void onFileTypeClick() {
+        fileListPresenter.showFileTypeDialog();
+    }
+
     public void onEvent(RequestFileUploadEvent event) {
         if (!isForeground) {
             return;
