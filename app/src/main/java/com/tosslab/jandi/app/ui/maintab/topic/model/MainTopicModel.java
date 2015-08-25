@@ -123,11 +123,7 @@ public class MainTopicModel {
                 .toBlocking()
                 .first();
 
-        if (entity != emptyEntity && entity.getEntityId() > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return entity != emptyEntity && entity.getEntityId() > 0;
     }
 
     public boolean refreshEntity() {

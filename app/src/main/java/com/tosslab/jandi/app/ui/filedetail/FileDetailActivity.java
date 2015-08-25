@@ -930,17 +930,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             getSupportActionBar().setTitle(R.string.jandi_deleted_file);
         }
 
-        if (TextUtils.equals(fileMessage.status, "archived")) {
-            isDeleted = true;
-        } else {
-            isDeleted = false;
-        }
+        isDeleted = TextUtils.equals(fileMessage.status, "archived");
 
-        if (fileMessage.writerId == EntityManager.getInstance().getMe().getId()) {
-            isMyFile = true;
-        } else {
-            isMyFile = false;
-        }
+        isMyFile = fileMessage.writerId == EntityManager.getInstance().getMe().getId();
 
         invalidateOptionsMenu();
 

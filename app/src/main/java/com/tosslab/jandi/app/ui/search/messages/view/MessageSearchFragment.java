@@ -1,12 +1,10 @@
 package com.tosslab.jandi.app.ui.search.messages.view;
 
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -25,19 +23,19 @@ import com.tosslab.jandi.app.events.search.MoreSearchRequestEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.events.search.SelectEntityEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
-import com.tosslab.jandi.app.ui.search.messages.adapter.EntitySelectDialogAdatper;
-import com.tosslab.jandi.app.ui.search.messages.adapter.MemberSelectDialogAdapter;
 import com.tosslab.jandi.app.ui.search.messages.adapter.MessageSearchResultAdapter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenterImpl;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
+import com.tosslab.jandi.app.ui.selector.room.RoomSelector;
+import com.tosslab.jandi.app.ui.selector.room.RoomSelectorImpl;
+import com.tosslab.jandi.app.ui.selector.user.UserSelector;
+import com.tosslab.jandi.app.ui.selector.user.UserSelectorImpl;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
-import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -54,11 +52,9 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 10..
@@ -78,17 +74,20 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     @ViewById(R.id.txt_search_scope_where)
     TextView entityTextView;
 
+    @ViewById(R.id.layout_search_scope_where)
+    View vgEntity;
+
     @ViewById(R.id.txt_search_scope_who)
     TextView memberTextView;
+
+    @ViewById(R.id.layout_search_scope_who)
+    View vgMember;
 
     @ViewById(R.id.layout_search_scope)
     View scopeView;
 
     @ViewById(R.id.progress_message_search)
     ProgressBar progressBar;
-
-    private Dialog memberSelectDialog;
-    private Dialog entitySelectDialog;
 
     private MessageSearchResultAdapter messageSearchResultAdapter;
     private int scropMaxY;
@@ -107,8 +106,6 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_SEARCH)
                         .build());
-
-        GoogleAnalyticsUtil.sendScreenName("MESSAGE_SEARCH");
 
         messageSearchPresenter.setView(this);
 
