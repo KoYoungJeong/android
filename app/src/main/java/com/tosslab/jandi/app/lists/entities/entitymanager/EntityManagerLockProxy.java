@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.lists.entities.entitymanager;
 
-import android.content.Context;
-
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 

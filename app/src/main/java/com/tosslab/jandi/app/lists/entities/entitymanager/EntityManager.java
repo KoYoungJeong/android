@@ -94,6 +94,7 @@ public class EntityManager {
     }
 
     // for only test! Don't use this method in nonTest Code
+    @Deprecated
     public void refreshEntity(ResLeftSideMenu resLeftSideMenu) {
         init(resLeftSideMenu);
     }

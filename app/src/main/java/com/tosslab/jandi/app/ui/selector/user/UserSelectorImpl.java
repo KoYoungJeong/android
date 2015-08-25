@@ -16,7 +16,6 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -77,8 +76,7 @@ public class UserSelectorImpl implements UserSelector {
 
     protected Observable<List<FormattedEntity>> getUsers() {
 
-
-        EntityManager entityManager = EntityManager.getInstance(JandiApplication.getContext());
+        EntityManager entityManager = EntityManager.getInstance();
         int myId = entityManager.getMe().getId();
         return Observable.from(entityManager.getFormattedUsers())
                 .filter(formattedEntity -> TextUtils.equals(formattedEntity.getUser().status, "enabled"))
@@ -91,7 +89,6 @@ public class UserSelectorImpl implements UserSelector {
                         return lhs.getName().compareToIgnoreCase(rhs.getName());
                     }
                 });
-
 
     }
 

@@ -15,7 +15,6 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -123,7 +122,7 @@ public class RoomSelectorImpl implements RoomSelector {
 
     protected Observable<List<FormattedEntity>> getUsers() {
         return Observable.merge(
-                Observable.from(EntityManager.getInstance(JandiApplication.getContext()).getFormattedUsersWithoutMe()),
+                Observable.from(EntityManager.getInstance().getFormattedUsersWithoutMe()),
                 Observable.from(Arrays.asList(new FormattedEntity(FormattedEntity.TYPE_EVERYWHERE))))
                 .filter(formattedEntity -> formattedEntity.type == FormattedEntity.TYPE_EVERYWHERE
                         || TextUtils.equals(formattedEntity.getUser().status, "enabled"))
@@ -140,8 +139,8 @@ public class RoomSelectorImpl implements RoomSelector {
 
     protected Observable<List<FormattedEntity>> getTopics() {
         return Observable.merge(
-                Observable.from(EntityManager.getInstance(JandiApplication.getContext()).getJoinedChannels()),
-                Observable.from(EntityManager.getInstance(JandiApplication.getContext())
+                Observable.from(EntityManager.getInstance().getJoinedChannels()),
+                Observable.from(EntityManager.getInstance()
                         .getGroups()),
                 Observable.from(Arrays.asList(new FormattedEntity(FormattedEntity.TYPE_EVERYWHERE))))
                 .toSortedList((lhs, rhs) -> {

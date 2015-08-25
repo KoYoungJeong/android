@@ -15,7 +15,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
@@ -152,7 +151,7 @@ public class FileListPresenter {
                     textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
                     EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
                 } else if (item.getId() ==
-                        EntityManager.getInstance(JandiApplication.getContext()).getMe().getId()) {
+                        EntityManager.getInstance().getMe().getId()) {
                     mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_my_files);
                     textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
                     EventBus.getDefault().post(new CategorizingAsOwner(item.getId()));

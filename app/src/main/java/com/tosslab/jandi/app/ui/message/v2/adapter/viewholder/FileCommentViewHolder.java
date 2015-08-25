@@ -109,7 +109,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
         if (link.feedback instanceof ResMessages.FileMessage) {
 
-            ResMessages.FileMessage feedbackFileMessage = (ResMessages.FileMessage) link.feedback;
+            ResMessages.FileMessage feedbackFileMessage = link.feedback;
 
             fileImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             fileImageRound.setVisibility(View.GONE);
