@@ -50,6 +50,7 @@ import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
@@ -157,6 +158,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, screenView)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName(
+                screenView == ScreenViewProperty.FILE_SEARCH ?"FILE_SEARCH" : "FILE_PANEL");
 
         setHasOptionsMenu(true);
 

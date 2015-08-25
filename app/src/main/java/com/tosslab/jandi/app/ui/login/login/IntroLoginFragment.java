@@ -16,9 +16,9 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.login.login.model.IntroLoginModel;
 import com.tosslab.jandi.app.ui.login.login.viewmodel.IntroLoginViewModel;
 import com.tosslab.jandi.app.ui.signup.account.SignUpActivity_;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -55,6 +55,8 @@ public class IntroLoginFragment extends Fragment {
                         .event(Event.ScreenView)
                         .property(PropertyKey.ScreenView, ScreenViewProperty.LOGIN_PAGE)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName("LOGIN_PAGE");
     }
 
     @Background

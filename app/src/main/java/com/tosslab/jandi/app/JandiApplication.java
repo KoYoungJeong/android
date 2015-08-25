@@ -52,7 +52,7 @@ public class JandiApplication extends MultiDexApplication {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
 
-        JandiApplication.setContext(getApplicationContext());
+        JandiApplication.setContext(this);
 
         boolean oldParseFileCacheDeleted = JandiPreference.isOldParseFileCacheDeleted(this);
         if (!oldParseFileCacheDeleted) {

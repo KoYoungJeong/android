@@ -55,6 +55,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -489,16 +490,7 @@ public class MessageListModel {
                         .build())
                 .flush();
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.MessagePost.name())
-                            .setAction("ResponseSuccess")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        GoogleAnalyticsUtil.sendEvent(Event.MessagePost.name(), "ResponseSuccess");
     }
 
     private void trackMessagePostFail(int errorCode) {
@@ -511,16 +503,7 @@ public class MessageListModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build())
                 .flush();
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.MessagePost.name())
-                            .setAction("ResponseFail")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        GoogleAnalyticsUtil.sendEvent(Event.MessagePost.name(), "ResponseFail");
     }
 
     public void trackMessageDeleteSuccess(int messageId) {
@@ -533,16 +516,7 @@ public class MessageListModel {
                         .property(PropertyKey.MessageId, messageId)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.MessageDelete.name())
-                            .setAction("ResponseSuccess")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        GoogleAnalyticsUtil.sendEvent(Event.MessageDelete.name(), "ResponseSuccess");
     }
 
     public void trackMessageDeleteFail(int errorCode) {
@@ -554,16 +528,7 @@ public class MessageListModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.MessageDelete.name())
-                            .setAction("ResponseFail")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        GoogleAnalyticsUtil.sendEvent(Event.MessageDelete.name(), "ResponseFail");
     }
 
     public void registStarredMessage(int teamId, int messageId) {

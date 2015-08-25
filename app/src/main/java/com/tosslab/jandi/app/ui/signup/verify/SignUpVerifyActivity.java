@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.ui.signup.verify.view.SignUpVerifyView;
 import com.tosslab.jandi.app.ui.signup.verify.widget.VerificationCodeView;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -75,6 +76,8 @@ public class SignUpVerifyActivity extends AppCompatActivity implements SignUpVer
                         .event(Event.ScreenView)
                         .property(PropertyKey.ScreenView, ScreenViewProperty.CONFIRM_VERIFICATION_NUMBER)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName("CONFIRM_VERIFICATION_NUMBER");
 
         setUpActionBar();
 

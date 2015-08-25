@@ -27,6 +27,7 @@ import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LanguageUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -85,6 +86,8 @@ public class MainMoreFragment extends Fragment {
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, ScreenViewProperty.SETTING_PANEL)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName("SETTING_PANEL");
 
         profileIconView = (IconWithTextView) getView().findViewById(R.id.ly_more_profile);
 

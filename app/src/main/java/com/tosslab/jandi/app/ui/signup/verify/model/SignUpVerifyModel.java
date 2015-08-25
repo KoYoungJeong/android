@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.signup.verify.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.google.android.gms.analytics.HitBuilders;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -16,6 +15,7 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.signup.verify.exception.VerifyNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -98,16 +98,7 @@ public class SignUpVerifyModel {
                         .build())
                 .flush();
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.SignUp.name())
-                            .setAction("ResponseSuccess")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        GoogleAnalyticsUtil.sendEvent(Event.SignUp.name(), "ResponseSuccess");
     }
 
     public void trackSignUpFailAndFlush(int errorCode) {
@@ -119,16 +110,7 @@ public class SignUpVerifyModel {
                         .build())
                 .flush();
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.SignUp.name())
-                            .setAction("ResponseFail")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        GoogleAnalyticsUtil.sendEvent(Event.SignUp.name(), "ResponseFail");
     }
 
 }

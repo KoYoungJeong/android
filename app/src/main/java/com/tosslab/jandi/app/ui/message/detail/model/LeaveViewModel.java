@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.message.detail.model;
 import android.content.Context;
 import android.support.v7.app.AlertDialog;
 
-import com.google.android.gms.analytics.HitBuilders;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -15,6 +14,7 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -120,16 +120,7 @@ public class LeaveViewModel {
                         .property(PropertyKey.TopicId, entityId)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.TopicLeave.name())
-                            .setAction("ResponseSuccess")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        GoogleAnalyticsUtil.sendEvent(Event.TopicLeave.name(), "ResponseSuccess");
     }
 
     private void trackTopicLeaveFail(int errorCode) {
@@ -142,16 +133,7 @@ public class LeaveViewModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.TopicLeave.name())
-                            .setAction("ResponseFail")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        GoogleAnalyticsUtil.sendEvent(Event.TopicLeave.name(), "ResponseFail");
     }
 
     @UiThread

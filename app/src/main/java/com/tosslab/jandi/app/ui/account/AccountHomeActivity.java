@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.app.views.AccountPendingTeamRowView;
 import com.tosslab.jandi.app.views.AccountTeamRowView;
@@ -89,6 +90,8 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
                         .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, ScreenViewProperty.ACCOUNT_HOME)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName("ACCOUNT_HOME");
 
         progressWheel = new ProgressWheel(AccountHomeActivity.this);
         setUpActionBar();

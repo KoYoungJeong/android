@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.search.messages.model;
 
 import android.content.Context;
 
-import com.google.android.gms.analytics.HitBuilders;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -13,6 +12,7 @@ import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.adapter.strategy.TextStrategy;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -127,16 +127,7 @@ public class MessageSearchModel {
                         .property(PropertyKey.SearchKeyword, keyword)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.MessageKeywordSearch.name())
-                            .setAction("ResponseSuccess")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        GoogleAnalyticsUtil.sendEvent(Event.MessageKeywordSearch.name(), "ResponseSuccess");
     }
 
     public void trackMessageKeywordSearchFail(int errorCode) {
@@ -149,16 +140,7 @@ public class MessageSearchModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        try {
-            ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
-                    .send(new HitBuilders.EventBuilder()
-                            .setCategory(Event.MessageKeywordSearch.name())
-                            .setAction("ResponseFail")
-                            .build());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        GoogleAnalyticsUtil.sendEvent(Event.MessageKeywordSearch.name(), "ResponseFail");
     }
 
 }
