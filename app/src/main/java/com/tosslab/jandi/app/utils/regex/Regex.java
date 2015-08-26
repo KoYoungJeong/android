@@ -48,9 +48,10 @@ public class Regex {
     public static final Pattern VALID_TCO_URL;
     public static final Pattern INVALID_URL_WITHOUT_PROTOCOL_MATCH_BEGIN;
     public static final Pattern VALID_CASHTAG;
-    public static final int VALID_CASHTAG_GROUP_BEFORE = 1;
+    public static final Pattern VALID_PHONE_NUMBER;
 
     /* Begin public constants */
+    public static final int VALID_CASHTAG_GROUP_BEFORE = 1;
     public static final int VALID_CASHTAG_GROUP_DOLLAR = 2;
     public static final int VALID_CASHTAG_GROUP_CASHTAG = 3;
     public static final Pattern VALID_DOMAIN;
@@ -187,6 +188,18 @@ public class Regex {
     private static final String DOLLAR_SIGN_CHAR = "\\$";
     private static final String CASHTAG = "[a-z]{1,6}(?:[._][a-z]{1,2})?";
 
+    // (021234567, 02 123 4567, 02.123.4567, 02-123-4567)
+    private static final String PHONE_NUMBER_WITHOUT_SPACE = "(\\d{9,11})";
+    private static final String PHONE_NUMBER_WITH_SPACE = "(\\d{2,3}\\s\\d{3,4}\\s\\d{4})";
+    private static final String PHONE_NUMBER_WITH_DOT = "(\\d{2,3}\\.\\d{3,4}\\.\\d{4})";
+    private static final String PHONE_NUMBER_WITH_DASH = "(\\d{2,3}\\-\\d{3,4}\\-\\d{4})";
+
+    // 국가번호는 1000의 자리까지 존재하고 국가번호가 들어가면 지역번호 앞자리가 생략된다.(+10 ~ +999999)
+    private static final String GLOBAL_PHONE_NUMBER_WITHOUT_SPACE = "(\\+\\d{9,14})";
+    private static final String GLOBAL_PHONE_NUMBER_WITH_SPACE = "(\\+\\d{2,6}\\s\\d{3,4}\\s\\d{4})|(\\+\\d{1,4}\\s\\d{1,2}\\s\\d{3,4}\\s\\d{4})";
+    private static final String GLOBAL_PHONE_NUMBER_WITH_DOT = "(\\+\\d{2,6}\\.\\d{3,4}\\.\\d{4})|(\\+\\d{1,4}\\s\\d{1,2}\\.\\d{3,4}\\.\\d{4})";
+    private static final String GLOBAL_PHONE_NUMBER_WITH_DASH = "(\\+\\d{2,6}\\-\\d{3,4}\\-\\d{4})|(\\+\\d{1,4}\\s\\d{1,2}\\-\\d{3,4}\\-\\d{4})";
+
     // initializing in a static synchronized block, there appears to be thread safety issues with Pattern.compile in android
     static {
         synchronized (Regex.class) {
@@ -203,6 +216,16 @@ public class Regex {
             VALID_TCO_URL = Pattern.compile("^https?:\\/\\/t\\.co\\/[a-z0-9]+", Pattern.CASE_INSENSITIVE);
             VALID_CASHTAG = Pattern.compile("(^|" + UNICODE_SPACES + ")(" + DOLLAR_SIGN_CHAR + ")(" + CASHTAG + ")" + "(?=$|\\s|\\p{Punct})", Pattern.CASE_INSENSITIVE);
             VALID_DOMAIN = Pattern.compile(URL_VALID_DOMAIN, Pattern.CASE_INSENSITIVE);
+            VALID_PHONE_NUMBER = Pattern.compile(
+                    PHONE_NUMBER_WITHOUT_SPACE + "|"
+                            + PHONE_NUMBER_WITH_SPACE + "|"
+                            + PHONE_NUMBER_WITH_DOT + "|"
+                            + PHONE_NUMBER_WITH_DASH + "|"
+                            + GLOBAL_PHONE_NUMBER_WITHOUT_SPACE + "|"
+                            + GLOBAL_PHONE_NUMBER_WITH_SPACE + "|"
+                            + GLOBAL_PHONE_NUMBER_WITH_DOT + "|"
+                            + GLOBAL_PHONE_NUMBER_WITH_DASH,
+                    Pattern.CASE_INSENSITIVE);
         }
     }
 
