@@ -305,7 +305,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @AfterViews
     void initViews() {
         int screenView = messageListModel.isPublicTopic(entityType)
-                ? ScreenViewProperty.PUBLIC_TOPIC : ScreenViewProperty.PRIVIATE_TOPIC;
+                ? ScreenViewProperty.PUBLIC_TOPIC : ScreenViewProperty.PRIVATE_TOPIC;
 
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
@@ -315,7 +315,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                         .property(PropertyKey.ScreenView, screenView)
                         .build());
 
-        GoogleAnalyticsUtil.sendScreenName(screenView == ScreenViewProperty.PRIVIATE_TOPIC ?
+        GoogleAnalyticsUtil.sendScreenName(screenView == ScreenViewProperty.PRIVATE_TOPIC ?
                 "PRIVATE_TOPIC" : "PUBLIC_TOPIC");
 
         setUpActionbar();
