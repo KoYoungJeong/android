@@ -11,8 +11,10 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
+import com.tosslab.jandi.app.utils.mimetype.filter.IconFilterUtil;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -30,7 +32,7 @@ public class SearchedFileItemView extends RelativeLayout {
     TextView textViewSearchedFileType;
     @ViewById(R.id.txt_searched_file_date)
     TextView textViewSearchedFileDate;
-    @ViewById(R.id.img_searched_file_type)
+    @ViewById(R.id.iv_searched_file_type)
     ImageView imageViewSearchedFileType;
     @ViewById(R.id.img_searched_file_name_line_through)
     View imageViewLineThrough;
@@ -48,7 +50,9 @@ public class SearchedFileItemView extends RelativeLayout {
     }
 
     public void bind(ResMessages.FileMessage searchedFile) {
-        String searchedFileName = searchedFile.content.title;
+        ResMessages.FileContent content = searchedFile.content;
+
+        String searchedFileName = content.title;
         textViewSearchedFileName.setText(searchedFileName);
 
         FormattedEntity entityById = EntityManager.getInstance().getEntityById(searchedFile.writerId);
@@ -57,12 +61,29 @@ public class SearchedFileItemView extends RelativeLayout {
 
         textViewSearchedFileOwnerName.setText(searchedFileOwnerName);
 
-        textViewSearchedFileType.setText(searchedFile.content.ext);
+        textViewSearchedFileType.setText(content.ext);
 
         String searchedFileDate = DateTransformator.getTimeString(searchedFile.createTime);
         textViewSearchedFileDate.setText(searchedFileDate);
-        // 파일 타입에 해당하는 아이콘 연결
-        imageViewSearchedFileType.setImageResource(MimeTypeUtil.getMimeTypeIconImage(searchedFile.content.serverUrl, searchedFile.content.icon));
+
+        String icon = content.icon;
+        MimeTypeUtil.FilterType filterType = IconFilterUtil.getMimeType(icon);
+        if (filterType == MimeTypeUtil.FilterType.Image) {
+            if (BitmapUtil.hasImageUrl(content)) {
+                // 썸네일
+                String thumbnailUrl =
+                        BitmapUtil.getThumbnailUrlOrOriginal(content, BitmapUtil.Thumbnails.MEDIUM);
+                BitmapUtil.loadImageByGlideOrIonWhenGif(
+                        imageViewSearchedFileType, thumbnailUrl,
+                        R.drawable.jandi_fl_icon_img, R.drawable.jandi_fl_icon_img);
+            } else {
+                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_img);
+            }
+        } else {
+            // 파일 타입에 해당하는 아이콘 연결
+            int mimeTypeResource = MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, icon);
+            imageViewSearchedFileType.setImageResource(mimeTypeResource);
+        }
 
         commentTextView.setText(String.valueOf(searchedFile.commentCount));
 
