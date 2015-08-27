@@ -1,9 +1,13 @@
 package com.tosslab.jandi.app.ui.file.upload.preview.to;
 
+import java.io.Serializable;
+
 /**
  * Created by Steve SeongUg Jung on 15. 6. 16..
  */
-public class FileUploadVO {
+public class FileUploadVO implements Serializable {
+    public static final long serialVersionUID = -20150827;
+
     private final String filePath;
     private final String fileName;
     private int entity;

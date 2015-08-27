@@ -74,7 +74,17 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
     }
 
     @Override
-    public void onUploadStartFile() {
+    public void onSingleFileUpload() {
+        if (fileUploadVOs == null || fileUploadVOs.isEmpty()) {
+            return;
+        }
+
+        FileUploadVO fileUploadVO = fileUploadVOs.get(0);
+        view.exitOnOk(fileUploadVO);
+    }
+
+    @Override
+    public void onMultiFileUpload() {
         FileUploadManager instance = FileUploadManager.getInstance(context);
 
         for (FileUploadVO fileUploadVO : fileUploadVOs) {
