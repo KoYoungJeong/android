@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -54,6 +56,7 @@ import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
+import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
@@ -79,7 +82,10 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
+import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
+import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
+import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel_;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -211,6 +217,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Bean
     AnnouncementViewModel announcementViewModel;
+
+    @Bean
+    InvitationDialogExecutor invitationDialogExecutor;
 
     MentionControlViewModel mentionControlViewModel;
 
@@ -867,6 +876,25 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.setEnableSendButton(false);
         messageListPresenter.setSendEditText("");
 
+    }
+
+    public void onEvent(TopicInviteEvent event) {
+        if (!isForeground) {
+            return;
+        }
+        inviteMembersToEntity();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void inviteMembersToEntity() {
+        int teamMemberCountWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe().size();
+
+        if (teamMemberCountWithoutMe <= 0) {
+            invitationDialogExecutor.execute();
+        } else {
+            InvitationViewModel invitationViewModel = InvitationViewModel_.getInstance_(getActivity());
+            invitationViewModel.inviteMembersToEntity(getActivity(), roomId);
+        }
     }
 
     public void onEvent(SendCompleteEvent event) {

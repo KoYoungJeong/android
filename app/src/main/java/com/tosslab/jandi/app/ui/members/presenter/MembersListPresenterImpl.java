@@ -136,8 +136,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     @Override
     public void inviteMemberToTopic(int entityId) {
-        invitationViewModel.initData(activity, entityId);
-        invitationViewModel.invite();
+        invitationViewModel.inviteMembersToEntity(activity, entityId);
     }
 
     public void onEventMainThread(final RequestMoveDirectMessageEvent event) {

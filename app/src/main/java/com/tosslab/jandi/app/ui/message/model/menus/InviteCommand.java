@@ -21,6 +21,7 @@ import org.androidannotations.annotations.UiThread;
 /**
  * Created by Steve SeongUg Jung on 14. 12. 10..
  */
+@Deprecated
 @EBean
 class InviteCommand implements MenuCommand {
 
@@ -62,8 +63,7 @@ class InviteCommand implements MenuCommand {
             invitationDialogExecutor.execute();
         } else {
             InvitationViewModel invitationViewModel = InvitationViewModel_.getInstance_(activity);
-            invitationViewModel.initData(activity, chattingInfomations.entityId);
-            invitationViewModel.invite();
+            invitationViewModel.inviteMembersToEntity(activity, chattingInfomations.entityId);
         }
 
     }
