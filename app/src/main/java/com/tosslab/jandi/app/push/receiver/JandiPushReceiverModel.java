@@ -311,10 +311,10 @@ public class JandiPushReceiverModel {
         String roomType = pushInfo.getRoomType();
         String writerThumb = pushInfo.getWriterThumb();
         Bitmap profileImage = null;
-        if (writerThumb != null) {
+        if (!TextUtils.isEmpty(writerThumb)) {
             try {
                 profileImage = Ion.with(context)
-                        .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + writerThumb)
+                        .load(writerThumb)
                         .asBitmap()
                         .get();
             } catch (Exception e) {
