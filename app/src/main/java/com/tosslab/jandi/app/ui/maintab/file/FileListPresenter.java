@@ -4,19 +4,14 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -27,26 +22,25 @@ import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
-import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
+import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
+import com.tosslab.jandi.app.ui.selector.filetype.FileTypeSelector;
+import com.tosslab.jandi.app.ui.selector.filetype.FileTypeSelectorImpl;
+import com.tosslab.jandi.app.ui.selector.room.RoomSelector;
+import com.tosslab.jandi.app.ui.selector.room.RoomSelectorImpl;
+import com.tosslab.jandi.app.ui.selector.user.UserSelector;
+import com.tosslab.jandi.app.ui.selector.user.UserSelectorImpl;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.greenrobot.event.EventBus;
-import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 8..
@@ -58,16 +52,10 @@ public class FileListPresenter {
     Context context;
 
     // 카테코리 탭
-    @ViewById(R.id.ly_file_list_where)
-    LinearLayout linearLayoutFileListWhere;
     @ViewById(R.id.txt_file_list_where)
     TextView textViewFileListWhere;
-    @ViewById(R.id.ly_file_list_whom)
-    LinearLayout linearLayoutFileListWhom;
     @ViewById(R.id.txt_file_list_whom)
     TextView textViewFileListWhom;
-    @ViewById(R.id.ly_file_list_type)
-    LinearLayout linearLayoutFileListType;
     @ViewById(R.id.txt_file_list_type)
     TextView textViewFileListType;
 
@@ -87,10 +75,6 @@ public class FileListPresenter {
     String mCurrentEntityCategorizingAccodingBy = null;
     private String mCurrentUserNameCategorizingAccodingBy = null;
     private String mCurrentFileTypeCategorizingAccodingBy = null;
-    private AlertDialog mFileTypeSelectDialog;
-    private AlertDialog mUserSelectDialog;  // 사용자별 검색시 사용할 리스트 다이얼로그
-    private AlertDialog mEntitySelectDialog;
-    private EntityManager entityManager;
 
     public void setEntityIdForCategorizing(int entityIdForCategorizing) {
         this.entityIdForCategorizing = entityIdForCategorizing;
@@ -98,11 +82,6 @@ public class FileListPresenter {
 
     public void setCurrentEntityCategorizingAccodingBy(String mCurrentEntityCategorizingAccodingBy) {
         this.mCurrentEntityCategorizingAccodingBy = mCurrentEntityCategorizingAccodingBy;
-    }
-
-    @AfterInject
-    void initObject() {
-        entityManager = EntityManager.getInstance(context);
     }
 
     @AfterViews
@@ -119,12 +98,6 @@ public class FileListPresenter {
                         ? context.getString(R.string.jandi_file_category_all)
                         : mCurrentFileTypeCategorizingAccodingBy
         );
-        linearLayoutFileListType.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showFileTypeDialog(textViewFileListType);
-            }
-        });
     }
 
     private void setSpinnerAsCategorizingAccodingByWhom() {
@@ -133,12 +106,6 @@ public class FileListPresenter {
                         ? context.getString(R.string.jandi_file_category_everyone)
                         : mCurrentUserNameCategorizingAccodingBy
         );
-        linearLayoutFileListWhom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showUsersDialog(textViewFileListWhom);
-            }
-        });
     }
 
     private void setSpinnerAsCategorizingAccodingByWhere() {
@@ -147,223 +114,113 @@ public class FileListPresenter {
                         ? context.getString(R.string.jandi_file_category_everywhere)
                         : mCurrentEntityCategorizingAccodingBy
         );
-        linearLayoutFileListWhere.setOnClickListener(new View.OnClickListener() {
+    }
+
+    public void showFileTypeDialog() {
+        setUpTypeTextView(textViewFileListType, true);
+
+        FileTypeSelector fileSelector = new FileTypeSelectorImpl();
+        fileSelector.setOnFileTypeSelectListener(position -> {
+
+            mCurrentFileTypeCategorizingAccodingBy =
+                    context.getString(CategorizedMenuOfFileType.stringTitleResourceList[position]);
+            textViewFileListType.setText(mCurrentFileTypeCategorizingAccodingBy);
+            textViewFileListType.invalidate();
+            EventBus.getDefault().post(new CategorizedMenuOfFileType(position));
+
+            fileSelector.dismiss();
+        });
+
+        fileSelector.setOnFileTypeDismissListener(() -> setUpTypeTextView(textViewFileListType, false));
+        fileSelector.show(((View) textViewFileListType.getParent().getParent()));
+    }
+
+    public void showUsersDialog() {
+
+        setUpTypeTextView(textViewFileListWhom, true);
+
+
+        UserSelector userSelector = new UserSelectorImpl();
+        userSelector.setOnUserSelectListener(new UserSelector.OnUserSelectListener() {
             @Override
-            public void onClick(View view) {
-                showEntityDialog(textViewFileListWhere);
+            public void onUserSelect(FormattedEntity item) {
+
+
+                if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
+                    mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everyone);
+                    textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
+                    EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
+                } else if (item.getId() ==
+                        EntityManager.getInstance().getMe().getId()) {
+                    mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_my_files);
+                    textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
+                    EventBus.getDefault().post(new CategorizingAsOwner(item.getId()));
+                } else {
+                    mCurrentUserNameCategorizingAccodingBy = item.getName();
+                    textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
+                    EventBus.getDefault().post(new CategorizingAsOwner(item.getId()));
+                }
+                userSelector.dismiss();
+
             }
         });
+
+        userSelector.setOnUserDismissListener(() -> setUpTypeTextView(textViewFileListWhom, false));
+
+        userSelector.show(((View) textViewFileListWhom.getParent().getParent()));
     }
 
-    /**
-     * 파일 타입 리스트 Dialog 를 보여준 뒤, 선택된 타입만 검색하라는 이벤트를
-     * FileListFragment에 전달
-     *
-     * @param textVewFileType
-     */
-    private void showFileTypeDialog(final TextView textVewFileType) {
+    public void showEntityDialog() {
 
-        if (mFileTypeSelectDialog != null && mFileTypeSelectDialog.isShowing()) {
-            return;
-        }
+        setUpTypeTextView(textViewFileListWhere, true);
 
-        if (mFileTypeSelectDialog == null) {
-            View view = LayoutInflater.from(context).inflate(R.layout.dialog_select_cdp, null);
-            ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-            final FileTypeSimpleListAdapter adapter = new FileTypeSimpleListAdapter(context);
-            lv.setAdapter(adapter);
-            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    if (mFileTypeSelectDialog != null)
-                        mFileTypeSelectDialog.dismiss();
-                    mCurrentFileTypeCategorizingAccodingBy = context.getString(adapter.getItem(i));
-                    textVewFileType.setText(mCurrentFileTypeCategorizingAccodingBy);
-                    textVewFileType.invalidate();
-                    EventBus.getDefault().post(new CategorizedMenuOfFileType(i));
+        RoomSelector roomSelector = new RoomSelectorImpl();
+        roomSelector.setOnRoomSelectListener(new RoomSelector.OnRoomSelectListener() {
+            @Override
+            public void onRoomSelect(FormattedEntity item) {
+
+                int sharedEntityId = CategorizingAsEntity.EVERYWHERE;
+
+                if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
+                    // 첫번째는 "Everywhere"인 더미 entity
+                    mCurrentEntityCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everywhere);
+                } else {
+                    sharedEntityId = item.getId();
+                    mCurrentEntityCategorizingAccodingBy = item.getName();
                 }
-            });
+                textViewFileListWhere.setText(mCurrentEntityCategorizingAccodingBy);
+                textViewFileListWhere.invalidate();
+                EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
+                roomSelector.dismiss();
 
-            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-            dialog.setTitle(R.string.jandi_file_search_type);
-            dialog.setView(view);
-            mFileTypeSelectDialog = dialog.show();
-            mFileTypeSelectDialog.setCanceledOnTouchOutside(true);
-        } else {
-            mFileTypeSelectDialog.show();
-        }
+            }
+        });
+
+        roomSelector.setOnRoomDismissListener(() -> setUpTypeTextView(textViewFileListWhere, false));
+        roomSelector.show(((View) textViewFileListWhere.getParent().getParent()));
     }
 
-    /**
-     * 사용자 리스트 Dialog 를 보여준 뒤, 선택된 사용자가 올린 파일을 검색하라는 이벤트를
-     * FileListFragment에 전달
-     *
-     * @param textViewUser
-     */
-    private void showUsersDialog(final TextView textViewUser) {
+    private void setUpTypeTextView(TextView textVew, boolean isFocused) {
 
-        if (mUserSelectDialog != null && mUserSelectDialog.isShowing()) {
-            return;
-        }
-
-        if (mUserSelectDialog == null) {
-
-
-            View view = LayoutInflater.from(context).inflate(R.layout.dialog_select_cdp, null);
-            ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-
-            // TODO : List를 User가 아닌 FormattedUser로 바꾸면 addHeader가 아니라 List에서
-            // TODO : Everyone 용으로 0번째 item을 추가할 수 있음. 그럼 아래 note 로 적힌 인덱스가 밀리는 현상 해결됨.
-            // TODO : 뭐가 더 나은지는 모르겠네잉
-
-            FormattedEntity me = entityManager.getMe();
-
-            List<FormattedEntity> teamMember = new ArrayList<>();
-
-            Observable.from(entityManager.getFormattedUsersWithoutMe())
-                    .filter(formattedEntity -> TextUtils.equals(formattedEntity.getUser().status, "enabled"))
-                    .toSortedList((lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()))
-                    .subscribe(teamMember::addAll);
-
-            teamMember.add(0, me);
-
-            final UserEntitySimpleListAdapter adapter = new UserEntitySimpleListAdapter(context, teamMember);
-
-            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    if (mUserSelectDialog != null)
-                        mUserSelectDialog.dismiss();
-
-                    // NOTE : index 0 이 Everyone 으로 올라가면서
-                    // teamMember[0]은 Adapter[1]과 같다. Adapter[0]은 모든 유저.
-                    if (i == 0) {
-                        mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everyone);
-                        textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
-                        EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
-                    } else if (i == 1) {
-                        FormattedEntity owner = teamMember.get(i - 1);
-                        mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_my_files);
-                        textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
-                        EventBus.getDefault().post(new CategorizingAsOwner(owner.getId()));
-                    } else {
-                        FormattedEntity owner = teamMember.get(i - 1);
-                        mCurrentUserNameCategorizingAccodingBy = owner.getName();
-                        textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
-                        EventBus.getDefault().post(new CategorizingAsOwner(owner.getId()));
-                    }
-
-                    textViewUser.invalidate();
-                }
-            });
-            lv.addHeaderView(getHeaderViewAsAllUser());
-            lv.setAdapter(adapter);
-
-            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-            dialog.setTitle(R.string.jandi_file_search_user);
-            dialog.setView(view);
-            mUserSelectDialog = dialog.show();
-            mUserSelectDialog.setCanceledOnTouchOutside(true);
+        Drawable rightDrawable;
+        if (isFocused) {
+            if (context instanceof SearchActivity) {
+                rightDrawable = textVew.getResources().getDrawable(R.drawable.jandi_arrow_up);
+                ((View) textVew.getParent()).setBackgroundColor(context.getResources().getColor(R.color.jandi_primary_color_focus));
+            } else {
+                rightDrawable = textVew.getResources().getDrawable(R.drawable.jandi_arrow_up_gray);
+                ((View) textVew.getParent()).setBackgroundColor(Color.WHITE);
+            }
         } else {
-            mUserSelectDialog.show();
-        }
-    }
-
-    /**
-     * 모든 Entity 리스트 Dialog 를 보여준 뒤, 선택된 장소에 share 된 파일만 검색하라는 이벤트를
-     * FileListFragment에 전달
-     *
-     * @param textVew
-     */
-    private void showEntityDialog(final TextView textVew) {
-
-        if (mEntitySelectDialog != null && mEntitySelectDialog.isShowing()) {
-            return;
+            if (context instanceof SearchActivity) {
+                rightDrawable = textVew.getResources().getDrawable(R.drawable.jandi_arrow_down);
+            } else {
+                rightDrawable = textVew.getResources().getDrawable(R.drawable.jandi_arrow_down_gray);
+            }
+            ((View) textVew.getParent()).setBackgroundColor(Color.TRANSPARENT);
         }
 
-        if (mEntitySelectDialog == null) {
-
-            View view = LayoutInflater.from(context).inflate(R.layout.dialog_select_cdp, null);
-            ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-
-            FormattedEntity me = entityManager.getMe();
-
-            List<FormattedEntity> categorizableEntities = new ArrayList<>();
-            Observable.from(entityManager.getCategorizableEntities())
-                    .filter(formattedEntity -> {
-                        if (formattedEntity.type == FormattedEntity.TYPE_EVERYWHERE) {
-                            return true;
-                        }
-                        if (!formattedEntity.isUser()) {
-                            return true;
-                        } else if (formattedEntity.getId() == me.getId()) {
-                            return false;
-                        } else if (TextUtils.equals(formattedEntity.getUser().status, "enabled")) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    })
-                    .toSortedList((lhs, rhs) -> {
-                        if (lhs.type == FormattedEntity.TYPE_EVERYWHERE) {
-                            return -1;
-                        } else if (rhs.type == FormattedEntity.TYPE_EVERYWHERE) {
-                            return 1;
-                        }
-
-                        if ((lhs.isUser() && rhs.isUser()) || (!lhs.isUser() && !rhs.isUser())) {
-                            return lhs.getName().compareToIgnoreCase(rhs.getName());
-                        } else {
-                            if (!lhs.isUser()) {
-                                return -1;
-                            } else {
-                                return 1;
-                            }
-                        }
-
-                    }).subscribe(categorizableEntities::addAll);
-
-            final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(context, categorizableEntities);
-            lv.setAdapter(adapter);
-            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    if (mEntitySelectDialog != null)
-                        mEntitySelectDialog.dismiss();
-
-                    int sharedEntityId = CategorizingAsEntity.EVERYWHERE;
-
-                    if (i <= 0) {
-                        // 첫번째는 "Everywhere"인 더미 entity
-                        mCurrentEntityCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everywhere);
-                    } else {
-                        FormattedEntity sharedEntity = adapter.getItem(i);
-                        sharedEntityId = sharedEntity.getId();
-                        mCurrentEntityCategorizingAccodingBy = sharedEntity.getName();
-                    }
-                    textVew.setText(mCurrentEntityCategorizingAccodingBy);
-                    textVew.invalidate();
-                    EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
-                }
-            });
-
-            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-            dialog.setTitle(R.string.jandi_file_search_entity);
-            dialog.setView(view);
-            mEntitySelectDialog = dialog.show();
-            mEntitySelectDialog.setCanceledOnTouchOutside(true);
-        } else {
-            mEntitySelectDialog.show();
-        }
-    }
-
-    private View getHeaderViewAsAllUser() {
-        View headerView = LayoutInflater.from(context).inflate(R.layout.item_select_cdp, null, false);
-        TextView textView = (TextView) headerView.findViewById(R.id.txt_select_cdp_name);
-        textView.setText(R.string.jandi_file_category_everyone);
-        ImageView imageView = (ImageView) headerView.findViewById(R.id.img_select_cdp_icon);
-        imageView.setImageResource(R.drawable.jandi_profile);
-        return headerView;
+        textVew.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDrawable, null);
     }
 
     @UiThread

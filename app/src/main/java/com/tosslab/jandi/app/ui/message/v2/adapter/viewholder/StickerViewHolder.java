@@ -32,9 +32,11 @@ public class StickerViewHolder implements BodyViewHolder {
     private TextView tvDate;
 
     private View lastReadView;
+    private View contentView;
 
     @Override
     public void initView(View rootView) {
+        contentView = rootView.findViewById(R.id.vg_message_item);
         profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
         tvDate = (TextView) rootView.findViewById(R.id.txt_message_create_date);
@@ -49,7 +51,7 @@ public class StickerViewHolder implements BodyViewHolder {
     public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
         int fromEntityId = link.fromEntity;
 
-        FormattedEntity entity = EntityManager.getInstance(profileImageView.getContext()).getEntityById(fromEntityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
         String profileUrl = entity.getUserLargeProfileUrl();
@@ -61,7 +63,7 @@ public class StickerViewHolder implements BodyViewHolder {
                 .crossfade(true)
                 .load(profileUrl);
 
-        EntityManager entityManager = EntityManager.getInstance(nameTextView.getContext());
+        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById != null ? entityById.getUser() : null;
         if (user != null && TextUtils.equals(user.status, "enabled")) {
@@ -79,7 +81,7 @@ public class StickerViewHolder implements BodyViewHolder {
         tvDate.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
 
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance(tvUnread.getContext()).getMe().getId());
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
 
         tvUnread.setText(String.valueOf(unreadCount));
         if (unreadCount > 0) {
@@ -111,5 +113,19 @@ public class StickerViewHolder implements BodyViewHolder {
     @Override
     public int getLayoutId() {
         return R.layout.item_message_sticker_v2;
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        if (contentView != null && itemClickListener != null) {
+            contentView.setOnClickListener(itemClickListener);
+        }
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        if (contentView != null && itemLongClickListener != null) {
+            contentView.setOnLongClickListener(itemLongClickListener);
+        }
     }
 }

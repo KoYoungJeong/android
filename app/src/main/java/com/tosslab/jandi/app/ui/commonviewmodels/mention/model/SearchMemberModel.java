@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.commonviewmodels.mention.model;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
@@ -67,7 +66,7 @@ public class SearchMemberModel {
 
     }
 
-    public void refreshSelectableMembers
+    public LinkedHashMap<Integer, SearchedItemVO> refreshSelectableMembers
             (List<Integer> topicIds, String mentionType) {
 
         if (topicIds == null || topicIds.size() == 0) {
@@ -81,7 +80,7 @@ public class SearchMemberModel {
 
         Observable.from(topicIds)
                 .subscribe(topicId -> Observable
-                                .from(EntityManager.getInstance(JandiApplication.getContext())
+                                .from(EntityManager.getInstance()
                                         .getEntityById(topicId).getMembers())
                                 .subscribe(member -> {
                                             if (!members.contains(member)) {
@@ -92,7 +91,7 @@ public class SearchMemberModel {
                                 )
                 );
 
-        List<FormattedEntity> usersWithoutMe = EntityManager.getInstance(JandiApplication.getContext())
+        List<FormattedEntity> usersWithoutMe = EntityManager.getInstance()
                 .getFormattedUsersWithoutMe();
 
         Observable.from(members)
@@ -118,9 +117,11 @@ public class SearchMemberModel {
             selectableMembersLinkedHashMap.put(searchedItemForAll.getId(), searchedItemForAll);
         }
 
+        return selectableMembersLinkedHashMap;
+
     }
 
-    public LinkedHashMap<Integer, SearchedItemVO> getSelectableMembers() {
+    public LinkedHashMap<Integer, SearchedItemVO> getAllSelectableMembers() {
         return selectableMembersLinkedHashMap;
     }
 

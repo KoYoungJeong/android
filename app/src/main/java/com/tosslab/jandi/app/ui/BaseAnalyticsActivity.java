@@ -2,10 +2,7 @@ package com.tosslab.jandi.app.ui;
 
 import android.support.v7.app.AppCompatActivity;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.gson.JsonObject;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
@@ -243,11 +240,11 @@ public class BaseAnalyticsActivity extends AppCompatActivity {
 
     private void trackGa(final String distictId, final String gaPath) {
 
-        Tracker screenViewTracker = ((JandiApplication) getApplication())
-                .getTracker(JandiApplication.TrackerName.APP_TRACKER);
-        screenViewTracker.set("&uid", distictId);
-        screenViewTracker.setScreenName(gaPath);
-        screenViewTracker.send(new HitBuilders.AppViewBuilder().build());
+//        Tracker screenViewTracker = ((JandiApplication) getApplication())
+//                .getTracker(JandiApplication.TrackerName.APP_TRACKER);
+//        screenViewTracker.set("&uid", distictId);
+//        screenViewTracker.setScreenName(gaPath);
+//        screenViewTracker.send(new HitBuilders.AppViewBuilder().build());
 
     }
 }

@@ -31,9 +31,11 @@ public class EventViewHolder implements BodyViewHolder {
     private TextView eventContentView;
     private Context context;
     private View lastReadView;
+    private View contentView;
 
     @Override
     public void initView(View rootView) {
+        contentView = rootView.findViewById(R.id.vg_message_item);
         eventContentView = ((TextView) rootView.findViewById(R.id.txt_message_event_title));
         context = rootView.getContext();
         lastReadView = rootView.findViewById(R.id.vg_message_last_read);
@@ -46,7 +48,7 @@ public class EventViewHolder implements BodyViewHolder {
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
 
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
 
         if (eventInfo instanceof ResMessages.AnnouncementCreateEvent) {
             buildAnnouncementCreateEvent((ResMessages.AnnouncementCreateEvent) eventInfo,
@@ -194,7 +196,7 @@ public class EventViewHolder implements BodyViewHolder {
 
     private void buildJoinEvent(SpannableStringBuilder builder, int fromEntity) {
         FormattedEntity entity =
-                EntityManager.getInstance(context).getEntityById(fromEntity);
+                EntityManager.getInstance().getEntityById(fromEntity);
         String name;
         if (entity != null) {
             name = entity.getName();
@@ -214,7 +216,7 @@ public class EventViewHolder implements BodyViewHolder {
 
     private void buildLeaveEvent(SpannableStringBuilder builder, int fromEntity) {
         FormattedEntity entity =
-                EntityManager.getInstance(context).getEntityById(fromEntity);
+                EntityManager.getInstance().getEntityById(fromEntity);
         String name = entity.getName();
 
         ProfileSpannable profileSpannable = new ProfileSpannable(fromEntity);
@@ -298,6 +300,16 @@ public class EventViewHolder implements BodyViewHolder {
     @Override
     public int getLayoutId() {
         return R.layout.item_message_event_v2;
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+
     }
 
 }

@@ -27,9 +27,11 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
     private View disableLineThroughView;
     private TextView unreadTextView;
     private View lastReadView;
+    private View contentView;
 
     @Override
     public void initView(View rootView) {
+        contentView = rootView.findViewById(R.id.vg_message_item);
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_nested_comment_user_name);
         dateTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_create_date);
         ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_nested_comment_content);
@@ -45,10 +47,10 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
 
         ResMessages.CommentStickerMessage stickerMessage = (ResMessages.CommentStickerMessage) link.message;
 
-        FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext()).getEntityById(fromEntityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
-        EntityManager entityManager = EntityManager.getInstance(nameTextView.getContext());
+        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById.getUser();
         if (entityById != null && user != null && TextUtils.equals(user.status, "enabled")) {
@@ -91,5 +93,19 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
     @Override
     public int getLayoutId() {
         return R.layout.item_message_sticker_cmt_without_file_v2;
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        if (contentView != null && itemClickListener != null) {
+            contentView.setOnClickListener(itemClickListener);
+        }
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        if (contentView != null && itemLongClickListener != null) {
+            contentView.setOnLongClickListener(itemLongClickListener);
+        }
     }
 }

@@ -9,7 +9,7 @@ import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +22,7 @@ import rx.subjects.PublishSubject;
 /**
  * Created by Steve SeongUg Jung on 15. 7. 31..
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class MembersListPresenterImplTest {
 
 

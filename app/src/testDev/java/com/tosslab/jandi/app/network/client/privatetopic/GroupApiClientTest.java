@@ -9,14 +9,16 @@ import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.shadows.httpclient.FakeHttp;
 
 import java.sql.Timestamp;
 
@@ -27,20 +29,26 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class GroupApiClientTest {
 
     private ResLeftSideMenu sideMenu;
 
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData(Robolectric.application);
+        BaseInitUtil.initData(RuntimeEnvironment.application);
         int teamId = AccountRepository.getRepository().getAccountTeams().get(0).getTeamId();
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
         sideMenu = getSideMenu();
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        FakeHttp.getFakeHttpLayer().interceptHttpRequests(false);
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
+
     }
 
     private ResLeftSideMenu getSideMenu() {
@@ -111,9 +119,9 @@ public class GroupApiClientTest {
         }
 
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(279);
-        EntityManager.getInstance(Robolectric.application).refreshEntity(infosForSideMenu);
+        EntityManager.getInstance().refreshEntity(infosForSideMenu);
 
-        FormattedEntity entity = EntityManager.getInstance(Robolectric.application).getEntityById(privateTopic.id);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(privateTopic.id);
         assertThat(entity.getName(), is(reqCreateTopic.name));
         assertThat(((ResLeftSideMenu.PrivateGroup) entity.getEntity()).description, is(oldDescription));
 
@@ -143,9 +151,9 @@ public class GroupApiClientTest {
         }
 
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(279);
-        EntityManager.getInstance(Robolectric.application).refreshEntity(infosForSideMenu);
+        EntityManager.getInstance().refreshEntity(infosForSideMenu);
 
-        FormattedEntity entity = EntityManager.getInstance(Robolectric.application).getEntityById(privateTopic.id);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(privateTopic.id);
         assertThat(entity.getName(), is(oldName));
         assertThat(((ResLeftSideMenu.PrivateGroup) entity.getEntity()).description,
                 is(reqCreateTopic.description));

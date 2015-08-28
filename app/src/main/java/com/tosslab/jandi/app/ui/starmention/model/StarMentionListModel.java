@@ -44,6 +44,7 @@ public class StarMentionListModel {
     public ResStarMentioned getStarredRawDatas(String categoryType, Integer starredId,
                                                int count) throws RetrofitError {
         int teamId = getTeamId(JandiApplication.getContext());
+
         if (categoryType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
             return RequestApiManager.getInstance().getStarredMessagesByTeamApi(
                     teamId, starredId, count, "file");
@@ -100,7 +101,7 @@ public class StarMentionListModel {
                 messageId = starMentionedMessageObject.getStarredId();
             }
 
-            FormattedEntity entity = EntityManager.getInstance(JandiApplication.getContext())
+            FormattedEntity entity = EntityManager.getInstance()
                     .getEntityById(starMentionedMessageObject.getMessage().writerId);
             starMentionVO.setWriterName(entity.getUser().name);
             starMentionVO.setWriterPictureUrl(entity.getUserSmallProfileUrl());
@@ -125,10 +126,10 @@ public class StarMentionListModel {
                 } else if (starMentionedMessageObject.getRoom().type.equals("chat")) {
                     starMentionVO.setRoomType(JandiConstants.TYPE_DIRECT_MESSAGE);
                     String userId = starMentionedMessageObject.getRoom().name.replaceAll(
-                            EntityManager.getInstance(JandiApplication.getContext()).getMe().getId() + "", "");
+                            EntityManager.getInstance().getMe().getId() + "", "");
                     userId = userId.replace(":", "");
-                    starMentionVO.setRoomName(EntityManager.getInstance(
-                            JandiApplication.getContext()).getEntityById(Integer.valueOf(userId)).getName());
+                    starMentionVO.setRoomName(EntityManager.getInstance().
+                            getEntityById(Integer.valueOf(userId)).getName());
                     starMentionVO.setRoomId(Integer.valueOf(userId));
                 }
                 starMentionVO.setLinkId(starMentionedMessageObject.getLinkId());

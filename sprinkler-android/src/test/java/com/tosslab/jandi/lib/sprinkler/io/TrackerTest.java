@@ -9,8 +9,8 @@ import com.tosslab.jandi.lib.sprinkler.SprinklerTestApplication;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.io.Serializable;
@@ -21,7 +21,11 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by tonyjs on 15. 7. 23..
@@ -29,7 +33,7 @@ import static org.junit.Assert.*;
 @Config(
         application = SprinklerTestApplication.class,
         manifest = "src/main/AndroidManifest.xml",
-        emulateSdk = 18
+        sdk = 18
 )
 @RunWith(RobolectricTestRunner.class)
 public class TrackerTest {
@@ -38,7 +42,7 @@ public class TrackerTest {
 
     @Before
     public void setup() throws Exception {
-        tracker = new Tracker(Robolectric.application);
+        tracker = new Tracker(RuntimeEnvironment.application);
     }
 
     @Test
@@ -55,7 +59,7 @@ public class TrackerTest {
     @Test
     public void testMapToJSONFormat() throws Exception {
         Map<String, TextView> testMap1 = new Hashtable<>();
-        testMap1.put("h", new TextView(Robolectric.application));
+        testMap1.put("h", new TextView(RuntimeEnvironment.application));
         String test1 = tracker.getJSONFormatFromMap(testMap1);
 
         System.out.println("test1 = " + test1);

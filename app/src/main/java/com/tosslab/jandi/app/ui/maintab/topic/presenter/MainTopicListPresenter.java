@@ -17,7 +17,7 @@ public interface MainTopicListPresenter {
 
     void setView(View view);
 
-    void onInitTopics(Context context);
+    void onInitTopics(Context context, int selectedEntity);
 
     void onItemClick(Context context, RecyclerView.Adapter adapter, int position);
 
@@ -40,6 +40,8 @@ public interface MainTopicListPresenter {
         void moveToMessageActivity(int entityId, int entityType, boolean starred, int teamId, int markerLinkId);
 
         void setSelectedItem(int selectedEntity);
+
+        void startAnimationSelectedItem();
 
         void showUnjoinDialog(Topic item);
 

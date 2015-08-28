@@ -40,9 +40,11 @@ public class MessageViewHolder implements BodyViewHolder {
     private View disableLineThroughView;
     private LinkPreviewViewModel linkPreviewViewModel;
     private View lastReadView;
+    private View contentView;
 
     @Override
     public void initView(View rootView) {
+        contentView = rootView.findViewById(R.id.vg_message_item);
         profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
         messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
@@ -59,7 +61,7 @@ public class MessageViewHolder implements BodyViewHolder {
     public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
         int fromEntityId = link.fromEntity;
 
-        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(fromEntityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
         String profileUrl = entity.getUserLargeProfileUrl();
@@ -71,7 +73,7 @@ public class MessageViewHolder implements BodyViewHolder {
                 .crossfade(true)
                 .load(profileUrl);
 
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById != null ? entityById.getUser() : null;
         if (user != null && TextUtils.equals(user.status, "enabled")) {
@@ -118,7 +120,7 @@ public class MessageViewHolder implements BodyViewHolder {
                     startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                    link.id, link.fromEntity, EntityManager.getInstance(context).getMe().getId());
+                    link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
 
             if (unreadCount > 0) {
                 NameSpannable unreadCountSpannable =
@@ -135,7 +137,7 @@ public class MessageViewHolder implements BodyViewHolder {
 
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                     messageTextView, messageStringBuilder, textMessage.mentions, entityManager.getMe().getId());
-            messageStringBuilder = generateMentionMessageUtil.generate();
+            messageStringBuilder = generateMentionMessageUtil.generate(true);
 
             messageTextView.setText(messageStringBuilder);
 
@@ -160,5 +162,19 @@ public class MessageViewHolder implements BodyViewHolder {
     @Override
     public int getLayoutId() {
         return R.layout.item_message_msg_v2;
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        if (contentView != null && itemClickListener != null) {
+            contentView.setOnClickListener(itemClickListener);
+        }
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        if (contentView != null && itemLongClickListener != null) {
+            contentView.setOnLongClickListener(itemLongClickListener);
+        }
     }
 }

@@ -1,6 +1,4 @@
-package com.tosslab.jandi.app.ui.settings;/**
- * Created by justinygchoi on 2014. 7. 18..
- */
+package com.tosslab.jandi.app.ui.settings;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -26,10 +24,10 @@ import com.tosslab.jandi.app.ui.settings.viewmodel.SettingFragmentViewModel;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -54,9 +52,6 @@ public class SettingsFragment extends PreferenceFragment {
     @Bean
     SettingFragmentViewModel settingFragmentViewModel;
 
-    @Bean
-    AlertUtil alertUtil;
-
     @AfterViews
     void init() {
         settingFragmentViewModel.initProgress(getActivity());
@@ -73,6 +68,8 @@ public class SettingsFragment extends PreferenceFragment {
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, ScreenViewProperty.SETTING)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName("SETTING");
 
         addPreferencesFromResource(R.xml.pref_setting);
 
@@ -126,7 +123,7 @@ public class SettingsFragment extends PreferenceFragment {
             if (NetworkCheckUtil.isConnected()) {
                 settingFragmentViewModel.showSignoutDialog(getActivity());
             } else {
-                alertUtil.showCheckNetworkDialog(getActivity(), null);
+                settingFragmentViewModel.showCheckNetworkDialog(getActivity());
             }
 
         }
@@ -139,7 +136,7 @@ public class SettingsFragment extends PreferenceFragment {
             trackSignOut();
             startSignOut();
         } else {
-            alertUtil.showCheckNetworkDialog(getActivity(), null);
+            settingFragmentViewModel.showCheckNetworkDialog(getActivity());
         }
     }
 
@@ -159,7 +156,7 @@ public class SettingsFragment extends PreferenceFragment {
                     .flush()
                     .clear();
 
-            EntityManager entityManager = EntityManager.getInstance(activity);
+            EntityManager entityManager = EntityManager.getInstance();
 
             MixpanelMemberAnalyticsClient
                     .getInstance(activity, entityManager.getDistictId())
@@ -188,6 +185,8 @@ public class SettingsFragment extends PreferenceFragment {
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .build())
                 .flush();
+
+        GoogleAnalyticsUtil.sendEvent(Event.SignOut.name(), "ResponseSuccess");
     }
 
     private void removeSignData() {

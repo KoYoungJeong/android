@@ -3,8 +3,8 @@ package com.tosslab.jandi.app.ui.profile.email.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.LanguageUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -114,6 +115,9 @@ public class EmailChooseModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.Email, email)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.ChangeAccountPrimaryEmail.name(), "ResponseSuccess");
+
     }
 
     public void trackChangeAccountEmailFail(int errorCode) {
@@ -124,6 +128,9 @@ public class EmailChooseModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.ChangeAccountPrimaryEmail.name(), "ResponseFail");
+
     }
 
     public void trackRequestVerifyEmailSuccess() {
@@ -135,6 +142,9 @@ public class EmailChooseModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.Email, email)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.RequestVerificationEmail.name(), "ResponseSuccess");
+
     }
 
     public void trackRequestVerifyEmailFail(int errorCode) {
@@ -145,5 +155,8 @@ public class EmailChooseModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.RequestVerificationEmail.name(), "ResponseFail");
+
     }
 }

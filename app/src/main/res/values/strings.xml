@@ -473,10 +473,20 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_starred_no_all">No starred messages or files</string>
     <string name="jandi_starred_no_file">No starred files</string>
     <string name="jandi_starred_unstar_from_item">Are you sure you want to unstar this item?</string>
+    <string name="jandi_starmention_no_longer_in_topic">You are no longer in the topic where this item was shared.</string>
 
     <string name="jandi_unread_messages_below">"Unread messages below"</string>
     <string name="jandi_unpinned_message">Unstarred</string>
     <string name="jandi_profile_picture">"Profile Picture"</string>
     <string name="jandi_you_cannot_delete_default_message">You cannot delete or leave the default topic</string>
     <string name="jandi_this_is_disabled_user_explain">"This member has been temporarily disabled. Please contact the team administrator for more information."</string>
+    <string name="jandi_who_of_file">"\'s file"</string>
+    <string name="jandi_shared">"Shared"</string>
+    <string name="jandi_commented_on">Commented on</string>
+
+    <string name="jandi_file_downloaded_into">"File downloaded to %s"</string>
+    <string name="jandi_file_deleted_with_date">"%s, file was deleted."</string>
+
+    <string name="jandi_msg_network_offline">"Connection lost."</string>
+    <string name="jandi_msg_network_offline_warn">"It seems you are not connected to the Internet."</string>
 </resources>

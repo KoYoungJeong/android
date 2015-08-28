@@ -31,9 +31,11 @@ public class PureCommentViewHolder implements BodyViewHolder {
     private TextView unreadTextView;
     private Context context;
     private View lastReadView;
+    private View contentView;
 
     @Override
     public void initView(View rootView) {
+        contentView = rootView.findViewById(R.id.vg_message_item);
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_nested_comment_user_name);
         dateTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_create_date);
         commentTextView = (TextView) rootView.findViewById(R.id.txt_message_nested_comment_content);
@@ -47,10 +49,10 @@ public class PureCommentViewHolder implements BodyViewHolder {
     public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
         int fromEntityId = link.fromEntity;
 
-        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(fromEntityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById.getUser();
         if (entityById != null && user != null && TextUtils.equals(user.status, "enabled")) {
@@ -86,7 +88,7 @@ public class PureCommentViewHolder implements BodyViewHolder {
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                     commentTextView, spannableStringBuilder, commentMessage.mentions, entityManager.getMe().getId())
                     .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
-            spannableStringBuilder = generateMentionMessageUtil.generate();
+            spannableStringBuilder = generateMentionMessageUtil.generate(true);
 
             if (hasLink) {
                 commentTextView.setText(
@@ -116,6 +118,20 @@ public class PureCommentViewHolder implements BodyViewHolder {
     public int getLayoutId() {
         return R.layout.item_message_cmt_without_file_v2;
 
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        if (contentView != null && itemClickListener != null) {
+            contentView.setOnClickListener(itemClickListener);
+        }
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        if (contentView != null && itemLongClickListener != null) {
+            contentView.setOnLongClickListener(itemLongClickListener);
+        }
     }
 
 }

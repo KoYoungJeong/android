@@ -10,12 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GlideCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -130,7 +130,7 @@ public class MemberProfilePresenter {
                 && activity != null
                 && !activity.isFinishing()) {
             Glide.with(activity)
-                    .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileImageUrlPath)
+                    .load(profileImageUrlPath)
                     .placeholder(R.drawable.jandi_profile)
                     .error(R.drawable.jandi_profile)
                     .transform(new GlideCircleTransform(activity))
@@ -291,5 +291,10 @@ public class MemberProfilePresenter {
     @UiThread
     public void successUpdateEmailColor() {
         textViewProfileUserEmail.setTextColor(activity.getResources().getColor(R.color.jandi_text));
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showCheckNetworkDialog() {
+        AlertUtil.showCheckNetworkDialog(activity, null);
     }
 }

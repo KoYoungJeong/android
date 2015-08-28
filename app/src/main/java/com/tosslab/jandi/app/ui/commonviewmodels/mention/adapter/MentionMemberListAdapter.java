@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
-import com.tosslab.jandi.app.ui.commonviewmodels.mention.viewholder.MentionMemberListViewHolder;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.viewholder.MentionMemberListViewHolder;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 

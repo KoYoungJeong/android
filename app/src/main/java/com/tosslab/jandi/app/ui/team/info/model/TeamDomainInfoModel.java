@@ -3,14 +3,15 @@ package com.tosslab.jandi.app.ui.team.info.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -107,6 +108,8 @@ public class TeamDomainInfoModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TeamId, teamId)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.CreateTeam.name(), "ResponseSuccess");
     }
 
     public void trackCreateTeamFail(int errorCode) {
@@ -117,6 +120,8 @@ public class TeamDomainInfoModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.CreateTeam.name(), "ResponseFail");
     }
     
     public interface Callback {

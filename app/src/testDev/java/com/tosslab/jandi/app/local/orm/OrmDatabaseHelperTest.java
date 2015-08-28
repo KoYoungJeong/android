@@ -5,10 +5,12 @@ import com.j256.ormlite.dao.Dao;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.BaseInitUtil;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 
 import java.util.List;
 
@@ -16,7 +18,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class OrmDatabaseHelperTest {
 
     private OrmDatabaseHelper helper;
@@ -26,6 +28,13 @@ public class OrmDatabaseHelperTest {
     public void setUp() throws Exception {
         helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
         dao = helper.getDao(ResMessages.StickerContent.class);
+
+    }
+
+
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
 
     }
 

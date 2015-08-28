@@ -8,12 +8,14 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.BaseInitUtil;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.shadows.httpclient.FakeHttp;
 
 import java.sql.Timestamp;
 
@@ -24,7 +26,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class ChannelMessageApiClientTest {
 
 
@@ -34,9 +36,14 @@ public class ChannelMessageApiClientTest {
     public void setUp() throws Exception {
 
         sideMenu = getSideMenu();
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        FakeHttp.getFakeHttpLayer().interceptHttpRequests(false);
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
+
+    }
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.releaseDatabase();
 
     }
 

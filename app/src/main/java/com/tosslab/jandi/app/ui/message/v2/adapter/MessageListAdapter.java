@@ -19,7 +19,6 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -126,23 +125,17 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
             EventBus.getDefault().post(new RefreshNewMessageEvent());
         }
 
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onItemClickListener != null) {
-                    onItemClickListener.onItemClick(MessageListAdapter.this, position);
-                }
+        viewHolder.getViewHolder().setOnItemClickListener(v -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(MessageListAdapter.this, position);
             }
         });
 
-        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (onItemLongClickListener != null) {
-                    return onItemLongClickListener.onItemLongClick(MessageListAdapter.this, position);
-                }
-                return false;
+        viewHolder.getViewHolder().setOnItemLongClickListener(v -> {
+            if (onItemLongClickListener != null) {
+                return onItemLongClickListener.onItemLongClick(MessageListAdapter.this, position);
             }
+            return false;
         });
 
     }
@@ -217,7 +210,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
                 if (TextUtils.equals(link.message.contentType, "file")) {
 
                     if (searchedPosition >= 0) {
-                        messageList.set(searchedPosition, link);
+                        ResMessages.Link originLink = messageList.get(searchedPosition);
+                        originLink.message = link.message;
+                        originLink.status = "archived";
                         messages.remove(link);
                     }
                     // if cannot find same object, will be add to list.

@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.adapter.strategy.TextStrategy;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -47,11 +48,11 @@ public class MessageSearchModel {
     }
 
     public boolean hasEntity(int entityId) {
-        return EntityManager.getInstance(context).getEntityById(entityId) != null;
+        return EntityManager.getInstance().getEntityById(entityId) != null;
     }
 
     public int getEntityType(int entityId) {
-        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         if (entity.isPublicTopic()) {
             return JandiConstants.TYPE_PUBLIC_TOPIC;
         } else if (entity.isPrivateGroup()) {
@@ -62,7 +63,7 @@ public class MessageSearchModel {
     }
 
     public boolean isStarredEntity(int entityId) {
-        return EntityManager.getInstance(context).getEntityById(entityId).isStarred;
+        return EntityManager.getInstance().getEntityById(entityId).isStarred;
     }
 
     public List<SearchResult> convertSearchResult(List<ResMessageSearch.SearchRecord> searchRecordList, String query) {
@@ -106,7 +107,7 @@ public class MessageSearchModel {
     }
 
     public String getEntityName(int entityId) {
-        return EntityManager.getInstance(context).getEntityNameById(entityId);
+        return EntityManager.getInstance().getEntityNameById(entityId);
     }
 
     public void trackMessageKeywordSearchSuccess(String keyword) {
@@ -125,6 +126,8 @@ public class MessageSearchModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.SearchKeyword, keyword)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.MessageKeywordSearch.name(), "ResponseSuccess");
     }
 
     public void trackMessageKeywordSearchFail(int errorCode) {
@@ -136,6 +139,8 @@ public class MessageSearchModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.MessageKeywordSearch.name(), "ResponseFail");
     }
 
 }

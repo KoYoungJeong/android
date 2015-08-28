@@ -72,9 +72,9 @@ public class FileDetailCollapseCommentView implements CommentViewHolder {
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 textViewCommentContent, spannableStringBuilder, commentMessage.mentions,
-                EntityManager.getInstance(textViewCommentContent.getContext()).getMe().getId())
+                EntityManager.getInstance().getMe().getId())
                 .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
-        spannableStringBuilder = generateMentionMessageUtil.generate();
+        spannableStringBuilder = generateMentionMessageUtil.generate(true);
 
         textViewCommentContent.setText(spannableStringBuilder);
     }

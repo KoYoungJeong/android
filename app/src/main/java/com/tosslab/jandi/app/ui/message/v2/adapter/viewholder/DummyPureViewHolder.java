@@ -8,9 +8,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 4..
@@ -18,9 +20,11 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 public class DummyPureViewHolder implements BodyViewHolder {
 
     private TextView messageTextView;
+    private View contentView;
 
     @Override
     public void initView(View rootView) {
+        contentView = rootView.findViewById(R.id.vg_message_item);
         messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
     }
 
@@ -70,9 +74,16 @@ public class DummyPureViewHolder implements BodyViewHolder {
                 break;
             }
             case COMPLETE:
+                builder.append(" ");
                 messageTextView.setTextColor(textColor);
                 break;
         }
+
+
+        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                messageTextView, builder, ((DummyMessageLink) link).getMentions(),
+                EntityManager.getInstance().getMe().getId());
+        builder = generateMentionMessageUtil.generate(false);
 
         messageTextView.setText(builder);
 
@@ -87,6 +98,20 @@ public class DummyPureViewHolder implements BodyViewHolder {
     public int getLayoutId() {
         return R.layout.item_message_dummy_pure_v2;
 
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        if (contentView != null && itemClickListener != null) {
+            contentView.setOnClickListener(itemClickListener);
+        }
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        if (contentView != null && itemLongClickListener != null) {
+            contentView.setOnLongClickListener(itemLongClickListener);
+        }
     }
 
 }

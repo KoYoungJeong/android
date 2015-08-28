@@ -9,8 +9,7 @@
         android:id="@+id/img_check_user_icon"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_margin="10dp"
-        android:src="@drawable/ic_menu_file" />
+        android:layout_margin="10dp"/>
 
     <TextView
         android:id="@+id/txt_check_user_name"

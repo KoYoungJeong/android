@@ -41,31 +41,8 @@ public class MenuCommandBuilder {
         switch (item.getItemId()) {
             case android.R.id.home:
                 return new HomeMenuCommand(activity);
-            case R.id.action_entity_starred:
-                FavoriteTriggerCommand favoriteTriggerCommand = FavoriteTriggerCommand_.getInstance_(activity);
-                favoriteTriggerCommand.initData(activity, mEntityClientManager, chattingInfomations);
-                return favoriteTriggerCommand;
             case R.id.action_entity_move_file_list:
                 return new FileListCommand(activity, chattingInfomations);
-            case R.id.action_entity_invite:
-            case R.id.action_my_entity_invite:
-                InviteCommand invitecommand = InviteCommand_.getInstance_(activity);
-                invitecommand.initData(activity, mEntityClientManager, chattingInfomations);
-                return invitecommand;
-            case R.id.action_my_entity_rename:
-                return new ModifyEntityCommand(activity, chattingInfomations);
-            case R.id.action_my_entity_delete:
-                return new DeleteTopicCommand(activity);
-            case R.id.action_entity_leave:
-            case R.id.action_my_entity_leave:
-                LeaveEntityCommand leaveentitycommand = LeaveEntityCommand_.getInstance_(activity);
-                leaveentitycommand.initData(activity, mEntityClientManager, chattingInfomations);
-                return leaveentitycommand;
-            case R.id.action_entity_members:
-            case R.id.action_my_entity_members:
-                TopicParticipantCommand topicParticipantCommand = TopicParticipantCommand_.getInstance_(activity);
-                topicParticipantCommand.setEntity(chattingInfomations.entityId);
-                return topicParticipantCommand;
             case R.id.action_entity_search:
                 SearchMenuCommand command = SearchMenuCommand_.getInstance_(activity);
                 command.setEntityId(chattingInfomations.entityId);

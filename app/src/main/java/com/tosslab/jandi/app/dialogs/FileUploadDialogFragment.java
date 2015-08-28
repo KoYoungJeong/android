@@ -82,7 +82,7 @@ public class FileUploadDialogFragment extends DialogFragment {
         // CDP
         final Spinner spinner = (Spinner) mainView.findViewById(R.id.spinner_cdps);
         spinner.setPrompt(getString(R.string.jandi_action_share));
-        EntityManager entityManager = EntityManager.getInstance(getActivity());
+        EntityManager entityManager = EntityManager.getInstance();
         List<FormattedEntity> unsharedEntities = entityManager.retrieveExclusivedEntities(Arrays.asList(entityManager.getMe().getId()));
 
         List<FormattedEntity> formattedEntities = new ArrayList<>();

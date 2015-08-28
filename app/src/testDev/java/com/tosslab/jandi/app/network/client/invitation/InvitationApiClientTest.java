@@ -10,15 +10,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.shadows.httpclient.FakeHttp;
 
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class InvitationApiClientTest {
 
     //    private JandiRestClient jandiRestClient_;
@@ -28,8 +28,8 @@ public class InvitationApiClientTest {
     @Before
     public void setUp() throws Exception {
 
-//        jandiRestClient_ = new JandiRestClient_(Robolectric.application);
-//        invitationApiClient = new InvitationApiClient_(Robolectric.application);
+//        jandiRestClient_ = new JandiRestClient_(RuntimeEnvironment.application);
+//        invitationApiClient = new InvitationApiClient_(RuntimeEnvironment.application);
 //        ResAccessToken accessToken = getAccessToken();
 
 //        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
@@ -37,7 +37,7 @@ public class InvitationApiClientTest {
 
         sideMenu = getSideMenu();
 
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        FakeHttp.getFakeHttpLayer().interceptHttpRequests(false);
 
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;

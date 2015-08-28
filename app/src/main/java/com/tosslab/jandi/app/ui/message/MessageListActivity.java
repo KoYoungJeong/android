@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.message;
 
-import android.app.NotificationManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -149,7 +148,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     void initInformations() {
         mContext = getApplicationContext();
-        mEntityManager = EntityManager.getInstance(mContext);
+        mEntityManager = EntityManager.getInstance();
 
         if (isFromPush) {
             ResAccountInfo.UserTeam teamInfo = AccountRepository.getRepository().getTeamInfo(teamId);
@@ -347,17 +346,13 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         getMenuInflater().inflate(R.menu.message_list_menu_basic, menu);
         MenuItem item = menu.getItem(FAVORITE_MENU_ITEM);
         if (mChattingInformations.isFavorite) {
-            item.setIcon(R.drawable.jandi_icon_actionbar_fav);
         } else {
-            item.setIcon(R.drawable.jandi_icon_actionbar_fav_off);
         }
 
         // DirectMessage의 경우 확장 메뉴가 없음.
         if (mChattingInformations.isDirectMessage() == false) {
             if (mChattingInformations.isMyEntity) {
-                getMenuInflater().inflate(R.menu.manipulate_my_entity_menu, menu);
             } else {
-                getMenuInflater().inflate(R.menu.manipulate_entity_menu, menu);
             }
         }
 
@@ -430,7 +425,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @UiThread
     public void getEntitiesSucceed(ResLeftSideMenu resLeftSideMenu) {
-        mEntityManager = EntityManager.getInstance(MessageListActivity.this);
+        mEntityManager = EntityManager.getInstance();
         FormattedEntity entity = mEntityManager.getEntityById(mChattingInformations.entityId);
         if (entity == null) {
             getEntitiesFailed(getString(R.string.err_messages_invaild_entity));

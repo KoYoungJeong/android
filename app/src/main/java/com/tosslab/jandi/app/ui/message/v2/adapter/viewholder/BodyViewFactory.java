@@ -95,7 +95,8 @@ public class BodyViewFactory {
             if (TextUtils.isEmpty(fileType) || fileType.equals("null")) {
                 return BodyViewHolder.Type.File;
             }
-            if (fileType.startsWith("image")) {
+            if (fileType.startsWith("image")
+                    && !TextUtils.equals(currentMessage.status, "archived")) {
                 return BodyViewHolder.Type.Image;
             } else {
                 return BodyViewHolder.Type.File;

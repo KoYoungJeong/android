@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -126,8 +127,7 @@ public class IntroActivityModel {
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context.getApplicationContext(), totalUnreadCount);
             BadgeUtils.setBadge(context.getApplicationContext(), totalUnreadCount);
-            EntityManager.getInstance(context.getApplicationContext())
-                    .refreshEntity(context.getApplicationContext());
+            EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -164,7 +164,7 @@ public class IntroActivityModel {
         cursor.moveToFirst();
         return cursor.getInt(0);
     }
-    
+
     public void trackAutoSignInSuccessAndFlush(boolean hasTeamSelected) {
         FutureTrack.Builder builder = new FutureTrack.Builder()
                 .event(Event.SignIn)
@@ -179,6 +179,8 @@ public class IntroActivityModel {
         Sprinkler.with(JandiApplication.getContext())
                 .track(builder.build())
                 .flush();
+
+        GoogleAnalyticsUtil.sendEvent(Event.SignIn.name(), "ResponseSuccess");
     }
 
     public void trackSignInFailAndFlush(int errorCode) {
@@ -191,5 +193,7 @@ public class IntroActivityModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build())
                 .flush();
+
+        GoogleAnalyticsUtil.sendEvent(Event.SignIn.name(), "ResponseFail");
     }
 }

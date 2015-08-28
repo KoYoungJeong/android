@@ -56,7 +56,7 @@
 
         <TextView
             android:id="@+id/tv_star_mention_topic_name"
-            android:layout_width="105dp"
+            android:layout_width="115dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/tv_star_mention_content"
@@ -64,7 +64,7 @@
             android:layout_marginTop="13dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="Design team_HQ"
+            android:text="Design Guide"
             android:textColor="@color/jandi_star_mention_item_topic_name_text"
             android:textSize="13sp" />
 

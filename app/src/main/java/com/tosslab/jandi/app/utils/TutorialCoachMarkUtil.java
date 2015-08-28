@@ -59,7 +59,7 @@ public class TutorialCoachMarkUtil {
             }
         });
 
-        EntityManager entityManager = EntityManager.getInstance(context.getApplicationContext());
+        EntityManager entityManager = EntityManager.getInstance();
 
         if (coachMarkType == COACH_MARK_MORE) {
             ImageView profileImageView = (ImageView) masterView.findViewById(R.id.iv_profile_guide_image_icon);

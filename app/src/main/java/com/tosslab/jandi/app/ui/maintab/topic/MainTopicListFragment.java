@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -116,7 +117,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         topicListAdapter.setHasStableIds(true);
 
         mainTopicListPresenter.setView(this);
-        mainTopicListPresenter.onInitTopics(getActivity());
     }
 
     @AfterViews
@@ -128,6 +128,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, ScreenViewProperty.TOPIC_PANEL)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName("TOPIC_PANEL");
 
         rvTopic.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvTopic.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
@@ -156,6 +158,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         });
 
         mainTopicListPresenter.onFocusTopic(selectedEntity);
+        mainTopicListPresenter.onInitTopics(getActivity(), selectedEntity);
 
     }
 
@@ -219,6 +222,13 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     public void setSelectedItem(int selectedEntity) {
         this.selectedEntity = selectedEntity;
         topicListAdapter.setSelectedEntity(selectedEntity);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void startAnimationSelectedItem() {
+        topicListAdapter.startAnimation();
+        topicListAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -303,7 +313,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
     public void onEventMainThread(RetrieveTopicListEvent event) {
 
-        mainTopicListPresenter.onInitTopics(getActivity());
+        mainTopicListPresenter.onInitTopics(getActivity(), selectedEntity);
         setSelectedItem(selectedEntity);
 
     }
@@ -321,7 +331,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         if (!isForeground) {
             return;
         }
-        mainTopicListPresenter.onInitTopics(getActivity());
+        mainTopicListPresenter.onInitTopics(getActivity(), selectedEntity);
     }
 
 }

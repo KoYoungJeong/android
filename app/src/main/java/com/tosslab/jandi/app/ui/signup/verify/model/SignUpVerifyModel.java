@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.signup.verify.exception.VerifyNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -96,6 +97,8 @@ public class SignUpVerifyModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .build())
                 .flush();
+
+        GoogleAnalyticsUtil.sendEvent(Event.SignUp.name(), "ResponseSuccess");
     }
 
     public void trackSignUpFailAndFlush(int errorCode) {
@@ -106,6 +109,8 @@ public class SignUpVerifyModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build())
                 .flush();
+
+        GoogleAnalyticsUtil.sendEvent(Event.SignUp.name(), "ResponseFail");
     }
 
 }

@@ -44,8 +44,8 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
     }
 
     @Override
-    public void onInitTopics(Context context) {
-        EntityManager entityManager = EntityManager.getInstance(context);
+    public void onInitTopics(Context context, int selectedEntity) {
+        EntityManager entityManager = EntityManager.getInstance();
 
         Observable<Topic> joinEntities = mainTopicModel.getJoinEntities(
                 entityManager.getJoinedChannels(), entityManager.getGroups());
@@ -53,6 +53,11 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
                 mainTopicModel.getUnjoinEntities(entityManager.getUnjoinedChannels());
 
         view.setEntities(joinEntities, unjoinEntities);
+        if (selectedEntity > 0) {
+            view.setSelectedItem(selectedEntity);
+            view.startAnimationSelectedItem();
+        }
+
 
         boolean hasAlarmCount = mainTopicModel.hasAlarmCount(joinEntities);
         EventBus.getDefault().post(new TopicBadgeEvent(hasAlarmCount));
@@ -62,7 +67,7 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
     @Override
     public void onRefreshTopicList() {
         mainTopicModel.refreshEntity();
-        onInitTopics(JandiApplication.getContext());
+        onInitTopics(JandiApplication.getContext(), -1);
     }
 
     @Override
@@ -120,7 +125,7 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
         try {
             mainTopicModel.joinPublicTopic(topic.getEntityId());
             mainTopicModel.refreshEntity();
-            EntityManager entityManager = EntityManager.getInstance(context);
+            EntityManager entityManager = EntityManager.getInstance();
             if (entityManager != null) {
                 MixpanelMemberAnalyticsClient
                         .getInstance(context, entityManager.getDistictId())
@@ -131,7 +136,6 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
                     .getTeamId();
             view.moveToMessageActivity(topic.getEntityId(), entityType, topic.isStarred(),
                     teamId, topic.getMarkerLinkId());
-            view.setSelectedItem(topic.getEntityId());
 
         } catch (RetrofitError e) {
             e.printStackTrace();

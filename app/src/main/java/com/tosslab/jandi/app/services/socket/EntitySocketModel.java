@@ -5,7 +5,6 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
@@ -15,7 +14,6 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -71,7 +69,7 @@ public class EntitySocketModel {
 
             setBadgeCount(context, resLeftSideMenu);
 
-            EntityManager.getInstance(context).refreshEntity(resLeftSideMenu);
+            EntityManager.getInstance().refreshEntity();
 
             Observable.from(eventWrappers)
                     .takeFirst(eventWrapper -> eventWrapper.postRetrieveEvent)

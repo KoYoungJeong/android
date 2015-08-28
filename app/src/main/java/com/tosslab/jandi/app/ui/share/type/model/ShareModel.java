@@ -17,7 +17,6 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.MessageManipulator_;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.share.type.to.EntityInfo;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -49,7 +48,7 @@ public class ShareModel {
 
         List<FormattedEntity> entities = new ArrayList<FormattedEntity>();
 
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         entities.addAll(entityManager.getJoinedChannels());
         entities.addAll(entityManager.getGroups());
         entities.addAll(entityManager.getFormattedUsersWithoutMe());
@@ -120,7 +119,7 @@ public class ShareModel {
     }
 
     public boolean isStarredEntity(int entityId) {
-        return EntityManager.getInstance(context).getEntityById(entityId).isStarred;
+        return EntityManager.getInstance().getEntityById(entityId).isStarred;
     }
 
     public String getImagePath(String uriString) {
@@ -140,8 +139,8 @@ public class ShareModel {
                 .with(context)
                 .load(requestURL)
                 .uploadProgressDialog(progressDialog)
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
-                .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
+                .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                 .setMultipartParameter("title", titleText)
                 .setMultipartParameter("share", "" + entityInfo.getEntityId())
@@ -165,7 +164,7 @@ public class ShareModel {
     public void trackUploadingFile(int entityType, JsonObject result) {
 
         try {
-            MixpanelMemberAnalyticsClient.getInstance(context, EntityManager.getInstance(context).getDistictId()).trackUploadingFile(entityType, result);
+            MixpanelMemberAnalyticsClient.getInstance(context, EntityManager.getInstance().getDistictId()).trackUploadingFile(entityType, result);
         } catch (JSONException e) {
         }
     }

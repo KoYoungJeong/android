@@ -103,6 +103,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
             view.setChatItems(chatItems);
 
             view.setSelectedItem(selectedEntity);
+            view.startSelectedItemAnimation();
 
             int selectedEntityPosition = 0;
             int size = chatItems.size();
@@ -141,7 +142,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
     @Override
     public void onMoveDirectMessage(Context context, int entityId) {
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         int roomId = mainChatListModel.getRoomId(entityId);
 
         view.moveMessageActivity(entityManager.getTeamId()
@@ -170,7 +171,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
         int entityId = chatItem.getEntityId();
 
-        boolean isStarred = EntityManager.getInstance(context.getApplicationContext())
+        boolean isStarred = EntityManager.getInstance()
                 .getEntityById(entityId)
                 .isStarred;
 

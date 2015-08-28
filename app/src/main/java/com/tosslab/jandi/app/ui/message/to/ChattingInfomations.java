@@ -11,8 +11,8 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
  * **********************************************************
  */
 public class ChattingInfomations {
-    public int entityType;
     private final Context context;
+    public int entityType;
     public int teamId;
     public int entityId;
     public boolean isMyEntity;
@@ -31,7 +31,7 @@ public class ChattingInfomations {
     }
 
     public void loadExtraInfo() {
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         if (entityManager != null) {
             this.isMyEntity = entityManager.isMyTopic(entityId);
             this.entityName = entityManager.getEntityNameById(entityId);

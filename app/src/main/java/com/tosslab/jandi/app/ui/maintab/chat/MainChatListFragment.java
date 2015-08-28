@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -95,6 +96,8 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
                         .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_PANEL)
                         .build());
 
+        GoogleAnalyticsUtil.sendScreenName("MESSAGE_PANEL");
+
         chatListView.setEmptyView(emptyView);
         chatListView.setAdapter(mainChatListAdapter);
 
@@ -114,7 +117,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     public void onResume() {
         super.onResume();
         foreground = true;
-        
+
         btnFAB.setAnimation(null);
         btnFAB.setVisibility(View.VISIBLE);
 
@@ -191,6 +194,13 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         }
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void startSelectedItemAnimation() {
+        mainChatListAdapter.startAnimation();
+        mainChatListAdapter.notifyDataSetChanged();
+    }
+
 
     public void onEventMainThread(ProfileDetailEvent event) {
         if (foreground) {
@@ -233,7 +243,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
             return;
         }
 
-        if(TextUtils.equals(event.getEntityType(), PushTO.RoomType.CHAT.getName())) {
+        if (TextUtils.equals(event.getEntityType(), PushTO.RoomType.CHAT.getName())) {
             mainChatListPresenter.onReloadChatList(getActivity());
         }
     }

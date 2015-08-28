@@ -48,8 +48,6 @@
 
             </LinearLayout>
 
-            <View style="@style/JandiFileListCategoryTab.Border" />
-
             <LinearLayout
                 android:id="@+id/ly_file_list_whom"
                 style="@style/JandiFileListCategoryTab.Layout">
@@ -59,8 +57,6 @@
                     style="@style/JandiFileListCategoryTab.Text" />
 
             </LinearLayout>
-
-            <View style="@style/JandiFileListCategoryTab.Border" />
 
             <LinearLayout
                 android:id="@+id/ly_file_list_type"

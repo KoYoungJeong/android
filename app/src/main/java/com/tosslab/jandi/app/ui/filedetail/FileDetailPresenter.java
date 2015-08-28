@@ -9,10 +9,13 @@ import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
@@ -21,6 +24,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
+import com.tosslab.jandi.app.ui.filedetail.domain.FileStarredInfo;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.utils.BitmapUtil;
@@ -29,6 +33,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.placeholder.PlaceholderUtil;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -37,12 +42,15 @@ import org.androidannotations.annotations.RootContext;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.Observable;
+import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 8..
@@ -59,11 +67,28 @@ public class FileDetailPresenter {
     private MentionControlViewModel mentionControlViewModel;
 
     private View view;
+    private PublishSubject<FileStarredInfo> starredPublishSubject;
+
+    @AfterInject
+    void initObject() {
+        starredPublishSubject = PublishSubject.create();
+
+        starredPublishSubject.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
+                .onBackpressureBuffer()
+                .subscribeOn(Schedulers.io())
+                .subscribe(fileStarredInfo -> {
+                    if (fileStarredInfo.isStarred()) {
+                        registStarredFileMessage(fileStarredInfo.getFileId());
+                    } else {
+                        unregistStarredFileMessage(fileStarredInfo.getFileId());
+                    }
+                }, Throwable::printStackTrace);
+    }
 
     public List<Integer> getSharedTopicIds(Context context, ResMessages.OriginalMessage fileDetail) {
         List<Integer> sharedTopicIds = new ArrayList<>();
 
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
 
         for (ResMessages.OriginalMessage.IntegerWrapper entity : ((ResMessages.FileMessage) fileDetail).shareEntities) {
             FormattedEntity formattedEntity = entityManager.getEntityById(entity.getShareEntity());
@@ -100,13 +125,11 @@ public class FileDetailPresenter {
                 }
             }
 
-            Collections.sort(fakeFile.messageDetails,
-                    (lhs, rhs) -> lhs.createTime.compareTo(rhs.createTime));
+            ResMessages.FileMessage fileMessage = fileDetailModel.extractFileMssage(fakeFile.messageDetails);
+            List<ResMessages.OriginalMessage> commentMessages =
+                    fileDetailModel.extractCommentMessage(fakeFile.messageDetails);
 
-            view.loadSuccess(fakeFile, false, selectMessageId);
-
-            boolean enableUserFromUploader = fileDetailModel.isEnableUserFromUploder(fakeFile);
-            view.drawFileWriterState(enableUserFromUploader);
+            view.loadSuccess(fileMessage, commentMessages, false, selectMessageId);
 
             return true;
         }
@@ -116,9 +139,7 @@ public class FileDetailPresenter {
     }
 
     /**
-     * *********************************************************
      * 파일 상세 출력 관련
-     * **********************************************************
      */
     @Background
     public void getFileDetail(int fileId, boolean isSendAction, boolean showDialog, int selectMessageId) {
@@ -132,25 +153,21 @@ public class FileDetailPresenter {
 
             LogUtil.d("FileDetailActivity", resFileDetail.toString());
 
-            for (ResMessages.OriginalMessage messageDetail : resFileDetail.messageDetails) {
-                if (messageDetail instanceof ResMessages.FileMessage) {
-                    fileDetailModel.setFileMessage((ResMessages.FileMessage) messageDetail);
-                    break;
-                }
+            ResMessages.FileMessage fileMessage = fileDetailModel.extractFileMssage(resFileDetail.messageDetails);
+
+            if (fileMessage == null) {
+                throw new NullPointerException("File Message doens't conains");
             }
 
-            // 저장하기 (멀티 쓰레딩)
+            // 저장하기
             fileDetailModel.saveFileDetailInfo(resFileDetail);
 
-            Collections.sort(resFileDetail.messageDetails,
-                    (lhs, rhs) -> lhs.createTime.compareTo(rhs.createTime));
+            List<ResMessages.OriginalMessage> commentMessages = fileDetailModel.extractCommentMessage(resFileDetail.messageDetails);
 
             view.dismissProgress();
 
-            view.loadSuccess(resFileDetail, isSendAction, selectMessageId);
+            view.loadSuccess(fileMessage, commentMessages, isSendAction, selectMessageId);
 
-            boolean enableUserFromUploader = fileDetailModel.isEnableUserFromUploder(resFileDetail);
-            view.drawFileWriterState(enableUserFromUploader);
         } catch (RetrofitError e) {
             LogUtil.e("fail to get file detail.", e);
             view.dismissProgress();
@@ -183,8 +200,10 @@ public class FileDetailPresenter {
         view.showManipulateMessageDialogFragment(item, isMine);
     }
 
-    public void onClickShare() {
-        final List<FormattedEntity> unSharedEntities = fileDetailModel.getUnsharedEntities();
+    public void onClickShare(int fileId) {
+        ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage(fileId);
+        final List<FormattedEntity> unSharedEntities
+                = fileDetailModel.getUnsharedEntities(fileMessage);
 
         int myId = fileDetailModel.getMyId();
 
@@ -202,9 +221,9 @@ public class FileDetailPresenter {
         }
     }
 
-    public void onClickUnShare() {
+    public void onClickUnShare(int fileId) {
         final Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities =
-                fileDetailModel.getFileMessage().shareEntities;
+                fileDetailModel.getFileMessage(fileId).shareEntities;
 
         int myId = fileDetailModel.getMyId();
 
@@ -230,10 +249,10 @@ public class FileDetailPresenter {
             fileDetailModel.shareMessage(fileId, entityIdToBeShared);
             LogUtil.d("success to share message");
 
-            fileDetailModel.trackFileShareSuccess(entityIdToBeShared);
+            fileDetailModel.trackFileShareSuccess(entityIdToBeShared, fileId);
 
             view.dismissProgress();
-            view.onShareMessageSucceed(entityIdToBeShared, fileDetailModel.getFileMessage());
+            view.onShareMessageSucceed(entityIdToBeShared, fileDetailModel.getFileMessage(fileId));
             view.showMoveDialog(entityIdToBeShared);
         } catch (RetrofitError e) {
             LogUtil.e("fail to send message", e);
@@ -256,11 +275,12 @@ public class FileDetailPresenter {
             fileDetailModel.unshareMessage(fileId, entityIdToBeUnshared);
             LogUtil.d("success to unshare message");
 
-            fileDetailModel.trackFileUnShareSuccess(entityIdToBeUnshared);
+            fileDetailModel.trackFileUnShareSuccess(entityIdToBeUnshared, fileId);
 
             view.dismissProgress();
 
-            view.onUnShareMessageSucceed(entityIdToBeUnshared, fileDetailModel.getFileMessage());
+            view.onUnShareMessageSucceed(entityIdToBeUnshared,
+                    fileDetailModel.getFileMessage(fileId));
 
         } catch (RetrofitError e) {
             LogUtil.e("fail to send message", e);
@@ -281,7 +301,7 @@ public class FileDetailPresenter {
         view.showProgress();
 
         try {
-            EntityManager entityManager = EntityManager.getInstance(activity);
+            EntityManager entityManager = EntityManager.getInstance();
             fileDetailModel.joinEntity(entityId);
 
             MixpanelMemberAnalyticsClient
@@ -369,7 +389,7 @@ public class FileDetailPresenter {
             fileDetailModel.deleteFile(fileId);
             LogUtil.d("success to delete file");
 
-            fileDetailModel.trackFileDeleteSuccess(topicId);
+            fileDetailModel.trackFileDeleteSuccess(topicId, fileId);
 
             view.dismissProgress();
             view.onDeleteFileSucceed(true);
@@ -389,8 +409,8 @@ public class FileDetailPresenter {
         }
     }
 
-    public void checkSharedEntity(int eventId) {
-        final ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage();
+    public void checkSharedEntity(int eventId, int fileId) {
+        final ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage(fileId);
         if (fileMessage == null) {
             return;
         }
@@ -409,8 +429,8 @@ public class FileDetailPresenter {
     }
 
     @Background
-    public void onClickDownload(ProgressDialog progressDialog) {
-        ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage();
+    public void onClickDownload(ProgressDialog progressDialog, int fileId) {
+        ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage(fileId);
         if (fileMessage == null) {
             return;
         }
@@ -435,11 +455,11 @@ public class FileDetailPresenter {
                 content.title,
                 content.type,
                 content.ext,
-                progressDialog);
+                progressDialog, fileId, false);
     }
 
     @Background
-    public void downloadFile(String url, String fileName, final String fileType, String ext, ProgressDialog progressDialog) {
+    public void downloadFile(String url, String fileName, final String fileType, String ext, ProgressDialog progressDialog, int fileId, boolean execute) {
         try {
             File result = fileDetailModel.download(url, fileName, ext, progressDialog);
 
@@ -447,10 +467,11 @@ public class FileDetailPresenter {
                 fileDetailModel.addGallery(result, fileType);
             }
 
-            fileDetailModel.trackFileDownloadSuccess();
+            fileDetailModel.trackFileDownloadSuccess(fileId);
 
             view.dismissDownloadProgressDialog();
-            view.onDownloadFileSucceed(result, fileType, fileDetailModel.getFileMessage());
+            view.onDownloadFileSucceed(result, fileType, fileDetailModel.getFileMessage(fileId),
+                    execute);
         } catch (Exception e) {
             LogUtil.e("Download failed", e);
             view.dismissDownloadProgressDialog();
@@ -480,8 +501,10 @@ public class FileDetailPresenter {
                 activity.getApplicationContext(), fileMessage);
 
         if (mentionControlViewModel == null) {
-            mentionControlViewModel = new MentionControlViewModel(activity,
-                    searchMemberListView, editText, fileCommentListView, sharedTopicIds);
+            mentionControlViewModel = MentionControlViewModel.newInstance(activity,
+                    editText, searchMemberListView, fileCommentListView,
+                    sharedTopicIds,
+                    MentionControlViewModel.MENTION_TYPE_FILE_COMMENT);
             registClipboardListenerforMention();
         }
         mentionControlViewModel.clear();
@@ -507,20 +530,80 @@ public class FileDetailPresenter {
         return mentionControlViewModel;
     }
 
-    public void registStarredMessage(int teamId, int messageId) throws RetrofitError {
-        fileDetailModel.registStarredMessage(teamId, messageId);
+    @Background
+    public void registStarredComment(int messageId) {
+        try {
+            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            fileDetailModel.registStarredMessage(teamId, messageId);
+            MessageRepository.getRepository().updateStarred(messageId, true);
+            view.showToast(activity.getString(R.string.jandi_message_starred));
+            view.modifyStarredInfo(messageId, true);
+            EventBus.getDefault().post(new StarredInfoChangeEvent());
+
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
     }
 
-    public void unregistStarredMessage(int teamId, int messageId) throws RetrofitError {
-        fileDetailModel.unregistStarredMessage(teamId, messageId);
+    @Background
+    public void unregistStarredComment(int messageId) {
+        try {
+            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            fileDetailModel.unregistStarredMessage(teamId, messageId);
+            MessageRepository.getRepository().updateStarred(messageId, false);
+
+            view.modifyStarredInfo(messageId, false);
+            view.showToast(activity.getString(R.string.jandi_unpinned_message));
+            EventBus.getDefault().post(new StarredInfoChangeEvent());
+
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
+
+    }
+
+    @Background
+    public void unregistStarredFileMessage(int fileId) {
+        try {
+            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            fileDetailModel.unregistStarredMessage(teamId, fileId);
+            MessageRepository.getRepository().updateStarred(fileId, false);
+
+            view.updateFileStarred(false);
+            view.showToast(activity.getString(R.string.jandi_unpinned_message));
+            EventBus.getDefault().post(new StarredInfoChangeEvent());
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
+    }
+
+    @Background
+    public void registStarredFileMessage(int fileId) {
+        try {
+            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            fileDetailModel.registStarredMessage(teamId, fileId);
+            view.updateFileStarred(true);
+            view.showToast(activity.getString(R.string.jandi_message_starred));
+            MessageRepository.getRepository().updateStarred(fileId, true);
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
+
+    }
+
+    public void changeStarredFileMessageState(int fileId, boolean starred) {
+        // 클릭 여러번을 막기 위함
+        starredPublishSubject.onNext(new FileStarredInfo(fileId, starred));
     }
 
     public interface View {
         void drawFileWriterState(boolean isEnabled);
 
-        void drawFileDetail(ResFileDetail resFileDetail, boolean isSendAction);
+        void drawFileDetail(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages, boolean isSendAction);
 
-        void loadSuccess(ResFileDetail resFileDetail, boolean isSendAction, int selectMessageId);
+        void loadSuccess(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages, boolean isSendAction, int selectMessageId);
+
+        void showCheckNetworkDialog();
 
         void showDeleteFileDialog(int fileId);
 
@@ -540,7 +623,7 @@ public class FileDetailPresenter {
 
         void onDeleteFileSucceed(boolean isOk);
 
-        void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage);
+        void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage, boolean execute);
 
         void onGetProfileFailed();
 
@@ -575,5 +658,9 @@ public class FileDetailPresenter {
         void loadSticker(StickerInfo stickerInfo);
 
         void dismissStickerPreview();
+
+        void modifyStarredInfo(int messageId, boolean isStarred);
+
+        void updateFileStarred(boolean starred);
     }
 }

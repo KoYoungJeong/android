@@ -35,7 +35,7 @@ public class FileInfoTextVisitor implements TextVisitor {
         int textSize = (int) context.getResources().getDimension(R.dimen.jandi_message_search_item_large_txt_size);
         NameSpannable nameSpannable;
 
-        String name = EntityManager.getInstance(context).getEntityById(record.getFileInfo().getWriterId()).getName();
+        String name = EntityManager.getInstance().getEntityById(record.getFileInfo().getWriterId()).getName();
         int start = builder.length();
         nameSpannable = new NameSpannable(textSize, textColor);
         builder.append(name).setSpan(nameSpannable, start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

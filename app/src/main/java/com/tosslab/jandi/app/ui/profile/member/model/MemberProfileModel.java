@@ -13,14 +13,12 @@ import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.apache.http.client.methods.HttpPut;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -45,26 +43,26 @@ public class MemberProfileModel {
     EntityClientManager entityClientManager;
 
     public ResLeftSideMenu.User getProfile() throws RetrofitError {
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         return entityClientManager.getUserProfile(entityManager.getMe().getId());
     }
 
     public ResLeftSideMenu.User updateProfile(ReqUpdateProfile reqUpdateProfile) throws RetrofitError {
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         return entityClientManager.updateUserProfile(entityManager.getMe().getId(), reqUpdateProfile);
     }
 
     public String uploadProfilePhoto(File file) throws ExecutionException, InterruptedException {
 
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
 
         String requestURL
                 = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/members/" + entityManager.getMe().getId() + "/profile/photo";
 
         return Ion.with(context)
-                .load(HttpPut.METHOD_NAME, requestURL)
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
-                .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+                .load("PUT", requestURL)
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
+                .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                 .setMultipartFile("photo", URLConnection.guessContentTypeFromName(file.getName()), file)
                 .asString()
@@ -72,7 +70,7 @@ public class MemberProfileModel {
     }
 
     public com.tosslab.jandi.app.network.models.ResCommon updateProfileName(ReqProfileName reqProfileName) throws RetrofitError {
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         return entityClientManager.updateMemberName(entityManager.getMe().getId(), reqProfileName);
     }
 
@@ -106,17 +104,17 @@ public class MemberProfileModel {
     }
 
     public ResLeftSideMenu.User updateProfileEmail(String email) throws RetrofitError {
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         return entityClientManager.updateMemberEmail(entityManager.getMe().getId(), email);
     }
 
     public boolean isMyId(int id) {
-        return EntityManager.getInstance(context).getMe().getId() == id;
+        return EntityManager.getInstance().getMe().getId() == id;
     }
 
     public ResLeftSideMenu.User getSavedProfile(Context context) {
 
-        return EntityManager.getInstance(context).getMe().getUser();
+        return EntityManager.getInstance().getMe().getUser();
 
     }
 }

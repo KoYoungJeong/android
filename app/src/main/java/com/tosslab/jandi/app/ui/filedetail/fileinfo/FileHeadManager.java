@@ -56,6 +56,8 @@ public class FileHeadManager {
     private ImageView iconFileType;
     private LinearLayout fileInfoLayout;
     private int roomId;
+    private View vgDeleted;
+    private TextView tvDeletedDate;
 
     public View getHeaderView() {
         View header = LayoutInflater.from(activity).inflate(R.layout.activity_file_detail_header, null, false);
@@ -70,6 +72,9 @@ public class FileHeadManager {
         disableLineThroughView = header.findViewById(R.id.img_entity_listitem_line_through);
         disableCoverView = header.findViewById(R.id.view_entity_listitem_warning);
         btnFileDetailStarred = (ImageView) header.findViewById(R.id.bt_file_detail_starred);
+
+        vgDeleted = header.findViewById(R.id.vg_file_detail_deleted);
+        tvDeletedDate = ((TextView) header.findViewById(R.id.tv_file_detail_deleted_date));
         return header;
     }
 
@@ -88,7 +93,7 @@ public class FileHeadManager {
         if (resFileDetail == null) {
             return;
         }
-        EntityManager mEntityManager = EntityManager.getInstance(activity);
+        EntityManager mEntityManager = EntityManager.getInstance();
         if (mEntityManager == null) {
             return;
         }
@@ -96,7 +101,6 @@ public class FileHeadManager {
         int teamId = mEntityManager.getTeamId();
 
         if (resFileDetail.shareEntities != null && !resFileDetail.shareEntities.isEmpty()) {
-            int nSharedEntities = resFileDetail.shareEntities.size();
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
             int shareTextSize = (int) activity.getResources().getDimension(R.dimen.jandi_text_size_small);
             int shareTextColor = activity.getResources().getColor(R.color.file_type);
@@ -149,7 +153,7 @@ public class FileHeadManager {
 
     public void setFileInfo(ResMessages.FileMessage fileMessage) {
         // 사용자
-        FormattedEntity writer = EntityManager.getInstance(activity).getEntityById(fileMessage.writerId);
+        FormattedEntity writer = EntityManager.getInstance().getEntityById(fileMessage.writerId);
         String profileUrl = writer.getUserSmallProfileUrl();
         Ion.with(imageViewUserProfile)
                 .placeholder(R.drawable.jandi_profile)
@@ -172,9 +176,16 @@ public class FileHeadManager {
 
             imageViewPhotoFile.setImageResource(R.drawable.jandi_fl_icon_deleted);
             imageViewPhotoFile.setOnClickListener(null);
+            imageViewPhotoFile.setVisibility(View.GONE);
             fileInfoLayout.setVisibility(View.GONE);
 
+            vgDeleted.setVisibility(View.VISIBLE);
+            String timeString = DateTransformator.getTimeString(fileMessage.updateTime, DateTransformator.FORMAT_YYYYMMDD_HHMM_A);
+            String deletedDate = tvDeletedDate.getResources().getString(R.string.jandi_file_deleted_with_date, timeString);
+            tvDeletedDate.setText(deletedDate);
+
         } else {
+            vgDeleted.setVisibility(View.GONE);
 
             ActionBar actionBar = activity.getSupportActionBar();
             if (actionBar != null) {
@@ -210,6 +221,15 @@ public class FileHeadManager {
                 thumbLoader.loadThumb(fileMessage);
             }
         }
+
+        boolean enabledUser = isEnabledUser(fileMessage.writerId);
+        drawFileWriterState(enabledUser);
+    }
+
+    private boolean isEnabledUser(int writerId) {
+        EntityManager entityManager = EntityManager.getInstance();
+        String userStatus = entityManager.getEntityById(writerId).getUser().status;
+        return TextUtils.equals(userStatus, "enabled");
     }
 
     public ImageView getStarredButton() {

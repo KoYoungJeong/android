@@ -1,0 +1,77 @@
+package com.tosslab.jandi.app.ui.offline;
+
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
+
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
+
+public class OfflineLayer {
+
+    private View vgOffline;
+
+    public OfflineLayer(View vgOffline) {
+        this.vgOffline = vgOffline;
+    }
+
+    public void dismissOfflineView() {
+
+        if (vgOffline.getVisibility() != View.VISIBLE) {
+            return;
+        }
+
+        if (vgOffline.getAnimation() != null && !vgOffline.getAnimation().hasEnded()) {
+            return;
+        }
+
+        Animation animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, -1f);
+
+        animation.setDuration(JandiApplication.getContext().getResources().getInteger(android.R
+                .integer
+                .config_shortAnimTime));
+        animation.setInterpolator(JandiApplication.getContext(), android.R.anim.decelerate_interpolator);
+        animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
+        animation.setFillAfter(true);
+
+        animation.setAnimationListener(new SimpleEndAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                vgOffline.setVisibility(View.GONE);
+            }
+        });
+
+        vgOffline.startAnimation(animation);
+    }
+
+    public void showOfflineView() {
+
+        if (vgOffline.getVisibility() == View.VISIBLE) {
+            return;
+        }
+
+
+        if (vgOffline.getAnimation() != null && !vgOffline.getAnimation().hasEnded()) {
+            return;
+        }
+
+        vgOffline.setVisibility(View.VISIBLE);
+
+        Animation animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, -1f,
+                Animation.RELATIVE_TO_SELF, 0f);
+
+        animation.setDuration(JandiApplication.getContext().getResources().getInteger(android.R
+                .integer.config_shortAnimTime));
+        animation.setInterpolator(JandiApplication.getContext(), android.R.anim.decelerate_interpolator);
+        animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
+        animation.setFillAfter(true);
+
+        vgOffline.startAnimation(animation);
+    }
+}

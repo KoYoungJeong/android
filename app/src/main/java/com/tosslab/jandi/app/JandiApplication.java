@@ -5,29 +5,23 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
-import com.parse.ParseACL;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
+import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
-import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
-import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
-import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.api.BackgroundExecutor;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 
@@ -35,7 +29,6 @@ import io.fabric.sdk.android.Fabric;
 import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Observer;
-import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
 /**
@@ -59,7 +52,7 @@ public class JandiApplication extends MultiDexApplication {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
 
-        JandiApplication.setContext(getApplicationContext());
+        JandiApplication.setContext(this);
 
         boolean oldParseFileCacheDeleted = JandiPreference.isOldParseFileCacheDeleted(this);
         if (!oldParseFileCacheDeleted) {
@@ -68,6 +61,9 @@ public class JandiApplication extends MultiDexApplication {
         }
 
         // For Parse Push Notification
+        if (BuildConfig.DEBUG) {
+            Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
+        }
         Parse.initialize(this,
                 JandiConstantsForFlavors.PARSE_APPLICATION_ID,
                 JandiConstantsForFlavors.PARSE_CLIENT_KEY);
@@ -91,10 +87,13 @@ public class JandiApplication extends MultiDexApplication {
         if (!mTrackers.containsKey(trackerId)) {
 
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            Tracker t = (trackerId == TrackerName.APP_TRACKER)
-                    ? analytics.newTracker(JandiConstantsForFlavors.GA_TRACK_ID)
-                    : analytics.newTracker(R.xml.global_tracker);
-            mTrackers.put(trackerId, t);
+            analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
+
+            Tracker tracker = analytics.newTracker(JandiConstantsForFlavors.GA_TRACK_ID);
+            tracker.enableAutoActivityTracking(true);
+            tracker.enableAdvertisingIdCollection(true);
+
+            mTrackers.put(trackerId, tracker);
 
         }
         return mTrackers.get(trackerId);

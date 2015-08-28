@@ -59,10 +59,10 @@ public class FileDetailCommentView implements CommentViewHolder {
         ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) originalMessage;
 
         // 프로필
-        final FormattedEntity writer = EntityManager.getInstance(imageViewCommentUserProfile.getContext()).getEntityById(commentMessage.writerId);
+        final FormattedEntity writer = EntityManager.getInstance().getEntityById(commentMessage.writerId);
 
         String profileUrl = writer.getUserSmallProfileUrl();
-        EntityManager entityManager = EntityManager.getInstance(imageViewCommentUserProfile.getContext());
+        EntityManager entityManager = EntityManager.getInstance();
         if (TextUtils.equals(entityManager.getEntityById(commentMessage.writerId).getUser().status, "enabled")) {
             disableLineThrougView.setVisibility(View.GONE);
             disableCoverView.setVisibility(View.GONE);
@@ -117,7 +117,7 @@ public class FileDetailCommentView implements CommentViewHolder {
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 textViewCommentContent, spannableStringBuilder, commentMessage.mentions, entityManager.getMe().getId())
                 .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
-        spannableStringBuilder = generateMentionMessageUtil.generate();
+        spannableStringBuilder = generateMentionMessageUtil.generate(true);
 
         textViewCommentContent.setText(spannableStringBuilder);
     }

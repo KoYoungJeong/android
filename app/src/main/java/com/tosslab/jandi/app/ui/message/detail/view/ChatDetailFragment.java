@@ -55,7 +55,7 @@ public class ChatDetailFragment extends Fragment {
     @AfterViews
     void initViews() {
         setUpActionbar();
-        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         boolean isStarred = entity.isStarred;
         setStarred(isStarred);
     }
@@ -107,7 +107,7 @@ public class ChatDetailFragment extends Fragment {
     @Background
     @Click(R.id.vg_chat_detail_starred)
     void onChatStarClick() {
-        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         boolean isStarred = entity.isStarred;
 
         try {
@@ -124,7 +124,7 @@ public class ChatDetailFragment extends Fragment {
                 showSuccessToast(getString(R.string.jandi_message_starred));
             }
 
-            EntityManager.getInstance(getActivity()).getEntityById(entityId).isStarred = !isStarred;
+            EntityManager.getInstance().getEntityById(entityId).isStarred = !isStarred;
 
             setStarred(!isStarred);
 

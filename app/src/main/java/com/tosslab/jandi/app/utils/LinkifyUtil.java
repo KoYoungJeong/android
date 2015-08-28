@@ -31,7 +31,6 @@ public class LinkifyUtil {
                     + "\\-\\.\\+\\!\\*\\'\\(\\)\\,\\_])|(?:\\%[a-fA-F0-9]{2}))*)?"
                     + "(?:\\b|$)"); // and finally, a word boundary or end of
 
-
     public static final boolean addLinks(Context context, Spannable text) {
 
         Matcher matcher = Regex.VALID_URL.matcher(text);

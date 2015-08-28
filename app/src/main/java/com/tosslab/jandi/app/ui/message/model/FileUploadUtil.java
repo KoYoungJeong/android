@@ -19,7 +19,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
@@ -57,8 +56,8 @@ public class FileUploadUtil {
                         progressDialog.setProgress((int) (downloaded / total));
                     }
                 })
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
-                .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
+                .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                 .setMultipartParameter("title", uploadFile.getName())
                 .setMultipartParameter("share", "" + event.entityId)

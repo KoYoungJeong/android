@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.members.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,9 +52,7 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
         membersViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
         membersViewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
         membersViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_user_count);
-        membersViewHolder.textViewBadgeCount = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
         membersViewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
-        membersViewHolder.disableWarningView = convertView.findViewById(R.id.img_entity_listitem_warning);
         membersViewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
 
 
@@ -62,12 +61,18 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
 
     @Override
     public void onBindViewHolder(MembersViewHolder membersViewHolder, int position) {
-        membersViewHolder.textViewBadgeCount.setVisibility(View.GONE);
 
         ChatChooseItem item = getItem(position);
 
         membersViewHolder.textViewName.setText(item.getName());
+
+        if (!TextUtils.isEmpty(item.getEmail())) {
+            membersViewHolder.textViewAdditional.setVisibility(View.VISIBLE);
+        } else {
+            membersViewHolder.textViewAdditional.setVisibility(View.GONE);
+        }
         membersViewHolder.textViewAdditional.setText(item.getEmail());
+
 
         if (item.isStarred()) {
             membersViewHolder.imageViewFavorite.setVisibility(View.VISIBLE);
@@ -84,13 +89,11 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
         if (item.isEnabled()) {
 
             membersViewHolder.disableLineThrouthView.setVisibility(View.GONE);
-            membersViewHolder.disableWarningView.setVisibility(View.GONE);
             membersViewHolder.disableCoverView.setVisibility(View.GONE);
 
         } else {
 
             membersViewHolder.disableLineThrouthView.setVisibility(View.VISIBLE);
-            membersViewHolder.disableWarningView.setVisibility(View.VISIBLE);
             membersViewHolder.disableCoverView.setVisibility(View.VISIBLE);
         }
 
@@ -123,9 +126,7 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
         public ImageView imageViewFavorite;
         public TextView textViewName;
         public TextView textViewAdditional;
-        public TextView textViewBadgeCount;
         public View disableLineThrouthView;
-        public View disableWarningView;
         public View disableCoverView;
 
         public MembersViewHolder(View itemView) {

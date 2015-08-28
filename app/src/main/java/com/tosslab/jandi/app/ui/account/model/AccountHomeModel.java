@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -105,8 +106,8 @@ public class AccountHomeModel {
         JandiPreference.setBadgeCount(context, totalUnreadCount);
         BadgeUtils.setBadge(context, totalUnreadCount);
 
-        EntityManager entityManager = EntityManager.getInstance(context);
-        entityManager.refreshEntity(entityInfo);
+        EntityManager entityManager = EntityManager.getInstance();
+        entityManager.refreshEntity();
         return entityManager;
     }
 
@@ -141,6 +142,8 @@ public class AccountHomeModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TeamId, teamId)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.LaunchTeam.name(), PropertyKey.ResponseSuccess.name());
     }
 
     public void trackLaunchTeamFail(int errorCode) {
@@ -151,6 +154,9 @@ public class AccountHomeModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.LaunchTeam.name(), "ResponseFail");
+
     }
 
     public void trackChangeAccountNameSuccess(Context context, String accountId) {
@@ -164,6 +170,8 @@ public class AccountHomeModel {
                         .accountId(accountId)
                         .property(PropertyKey.ResponseSuccess, true)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.ChangeAccountName.name(), "ResponseSuccess");
     }
 
     public void trackChangeAccountNameFail(int errorCode) {
@@ -174,6 +182,10 @@ public class AccountHomeModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+
+        GoogleAnalyticsUtil.sendEvent(Event.ChangeAccountName.name(), "ResponseFail");
+
     }
 
 }

@@ -22,9 +22,11 @@ import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.members.adapter.MembersAdapter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -95,10 +97,13 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
                         .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_MEMBER)
                         .build());
 
+        GoogleAnalyticsUtil.sendScreenName("TEAM_MEMBER");
+
         setupActionbar();
 
         memberListView.setLayoutManager(new LinearLayoutManager(MembersListActivity.this,
                 RecyclerView.VERTICAL, false));
+        memberListView.addItemDecoration(new SimpleDividerItemDecoration(MembersListActivity.this));
         memberListView.setAdapter(topicMembersAdapter);
         initProgressWheel();
 

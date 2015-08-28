@@ -70,6 +70,6 @@ public interface AccountHomePresenter {
 
         void invalidAccess();
 
-        void showNetworCheckDialog();
+        void showCheckNetworkDialog();
     }
 }

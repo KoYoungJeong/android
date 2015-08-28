@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -48,7 +49,7 @@ public class LeaveViewModel {
     }
 
     public void leave() {
-        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         if (entity.isPublicTopic() || entity.isUser()) {
             leaveEntityInBackground(entity);
         } else {
@@ -76,7 +77,7 @@ public class LeaveViewModel {
             } else if (entity.isPrivateGroup()) {
                 entityClientManager.leavePrivateGroup(entityId);
             } else if (entity.isUser()) {
-                int memberId = EntityManager.getInstance(context).getMe().getId();
+                int memberId = EntityManager.getInstance().getMe().getId();
                 RequestApiManager.getInstance().deleteChatByChatApi(memberId, entityId);
             }
             trackLeavingEntity(entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity
@@ -99,7 +100,7 @@ public class LeaveViewModel {
     }
 
     private void trackLeavingEntity(int entityType) {
-        String distictId = EntityManager.getInstance(context).getDistictId();
+        String distictId = EntityManager.getInstance().getDistictId();
         try {
             MixpanelMemberAnalyticsClient
                     .getInstance(context, distictId)
@@ -118,6 +119,8 @@ public class LeaveViewModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, entityId)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.TopicLeave.name(), "ResponseSuccess");
     }
 
     private void trackTopicLeaveFail(int errorCode) {
@@ -129,6 +132,8 @@ public class LeaveViewModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.TopicLeave.name(), "ResponseFail");
     }
 
     @UiThread

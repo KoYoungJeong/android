@@ -13,7 +13,7 @@ import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.utils.AlertUtil_;
+import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -82,26 +82,23 @@ public class PushInterfaceActivity extends AppCompatActivity {
 
     @UiThread
     void showMaintenanceDialog() {
-        AlertUtil_.getInstance_(this)
-                .showConfirmDialog(this,
-                        R.string.jandi_service_maintenance, (dialog, which) -> finish(),
-                        false);
+        AlertUtil.showConfirmDialog(this,
+                R.string.jandi_service_maintenance, (dialog, which) -> finish(),
+                false);
     }
 
     @UiThread
     void showCheckNetworkDialog() {
-        AlertUtil_.getInstance_(this)
-                .showCheckNetworkDialog(this, (dialog, which) -> finish());
+        AlertUtil.showCheckNetworkDialog(this, (dialog, which) -> finish());
     }
 
     @UiThread
     public void showUpdateDialog() {
-        AlertUtil_.getInstance_(this)
-                .showConfirmDialog(this, R.string.jandi_update_title,
-                        R.string.jandi_update_message, (dialog, which) -> {
-                            ApplicationUtil.startAppMarketAndFinish(PushInterfaceActivity.this);
-                        },
-                        false);
+        AlertUtil.showConfirmDialog(this, R.string.jandi_update_title,
+                R.string.jandi_update_message, (dialog, which) -> {
+                    ApplicationUtil.startAppMarketAndFinish(PushInterfaceActivity.this);
+                },
+                false);
     }
 
     @Background(serial = "push_interface_activity_background")
@@ -139,7 +136,7 @@ public class PushInterfaceActivity extends AppCompatActivity {
                 moveIntroActivity();
             }
 
-            String distictId = EntityManager.getInstance(PushInterfaceActivity.this).getDistictId();
+            String distictId = EntityManager.getInstance().getDistictId();
             MixpanelMemberAnalyticsClient.getInstance(PushInterfaceActivity.this, distictId).trackMemberSingingIn();
         } else {
             moveIntroActivity();

@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.topic.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
@@ -124,11 +123,7 @@ public class MainTopicModel {
                 .toBlocking()
                 .first();
 
-        if (entity != emptyEntity && entity.getEntityId() > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return entity != emptyEntity && entity.getEntityId() > 0;
     }
 
     public boolean refreshEntity() {
@@ -138,7 +133,7 @@ public class MainTopicModel {
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context, totalUnreadCount);
             BadgeUtils.setBadge(context, totalUnreadCount);
-            EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
+            EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -150,11 +145,11 @@ public class MainTopicModel {
     }
 
     public void resetBadge(Context context, int entityId) {
-        EntityManager.getInstance(context).getEntityById(entityId).alarmCount = 0;
+        EntityManager.getInstance().getEntityById(entityId).alarmCount = 0;
     }
 
     public boolean isMe(int writer) {
-        return EntityManager.getInstance(JandiApplication.getContext()).getMe()
+        return EntityManager.getInstance().getMe()
                 .getId() == writer;
     }
 }

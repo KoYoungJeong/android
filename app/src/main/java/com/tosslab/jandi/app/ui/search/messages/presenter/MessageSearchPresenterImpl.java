@@ -60,7 +60,7 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
         BackgroundExecutor.cancelAll(MORE_SEARCH_TASK, true);
 
         if (!NetworkCheckUtil.isConnected()) {
-            view.showInvalidNetworkDialog();
+            view.showCheckNetworkDialog();
             return;
         }
 
@@ -98,7 +98,7 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
     public void onMoreSearchRequest() {
 
         if (!NetworkCheckUtil.isConnected()) {
-            view.showInvalidNetworkDialog();
+            view.showCheckNetworkDialog();
             return;
         }
 

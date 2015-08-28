@@ -158,7 +158,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                     fileInfo.getFileName(), fileInfo.getExt(),
                     progressDialog, context.getApplicationContext());
 
-            carouselViewerModel.trackDownloadingFile(EntityManager.getInstance(context),
+            carouselViewerModel.trackDownloadingFile(EntityManager.getInstance(),
                     fileInfo, context);
 
             if (carouselViewerModel.isMediaFile(fileInfo.getFileType())) {

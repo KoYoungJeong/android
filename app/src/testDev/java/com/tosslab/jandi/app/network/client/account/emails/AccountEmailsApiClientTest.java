@@ -12,10 +12,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
-import org.springframework.web.client.HttpStatusCodeException;
+import org.robolectric.shadows.httpclient.FakeHttp;
 
 import retrofit.RetrofitError;
 
@@ -25,7 +24,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(JandiRobolectricGradleTestRunner.class)
 public class AccountEmailsApiClientTest {
 
     public static final String TEMP_TOKEN = "aaa";
@@ -37,7 +36,7 @@ public class AccountEmailsApiClientTest {
 
         sideMenu = getSideMenu();
 
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        FakeHttp.getFakeHttpLayer().interceptHttpRequests(false);
 
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
@@ -53,12 +52,7 @@ public class AccountEmailsApiClientTest {
     @Test
     public void testRequestAddEmail() throws Exception {
         ResAccountInfo resAccountInfo = null;
-        try {
-            resAccountInfo = RequestApiManager.getInstance().requestAddEmailByAccountEmailApi(new ReqAccountEmail(SAMPLE_EMAIL));
-
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
-        }
+        resAccountInfo = RequestApiManager.getInstance().requestAddEmailByAccountEmailApi(new ReqAccountEmail(SAMPLE_EMAIL));
 
         assertThat(resAccountInfo, is(notNullValue()));
     }

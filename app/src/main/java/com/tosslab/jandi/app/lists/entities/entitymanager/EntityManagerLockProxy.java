@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.lists.entities.entitymanager;
 
-import android.content.Context;
-
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
@@ -16,17 +14,17 @@ class EntityManagerLockProxy extends EntityManager {
 
     private Lock lock;
 
-    protected EntityManagerLockProxy(Context context) {
-        super(context);
+    protected EntityManagerLockProxy() {
+        super();
         lock = new ReentrantLock();
 
     }
 
     @Override
-    public void refreshEntity(Context context) {
+    public void refreshEntity() {
         lock.lock();
         try {
-            super.refreshEntity(context);
+            super.refreshEntity();
         } finally {
             lock.unlock();
         }

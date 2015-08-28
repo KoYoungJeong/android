@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -32,11 +33,11 @@ public class TopicDetailModel {
 
     public String getTopicName(Context context, int entityId) {
 
-        return EntityManager.getInstance(context).getEntityById(entityId).getName();
+        return EntityManager.getInstance().getEntityById(entityId).getName();
     }
 
     public String getTopicDescription(Context context, int entityId) {
-        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         ResLeftSideMenu.Entity rawEntity = entity.getEntity();
         if (entity.isPublicTopic()) {
             return ((ResLeftSideMenu.Channel) rawEntity).description;
@@ -48,17 +49,17 @@ public class TopicDetailModel {
     }
 
     public int getTopicMemberCount(Context context, int entityId) {
-        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         return entity.getMemberCount();
     }
 
     public boolean isStarred(Context context, int entityId) {
 
-        return EntityManager.getInstance(context).getEntityById(entityId).isStarred;
+        return EntityManager.getInstance().getEntityById(entityId).isStarred;
     }
 
     public boolean isOwner(Context context, int entityId) {
-        return EntityManager.getInstance(context).isMyTopic(entityId);
+        return EntityManager.getInstance().isMyTopic(entityId);
 
     }
 
@@ -72,7 +73,7 @@ public class TopicDetailModel {
 
     public int getEntityType(Context context, int entityId) {
 
-        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         if (entity.isPublicTopic()) {
             return JandiConstants.TYPE_PUBLIC_TOPIC;
         } else if (entity.isPrivateGroup()) {
@@ -81,9 +82,9 @@ public class TopicDetailModel {
             return JandiConstants.TYPE_DIRECT_MESSAGE;
         }
     }
-    
+
     public void trackDeletingEntity(Context context, int entityType) {
-        String distictId = EntityManager.getInstance(context).getDistictId();
+        String distictId = EntityManager.getInstance().getDistictId();
         try {
             MixpanelMemberAnalyticsClient
                     .getInstance(context, distictId)
@@ -101,6 +102,7 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, entityId)
                         .build());
+        GoogleAnalyticsUtil.sendEvent(Event.TopicDelete.name(), "ResponseSuccess");
     }
 
     public void trackTopicDeleteFail(int errorCode) {
@@ -112,6 +114,7 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+        GoogleAnalyticsUtil.sendEvent(Event.TopicDelete.name(), "ResponseFail");
     }
 
     public void modifyTopicName(int entityType, int entityId, String inputName) throws RetrofitError {
@@ -128,14 +131,14 @@ public class TopicDetailModel {
     }
 
     public boolean isPushOn(Context context, int entityId) {
-        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         return entity.isTopicPushOn;
     }
 
     public void trackChangingEntityName(Context context, int entityId, int entityType) {
 
         try {
-            String distictId = EntityManager.getInstance(context).getDistictId();
+            String distictId = EntityManager.getInstance().getDistictId();
 
             MixpanelMemberAnalyticsClient
                     .getInstance(context, distictId)
@@ -151,6 +154,8 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, entityId)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.TopicNameChange.name(), "ResponseSuccess");
     }
 
     public void trackChangingEntityNameFail(int errorCode) {
@@ -162,6 +167,8 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.TopicId, errorCode)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.TopicNameChange.name(), "ResponseFail");
     }
 
     public void trackTopicStarSuccess(int topicId) {
@@ -173,6 +180,7 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, topicId)
                         .build());
+        GoogleAnalyticsUtil.sendEvent(Event.TopicStar.name(), "ResponseSuccess");
     }
 
     public void trackTopicUnStarSuccess(int topicId) {
@@ -184,6 +192,8 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, topicId)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.TopicUnStar.name(), "ResponseSuccess");
     }
 
     public void trackTopicStarFail(int errorCode) {
@@ -195,6 +205,7 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+        GoogleAnalyticsUtil.sendEvent(Event.TopicStar.name(), "ResponseFail");
     }
 
     public void trackTopicUnStarFail(int errorCode) {
@@ -206,9 +217,11 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.TopicUnStar.name(), "ResponseFail");
     }
 
     public boolean isDefaultTopic(Context context, int entityId) {
-        return EntityManager.getInstance(context).getDefaultTopicId() == entityId;
+        return EntityManager.getInstance().getDefaultTopicId() == entityId;
     }
 }

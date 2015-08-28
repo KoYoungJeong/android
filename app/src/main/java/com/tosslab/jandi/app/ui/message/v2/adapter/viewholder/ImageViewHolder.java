@@ -1,7 +1,11 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,6 +24,7 @@ import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
+import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import de.greenrobot.event.EventBus;
 
@@ -34,14 +39,17 @@ public class ImageViewHolder implements BodyViewHolder {
     private ImageView fileImageView;
     private TextView fileNameTextView;
     private TextView fileTypeTextView;
+    private TextView tvUploader;
     private View disableCoverView;
     private View disableLineThroughView;
     private TextView unreadTextView;
     private Context context;
     private View lastReadView;
+    private View contentView;
 
     @Override
     public void initView(View rootView) {
+        contentView = rootView.findViewById(R.id.vg_message_item);
         profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
         dateTextView = (TextView) rootView.findViewById(R.id.txt_message_create_date);
@@ -49,6 +57,7 @@ public class ImageViewHolder implements BodyViewHolder {
         fileImageView = (ImageView) rootView.findViewById(R.id.iv_message_photo);
         fileNameTextView = (TextView) rootView.findViewById(R.id.txt_message_image_file_name);
         fileTypeTextView = (TextView) rootView.findViewById(R.id.txt_img_file_type);
+        tvUploader = (TextView) rootView.findViewById(R.id.txt_img_file_uploader);
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
 
@@ -63,7 +72,7 @@ public class ImageViewHolder implements BodyViewHolder {
         int fromEntityId = link.fromEntity;
 
         FormattedEntity entity =
-                EntityManager.getInstance(context).getEntityById(fromEntityId);
+                EntityManager.getInstance().getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
         String profileUrl = entity.getUserLargeProfileUrl();
@@ -75,7 +84,7 @@ public class ImageViewHolder implements BodyViewHolder {
                 .crossfade(true)
                 .load(profileUrl);
 
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById != null ? entityById.getUser() : null;
         if (user != null && TextUtils.equals(user.status, "enabled")) {
@@ -109,6 +118,34 @@ public class ImageViewHolder implements BodyViewHolder {
             MimeTypeUtil.SourceType sourceType =
                     SourceTypeUtil.getSourceType(fileContent.serverUrl);
 
+            if (fromEntity.id != fileMessage.writerId) {
+                tvUploader.setVisibility(View.VISIBLE);
+                String shared = tvUploader.getContext().getString(R.string.jandi_shared);
+                String name = EntityManager.getInstance()
+                        .getEntityById(fileMessage.writerId).getName();
+                String ofFile = tvUploader.getContext().getString(R.string.jandi_who_of_file);
+
+                SpannableStringBuilder builder = new SpannableStringBuilder();
+                builder.append(shared).append(" ");
+                int startIdx = builder.length();
+                builder.append(name);
+                int lastIdx = builder.length();
+                builder.append(ofFile);
+
+                int textSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 11f, tvUploader
+                        .getResources().getDisplayMetrics());
+
+                builder.setSpan(new NameSpannable(textSize, Color.BLACK),
+                        startIdx,
+                        lastIdx,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                tvUploader.setText(builder);
+            } else {
+                tvUploader.setVisibility(View.GONE);
+
+            }
+
             if (TextUtils.equals(fileMessage.status, "archived")) {
 
                 fileNameTextView.setText(R.string.jandi_deleted_file);
@@ -137,6 +174,7 @@ public class ImageViewHolder implements BodyViewHolder {
                                 .placeholder(R.drawable.jandi_fl_icon_img)
                                 .error(R.drawable.jandi_fl_icon_img)
                                 .crossFade()
+                                .centerCrop()
                                 .into(fileImageView);
                         fileTypeTextView.setText(FileSizeUtil.fileSizeCalculation(fileContent.size) + ", "
                                 + fileContent.ext);
@@ -167,6 +205,20 @@ public class ImageViewHolder implements BodyViewHolder {
     @Override
     public int getLayoutId() {
         return R.layout.item_message_img_v2;
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        if (contentView != null && itemClickListener != null) {
+            contentView.setOnClickListener(itemClickListener);
+        }
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        if (contentView != null && itemLongClickListener != null) {
+            contentView.setOnLongClickListener(itemLongClickListener);
+        }
     }
 
 }

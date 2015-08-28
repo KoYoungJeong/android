@@ -51,6 +51,7 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
+import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
@@ -59,6 +60,7 @@ import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -141,6 +143,9 @@ public class MessageListPresenter {
     @ViewById(R.id.iv_messages_preview_sticker_image)
     ImageView imgStickerPreview;
 
+    @ViewById(R.id.vg_message_offline)
+    View vgOffline;
+
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
     @Bean
@@ -155,6 +160,7 @@ public class MessageListPresenter {
     private boolean isDisabled;
     private boolean sendLayoutVisible;
     private boolean gotoLatestLayoutVisible;
+    private OfflineLayer offlineLayer;
 
     @AfterInject
     void initObject() {
@@ -218,7 +224,13 @@ public class MessageListPresenter {
             setGotoLatestLayoutVisible();
         }
 
-        setEditTextKeyListener();
+//        setEditTextKeyListener();
+
+        offlineLayer = new OfflineLayer(vgOffline);
+
+        if (!NetworkCheckUtil.isConnected()) {
+            offlineLayer.showOfflineView();
+        }
 
     }
 
@@ -514,7 +526,7 @@ public class MessageListPresenter {
     public void insertSendingMessage(long localId, String message, String name, String userLargeProfileUrl, List<MentionObject> mentions) {
         DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, message, SendMessage
                 .Status.SENDING.name(), mentions);
-        dummyMessageLink.message.writerId = EntityManager.getInstance(activity).getMe().getId();
+        dummyMessageLink.message.writerId = EntityManager.getInstance().getMe().getId();
         dummyMessageLink.message.createTime = new Date();
         dummyMessageLink.message.updateTime = new Date();
 
@@ -574,7 +586,7 @@ public class MessageListPresenter {
             return;
         }
 
-        FormattedEntity entityById = EntityManager.getInstance(activity).getEntityById(item.message.writerId);
+        FormattedEntity entityById = EntityManager.getInstance().getEntityById(item.message.writerId);
         previewNameView.setText(entityById.getName());
 
         ResLeftSideMenu.User user = entityById.getUser();
@@ -724,7 +736,7 @@ public class MessageListPresenter {
     }
 
     private String getOwnerName() {
-        List<FormattedEntity> users = EntityManager.getInstance(activity).getFormattedUsers();
+        List<FormattedEntity> users = EntityManager.getInstance().getFormattedUsers();
         FormattedEntity tempDefaultEntity = new FormattedEntity();
         FormattedEntity owner = Observable.from(users)
                 .filter(formattedEntity ->
@@ -1057,6 +1069,21 @@ public class MessageListPresenter {
 
     public boolean isLastOfLastReadPosition() {
         return messageListAdapter.isLastOfLastReadPosition();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void dismissOfflineLayer() {
+        offlineLayer.dismissOfflineView();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showOfflineLayer() {
+        offlineLayer.showOfflineView();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showGrayToast(String message) {
+        ColoredToast.showGray(activity, message);
     }
 }
 

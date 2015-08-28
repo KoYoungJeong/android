@@ -66,14 +66,46 @@
 
     </RelativeLayout>
     <!-- 이미지나 파일 타입 출력 -->
-    <ImageView
-        android:id="@+id/img_file_detail_photo"
+    <RelativeLayout
+        android:id="@+id/vg_file_detail_photo"
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_file_detail_image_height"
         android:layout_marginBottom="@dimen/jandi_file_detail_file_margin_top"
         android:layout_marginLeft="@dimen/jandi_file_detail_padding_sides"
-        android:layout_marginRight="@dimen/jandi_file_detail_padding_sides"
-        android:src="@drawable/jandi_down_img"/>
+        android:layout_marginRight="@dimen/jandi_file_detail_padding_sides">
+
+        <ImageView
+            android:id="@+id/img_file_detail_photo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:id="@+id/vg_file_detail_deleted"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:background="@color/jandi_deleted_file_image_background"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="57dp"
+                android:src="@drawable/jandi_fl_icon_deleted"/>
+
+            <TextView
+                android:id="@+id/tv_file_detail_deleted_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/jandi_border_gray_light"
+                android:textSize="11sp"/>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
     <!-- 파일의 상세 정보 -->
     <LinearLayout
         android:id="@+id/ly_file_detail_info"
@@ -89,7 +121,7 @@
             android:id="@+id/icon_file_detail_content_type"
             android:layout_width="@dimen/jandi_file_detail_file_icon_width"
             android:layout_height="@dimen/jandi_file_detail_file_icon_height"
-            android:background="@drawable/jandi_fview_icon_etc"/>
+            android:background="@drawable/jandi_fl_icon_audio"/>
 
         <RelativeLayout
             android:layout_width="match_parent"

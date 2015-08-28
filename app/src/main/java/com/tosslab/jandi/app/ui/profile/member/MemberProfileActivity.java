@@ -27,10 +27,10 @@ import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
-import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -68,9 +68,6 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     @Bean(ProfileFileUploadViewModelImpl.class)
     FilePickerViewModel filePickerViewModel;
 
-    @Bean
-    AlertUtil alertUtil;
-
     @AfterViews
     void bindAdapter() {
         Sprinkler.with(JandiApplication.getContext())
@@ -80,6 +77,8 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, ScreenViewProperty.PROFILE)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName("PROFILE");
 
         setupActionBar();
 
@@ -257,7 +256,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
 
         if (!NetworkCheckUtil.isConnected()) {
-            alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
+            memberProfileView.showCheckNetworkDialog();
             return;
         }
 
@@ -325,7 +324,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     void uploadEmail(String email) {
 
         if (!NetworkCheckUtil.isConnected()) {
-            alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
+            memberProfileView.showCheckNetworkDialog();
             return;
         }
 
@@ -371,7 +370,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         }
 
         if (!NetworkCheckUtil.isConnected()) {
-            alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
+            memberProfileView.showCheckNetworkDialog();
             return;
         }
 
@@ -384,7 +383,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     }
 
     private String getDistictId() {
-        EntityManager entityManager = EntityManager.getInstance(MemberProfileActivity.this);
+        EntityManager entityManager = EntityManager.getInstance();
         return entityManager.getDistictId();
     }
 }

@@ -84,7 +84,7 @@ public class JandiSocketServiceModel {
             return null;
         }
 
-        EntityManager entityManager = EntityManager.getInstance(context);
+        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity me = entityManager.getMe();
 
         if (me == null) {
@@ -234,7 +234,7 @@ public class JandiSocketServiceModel {
             SocketRoomMarkerEvent socketRoomMarkerEvent =
                     objectMapper.readValue(object.toString(), SocketRoomMarkerEvent.class);
             postEvent(socketRoomMarkerEvent);
-            if (EntityManager.getInstance(context).getMe().getId()
+            if (EntityManager.getInstance().getMe().getId()
                     == socketRoomMarkerEvent.getMarker().getMemberId()) {
                 markerPublishSubject.onNext(socketRoomMarkerEvent);
             }
@@ -259,7 +259,7 @@ public class JandiSocketServiceModel {
             EntityClientManager jandiEntityClient = EntityClientManager_.getInstance_(context);
             ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
+            EntityManager.getInstance().refreshEntity();
 
             SocketAnnouncementEvent socketAnnouncementEvent =
                     objectMapper.readValue(object.toString(), SocketAnnouncementEvent.class);
@@ -277,7 +277,7 @@ public class JandiSocketServiceModel {
             EntityClientManager jandiEntityClient = EntityClientManager_.getInstance_(context);
             ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
+            EntityManager.getInstance().refreshEntity();
 
             SocketTopicPushEvent socketTopicPushEvent =
                     objectMapper.readValue(object.toString(), SocketTopicPushEvent.class);
@@ -310,7 +310,7 @@ public class JandiSocketServiceModel {
                         JandiPreference.setBadgeCount(context, totalUnreadCount);
                         BadgeUtils.setBadge(context, totalUnreadCount);
 
-                        EntityManager.getInstance(context).refreshEntity(entitiesInfo);
+                        EntityManager.getInstance().refreshEntity();
 
                         postEvent(new RetrieveTopicListEvent());
 

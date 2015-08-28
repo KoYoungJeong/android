@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -79,7 +82,10 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
+import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
+import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
+import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel_;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -111,6 +117,8 @@ import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -146,7 +154,8 @@ import rx.subjects.PublishSubject;
  * Created by Steve SeongUg Jung on 15. 1. 20..
  */
 @EFragment(R.layout.fragment_message_list)
-public class MessageListFragment extends Fragment implements MessageListV2Activity.OnBackPressedListener {
+public class MessageListFragment extends Fragment implements MessageListV2Activity
+        .OnBackPressedListener, MessageListV2Activity.OnKeyPressListener {
 
     public static final String EXTRA_FILE_DELETE = "file_delete";
     public static final String EXTRA_FILE_ID = "file_id";
@@ -208,6 +217,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Bean
     AnnouncementViewModel announcementViewModel;
+
+    @Bean
+    InvitationDialogExecutor invitationDialogExecutor;
 
     MentionControlViewModel mentionControlViewModel;
 
@@ -312,9 +324,101 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                         .property(PropertyKey.ScreenView, screenView)
                         .build());
 
+        GoogleAnalyticsUtil.sendScreenName(screenView == ScreenViewProperty.PRIVIATE_TOPIC ?
+                "PRIVATE_TOPIC" : "PUBLIC_TOPIC");
+
         setUpActionbar();
         setHasOptionsMenu(true);
 
+        initMessageList();
+
+        messageListModel.setEntityInfo(entityType, entityId);
+
+        String tempMessage;
+        if (messageListModel.isUser(entityId)) {
+
+            if (roomId > 0) {
+                tempMessage = messageListModel.getReadyMessage(roomId);
+            } else {
+                tempMessage = "";
+            }
+        } else {
+            tempMessage = messageListModel.getReadyMessage(entityId);
+
+        }
+        messageListPresenter.setSendEditText(tempMessage);
+
+        if (!messageListModel.isEnabledIfUser(entityId)) {
+            messageListPresenter.disableChat();
+        }
+
+        initKeyboardEvent();
+
+        initStickerViewModel();
+
+        insertEmptyMessage();
+
+        initAnnouncementListeners();
+
+        sendInitMessage();
+
+        TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
+
+    }
+
+    private void initKeyboardEvent() {
+
+        messageEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+
+                LogUtil.d("In messageEditText KeyCode : " + keyCode);
+
+                if (keyCode == KeyEvent.KEYCODE_ENTER
+                        && getResources().getConfiguration().keyboard != Configuration
+                        .KEYBOARD_NOKEYS) {
+
+                    if (!event.isShiftPressed()) {
+                        onSendClick();
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+
+                if (event.getAction() != KeyEvent.ACTION_DOWN) {
+                    //We only look at ACTION_DOWN in this code, assuming that ACTION_UP is redundant.
+                    // If not, adjust accordingly.
+                    return false;
+                } else if (event.getUnicodeChar() ==
+                        (int) EditableAccomodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
+                    //We are ignoring this character, and we want everyone else to ignore it, too, so
+                    // we return true indicating that we have handled it (by ignoring it).
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+    }
+
+    private void initStickerViewModel() {
+        stickerViewModel.setOnStickerClick(new StickerViewModel.OnStickerClick() {
+            @Override
+            public void onStickerClick(int groupId, String stickerId) {
+                StickerInfo oldSticker = stickerInfo;
+                stickerInfo = new StickerInfo();
+                stickerInfo.setStickerGroupId(groupId);
+                stickerInfo.setStickerId(stickerId);
+                showStickerPreview(oldSticker, stickerInfo);
+                messageListPresenter.setEnableSendButton(true);
+            }
+        });
+    }
+
+    private void initMessageList() {
         messageListPresenter.setOnItemClickListener(new MessageListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(RecyclerView.Adapter adapter, int position) {
@@ -343,65 +447,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 }
             }
         });
-
-        messageListModel.setEntityInfo(entityType, entityId);
-
-        String tempMessage;
-        if (messageListModel.isUser(entityId)) {
-
-            if (roomId > 0) {
-                tempMessage = messageListModel.getReadyMessage(roomId);
-            } else {
-                tempMessage = "";
-            }
-        } else {
-            tempMessage = messageListModel.getReadyMessage(entityId);
-
-        }
-        messageListPresenter.setSendEditText(tempMessage);
-
-        if (!messageListModel.isEnabledIfUser(entityId)) {
-            messageListPresenter.disableChat();
-        }
-
-        stickerViewModel.setOnStickerClick(new StickerViewModel.OnStickerClick() {
-            @Override
-            public void onStickerClick(int groupId, String stickerId) {
-                StickerInfo oldSticker = stickerInfo;
-                stickerInfo = new StickerInfo();
-                stickerInfo.setStickerGroupId(groupId);
-                stickerInfo.setStickerId(stickerId);
-                showStickerPreview(oldSticker, stickerInfo);
-                messageListPresenter.setEnableSendButton(true);
-            }
-        });
-
-        insertEmptyMessage();
-
-        initAnnouncementListeners();
-
-        sendInitMessage();
-
-        TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
-
-//        List<Integer> roomIds = new ArrayList<>();
-//        roomIds.add(roomId);
-//
-//        if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
-//            mentionControlViewModel = new MentionControlViewModel(getActivity(),
-//                    rvListSearchMembers, messageEditText, messageListView, roomIds);
-//            mentionControlViewModel.setOnMentionViewShowingListener(isShowing ->
-//                    announcementViewModel.setAnnouncementViewVisibility(!isShowing));
-//            // copy txt from mentioned edittext message
-//            mentionControlViewModel.registClipboardListener();
-//        }
-
     }
 
     @Background
     void sendInitMessage() {
         if (roomId <= 0) {
-            boolean user = EntityManager.getInstance(JandiApplication.getContext()).getEntityById(entityId).isUser();
+            boolean user = EntityManager.getInstance().getEntityById(entityId).isUser();
 
             if (!user) {
                 roomId = entityId;
@@ -524,9 +575,14 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     }
 
+    @Click(R.id.vg_message_offline)
+    void onOfflineLayerClick() {
+        messageListPresenter.dismissOfflineLayer();
+    }
+
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void insertEmptyMessage() {
-        EntityManager entityManager = EntityManager.getInstance(getActivity());
+        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entity = entityManager.getEntityById(entityId);
         if (entity != null && !entity.isUser()) {
             int topicMemberCount = entity.getMemberCount();
@@ -563,7 +619,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
-        actionBar.setTitle(EntityManager.getInstance(getActivity()).getEntityNameById(entityId));
+        actionBar.setTitle(EntityManager.getInstance().getEntityNameById(entityId));
     }
 
     @Override
@@ -583,7 +639,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        FormattedEntity entityById = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+        FormattedEntity entityById = EntityManager.getInstance().getEntityById(entityId);
         boolean isStarred;
         isStarred = entityById != null ? entityById.isStarred : false;
         ChattingInfomations infomations =
@@ -648,8 +704,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
             if (mentionControlViewModel == null) {
-                mentionControlViewModel = new MentionControlViewModel(getActivity(),
-                        rvListSearchMembers, messageEditText, messageListView, roomIds);
+                mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(),
+                        messageEditText, rvListSearchMembers, messageListView,
+                        roomIds,
+                        MentionControlViewModel.MENTION_TYPE_MESSAGE);
+
                 mentionControlViewModel.setOnMentionViewShowingListener(isShowing ->
                         announcementViewModel.setAnnouncementViewVisibility(!isShowing));
                 // copy txt from mentioned edittext message
@@ -657,6 +716,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             } else {
                 mentionControlViewModel.refreshSelectableMembers(roomIds);
             }
+        }
+
+        if (NetworkCheckUtil.isConnected()) {
+            messageListPresenter.dismissOfflineLayer();
+        } else {
+            messageListPresenter.showOfflineLayer();
         }
     }
 
@@ -798,7 +863,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             } else {
                 localId = messageListModel.insertSendingMessage(entityId, message, mentions);
             }
-            FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
+            FormattedEntity me = EntityManager.getInstance().getMe();
             // insert to ui
             messageListPresenter.insertSendingMessage(localId, message, me.getName(),
                     me.getUserLargeProfileUrl(), mentions);
@@ -817,7 +882,19 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!isForeground) {
             return;
         }
-        onOptionsItemSelected(new MenuBuilder(getActivity()).add(0, R.id.action_entity_invite, 0, ""));
+        inviteMembersToEntity();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void inviteMembersToEntity() {
+        int teamMemberCountWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe().size();
+
+        if (teamMemberCountWithoutMe <= 0) {
+            invitationDialogExecutor.execute();
+        } else {
+            InvitationViewModel invitationViewModel = InvitationViewModel_.getInstance_(getActivity());
+            invitationViewModel.inviteMembersToEntity(getActivity(), roomId);
+        }
     }
 
     public void onEvent(SendCompleteEvent event) {
@@ -899,6 +976,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             } else {
                 sendMessagePublisherEvent(new NewMessageQueue(messageState));
             }
+
+            messageListPresenter.dismissOfflineLayer();
+
+        } else {
+
+            messageListPresenter.showOfflineLayer();
+
+            if (isForeground) {
+                messageListPresenter.showGrayToast(JandiApplication.getContext().getString(R.string.jandi_msg_network_offline_warn));
+            }
+
         }
     }
 
@@ -1081,7 +1169,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
 
-        EntityManager entityManager = EntityManager.getInstance(getActivity());
+        EntityManager entityManager = EntityManager.getInstance();
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .teamId(entityManager.getTeamId())
@@ -1272,7 +1360,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     public void onEvent(TopicInfoUpdateEvent event) {
         if (event.getId() == entityId) {
-            FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+            FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
             isFavorite = entity.isStarred;
             refreshActionbar();
             if (isForeground) {
@@ -1291,7 +1379,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     public void onEvent(MemberStarredEvent memberStarredEvent) {
         if (memberStarredEvent.getId() == entityId) {
-            FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+            FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
             isFavorite = entity.isStarred;
             refreshActionbar();
         }
@@ -1326,7 +1414,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             modifyEntitySucceed(event.inputName);
 
             messageListModel.trackChangingEntityName(entityType);
-            EntityManager.getInstance(getActivity()).getEntityById(entityId).getEntity().name = event.inputName;
+            EntityManager.getInstance().getEntityById(entityId).getEntity().name = event.inputName;
 
         } catch (RetrofitError e) {
             if (e.getResponse() != null && e.getResponse().getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
@@ -1489,6 +1577,22 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (mentionControlViewModel != null && mentionControlViewModel.isMentionListVisible()) {
             mentionControlViewModel.dismissMentionList();
             return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean onKey(int keyCode, KeyEvent event) {
+
+        if ((keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_POUND)
+                || (keyCode >= KeyEvent.KEYCODE_A && keyCode <= KeyEvent.KEYCODE_PERIOD)
+                || (keyCode >= KeyEvent.KEYCODE_GRAVE && keyCode <= KeyEvent.KEYCODE_AT)) {
+            if (!messageEditText.isFocused()) {
+                messageEditText.requestFocus();
+                messageEditText.setSelection(messageEditText.getText().length());
+                return true;
+            }
         }
 
         return false;

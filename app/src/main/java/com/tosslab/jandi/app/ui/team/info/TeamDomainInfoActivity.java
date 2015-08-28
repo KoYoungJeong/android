@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -63,6 +64,8 @@ public class TeamDomainInfoActivity extends AppCompatActivity {
                         .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_CREATE)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName("TEAM_CREATE");
 
         MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
                 .pageViewTeamCreate();

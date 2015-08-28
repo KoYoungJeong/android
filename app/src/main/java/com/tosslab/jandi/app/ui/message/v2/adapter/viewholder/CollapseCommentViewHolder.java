@@ -22,9 +22,11 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
 
     private TextView tvMessage;
     private View lastReadView;
+    private View contentView;
 
     @Override
     public void initView(View rootView) {
+        contentView = rootView.findViewById(R.id.vg_message_item);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_pure_comment_content);
         lastReadView = rootView.findViewById(R.id.vg_message_last_read);
     }
@@ -52,9 +54,9 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 tvMessage, builder, commentMessage.mentions,
-                EntityManager.getInstance(tvMessage.getContext()).getMe().getId())
+                EntityManager.getInstance().getMe().getId())
                 .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
-        builder = generateMentionMessageUtil.generate();
+        builder = generateMentionMessageUtil.generate(true);
 
 
         int startIndex = builder.length();
@@ -67,7 +69,7 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
         builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance(context).getMe().getId());
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
 
         if (unreadCount > 0) {
             NameSpannable unreadCountSpannable =
@@ -96,5 +98,19 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
     @Override
     public int getLayoutId() {
         return R.layout.item_message_pure_cmt_without_file_v2;
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        if (contentView != null && itemClickListener != null) {
+            contentView.setOnClickListener(itemClickListener);
+        }
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        if (contentView != null && itemLongClickListener != null) {
+            contentView.setOnLongClickListener(itemLongClickListener);
+        }
     }
 }

@@ -4,15 +4,15 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/ly_message_item"
+    <RelativeLayout
+        android:id="@+id/vg_message_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/message_list_selector"
-        android:descendantFocusability="blocksDescendants"
-        android:foreground="?android:attr/selectableItemBackground"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
         android:orientation="horizontal"
-        android:paddingBottom="15dp"
+        android:paddingBottom="10dp"
         android:paddingLeft="@dimen/jandi_messages_padding_left"
         android:paddingRight="@dimen/jandi_messages_padding_right"
         android:paddingTop="8dp"
@@ -49,6 +49,7 @@
             android:layout_toRightOf="@+id/img_message_user_profile"
             android:focusable="false"
             android:lineSpacingExtra="2dip"
+            android:minHeight="19dp"
             android:text="Text"
             android:textColor="@color/jandi_messages_content"
             android:textSize="@dimen/jandi_messages_content" />

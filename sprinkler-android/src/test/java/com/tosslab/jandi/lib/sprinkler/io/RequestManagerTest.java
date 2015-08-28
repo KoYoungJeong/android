@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 @Config(
         application = SprinklerTestApplication.class,
         manifest = "src/main/AndroidManifest.xml",
-        emulateSdk = 18
+        sdk =18
 )
 @RunWith(RobolectricTestRunner.class)
 public class RequestManagerTest {

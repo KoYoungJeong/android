@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.detail.presenter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -75,9 +76,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
-    public void onTopicInvite(Context context, int entityId) {
-        invitationViewModel.initData(context, entityId);
-        invitationViewModel.invite();
+    public void onTopicInvite(Activity activity, int entityId) {
+        invitationViewModel.inviteMembersToEntity(activity, entityId);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                 view.showSuccessToast(context.getString(R.string.jandi_message_starred));
             }
 
-            EntityManager.getInstance(context).getEntityById(entityId).isStarred = !isStarred;
+            EntityManager.getInstance().getEntityById(entityId).isStarred = !isStarred;
 
             view.setStarred(!isStarred);
 
@@ -176,7 +176,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             view.setTopicName(topicName);
 
             topicDetailModel.trackChangingEntityName(context, entityId, entityType);
-            EntityManager.getInstance(context).getEntityById(entityId).getEntity().name = topicName;
+            EntityManager.getInstance().getEntityById(entityId).getEntity().name = topicName;
             EventBus.getDefault().post(new TopicInfoUpdateEvent(entityId));
 
         } catch (RetrofitError e) {

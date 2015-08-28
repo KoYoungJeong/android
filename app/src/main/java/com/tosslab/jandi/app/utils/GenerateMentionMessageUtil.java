@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.utils;
 import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.util.TypedValue;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -20,7 +21,7 @@ public class GenerateMentionMessageUtil {
     private Context context = null;
     private SpannableStringBuilder stringBuilder = null;
     private Collection<MentionObject> mentions = null;
-    private TextView textView = null;
+    private TextView tvMessageView = null;
     private float pxSize = -1;
     private int textColor = 0xFF00a6e9;
     private int backgroundColor = 0x00ffffff;
@@ -28,22 +29,30 @@ public class GenerateMentionMessageUtil {
     private int meBackgroundColor = 0xFFdaf2ff;
     private int myId;
 
-    public GenerateMentionMessageUtil(TextView textView, SpannableStringBuilder stringBuilder,
-                                      Collection<MentionObject> mentions, int myId) {
-        context = textView.getContext();
-        this.textView = textView;
+    public GenerateMentionMessageUtil(TextView tvMessageView,
+                                      SpannableStringBuilder stringBuilder,
+                                      Collection<MentionObject> mentions,
+                                      int myId) {
+        context = tvMessageView.getContext();
+        this.tvMessageView = tvMessageView;
         this.pxSize = context.getResources().getDimensionPixelSize(R.dimen.jandi_mention_message_item_font_size);
         this.stringBuilder = stringBuilder;
         this.mentions = mentions;
         this.myId = myId;
     }
 
-    public SpannableStringBuilder generate() {
+    public SpannableStringBuilder generate(boolean mentionClick) {
         boolean hasMention = false;
         MentionMessageSpannable spannable = null;
         for (MentionObject mention : mentions) {
-            String name = stringBuilder.subSequence(mention.getOffset() + 1,
-                    mention.getLength() + mention.getOffset()).toString();
+            String name = null;
+            try {
+                name = stringBuilder.subSequence(mention.getOffset() + 1,
+                        mention.getLength() + mention.getOffset()).toString();
+            } catch (Exception e) {
+                e.printStackTrace();
+                continue;
+            }
             if (mention.getId() == myId) {
                 spannable = new ClickableMensionMessageSpannable(context,
                         name, mention.getId(), pxSize, meTextColor, meBackgroundColor);
@@ -51,6 +60,11 @@ public class GenerateMentionMessageUtil {
                 spannable = new ClickableMensionMessageSpannable(context,
                         name, mention.getId(), pxSize, textColor, backgroundColor);
             }
+
+            int dp = 260;
+            float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    dp, context.getResources().getDisplayMetrics());
+            spannable.setViewMaxWidthSize((int) px);
             stringBuilder.setSpan(spannable, mention.getOffset(),
                     mention.getLength() + mention.getOffset(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -59,8 +73,8 @@ public class GenerateMentionMessageUtil {
             }
         }
 
-        if (hasMention) {
-            LinkifyUtil.setOnLinkClick(textView);
+        if (mentionClick && hasMention) {
+            LinkifyUtil.setOnLinkClick(tvMessageView);
         }
 
         return stringBuilder;

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_room_selector"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingBottom="8dp"
+        android:paddingTop="54dp"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
+        android:weightSum="2">
+
+        <TextView
+            android:id="@+id/tv_room_selector_topic"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_line_rect_gray"
+            android:gravity="center"
+            android:text="토픽"
+            android:textColor="@color/text_color_gray"
+            android:textSize="11sp"/>
+
+        <TextView
+            android:id="@+id/tv_room_selector_direct_message"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_line_rect_gray"
+            android:gravity="center"
+            android:text="1:1메세지"
+            android:textColor="@color/text_color_gray"
+            android:textSize="11sp"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

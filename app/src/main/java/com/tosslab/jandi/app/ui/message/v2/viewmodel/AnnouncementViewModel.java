@@ -40,49 +40,30 @@ import de.greenrobot.event.EventBus;
 @EBean
 public class AnnouncementViewModel {
 
+    @ViewById(R.id.vg_announcement)
+    ViewGroup vgAnnouncement;
+    @ViewById(R.id.vg_announcement_info)
+    ViewGroup vgAnnouncementInfo;
+    @ViewById(R.id.vg_announcement_action)
+    ViewGroup vgAnnouncementAction;
+    @ViewById(R.id.iv_announcement_user)
+    ImageView ivAnnouncementUser;
+    @ViewById(R.id.tv_announcement_info)
+    TextView tvAnnouncementInfo;
+    @ViewById(R.id.tv_announcement_message)
+    TextView tvAnnouncementMessage;
+    @ViewById(R.id.btn_announcement_open)
+    View btnAnnouncementOpen;
+    @ViewById(R.id.btn_announcement_close)
+    View btnAnnouncementClose;
+    @RootContext
+    Activity activity;
     private ResAnnouncement announcement;
     private boolean isOpened;
     private boolean isAfterViews;
-
-    public interface OnAnnouncementOpenListener {
-        void onOpen();
-    }
-
-    public interface OnAnnouncementCloseListener {
-        void onClose();
-    }
-
-    @ViewById(R.id.vg_announcement)
-    ViewGroup vgAnnouncement;
-
-    @ViewById(R.id.vg_announcement_info)
-    ViewGroup vgAnnouncementInfo;
-
-    @ViewById(R.id.vg_announcement_action)
-    ViewGroup vgAnnouncementAction;
-
-    @ViewById(R.id.iv_announcement_user)
-    ImageView ivAnnouncementUser;
-
-    @ViewById(R.id.tv_announcement_info)
-    TextView tvAnnouncementInfo;
-
-    @ViewById(R.id.tv_announcement_message)
-    TextView tvAnnouncementMessage;
-
-    @ViewById(R.id.btn_announcement_open)
-    View btnAnnouncementOpen;
-
-    @ViewById(R.id.btn_announcement_close)
-    View btnAnnouncementClose;
-
     private OnAnnouncementOpenListener onAnnouncementOpenListener;
     private OnAnnouncementCloseListener onAnnouncementCloseListener;
-
     private TextLineDetermineRunnable textLineDetermineRunnable;
-
-    @RootContext
-    Activity activity;
 
     @AfterViews
     void init() {
@@ -117,7 +98,7 @@ public class AnnouncementViewModel {
         String writtenAt = announcement.getWrittenAt();
         String content = announcement.getContent();
 
-        EntityManager entityManager = EntityManager.getInstance(activity);
+        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity fromEntity = entityManager.getEntityById(writerId);
         if (fromEntity == null) {
             vgAnnouncement.setVisibility(View.GONE);
@@ -207,7 +188,7 @@ public class AnnouncementViewModel {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setAnnouncementViewVisibility(boolean visibility) {
-        if(vgAnnouncement == null) {
+        if (vgAnnouncement == null) {
             return;
         }
 
@@ -224,6 +205,14 @@ public class AnnouncementViewModel {
 
     public void setOnAnnouncementCloseListener(OnAnnouncementCloseListener onAnnouncementCloseListener) {
         this.onAnnouncementCloseListener = onAnnouncementCloseListener;
+    }
+
+    public interface OnAnnouncementOpenListener {
+        void onOpen();
+    }
+
+    public interface OnAnnouncementCloseListener {
+        void onClose();
     }
 
     private static class TextLineDetermineRunnable implements Runnable {

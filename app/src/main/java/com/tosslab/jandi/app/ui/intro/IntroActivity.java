@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.intro.presenter.IntroActivityPresenter;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
-import com.tosslab.jandi.app.utils.AlertUtil_;
+import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 
 import org.androidannotations.annotations.AfterViews;
@@ -78,8 +78,7 @@ public class IntroActivity extends AppCompatActivity implements IntroActivityPre
     @UiThread
     @Override
     public void showCheckNetworkDialog() {
-        AlertUtil_.getInstance_(IntroActivity.this)
-                .showCheckNetworkDialog(IntroActivity.this, (dialog, which) -> finish());
+        AlertUtil.showCheckNetworkDialog(IntroActivity.this, (dialog, which) -> finish());
     }
 
     @UiThread
@@ -91,30 +90,28 @@ public class IntroActivity extends AppCompatActivity implements IntroActivityPre
     @UiThread
     @Override
     public void showMaintenanceDialog() {
-        AlertUtil_.getInstance_(IntroActivity.this)
-                .showConfirmDialog(IntroActivity.this,
-                        R.string.jandi_service_maintenance, (dialog, which) -> finish(),
-                        false);
+        AlertUtil.showConfirmDialog(IntroActivity.this,
+                R.string.jandi_service_maintenance, (dialog, which) -> finish(),
+                false);
     }
 
     @UiThread
     @Override
     public void showUpdateDialog() {
-        AlertUtil_.getInstance_(IntroActivity.this)
-                .showConfirmDialog(IntroActivity.this, R.string.jandi_update_title,
-                        R.string.jandi_update_message, (dialog, which) -> {
-                            final String appPackageName = getPackageName();
-                            try {
-                                startActivity(new Intent(Intent.ACTION_VIEW,
-                                        Uri.parse("market://details?id=" + appPackageName)));
-                            } catch (android.content.ActivityNotFoundException anfe) {
-                                startActivity(new Intent(Intent.ACTION_VIEW,
-                                        Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
-                            } finally {
-                                finish();   // 업데이트 안내를 확인하면 앱을 종료한다.
-                            }
-                        },
-                        false);
+        AlertUtil.showConfirmDialog(IntroActivity.this, R.string.jandi_update_title,
+                R.string.jandi_update_message, (dialog, which) -> {
+                    final String appPackageName = getPackageName();
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("market://details?id=" + appPackageName)));
+                    } catch (android.content.ActivityNotFoundException anfe) {
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
+                    } finally {
+                        finish();   // 업데이트 안내를 확인하면 앱을 종료한다.
+                    }
+                },
+                false);
     }
 
     @UiThread

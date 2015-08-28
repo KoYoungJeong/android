@@ -50,6 +50,7 @@ import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
@@ -128,7 +129,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         mSearchQuery = new SearchQuery();
         if (entityIdForCategorizing >= 0) {
             mSearchQuery.setSharedEntity(entityIdForCategorizing);
-            mCurrentEntityCategorizingAccodingBy = EntityManager.getInstance(getActivity())
+            mCurrentEntityCategorizingAccodingBy = EntityManager.getInstance()
                     .getEntityById(entityIdForCategorizing).getName();
         }
         fileListPresenter.setEntityIdForCategorizing(entityIdForCategorizing);
@@ -157,6 +158,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, screenView)
                         .build());
+
+        GoogleAnalyticsUtil.sendScreenName(
+                screenView == ScreenViewProperty.FILE_SEARCH ?"FILE_SEARCH" : "FILE_PANEL");
 
         setHasOptionsMenu(true);
 
@@ -526,6 +530,21 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         fileUploadTypeDialog.show(getFragmentManager(), "dialog");
     }
 
+    @Click(R.id.ly_file_list_where)
+    void onEntityClick() {
+        fileListPresenter.showEntityDialog();
+    }
+
+    @Click(R.id.ly_file_list_whom)
+    void onUserClick() {
+        fileListPresenter.showUsersDialog();
+    }
+
+    @Click(R.id.ly_file_list_type)
+    void onFileTypeClick() {
+        fileListPresenter.showFileTypeDialog();
+    }
+
     public void onEvent(RequestFileUploadEvent event) {
         if (!isForeground) {
             return;
@@ -646,9 +665,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         setHeaderTextViewColor(((ViewGroup) headerView), getResources().getColor(R.color.white));
         setHeaderImageViewImage(((ViewGroup) headerView), R.drawable.jandi_arrow_down);
-
-        ((ViewGroup) ((ViewGroup) headerView).getChildAt(0)).getChildAt(1).setVisibility(View.INVISIBLE);
-        ((ViewGroup) ((ViewGroup) headerView).getChildAt(0)).getChildAt(3).setVisibility(View.INVISIBLE);
 
         final int headerMaxY = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
         final int headerMinY = 0;

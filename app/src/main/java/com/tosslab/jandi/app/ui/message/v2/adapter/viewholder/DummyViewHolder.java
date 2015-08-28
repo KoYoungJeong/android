@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 /**
@@ -25,9 +26,11 @@ public class DummyViewHolder implements BodyViewHolder {
     private ImageView profileImageView;
     private TextView nameTextView;
     private TextView messageTextView;
+    private View contentView;
 
     @Override
     public void initView(View rootView) {
+        contentView = rootView.findViewById(R.id.vg_message_item);
         profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
         messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
@@ -38,7 +41,7 @@ public class DummyViewHolder implements BodyViewHolder {
 
         DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
-        FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext())
+        FormattedEntity entity = EntityManager.getInstance()
                 .getEntityById(dummyMessageLink.message.writerId);
 
         String profileUrl = entity.getUserLargeProfileUrl();
@@ -96,10 +99,16 @@ public class DummyViewHolder implements BodyViewHolder {
                 break;
             }
             case COMPLETE:
+                builder.append(" ");
                 nameTextView.setTextColor(textColor);
                 messageTextView.setTextColor(textColor);
                 break;
         }
+
+        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                messageTextView, builder, ((DummyMessageLink) link).getMentions(),
+                EntityManager.getInstance().getMe().getId());
+        builder = generateMentionMessageUtil.generate(false);
 
         messageTextView.setText(builder);
 
@@ -114,6 +123,20 @@ public class DummyViewHolder implements BodyViewHolder {
     public int getLayoutId() {
         return R.layout.item_message_dummy_v2;
 
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        if (contentView != null && itemClickListener != null) {
+            contentView.setOnClickListener(itemClickListener);
+        }
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        if (contentView != null && itemLongClickListener != null) {
+            contentView.setOnLongClickListener(itemLongClickListener);
+        }
     }
 
 }

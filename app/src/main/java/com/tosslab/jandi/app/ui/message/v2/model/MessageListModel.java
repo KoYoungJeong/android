@@ -43,7 +43,6 @@ import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
@@ -56,6 +55,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -174,7 +174,7 @@ public class MessageListModel {
     }
 
     public boolean isMyTopic(int entityId) {
-        return EntityManager.getInstance(activity).isMyTopic(entityId);
+        return EntityManager.getInstance().isMyTopic(entityId);
     }
 
     public MenuCommand getMenuCommand(Fragment fragmet, ChattingInfomations
@@ -233,7 +233,7 @@ public class MessageListModel {
     }
 
     public boolean isMyMessage(int writerId) {
-        return EntityManager.getInstance(activity).getMe().getId() == writerId;
+        return EntityManager.getInstance().getMe().getId() == writerId;
     }
 
     @Deprecated
@@ -247,8 +247,8 @@ public class MessageListModel {
                 .load(requestURL)
                 .uploadProgressDialog(progressDialog)
                 .progress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
-                .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
+                .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(activity))
                 .setMultipartParameter("title", event.title)
                 .setMultipartParameter("share", "" + event.entityId)
@@ -311,7 +311,7 @@ public class MessageListModel {
 
         Tracker screenViewTracker = ((JandiApplication) activity.getApplicationContext())
                 .getTracker(JandiApplication.TrackerName.APP_TRACKER);
-        screenViewTracker.set("&uid", EntityManager.getInstance(activity).getDistictId());
+        screenViewTracker.set("&uid", EntityManager.getInstance().getDistictId());
         screenViewTracker.setScreenName(gaPath);
         screenViewTracker.send(new HitBuilders.AppViewBuilder().build());
     }
@@ -319,7 +319,7 @@ public class MessageListModel {
     public void trackChangingEntityName(int entityType) {
 
         try {
-            String distictId = EntityManager.getInstance(activity).getDistictId();
+            String distictId = EntityManager.getInstance().getDistictId();
 
             MixpanelMemberAnalyticsClient
                     .getInstance(activity, distictId)
@@ -329,7 +329,7 @@ public class MessageListModel {
     }
 
     public void trackDeletingEntity(int entityType) {
-        String distictId = EntityManager.getInstance(activity).getDistictId();
+        String distictId = EntityManager.getInstance().getDistictId();
         try {
             MixpanelMemberAnalyticsClient
                     .getInstance(activity, distictId)
@@ -345,7 +345,7 @@ public class MessageListModel {
     public List<ResMessages.Link> getDummyMessages(int roomId) {
         List<SendMessage> sendMessage = SendMessageRepository.getRepository().getSendMessage
                 (roomId);
-        int id = EntityManager.getInstance(activity).getMe().getId();
+        int id = EntityManager.getInstance().getMe().getId();
         List<ResMessages.Link> links = new ArrayList<>();
         for (SendMessage link : sendMessage) {
 
@@ -376,7 +376,7 @@ public class MessageListModel {
     }
 
     public boolean isDefaultTopic(int entityId) {
-        return EntityManager.getInstance(activity).getDefaultTopicId() == entityId;
+        return EntityManager.getInstance().getDefaultTopicId() == entityId;
     }
 
     public void removeNotificationSameEntityId(int entityId) {
@@ -391,7 +391,7 @@ public class MessageListModel {
 
     public boolean isEnabledIfUser(int entityId) {
 
-        FormattedEntity entity = EntityManager.getInstance(activity).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
         if (entity != null && entity.isUser()) {
             return TextUtils.equals(entity.getUser().status, "enabled");
@@ -440,7 +440,7 @@ public class MessageListModel {
         try {
             ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            EntityManager.getInstance(activity).refreshEntity(totalEntitiesInfo);
+            EntityManager.getInstance().refreshEntity();
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(activity, totalUnreadCount);
             BadgeUtils.setBadge(activity, totalUnreadCount);
@@ -450,14 +450,14 @@ public class MessageListModel {
     }
 
     public void upsertMyMarker(int roomId, int lastLinkId) {
-        int myId = EntityManager.getInstance(activity).getMe().getId();
+        int myId = EntityManager.getInstance().getMe().getId();
         int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
         MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, myId, lastLinkId);
     }
 
     public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, String message, List<MentionObject> mentions) {
 
-        FormattedEntity entity = EntityManager.getInstance(activity.getApplicationContext()).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         String type = null;
         if (!TextUtils.isEmpty(message)) {
             type = entity.isPublicTopic() ? JandiConstants.RoomType.TYPE_PUBLIC : entity.isPrivateGroup() ? JandiConstants.RoomType.TYPE_PRIVATE : JandiConstants.RoomType.TYPE_USER;
@@ -489,6 +489,8 @@ public class MessageListModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .build())
                 .flush();
+
+        GoogleAnalyticsUtil.sendEvent(Event.MessagePost.name(), "ResponseSuccess");
     }
 
     private void trackMessagePostFail(int errorCode) {
@@ -501,6 +503,7 @@ public class MessageListModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build())
                 .flush();
+        GoogleAnalyticsUtil.sendEvent(Event.MessagePost.name(), "ResponseFail");
     }
 
     public void trackMessageDeleteSuccess(int messageId) {
@@ -512,6 +515,8 @@ public class MessageListModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.MessageId, messageId)
                         .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.MessageDelete.name(), "ResponseSuccess");
     }
 
     public void trackMessageDeleteFail(int errorCode) {
@@ -523,6 +528,7 @@ public class MessageListModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
+        GoogleAnalyticsUtil.sendEvent(Event.MessageDelete.name(), "ResponseFail");
     }
 
     public void registStarredMessage(int teamId, int messageId) {
@@ -549,7 +555,7 @@ public class MessageListModel {
 
     public boolean isUser(int entityId) {
         return EntityManager
-                .getInstance(JandiApplication.getContext())
+                .getInstance()
                 .getEntityById(entityId).isUser();
     }
 
@@ -586,7 +592,7 @@ public class MessageListModel {
         }
 
         // 엔티티 기준으로 정보 가져오기
-        ResLeftSideMenu.User myUser = EntityManager.getInstance(JandiApplication.getContext()).getMe()
+        ResLeftSideMenu.User myUser = EntityManager.getInstance().getMe()
                 .getUser();
 
         Integer lastLinkId = Observable.from(myUser.u_messageMarkers)
@@ -600,6 +606,6 @@ public class MessageListModel {
     }
 
     public int getMyId() {
-        return EntityManager.getInstance(JandiApplication.getContext()).getMe().getId();
+        return EntityManager.getInstance().getMe().getId();
     }
 }

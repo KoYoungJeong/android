@@ -4,11 +4,7 @@ import android.content.Context;
 import android.text.SpannableStringBuilder;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
-import com.tosslab.jandi.app.ui.search.messages.adapter.decorator.SearchResultType;
-import com.tosslab.jandi.app.ui.search.messages.adapter.decorator.SearchTextDecorator;
-import com.tosslab.jandi.app.ui.search.messages.adapter.decorator.TextDecorator;
 import com.tosslab.jandi.app.ui.search.messages.adapter.visitor.ContentTextVisitor;
 import com.tosslab.jandi.app.ui.search.messages.adapter.visitor.FileInfoTextVisitor;
 import com.tosslab.jandi.app.ui.search.messages.adapter.visitor.TextVisitor;
@@ -22,42 +18,6 @@ import java.util.List;
  * Created by Steve SeongUg Jung on 15. 3. 13..
  */
 public class TextStrategy {
-
-    @Deprecated
-    public static TextDecorator getCurrentTextDecoratorByBuilder(Context context, ResMessageSearch.Record record, EntityManager entityManager) {
-        // name
-        SearchTextDecorator textDecorator = SearchTextDecorator.builder(context)
-                .searchResultType(SearchResultType.Main)
-                .writer().text(entityManager.getEntityNameById(record.getMemberId()))
-                .build(
-                        // type
-                        SearchTextDecorator.builder(context)
-                                .searchResultType(SearchResultType.Main)
-                                .contentType(record.getType(), record.getStatus())
-                                .build(
-                                        // file owner
-                                        SearchTextDecorator.builder(context)
-                                                .searchResultType(SearchResultType.Main)
-                                                .contentOwner()
-                                                .text(entityManager.getEntityNameById(record.getFileInfo().getWriterId())).build(
-                                                // file name
-                                                SearchTextDecorator.builder(context)
-                                                        .searchResultType(SearchResultType.Main)
-                                                        .fileName().text(record.getFileInfo().getName())
-                                                        .build(
-                                                                SearchTextDecorator.builder(context)
-                                                                        .searchResultType(SearchResultType.Main)
-                                                                        .content()
-                                                                        .text(record.getText())
-                                                                        .build(null)
-                                                        )
-                                        )
-                                )
-                );
-
-
-        return textDecorator;
-    }
 
     public static SpannableStringBuilder getCurrentSearchString(Context context, ResMessageSearch.Record record, String query) {
 

@@ -2,19 +2,16 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/jandi_progress_anim_01"/>
+    android:gravity="center"
+    android:orientation="vertical">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="27dp"
-        android:textSize="14sp"
+        android:text="@string/jandi_cannot_find_search_result_old"
         android:textColor="#999999"
-        android:text="@string/jandi_cannot_find_search_result_old"/>
+        android:textSize="14sp"/>
 </LinearLayout>

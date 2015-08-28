@@ -479,5 +479,13 @@
     <string name="jandi_profile_picture">"簡介照片"</string>
     <string name="jandi_you_cannot_delete_default_message">"無法離開或刪除預設議題"</string>
     <string name="jandi_this_is_disabled_user_explain">"此成員權限已被暫時關閉。欲知更多細節，請聯絡團隊管理員。"</string>
+    <string name="jandi_who_of_file">"共享檔案"</string>
+    <string name="jandi_shared">"分享過"</string>
+    <string name="jandi_file_downloaded_into">"檔案下載至  %s"</string>
+    <string name="jandi_file_deleted_with_date">"%s 檔案已刪除"</string>
+    <string name="jandi_starmention_no_longer_in_topic">此信息/文件已被标示</string>
+
+    <string name="jandi_msg_network_offline">"連線中斷。"</string>
+    <string name="jandi_msg_network_offline_warn">"目前為無網路狀態 JANDI會於連上網路後，"</string>
 </resources>
 

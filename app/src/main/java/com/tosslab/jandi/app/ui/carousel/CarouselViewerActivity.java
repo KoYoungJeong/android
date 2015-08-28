@@ -1,10 +1,8 @@
 package com.tosslab.jandi.app.ui.carousel;
 
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -275,19 +273,11 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
     @Override
     public void downloadDone(File file, String fileType, ProgressDialog progressDialog) {
 
-        progressDialog.dismiss();
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
 
         ColoredToast.show(CarouselViewerActivity.this, file.getPath());
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(file), carouselViewerModel.getFileType(file, fileType));
-        try {
-            startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            String rawString = getString(R.string.err_unsupported_file_type);
-            String formatString = String.format(rawString, file);
-            ColoredToast.showError(this, formatString);
-        }
     }
 
     @UiThread
