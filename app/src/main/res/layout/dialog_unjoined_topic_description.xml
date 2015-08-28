@@ -1,25 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingBottom="25dp"
-                android:paddingLeft="22dp"
-                android:paddingRight="22dp"
-                android:paddingTop="25dp">
-
-    <ImageView
-        android:id="@+id/iv_unjoin_topic_desc_icon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/jandi_topic_icon"/>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="24dp"
+    android:paddingLeft="22dp"
+    android:paddingRight="22dp"
+    android:paddingTop="25dp">
 
     <LinearLayout
+        android:id="@+id/vg_unjoin_topic_desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/iv_unjoin_topic_desc_icon"
-        android:layout_marginLeft="15dp"
-        android:layout_toRightOf="@+id/iv_unjoin_topic_desc_icon"
         android:orientation="vertical">
 
         <TextView
@@ -81,7 +73,7 @@
         android:id="@+id/tv_unjoin_topic_desc_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/iv_unjoin_topic_desc_icon"
+        android:layout_below="@+id/vg_unjoin_topic_desc"
         android:layout_marginTop="51dp"
         android:lineSpacingExtra="7dp"
         android:maxLines="6"
