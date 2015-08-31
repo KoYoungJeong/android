@@ -83,6 +83,8 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
+import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel_;
@@ -115,6 +117,7 @@ import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
@@ -1005,15 +1008,29 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             case FilePickerViewModel.TYPE_UPLOAD_EXPLORER:
                 List<String> filePath = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
                 if (filePath != null && filePath.size() > 0) {
-                    filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath.get(0), entityId);
+                    FileUploadPreviewActivity_.intent(this)
+                            .singleUpload(true)
+                            .realFilePathList(new ArrayList<>(filePath))
+                            .selectedEntityIdToBeShared(entityId)
+                            .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
                 }
                 break;
             case FileUploadPreviewActivity.REQUEST_CODE:
+                if (intent != null
+                        && intent.getSerializableExtra(
+                        FileUploadPreviewActivity.KEY_SINGLE_FILE_UPLOADVO) != null) {
+                    final FileUploadVO fileUploadVO = (FileUploadVO) intent.getSerializableExtra(
+                            FileUploadPreviewActivity.KEY_SINGLE_FILE_UPLOADVO);
+                    startFileUpload(
+                            fileUploadVO.getFileName(),
+                            fileUploadVO.getEntity(),
+                            fileUploadVO.getFilePath(),
+                            fileUploadVO.getComment());
+                }
                 break;
             default:
                 break;
         }
-
     }
 
     @TextChange(R.id.et_message)
@@ -1147,13 +1164,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.copyToClipboard(event.contentString);
     }
 
-
     public void onEvent(ConfirmFileUploadEvent event) {
         LogUtil.d("List fragment onEvent");
         if (!isForeground) {
             return;
         }
-        filePickerViewModel.startUpload(getActivity(), event.title, event.entityId, event.realFilePath, event.comment);
+
+        startFileUpload(event.title, event.entityId, event.realFilePath, event.comment);
+    }
+
+    private void startFileUpload(String title, int entityId, String filePath, String comment) {
+        filePickerViewModel.startUpload(getActivity(), title, entityId, filePath, comment);
     }
 
     public void onEvent(ConfirmDeleteTopicEvent event) {
