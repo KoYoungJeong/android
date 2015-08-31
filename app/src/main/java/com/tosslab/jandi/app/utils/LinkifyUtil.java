@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.regex.Regex;
+import com.tosslab.jandi.app.utils.regex.TelRegex;
 import com.tosslab.jandi.app.views.spannable.ClickableMensionMessageSpannable;
 
 import java.util.regex.Matcher;
@@ -33,10 +34,16 @@ public class LinkifyUtil {
 
     public static final boolean addLinks(Context context, Spannable text) {
 
-        Matcher matcher = Regex.VALID_URL.matcher(text);
+        boolean hasWebLink = addWebLinks(context, text);
+        boolean hasPhoneLink = addPhoneLinks(context, text);
 
+        return hasWebLink || hasPhoneLink;
+    }
+
+    public static boolean addWebLinks(Context context, Spannable text) {
         boolean hasLink = false;
 
+        Matcher matcher = Regex.VALID_URL.matcher(text);
         int color = context.getResources().getColor(R.color.jandi_accent_color);
         while (matcher.find()) {
 
@@ -62,6 +69,26 @@ public class LinkifyUtil {
 
             JandiURLSpan span = new JandiURLSpan(context, url, color);
 
+            text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        return hasLink;
+    }
+
+    public static boolean addPhoneLinks(Context context, Spannable text) {
+        boolean hasLink = false;
+
+        Matcher matcher = TelRegex.VALID_PHONE_NUMBER.matcher(text);
+
+        int color = context.getResources().getColor(R.color.jandi_accent_color);
+
+        while (matcher.find()) {
+            hasLink = true;
+
+            String phoneNumber = matcher.group();
+            int start = matcher.start();
+            int end = matcher.end();
+
+            JandiTelSpan span = new JandiTelSpan(phoneNumber, color);
             text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
@@ -118,6 +145,14 @@ public class LinkifyUtil {
                         return true;
                     }
 
+                    JandiTelSpan[] telSpans = buffer.getSpans(off, off, JandiTelSpan.class);
+                    if (telSpans.length != 0) {
+                        if (action == MotionEvent.ACTION_UP) {
+                            telSpans[0].onClick();
+                        }
+
+                        return true;
+                    }
                 }
 
                 return false;

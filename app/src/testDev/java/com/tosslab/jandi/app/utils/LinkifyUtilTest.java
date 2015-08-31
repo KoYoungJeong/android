@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.utils;
 
+import android.text.SpannableStringBuilder;
 import android.util.Patterns;
 
 import com.tosslab.jandi.app.utils.regex.Regex;
@@ -7,10 +8,12 @@ import com.tosslab.jandi.app.utils.regex.Regex;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.JandiRobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -117,4 +120,109 @@ public class LinkifyUtilTest {
             }
         }
     }
+
+    @Test
+    public void testAddPhoneLinks() throws Exception {
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        builder.append(PHONE_NUMBER_TEST_TEXT);
+
+        boolean hasLinks = LinkifyUtil.addPhoneLinks(RuntimeEnvironment.application, builder);
+
+        assertTrue(hasLinks);
+    }
+
+    final String PHONE_NUMBER_TEST_TEXT =
+            "말씀해주신 사항과 마침표 대응도 하도록 하겠습니다.(생각해보니 IP는 마침표가4개...)\n" +
+                    "링크를 지원가능한 전화번호는 다음과 같습니다.\n" +
+                    "\n" +
+                    "021234567\n" +
+                    "0212345678\n" +
+                    "0311234567\n" +
+                    "03112345678\n" +
+                    "\n" +
+                    "02 123 4567\n" +
+                    "02 1234 5678\n" +
+                    "031 123 4567\n" +
+                    "031 1234 5678\n" +
+                    "\n" + "http://www.nave.com" +
+                    "02.123.4567 http://www.nave.com\n" +
+                    "02.1234.4567하하호호호\n" +
+                    "031.123.4567\n" +
+                    "031.1234.4567\n" +
+                    "\n" +
+                    "02-123-4567\n" +
+                    "02-1234-5678\n" +
+                    "031-123-4567\n" +
+                    "031-1234-5678\n" +
+                    "\n" +
+                    "+121234567\n" +
+                    "+1101234567\n" +
+                    "+11012345678\n" +
+                    "+82101234567\n" +
+                    "+821012345678\n" +
+                    "+547101234567\n" +
+                    "+5471012345678\n" +
+                    "+547811234567데헤헤헤\n" +
+                    "+5478101234567\n" +
+                    "+54781012345678\n" +
+                    "\n" +
+                    "+110 123 4567\n" +
+                    "+110 1234 5678\n" +
+                    "+8210 123 4567\n" +
+                    "+8210 1234 5678\n" +
+                    "+54710 123 4567\n" +
+                    "+54710 1234 5678\n" +
+                    "+54781 123 4567\n" +
+                    "+547810 123 4567\n" +
+                    "+547810 1234 5678\n" +
+                    "\n" +
+                    "+1 10 123 4567\n" +
+                    "+1 10 1234 5678\n" +
+                    "+82 10 123 4567\n" +
+                    "+82 10 1234 5678\n" +
+                    "+547 10 123 4567\n" +
+                    "+547 10 1234 5678\n" +
+                    "+5478 1 123 4567\n" +
+                    "+5478 10 123 4567\n" +
+                    "+5478 10 1234 5678\n" +
+                    "\n" +
+                    "+110.123.4567\n" +
+                    "+110.1234.5678 @토니\n" +
+                    "+8210.123.4567\n" +
+                    "+8210.1234.5678\n" +
+                    "+54710.123.4567\n" +
+                    "+54710.1234.5678\n" +
+                    "+54781.123.4567\n" +
+                    "+54781.1234.4567\n" +
+                    "+547810.123.4567\n" +
+                    "+547810.1234.5678\n" +
+                    "\n" +
+                    "+1 10.123.4567\n" +
+                    "+1 10.1234.5678\n" +
+                    "+82 10.123.4567\n" +
+                    "+82 10.1234.5678\n" +
+                    "+547 10.123.4567\n" +
+                    "+547 10.1234.5678\n" +
+                    "+5478 1.123.4567\n" +
+                    "+5478 1.1234.4567\n" +
+                    "+5478 10.123.4567\n" +
+                    "+5478 10.1234.5678\n" +
+                    "\n" +
+                    "+110-123-4567\n" +
+                    "+110-1234-5678\n" +
+                    "+8210-123-4567\n" +
+                    "+8210-1234-5678\n" +
+                    "+54710-123-4567\n" +
+                    "+54710-1234-5678\n" +
+                    "+547810-123-4567\n" +
+                    "+547810-1234-5678\n" +
+                    "\n" +
+                    "+1 10-123-4567\n" +
+                    "+1 10-1234-5678\n" +
+                    "+82 10-123-4567\n" +
+                    "+82 10-1234-5678\n" +
+                    "+547 10-123-4567\n" +
+                    "+547 10-1234-5678\n" +
+                    "+5478 10-123-4567\n" +
+                    "+5478 10-1234-5678";
 }
