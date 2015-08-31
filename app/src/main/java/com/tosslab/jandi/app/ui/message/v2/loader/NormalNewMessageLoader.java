@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2.loader;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
@@ -57,7 +58,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 Collections.sort(messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
                 messageState.setLastUpdateLinkId(newMessage.lastLinkId);
                 messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), newMessage.lastLinkId);
-                updateMarker();
+                updateMarker(roomId);
 
                 messageListPresenter.setUpNewMessage(messages, messageListModel.getMyId(), linkId, firstLoad);
             } else {
@@ -97,10 +98,11 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 });
     }
 
-    private void updateMarker() {
+    private void updateMarker(int roomId) {
         try {
             if (messageState.getLastUpdateLinkId() > 0) {
                 messageListModel.updateMarker(messageState.getLastUpdateLinkId());
+                messageListModel.updateMarkerInfo(AccountRepository.getRepository().getSelectedTeamId(), roomId);
             }
         } catch (RetrofitError e) {
             e.printStackTrace();
