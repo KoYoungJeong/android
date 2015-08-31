@@ -308,6 +308,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.setEntityInfo(entityId);
         fileUploadStateViewModel.setEntityId(entityId);
 
+        keyboardHeightModel.addOnKeyboardShowListener((isShowing) -> {
+            announcementViewModel.setAnnouncementViewVisibility(!isShowing);
+        });
+
         JandiPreference.setKeyboardHeight(getActivity(), 0);
     }
 
@@ -709,8 +713,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                         roomIds,
                         MentionControlViewModel.MENTION_TYPE_MESSAGE);
 
-                mentionControlViewModel.setOnMentionViewShowingListener(isShowing ->
-                        announcementViewModel.setAnnouncementViewVisibility(!isShowing));
                 // copy txt from mentioned edittext message
                 mentionControlViewModel.registClipboardListener();
             } else {
