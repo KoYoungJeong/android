@@ -88,8 +88,6 @@ public class LinkifyUtil {
             int start = matcher.start();
             int end = matcher.end();
 
-            System.out.println("phoneNumber(" + phoneNumber + ") start - " + start + " end - " + end);
-
             JandiTelSpan span = new JandiTelSpan(phoneNumber, color);
             text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
