@@ -80,9 +80,9 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
+import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel_;
@@ -141,6 +141,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -1311,6 +1312,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 TextUtils.equals(messageType, "topic_invite")) {
 
             updateRoomInfo();
+
+            updateMentionInfo();
         } else {
             if (!isForeground) {
                 messageListModel.updateMarkerInfo(teamId, roomId);
@@ -1319,6 +1322,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void updateMentionInfo() {
+        mentionControlViewModel.refreshMembers(Arrays.asList(roomId));
     }
 
     public void onEvent(SocketLinkPreviewMessageEvent event) {
