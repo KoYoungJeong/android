@@ -48,9 +48,9 @@ public class Regex {
     public static final Pattern VALID_TCO_URL;
     public static final Pattern INVALID_URL_WITHOUT_PROTOCOL_MATCH_BEGIN;
     public static final Pattern VALID_CASHTAG;
-    public static final int VALID_CASHTAG_GROUP_BEFORE = 1;
 
     /* Begin public constants */
+    public static final int VALID_CASHTAG_GROUP_BEFORE = 1;
     public static final int VALID_CASHTAG_GROUP_DOLLAR = 2;
     public static final int VALID_CASHTAG_GROUP_CASHTAG = 3;
     public static final Pattern VALID_DOMAIN;

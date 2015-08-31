@@ -14,7 +14,7 @@ public interface ScreenViewProperty {
     int FILE_PANEL = 507;
     int SETTING_PANEL = 508;
     int PUBLIC_TOPIC = 509;
-    int PRIVIATE_TOPIC = 510;
+    int PRIVATE_TOPIC = 510;
     int FILE_SEARCH = 511;
     int MESSAGE_SEARCH = 512;
     int FILE_DETAIL = 513;

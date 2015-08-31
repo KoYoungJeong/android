@@ -17,6 +17,8 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
+import java.util.ArrayList;
+
 /**
  * Created by Steve SeongUg Jung on 15. 6. 3..
  */
@@ -33,6 +35,14 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
     private OnKeyboardShowListener onKeyboardShowListener;
     private boolean isOpened;
 
+    private ArrayList<OnKeyboardShowListener> onKeyboardShowListeners;
+
+    @AfterViews
+    void initViews() {
+        rootView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(this);
+    }
+
     public OnKeyboardShowListener getOnKeyboardShowListener() {
         return onKeyboardShowListener;
     }
@@ -41,10 +51,11 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
         this.onKeyboardShowListener = onKeyboardShowListener;
     }
 
-    @AfterViews
-    void initViews() {
-        rootView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(this);
+    public void addOnKeyboardShowListener(OnKeyboardShowListener onKeyboardShowListener) {
+        if (onKeyboardShowListeners == null) {
+            onKeyboardShowListeners = new ArrayList<>();
+        }
+        onKeyboardShowListeners.add(onKeyboardShowListener);
     }
 
     public void setOnKeyboardHeightCaptureListener(OnKeyboardCaptureListener onKeyboardHeightCapture) {
@@ -106,9 +117,7 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
             JandiPreference.setKeyboardHeight(activity, keyboardHeight);
             if (!isOpened) {
                 isOpened = true;
-                if (onKeyboardShowListener != null) {
-                    onKeyboardShowListener.onShow(true);
-                }
+                notifyOnKeyboardShowListener(true);
             }
 
             if (onKeyboardHeightCapture != null) {
@@ -117,12 +126,21 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
         } else {
             if (isOpened) {
                 isOpened = false;
-                if (onKeyboardShowListener != null) {
-                    onKeyboardShowListener.onShow(false);
-                }
+                notifyOnKeyboardShowListener(false);
             }
         }
+    }
 
+    private void notifyOnKeyboardShowListener(boolean isShow) {
+        if (onKeyboardShowListener != null) {
+            onKeyboardShowListener.onShow(isShow);
+        }
+
+        if (onKeyboardShowListeners != null && !onKeyboardShowListeners.isEmpty()) {
+            for (OnKeyboardShowListener listener : onKeyboardShowListeners) {
+                listener.onShow(isShow);
+            }
+        }
     }
 
     private boolean hasNoNavigationBar() {

@@ -604,6 +604,9 @@ public class MessageListPresenter {
             previewContent.setText(((ResMessages.CommentMessage) item.message).content.body);
         } else if (item.message instanceof ResMessages.TextMessage) {
             previewContent.setText(((ResMessages.TextMessage) item.message).content.body);
+        } else if (item.message instanceof ResMessages.StickerMessage || item.message instanceof
+                ResMessages.CommentStickerMessage) {
+            previewContent.setText(String.format("(%s)", activity.getString(R.string.jandi_coach_mark_stickers)));
         }
 
         previewLayout.setVisibility(View.VISIBLE);
