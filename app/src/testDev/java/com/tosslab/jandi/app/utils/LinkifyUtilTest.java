@@ -152,6 +152,12 @@ public class LinkifyUtilTest {
             "+5478 10-1234-5678"
     };
 
+    final String[] EMAIL_NUMBER_TEST_TEXT = {
+            "steve@tosslab.com",
+            "aaa@a.aa",
+            "a12@a12.aa"
+    };
+
     @Test
     public void testURLMatcher() throws Exception {
 
@@ -227,6 +233,15 @@ public class LinkifyUtilTest {
                 .map(builder -> LinkifyUtil.addPhoneLinks(RuntimeEnvironment.application, builder))
                 .subscribe(Assert::assertTrue);
 
+
+    }
+
+    @Test
+    public void testAddEmailLinks() throws Exception {
+        Observable.from(EMAIL_NUMBER_TEST_TEXT)
+                .map(SpannableStringBuilder::new)
+                .map(builder -> LinkifyUtil.addEmailLinks(RuntimeEnvironment.application, builder))
+                .subscribe(Assert::assertTrue);
 
     }
 }

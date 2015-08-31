@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.utils;
+package com.tosslab.jandi.app.views.spannable;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 /**
  * Created by Steve SeongUg Jung on 15. 4. 21..
  */
-public class JandiURLSpan extends UnderlineSpan {
+public class JandiURLSpan extends UnderlineSpan implements ClickableSpannable{
     private final Context context;
     private final String url;
     private final int color;
