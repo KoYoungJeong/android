@@ -41,13 +41,13 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
 
         holder.bindView(starMentionVO);
 
-        holder.getConvertView().setOnClickListener(v -> {
+        holder.itemView.setOnClickListener(v -> {
             if (onItemClickListener != null) {
                 onItemClickListener.onItemClick(StarMentionListAdapter.this, position);
             }
         });
 
-        holder.getConvertView().setOnLongClickListener(v -> {
+        holder.itemView.setOnLongClickListener(v -> {
             if (onItemLongClickListener != null) {
                 return onItemLongClickListener.
                         onItemLongClick(StarMentionListAdapter.this, position);

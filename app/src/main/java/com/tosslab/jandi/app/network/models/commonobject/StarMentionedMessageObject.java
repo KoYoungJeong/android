@@ -80,7 +80,7 @@ public class StarMentionedMessageObject {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    static public class Room {
+    public static class Room {
         public int id;
         public String type;
         public String name;
@@ -100,7 +100,7 @@ public class StarMentionedMessageObject {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    static public class Message {
+    public static class Message {
         public int id;
         public int writerId;
         public String contentType;
@@ -131,7 +131,7 @@ public class StarMentionedMessageObject {
 
         @JsonIgnoreProperties(ignoreUnknown = true)
         @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-        static public class Content {
+        public static class Content {
 
             public String body;
             public String title;

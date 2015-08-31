@@ -54,7 +54,7 @@ public class BitmapUtilTest {
     @Test
     public void testGetOptimizedImageUrl() throws Exception {
         String optimizedImageUrl =
-                BitmapUtil.getOptimizedImageUrl(RuntimeEnvironment.application, content);
+                BitmapUtil.getOptimizedImageUrl(content);
         assertThat(optimizedImageUrl, is(equalTo(content.fileUrl)));
     }
 }

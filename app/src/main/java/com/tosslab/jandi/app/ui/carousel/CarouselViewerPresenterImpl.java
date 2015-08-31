@@ -59,7 +59,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
             int teamId = carouselViewerModel.getTeamId(context);
 
             List<ResMessages.FileMessage> fileMessages = carouselViewerModel.searchInitFileList(teamId, roomId, fileId);
-            imageFiles = carouselViewerModel.getImageFileConvert(roomId, context, fileMessages);
+            imageFiles = carouselViewerModel.getImageFileConvert(roomId, fileMessages);
 
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -101,7 +101,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
             List<ResMessages.FileMessage> fileMessages = carouselViewerModel.searchBeforeFileList
                     (teamId, roomId, fileLinkId, count);
-            imageFiles = carouselViewerModel.getImageFileConvert(roomId, context, fileMessages);
+            imageFiles = carouselViewerModel.getImageFileConvert(roomId, fileMessages);
 
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -133,7 +133,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
             List<ResMessages.FileMessage> fileMessages = carouselViewerModel
                     .searchAfterFileList(teamId, roomId, fileLinkId, count);
-            imageFiles = carouselViewerModel.getImageFileConvert(roomId, context, fileMessages);
+            imageFiles = carouselViewerModel.getImageFileConvert(roomId, fileMessages);
 
         } catch (RetrofitError e) {
             e.printStackTrace();
