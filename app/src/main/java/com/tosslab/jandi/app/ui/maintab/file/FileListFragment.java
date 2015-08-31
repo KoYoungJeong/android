@@ -148,19 +148,17 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     void bindAdapter() {
         LogUtil.d("FileListFragment AfterViews");
 
-        int screenView = getActivity() instanceof SearchActivity
-                ? ScreenViewProperty.FILE_SEARCH : ScreenViewProperty.FILE_PANEL;
+        if (getActivity() instanceof SearchActivity) {
+            Sprinkler.with(JandiApplication.getContext())
+                    .track(new FutureTrack.Builder()
+                            .event(Event.ScreenView)
+                            .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                            .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                            .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_SEARCH)
+                            .build());
 
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.ScreenView)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ScreenView, screenView)
-                        .build());
-
-        GoogleAnalyticsUtil.sendScreenName(
-                screenView == ScreenViewProperty.FILE_SEARCH ?"FILE_SEARCH" : "FILE_PANEL");
+            GoogleAnalyticsUtil.sendScreenName("FILE_SEARCH");
+        }
 
         setHasOptionsMenu(true);
 

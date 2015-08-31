@@ -177,6 +177,10 @@ android {
         inhouse {
             java.srcDirs = ['src/full/java']
         }
+
+        landscae {
+            java.srcDirs = ['src/full/java']
+        }
     }
 
     packagingOptions.excludes = [

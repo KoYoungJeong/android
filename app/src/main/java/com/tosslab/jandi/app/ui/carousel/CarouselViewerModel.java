@@ -87,7 +87,7 @@ public class CarouselViewerModel {
         return context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
     }
 
-    public List<CarouselFileInfo> getImageFileConvert(final int entityId, final Context context,
+    public List<CarouselFileInfo> getImageFileConvert(final int entityId,
                                                       List<ResMessages.FileMessage> fileMessages) {
         List<CarouselFileInfo> fileInfos = new ArrayList<CarouselFileInfo>();
 
@@ -97,7 +97,7 @@ public class CarouselViewerModel {
                         .fileLinkId(fileMessage.id)
                         .fileName(fileMessage.content.name)
                         .fileType(fileMessage.content.type)
-                        .fileLinkUrl(BitmapUtil.getOptimizedImageUrl(context, fileMessage.content))
+                        .fileLinkUrl(BitmapUtil.getOptimizedImageUrl(fileMessage.content))
                         .ext(fileMessage.content.ext)
                         .size(fileMessage.content.size)
                         .fileCreateTime(
