@@ -803,6 +803,10 @@ public class MessageListPresenter {
         return messageListAdapter.getItemCount();
     }
 
+    public int getItemCountWithoutDummy() {
+        return messageListAdapter.getItemCount() - messageListAdapter.getDummyMessageCount();
+    }
+
     public int getRoomId() {
         return messageListAdapter.getRoomId();
     }

@@ -237,7 +237,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         messageList.addAll(Math.min(position, messageList.size() - getDummyMessageCount()), messages);
     }
 
-    private int getDummyMessageCount() {
+    public int getDummyMessageCount() {
 
         int total = 0;
 

@@ -80,9 +80,9 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
+import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel_;
@@ -522,9 +522,16 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     private void loadNewMessage(MessageQueue messageQueue) {
+
+
         if (newsMessageLoader != null) {
             MessageState data = (MessageState) messageQueue.getData();
             int lastUpdateLinkId = data.getLastUpdateLinkId();
+
+            if (lastUpdateLinkId < 0 && oldMessageLoader != null) {
+                oldMessageLoader.load(roomId, lastUpdateLinkId);
+            }
+
             newsMessageLoader.load(roomId, lastUpdateLinkId);
         }
     }
@@ -540,7 +547,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
         if (linkId > 0) {
             messageListPresenter.updateDummyMessageState(data.getLocalId(), SendMessage.Status.COMPLETE);
-            EventBus.getDefault().post(new RefreshNewMessageEvent());
+            if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
+                // 소켓이 안 붙어 있으면 임의로 갱신 요청
+                EventBus.getDefault().post(new RefreshNewMessageEvent());
+            }
         } else {
             messageListPresenter.updateDummyMessageState(data.getLocalId(), SendMessage.Status.FAIL);
         }
@@ -733,10 +743,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         fileUploadStateViewModel.unregisterEventBus();
 
         isForeground = false;
-
-        if (!isFromSearch) {
-            messageListModel.stopRefreshTimer();
-        }
 
         if (roomId > 0) {
             messageListModel.saveTempMessage(roomId, messageListPresenter.getSendEditText());
@@ -943,7 +949,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListPresenter.setGotoLatestLayoutShowProgress();
             loadLastMessage();
         } else {
-            messageListModel.startRefreshTimer();
             messageListPresenter.setGotoLatestLayoutVisibleGone();
         }
     }
@@ -959,7 +964,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         newsMessageLoader.load(roomId, messageState.getLastUpdateLinkId());
         messageListPresenter.setGotoLatestLayoutVisibleGone();
         messageListPresenter.moveLastPage();
-        messageListModel.startRefreshTimer();
 
     }
 
