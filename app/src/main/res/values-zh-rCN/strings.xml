@@ -111,6 +111,7 @@
     <string name="err_profile_update">"简介无法更新"</string>
     <string name="jandi_profile_photo_upload_succeed">"简介照片已更新"</string>
     <string name="err_profile_photo_upload">"简介照片无法更新"</string>
+    <string name="err_email_exists">"此电子邮箱已被注册"</string>
 
     <!-- 회원 초대 -->
     <string name="jandi_team_info">"团队"</string>
