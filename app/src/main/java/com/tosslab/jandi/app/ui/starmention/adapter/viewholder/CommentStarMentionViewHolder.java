@@ -14,41 +14,32 @@ import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
  */
 public class CommentStarMentionViewHolder extends CommonStarMentionViewHolder {
 
-    private TextView starMentionCommentView;
-    private TextView starMentionFileNameView;
+    private TextView tvComment;
+    private TextView tvFileName;
 
     public CommentStarMentionViewHolder(View itemView) {
         super(itemView);
 
-        starMentionCommentView = (TextView) itemView.findViewById(R.id.tv_star_mention_comment);
-        starMentionFileNameView = (TextView) itemView.findViewById(R.id.tv_star_mention_file_name);
-    }
-
-    public TextView getStarMentionCommentView() {
-        return starMentionCommentView;
-    }
-
-    public TextView getStarMentionFileNameView() {
-        return starMentionFileNameView;
+        tvComment = (TextView) itemView.findViewById(R.id.tv_star_mention_comment);
+        tvFileName = (TextView) itemView.findViewById(R.id.tv_star_mention_file_name);
     }
 
     @Override
     public String toString() {
         return "CommentStarMentionViewHolder{" +
-                "starMentionCommentView=" + starMentionCommentView +
-                ", starMentionFileNameView=" + starMentionFileNameView +
+                "tvComment=" + tvComment +
+                ", tvFileName=" + tvFileName +
                 '}';
     }
 
     @Override
     public void bindView(StarMentionVO starMentionVO) {
         super.bindView(starMentionVO);
-        this.getStarMentionFileNameView().setText(starMentionVO.getFileName());
-        SpannableStringBuilder commentStringBuilder = new SpannableStringBuilder
-                (starMentionVO.getContent());
+        tvFileName.setText(starMentionVO.getFileName());
+        SpannableStringBuilder commentStringBuilder = new SpannableStringBuilder(starMentionVO.getBody());
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                this.getStarMentionCommentView(), commentStringBuilder, starMentionVO.getMentions(),
+                tvComment, commentStringBuilder, starMentionVO.getMentions(),
                 EntityManager.getInstance().getMe().getId())
                 .setMeBackgroundColor(0xFF01a4e7)
                 .setMeTextColor(0xFFffffff)
@@ -59,6 +50,6 @@ public class CommentStarMentionViewHolder extends CommonStarMentionViewHolder {
         commentStringBuilder = generateMentionMessageUtil.generate(false);
         // for single spannable
         commentStringBuilder.append(" ");
-        this.getStarMentionCommentView().setText(commentStringBuilder);
+        tvComment.setText(commentStringBuilder);
     }
 }

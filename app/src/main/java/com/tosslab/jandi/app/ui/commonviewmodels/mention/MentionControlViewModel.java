@@ -71,7 +71,6 @@ public class MentionControlViewModel {
     private LinkedHashMap<Integer, SearchedItemVO> selectedMemberHashMap;
     private ClipboardListener clipboardListener;
     private TextWatcher textWatcher;
-    private OnMentionViewShowingListener onMentionViewShowingListener;
 
     // 멘션 선택된 멤버 리스트의 사본
     // 클립 보드에서 CUT(잘라내기) 시 해당 정보를 한꺼번에 잃기 때문에 사본을 저장할 필요성 있음.
@@ -139,10 +138,6 @@ public class MentionControlViewModel {
 
         selectedMemberHashMap = new LinkedHashMap<>();
 
-    }
-
-    public void setOnMentionViewShowingListener(OnMentionViewShowingListener listener) {
-        onMentionViewShowingListener = listener;
     }
 
     private void addTextWatcher(EditText editText) {
@@ -294,10 +289,6 @@ public class MentionControlViewModel {
             } else if (lvFileComment != null) {
                 lvFileComment.setVisibility(View.VISIBLE);
             }
-        }
-
-        if (onMentionViewShowingListener != null) {
-            onMentionViewShowingListener.onMentionViewShowing(isShow);
         }
 
     }
@@ -512,11 +503,6 @@ public class MentionControlViewModel {
         ClipboardManager clipBoard = (ClipboardManager) etMessage.getContext()
                 .getSystemService(etMessage.getContext().CLIPBOARD_SERVICE);
         clipBoard.addPrimaryClipChangedListener(clipboardListener);
-    }
-
-    // for control announcement view
-    public interface OnMentionViewShowingListener {
-        void onMentionViewShowing(boolean isShowing);
     }
 
     // 가공되지 않은 스트링이 클립보드에 복사되면 안되므로 별도의 처리 진행

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.file.upload.preview;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
@@ -28,6 +29,7 @@ import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadPagerAdapter;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenter;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenterImpl;
+import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
@@ -64,8 +66,12 @@ import rx.subjects.PublishSubject;
 public class FileUploadPreviewActivity extends AppCompatActivity implements FileUploadPresenter.View {
 
     public static final int REQUEST_CODE = 17863;
+    public static final String KEY_SINGLE_FILE_UPLOADVO = "file_uploadvo";
     @Extra
     int selectedEntityIdToBeShared;    // Share 할 chat-room
+
+    @Extra
+    boolean singleUpload = false;
 
     @Extra
     ArrayList<String> realFilePathList;
@@ -95,7 +101,6 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
     List<ImageView> scrollButtons;
     private PublishSubject<Object> scrollButtonPublishSubject;
     private Subscription subscribe;
-
 
     @AfterViews
     void initView() {
@@ -127,7 +132,6 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
                     }
                 }, throwable -> {
                 });
-
     }
 
     @Override
@@ -179,7 +183,11 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
 
     @OptionsItem(R.id.action_confirm)
     void onSendFile() {
-        fileUploadPresenter.onUploadStartFile();
+        if (singleUpload) {
+            fileUploadPresenter.onSingleFileUpload();
+            return;
+        }
+        fileUploadPresenter.onMultiFileUpload();
     }
 
     private void setupActionbar() {
@@ -198,7 +206,10 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
     private void setupActionbarTitle(int current, int max) {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(String.format("%s (%d/%d)", getString(R.string.title_file_upload), current, max));
+            String title = !singleUpload
+                    ? String.format("%s (%d/%d)", getString(R.string.title_file_upload), current, max)
+                    : getString(R.string.title_file_upload);
+            actionBar.setTitle(title);
         }
     }
 
@@ -299,8 +310,6 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
 
     @Override
     public void showEntitySelectDialog(List<FormattedEntity> entityList) {
-
-
         android.view.View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.dialog_invite_to_topic, null);
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
         EditText et = (EditText) view.findViewById(R.id.et_cdp_search);
@@ -355,6 +364,14 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
     @Override
     public void exitOnOK() {
         setResult(RESULT_OK);
+        finish();
+    }
+
+    @Override
+    public void exitOnOk(FileUploadVO fileUploadVO) {
+        Intent intent = new Intent();
+        intent.putExtra(KEY_SINGLE_FILE_UPLOADVO, fileUploadVO);
+        setResult(RESULT_OK, intent);
         finish();
     }
 

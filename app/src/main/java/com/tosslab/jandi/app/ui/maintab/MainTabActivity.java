@@ -42,6 +42,7 @@ import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -50,9 +51,15 @@ import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -138,15 +145,12 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             }
         }
 
-        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
+        tabs.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 LogUtil.d("onPageSelected at " + position);
                 trackGaTab(mEntityManager, position);
+                trackScreenView(position);
                 switch (position) {
                     case 1:
                         TutorialCoachMarkUtil.showCoachMarkDirectMessageListIfNotShown(MainTabActivity.this);
@@ -160,11 +164,10 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                         break;
                 }
             }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
         });
+
+        // Track for first load(MainTopicListFragment).
+        trackScreenView(0);
 
         if (needInvitePopup()) {
             JandiPreference.setInvitePopup(MainTabActivity.this);
@@ -342,11 +345,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     }
 
     private void postAllEvents() {
-        if (isFirst) {
-            // 처음 TabActivity를 시도하면 0번째 탭이 자동 선택됨으로 이를 tracking
-            trackGaTab(mEntityManager, 0);
-            isFirst = false;
-        }
         postShowChattingListEvent();
     }
 
@@ -407,6 +405,39 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         AlertUtil.showConfirmDialog(MainTabActivity.this,
                 R.string.jandi_service_maintenance, (dialog, which) -> finish(),
                 false);
+    }
+
+    private void trackScreenView(int position) {
+        int screenView = ScreenViewProperty.TOPIC_PANEL;
+        String screenViewForGA = "TOPIC_PANEL";
+        switch (position) {
+            case 0:
+                screenView = ScreenViewProperty.TOPIC_PANEL;
+                screenViewForGA = "TOPIC_PANEL";
+                break;
+            case 1:
+                screenView = ScreenViewProperty.MESSAGE_PANEL;
+                screenViewForGA = "MESSAGE_PANEL";
+                break;
+            case 2:
+                screenView = ScreenViewProperty.FILE_PANEL;
+                screenViewForGA = "FILE_PANEL";
+                break;
+            case 3:
+                screenView = ScreenViewProperty.SETTING_PANEL;
+                screenViewForGA = "SETTING_PANEL";
+                break;
+        }
+
+        GoogleAnalyticsUtil.sendScreenName(screenViewForGA);
+
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ScreenView, screenView)
+                        .build());
     }
 
 }

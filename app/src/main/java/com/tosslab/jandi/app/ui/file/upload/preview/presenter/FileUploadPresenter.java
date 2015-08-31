@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.file.upload.preview.presenter;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,9 @@ public interface FileUploadPresenter {
 
     void onEntityUpdate(FormattedEntity item);
 
-    void onUploadStartFile();
+    void onSingleFileUpload();
+
+    void onMultiFileUpload();
 
     interface View {
 
@@ -36,6 +39,8 @@ public interface FileUploadPresenter {
         void showEntitySelectDialog(List<FormattedEntity> entityList);
 
         void exitOnOK();
+
+        void exitOnOk(FileUploadVO fileUploadVO);
 
         void setShareEntity(int entityId);
     }
