@@ -1068,6 +1068,7 @@ public class MessageListPresenter {
     public void deleteLinkByMessageId(int messageId) {
         int position = messageListAdapter.indexByMessageId(messageId);
         messageListAdapter.remove(position);
+        messageListAdapter.notifyDataSetChanged();
     }
 
     public boolean isLastOfLastReadPosition() {
