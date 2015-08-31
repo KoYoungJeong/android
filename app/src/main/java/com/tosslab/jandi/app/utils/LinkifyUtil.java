@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.regex.Regex;
+import com.tosslab.jandi.app.utils.regex.TelRegex;
 import com.tosslab.jandi.app.views.spannable.ClickableMensionMessageSpannable;
 
 import java.util.regex.Matcher;
@@ -76,7 +77,7 @@ public class LinkifyUtil {
     public static boolean addPhoneLinks(Context context, Spannable text) {
         boolean hasLink = false;
 
-        Matcher matcher = Regex.VALID_PHONE_NUMBER.matcher(text);
+        Matcher matcher = TelRegex.VALID_PHONE_NUMBER.matcher(text);
 
         int color = context.getResources().getColor(R.color.jandi_accent_color);
 
