@@ -374,7 +374,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     @UiThread(propagation = Propagation.REUSE)
     @Override
-    public void loadSuccess(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages, boolean isSendAction, int selectMessageId) {
+    public void loadSuccess(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages,
+                            boolean isSendAction, int selectMessageId) {
 
         drawFileDetail(fileMessage, commentMessages, isSendAction);
 
@@ -484,6 +485,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                                 .roomId(entity.isUser() ? -1 : entityIdToBeShared)
                                 .isFavorite(entity.isStarred)
                                 .teamId(entity.getEntity().teamId)
+                                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                 .start();
                     }
                 })
@@ -677,7 +679,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
             dismissStickerPreview();
-            StickerRepository.getRepository().upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+            StickerRepository.getRepository()
+                    .upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
 
             fileDetailPresenter.sendCommentWithSticker(
                     fileId, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(),
@@ -745,7 +748,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @UiThread(propagation = Propagation.REUSE)
     @Override
     public void loadSticker(StickerInfo stickerInfo) {
-        StickerManager.getInstance().loadStickerDefaultOption(ivStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+        StickerManager.getInstance()
+                .loadStickerDefaultOption(
+                        ivStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
     }
 
     @UiThread(propagation = Propagation.REUSE)
@@ -815,7 +820,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     @UiThread
     @Override
-    public void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage, boolean execute) {
+    public void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage,
+                                      boolean execute) {
         trackDownloadingFile(entityManager, fileMessage);
 
         try {
@@ -844,7 +850,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
         if (idx >= 0) {
-            return mimeTypeMap.getMimeTypeFromExtension(fileName.substring(idx + 1, fileName.length()).toLowerCase());
+            return mimeTypeMap.getMimeTypeFromExtension(
+                    fileName.substring(idx + 1, fileName.length()).toLowerCase());
         } else {
             return mimeTypeMap.getExtensionFromMimeType(fileType.toLowerCase());
         }
@@ -894,7 +901,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         if (prev != null) {
             ft.remove(prev);
         }
-        UserInfoDialogFragment_.builder().entityId(user.getId()).build().show(getSupportFragmentManager(), "dialog");
+        UserInfoDialogFragment_.builder()
+                .entityId(user.getId()).build()
+                .show(getSupportFragmentManager(), "dialog");
     }
 
     public void copyToClipboard(String contentString) {
@@ -920,7 +929,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     @UiThread(propagation = Propagation.REUSE)
     @Override
-    public void drawFileDetail(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages, boolean isSendAction) {
+    public void drawFileDetail(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages,
+                               boolean isSendAction) {
 
         fileHeadManager.setFileInfo(fileMessage);
 
