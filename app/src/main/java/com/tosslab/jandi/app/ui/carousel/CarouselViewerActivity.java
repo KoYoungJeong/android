@@ -273,6 +273,10 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
     @Override
     public void downloadDone(File file, String fileType, ProgressDialog progressDialog) {
 
+        if (isFinishing()) {
+            return;
+        }
+
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }

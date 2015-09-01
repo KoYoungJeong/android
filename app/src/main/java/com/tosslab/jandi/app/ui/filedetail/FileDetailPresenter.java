@@ -523,7 +523,11 @@ public class FileDetailPresenter {
     }
 
     public ResultMentionsVO getMentionInfo() {
-        return mentionControlViewModel.getMentionInfoObject();
+        if (mentionControlViewModel != null) {
+            return mentionControlViewModel.getMentionInfoObject();
+        } else {
+            return new ResultMentionsVO("", new ArrayList<>());
+        }
     }
 
     public MentionControlViewModel getMentionControlViewModel() {

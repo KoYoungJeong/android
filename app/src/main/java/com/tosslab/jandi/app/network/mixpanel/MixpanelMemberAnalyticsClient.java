@@ -208,7 +208,7 @@ public class MixpanelMemberAnalyticsClient {
         people.set("invite", 0);
         people.set("mixpanel_ID", mDistictId);
         people.set("member_ID", resLeftSideMenu.user.id);
-        people.set("team_ID", resLeftSideMenu.user.teamId);
+        people.set("team_ID", resLeftSideMenu.team.id);
         people.set("team_name", resLeftSideMenu.team.name);
         people.set("team_domain", resLeftSideMenu.team.t_domain);
         people.set("name", resLeftSideMenu.user.name);
