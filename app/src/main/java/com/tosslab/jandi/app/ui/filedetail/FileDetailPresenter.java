@@ -235,8 +235,17 @@ public class FileDetailPresenter {
                         (integers, integerWrapper1) -> integers.add(integerWrapper1.getShareEntity()))
                 .subscribe();
 
-        if (!sharedEntityWithoutMe.isEmpty()) {
-            view.initUnShareListDialog(sharedEntityWithoutMe);
+        EntityManager entityManager = EntityManager.getInstance();
+        final List<FormattedEntity> sharedEntities = entityManager.retrieveGivenEntities(sharedEntityWithoutMe);
+        List<FormattedEntity> unjoinedChannels = entityManager.getUnjoinedChannels();
+        for (FormattedEntity unjoinedEntity : unjoinedChannels) {
+            if(unjoinedEntity.hasGivenIds(sharedEntityWithoutMe)) {
+                sharedEntities.add(unjoinedEntity);
+            }
+        }
+
+        if (!sharedEntities.isEmpty()) {
+            view.initUnShareListDialog(sharedEntities);
         } else {
             view.showErrorToast(activity.getString(R.string.err_file_has_not_been_shared));
         }
@@ -615,7 +624,7 @@ public class FileDetailPresenter {
 
         void initShareListDialog(List<FormattedEntity> unSharedEntities);
 
-        void initUnShareListDialog(List<Integer> shareEntitiesIds);
+        void initUnShareListDialog(List<FormattedEntity> sharedEntities);
 
         void onShareMessageSucceed(int entityIdToBeShared, ResMessages.FileMessage fileMessage);
 

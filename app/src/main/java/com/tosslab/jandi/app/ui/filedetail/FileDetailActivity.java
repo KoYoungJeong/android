@@ -512,7 +512,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     }
 
     @Override
-    public void initUnShareListDialog(List<Integer> shareEntitiesIds) {
+    public void initUnShareListDialog(List<FormattedEntity> sharedEntities) {
         /**
          * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
          */
@@ -524,7 +524,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         final AlertDialog entitySelectDialog = dialog.show();
 
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-        final List<FormattedEntity> sharedEntities = entityManager.retrieveGivenEntities(shareEntitiesIds);
         final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, sharedEntities);
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
