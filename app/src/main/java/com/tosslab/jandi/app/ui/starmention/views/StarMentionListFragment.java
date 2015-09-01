@@ -80,6 +80,18 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
         lvStarMention.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         starMentionListAdapter = new StarMentionListAdapter();
         starMentionListAdapter.setListType(listType);
+        starMentionListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                if (starMentionListAdapter.getItemCount() == 0) {
+                    lvStarMention.setVisibility(View.GONE);
+                    llEmptyListStarMention.setVisibility(View.VISIBLE);
+                } else {
+                    lvStarMention.setVisibility(View.VISIBLE);
+                    llEmptyListStarMention.setVisibility(View.GONE);
+                }
+            }
+        });
         lvStarMention.setAdapter(starMentionListAdapter);
         loadStarMentionList();
         setOnItemClickListener();
@@ -92,20 +104,13 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
         starMentionListPresentor.addStarMentionMessagesToList(listType);
     }
 
-    private void notifyViewStatus() {
-        if (starMentionListPresentor.isEmpty()) {
-            lvStarMention.setVisibility(View.GONE);
-            llEmptyListStarMention.setVisibility(View.VISIBLE);
-            if (listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
-                tvNoContent.setText(R.string.jandi_mention_no_mentions);
-            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL)) {
-                tvNoContent.setText(R.string.jandi_starred_no_all);
-            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
-                tvNoContent.setText(R.string.jandi_starred_no_file);
-            }
-        } else {
-            lvStarMention.setVisibility(View.VISIBLE);
-            llEmptyListStarMention.setVisibility(View.GONE);
+    private void initNoContentMessage() {
+        if (listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
+            tvNoContent.setText(R.string.jandi_mention_no_mentions);
+        } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL)) {
+            tvNoContent.setText(R.string.jandi_starred_no_all);
+        } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
+            tvNoContent.setText(R.string.jandi_starred_no_file);
         }
     }
 
@@ -113,7 +118,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     @UiThread
     public void onAddAndShowList(List<StarMentionVO> starMentionMessageList) {
         starMentionListAdapter.addStarMentionList(starMentionMessageList);
-        notifyViewStatus();
+        initNoContentMessage();
     }
 
     public void setOnItemClickListener() {
