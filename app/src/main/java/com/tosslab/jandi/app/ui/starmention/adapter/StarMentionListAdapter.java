@@ -130,6 +130,18 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
         return starMentionList.remove(position);
     }
 
+    public boolean deleteMessage(int messageId) {
+        int size = starMentionList.size();
+        for (int idx = 0; idx < size; idx++) {
+            if (starMentionList.get(idx).getMessageId() == messageId) {
+                starMentionList.remove(idx);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private enum MoreState {
         Idle, Loading, NoMore
     }

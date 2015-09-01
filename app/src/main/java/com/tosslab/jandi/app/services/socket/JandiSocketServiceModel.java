@@ -141,9 +141,13 @@ public class JandiSocketServiceModel {
 
     public void refreshFileComment(Object object) {
         try {
-            SocketFileEvent socketFileEvent =
+            SocketFileCommentEvent socketFileEvent =
                     objectMapper.readValue(object.toString(), SocketFileCommentEvent.class);
-            postEvent(new FileCommentRefreshEvent(socketFileEvent.getFile().getId()));
+            postEvent(
+                    new FileCommentRefreshEvent(socketFileEvent.getEvent(),
+                            socketFileEvent.getFile().getId(),
+                            socketFileEvent.getComment().getId()
+                    ));
         } catch (IOException e) {
             e.printStackTrace();
         }

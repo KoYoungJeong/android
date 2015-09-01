@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.services.socket.to;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.util.List;
@@ -15,6 +13,7 @@ import java.util.List;
 public class SocketMessageEvent {
     private String event;
     private String messageType;
+    private int messageId;
 
     private MessageRoom room;
     private int writer;
@@ -79,6 +78,14 @@ public class SocketMessageEvent {
                 ", rooms=" + rooms +
                 ", comment=" + comment +
                 '}';
+    }
+
+    public int getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(int messageId) {
+        this.messageId = messageId;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

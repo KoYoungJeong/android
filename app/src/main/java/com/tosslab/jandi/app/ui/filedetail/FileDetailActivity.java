@@ -592,7 +592,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     }
 
     public void onEvent(FileCommentRefreshEvent event) {
-        if (fileId == event.getId()) {
+        if (fileId == event.getFileId()) {
             fileDetailPresenter.getFileDetail(fileId, false, false, -1);
         }
     }
