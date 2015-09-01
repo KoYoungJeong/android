@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -250,5 +251,10 @@ public class InternalWebActivity extends AppCompatActivity {
             internalWebPresenter.zendeskCookieRemove(getApplicationContext());
         }
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
     }
 }

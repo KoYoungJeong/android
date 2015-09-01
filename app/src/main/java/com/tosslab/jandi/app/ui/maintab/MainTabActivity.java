@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -424,4 +425,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                         .build());
     }
 
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
+    }
 }

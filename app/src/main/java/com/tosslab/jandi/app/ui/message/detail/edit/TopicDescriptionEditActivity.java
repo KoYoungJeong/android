@@ -4,6 +4,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -129,4 +130,8 @@ public class TopicDescriptionEditActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
+    }
 }

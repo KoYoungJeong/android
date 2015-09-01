@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Menu;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -184,5 +185,10 @@ public class TeamDomainInfoActivity extends AppCompatActivity {
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
     }
 }

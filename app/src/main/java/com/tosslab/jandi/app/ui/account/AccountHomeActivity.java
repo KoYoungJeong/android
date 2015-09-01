@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -366,4 +367,8 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
         }
     }
 
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
+    }
 }

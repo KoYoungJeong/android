@@ -178,6 +178,10 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
         return true;
     }
 
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
+    }
 
     @Override
     protected void onResume() {

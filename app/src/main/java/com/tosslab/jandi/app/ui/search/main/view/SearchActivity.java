@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
@@ -391,5 +392,10 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
 
     public interface OnSearchText {
         String getSearchText();
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
     }
 }

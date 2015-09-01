@@ -87,6 +87,11 @@ public class ImageAlbumActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
+    }
+
     @OptionsItem(R.id.action_select_picture)
     void onSelectPicture() {
 
