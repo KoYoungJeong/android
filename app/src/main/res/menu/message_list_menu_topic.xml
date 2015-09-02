@@ -4,7 +4,7 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_entity_more"
-        android:icon="@drawable/jandi_icon_detail"
+        android:icon="@drawable/actionbar_icon_menu"
         android:showAsAction="always"
         android:title="@string/jandi_tab_more"
         app:showAsAction="always"/>

@@ -38,7 +38,7 @@
         android:layout_marginLeft="9dp"
         android:layout_marginRight="9dp"
         android:layout_marginTop="30dp"
-        android:background="@drawable/file_name">
+        android:background="@drawable/coachmark_img_filename">
 
         <LinearLayout
             android:layout_width="120dp"
@@ -177,7 +177,7 @@
             android:layout_height="59dp"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
-            android:src="@drawable/icon_check_btn" />
+            android:src="@drawable/coachmark_btn_check" />
 
     </LinearLayout>
 

@@ -102,7 +102,7 @@ public class SignUpVerifyActivity extends AppCompatActivity implements SignUpVer
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
         actionBar.setTitle(getString(R.string.jandi_signup_verify_title));
     }
 

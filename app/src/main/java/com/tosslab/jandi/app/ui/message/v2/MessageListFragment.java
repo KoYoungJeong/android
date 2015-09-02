@@ -603,10 +603,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (activity.getSupportActionBar() == null) {
             Toolbar toolbar = (Toolbar) activity.findViewById(R.id.layout_search_bar);
             activity.setSupportActionBar(toolbar);
+            toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
         }
 
         ActionBar actionBar = activity.getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tosslab.jandi.app.utils;
+package com.tosslab.jandi.app.views;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -359,10 +359,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
         canvas.drawRect(lineLeft, height - indicatorHeight, lineRight, height, rectPaint);
 
-        // draw underline
-
-        rectPaint.setColor(underlineColor);
-        canvas.drawRect(0, height - underlineHeight, tabsContainer.getWidth(), height, rectPaint);
+        // draw underline - useless(20150902)
+        // rectPaint.setColor(underlineColor);
+        // canvas.drawRect(0, height - underlineHeight, tabsContainer.getWidth(), height, rectPaint);
 
         // draw divider
 

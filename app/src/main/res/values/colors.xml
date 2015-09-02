@@ -8,7 +8,7 @@
 
     <color name="jandi_background_highlight">#FFF2FBFF</color>
     <color name="jandi_background_default">#FFF1F4F8</color>
-    <color name="jandi_tab_sliding_indicator">@color/jandi_accent_color</color>
+    <color name="jandi_tab_sliding_indicator">@color/white</color>
 
     <color name="jandi_disable_user_color">#D7D7D7</color>
     <color name="jandi_transparent_white_75p">#DDFFFFFF</color>
@@ -74,8 +74,9 @@
     <color name="jandi_sign_in_button_tab">#082a3b</color>
     <color name="jandi_sign_in_under_line">#000000</color>
     <!-- Main Tab -->
-    <color name="jandi_tab_background">@color/white</color>
-    <color name="jandi_tab_text">#1a9b6a</color>
+    <color name="jandi_tab_background">@color/jandi_primary_color</color>
+    <color name="jandi_tab_text_active">@color/white</color>
+    <color name="jandi_tab_text_inactive">#FF496c82</color>
     <color name="jandi_tab_indicator">#a3d7c3</color>
     <color name="jandi_tab_underline">#e5e5e5</color>
     <color name="jandi_entities_divider">#E5E5E5</color>
