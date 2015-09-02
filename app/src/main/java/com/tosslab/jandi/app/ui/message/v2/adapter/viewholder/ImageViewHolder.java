@@ -165,12 +165,20 @@ public class ImageViewHolder implements BodyViewHolder {
                     } else {
 
                         // small 은 80 x 80 사이즈가 로딩됨 -> medium 으로 로딩
-                        String mediumThumb =
-                                BitmapUtil.getThumbnailUrlOrOriginal(
-                                        fileContent, BitmapUtil.Thumbnails.MEDIUM);
+
+                        String localFilePath = BitmapUtil.getLocalFilePath(fileMessage.id);
+
+
+                        String thumbPath;
+                        if (!TextUtils.isEmpty(localFilePath)) {
+                            thumbPath = localFilePath;
+                        } else {
+                            thumbPath = BitmapUtil.getThumbnailUrlOrOriginal(
+                                    fileContent, BitmapUtil.Thumbnails.LARGE);
+                        }
 
                         Glide.with(fileImageView.getContext())
-                                .load(mediumThumb)
+                                .load(thumbPath)
                                 .placeholder(R.drawable.jandi_fl_icon_img)
                                 .error(R.drawable.jandi_fl_icon_img)
                                 .crossFade()
