@@ -12,7 +12,7 @@
         android:id="@+id/iv_unjoin_topic_desc_icon"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:src="@drawable/jandi_topic_icon"/>
+        android:src="@drawable/topiclist_icon_topic"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -63,7 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:scaleType="centerInside"
-                android:src="@drawable/jandi_icon_modal_member"/>
+                android:src="@drawable/modal_icon_member"/>
 
             <TextView
                 android:id="@+id/tv_unjoin_topic_desc_member_count"

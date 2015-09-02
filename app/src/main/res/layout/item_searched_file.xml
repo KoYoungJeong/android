@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/jandi_file_search_item_type_icon_margin_left"
-        android:src="@drawable/jandi_fl_icon_txt" />
+        android:src="@drawable/file_icon_txt" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -54,7 +54,7 @@
             android:layout_marginLeft="3dp"
             android:layout_toRightOf="@+id/txt_searched_file_type"
             android:scaleType="centerInside"
-            android:src="@drawable/icon_comment" />
+            android:src="@drawable/file_icon_comment" />
 
         <TextView
             android:id="@+id/txt_searched_file_type_comment"
@@ -64,7 +64,7 @@
             android:layout_marginLeft="3dp"
             android:layout_marginTop="@dimen/jandi_file_search_item_text_margin"
             android:layout_toRightOf="@+id/img_searched_file_type_comment"
-            android:src="@drawable/icon_comment"
+            android:src="@drawable/file_icon_comment"
             android:text="3"
             android:textColor="@color/jandi_file_search_item_type_text"
             android:textSize="@dimen/jandi_file_search_item_date_text" />

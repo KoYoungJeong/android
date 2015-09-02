@@ -17,7 +17,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="17dp"
-        android:src="@drawable/jandi_topic_icon"/>
+        android:src="@drawable/topiclist_icon_topic"/>
 
     <ImageView
         android:id="@+id/img_entity_listitem_fav"
@@ -86,7 +86,7 @@
             android:layout_alignTop="@+id/img_entity_listitem_line_through"
             android:layout_toRightOf="@+id/img_entity_listitem_line_through"
             android:scaleType="centerInside"
-            android:src="@drawable/alert_disabled_members"/>
+            android:src="@drawable/alert_icon_warning"/>
     </RelativeLayout>
 
     <TextView
@@ -97,7 +97,7 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:layout_marginRight="16dp"
-        android:background="@drawable/topic_unread_bagde"
+        android:background="@drawable/topiclist_unread_bagde"
         android:gravity="center"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"

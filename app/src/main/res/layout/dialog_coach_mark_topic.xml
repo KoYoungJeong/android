@@ -37,7 +37,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="-16dp"
         android:layout_marginTop="12dp"
-        android:src="@drawable/coachmark_img_detail" />
+        android:src="@drawable/coachmark_img_file" />
 
     <TextView
         android:layout_width="90dp"
@@ -62,7 +62,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginRight="103dp"
         android:layout_marginTop="-16dp"
-        android:src="@drawable/icon_topic_messege_guide" />
+        android:src="@drawable/coachmark_img_messege" />
 
     <TextView
         android:layout_width="115dp"
@@ -128,7 +128,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="-13dp"
         android:layout_marginLeft="1.2dp"
-        android:src="@drawable/icon_topic_upload_guide" />
+        android:src="@drawable/coachmark_img_upload" />
 
     <TextView
         android:layout_width="100dp"
@@ -153,7 +153,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="-15.1dp"
         android:layout_marginRight="97.6dp"
-        android:src="@drawable/icon_topic_sticker_guide" />
+        android:src="@drawable/coachmark_img_sticker" />
 
     <TextView
         android:layout_width="100dp"

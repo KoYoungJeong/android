@@ -156,8 +156,8 @@ public class FileHeadManager {
         FormattedEntity writer = EntityManager.getInstance().getEntityById(fileMessage.writerId);
         String profileUrl = writer.getUserSmallProfileUrl();
         Ion.with(imageViewUserProfile)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
+                .placeholder(R.drawable.profile_img)
+                .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
                 .load(profileUrl);
         String userName = writer.getName();

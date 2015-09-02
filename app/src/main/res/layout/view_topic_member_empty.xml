@@ -10,7 +10,7 @@
         android:id="@+id/img_chat_choose_member_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/help_invite_members" />
+        android:src="@drawable/img_invite_members" />
 
     <TextView
         android:layout_width="wrap_content"

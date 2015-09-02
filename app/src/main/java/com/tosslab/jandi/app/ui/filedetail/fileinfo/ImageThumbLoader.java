@@ -101,7 +101,7 @@ public class ImageThumbLoader implements FileThumbLoader {
                     imageViewPhotoFile.setImageResource(R.drawable.jandi_down_placeholder_dropbox);
                     break;
                 default:
-                    imageViewPhotoFile.setImageResource(R.drawable.jandi_down_img_disable);
+                    imageViewPhotoFile.setImageResource(R.drawable.file_down_img_disable);
                     break;
             }
         }
@@ -112,7 +112,7 @@ public class ImageThumbLoader implements FileThumbLoader {
             Ion.with(imageViewPhotoFile)
                     .fitCenter()
                     .placeholder(R.drawable.jandi_down_placeholder_img)
-                    .error(R.drawable.jandi_down_img_disable)
+                    .error(R.drawable.file_down_img_disable)
                     .crossfade(true)
                     .load(url);
             return;
@@ -131,7 +131,7 @@ public class ImageThumbLoader implements FileThumbLoader {
         Glide.with(context)
                 .load(url)
                 .placeholder(R.drawable.jandi_down_placeholder_img)
-                .error(R.drawable.jandi_down_img_disable)
+                .error(R.drawable.file_down_img_disable)
                 .animate(view -> {
                     view.setAlpha(0.0f);
                     view.animate()

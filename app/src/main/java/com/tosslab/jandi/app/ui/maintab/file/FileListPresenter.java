@@ -213,9 +213,9 @@ public class FileListPresenter {
             }
         } else {
             if (context instanceof SearchActivity) {
-                rightDrawable = textVew.getResources().getDrawable(R.drawable.jandi_arrow_down);
+                rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_down);
             } else {
-                rightDrawable = textVew.getResources().getDrawable(R.drawable.jandi_arrow_down_gray);
+                rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_down_gray);
             }
             ((View) textVew.getParent()).setBackgroundColor(Color.TRANSPARENT);
         }

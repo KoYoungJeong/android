@@ -18,7 +18,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
-            android:background="@drawable/icon_topiclist_folder"
+            android:background="@drawable/topiclist_icon_folder"
             android:gravity="center"
             android:text="1"
             android:textColor="#a6a6a6"
@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:src="@drawable/topic_unread_bagde" />
+                android:src="@drawable/topiclist_unread_bagde" />
 
             <TextView
                 android:id="@+id/tv_folder_listitem_badge"
@@ -81,7 +81,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
             android:clickable="true"
-            android:src="@drawable/icon_folder_setting" />
+            android:src="@drawable/topiclist_icon_folder_setting" />
 
         <ImageView
             android:id="@+id/iv_folder_default_underline"

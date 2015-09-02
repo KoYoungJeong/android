@@ -57,26 +57,26 @@ public class FileExtensionCheck {
         switch (extValue) {
 
             case IMAGE:
-                return R.drawable.jandi_fl_icon_img;
+                return R.drawable.file_icon_img;
             case VIDEO:
-                return R.drawable.jandi_fl_icon_video;
+                return R.drawable.file_icon_video;
             case AUDIO:
-                return R.drawable.jandi_fl_icon_audio;
+                return R.drawable.file_icon_audio;
             case PDF:
-                return R.drawable.jandi_fl_icon_pdf;
+                return R.drawable.file_icon_pdf;
             case TXT:
-                return R.drawable.jandi_fl_icon_txt;
+                return R.drawable.file_icon_txt;
             case HWP:
-                return R.drawable.jandi_fl_icon_hwp;
+                return R.drawable.file_icon_hwp;
             case EXEL:
-                return R.drawable.jandi_fl_icon_exel;
+                return R.drawable.file_icon_exel;
             case DOC:
-                return R.drawable.jandi_fl_icon_txt;
+                return R.drawable.file_icon_txt;
             case PPT:
-                return R.drawable.jandi_fl_icon_ppt;
+                return R.drawable.file_icon_ppt;
             default:
             case ETC:
-                return R.drawable.jandi_fl_icon_etc;
+                return R.drawable.file_icon_etc;
 
         }
     }

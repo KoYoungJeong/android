@@ -147,8 +147,8 @@ public class UserSelectorImpl implements UserSelector {
                 holder.ivIcon.setImageResource(R.drawable.icon_search_all);
             } else {
                 Ion.with(holder.ivIcon)
-                        .placeholder(R.drawable.jandi_profile_comment)
-                        .error(R.drawable.jandi_profile_comment)
+                        .placeholder(R.drawable.profile_img_comment)
+                        .error(R.drawable.profile_img_comment)
                         .fitCenter()
                         .crossfade(true)
                         .transform(new IonCircleTransform())

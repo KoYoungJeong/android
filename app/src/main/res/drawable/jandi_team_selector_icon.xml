@@ -2,5 +2,5 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true"  android:drawable="@drawable/jandi_icon_teamlist_active"/>
     <item android:state_selected="true" android:drawable="@drawable/jandi_icon_teamlist_active"/>
-    <item android:drawable="@drawable/jandi_icon_teamlist_inactive" />
+    <item android:drawable="@drawable/account_icon_teamlist_inactive" />
 </selector>

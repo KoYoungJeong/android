@@ -105,8 +105,8 @@ public class MainMoreFragment extends Fragment {
         if (mEntityManager != null) {
             FormattedEntity me = mEntityManager.getMe();
             Ion.with(profileIconView.getImageView())
-                    .placeholder(R.drawable.jandi_profile)
-                    .error(R.drawable.jandi_profile)
+                    .placeholder(R.drawable.profile_img)
+                    .error(R.drawable.profile_img)
                     .transform(new IonCircleTransform())
                     .load(me.getUserSmallProfileUrl());
         }

@@ -12,7 +12,7 @@
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
         android:paddingTop="24dp"
-        android:src="@drawable/help_diagram" />
+        android:src="@drawable/img_help_diagram" />
 
     <TextView
         android:layout_width="match_parent"

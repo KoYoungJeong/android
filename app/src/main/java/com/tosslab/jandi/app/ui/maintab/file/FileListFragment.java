@@ -664,7 +664,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         headerView.setBackgroundColor(getResources().getColor(R.color.jandi_primary_color));
 
         setHeaderTextViewColor(((ViewGroup) headerView), getResources().getColor(R.color.white));
-        setHeaderImageViewImage(((ViewGroup) headerView), R.drawable.jandi_arrow_down);
+        setHeaderImageViewImage(((ViewGroup) headerView), R.drawable.file_arrow_down);
 
         final int headerMaxY = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
         final int headerMinY = 0;

@@ -10,7 +10,7 @@
         android:layout_height="24dp"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="16dp"
-        android:src="@drawable/icon_add" />
+        android:src="@drawable/icon_add_folder" />
 
     <TextView
         android:layout_width="wrap_content"

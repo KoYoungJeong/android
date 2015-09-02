@@ -12,7 +12,7 @@
         android:layout_height="24dp"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="16dp"
-        android:src="@drawable/icon_folder" />
+        android:src="@drawable/icon_folder_move" />
 
     <TextView
         android:id="@+id/tv_choose_folder"

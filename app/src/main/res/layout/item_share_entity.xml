@@ -9,7 +9,7 @@
         android:id="@+id/img_share_entity_icon"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:src="@drawable/jandi_icon_channel"
+        android:src="@drawable/topiclist_icon_topic"
         android:layout_margin="10dp"/>
     <TextView
         android:id="@+id/txt_share_entity_name"

@@ -291,7 +291,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
             textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.jandi_arrow_up, 0);
         } else {
             backgroundView.setBackgroundColor(Color.TRANSPARENT);
-            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.jandi_arrow_down, 0);
+            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.file_arrow_down, 0);
 
         }
     }

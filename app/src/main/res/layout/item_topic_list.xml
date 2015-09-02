@@ -32,7 +32,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="19dp"
             android:layout_marginRight="19dp"
-            android:src="@drawable/icon_topic" />
+            android:src="@drawable/topiclist_icon_topic" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -113,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:src="@drawable/topic_unread_bagde" />
+                android:src="@drawable/topiclist_unread_bagde" />
 
             <TextView
                 android:id="@+id/tv_entity_listitem_badge"

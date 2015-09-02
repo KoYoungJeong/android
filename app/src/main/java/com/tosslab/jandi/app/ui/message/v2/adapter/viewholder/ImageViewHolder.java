@@ -78,8 +78,8 @@ public class ImageViewHolder implements BodyViewHolder {
         String profileUrl = entity.getUserLargeProfileUrl();
 
         Ion.with(profileImageView)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
+                .placeholder(R.drawable.profile_img)
+                .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
                 .crossfade(true)
                 .load(profileUrl);
@@ -171,8 +171,8 @@ public class ImageViewHolder implements BodyViewHolder {
 
                         Glide.with(fileImageView.getContext())
                                 .load(mediumThumb)
-                                .placeholder(R.drawable.jandi_fl_icon_img)
-                                .error(R.drawable.jandi_fl_icon_img)
+                                .placeholder(R.drawable.file_icon_img)
+                                .error(R.drawable.file_icon_img)
                                 .crossFade()
                                 .centerCrop()
                                 .into(fileImageView);
@@ -180,7 +180,7 @@ public class ImageViewHolder implements BodyViewHolder {
                                 + fileContent.ext);
                     }
                 } else {
-                    fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
+                    fileImageView.setImageResource(R.drawable.file_icon_img);
                 }
 
                 fileNameTextView.setText(fileContent.title);

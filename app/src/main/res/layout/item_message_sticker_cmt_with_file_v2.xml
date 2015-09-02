@@ -23,7 +23,7 @@
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
             android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-            android:background="@drawable/jandi_profile"/>
+            android:background="@drawable/profile_img"/>
         <!-- 기본 표시 레이어 -->
 
 
@@ -172,7 +172,7 @@
                 android:layout_height="@dimen/jandi_messages_arrow_right_height"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/jandi_icon_comment_arrow"/>
+                android:src="@drawable/icon_comment_arrow"/>
         </RelativeLayout>
 
 

@@ -26,7 +26,7 @@
                 android:id="@+id/iv_announcement_user"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/jandi_profile"/>
+                android:src="@drawable/profile_img"/>
 
             <TextView
                 android:id="@+id/tv_announcement_info"

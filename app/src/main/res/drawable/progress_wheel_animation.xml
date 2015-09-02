@@ -4,74 +4,74 @@
     android:variablePadding="true">
     <item android:duration="50">
         <scale
-            android:drawable="@drawable/jandi_progress_anim_01"
+            android:drawable="@drawable/progress_anim_01"
             android:scaleGravity="center" />
 
     </item>
     <item android:duration="50">
         <scale
-            android:drawable="@drawable/jandi_progress_anim_02"
+            android:drawable="@drawable/progress_anim_02"
             android:scaleGravity="center" />
     </item>
 
     <item android:duration="50">
         <scale
-            android:drawable="@drawable/jandi_progress_anim_03"
+            android:drawable="@drawable/progress_anim_03"
             android:scaleGravity="center" />
     </item>
     <item android:duration="50">
         <scale
-            android:drawable="@drawable/jandi_progress_anim_04"
+            android:drawable="@drawable/progress_anim_04"
             android:scaleGravity="center" />
     </item>
     <item android:duration="50">
         <scale
-            android:drawable="@drawable/jandi_progress_anim_05"
+            android:drawable="@drawable/progress_anim_05"
             android:scaleGravity="center" />
     </item>
     <item android:duration="50">
         <scale
-            android:drawable="@drawable/jandi_progress_anim_05"
+            android:drawable="@drawable/progress_anim_05"
             android:scaleGravity="center" />
     </item>
     <item android:duration="50">
         <scale
-            android:drawable="@drawable/jandi_progress_anim_06"
+            android:drawable="@drawable/progress_anim_06"
             android:scaleGravity="center" />
     </item>
     <item android:duration="50">
         <scale
-            android:drawable="@drawable/jandi_progress_anim_07"
+            android:drawable="@drawable/progress_anim_07"
             android:scaleGravity="center" />
     </item>
     <item android:duration="50">
         <scale
-            android:drawable="@drawable/jandi_progress_anim_08"
+            android:drawable="@drawable/progress_anim_08"
             android:scaleGravity="center" />
     </item>
     <item android:duration="50">
         <scale
-            android:drawable="@drawable/jandi_progress_anim_09"
+            android:drawable="@drawable/progress_anim_09"
             android:scaleGravity="center" />
     </item>
     <item android:duration="50">
         <scale
-            android:drawable="@drawable/jandi_progress_anim_10"
+            android:drawable="@drawable/progress_anim_10"
             android:scaleGravity="center" />
     </item>
     <item android:duration="50">
         <scale
-            android:drawable="@drawable/jandi_progress_anim_11"
+            android:drawable="@drawable/progress_anim_11"
             android:scaleGravity="center" />
     </item>
     <item android:duration="50">
         <scale
-            android:drawable="@drawable/jandi_progress_anim_12"
+            android:drawable="@drawable/progress_anim_12"
             android:scaleGravity="center" />
     </item>
     <item android:duration="50">
         <scale
-            android:drawable="@drawable/jandi_progress_anim_13"
+            android:drawable="@drawable/progress_anim_13"
             android:scaleGravity="center" />
     </item>
 </animation-list>

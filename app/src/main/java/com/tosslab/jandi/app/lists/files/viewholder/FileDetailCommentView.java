@@ -74,8 +74,8 @@ public class FileDetailCommentView implements CommentViewHolder {
         }
 
         Ion.with(imageViewCommentUserProfile)
-                .placeholder(R.drawable.jandi_profile_comment)
-                .error(R.drawable.jandi_profile_comment)
+                .placeholder(R.drawable.profile_img_comment)
+                .error(R.drawable.profile_img_comment)
                 .transform(new IonCircleTransform())
                 .load(profileUrl);
 

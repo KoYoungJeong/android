@@ -74,7 +74,7 @@
                     <View
                         android:layout_width="15dp"
                         android:layout_height="15dp"
-                        android:background="@drawable/icon_warning"/>
+                        android:background="@drawable/signin_icon_error"/>
 
                     <TextView
                         android:id="@+id/tv_invalidate_code"

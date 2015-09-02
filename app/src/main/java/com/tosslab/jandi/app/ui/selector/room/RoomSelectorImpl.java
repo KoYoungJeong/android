@@ -206,8 +206,8 @@ public class RoomSelectorImpl implements RoomSelector {
                 holder.tvName.setText(R.string.jandi_file_category_everywhere);
             } else if (item.isUser()) {
                 Ion.with(holder.ivIcon)
-                        .placeholder(R.drawable.jandi_profile_comment)
-                        .error(R.drawable.jandi_profile_comment)
+                        .placeholder(R.drawable.profile_img_comment)
+                        .error(R.drawable.profile_img_comment)
                         .fitCenter()
                         .transform(new IonCircleTransform())
                         .crossfade(true)
@@ -216,16 +216,16 @@ public class RoomSelectorImpl implements RoomSelector {
                 holder.tvName.setText(item.getName());
             } else if (item.isPublicTopic()) {
                 if (item.isStarred) {
-                    holder.ivIcon.setImageResource(R.drawable.icon_topic_f);
+                    holder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic_fav);
                 } else {
-                    holder.ivIcon.setImageResource(R.drawable.icon_topic);
+                    holder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic);
                 }
                 holder.tvName.setText(item.getName());
             } else {
                 if (item.isStarred) {
-                    holder.ivIcon.setImageResource(R.drawable.icon_topic_private_f);
+                    holder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic_private_fav);
                 } else {
-                    holder.ivIcon.setImageResource(R.drawable.icon_topic_private);
+                    holder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic_private);
                 }
                 holder.tvName.setText(item.getName());
             }

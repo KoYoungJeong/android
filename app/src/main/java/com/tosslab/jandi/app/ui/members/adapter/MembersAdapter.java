@@ -81,8 +81,8 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
         }
 
         Ion.with(membersViewHolder.imageViewIcon)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
+                .placeholder(R.drawable.profile_img)
+                .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
                 .load(item.getPhotoUrl());
 

@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="23dp"
                 android:layout_marginTop="23dp"
-                android:background="@drawable/line_or"/>
+                android:background="@drawable/signin_line_or"/>
 
             <TextView
                 style="@style/JandiSignIn.Text"

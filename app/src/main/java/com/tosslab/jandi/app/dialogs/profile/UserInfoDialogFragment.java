@@ -196,8 +196,8 @@ public class UserInfoDialogFragment extends DialogFragment {
         txtUserDivision.setText(userDivision);
         txtUserPosition.setText(userPosition);
         Ion.with(imgUserPhoto)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
+                .placeholder(R.drawable.profile_img)
+                .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
                 .load(userProfileUrl);
 
@@ -301,8 +301,8 @@ public class UserInfoDialogFragment extends DialogFragment {
         txtUserDivision.setText(userDivision);
         txtUserPosition.setText(userPosition);
         Ion.with(imgUserPhoto)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
+                .placeholder(R.drawable.profile_img)
+                .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
                 .load(userProfileUrl);
         return mainView;

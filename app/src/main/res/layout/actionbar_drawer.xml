@@ -9,6 +9,6 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/jandi_actionb_drawer_logo"/>
+        android:src="@drawable/jandi_logo_drawer"/>
 
 </LinearLayout>
