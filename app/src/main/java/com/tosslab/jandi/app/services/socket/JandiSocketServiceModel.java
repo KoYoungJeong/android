@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
@@ -40,6 +41,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -376,6 +378,32 @@ public class JandiSocketServiceModel {
                     .getMessageId(), true);
 
             postEvent(new SocketMessageStarEvent(socketFileEvent.getStarredInfo().getMessageId(), true));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //todo
+    public void refreshTopicFolder(Object object) {
+        try {
+            SocketTopicFolderEvent socketTopicFolderEvent
+                    = objectMapper.readValue(object.toString(), SocketTopicFolderEvent.class);
+
+            ResFolder resFolder = new ResFolder();
+
+            if (socketTopicFolderEvent.getEvent().equals("folder_create")) {
+
+            } else if (socketTopicFolderEvent.getEvent().equals("folder_update")) {
+
+            } else if (socketTopicFolderEvent.getEvent().equals("folder_deleted")) {
+
+            } else if (socketTopicFolderEvent.getEvent().equals("folder_item_created")) {
+
+            } else if (socketTopicFolderEvent.getEvent().equals("folder_item_deleted")) {
+
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

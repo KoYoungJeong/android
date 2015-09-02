@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.network.models.ReqAccountVerification;
 import com.tosslab.jandi.app.network.models.ReqChangePassword;
 import com.tosslab.jandi.app.network.models.ReqConfirmEmail;
 import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
+import com.tosslab.jandi.app.network.models.ReqCreateFolder;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
@@ -44,6 +45,7 @@ import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
+import com.tosslab.jandi.app.network.models.ReqRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
@@ -54,6 +56,7 @@ import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
+import com.tosslab.jandi.app.network.models.ReqUpdateFolder;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
@@ -65,14 +68,17 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
+import com.tosslab.jandi.app.network.models.ResCreateFolder;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
+import com.tosslab.jandi.app.network.models.ResFolder;
+import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
-import com.tosslab.jandi.app.network.models.ResRegistStarred;
+import com.tosslab.jandi.app.network.models.ResRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
@@ -651,5 +657,40 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     @Override
     public IExecutor<ResCommon> loadUpdatePlatformStatus(ReqUpdatePlatformStatus reqUpdatePlatformStatus) {
         return () -> authRestApiClient.updatePlatformStatus(reqUpdatePlatformStatus);
+    }
+
+    @Override
+    public IExecutor<ResCreateFolder> loadCreateFolderByTeamApi(int teamId, ReqCreateFolder reqCreateFolder) {
+        return () -> authRestApiClient.createFolderByTeamApi(teamId, reqCreateFolder);
+    }
+
+    @Override
+    public IExecutor<ResCommon> loadDeleteFolderByTeamApi(int teamId, int folderId) {
+        return () -> authRestApiClient.deleteFolderByTeamApi(teamId, folderId);
+    }
+
+    @Override
+    public IExecutor<ResCommon> loadUpdateFolderByTeamApi(int teamId, int folderId, ReqUpdateFolder reqUpdateFolder) {
+        return () -> authRestApiClient.updateFolderByTeamApi(teamId, folderId, reqUpdateFolder);
+    }
+
+    @Override
+    public IExecutor<List<ResFolder>> loadGetFoldersByTeamApi(int teamId) {
+        return () -> authRestApiClient.getFoldersByTeamApi(teamId);
+    }
+
+    @Override
+    public IExecutor<List<ResFolderItem>> loadGetFolderItemsByTeamApi(int teamId) {
+        return () -> authRestApiClient.getFolderItemsByTeamApi(teamId);
+    }
+
+    @Override
+    public IExecutor<ResRegistFolderItem> loadRegistFolderItemByTeamApi(int teamId, int folderId, ReqRegistFolderItem reqRegistFolderItem) {
+        return () -> authRestApiClient.registFolderItemByTeamApi(teamId, folderId, reqRegistFolderItem);
+    }
+
+    @Override
+    public IExecutor<ResCommon> loadDeleteFolderItemByTeamApi(int teamId, int folderId, int itemId) {
+        return () -> authRestApiClient.deleteFolderItemByTeamApi(teamId, folderId, itemId);
     }
 }

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?><!-- NOTE: should use FrameLayout or RelativeLayout for parent of the "@id/container" view (for Android 2.3 compatibility) -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/jandi_entity_item_title_margin_left"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:id="@+id/rl_topic_item_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/iv_shadow_underline"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/folder_shadow"></ImageView>
+
+        <View
+            android:id="@+id/view_entity_listitem_selector"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_topic_selector" />
+
+        <ImageView
+            android:id="@+id/iv_entity_listitem_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="19dp"
+            android:layout_marginRight="19dp"
+            android:src="@drawable/icon_topic" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_marginRight="16dp"
+            android:layout_toLeftOf="@+id/vg_entity_listitem_badge"
+            android:layout_toRightOf="@+id/iv_entity_listitem_icon"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <com.tosslab.jandi.app.views.FixedLinearLayout
+                android:id="@+id/vg_entity_listitem_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_entity_listitem_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:maxWidth="180dp"
+                    android:singleLine="true"
+                    android:text="Topic Name4231412341234123412341234"
+                    android:textColor="@color/jandi_text"
+                    android:textSize="@dimen/jandi_entity_item_title_font"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_entity_listitem_user_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="6dp"
+                    android:maxLines="1"
+                    android:text="(11)"
+                    android:textColor="@color/jandi_text"
+                    android:textSize="@dimen/jandi_entity_item_title_font"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/v_push_off"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/icon_notification_off" />
+            </com.tosslab.jandi.app.views.FixedLinearLayout>
+
+            <TextView
+                android:id="@+id/tv_entity_listitem_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="11dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="Descroption"
+                android:textColor="@color/jandi_text_medium"
+                android:textSize="@dimen/jandi_text_size_small" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_entity_listitem_badge"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true">
+
+
+            <ImageView
+                android:id="@+id/iv_entity_listitem_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/topic_unread_bagde" />
+
+            <TextView
+                android:id="@+id/tv_entity_listitem_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@drawable/jandi_badge_starred"
+                android:gravity="center"
+                android:text="121"
+                android:textColor="@color/jandi_text_white"
+                android:textSize="@dimen/jandi_entity_badge_font"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/iv_default_underline"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="#ffe5e5e5"
+            android:visibility="gone"></ImageView>
+
+        <ImageView
+            android:id="@+id/iv_folder_item_underline"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="62dp"
+            android:background="#ffe5e5e5"></ImageView>
+    </RelativeLayout>
+
+</RelativeLayout>

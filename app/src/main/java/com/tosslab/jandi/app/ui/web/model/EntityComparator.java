@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.maintab.topic.model;
+package com.tosslab.jandi.app.ui.web.model;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 

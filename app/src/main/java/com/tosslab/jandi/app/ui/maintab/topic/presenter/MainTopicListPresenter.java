@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
-import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
+import com.tosslab.jandi.app.ui.maintab.topics.domain.Topic;
 
 import java.util.List;
 

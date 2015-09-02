@@ -15,6 +15,8 @@ import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResChat;
+import com.tosslab.jandi.app.network.models.ResFolderItem;
+import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
@@ -91,6 +93,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             createTable(connectionSource, FileDetail.class);
 
+            createTable(connectionSource, ResFolder.class);
+            createTable(connectionSource, ResFolderItem.class);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -148,6 +153,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             dropTable(connectionSource, ResAnnouncement.class);
 
             dropTable(connectionSource, FileDetail.class);
+
+            dropTable(connectionSource, ResFolder.class);
+            dropTable(connectionSource, ResFolderItem.class);
 
             onCreate(database, connectionSource);
 
@@ -211,6 +219,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), ResAnnouncement.class);
 
         clearTable(getConnectionSource(), FileDetail.class);
+
+        clearTable(getConnectionSource(), ResFolder.class);
+        clearTable(getConnectionSource(), ResFolderItem.class);
 
     }
 

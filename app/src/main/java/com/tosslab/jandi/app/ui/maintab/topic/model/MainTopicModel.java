@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
-import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
+import com.tosslab.jandi.app.ui.maintab.topics.domain.Topic;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
@@ -34,7 +34,6 @@ public class MainTopicModel {
     @Bean
     EntityClientManager entityClientManager;
 
-
     public Observable<Topic> getJoinEntities(List<FormattedEntity> joinedChannels, List<FormattedEntity>
             groups) {
 
@@ -57,7 +56,6 @@ public class MainTopicModel {
         return Observable.from(unjoinedChannels).map(formattedEntity -> {
 
             int creatorId = ((ResLeftSideMenu.Channel) formattedEntity.getEntity()).ch_creatorId;
-
 
             return new Topic.Builder()
                     .entityId(formattedEntity.getId())

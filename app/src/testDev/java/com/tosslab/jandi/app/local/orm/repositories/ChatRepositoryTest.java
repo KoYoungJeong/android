@@ -35,13 +35,11 @@ public class ChatRepositoryTest {
 
         int memberId = AccountRepository.getRepository().getSelectedTeamInfo().getMemberId();
         originChats = RequestApiManager.getInstance().getChatListByChatApi(memberId);
-
     }
 
     @After
     public void tearDown() throws Exception {
         BaseInitUtil.releaseDatabase();
-
     }
 
     @Test
@@ -66,4 +64,5 @@ public class ChatRepositoryTest {
         List<ResChat> savedChatList = repository.getChats();
         assertThat(originChats.size() - 1, is(equalTo(savedChatList.size())));
     }
+
 }

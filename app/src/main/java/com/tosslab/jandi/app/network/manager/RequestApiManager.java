@@ -34,6 +34,7 @@ import com.tosslab.jandi.app.network.models.ReqAccountVerification;
 import com.tosslab.jandi.app.network.models.ReqChangePassword;
 import com.tosslab.jandi.app.network.models.ReqConfirmEmail;
 import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
+import com.tosslab.jandi.app.network.models.ReqCreateFolder;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
@@ -46,6 +47,7 @@ import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
+import com.tosslab.jandi.app.network.models.ReqRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
@@ -56,6 +58,7 @@ import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
+import com.tosslab.jandi.app.network.models.ReqUpdateFolder;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
@@ -67,14 +70,17 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
+import com.tosslab.jandi.app.network.models.ResCreateFolder;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
+import com.tosslab.jandi.app.network.models.ResFolder;
+import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
-import com.tosslab.jandi.app.network.models.ResRegistStarred;
+import com.tosslab.jandi.app.network.models.ResRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
@@ -625,5 +631,40 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     @Override
     public ResCommon updatePlatformStatus(ReqUpdatePlatformStatus reqUpdatePlatformStatus) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadUpdatePlatformStatus(reqUpdatePlatformStatus));
+    }
+
+    @Override
+    public ResCreateFolder createFolderByTeamApi(int teamId, ReqCreateFolder reqCreateFolder) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadCreateFolderByTeamApi(teamId, reqCreateFolder));
+    }
+
+    @Override
+    public ResCommon deleteFolderByTeamApi(int teamId, int folderId) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadDeleteFolderByTeamApi(teamId, folderId));
+    }
+
+    @Override
+    public ResCommon updateFolderByTeamApi(int teamId, int folderId, ReqUpdateFolder reqUpdateFolder) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadUpdateFolderByTeamApi(teamId, folderId, reqUpdateFolder));
+    }
+
+    @Override
+    public List<ResFolder> getFoldersByTeamApi(int teamId) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadGetFoldersByTeamApi(teamId));
+    }
+
+    @Override
+    public List<ResFolderItem> getFolderItemsByTeamApi(int teamId) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadGetFolderItemsByTeamApi(teamId));
+    }
+
+    @Override
+    public ResRegistFolderItem registFolderItemByTeamApi(int teamId, int folderId, ReqRegistFolderItem reqRegistFolderItem) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadRegistFolderItemByTeamApi(teamId, folderId, reqRegistFolderItem));
+    }
+
+    @Override
+    public ResCommon deleteFolderItemByTeamApi(int teamId, int folderId, int itemId) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadDeleteFolderItemByTeamApi(teamId, folderId, itemId));
     }
 }

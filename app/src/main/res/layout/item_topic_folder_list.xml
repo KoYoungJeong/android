@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?><!-- NOTE: should use FrameLayout or RelativeLayout for parent of the "@id/container" view (for Android 2.3 compatibility) -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:id="@+id/rl_folder_container"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground">
+
+        <TextView
+            android:id="@+id/tv_topic_cnt"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:background="@drawable/icon_topiclist_folder"
+            android:gravity="center"
+            android:text="1"
+            android:textColor="#a6a6a6"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_topic_folder_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="16dp"
+            android:layout_toRightOf="@id/tv_topic_cnt"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:maxWidth="200dp"
+            android:text="Design Topic"
+            android:textColor="#a6a6a6" />
+
+        <RelativeLayout
+            android:id="@+id/rl_folder_listitem_badge"
+            android:layout_width="29dp"
+            android:layout_height="56dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/tv_topic_folder_title">
+
+
+            <ImageView
+                android:id="@+id/iv_folder_listitem_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/topic_unread_bagde" />
+
+            <TextView
+                android:id="@+id/tv_folder_listitem_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@drawable/jandi_badge_starred"
+                android:gravity="center"
+                android:text="121"
+                android:textColor="@color/jandi_text_white"
+                android:textSize="@dimen/jandi_entity_badge_font"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_folder_setting"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_folder_setting"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            android:src="@drawable/icon_folder_setting" />
+
+        <ImageView
+            android:id="@+id/iv_folder_default_underline"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="#ffe5e5e5"></ImageView>
+
+    </RelativeLayout>
+
+
+</FrameLayout>

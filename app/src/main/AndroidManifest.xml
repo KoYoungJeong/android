@@ -14,7 +14,7 @@
         tools:replace="android:icon">
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version"/>
+            android:value="@integer/google_play_services_version" />
 
         <meta-data
             android:name="com.mixpanel.android.MPConfig.FlushInterval"
@@ -272,6 +272,32 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.maintab.topics.views.choosefolderlist.TopicFolderChooseActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="Move topic"
+            android:screenOrientation="portrait">
+
+            <intent-filter>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+
+        <activity
+            android:name=".ui.maintab.topics.views.joinabletopiclist.JoinableTopicListActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="Join topic"
+            android:screenOrientation="portrait">
+
+            <intent-filter>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
 
         <service android:name=".services.socket.JandiSocketService" />
 

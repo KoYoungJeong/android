@@ -11,6 +11,7 @@ import android.widget.Button;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
+import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -38,6 +39,9 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
     @FragmentArg
     int entityId;
+
+    @FragmentArg
+    int folderId;
 
     @ViewById(R.id.btn_entity_popup_starred)
     Button starredButton;
@@ -226,5 +230,14 @@ public class EntityMenuDialogFragment extends DialogFragment {
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
+    }
+
+    @Click(R.id.btn_entity_popup_move_folder)
+    void onMoveFolderClick() {
+        TopicFolderMoveCallEvent topicFolderMoveCallEvent = new TopicFolderMoveCallEvent();
+        topicFolderMoveCallEvent.setTopicId(entityId);
+        topicFolderMoveCallEvent.setFolderId(folderId);
+        EventBus.getDefault().post(topicFolderMoveCallEvent);
+        dismiss();
     }
 }

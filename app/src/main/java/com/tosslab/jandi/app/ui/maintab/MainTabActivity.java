@@ -150,7 +150,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                     case 2:
                         TutorialCoachMarkUtil.showCoachMarkFileListIfNotShown(MainTabActivity.this);
                         break;
-
                     case 3:
                         TutorialCoachMarkUtil.showCoachMarkMoreIfNotShown(MainTabActivity.this);
                         break;

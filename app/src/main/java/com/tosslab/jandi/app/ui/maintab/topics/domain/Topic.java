@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.maintab.topic.domain;
+package com.tosslab.jandi.app.ui.maintab.topics.domain;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 7..

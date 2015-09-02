@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.MessageManipulator_;
-import com.tosslab.jandi.app.ui.maintab.topic.model.EntityComparator;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;

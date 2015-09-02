@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ReadyMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
+import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
@@ -68,6 +69,7 @@ public class BaseInitUtil {
         SendMessageRepository.release();
         ReadyMessageRepository.release();
         AnnouncementRepository.release();
+        TopicFolderRepository.release();
         DaoManager.clearCache();
         for (int idx = 0; idx < 10; ++idx) {
             OpenHelperManager.releaseHelper();
