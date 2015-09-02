@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.RecentSticker;
 import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
+import com.tosslab.jandi.app.local.orm.domain.UploadedFileInfo;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResChat;
@@ -26,7 +27,7 @@ import java.sql.SQLException;
  */
 public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -91,6 +92,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             createTable(connectionSource, FileDetail.class);
 
+            createTable(connectionSource, UploadedFileInfo.class);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -98,6 +101,18 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
+
+        if (oldVersion == 1) {
+            if (newVersion == 2) {
+                try {
+                    createTable(connectionSource, UploadedFileInfo.class);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+        }
+
         try {
             // ResAccountInfo.java
             dropTable(connectionSource, ResAccountInfo.ThumbnailInfo.class);
@@ -148,6 +163,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             dropTable(connectionSource, ResAnnouncement.class);
 
             dropTable(connectionSource, FileDetail.class);
+
+            dropTable(connectionSource, UploadedFileInfo.class);
 
             onCreate(database, connectionSource);
 

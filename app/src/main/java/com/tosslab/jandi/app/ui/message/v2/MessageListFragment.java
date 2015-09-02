@@ -38,6 +38,7 @@ import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
+import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
@@ -80,9 +81,9 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
+import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel_;
@@ -1181,6 +1182,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         deleteTopic();
     }
 
+    public void onEvent(FileUploadFinishEvent event) {
+        messageListPresenter.justRefresh();
+    }
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
 
