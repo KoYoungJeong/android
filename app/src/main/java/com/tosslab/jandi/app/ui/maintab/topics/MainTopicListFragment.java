@@ -318,6 +318,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     }
 
     public void onEvent(SocketMessageEvent event) {
+
         mainTopicListPresenter.onRefreshList();
     }
 

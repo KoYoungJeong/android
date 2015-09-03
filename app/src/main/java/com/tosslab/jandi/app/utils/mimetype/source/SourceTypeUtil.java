@@ -90,7 +90,8 @@ public class SourceTypeUtil {
     public static MimeTypeUtil.SourceType getSourceType(String sourceUrl) {
 
         for (MimeTypeUtil.SourceType sourceType : MimeTypeUtil.SourceType.values()) {
-            if (TextUtils.equals(sourceType.name().toLowerCase(), sourceUrl.toLowerCase())) {
+            if (!TextUtils.isEmpty(sourceUrl)
+                    && TextUtils.equals(sourceType.name().toLowerCase(), sourceUrl.toLowerCase())) {
                 return sourceType;
             }
         }

@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
+import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
@@ -66,8 +67,10 @@ public class JandiSocketServiceModel {
     private final Context context;
     private final ObjectMapper objectMapper;
     private PublishSubject<SocketRoomMarkerEvent> markerPublishSubject;
+    private PublishSubject<SocketMessageEvent> messagePublishSubject;
     private Subscription markerSubscribe;
     private EntitySocketModel entitySocketModel;
+    private Subscription messageSubscribe;
 
     public JandiSocketServiceModel(Context context) {
 
@@ -164,6 +167,8 @@ public class JandiSocketServiceModel {
             } else {
                 postEvent(socketMessageEvent);
             }
+
+            messagePublishSubject.onNext(socketMessageEvent);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -325,6 +330,25 @@ public class JandiSocketServiceModel {
     public void stopMarkerObserver() {
         if (markerSubscribe != null && !markerSubscribe.isUnsubscribed()) {
             markerSubscribe.unsubscribe();
+        }
+    }
+
+    public void startMessageObserver() {
+        messagePublishSubject = PublishSubject.create();
+        messageSubscribe = messagePublishSubject
+                .filter(event -> event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId())
+                .throttleWithTimeout(1000 * 3, TimeUnit.MILLISECONDS)
+                .onBackpressureBuffer()
+                .subscribe(event -> {
+                    ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+                    AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+                    postEvent(new MessageOfOtherTeamEvent());
+                }, Throwable::printStackTrace);
+    }
+
+    public void stopMessageObserver() {
+        if (messageSubscribe != null && !messageSubscribe.isUnsubscribed()) {
+            messageSubscribe.unsubscribe();
         }
     }
 

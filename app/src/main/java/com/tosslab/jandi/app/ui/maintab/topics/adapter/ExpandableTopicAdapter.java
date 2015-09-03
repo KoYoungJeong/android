@@ -167,7 +167,7 @@ public class ExpandableTopicAdapter
             holder.tvTitle.setTextColor(0xff154a67);
             holder.ivDefaultUnderline.setVisibility(View.GONE);
         } else {
-            holder.tvTopicCnt.setBackgroundResource(R.drawable.icon_topiclist_folder);
+            holder.tvTopicCnt.setBackgroundResource(R.drawable.topiclist_icon_folder);
             holder.tvTopicCnt.setTextColor(0xffa6a6a6);
             holder.tvTitle.setTextColor(0xffa6a6a6);
             holder.ivDefaultUnderline.setVisibility(View.VISIBLE);

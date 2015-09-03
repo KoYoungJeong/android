@@ -28,7 +28,7 @@
         android:id="@+id/txt_account_home_team_badge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/jandi_badge_starred"
+        android:background="@drawable/topiclist_unread_badge"
         android:gravity="center"
         android:minHeight="24dp"
         android:minWidth="24dp"

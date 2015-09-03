@@ -113,14 +113,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:src="@drawable/topiclist_unread_bagde" />
+                android:src="@drawable/topiclist_unread_badge" />
 
             <TextView
                 android:id="@+id/tv_entity_listitem_badge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:background="@drawable/jandi_badge_starred"
+                android:background="@drawable/topiclist_unread_badge"
                 android:gravity="center"
                 android:text="121"
                 android:textColor="@color/jandi_text_white"

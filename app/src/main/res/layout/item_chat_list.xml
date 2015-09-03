@@ -97,7 +97,7 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:layout_marginRight="16dp"
-        android:background="@drawable/topiclist_unread_bagde"
+        android:background="@drawable/topiclist_unread_badge"
         android:gravity="center"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"

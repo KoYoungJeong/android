@@ -106,6 +106,7 @@ public class JandiSocketService extends Service {
         }
 
         jandiSocketServiceModel.startMarkerObserver();
+        jandiSocketServiceModel.startMessageObserver();
 
         initEventMapper();
 
@@ -281,6 +282,7 @@ public class JandiSocketService extends Service {
         jandiSocketManager.disconnect();
         jandiSocketManager.release();
         jandiSocketServiceModel.stopMarkerObserver();
+        jandiSocketServiceModel.stopMessageObserver();
         jandiSocketServiceModel.stopRefreshEntityObserver();
     }
 

@@ -29,6 +29,9 @@
     <color name="jandi_black_de">#de000000</color>
 
 
+    <color name="jandi_badge_point_color">#FFFF5B49</color>
+
+
     <color name="jandi_text">#FF333333</color>
     <color name="jandi_text_medium">#666666</color>
     <color name="jandi_text_light">#999999</color>

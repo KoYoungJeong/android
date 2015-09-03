@@ -123,4 +123,14 @@ public class MainChatListModel {
     public boolean isStarred(Context context, int entityId) {
         return EntityManager.getInstance().getEntityById(entityId).isStarred;
     }
+
+    public int getUnreadCount(List<ChatItem> chatItems) {
+        int total = 0;
+        int size = chatItems.size();
+        for (int idx = 0; idx < size; idx++) {
+            total += chatItems.get(idx).getUnread();
+        }
+
+        return total;
+    }
 }
