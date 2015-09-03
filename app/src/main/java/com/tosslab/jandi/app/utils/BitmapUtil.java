@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
@@ -8,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.koushikdutta.ion.Ion;
@@ -138,20 +140,22 @@ public class BitmapUtil {
     }
 
     public static boolean hasImageUrl(ResMessages.FileContent fileContent) {
+        boolean hasExtraSizeImageUrl = false;
         ResMessages.ThumbnailUrls extraInfo = fileContent.extraInfo;
         if (extraInfo != null) {
-            return !isEmpty(extraInfo.smallThumbnailUrl)
+            hasExtraSizeImageUrl =
+                    !isEmpty(extraInfo.smallThumbnailUrl)
                     || !isEmpty(extraInfo.mediumThumbnailUrl)
                     || !isEmpty(extraInfo.largeThumbnailUrl);
         }
-        return !isEmpty(fileContent.fileUrl);
+        return !isEmpty(fileContent.fileUrl) || hasExtraSizeImageUrl;
     }
 
     public static boolean isEmpty(String url) {
         return TextUtils.isEmpty(url) || TextUtils.getTrimmedLength(url) <= 0;
     }
 
-    public static String getOptimizedImageUrl(Context context, ResMessages.FileContent content) {
+    public static String getOptimizedImageUrl(ResMessages.FileContent content) {
         String original = content.fileUrl;
 
         ResMessages.ThumbnailUrls extraInfo = content.extraInfo;
@@ -159,8 +163,8 @@ public class BitmapUtil {
         String medium = extraInfo != null ? extraInfo.mediumThumbnailUrl : null;
         String large = extraInfo != null ? extraInfo.largeThumbnailUrl : null;
         String extraImageUrl = getImageUrl(small, medium, large, original);
-
-        int dpi = context.getResources().getDisplayMetrics().densityDpi;
+        Resources resources = JandiApplication.getContext().getResources();
+        int dpi = resources.getDisplayMetrics().densityDpi;
         // XXHDPI 이상인 기기에서만 오리지널 파일을 로드
         if (dpi > DisplayMetrics.DENSITY_XHIGH) {
             return !TextUtils.isEmpty(original) ? getFileUrl(original) : getFileUrl(extraImageUrl);
@@ -187,6 +191,32 @@ public class BitmapUtil {
 
         // 80x80 정사각형 이미지
         return small;
+    }
+
+    public static void loadImageByGlideOrIonWhenGif(ImageView imageView,
+                                                    String url, int placeHolder, int error) {
+        if (url.toLowerCase().endsWith("gif")) {
+            Ion.with(imageView)
+                    .fitCenter()
+                    .placeholder(placeHolder)
+                    .error(error)
+                    .crossfade(true)
+                    .load(url);
+            return;
+        }
+
+        Glide.with(JandiApplication.getContext())
+                .load(url)
+                .placeholder(placeHolder)
+                .error(error)
+                .animate(view -> {
+                    view.setAlpha(0.0f);
+                    view.animate()
+                            .alpha(1.0f)
+                            .setDuration(300);
+                })  // Avoid doesn't working 'fitCenter with crossfade'
+                .fitCenter()
+                .into(imageView);
     }
 
     public enum Thumbnails {

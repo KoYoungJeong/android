@@ -54,7 +54,9 @@ public class ImageThumbLoader implements FileThumbLoader {
                     imageViewPhotoFile.setImageResource(R.drawable.jandi_down_placeholder_dropbox);
                     break;
                 default:
-                    loadImage(thumbnailPhotoUrl);
+                    BitmapUtil.loadImageByGlideOrIonWhenGif(
+                            imageViewPhotoFile, thumbnailPhotoUrl,
+                            R.drawable.jandi_down_placeholder_img, R.drawable.jandi_down_img_disable);
                     break;
             }
 
@@ -71,7 +73,7 @@ public class ImageThumbLoader implements FileThumbLoader {
                     break;
                 default:
                     imageViewPhotoFile.setOnClickListener(view -> {
-                        String optimizedImageUrl = BitmapUtil.getOptimizedImageUrl(context, content);
+                        String optimizedImageUrl = BitmapUtil.getOptimizedImageUrl(content);
 
                         if (roomId > 0) {
                             CarouselViewerActivity_.intent(context)
@@ -107,38 +109,4 @@ public class ImageThumbLoader implements FileThumbLoader {
         }
     }
 
-    private void loadImage(String url) {
-        if (url.toLowerCase().endsWith("gif")) {
-            Ion.with(imageViewPhotoFile)
-                    .fitCenter()
-                    .placeholder(R.drawable.jandi_down_placeholder_img)
-                    .error(R.drawable.file_down_img_disable)
-                    .crossfade(true)
-                    .load(url);
-            return;
-        }
-
-        if (context == null) {
-            return;
-        }
-
-        if (context instanceof Activity) {
-            if (((Activity) context).isFinishing()) {
-                return;
-            }
-        }
-
-        Glide.with(context)
-                .load(url)
-                .placeholder(R.drawable.jandi_down_placeholder_img)
-                .error(R.drawable.file_down_img_disable)
-                .animate(view -> {
-                    view.setAlpha(0.0f);
-                    view.animate()
-                            .alpha(1.0f)
-                            .setDuration(300);
-                })  // Avoid doesn't working 'fitCenter with crossfade'
-                .fitCenter()
-                .into(imageViewPhotoFile);
-    }
 }

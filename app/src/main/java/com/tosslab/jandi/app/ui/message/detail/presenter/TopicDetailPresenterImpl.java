@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.detail.presenter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -75,9 +76,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
-    public void onTopicInvite(Context context, int entityId) {
-        invitationViewModel.initData(context, entityId);
-        invitationViewModel.invite();
+    public void onTopicInvite(Activity activity, int entityId) {
+        invitationViewModel.inviteMembersToEntity(activity, entityId);
     }
 
     @Override

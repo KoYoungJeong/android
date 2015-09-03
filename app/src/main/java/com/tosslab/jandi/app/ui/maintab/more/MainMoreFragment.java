@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -25,10 +24,8 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LanguageUtil;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.IconWithTextView;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -85,16 +82,6 @@ public class MainMoreFragment extends Fragment {
     @AfterViews
     void initView() {
         LogUtil.d("initView MainMoreFragment");
-
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.ScreenView)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ScreenView, ScreenViewProperty.SETTING_PANEL)
-                        .build());
-
-        GoogleAnalyticsUtil.sendScreenName("SETTING_PANEL");
 
         showJandiVersion();
         showOtherTeamMessageCount();

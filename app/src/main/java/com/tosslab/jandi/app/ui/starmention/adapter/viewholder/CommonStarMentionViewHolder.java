@@ -16,56 +16,40 @@ import com.tosslab.jandi.app.utils.IonCircleTransform;
  */
 public class CommonStarMentionViewHolder extends RecyclerView.ViewHolder {
 
-    private ImageView starMentionProfileView;
-    private TextView starMentionNameView;
-    private TextView starMentionDateView;
+    private ImageView ivProfile;
+    private TextView tvWriter;
+    private TextView tvDate;
     private View convertView;
 
     public CommonStarMentionViewHolder(View itemView) {
         super(itemView);
-        starMentionProfileView = (ImageView) itemView.findViewById(R.id.iv_star_mention_profile);
-        starMentionNameView = (TextView) itemView.findViewById(R.id.tv_star_mention_name);
-        starMentionDateView = (TextView) itemView.findViewById(R.id.tv_star_mention_date);
+        ivProfile = (ImageView) itemView.findViewById(R.id.iv_star_mention_profile);
+        tvWriter = (TextView) itemView.findViewById(R.id.tv_star_mention_name);
+        tvDate = (TextView) itemView.findViewById(R.id.tv_star_mention_date);
         convertView = itemView;
-    }
-
-    public ImageView getStarMentionProfileView() {
-        return starMentionProfileView;
-    }
-
-    public TextView getStarMentionNameView() {
-        return starMentionNameView;
-    }
-
-    public TextView getStarMentionDateView() {
-        return starMentionDateView;
-    }
-
-    public View getConvertView() {
-        return convertView;
     }
 
     @Override
     public String toString() {
         return "CommonStarMentionViewHolder{" +
-                "starMentionProfileView=" + starMentionProfileView +
-                ", starMentionNameView=" + starMentionNameView +
-                ", starMentionDateView=" + starMentionDateView +
+                "ivProfile=" + ivProfile +
+                ", tvWriter=" + tvWriter +
+                ", tvDate=" + tvDate +
                 ", convertView=" + convertView +
                 '}';
     }
 
     public void bindView(StarMentionVO starMentionVO) {
 
-        Ion.with(this.getStarMentionProfileView())
+        Ion.with(ivProfile)
                 .placeholder(R.drawable.profile_img)
                 .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
                 .load(starMentionVO.getWriterPictureUrl());
 
-        this.getStarMentionNameView().setText(starMentionVO.getWriterName());
+        tvWriter.setText(starMentionVO.getWriterName());
         String updateTime = DateTransformator.getTimeString(starMentionVO.getUpdatedAt());
-        this.getStarMentionDateView().setText(updateTime);
+        tvDate.setText(updateTime);
 
     }
 

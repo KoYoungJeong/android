@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.starmention.vo;
 
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 
 import java.util.Date;
 import java.util.List;
@@ -16,14 +17,13 @@ public class StarMentionVO {
     private int linkId;
     private String writerName;
     private String writerPictureUrl;
-    private String content;
-    private int imageResource;
+    private String body;
     private int messageId;
-
     //for type is text
     private String roomName;
     private int roomId;
     private int roomType;
+    private StarMentionedMessageObject.Message.Content content;
 
     //for type is comment -  file
     private int fileId;
@@ -56,12 +56,12 @@ public class StarMentionVO {
         this.writerPictureUrl = writerPictureUrl;
     }
 
-    public String getContent() {
-        return content;
+    public String getBody() {
+        return body;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setBody(String body) {
+        this.body = body;
     }
 
     public String getRoomName() {
@@ -144,20 +144,20 @@ public class StarMentionVO {
         this.fileId = fileId;
     }
 
-    public int getImageResource() {
-        return imageResource;
-    }
-
-    public void setImageResource(int imageResource) {
-        this.imageResource = imageResource;
-    }
-
     public int getMessageId() {
         return messageId;
     }
 
     public void setMessageId(int messageId) {
         this.messageId = messageId;
+    }
+
+    public StarMentionedMessageObject.Message.Content getContent() {
+        return content;
+    }
+
+    public void setContent(StarMentionedMessageObject.Message.Content content) {
+        this.content = content;
     }
 
     @Override
@@ -169,8 +169,7 @@ public class StarMentionVO {
                 ", linkId=" + linkId +
                 ", writerName='" + writerName + '\'' +
                 ", writerPictureUrl='" + writerPictureUrl + '\'' +
-                ", content='" + content + '\'' +
-                ", imageResource=" + imageResource +
+                ", body='" + body + '\'' +
                 ", messageId=" + messageId +
                 ", roomName='" + roomName + '\'' +
                 ", roomId=" + roomId +
@@ -182,7 +181,7 @@ public class StarMentionVO {
                 '}';
     }
 
-    public static enum Type {
+    public enum Type {
 
         Text(1), Comment(2), File(3);
 

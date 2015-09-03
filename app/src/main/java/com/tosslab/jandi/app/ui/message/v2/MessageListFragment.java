@@ -54,6 +54,7 @@ import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
+import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
@@ -79,7 +80,12 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
+import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
+import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
+import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
+import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel_;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -212,6 +218,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Bean
     AnnouncementViewModel announcementViewModel;
 
+    @Bean
+    InvitationDialogExecutor invitationDialogExecutor;
+
     MentionControlViewModel mentionControlViewModel;
 
     private OldMessageLoader oldMessageLoader;
@@ -299,13 +308,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.setEntityInfo(entityId);
         fileUploadStateViewModel.setEntityId(entityId);
 
+        keyboardHeightModel.addOnKeyboardShowListener((isShowing) -> {
+            announcementViewModel.setAnnouncementViewVisibility(!isShowing);
+        });
+
         JandiPreference.setKeyboardHeight(getActivity(), 0);
     }
 
     @AfterViews
     void initViews() {
         int screenView = messageListModel.isPublicTopic(entityType)
-                ? ScreenViewProperty.PUBLIC_TOPIC : ScreenViewProperty.PRIVIATE_TOPIC;
+                ? ScreenViewProperty.PUBLIC_TOPIC : ScreenViewProperty.PRIVATE_TOPIC;
 
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
@@ -315,7 +328,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                         .property(PropertyKey.ScreenView, screenView)
                         .build());
 
-        GoogleAnalyticsUtil.sendScreenName(screenView == ScreenViewProperty.PRIVIATE_TOPIC ?
+        GoogleAnalyticsUtil.sendScreenName(screenView == ScreenViewProperty.PRIVATE_TOPIC ?
                 "PRIVATE_TOPIC" : "PUBLIC_TOPIC");
 
         setUpActionbar();
@@ -700,8 +713,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                         roomIds,
                         MentionControlViewModel.MENTION_TYPE_MESSAGE);
 
-                mentionControlViewModel.setOnMentionViewShowingListener(isShowing ->
-                        announcementViewModel.setAnnouncementViewVisibility(!isShowing));
                 // copy txt from mentioned edittext message
                 mentionControlViewModel.registClipboardListener();
             } else {
@@ -869,6 +880,25 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     }
 
+    public void onEvent(TopicInviteEvent event) {
+        if (!isForeground) {
+            return;
+        }
+        inviteMembersToEntity();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void inviteMembersToEntity() {
+        int teamMemberCountWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe().size();
+
+        if (teamMemberCountWithoutMe <= 0) {
+            invitationDialogExecutor.execute();
+        } else {
+            InvitationViewModel invitationViewModel = InvitationViewModel_.getInstance_(getActivity());
+            invitationViewModel.inviteMembersToEntity(getActivity(), roomId);
+        }
+    }
+
     public void onEvent(SendCompleteEvent event) {
         if (!isForeground) {
             return;
@@ -975,15 +1005,29 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             case FilePickerViewModel.TYPE_UPLOAD_EXPLORER:
                 List<String> filePath = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
                 if (filePath != null && filePath.size() > 0) {
-                    filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath.get(0), entityId);
+                    FileUploadPreviewActivity_.intent(this)
+                            .singleUpload(true)
+                            .realFilePathList(new ArrayList<>(filePath))
+                            .selectedEntityIdToBeShared(entityId)
+                            .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
                 }
                 break;
             case FileUploadPreviewActivity.REQUEST_CODE:
+                if (intent != null
+                        && intent.getSerializableExtra(
+                        FileUploadPreviewActivity.KEY_SINGLE_FILE_UPLOADVO) != null) {
+                    final FileUploadVO fileUploadVO = (FileUploadVO) intent.getSerializableExtra(
+                            FileUploadPreviewActivity.KEY_SINGLE_FILE_UPLOADVO);
+                    startFileUpload(
+                            fileUploadVO.getFileName(),
+                            fileUploadVO.getEntity(),
+                            fileUploadVO.getFilePath(),
+                            fileUploadVO.getComment());
+                }
                 break;
             default:
                 break;
         }
-
     }
 
     @TextChange(R.id.et_message)
@@ -1117,13 +1161,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.copyToClipboard(event.contentString);
     }
 
-
     public void onEvent(ConfirmFileUploadEvent event) {
         LogUtil.d("List fragment onEvent");
         if (!isForeground) {
             return;
         }
-        filePickerViewModel.startUpload(getActivity(), event.title, event.entityId, event.realFilePath, event.comment);
+
+        startFileUpload(event.title, event.entityId, event.realFilePath, event.comment);
+    }
+
+    private void startFileUpload(String title, int entityId, String filePath, String comment) {
+        filePickerViewModel.startUpload(getActivity(), title, entityId, filePath, comment);
     }
 
     public void onEvent(ConfirmDeleteTopicEvent event) {

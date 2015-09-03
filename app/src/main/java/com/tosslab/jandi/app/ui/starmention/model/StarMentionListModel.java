@@ -143,7 +143,7 @@ public class StarMentionListModel {
             }
 
             if (!type.equals("file")) {
-                starMentionVO.setContent(starMentionedMessageObject.getMessage().content.body);
+                starMentionVO.setBody(starMentionedMessageObject.getMessage().content.body);
                 starMentionVO.setMentions(starMentionedMessageObject.getMessage().mentions);
 
             }
@@ -152,9 +152,7 @@ public class StarMentionListModel {
                 starMentionVO.setContentType(StarMentionVO.Type.File.getValue());
                 starMentionVO.setFileName(starMentionedMessageObject.getMessage().content.title);
                 starMentionVO.setFileId(starMentionedMessageObject.getMessage().id);
-                starMentionVO.setImageResource(MimeTypeUtil.getMimeTypeIconImage(
-                        starMentionedMessageObject.getMessage().content.serverUrl,
-                        starMentionedMessageObject.getMessage().content.icon));
+                starMentionVO.setContent(starMentionedMessageObject.getMessage().content);
             }
 
             starMentionVO.setUpdatedAt(starMentionedMessageObject.getMessage().createdAt);
