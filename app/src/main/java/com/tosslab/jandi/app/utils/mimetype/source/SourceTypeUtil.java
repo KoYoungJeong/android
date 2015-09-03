@@ -88,6 +88,9 @@ public class SourceTypeUtil {
     }
 
     public static MimeTypeUtil.SourceType getSourceType(String sourceUrl) {
+        if (TextUtils.isEmpty(sourceUrl)) {
+            return MimeTypeUtil.SourceType.S3;
+        }
 
         for (MimeTypeUtil.SourceType sourceType : MimeTypeUtil.SourceType.values()) {
             if (TextUtils.equals(sourceType.name().toLowerCase(), sourceUrl.toLowerCase())) {
