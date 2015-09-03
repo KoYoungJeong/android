@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.starmention.presentor;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.widget.Toast;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -13,6 +12,7 @@ import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.starmention.model.StarMentionListModel;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
+import com.tosslab.jandi.app.utils.ColoredToast;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -91,8 +91,7 @@ public class StarMentionListPresentor {
                         .lastMarker(starMentionVO.getLinkId())
                         .start();
             } else {
-                Toast.makeText(fragment.getActivity(),
-                        R.string.jandi_starmention_no_longer_in_topic, Toast.LENGTH_SHORT).show();
+                ColoredToast.show(fragment.getActivity(), fragment.getString(R.string.jandi_starmention_no_longer_in_topic));
             }
         } else if (contentType == StarMentionVO.Type.Comment.getValue()
                 || contentType == StarMentionVO.Type.File.getValue()) {
