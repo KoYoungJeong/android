@@ -83,6 +83,7 @@ import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.ResUpdateFolder;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
@@ -670,7 +671,7 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadUpdateFolderByTeamApi(int teamId, int folderId, ReqUpdateFolder reqUpdateFolder) {
+    public IExecutor<ResUpdateFolder> loadUpdateFolderByTeamApi(int teamId, int folderId, ReqUpdateFolder reqUpdateFolder) {
         return () -> authRestApiClient.updateFolderByTeamApi(teamId, folderId, reqUpdateFolder);
     }
 

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -16,8 +17,9 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ResFolderItem {
 
-    @DatabaseField(id = true)
-    public int id;
+    @JsonIgnore
+    @DatabaseField(generatedId = true)
+    public int _id;
     @DatabaseField
     public int folderId;
     @DatabaseField

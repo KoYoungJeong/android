@@ -75,7 +75,6 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
         adapter.setOnRecyclerItemClickListener((view, adapter, position, type) -> {
             topicFolderChoosePresentor.onItemClick(adapter, position, type, folderId, topicId);
         });
-
     }
 
     @UiThread

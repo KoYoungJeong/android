@@ -185,11 +185,4 @@ public class TopicItemData extends AbstractExpandableDataProvider.ChildData {
         this.isPushOn = isPushOn;
     }
 
-//    public boolean isFakeJoinButton() {
-//        return isFakeJoinButton;
-//    }
-//
-//    public void setIsFakeJoinButton(boolean isFakeJoinButton) {
-//        this.isFakeJoinButton = isFakeJoinButton;
-//    }
 }

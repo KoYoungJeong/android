@@ -82,6 +82,9 @@
     <color name="jandi_entities_divider">#E5E5E5</color>
     <color name="jandi_entities_bg">#f0f0f0</color>
     <color name="jandi_more_bg">#f2f2f2</color>
+    <color name="jandi_list_item_background_pressed">#FFDCDCDC</color>
+    <color name="jandi_list_item_background">#FFFFFFFF</color>
+    <color name="jandi_list_item_background_inner_folder">#FFf7f7f7</color>
 
     <!-- Message List -->
     <color name="jandi_messages_date_divider">@color/jandi_accent_color</color>

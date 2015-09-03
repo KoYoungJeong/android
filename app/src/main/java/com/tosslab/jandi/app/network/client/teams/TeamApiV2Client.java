@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.ResUpdateFolder;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 
 import java.util.List;
@@ -110,7 +111,7 @@ public interface TeamApiV2Client {
 
     @PUT("/teams/{teamId}/folders/{folderId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon updateFolder(@Path("teamId") int teamId, @Path("folderId") int folderId,
+    ResUpdateFolder updateFolder(@Path("teamId") int teamId, @Path("folderId") int folderId,
                            @Body ReqUpdateFolder reqUpdateFolder);
 
     @GET("/teams/{teamId}/folders")

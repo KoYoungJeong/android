@@ -93,6 +93,49 @@ public class TopicFolderRepository {
         }
     }
 
+    public boolean insertFolders(List<ResFolder> resFolders) {
+        if (resFolders == null) {
+            return true;
+        }
+        lock.lock();
+        boolean result = false;
+        try {
+
+            Dao<ResFolder, ?> resFoldersDao = helper.getDao(ResFolder.class);
+
+            for (ResFolder resFolder : resFolders) {
+                resFoldersDao.create(resFolder);
+            }
+
+            result = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            result = false;
+        } finally {
+            lock.unlock();
+            return result;
+        }
+    }
+
+    public boolean insertFolderItems(List<ResFolderItem> resFolderItems) {
+        lock.lock();
+        boolean result = false;
+        try {
+            Dao<ResFolderItem, ?> resFolderItemsDao = helper.getDao(ResFolderItem.class);
+
+            for (ResFolderItem resFolderItem : resFolderItems) {
+                resFolderItemsDao.create(resFolderItem);
+            }
+            result = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            result = false;
+        } finally {
+            lock.unlock();
+            return result;
+        }
+    }
+
     public boolean upsertFolderItems(List<ResFolderItem> resFolderItems) {
         lock.lock();
         boolean result = false;
@@ -141,6 +184,40 @@ public class TopicFolderRepository {
             deleteBuilder
                     .where()
                     .eq("roomId", roomId);
+            deleteBuilder.delete();
+            result = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            result = false;
+        } finally {
+            lock.unlock();
+            return result;
+        }
+    }
+
+    public boolean removeAllFolders() {
+        lock.lock();
+        boolean result = false;
+        try {
+            Dao<ResFolder, ?> resFolderDao = helper.getDao(ResFolder.class);
+            DeleteBuilder<ResFolder, ?> deleteBuilder = resFolderDao.deleteBuilder();
+            deleteBuilder.delete();
+            result = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            result = false;
+        } finally {
+            lock.unlock();
+            return result;
+        }
+    }
+
+    public boolean removeAllFolderItems() {
+        lock.lock();
+        boolean result = false;
+        try {
+            Dao<ResFolderItem, ?> resFolderItemDao = helper.getDao(ResFolderItem.class);
+            DeleteBuilder<ResFolderItem, ?> deleteBuilder = resFolderItemDao.deleteBuilder();
             deleteBuilder.delete();
             result = true;
         } catch (SQLException e) {

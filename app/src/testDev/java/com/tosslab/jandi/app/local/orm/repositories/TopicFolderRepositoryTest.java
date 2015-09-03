@@ -40,7 +40,6 @@ public class TopicFolderRepositoryTest {
     @After
     public void tearDown() throws Exception {
         BaseInitUtil.releaseDatabase();
-
     }
 
     @Test
@@ -81,7 +80,7 @@ public class TopicFolderRepositoryTest {
     public void testDeleteFolderItem() throws Exception {
         repository.upsertFolderItems(originFolderItems);
         repository.removeFolderItem(originFolderItems.get(0).roomId);
-        List<ResFolder> savedFolderItemList = repository.getFolders();
+        List<ResFolderItem> savedFolderItemList = repository.getFolderItems();
         assertThat(originFolderItems.size() - 1, is(equalTo(savedFolderItemList.size())));
     }
 

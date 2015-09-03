@@ -18,7 +18,8 @@ public class Topic {
     private int markerLinkId;
     private boolean isPushOn;
 
-    public Topic(String name, boolean isStarred, boolean isJoined, int entityId, int memberCount, int unreadCount, boolean isPublic, String description, int creatorId, int markerLinkId, boolean isPushOn) {
+    public Topic(String name, boolean isStarred, boolean isJoined, int entityId, int memberCount, int unreadCount,
+                 boolean isPublic, String description, int creatorId, int markerLinkId, boolean isPushOn) {
         this.name = name;
         this.isStarred = isStarred;
         this.isJoined = isJoined;

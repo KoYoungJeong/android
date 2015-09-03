@@ -71,6 +71,7 @@
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
+            android:clickable="true"
             android:orientation="vertical"></LinearLayout>
 
         <ImageView
@@ -81,7 +82,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
             android:clickable="true"
-            android:src="@drawable/topiclist_icon_folder_setting" />
+            android:src="@drawable/icon_folder_setting" />
 
         <ImageView
             android:id="@+id/iv_folder_default_underline"

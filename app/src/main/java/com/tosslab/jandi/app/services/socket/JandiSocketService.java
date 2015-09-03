@@ -232,10 +232,15 @@ public class JandiSocketService extends Service {
                 objects -> jandiSocketServiceModel.updateTopicPushSubscribe(objects[0]);
         eventHashMap.put("room_subscription_updated", topicTopicPushSubscribeUpdateListener);
 
+
         EventListener topicFolderUpdateListener =
-                objects -> jandiSocketServiceModel.updateTopicPushSubscribe(objects[0]);
+                objects -> jandiSocketServiceModel.refreshTopicFolder(objects[0]);
 
-
+        eventHashMap.put("folder_updated", topicFolderUpdateListener);
+        eventHashMap.put("folder_item_deleted", topicFolderUpdateListener);
+        eventHashMap.put("folder_item_created", topicFolderUpdateListener);
+        eventHashMap.put("folder_deleted", topicFolderUpdateListener);
+        eventHashMap.put("folder_created", topicFolderUpdateListener);
     }
 
     private void setUpSocketListener() {

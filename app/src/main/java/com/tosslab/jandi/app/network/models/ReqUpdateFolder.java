@@ -18,7 +18,7 @@ public class ReqUpdateFolder {
                 '}';
     }
 
-    public class UpdateItems {
+    static public class UpdateItems {
         private String name;
         private int seq;
 
