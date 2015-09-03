@@ -8,6 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -132,6 +134,13 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         final EditText input = new EditText(this);
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        int minWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300f, displayMetrics);
+        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, displayMetrics);
+        input.setMinWidth(minWidth);
+        input.setPadding(padding, input.getPaddingTop(), padding, input.getPaddingBottom());
+
         input.setHint("Folder Name");
         input.setMaxLines(1);
         input.setCursorVisible(true);
@@ -150,7 +159,7 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
                         dialog.cancel();
                     }
                 });
-        builder.show();
+        AlertDialog dialog = builder.show();
     }
 
     public void createNewFolder(String title) {

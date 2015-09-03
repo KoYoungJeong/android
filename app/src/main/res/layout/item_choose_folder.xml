@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:background="@drawable/bg_list_item"
+    android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal"
     android:paddingBottom="1dp">
 
@@ -21,6 +22,6 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="32dp"
         android:text="Etc.Folder"
-        android:textSize="16sp" />
+        android:textSize="16sp"/>
 
 </LinearLayout>

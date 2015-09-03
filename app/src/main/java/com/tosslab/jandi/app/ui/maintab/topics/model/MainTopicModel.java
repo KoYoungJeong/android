@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.topics.model;
 
 import android.support.v4.util.Pair;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -11,6 +12,7 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqUpdateFolder;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.maintab.topics.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topics.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topics.domain.TopicFolderListDataProvider;
@@ -144,7 +146,7 @@ public class MainTopicModel {
                                 topic.isSelected(), topic.getDescription(), topic.isPublic(),
                                 topic.getMemberCount());
                         itemCount++;
-                        itemBadgeCount += Integer.valueOf(topic.getUnreadCount());
+                        itemBadgeCount += topic.getUnreadCount();
                         topicItemDatas.add(topicItemData);
                     }
                 }
@@ -153,7 +155,7 @@ public class MainTopicModel {
             topicFolderData.setItemCount(itemCount);
             topicFolderData.setChildBadgeCnt(itemBadgeCount);
 
-            datas.add(new Pair(topicFolderData, topicItemDatas));
+            datas.add(new Pair<>(topicFolderData, topicItemDatas));
 
             folderIndex++;
         }
@@ -166,7 +168,7 @@ public class MainTopicModel {
 
         while (joinTopicKeySets.hasNext()) {
             long itemIndex = fakeFolder.generateNewChildId();
-            Topic topic = joinTopics.get((Integer) joinTopicKeySets.next());
+            Topic topic = joinTopics.get(joinTopicKeySets.next());
             if (topic != null) {
                 TopicItemData topicItemData = TopicItemData.newInstance(
                         itemIndex, -1, topic.getCreatorId(), topic.getName(),
@@ -180,7 +182,7 @@ public class MainTopicModel {
         // Topic join button을 위한 더미 인스턴스 추가
         noFolderTopicItemDatas.add(TopicItemData.getDummyInstance());
 
-        datas.add(new Pair(fakeFolder, noFolderTopicItemDatas));
+        datas.add(new Pair<>(fakeFolder, noFolderTopicItemDatas));
 
         return new TopicFolderListDataProvider(datas);
     }
@@ -220,4 +222,40 @@ public class MainTopicModel {
         RequestApiManager.getInstance().updateFolderByTeamApi(teamId, folderId, reqUpdateFolder);
     }
 
+    public boolean isMe(int writer) {
+        return EntityManager.getInstance().getMe().getId() == writer;
+    }
+
+    public void updateMessageCount(SocketMessageEvent event, List<TopicItemData> joinedTopics) {
+        TopicItemData dummyInstance = TopicItemData.getDummyInstance();
+        Observable.from(joinedTopics)
+                .filter(topicItemData -> {
+
+                    if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
+                        if (TextUtils.equals(event.getMessageType(), "topic_join")
+                                || TextUtils.equals(event.getMessageType(), "topic_invite")
+                                || TextUtils.equals(event.getMessageType(), "topic_leave")
+                                || TextUtils.equals(event.getMessageType(), "message_delete")
+                                || TextUtils.equals(event.getMessageType(), "file_unshare")) {
+                            return false;
+                        } else {
+                            return topicItemData.getEntityId() == event.getRoom().getId();
+                        }
+                    } else if (TextUtils.equals(event.getMessageType(), "link_preview_create")) {
+                        // 단순 메세지 업데이트인 경우
+                        return false;
+                    } else {
+                        for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
+                            if (topicItemData.getEntityId() == messageRoom.getId()) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                })
+                .doOnNext(topicItemData -> topicItemData.setUnreadCount(topicItemData.getUnreadCount() + 1))
+                .firstOrDefault(dummyInstance)
+                .subscribe();
+
+    }
 }
