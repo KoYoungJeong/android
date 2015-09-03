@@ -1,13 +1,10 @@
 package com.tosslab.jandi.app.ui.filedetail.fileinfo;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
@@ -56,7 +53,7 @@ public class ImageThumbLoader implements FileThumbLoader {
                 default:
                     BitmapUtil.loadImageByGlideOrIonWhenGif(
                             imageViewPhotoFile, thumbnailPhotoUrl,
-                            R.drawable.jandi_down_placeholder_img, R.drawable.jandi_down_img_disable);
+                            R.drawable.jandi_down_placeholder_img, R.drawable.jandi_down_placeholder_img);
                     break;
             }
 

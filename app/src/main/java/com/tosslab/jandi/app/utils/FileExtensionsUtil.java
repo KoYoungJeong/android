@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.utils;
 
 import android.text.TextUtils;
+
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -60,7 +61,7 @@ public class FileExtensionsUtil {
                 return R.drawable.file_icon_ppt;
             default:
             case ETC:
-                return R.drawable.jandi_fl_icon_etc;
+                return R.drawable.file_icon_etc;
         }
     }
     

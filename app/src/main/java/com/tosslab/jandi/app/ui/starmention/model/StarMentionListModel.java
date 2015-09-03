@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
-import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 
 import org.androidannotations.annotations.EBean;
 

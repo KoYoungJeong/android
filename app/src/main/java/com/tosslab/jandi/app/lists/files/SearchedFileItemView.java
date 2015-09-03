@@ -75,9 +75,9 @@ public class SearchedFileItemView extends RelativeLayout {
                         BitmapUtil.getThumbnailUrlOrOriginal(content, BitmapUtil.Thumbnails.MEDIUM);
                 BitmapUtil.loadImageByGlideOrIonWhenGif(
                         imageViewSearchedFileType, thumbnailUrl,
-                        R.drawable.jandi_fl_icon_img, R.drawable.jandi_fl_icon_img);
+                        R.drawable.file_icon_img, R.drawable.file_icon_img);
             } else {
-                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_img);
+                imageViewSearchedFileType.setImageResource(R.drawable.file_icon_img);
             }
         } else {
             // 파일 타입에 해당하는 아이콘 연결
