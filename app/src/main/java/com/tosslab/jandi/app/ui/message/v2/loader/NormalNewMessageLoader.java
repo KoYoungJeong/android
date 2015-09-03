@@ -99,11 +99,13 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
     }
 
     private void updateMarker(int roomId) {
+        if (messageState.getLastUpdateLinkId() <= 0) {
+            // 마지막 메세지 정보가 갱신되지 않은 것으로 간주함
+            return;
+        }
         try {
-            if (messageState.getLastUpdateLinkId() > 0) {
-                messageListModel.updateMarker(messageState.getLastUpdateLinkId());
-                messageListModel.updateMarkerInfo(AccountRepository.getRepository().getSelectedTeamId(), roomId);
-            }
+            messageListModel.updateMarker(messageState.getLastUpdateLinkId());
+            messageListModel.updateMarkerInfo(AccountRepository.getRepository().getSelectedTeamId(), roomId);
         } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
