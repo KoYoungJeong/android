@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.selector.user;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -52,7 +51,7 @@ public class UserSelectorImplTest {
 
         assertThat(formattedEntityList.size(), is(greaterThan(0)));
         assertThat(formattedEntityList.get(0).getId(), is(equalTo(EntityManager.getInstance
-                (JandiApplication.getContext()).getMe().getId())));
+                ().getMe().getId())));
 
 
     }

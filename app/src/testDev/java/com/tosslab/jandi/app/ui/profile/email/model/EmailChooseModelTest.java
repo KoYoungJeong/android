@@ -1,9 +1,7 @@
 package com.tosslab.jandi.app.ui.profile.email.model;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.exception.ExceptionData;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +12,10 @@ import org.robolectric.RuntimeEnvironment;
 
 import retrofit.RetrofitError;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * Created by tonyjs on 15. 8. 31..
@@ -24,11 +25,8 @@ public class EmailChooseModelTest {
 
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.httpOn();
 
-        JandiApplication.setContext(RuntimeEnvironment.application);
-        JandiPreference.setAccessTokenType(RuntimeEnvironment.application, "bearer");
-        JandiPreference.setAccessToken(RuntimeEnvironment.application, "413adaa8-7717-406a-abf0-536e947b7d8c");
+        BaseInitUtil.initData(RuntimeEnvironment.application);
     }
 
     @Test
@@ -36,18 +34,17 @@ public class EmailChooseModelTest {
         ResAccountInfo resAccountInfo = null;
         try {
             resAccountInfo = EmailChooseModel_.getInstance_(RuntimeEnvironment.application).requestNewEmail("aiden.jo@tosslab.com");
-            System.out.println(resAccountInfo.toString());
+            fail("it never occured : Response :" + resAccountInfo.toString());
         } catch (RetrofitError retrofitError) {
             retrofitError.printStackTrace();
-
+            assertThat(retrofitError.getResponse().getStatus(), is(equalTo(400)));
             try {
                 ExceptionData exceptionData = (ExceptionData) retrofitError.getBodyAs(ExceptionData.class);
-                System.out.println(exceptionData.toString());
+                assertThat(exceptionData.getCode(), is(equalTo(40001)));
             } catch (Exception e) {
                 e.printStackTrace();
+                fail("wrong response");
             }
         }
-
-        assertNull(resAccountInfo);
     }
 }
