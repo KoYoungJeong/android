@@ -329,8 +329,9 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             // 처음 TabActivity를 시도하면 0번째 탭이 자동 선택됨으로 이를 tracking
             trackGaTab(mEntityManager, 0);
             isFirst = false;
+        } else {
+            postShowChattingListEvent();
         }
-        postShowChattingListEvent();
     }
 
     private void postShowChattingListEvent() {

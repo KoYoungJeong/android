@@ -25,7 +25,6 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
@@ -391,19 +390,23 @@ public class JandiSocketServiceModel {
             SocketTopicFolderEvent socketTopicFolderEvent
                     = objectMapper.readValue(object.toString(), SocketTopicFolderEvent.class);
 
-            ResFolder resFolder = new ResFolder();
+            postEvent(socketTopicFolderEvent);
 
-            if (socketTopicFolderEvent.getEvent().equals("folder_create")) {
 
-            } else if (socketTopicFolderEvent.getEvent().equals("folder_update")) {
-
-            } else if (socketTopicFolderEvent.getEvent().equals("folder_deleted")) {
-
-            } else if (socketTopicFolderEvent.getEvent().equals("folder_item_created")) {
-
-            } else if (socketTopicFolderEvent.getEvent().equals("folder_item_deleted")) {
-
-            }
+            //todo
+//            ResFolder resFolder = new ResFolder();
+//
+//            if (socketTopicFolderEvent.getEvent().equals("folder_create")) {
+//
+//            } else if (socketTopicFolderEvent.getEvent().equals("folder_update")) {
+//
+//            } else if (socketTopicFolderEvent.getEvent().equals("folder_deleted")) {
+//
+//            } else if (socketTopicFolderEvent.getEvent().equals("folder_item_created")) {
+//
+//            } else if (socketTopicFolderEvent.getEvent().equals("folder_item_deleted")) {
+//
+//            }
 
         } catch (IOException e) {
             e.printStackTrace();

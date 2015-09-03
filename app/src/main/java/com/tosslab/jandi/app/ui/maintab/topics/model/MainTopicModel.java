@@ -5,15 +5,19 @@ import android.support.v4.util.Pair;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.libs.advancerecyclerview.provider.AbstractExpandableDataProvider;
+import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ReqUpdateFolder;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.ui.maintab.topics.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topics.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topics.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topics.domain.TopicItemData;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
@@ -23,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -36,13 +41,13 @@ public class MainTopicModel {
     EntityClientManager entityClientManager;
 
     // 폴더 정보 가져오기
-    public List<ResFolder> getTopicFolders() {
+    public List<ResFolder> getTopicFolders() throws RetrofitError {
         return RequestApiManager.getInstance()
                 .getFoldersByTeamApi(entityClientManager.getSelectedTeamId());
     }
 
     // 폴더 속 토픽 아이디 가져오기
-    public List<ResFolderItem> getTopicFolderItems() {
+    public List<ResFolderItem> getTopicFolderItems() throws RetrofitError {
         return RequestApiManager.getInstance()
                 .getFolderItemsByTeamApi(entityClientManager.getSelectedTeamId());
     }
@@ -95,11 +100,25 @@ public class MainTopicModel {
     // 리스트에 보여 줄 Data Provider 가져오기
     public TopicFolderListDataProvider getDataProvider() {
 
+        TopicFolderRepository repository = TopicFolderRepository.getRepository();
+
         List<Pair<AbstractExpandableDataProvider.GroupData,
                 List<AbstractExpandableDataProvider.ChildData>>> datas = new LinkedList<>();
 
-        List<ResFolder> topicFolders = getTopicFolders();
-        List<ResFolderItem> topicFolderItems = getTopicFolderItems();
+        List<ResFolder> topicFolders = null;
+        List<ResFolderItem> topicFolderItems = null;
+
+        if (NetworkCheckUtil.isConnected()) {
+            // 네트워크를 통해 가져오기
+            topicFolders = getTopicFolders();
+            topicFolderItems = getTopicFolderItems();
+            saveFolderDataInDB(topicFolders, topicFolderItems);
+        } else {
+            // 로컬에서 가져오기
+            topicFolderItems = repository.getFolderItems();
+            topicFolders = repository.getFolders();
+        }
+
         LinkedHashMap<Integer, Topic> joinTopics = getJoinEntities();
 
         long folderIndex = 0;
@@ -114,7 +133,6 @@ public class MainTopicModel {
 
             for (ResFolderItem folderItem : topicFolderItems) {
                 if (folderItem.folderId != -1 && folderItem.folderId == folder.id) {
-                    itemBadgeCount = 0;
                     Topic topic = joinTopics.get(folderItem.roomId);
                     if (topic != null) {
                         joinTopics.remove(folderItem.roomId);
@@ -132,14 +150,12 @@ public class MainTopicModel {
                 }
             }
 
-
             topicFolderData.setItemCount(itemCount);
             topicFolderData.setChildBadgeCnt(itemBadgeCount);
 
             datas.add(new Pair(topicFolderData, topicItemDatas));
 
             folderIndex++;
-
         }
 
         // 폴더가 없는 토픽 데이터 셋팅
@@ -169,6 +185,16 @@ public class MainTopicModel {
         return new TopicFolderListDataProvider(datas);
     }
 
+    @Background
+    public void saveFolderDataInDB(List<ResFolder> topicFolders, List<ResFolderItem> topicFolderItems) {
+        TopicFolderRepository repository = TopicFolderRepository.getRepository();
+        repository.removeAllFolders();
+        repository.removeAllFolderItems();
+
+        repository.insertFolders(topicFolders);
+        repository.insertFolderItems(topicFolderItems);
+    }
+
 
     // 그룹이 없는 Topic 들을 담아낼 더미 그룹 생성
     public TopicFolderData getFakeFolder(long lastFolderIndex) {
@@ -181,16 +207,17 @@ public class MainTopicModel {
         EntityManager.getInstance().getEntityById(entityId).alarmCount = 0;
     }
 
-    public boolean hasAlarmCount(Observable<Topic> joinEntities) {
+    public void deleteTopicFolder(int folderId) throws RetrofitError {
+        int teamId = entityClientManager.getSelectedTeamId();
+        RequestApiManager.getInstance().deleteFolderByTeamApi(teamId, folderId);
+    }
 
-        Topic defaultValue = new Topic.Builder().build();
-        Topic first = joinEntities.filter(topic -> topic.getUnreadCount() > 0)
-                .firstOrDefault(defaultValue)
-                .toBlocking()
-                .first();
-
-        return first != defaultValue;
-
+    public void renameFolder(int folderId, String name) throws RetrofitError {
+        int teamId = entityClientManager.getSelectedTeamId();
+        ReqUpdateFolder reqUpdateFolder = new ReqUpdateFolder();
+        reqUpdateFolder.updateItems = new ReqUpdateFolder.UpdateItems();
+        reqUpdateFolder.updateItems.setName(name);
+        RequestApiManager.getInstance().updateFolderByTeamApi(teamId, folderId, reqUpdateFolder);
     }
 
 }

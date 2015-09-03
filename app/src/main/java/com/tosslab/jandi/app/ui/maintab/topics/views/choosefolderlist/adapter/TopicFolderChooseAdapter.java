@@ -61,7 +61,6 @@ public class TopicFolderChooseAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
         if (holder.getItemViewType() == TYPE_FOLDER_LIST) {
             FolderChooseAdapterViewHolder viewHolder = (FolderChooseAdapterViewHolder) holder;
             viewHolder.tvChooseFolder.setText(getFolders().get(position).name);
@@ -73,7 +72,6 @@ public class TopicFolderChooseAdapter extends RecyclerView.Adapter<RecyclerView.
                         position, holder.getItemViewType());
             }
         });
-
     }
 
     @Override
@@ -83,7 +81,6 @@ public class TopicFolderChooseAdapter extends RecyclerView.Adapter<RecyclerView.
         } else if (position == getItemCount() - 1) {
             return TYPE_MAKE_NEW_FOLDER;
         }
-
         return TYPE_FOLDER_LIST;
     }
 
@@ -114,6 +111,5 @@ public class TopicFolderChooseAdapter extends RecyclerView.Adapter<RecyclerView.
             super(itemView);
         }
     }
-
 
 }

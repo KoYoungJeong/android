@@ -35,10 +35,8 @@ public class MainTopicListPresenter {
 
     public void onInitUnjoinedTopics() {
         EntityManager entityManager = EntityManager.getInstance();
-
         Observable<Topic> unjoinEntities =
                 mainTopicModel.getUnjoinEntities(entityManager.getUnjoinedChannels());
-
         view.setEntities(unjoinEntities);
     }
 
@@ -50,7 +48,6 @@ public class MainTopicListPresenter {
 
     @Background
     public void onJoinTopic(Context context, Topic topic) {
-
         if (!NetworkCheckUtil.isConnected()) {
             view.showErrorToast(context.getString(R.string.err_entity_join));
             return;
@@ -101,7 +98,6 @@ public class MainTopicListPresenter {
     }
 
     public void onItemLongClick(RecyclerView.Adapter adapter, int position) {
-
         Topic item = ((TopicRecyclerAdapter) adapter).getItem(position);
 
         if (item == null) {
@@ -110,7 +106,6 @@ public class MainTopicListPresenter {
 
         view.showUnjoinDialog(item);
         view.notifyDatasetChanged();
-
     }
 
     public interface View {

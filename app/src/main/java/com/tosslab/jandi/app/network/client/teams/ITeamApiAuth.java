@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.ResUpdateFolder;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 
 import java.util.List;
@@ -64,7 +65,7 @@ public interface ITeamApiAuth {
 
     ResCommon deleteFolderByTeamApi(int teamId, int folderId) throws RetrofitError;
 
-    ResCommon updateFolderByTeamApi(int teamId, int folderId, ReqUpdateFolder reqUpdateFolder) throws RetrofitError;
+    ResUpdateFolder updateFolderByTeamApi(int teamId, int folderId, ReqUpdateFolder reqUpdateFolder) throws RetrofitError;
 
     List<ResFolder> getFoldersByTeamApi(int teamId) throws RetrofitError;
 

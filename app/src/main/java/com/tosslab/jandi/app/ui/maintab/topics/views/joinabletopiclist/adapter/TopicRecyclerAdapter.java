@@ -183,5 +183,7 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
             }
 
         }
+
     }
+
 }

@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.ResUpdateFolder;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 
 import java.util.List;
@@ -65,7 +66,7 @@ public interface ITeamApiLoader {
 
     IExecutor<ResCommon> loadDeleteFolderByTeamApi(int teamId, int folderId);
 
-    IExecutor<ResCommon> loadUpdateFolderByTeamApi(int teamId, int folderId,
+    IExecutor<ResUpdateFolder> loadUpdateFolderByTeamApi(int teamId, int folderId,
                                                    ReqUpdateFolder reqUpdateFolder);
 
     IExecutor<List<ResFolder>> loadGetFoldersByTeamApi(int teamId);

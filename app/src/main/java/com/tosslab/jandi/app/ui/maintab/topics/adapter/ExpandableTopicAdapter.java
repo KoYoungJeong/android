@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.topics.adapter;
 
+import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
 import com.tosslab.jandi.app.lists.libs.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.tosslab.jandi.app.lists.libs.advancerecyclerview.utils.AbstractExpandableItemAdapter;
+import com.tosslab.jandi.app.lists.libs.advancerecyclerview.utils.ExpandableViewUtils;
 import com.tosslab.jandi.app.ui.maintab.topics.adapter.viewholder.TopicFolderViewHolder;
 import com.tosslab.jandi.app.ui.maintab.topics.adapter.viewholder.TopicItemViewHolder;
 import com.tosslab.jandi.app.ui.maintab.topics.adapter.viewholder.TopicJoinButtonViewHolder;
@@ -18,6 +20,9 @@ import com.tosslab.jandi.app.ui.maintab.topics.domain.TopicItemData;
 import com.tosslab.jandi.app.views.listeners.OnExpandableChildItemClickListener;
 import com.tosslab.jandi.app.views.listeners.OnExpandableChildItemLongClickListener;
 import com.tosslab.jandi.app.views.listeners.OnExpandableGroupItemClickListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -77,6 +82,22 @@ public class ExpandableTopicAdapter
         return (TopicItemData) provider.getChildItem(groupPosition, childPosition);
     }
 
+    public List<TopicItemData> getAllTopicItemData() {
+
+        List<TopicItemData> topicItemDatas = new ArrayList<>();
+
+        for (int i = 0; i < getGroupCount(); i++) {
+            for (int j = 0; j < getChildCount(i); j++)
+                topicItemDatas.add(getTopicItemData(i, j));
+        }
+
+        // 마지막에 들어가 있는 더미 아이템을 빼주기 위해서
+        topicItemDatas.remove(topicItemDatas.size() - 1);
+
+        return topicItemDatas;
+
+    }
+
     public TopicFolderData getTopicFolderData(int groupPosition) {
         return (TopicFolderData) provider.getGroupItem(groupPosition);
     }
@@ -121,7 +142,8 @@ public class ExpandableTopicAdapter
 
     @Override
     public void onBindGroupViewHolder(TopicFolderViewHolder holder, int groupPosition, int viewType) {
-        final TopicFolderData item = (TopicFolderData) provider.getGroupItem(groupPosition);
+        final TopicFolderData item = getTopicFolderData(groupPosition);
+
         holder.container.setVisibility(View.VISIBLE);
         holder.tvTitle.setText(item.getTitle());
         holder.tvTopicCnt.setText(String.valueOf(item.getItemCount()));
@@ -139,27 +161,22 @@ public class ExpandableTopicAdapter
 
         final int expandState = holder.getExpandStateFlags();
 
-        if ((expandState & RecyclerViewExpandableItemManager.STATE_FLAG_IS_UPDATED) != 0) {
-
-            if ((expandState & RecyclerViewExpandableItemManager.STATE_FLAG_IS_EXPANDED) != 0) {
-                holder.tvTopicCnt.setBackgroundResource(R.drawable.topiclist_icon_folder_open);
-                holder.tvTopicCnt.setTextColor(0xff154a67);
-                holder.tvTitle.setTextColor(0xff154a67);
-                holder.ivDefaultUnderline.setVisibility(View.GONE);
-
-            } else {
-                holder.tvTopicCnt.setBackgroundResource(R.drawable.icon_topiclist_folder);
-                holder.tvTopicCnt.setTextColor(0xffa6a6a6);
-                holder.tvTitle.setTextColor(0xffa6a6a6);
-                holder.ivDefaultUnderline.setVisibility(View.VISIBLE);
-            }
-
+        if ((item.getItemCount() > 0) && (expandState & RecyclerViewExpandableItemManager.STATE_FLAG_IS_EXPANDED) != 0) {
+            holder.tvTopicCnt.setBackgroundResource(R.drawable.topiclist_icon_folder_open);
+            holder.tvTopicCnt.setTextColor(0xff154a67);
+            holder.tvTitle.setTextColor(0xff154a67);
+            holder.ivDefaultUnderline.setVisibility(View.GONE);
+        } else {
+            holder.tvTopicCnt.setBackgroundResource(R.drawable.icon_topiclist_folder);
+            holder.tvTopicCnt.setTextColor(0xffa6a6a6);
+            holder.tvTitle.setTextColor(0xffa6a6a6);
+            holder.ivDefaultUnderline.setVisibility(View.VISIBLE);
         }
 
         holder.vgFolderSetting.setClickable(true);
         holder.vgFolderSetting.setOnClickListener(v -> {
             if (onExpandableGroupItemClickListener != null) {
-                onExpandableGroupItemClickListener.onItemClick(holder.itemView,
+                onExpandableGroupItemClickListener.onItemClick(holder.vgFolderSetting,
                         ExpandableTopicAdapter.this, groupPosition);
             }
         });
@@ -180,7 +197,7 @@ public class ExpandableTopicAdapter
         final TopicItemData item = (TopicItemData) provider.getChildItem(groupPosition, childPosition);
 
         if (getGroupItemViewType(groupPosition) != TYPE_NO_GROUP) {
-            holder.container.setBackgroundColor(0xfff7f7f7);
+            holder.container.setBackgroundResource(R.drawable.bg_list_innerfolder_item);
             if (childPosition != getChildCount(groupPosition) - 1) {
                 holder.ivFolderItemUnderline.setVisibility(View.VISIBLE);
                 holder.ivDefaultUnderline.setVisibility(View.GONE);
@@ -194,7 +211,7 @@ public class ExpandableTopicAdapter
                 holder.ivShadowUnderline.setVisibility(View.GONE);
             }
         } else {
-            holder.container.setBackgroundColor(0xffffffff);
+            holder.container.setBackgroundResource(R.drawable.bg_list_item);
             holder.ivFolderItemUnderline.setVisibility(View.GONE);
             holder.ivDefaultUnderline.setVisibility(View.VISIBLE);
             holder.ivShadowUnderline.setVisibility(View.GONE);
@@ -257,8 +274,11 @@ public class ExpandableTopicAdapter
 
     @Override
     public boolean onCheckCanExpandOrCollapseGroup(TopicFolderViewHolder holder, int groupPosition, int x, int y, boolean expand) {
+        if (getTopicFolderData(groupPosition).getItemCount() == 0) {
+            return false;
+        }
         // check the item is *not* pinned
-        if (provider.getGroupItem(groupPosition).isPinnedToSwipeLeft()) {
+        if (getTopicFolderData(groupPosition).isPinnedToSwipeLeft()) {
             // return false to raise View.OnClickListener#onClick() event
             return false;
         }
@@ -266,7 +286,15 @@ public class ExpandableTopicAdapter
         if (!(holder.itemView.isEnabled() && holder.itemView.isClickable())) {
             return false;
         }
-        return true;
+
+        final View containerView = holder.container;
+        final View settingView = holder.vgFolderSetting;
+
+
+        final int offsetX = containerView.getLeft() + (int) (ViewCompat.getTranslationX(containerView) + 0.5f);
+        final int offsetY = containerView.getTop() + (int) (ViewCompat.getTranslationY(containerView) + 0.5f);
+
+        return !ExpandableViewUtils.hitTest(settingView, x - offsetX, y - offsetY);
     }
 
     public void setOnChildItemClickListener(OnExpandableChildItemClickListener onExpandableChildItemClickListener) {

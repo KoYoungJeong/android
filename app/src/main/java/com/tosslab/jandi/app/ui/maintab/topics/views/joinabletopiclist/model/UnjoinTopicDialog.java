@@ -29,7 +29,6 @@ public class UnjoinTopicDialog extends DialogFragment {
     private DialogInterface.OnClickListener onJoinClickListener;
 
     public static UnjoinTopicDialog instantiate(Topic topic) {
-
         UnjoinTopicDialog fragment = new UnjoinTopicDialog();
         Bundle args = new Bundle();
 
@@ -41,13 +40,11 @@ public class UnjoinTopicDialog extends DialogFragment {
         fragment.setArguments(args);
 
         return fragment;
-
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         Bundle arguments = getArguments();
 
         String name = arguments.getString(ARGS_NAME);
@@ -85,4 +82,5 @@ public class UnjoinTopicDialog extends DialogFragment {
     public void setOnJoinClickListener(DialogInterface.OnClickListener onJoinClickListener) {
         this.onJoinClickListener = onJoinClickListener;
     }
+
 }
