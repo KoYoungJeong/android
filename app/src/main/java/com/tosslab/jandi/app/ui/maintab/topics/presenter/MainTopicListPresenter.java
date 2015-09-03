@@ -131,8 +131,8 @@ public class MainTopicListPresenter {
         view.updateGroupBadgeCount();
         view.notifyDatasetChanged();
 
-        boolean isBadge = hasAlarmCount(Observable.from(view.getJoinedTopics()));
-        EventBus.getDefault().post(new TopicBadgeEvent(isBadge));
+        int unreadCount = getUnreadCount(Observable.from(view.getJoinedTopics()));
+        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
     }
 
 
