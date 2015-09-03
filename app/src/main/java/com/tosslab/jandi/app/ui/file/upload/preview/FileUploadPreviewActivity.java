@@ -266,11 +266,6 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
         fileUploadPresenter.onCommentTextChange(text.toString(), currentItemPosition);
     }
 
-    @Click(R.id.tv_file_upload_entity)
-    void onEntityTextClick() {
-        fileUploadPresenter.onEntitySelect(vpFilePreview.getCurrentItem());
-    }
-
     @Click(R.id.iv_file_upload_preview_previous)
     void onPreviousClick() {
         int currentItem = vpFilePreview.getCurrentItem();

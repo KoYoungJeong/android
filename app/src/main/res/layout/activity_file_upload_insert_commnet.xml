@@ -100,6 +100,7 @@
 
             <TextView
                 android:id="@+id/tv_file_upload_entity"
+                android:clickable="true"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="6"

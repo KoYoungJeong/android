@@ -16,8 +16,6 @@ public interface FileUploadPresenter {
 
     void onInitEntity(int selectedEntityIdToBeShared);
 
-    void onEntitySelect(int currentItem);
-
     void onCommentTextChange(String text, int currentItemPosition);
 
     void onEntityUpdate(FormattedEntity item);
