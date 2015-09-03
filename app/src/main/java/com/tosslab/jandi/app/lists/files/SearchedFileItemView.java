@@ -60,6 +60,8 @@ public class SearchedFileItemView extends RelativeLayout {
         if (entity != null) {
             String searchedFileOwnerName = entity.getName();
             textViewSearchedFileOwnerName.setText(searchedFileOwnerName);
+        } else {
+            textViewSearchedFileOwnerName.setText("");
         }
 
         textViewSearchedFileType.setText(content.ext);
