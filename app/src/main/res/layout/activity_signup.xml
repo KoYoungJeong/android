@@ -121,7 +121,8 @@
                         android:layout_height="20dp"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="8dp"
-                        android:background="@drawable/jandi_tab_selector_topic"
+                        android:layout_marginRight="4dp"
+                        android:background="@drawable/jandi_signup_checkbox_selector"
                         android:duplicateParentState="true"/>
                 </LinearLayout>
 
@@ -157,7 +158,8 @@
                         android:layout_height="20dp"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="8dp"
-                        android:background="@drawable/jandi_tab_selector_topic"
+                        android:layout_marginRight="4dp"
+                        android:background="@drawable/jandi_signup_checkbox_selector"
                         android:duplicateParentState="true"/>
                 </LinearLayout>
 
@@ -196,7 +198,8 @@
                         android:layout_height="20dp"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="8dp"
-                        android:background="@drawable/jandi_tab_selector_topic"
+                        android:layout_marginRight="4dp"
+                        android:background="@drawable/jandi_signup_checkbox_selector"
                         android:duplicateParentState="true"/>
                 </LinearLayout>
 
