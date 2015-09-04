@@ -57,7 +57,7 @@ public class SearchedFileItemView extends RelativeLayout {
 
         FormattedEntity entityById = EntityManager.getInstance().getEntityById(searchedFile.writerId);
 
-        String searchedFileOwnerName = entityById.getName();
+        String searchedFileOwnerName = entityById == null ? "" : entityById.getName();
 
         textViewSearchedFileOwnerName.setText(searchedFileOwnerName);
 
@@ -101,8 +101,6 @@ public class SearchedFileItemView extends RelativeLayout {
         } else {
             textViewSearchedFileOwnerName.setTextColor(getResources().getColor(R.color.deactivate_text_color));
             imageViewLineThrough.setVisibility(View.VISIBLE);
-
-
         }
     }
 }
