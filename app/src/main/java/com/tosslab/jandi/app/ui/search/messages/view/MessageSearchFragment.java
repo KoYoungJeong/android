@@ -290,7 +290,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     private void setUpCategoryView(View backgroundView, TextView textView, boolean isFocused) {
         if (isFocused) {
             backgroundView.setBackgroundColor(backgroundView.getResources().getColor(R.color.jandi_primary_color_focus));
-            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.jandi_arrow_up, 0);
+            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.file_arrow_up, 0);
         } else {
             backgroundView.setBackgroundColor(Color.TRANSPARENT);
             textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.file_arrow_down, 0);

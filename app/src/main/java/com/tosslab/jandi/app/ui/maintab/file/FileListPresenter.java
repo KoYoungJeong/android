@@ -205,10 +205,10 @@ public class FileListPresenter {
         Drawable rightDrawable;
         if (isFocused) {
             if (context instanceof SearchActivity) {
-                rightDrawable = textVew.getResources().getDrawable(R.drawable.jandi_arrow_up);
+                rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_up);
                 ((View) textVew.getParent()).setBackgroundColor(context.getResources().getColor(R.color.jandi_primary_color_focus));
             } else {
-                rightDrawable = textVew.getResources().getDrawable(R.drawable.jandi_arrow_up_gray);
+                rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_up_gray);
                 ((View) textVew.getParent()).setBackgroundColor(Color.WHITE);
             }
         } else {
