@@ -47,7 +47,8 @@ public class NormalOldMessageLoader implements OldMessageLoader {
     @Override
     public ResMessages load(int roomId, int linkId) {
         ResMessages oldMessage = null;
-        int currentItemCount = messageListPresenter.getItemCount();
+        // 모든 요청은 dummy 가 아닌 실제 데이터 기준...
+        int currentItemCount = messageListPresenter.getItemCountWithoutDummy();
         try {
 
             int itemCount = Math.min(

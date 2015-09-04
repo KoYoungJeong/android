@@ -91,8 +91,6 @@ public class MessageListModel {
     MessageManipulator messageManipulator;
     @Bean
     EntityClientManager entityClientManager;
-    @Bean
-    MessageListTimer messageListTimer;
     @RootContext
     AppCompatActivity activity;
 
@@ -127,14 +125,6 @@ public class MessageListModel {
 
     public ResUpdateMessages getNewMessage(int linkId) throws RetrofitError {
         return messageManipulator.updateMessages(linkId);
-    }
-
-    public void stopRefreshTimer() {
-//        messageListTimer.stop();
-    }
-
-    public void startRefreshTimer() {
-//        messageListTimer.start();
     }
 
     public void deleteMessage(int messageId) throws RetrofitError {

@@ -44,6 +44,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
     @Override
     public void load(int roomId, int linkId) {
         if (linkId <= 0) {
+            // 첫 메세지로 간주함
             return;
         }
 
