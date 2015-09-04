@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Menu;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.DeleteEmailEvent;
@@ -254,5 +255,10 @@ public class EmailChooseActivity extends AppCompatActivity {
         } finally {
             emailChoosePresenter.dismissProgressWheel();
         }
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
     }
 }

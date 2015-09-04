@@ -183,6 +183,10 @@ public class FileExplorerActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
+    }
 
     @Override
     public void onBackPressed() {

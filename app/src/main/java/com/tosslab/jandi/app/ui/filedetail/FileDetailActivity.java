@@ -218,6 +218,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         addStarredButtonExecution();
     }
 
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
+    }
+
     private void addFileDetailViewAsListviewHeader() {
         // ListView(댓글에 대한 List)의 Header에 File detail 정보를 보여주는 View 연결한다.
         View header = fileHeadManager.getHeaderView();
