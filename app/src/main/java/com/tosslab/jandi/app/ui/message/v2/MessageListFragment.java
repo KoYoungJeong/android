@@ -141,6 +141,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -1315,6 +1316,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 TextUtils.equals(messageType, "topic_invite")) {
 
             updateRoomInfo();
+
+            updateMentionInfo();
         } else {
             if (!isForeground) {
                 messageListModel.updateMarkerInfo(teamId, roomId);
@@ -1323,6 +1326,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void updateMentionInfo() {
+        mentionControlViewModel.refreshMembers(Arrays.asList(roomId));
     }
 
     public void onEvent(SocketLinkPreviewMessageEvent event) {

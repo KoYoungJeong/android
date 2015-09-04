@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
@@ -138,6 +139,26 @@ public class MentionControlViewModel {
 
         selectedMemberHashMap = new LinkedHashMap<>();
 
+    }
+
+    public void refreshMembers(List<Integer> roomIds) {
+        refreshSelectableMembers(roomIds);
+        if (lvSearchMember != null
+                && lvSearchMember.getAdapter() != null
+                && etMessage != null) {
+
+            Editable e = etMessage.getEditableText();
+            int appendCharIndex = etMessage.getSelectionStart();
+            CharSequence cs = e.subSequence(0, appendCharIndex);
+
+            String mentionedName = getMentionSearchName(cs);
+
+            if (!TextUtils.isEmpty(mentionedName)) {
+                showSearchMembersInfo(mentionedName);
+            } else {
+                showSearchMembersInfo("");
+            }
+        }
     }
 
     private void addTextWatcher(EditText editText) {
@@ -409,9 +430,15 @@ public class MentionControlViewModel {
 
         while (matcher.find()) {
             findId = matcher.group(2);
-            if (selectedMembers.get(new Integer(findId)) != null) {
-                orderedSearchedMember.put(new Integer(findId),
-                        selectableMembers.get(new Integer(findId)));
+            try {
+                int id = Integer.parseInt(findId);
+                if (selectableMembers.containsKey(id)) {
+                    orderedSearchedMember.put(id, selectableMembers.get(id));
+                } else {
+                    builder.replace(matcher.start(2) - 1, matcher.end(2) + 1, "");
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
             }
         }
 
@@ -419,11 +446,17 @@ public class MentionControlViewModel {
 
         List<MentionObject> mentions = new ArrayList<>();
 
+        StringBuilder memberInfoStringSB;
+
         while (iterator.hasNext()) {
 
             int key = (Integer) iterator.next();
-            StringBuilder memberInfoStringSB = new StringBuilder();
+            memberInfoStringSB = new StringBuilder();
             SearchedItemVO searchedItemVO = orderedSearchedMember.get(Integer.valueOf(key));
+
+            if (searchedItemVO == null) {
+                continue;
+            }
 
             String name = searchedItemVO.getName();
             String id = String.valueOf(key);
