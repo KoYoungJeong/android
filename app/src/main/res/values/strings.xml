@@ -126,6 +126,7 @@
     <string name="err_profile_update">"Profile could not be updated"</string>
     <string name="jandi_profile_photo_upload_succeed">"Profile photo has been updated"</string>
     <string name="err_profile_photo_upload">"Profile photo could not be updated"</string>
+    <string name="err_email_exists">"That email is already registered"</string>
 
     <!-- 회원 초대 -->
     <string name="jandi_team_info">"Team"</string>

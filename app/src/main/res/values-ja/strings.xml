@@ -117,6 +117,7 @@
     <string name="err_profile_update">"プロフィールは更新されませんでした"</string>
     <string name="jandi_profile_photo_upload_succeed">"プロフィール画像は正常に更新されました"</string>
     <string name="err_profile_photo_upload">"プロフィール画像は更新されませんでした"</string>
+    <string name="err_email_exists">"そのメールアドレスは既に使用されています"</string>
 
     <!-- 회원 초대 -->
     <string name="jandi_team_info">"チーム"</string>

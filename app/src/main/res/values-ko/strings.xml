@@ -127,6 +127,7 @@
     <string name="err_profile_update">"프로필 수정에 실패하였습니다"</string>
     <string name="jandi_profile_photo_upload_succeed">"사진이 수정되었습니다"</string>
     <string name="err_profile_photo_upload">"사진 업로드가 실패하였습니다"</string>
+    <string name="err_email_exists">"이미 사용중인 이메일입니다"</string>
 
     <!-- 회원 초대 -->
     <string name="jandi_team_info">"팀 정보"</string>
