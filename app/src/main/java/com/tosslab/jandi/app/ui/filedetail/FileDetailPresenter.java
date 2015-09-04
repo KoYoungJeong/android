@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.filedetail;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -85,12 +84,13 @@ public class FileDetailPresenter {
                 }, Throwable::printStackTrace);
     }
 
-    public List<Integer> getSharedTopicIds(Context context, ResMessages.OriginalMessage fileDetail) {
+    public List<Integer> getSharedTopicIds(ResMessages.OriginalMessage fileDetail) {
         List<Integer> sharedTopicIds = new ArrayList<>();
 
         EntityManager entityManager = EntityManager.getInstance();
 
-        for (ResMessages.OriginalMessage.IntegerWrapper entity : ((ResMessages.FileMessage) fileDetail).shareEntities) {
+        ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
+        for (ResMessages.OriginalMessage.IntegerWrapper entity : fileMessage.shareEntities) {
             FormattedEntity formattedEntity = entityManager.getEntityById(entity.getShareEntity());
             if (formattedEntity != null && !formattedEntity.isUser()) {
                 sharedTopicIds.add(formattedEntity.getId());
@@ -162,7 +162,8 @@ public class FileDetailPresenter {
             // 저장하기
             fileDetailModel.saveFileDetailInfo(resFileDetail);
 
-            List<ResMessages.OriginalMessage> commentMessages = fileDetailModel.extractCommentMessage(resFileDetail.messageDetails);
+            List<ResMessages.OriginalMessage> commentMessages =
+                    fileDetailModel.extractCommentMessage(resFileDetail.messageDetails);
 
             view.dismissProgress();
 
@@ -340,10 +341,12 @@ public class FileDetailPresenter {
     }
 
     @Background
-    void sendCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment, List<MentionObject> mentions) {
+    void sendCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment,
+                                List<MentionObject> mentions) {
         view.showProgress();
         try {
-            fileDetailModel.sendMessageCommentWithSticker(fileId, stickerGroupId, stickerId, comment, mentions);
+            fileDetailModel.sendMessageCommentWithSticker(
+                    fileId, stickerGroupId, stickerId, comment, mentions);
 
             view.dismissProgress();
 
@@ -459,7 +462,8 @@ public class FileDetailPresenter {
     }
 
     @Background
-    public void downloadFile(String url, String fileName, final String fileType, String ext, ProgressDialog progressDialog, int fileId, boolean execute) {
+    public void downloadFile(String url, String fileName, final String fileType, String ext,
+                             ProgressDialog progressDialog, int fileId, boolean execute) {
         try {
             File result = fileDetailModel.download(url, fileName, ext, progressDialog);
 
@@ -497,8 +501,7 @@ public class FileDetailPresenter {
                                  RecyclerView searchMemberListView,
                                  EditText editText, ListView fileCommentListView) {
 
-        List<Integer> sharedTopicIds = getSharedTopicIds(
-                activity.getApplicationContext(), fileMessage);
+        List<Integer> sharedTopicIds = getSharedTopicIds(fileMessage);
 
         if (mentionControlViewModel == null) {
             mentionControlViewModel = MentionControlViewModel.newInstance(activity,
@@ -599,9 +602,11 @@ public class FileDetailPresenter {
     public interface View {
         void drawFileWriterState(boolean isEnabled);
 
-        void drawFileDetail(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages, boolean isSendAction);
+        void drawFileDetail(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages,
+                            boolean isSendAction);
 
-        void loadSuccess(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages, boolean isSendAction, int selectMessageId);
+        void loadSuccess(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages,
+                         boolean isSendAction, int selectMessageId);
 
         void showCheckNetworkDialog();
 
@@ -623,7 +628,8 @@ public class FileDetailPresenter {
 
         void onDeleteFileSucceed(boolean isOk);
 
-        void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage, boolean execute);
+        void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage,
+                                   boolean execute);
 
         void onGetProfileFailed();
 
