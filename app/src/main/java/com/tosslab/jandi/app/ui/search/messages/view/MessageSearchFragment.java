@@ -248,10 +248,10 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         RoomSelector roomSelector = new RoomSelectorImpl();
 
         roomSelector.setOnRoomSelectListener(item -> {
-            if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
+            if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
                 EventBus.getDefault().post(new SelectEntityEvent(-1, getString(R.string.jandi_file_category_everywhere)));
             } else {
-                EventBus.getDefault().post(new SelectEntityEvent(item.getId(), item.getName()));
+                EventBus.getDefault().post(new SelectEntityEvent(item.getEntityId(), item.getName()));
             }
             roomSelector.dismiss();
         });

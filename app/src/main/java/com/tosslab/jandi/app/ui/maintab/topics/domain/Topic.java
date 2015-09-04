@@ -17,6 +17,7 @@ public class Topic {
     private boolean selected;
     private int markerLinkId;
     private boolean isPushOn;
+    private int type;
 
     public Topic(String name, boolean isStarred, boolean isJoined, int entityId, int memberCount, int unreadCount,
                  boolean isPublic, String description, int creatorId, int markerLinkId, boolean isPushOn) {
@@ -123,6 +124,14 @@ public class Topic {
 
     public void setIsPushOn(boolean isPushOn) {
         this.isPushOn = isPushOn;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public static class Builder {
