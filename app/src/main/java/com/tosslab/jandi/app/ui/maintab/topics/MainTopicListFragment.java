@@ -83,12 +83,13 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     MainTopicListPresenter mainTopicListPresenter;
     @ViewById(R.id.btn_main_topic_fab)
     View btnFA;
+    @ViewById(R.id.rv_main_topic)
+    private RecyclerView lvMainTopic;
 
-    private RecyclerView rvMainTopic;
     private RecyclerView.LayoutManager layoutManager;
     private ExpandableTopicAdapter adapter;
     private RecyclerView.Adapter wrappedAdapter;
-    private RecyclerViewExpandableItemManager recyclerViewExpandableItemManager;
+    private RecyclerViewExpandableItemManager expandableItemManager;
     private boolean isFirst = true;
 
     private ProgressWheel progressWheel;
@@ -107,14 +108,12 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
         GoogleAnalyticsUtil.sendScreenName("MESSAGE_PANEL");
 
-
-        rvMainTopic = (RecyclerView) getView().findViewById(R.id.rv_main_topic);
         layoutManager = new LinearLayoutManager(getActivity());
 
         final Parcelable eimSavedState = (savedInstanceState != null) ?
                 savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
 
-        recyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
+        expandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
         progressWheel = new ProgressWheel(getActivity());
     }
 
@@ -123,7 +122,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         mainTopicListPresenter.setView(this);
         mainTopicListPresenter.onLoadList();
         mainTopicListPresenter.onInitList();
-        FAButtonUtil.setFAButtonController(rvMainTopic, btnFA);
+        FAButtonUtil.setFAButtonController(lvMainTopic, btnFA);
         hasOptionsMenu();
     }
 
@@ -139,21 +138,21 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
         adapter = new ExpandableTopicAdapter(topicFolderListDataProvider);
 
-        wrappedAdapter = recyclerViewExpandableItemManager.createWrappedAdapter(adapter);
+        wrappedAdapter = expandableItemManager.createWrappedAdapter(adapter);
 
         final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
 
         // Change animations are enabled by default since support-v7-recyclerview v22.
         // Need to disable them when using animation indicator.
         animator.setSupportsChangeAnimations(false);
-        rvMainTopic.setLayoutManager(layoutManager);
-        rvMainTopic.setAdapter(wrappedAdapter);  // requires *wrapped* adapter
-        rvMainTopic.setItemAnimator(animator);
-        rvMainTopic.setHasFixedSize(false);
-        recyclerViewExpandableItemManager.attachRecyclerView(rvMainTopic);
+        lvMainTopic.setLayoutManager(layoutManager);
+        lvMainTopic.setAdapter(wrappedAdapter);  // requires *wrapped* adapter
+        lvMainTopic.setItemAnimator(animator);
+        lvMainTopic.setHasFixedSize(false);
+        expandableItemManager.attachRecyclerView(lvMainTopic);
 
         // 어떤 폴더에도 속하지 않는 토픽들을 expand된 상태에서 보여주기 위하여
-        recyclerViewExpandableItemManager.expandGroup(adapter.getGroupCount() - 1);
+        expandableItemManager.expandGroup(adapter.getGroupCount() - 1);
         if (adapter.getGroupCount() > 1 && folderExpands != null && !folderExpands.isEmpty()) {
             int groupCount = adapter.getGroupCount();
             for (int idx = 0; idx < groupCount; idx++) {
@@ -165,18 +164,19 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
                         .firstOrDefault(false)
                         .toBlocking().first();
                 if (expand) {
-                    recyclerViewExpandableItemManager.expandGroup(idx);
+                    expandableItemManager.expandGroup(idx);
                 }
             }
         }
-        recyclerViewExpandableItemManager.setOnGroupCollapseListener((groupPosition, fromUser) -> {
+        expandableItemManager.setOnGroupCollapseListener((groupPosition, fromUser) -> {
             TopicFolderData topicFolderData = adapter.getTopicFolderData(groupPosition);
             mainTopicListPresenter.onFolderCollapse(topicFolderData);
         });
-        recyclerViewExpandableItemManager.setOnGroupExpandListener((groupPosition, fromUser) -> {
+        expandableItemManager.setOnGroupExpandListener((groupPosition, fromUser) -> {
             TopicFolderData topicFolderData = adapter.getTopicFolderData(groupPosition);
             mainTopicListPresenter.onFolderExpand(topicFolderData);
         });
+        expandableItemManager.expandGroup(adapter.getGroupCount() - 1);
 
         adapter.setOnChildItemClickListener((view, adapter, groupPosition, childPosition) -> {
             mainTopicListPresenter.onChildItemClick(adapter, groupPosition, childPosition);
@@ -304,7 +304,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     public void notifyDatasetChanged() {
         adapter.notifyDataSetChanged();
         //빼먹지 말아야 함.
-        recyclerViewExpandableItemManager.expandGroup(adapter.getGroupCount() - 1);
+        expandableItemManager.expandGroup(adapter.getGroupCount() - 1);
     }
 
     @Override
@@ -409,6 +409,5 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             progressWheel.dismiss();
         }
     }
-
 
 }

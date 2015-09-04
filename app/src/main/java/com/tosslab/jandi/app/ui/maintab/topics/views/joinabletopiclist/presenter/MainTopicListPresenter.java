@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.maintab.topics.views.joinabletopiclist.presentor;
+package com.tosslab.jandi.app.ui.maintab.topics.views.joinabletopiclist.presenter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -125,6 +125,7 @@ public class MainTopicListPresenter {
         void showErrorToast(String message);
 
         void dismissProgressWheel();
+
     }
 
 }

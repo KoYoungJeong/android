@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.maintab.topics.views.choosefolderlist.presentor;
+package com.tosslab.jandi.app.ui.maintab.topics.views.choosefolderlist.presenter;
 
 import android.support.v7.widget.RecyclerView;
 

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@drawable/jandi_btn_dynamic_selector_v2"
-        android:text="Move to another folder"
+        android:text="폴더로 이동하기"
         android:textColor="@color/white"
         android:textStyle="bold" />
 

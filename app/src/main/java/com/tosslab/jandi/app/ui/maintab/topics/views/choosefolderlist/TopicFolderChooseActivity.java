@@ -19,7 +19,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.maintab.topics.views.choosefolderlist.adapter.TopicFolderChooseAdapter;
-import com.tosslab.jandi.app.ui.maintab.topics.views.choosefolderlist.presentor.TopicFolderChoosePresentor;
+import com.tosslab.jandi.app.ui.maintab.topics.views.choosefolderlist.presenter.TopicFolderChoosePresentor;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
@@ -51,7 +51,7 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
     @Bean
     TopicFolderChoosePresentor topicFolderChoosePresentor;
     @ViewById(R.id.rv_choose_folder)
-    RecyclerView rvTopicFolderChoose;
+    RecyclerView lvTopicFolderChoose;
     @ViewById(R.id.ll_no_folder)
     LinearLayout vgNoFolder;
     @ViewById(R.id.ll_folder_list)
@@ -68,10 +68,10 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
     @AfterViews
     void initView() {
         setupActionBar();
-        rvTopicFolderChoose.setLayoutManager(new LinearLayoutManager(TopicFolderChooseActivity.this,
+        lvTopicFolderChoose.setLayoutManager(new LinearLayoutManager(TopicFolderChooseActivity.this,
                 RecyclerView.VERTICAL, false));
-        rvTopicFolderChoose.addItemDecoration(new SimpleDividerItemDecoration(TopicFolderChooseActivity.this));
-        rvTopicFolderChoose.setAdapter(adapter);
+        lvTopicFolderChoose.addItemDecoration(new SimpleDividerItemDecoration(TopicFolderChooseActivity.this));
+        lvTopicFolderChoose.setAdapter(adapter);
         topicFolderChoosePresentor.onRefreshFolders();
 
         adapter.setOnRecyclerItemClickListener((view, adapter, position, type) -> {

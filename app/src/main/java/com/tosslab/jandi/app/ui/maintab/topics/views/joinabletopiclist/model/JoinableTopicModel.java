@@ -62,4 +62,5 @@ public class JoinableTopicModel {
             return false;
         }
     }
+
 }

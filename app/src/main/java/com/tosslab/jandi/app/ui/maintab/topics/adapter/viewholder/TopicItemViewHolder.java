@@ -22,7 +22,6 @@ public class TopicItemViewHolder extends AbstractExpandableItemViewHolder {
     public TextView tvTopicUserCnt;
     public View vPushOff;
     public TextView tvTopicDescription;
-    public RelativeLayout rlTopicBadge;
     public ImageView ivTopicListItemInfo;
     public TextView tvTopicBadge;
     public ImageView ivDefaultUnderline;
@@ -40,12 +39,12 @@ public class TopicItemViewHolder extends AbstractExpandableItemViewHolder {
         tvTopicUserCnt = (TextView) itemView.findViewById(R.id.tv_entity_listitem_user_count);
         vPushOff = (View) itemView.findViewById(R.id.v_push_off);
         tvTopicDescription = (TextView) itemView.findViewById(R.id.tv_entity_listitem_description);
-        rlTopicBadge = (RelativeLayout) itemView.findViewById(R.id.rl_entity_listitem_badge);
+        vgTopicBadge = (RelativeLayout) itemView.findViewById(R.id.rl_entity_listitem_badge);
         ivTopicListItemInfo = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_info);
         tvTopicBadge = (TextView) itemView.findViewById(R.id.tv_entity_listitem_badge);
         ivDefaultUnderline = (ImageView) itemView.findViewById(R.id.iv_default_underline);
         ivFolderItemUnderline = (ImageView) itemView.findViewById(R.id.iv_folder_item_underline);
         ivShadowUnderline = (ImageView) itemView.findViewById(R.id.iv_shadow_underline);
-        vgTopicBadge = (RelativeLayout) itemView.findViewById(R.id.rl_entity_listitem_badge);
     }
+
 }

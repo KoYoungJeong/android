@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="17dp"
             android:clickable="true"
-            android:text="Make new folder"
+            android:text="새 폴더 만들기"
             android:textColor="#00a3e1"
             android:textSize="16sp" />
 
@@ -53,7 +53,7 @@
             android:layout_height="48dp"
             android:gravity="center_vertical"
             android:paddingLeft="16dp"
-            android:text="Choose Your Folder"
+            android:text="이동할 폴더를 선택해주세요."
             android:textColor="#999999"
             android:textSize="14sp" />
 

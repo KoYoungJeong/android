@@ -24,7 +24,7 @@ public class TopicFolderViewHolder extends AbstractExpandableItemViewHolder {
 
     public TextView tvChildBadgeCnt;
 
-    public RelativeLayout rlChildBadgeCnt;
+    public RelativeLayout vgChildBadgeCnt;
     public ImageView ivDefaultUnderline;
     public LinearLayout vgFolderSetting;
 
@@ -37,7 +37,7 @@ public class TopicFolderViewHolder extends AbstractExpandableItemViewHolder {
         tvTitle = (TextView) itemView.findViewById(R.id.tv_topic_folder_title);
         tvTopicCnt = (TextView) itemView.findViewById(R.id.tv_topic_cnt);
         tvChildBadgeCnt = (TextView) itemView.findViewById(R.id.tv_folder_listitem_badge);
-        rlChildBadgeCnt = (RelativeLayout) itemView.findViewById(R.id.rl_folder_listitem_badge);
+        vgChildBadgeCnt = (RelativeLayout) itemView.findViewById(R.id.rl_folder_listitem_badge);
         ivDefaultUnderline = (ImageView) itemView.findViewById(R.id.iv_folder_default_underline);
 
     }

@@ -16,7 +16,7 @@ import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topics.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topics.views.joinabletopiclist.adapter.TopicRecyclerAdapter;
 import com.tosslab.jandi.app.ui.maintab.topics.views.joinabletopiclist.model.UnjoinTopicDialog;
-import com.tosslab.jandi.app.ui.maintab.topics.views.joinabletopiclist.presentor.MainTopicListPresenter;
+import com.tosslab.jandi.app.ui.maintab.topics.views.joinabletopiclist.presenter.MainTopicListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -41,7 +41,7 @@ public class JoinableTopicListActivity extends BaseAnalyticsActivity
         implements MainTopicListPresenter.View {
 
     @ViewById(R.id.rv_unjoined_topic)
-    RecyclerView rvUnjoinedTopic;
+    RecyclerView lvUnjoinedTopic;
 
     @Bean
     MainTopicListPresenter mainTopicListPresenter;
@@ -90,9 +90,9 @@ public class JoinableTopicListActivity extends BaseAnalyticsActivity
 
         setupActionBar();
 
-        rvUnjoinedTopic.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        rvUnjoinedTopic.addItemDecoration(new SimpleDividerItemDecoration(getApplicationContext()));
-        rvUnjoinedTopic.setAdapter(adapter);
+        lvUnjoinedTopic.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        lvUnjoinedTopic.addItemDecoration(new SimpleDividerItemDecoration(getApplicationContext()));
+        lvUnjoinedTopic.setAdapter(adapter);
 
         adapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
             mainTopicListPresenter.onItemClick(adapter, position);

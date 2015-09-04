@@ -33,22 +33,18 @@ public class ExpandableTopicAdapter
         extends AbstractExpandableItemAdapter<TopicFolderViewHolder, TopicItemViewHolder> {
 
     // 그룹이 없는 리스트를 포함하기 위한 더미 그룹 타입
-    public static final int TYPE_NO_GROUP = 0X01;
-
+    public static final int TYPE_NO_GROUP = 1;
     // 하단의 TOPIC JOIN BUTTON 을 삽입하기 위한 타입
-    public static final int TYPE_FOR_JOIN_TOPIC_BUTTON = 0X02;
-
+    public static final int TYPE_FOR_JOIN_TOPIC_BUTTON = 2;
+    private static final int TYPE_HAS_GROUP = 0;
     private OnExpandableChildItemClickListener onExpandableChildItemClickListener;
     private OnExpandableChildItemLongClickListener onExpandableChildItemLongClickListener;
-
     private OnExpandableGroupItemClickListener onExpandableGroupItemClickListener;
 
     private TopicFolderListDataProvider provider;
 
     public ExpandableTopicAdapter(TopicFolderListDataProvider dataProvider) {
-
         this.provider = dataProvider;
-
         // ExpandableItemAdapter requires stable ID, and also
         // have to implement the getGroupItemId()/getChildItemId() methods appropriately.
         setHasStableIds(true);
@@ -107,7 +103,7 @@ public class ExpandableTopicAdapter
         if (groupPosition == getGroupCount() - 1) {
             return TYPE_NO_GROUP;
         }
-        return 0;
+        return TYPE_HAS_GROUP;
     }
 
     @Override
@@ -148,10 +144,10 @@ public class ExpandableTopicAdapter
         holder.tvTitle.setText(item.getTitle());
         holder.tvTopicCnt.setText(String.valueOf(item.getItemCount()));
         if (item.getChildBadgeCnt() > 0) {
-            holder.rlChildBadgeCnt.setVisibility(View.VISIBLE);
+            holder.vgChildBadgeCnt.setVisibility(View.VISIBLE);
             holder.tvChildBadgeCnt.setText(String.valueOf(item.getChildBadgeCnt()));
         } else {
-            holder.rlChildBadgeCnt.setVisibility(View.GONE);
+            holder.vgChildBadgeCnt.setVisibility(View.GONE);
         }
 
         holder.itemView.setClickable(true);
@@ -321,4 +317,5 @@ public class ExpandableTopicAdapter
             getTopicFolderData(groupIdx).setChildBadgeCnt(badgeCount);
         }
     }
+
 }

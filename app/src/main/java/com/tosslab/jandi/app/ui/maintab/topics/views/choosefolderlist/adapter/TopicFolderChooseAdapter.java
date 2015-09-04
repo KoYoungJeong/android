@@ -18,9 +18,9 @@ import java.util.List;
  */
 public class TopicFolderChooseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public static final int TYPE_REMOVE_FROM_FOLDER = 0x01;
-    public static final int TYPE_MAKE_NEW_FOLDER = 0x02;
-    public static final int TYPE_FOLDER_LIST = 0x00;
+    public static final int TYPE_REMOVE_FROM_FOLDER = 1;
+    public static final int TYPE_MAKE_NEW_FOLDER = 2;
+    public static final int TYPE_FOLDER_LIST = 0;
 
     List<ResFolder> folders = null;
 
