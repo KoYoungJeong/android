@@ -424,21 +424,21 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     private void initMessageList() {
-        messageListPresenter.setOnItemClickListener(new MessageListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(RecyclerView.Adapter adapter, int position) {
-
-                MessageListFragment.this.onMessageItemClick(messageListPresenter.getItem
-                        (position), entityId);
+        messageListPresenter.setOnItemClickListener((adapter, position) -> {
+            try {
+                onMessageItemClick(messageListPresenter.getItem(position), entityId);
+            } catch (Exception e) {
+                messageListPresenter.justRefresh();
             }
         });
 
-        messageListPresenter.setOnItemLongClickListener(new MessageListAdapter.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(RecyclerView.Adapter adapter, int position) {
-                MessageListFragment.this.onMessageItemLongClick(messageListPresenter.getItem(position));
-                return true;
+        messageListPresenter.setOnItemLongClickListener((adapter, position) -> {
+            try {
+                onMessageItemLongClick(messageListPresenter.getItem(position));
+            } catch (Exception e) {
+                messageListPresenter.justRefresh();
             }
+            return true;
         });
 
         ((RecyclerView) getView().findViewById(R.id.list_messages)).setOnScrollListener(new RecyclerView.OnScrollListener() {

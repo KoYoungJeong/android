@@ -48,7 +48,7 @@ public class SearchMemberModel {
                                 .contains(subNameString.toLowerCase()))
                 .map(selectableMembersLinkedHashMap::get)
                 .toSortedList(getChatItemComparator())
-                .subscribe(searchedItems::addAll);
+                .subscribe(searchedItems::addAll, Throwable::printStackTrace);
 
         return searchedItems;
 
@@ -81,7 +81,7 @@ public class SearchMemberModel {
                         .setStarred(entity.isStarred))
                 .collect(() -> selectableMembersLinkedHashMap,
                         (selectableMembersLinkedHashMap, searchedItem) -> selectableMembersLinkedHashMap.put(searchedItem.getId(), searchedItem))
-                .subscribe();
+                .subscribe(map -> {}, Throwable::printStackTrace);
 
         if (mentionType.equals(MentionControlViewModel.MENTION_TYPE_MESSAGE)) {
             SearchedItemVO searchedItemForAll = new SearchedItemVO();

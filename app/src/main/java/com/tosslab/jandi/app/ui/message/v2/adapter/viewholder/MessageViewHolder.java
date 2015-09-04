@@ -61,7 +61,8 @@ public class MessageViewHolder implements BodyViewHolder {
     public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
         int fromEntityId = link.fromEntity;
 
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(fromEntityId);
+        EntityManager entityManager = EntityManager.getInstance();
+        FormattedEntity entity = entityManager.getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
         String profileUrl = entity.getUserLargeProfileUrl();
@@ -73,10 +74,7 @@ public class MessageViewHolder implements BodyViewHolder {
                 .crossfade(true)
                 .load(profileUrl);
 
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
-        ResLeftSideMenu.User user = entityById != null ? entityById.getUser() : null;
-        if (user != null && TextUtils.equals(user.status, "enabled")) {
+        if (fromEntity != null && TextUtils.equals(fromEntity.status, "enabled")) {
             nameTextView.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
             disableCoverView.setVisibility(View.GONE);
             disableLineThroughView.setVisibility(View.GONE);
