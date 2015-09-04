@@ -84,7 +84,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     @ViewById(R.id.btn_main_topic_fab)
     View btnFA;
     @ViewById(R.id.rv_main_topic)
-    private RecyclerView lvMainTopic;
+    RecyclerView lvMainTopic;
 
     private RecyclerView.LayoutManager layoutManager;
     private ExpandableTopicAdapter adapter;
