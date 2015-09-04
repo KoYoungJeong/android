@@ -6,8 +6,9 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.maintab.topics.adapter.ExpandableTopicAdapter;
+import com.tosslab.jandi.app.ui.maintab.topics.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topics.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topics.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.topics.model.MainTopicModel;
@@ -33,9 +34,6 @@ public class MainTopicListPresenter {
     @Bean(MainTopicModel.class)
     MainTopicModel mainTopicModel;
 
-    @Bean
-    EntityClientManager entityClientManager;
-
     View view;
 
     public void setView(View view) {
@@ -44,23 +42,22 @@ public class MainTopicListPresenter {
 
     @Background
     public void onInitList() {
-//        view.showProgressWheel();
         view.showList(mainTopicModel.getDataProvider());
-//        view.dismissProgressWheel();
     }
 
     @Background
     public void onRefreshList() {
-//        view.showProgressWheel();
         view.refreshList(mainTopicModel.getDataProvider());
-//        view.dismissProgressWheel();
     }
 
     public void onChildItemClick(RecyclerView.Adapter adapter, int groupPosition, int childPosition) {
-        TopicItemData item = ((ExpandableTopicAdapter) adapter).getTopicItemData(groupPosition, childPosition);
+        ExpandableTopicAdapter topicAdapter = (ExpandableTopicAdapter) adapter;
+        TopicItemData item = topicAdapter.getTopicItemData(groupPosition, childPosition);
         if (item == null) {
             return;
         }
+        TopicFolderData topicFolderData = topicAdapter.getTopicFolderData(groupPosition);
+        topicFolderData.setChildBadgeCnt(topicFolderData.getChildBadgeCnt() - item.getUnreadCount());
         item.setUnreadCount(0);
         adapter.notifyDataSetChanged();
 
@@ -124,6 +121,22 @@ public class MainTopicListPresenter {
         return first != defaultValue;
     }
 
+    public void onNewMessage(SocketMessageEvent event) {
+
+        if (mainTopicModel.isMe(event.getWriter())) {
+            return;
+        }
+
+        List<TopicItemData> joinedTopics = view.getJoinedTopics();
+
+        mainTopicModel.updateMessageCount(event, joinedTopics);
+        view.updateGroupBadgeCount();
+        view.notifyDatasetChanged();
+
+        boolean isBadge = hasAlarmCount(Observable.from(view.getJoinedTopics()));
+        EventBus.getDefault().post(new TopicBadgeEvent(isBadge));
+    }
+
 
     public interface View {
         void showList(TopicFolderListDataProvider topicFolderListDataProvider);
@@ -141,6 +154,8 @@ public class MainTopicListPresenter {
         void showProgressWheel();
 
         void dismissProgressWheel();
+
+        void updateGroupBadgeCount();
     }
 
 }

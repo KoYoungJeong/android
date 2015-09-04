@@ -309,4 +309,16 @@ public class ExpandableTopicAdapter
         this.onExpandableGroupItemClickListener = onExpandableGroupItemClickListener;
     }
 
+    public void updateGroupBadgeCount() {
+        int groupCount = getGroupCount();
+        for (int groupIdx = 0; groupIdx < groupCount; groupIdx++) {
+            int childCount = getChildCount(groupIdx);
+            int badgeCount = 0;
+            for (int childIdx = 0; childIdx < childCount; childIdx++) {
+                TopicItemData topicItemData = getTopicItemData(groupIdx, childIdx);
+                badgeCount += topicItemData.getUnreadCount();
+            }
+            getTopicFolderData(groupIdx).setChildBadgeCnt(badgeCount);
+        }
+    }
 }

@@ -12,6 +12,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -20,6 +23,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
@@ -40,6 +44,7 @@ import com.tosslab.jandi.app.ui.maintab.topics.presenter.MainTopicListPresenter;
 import com.tosslab.jandi.app.ui.maintab.topics.views.choosefolderlist.TopicFolderChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.topics.views.joinabletopiclist.JoinableTopicListActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -54,17 +59,21 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
 /**
  * Created by tee on 15. 8. 26..
  */
 @EFragment(R.layout.fragment_joined_topic_list)
+@OptionsMenu(R.menu.main_activity_menu)
 public class MainTopicListFragment extends Fragment implements MainTopicListPresenter.View {
 
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
@@ -113,6 +122,13 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         mainTopicListPresenter.setView(this);
         mainTopicListPresenter.onInitList();
         FAButtonUtil.setFAButtonController(rvMainTopic, btnFA);
+        hasOptionsMenu();
+    }
+
+    @OptionsItem(R.id.action_main_search)
+    void onSearchOptionSelect() {
+        SearchActivity_.intent(getActivity())
+                .start();
     }
 
     @Override
@@ -153,6 +169,9 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             String folderName = topicFolderData.getTitle();
             showGroupSettingPopupView(view, folderId, folderName);
         });
+
+        boolean isBadge = mainTopicListPresenter.hasAlarmCount(Observable.from(getJoinedTopics()));
+        EventBus.getDefault().post(new TopicBadgeEvent(isBadge));
 
     }
 
@@ -239,17 +258,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     }
 
     public void onEvent(SocketTopicFolderEvent event) {
-//        if (event.getEvent().equals("folder_create")) {
-//
-//        } else if (event.getEvent().equals("folder_update")) {
-//
-//        } else if (event.getEvent().equals("folder_deleted")) {
-//
-//        } else if (event.getEvent().equals("folder_item_created")) {
-//
-//        } else if (event.getEvent().equals("folder_item_deleted")) {
-//
-//        }
         mainTopicListPresenter.onRefreshList();
     }
 
@@ -275,6 +283,11 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     }
 
     @Override
+    public void updateGroupBadgeCount() {
+        adapter.updateGroupBadgeCount();
+    }
+
+    @Override
     public void showEntityMenuDialog(int entityId, int folderId) {
         EntityMenuDialogFragment_.builder()
                 .entityId(entityId)
@@ -288,12 +301,22 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     public void refreshList(TopicFolderListDataProvider topicFolderListDataProvider) {
         adapter.setProvider(topicFolderListDataProvider);
         notifyDatasetChanged();
+
+        boolean isBadge = mainTopicListPresenter.hasAlarmCount(Observable.from(getJoinedTopics()));
+        EventBus.getDefault().post(new TopicBadgeEvent(isBadge));
     }
 
     public void showCreateNewFolderDialog(int folderId, String name) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         final EditText input = new EditText(getActivity());
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        int minWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300f, displayMetrics);
+        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, displayMetrics);
+        input.setMinWidth(minWidth);
+        input.setPadding(padding, input.getPaddingTop(), padding, input.getPaddingBottom());
+
         input.setText(name);
         input.setMaxLines(1);
         input.setCursorVisible(true);
@@ -318,7 +341,13 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     }
 
     public void onEvent(SocketMessageEvent event) {
-        mainTopicListPresenter.onRefreshList();
+        if (TextUtils.equals(event.getMessageType(), "chat")) {
+            return;
+        }
+
+        // 내부적으로 메세지만 갱신시키도록 변경
+        mainTopicListPresenter.onNewMessage(event);
+
     }
 
     public void onEvent(SocketTopicPushEvent event) {

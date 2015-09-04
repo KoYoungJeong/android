@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?><!-- NOTE: should use FrameLayout or RelativeLayout for parent of the "@id/container" view (for Android 2.3 compatibility) -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white">
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@color/white">
 
     <RelativeLayout
         android:id="@+id/rl_folder_container"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:clickable="true"
-        android:foreground="?attr/selectableItemBackground">
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true">
 
         <TextView
             android:id="@+id/tv_topic_cnt"
@@ -22,7 +22,7 @@
             android:gravity="center"
             android:text="1"
             android:textColor="#a6a6a6"
-            android:textSize="12sp" />
+            android:textSize="12sp"/>
 
         <TextView
             android:id="@+id/tv_topic_folder_title"
@@ -35,7 +35,7 @@
             android:maxLines="1"
             android:maxWidth="200dp"
             android:text="Design Topic"
-            android:textColor="#a6a6a6" />
+            android:textColor="#a6a6a6"/>
 
         <RelativeLayout
             android:id="@+id/rl_folder_listitem_badge"
@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:src="@drawable/topic_unread_bagde" />
+                android:src="@drawable/topic_unread_bagde"/>
 
             <TextView
                 android:id="@+id/tv_folder_listitem_badge"
@@ -62,7 +62,7 @@
                 android:text="121"
                 android:textColor="@color/jandi_text_white"
                 android:textSize="@dimen/jandi_entity_badge_font"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
         </RelativeLayout>
 
@@ -81,7 +81,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
-            android:src="@drawable/icon_folder_setting" />
+            android:src="@drawable/icon_folder_setting"/>
 
         <ImageView
             android:id="@+id/iv_folder_default_underline"
