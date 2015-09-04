@@ -140,7 +140,7 @@ public class JandiSocketService extends Service {
 
         EventListener topicStateListener = objects ->
                 jandiSocketServiceModel.refreshTopicState(objects[0]);
-        eventHashMap.put("topic_name_updated", topicStateListener);
+        eventHashMap.put("topic_updated", topicStateListener);
         eventHashMap.put("topic_starred", topicStateListener);
         eventHashMap.put("topic_unstarred", topicStateListener);
 
