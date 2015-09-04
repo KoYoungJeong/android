@@ -8,7 +8,6 @@ import java.util.List;
  * Created by justinygchoi on 2014. 6. 24..
  */
 public class FormatConverter {
-    static final String REG_EX_EMAIL = "^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})$";
     static final String REG_EX_START_WHITE_SPACE = "^\\s";
 
     static final int MB = 1024 * 1024;
@@ -45,7 +44,7 @@ public class FormatConverter {
     }
 
     public static boolean isInvalidEmailString(String targetString) {
-        return !targetString.matches(REG_EX_EMAIL);
+        return !targetString.matches(LinkifyUtil.REG_EX_EMAIL);
     }
 
     public static boolean isInvalidPasswd(String targetString) {
