@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.login;
 
+import android.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -22,6 +23,9 @@ import org.androidannotations.annotations.ViewById;
  */
 @EActivity(R.layout.activity_intro_tutorial)
 public class IntroMainActivity extends AppCompatActivity {
+    public interface KeyboardHandler {
+        void hideKeyboard();
+    }
 
     @ViewById(R.id.btn_tutorial_first)
     Button buttonTutorialFirst;
@@ -36,6 +40,8 @@ public class IntroMainActivity extends AppCompatActivity {
 
     @ViewById(R.id.layout_footer_tutorial)
     LinearLayout tutorialFooterLayout;
+
+    private KeyboardHandler keyboardHandler;
 
     @AfterViews
     void init() {
@@ -64,16 +70,7 @@ public class IntroMainActivity extends AppCompatActivity {
     }
 
     private void setTab() {
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-            @Override
-            public void onPageScrollStateChanged(int position) {
-            }
-
-            @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {
-            }
-
+        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 if (position > IntroTutorialFragment.LAST_PAGE) {
@@ -82,6 +79,8 @@ public class IntroMainActivity extends AppCompatActivity {
                     tutorialFooterLayout.setVisibility(View.VISIBLE);
                     btnAction(position);
                 }
+
+                hideKeyboardIfNeed(position);
             }
         });
     }
@@ -91,5 +90,22 @@ public class IntroMainActivity extends AppCompatActivity {
         buttonTutorialSecond.setSelected(position == IntroTutorialFragment.SECOND_PAGE);
         buttonTutorialThird.setSelected(position == IntroTutorialFragment.LAST_PAGE);
         buttonTutorialLast.setSelected(position > IntroTutorialFragment.LAST_PAGE);
+    }
+
+    private void hideKeyboardIfNeed(int position) {
+        if (keyboardHandler == null) {
+            return;
+        }
+        if (position <= IntroTutorialFragment.LAST_PAGE) {
+            keyboardHandler.hideKeyboard();
+        }
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (fragment instanceof KeyboardHandler) {
+            keyboardHandler = (KeyboardHandler) fragment;
+        }
     }
 }

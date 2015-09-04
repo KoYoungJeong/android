@@ -30,27 +30,27 @@ public class IntroLoginViewModel {
     Activity activity;
 
     @ViewById(R.id.et_intro_login_email)
-    EditText editTextEmail;
+    EditText etEmail;
 
     @ViewById(R.id.et_intro_login_password)
-    EditText editTextPassword;
+    EditText etPassword;
 
     @ViewById(R.id.btn_intro_action_signin_start)
-    Button buttonSignInStart;
+    Button btnSignIn;
 
     @ViewById(R.id.txt_intro_login_forgot_password)
-    TextView forgotPasswordView;
+    TextView tvForgotPassword;
 
     @ViewById(R.id.layout_tutorial_top)
-    View topLayout;
+    View vTopLayout;
 
     /**
      * 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
      */
     @SystemService
     InputMethodManager imm;
-    private ProgressWheel mProgressWheel;
 
+    private ProgressWheel mProgressWheel;
 
     @AfterInject
     void initObject() {
@@ -104,20 +104,24 @@ public class IntroLoginViewModel {
     }
 
     public String getEmailText() {
-        return editTextEmail.getText().toString();
+        return etEmail.getText().toString();
     }
 
     public void setEmailText(String email) {
-        editTextEmail.setText(email);
-        editTextEmail.setSelection(email.length());
+        etEmail.setText(email);
+        etEmail.setSelection(email.length());
     }
 
     public String getPasswordText() {
-        return editTextPassword.getText().toString();
+        return etPassword.getText().toString();
     }
 
     public void hideKeypad() {
-        imm.hideSoftInputFromWindow(editTextEmail.getWindowToken(), 0);
+        if (imm == null || etEmail == null) {
+            return;
+        }
+
+        imm.hideSoftInputFromWindow(etEmail.getWindowToken(), 0);
     }
 
     @UiThread
@@ -131,6 +135,6 @@ public class IntroLoginViewModel {
     }
 
     public void setSignInButtonEnable(boolean validEmailPassword) {
-        buttonSignInStart.setEnabled(validEmailPassword);
+        btnSignIn.setEnabled(validEmailPassword);
     }
 }
