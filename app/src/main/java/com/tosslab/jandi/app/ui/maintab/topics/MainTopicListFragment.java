@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
 import com.tosslab.jandi.app.lists.libs.advancerecyclerview.animator.GeneralItemAnimator;
 import com.tosslab.jandi.app.lists.libs.advancerecyclerview.animator.RefactoredDefaultItemAnimator;
 import com.tosslab.jandi.app.lists.libs.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
+import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
@@ -120,6 +121,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     @AfterViews
     void initViews() {
         mainTopicListPresenter.setView(this);
+        mainTopicListPresenter.onLoadList();
         mainTopicListPresenter.onInitList();
         FAButtonUtil.setFAButtonController(rvMainTopic, btnFA);
         hasOptionsMenu();
@@ -133,7 +135,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
     @Override
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void showList(TopicFolderListDataProvider topicFolderListDataProvider) {
+    public void showList(TopicFolderListDataProvider topicFolderListDataProvider, List<FolderExpand> folderExpands) {
 
         adapter = new ExpandableTopicAdapter(topicFolderListDataProvider);
 
@@ -152,6 +154,29 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
         // 어떤 폴더에도 속하지 않는 토픽들을 expand된 상태에서 보여주기 위하여
         recyclerViewExpandableItemManager.expandGroup(adapter.getGroupCount() - 1);
+        if (adapter.getGroupCount() > 1 && folderExpands != null && !folderExpands.isEmpty()) {
+            int groupCount = adapter.getGroupCount();
+            for (int idx = 0; idx < groupCount; idx++) {
+                TopicFolderData topicFolderData = adapter.getTopicFolderData(idx);
+                boolean expand = Observable.from(folderExpands)
+                        .filter(folderExpand -> topicFolderData.getFolderId() == folderExpand
+                                .getFolderId())
+                        .map(FolderExpand::isExpand)
+                        .firstOrDefault(false)
+                        .toBlocking().first();
+                if (expand) {
+                    recyclerViewExpandableItemManager.expandGroup(idx);
+                }
+            }
+        }
+        recyclerViewExpandableItemManager.setOnGroupCollapseListener((groupPosition, fromUser) -> {
+            TopicFolderData topicFolderData = adapter.getTopicFolderData(groupPosition);
+            mainTopicListPresenter.onFolderCollapse(topicFolderData);
+        });
+        recyclerViewExpandableItemManager.setOnGroupExpandListener((groupPosition, fromUser) -> {
+            TopicFolderData topicFolderData = adapter.getTopicFolderData(groupPosition);
+            mainTopicListPresenter.onFolderExpand(topicFolderData);
+        });
 
         adapter.setOnChildItemClickListener((view, adapter, groupPosition, childPosition) -> {
             mainTopicListPresenter.onChildItemClick(adapter, groupPosition, childPosition);
