@@ -8,7 +8,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/help_no_chating_list" />
+        android:src="@drawable/img_no_chating" />
 
     <TextView
         android:layout_width="wrap_content"

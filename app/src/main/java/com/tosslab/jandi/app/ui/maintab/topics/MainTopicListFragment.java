@@ -170,8 +170,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             showGroupSettingPopupView(view, folderId, folderName);
         });
 
-        boolean isBadge = mainTopicListPresenter.hasAlarmCount(Observable.from(getJoinedTopics()));
-        EventBus.getDefault().post(new TopicBadgeEvent(isBadge));
+        int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
+        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
 
     }
 
@@ -302,8 +302,9 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         adapter.setProvider(topicFolderListDataProvider);
         notifyDatasetChanged();
 
-        boolean isBadge = mainTopicListPresenter.hasAlarmCount(Observable.from(getJoinedTopics()));
-        EventBus.getDefault().post(new TopicBadgeEvent(isBadge));
+        int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics
+                ()));
+        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
     }
 
     public void showCreateNewFolderDialog(int folderId, String name) {

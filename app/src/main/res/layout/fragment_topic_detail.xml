@@ -106,7 +106,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/jandi_icon_setting_member"/>
+                    android:src="@drawable/setting_icon_member"/>
 
                 <TextView
                     android:id="@+id/tv_topic_detail_member_count"

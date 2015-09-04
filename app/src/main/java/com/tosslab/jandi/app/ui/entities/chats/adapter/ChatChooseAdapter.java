@@ -165,11 +165,11 @@ public class ChatChooseAdapter extends BaseAdapter {
         }
 
         chatCHooseViewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
-        chatCHooseViewHolder.imageViewIcon.setImageResource(R.drawable.jandi_profile);
+        chatCHooseViewHolder.imageViewIcon.setImageResource(R.drawable.profile_img);
 
         Ion.with(chatCHooseViewHolder.imageViewIcon)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
+                .placeholder(R.drawable.profile_img)
+                .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
                 .load(item.getPhotoUrl());
         return convertView;

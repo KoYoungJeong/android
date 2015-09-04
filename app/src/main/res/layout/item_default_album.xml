@@ -31,7 +31,7 @@
         android:layout_centerVertical="true"
         android:layout_marginRight="6dp"
         android:layout_toLeftOf="@+id/iv_item_default_album_arrow"
-        android:background="@drawable/jandi_check_select"
+        android:background="@drawable/upload_check_folder"
         android:gravity="center_vertical"
         android:text="12"
         android:textColor="@color/jandi_text_white"

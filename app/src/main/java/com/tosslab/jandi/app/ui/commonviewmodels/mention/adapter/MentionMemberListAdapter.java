@@ -58,15 +58,15 @@ public class MentionMemberListAdapter extends RecyclerView.Adapter<MentionMember
 
         if (item.getName().equals("All") && item.getType().equals("room")) {
             Ion.with(holder.getIvIcon())
-                    .placeholder(R.drawable.thum_all)
+                    .placeholder(R.drawable.thum_all_member)
                     .transform(new IonCircleTransform())
                     .load(null);
 
             holder.getTvName().setText(item.getName() + " (of topic member)");
         } else {
             Ion.with(holder.getIvIcon())
-                    .placeholder(R.drawable.jandi_profile)
-                    .error(R.drawable.jandi_profile)
+                    .placeholder(R.drawable.profile_img)
+                    .error(R.drawable.profile_img)
                     .transform(new IonCircleTransform())
                     .load(item.getSmallProfileImageUrl());
             holder.getTvName().setText(item.getName());

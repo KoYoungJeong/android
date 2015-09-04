@@ -133,10 +133,10 @@ public class MainChatListAdapter extends BaseAdapter {
         }
 
         viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
-        viewHolder.imageViewIcon.setImageResource(R.drawable.jandi_profile);
+        viewHolder.imageViewIcon.setImageResource(R.drawable.profile_img);
         Ion.with(viewHolder.imageViewIcon)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
+                .placeholder(R.drawable.profile_img)
+                .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
                 .load(item.getPhoto());
 

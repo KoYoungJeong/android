@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/jandi_icon_user" />
+        android:src="@drawable/invite_icon_member" />
 
     <TextView
         android:id="@+id/txt_invite_email"
@@ -39,7 +39,7 @@
         android:id="@+id/img_invite_success"
         android:layout_width="21.3dp"
         android:layout_height="21.3dp"
-        android:src="@drawable/jandi_icon_accept"
+        android:src="@drawable/icon_accept"
         android:visibility="gone" />
 
 </LinearLayout>

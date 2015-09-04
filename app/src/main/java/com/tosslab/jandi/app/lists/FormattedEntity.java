@@ -139,9 +139,9 @@ public class FormattedEntity {
 
     public int getIconImageResId() {
         if (isPublicTopic()) {
-            return R.drawable.jandi_icon_topic;
+            return R.drawable.topiclist_icon_topic;
         } else if (isPrivateGroup()) {
-            return R.drawable.jandi_private_topic_icon;
+            return R.drawable.topiclist_icon_topic_private;
         } else if (isDummy()) {
             return getDummyImageRes();
         } else {
@@ -280,7 +280,7 @@ public class FormattedEntity {
     }
 
     private int getDummyImageRes() {
-        return R.drawable.jandi_icon_channel;
+        return R.drawable.topiclist_icon_topic;
     }
 
     public int getMyColor() {

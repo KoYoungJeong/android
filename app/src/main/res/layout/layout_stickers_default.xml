@@ -41,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:scaleType="centerInside"
-                    android:src="@drawable/icon_sticker_recent_no_items" />
+                    android:src="@drawable/icon_sticker_no_items" />
 
                 <TextView
                     android:layout_width="wrap_content"

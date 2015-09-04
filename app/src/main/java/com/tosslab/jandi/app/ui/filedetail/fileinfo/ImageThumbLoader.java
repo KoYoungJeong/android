@@ -62,7 +62,7 @@ public class ImageThumbLoader implements FileThumbLoader {
 
                     BitmapUtil.loadImageByGlideOrIonWhenGif(
                             imageViewPhotoFile, thumbnailPhotoUrl,
-                            R.drawable.jandi_down_placeholder_img, R.drawable.jandi_down_img_disable);
+                            R.drawable.jandi_down_placeholder_img, R.drawable.jandi_down_placeholder_img);
                     break;
             }
 
@@ -109,9 +109,10 @@ public class ImageThumbLoader implements FileThumbLoader {
                     imageViewPhotoFile.setImageResource(R.drawable.jandi_down_placeholder_dropbox);
                     break;
                 default:
-                    imageViewPhotoFile.setImageResource(R.drawable.jandi_down_img_disable);
+                    imageViewPhotoFile.setImageResource(R.drawable.file_down_img_disable);
                     break;
             }
         }
     }
+
 }

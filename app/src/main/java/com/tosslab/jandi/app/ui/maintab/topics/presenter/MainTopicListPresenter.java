@@ -66,9 +66,8 @@ public class MainTopicListPresenter {
         JandiPreference.setBadgeCount(JandiApplication.getContext(), badgeCount);
         BadgeUtils.setBadge(JandiApplication.getContext(), badgeCount);
 
-        boolean isBadge = hasAlarmCount(
-                Observable.from(view.getJoinedTopics()));
-        EventBus.getDefault().post(new TopicBadgeEvent(isBadge));
+        int unreadCount = getUnreadCount(Observable.from(view.getJoinedTopics()));
+        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
 
         int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
         int teamId = AccountRepository.getRepository().getSelectedTeamInfo()
@@ -112,13 +111,12 @@ public class MainTopicListPresenter {
 //        onRefreshList();
     }
 
-    public boolean hasAlarmCount(Observable<TopicItemData> joinEntities) {
-        TopicItemData defaultValue = new TopicItemData();
-        TopicItemData first = joinEntities.filter(topic -> topic.getUnreadCount() > 0)
-                .firstOrDefault(defaultValue)
-                .toBlocking()
-                .first();
-        return first != defaultValue;
+    public int getUnreadCount(Observable<TopicItemData> joinEntities) {
+        final int[] value = {0};
+        joinEntities.filter(topicItemData -> topicItemData.getUnreadCount() > 0)
+                .subscribe(topicItemData -> value[0] += topicItemData.getUnreadCount());
+
+        return value[0];
     }
 
     public void onNewMessage(SocketMessageEvent event) {
@@ -133,8 +131,8 @@ public class MainTopicListPresenter {
         view.updateGroupBadgeCount();
         view.notifyDatasetChanged();
 
-        boolean isBadge = hasAlarmCount(Observable.from(view.getJoinedTopics()));
-        EventBus.getDefault().post(new TopicBadgeEvent(isBadge));
+        int unreadCount = getUnreadCount(Observable.from(view.getJoinedTopics()));
+        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
     }
 
 

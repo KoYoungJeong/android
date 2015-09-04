@@ -15,7 +15,7 @@
             android:layout_height="250dp"
             android:layout_marginBottom="100dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/jandi_intro_symbol" />
+            android:src="@drawable/jandi_symbol_intro" />
     </LinearLayout>
 
     <ImageView
@@ -25,7 +25,7 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="60dp"
-        android:src="@drawable/jandi_intro_logo" />
+        android:src="@drawable/jandi_logo_intro" />
 
 </RelativeLayout>
 

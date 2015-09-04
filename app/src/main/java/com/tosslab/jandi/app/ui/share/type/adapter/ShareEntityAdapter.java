@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.share.type.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,17 +68,17 @@ public class ShareEntityAdapter extends BaseAdapter {
         holder.textView.setText(item.getName());
 
         if (item.isPublicTopic()) {
-            holder.imageView.setImageResource(R.drawable.jandi_icon_topic);
+            holder.imageView.setImageResource(R.drawable.topiclist_icon_topic);
         } else if (item.isPrivateTopic()) {
-            holder.imageView.setImageResource(R.drawable.jandi_private_topic_icon);
+            holder.imageView.setImageResource(R.drawable.topiclist_icon_topic_private);
         } else {
 
-            holder.imageView.setImageResource(R.drawable.jandi_profile);
+            holder.imageView.setImageResource(R.drawable.profile_img);
 
             Ion.with(holder.imageView)
                     .crossfade(true)
-                    .placeholder(R.drawable.jandi_profile)
-                    .error(R.drawable.jandi_profile)
+                    .placeholder(R.drawable.profile_img)
+                    .error(R.drawable.profile_img)
                     .fitCenter()
                     .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + item.getProfileImage());
         }

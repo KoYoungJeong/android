@@ -129,8 +129,8 @@ public class MessageItemView extends LinearLayout {
         LogUtil.d("User Profile Image : " + item.getUserProfileUrl());
 
         Ion.with(mUserProfileImage)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
+                .placeholder(R.drawable.profile_img)
+                .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
                 .load(item.getUserProfileUrl());
         mUserProfileImage.setOnClickListener(new OnClickListener() {
@@ -175,8 +175,8 @@ public class MessageItemView extends LinearLayout {
             String imageUrl = item.getContentSmallThumbnailUrl();
             LogUtil.d("load image thumnail : " + imageUrl);
             Ion.with(mImagePhoto)
-                    .placeholder(R.drawable.jandi_fl_icon_img)
-                    .error(R.drawable.jandi_fl_icon_img)
+                    .placeholder(R.drawable.file_icon_img)
+                    .error(R.drawable.file_icon_img)
                     .fitCenter()
                     .load(imageUrl);
         }

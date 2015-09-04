@@ -5,12 +5,18 @@ package com.tosslab.jandi.app.events;
  */
 public class TopicBadgeEvent {
     private final boolean isBadge;
+    private final int count;
 
-    public TopicBadgeEvent(boolean isBadge) {
+    public TopicBadgeEvent(boolean isBadge, int count) {
         this.isBadge = isBadge;
+        this.count = count;
     }
 
     public boolean isBadge() {
         return isBadge;
+    }
+
+    public int getCount() {
+        return count;
     }
 }

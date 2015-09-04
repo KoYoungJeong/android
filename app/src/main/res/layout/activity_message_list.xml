@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:background="@drawable/jandi_upload_file" />
+            android:background="@drawable/icon_upload_file" />
 
         <EditText
             android:id="@+id/et_message"

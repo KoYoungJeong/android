@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/layout_search_bar"
@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:visibility="visible"/>
 
-
-    <com.tosslab.jandi.app.utils.PagerSlidingTabStrip
+    <com.tosslab.jandi.app.views.PagerSlidingTabStrip
         android:id="@+id/sliding_tabs"
         style="@style/PagerSlidingTabStrip"
         android:layout_width="match_parent"
@@ -44,5 +43,11 @@
 
         </LinearLayout>
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_below="@id/sliding_tabs"
+        android:background="@drawable/menu_shadow"/>
 
 </RelativeLayout>

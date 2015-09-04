@@ -167,7 +167,7 @@ public class ExpandableTopicAdapter
             holder.tvTitle.setTextColor(0xff154a67);
             holder.ivDefaultUnderline.setVisibility(View.GONE);
         } else {
-            holder.tvTopicCnt.setBackgroundResource(R.drawable.icon_topiclist_folder);
+            holder.tvTopicCnt.setBackgroundResource(R.drawable.topiclist_icon_folder);
             holder.tvTopicCnt.setTextColor(0xffa6a6a6);
             holder.tvTitle.setTextColor(0xffa6a6a6);
             holder.ivDefaultUnderline.setVisibility(View.VISIBLE);
@@ -236,15 +236,15 @@ public class ExpandableTopicAdapter
 
         if (item.isPublic()) {
             if (item.isStarred()) {
-                holder.ivTopicIcon.setImageResource(R.drawable.icon_topic_f);
+                holder.ivTopicIcon.setImageResource(R.drawable.topiclist_icon_topic_fav);
             } else {
-                holder.ivTopicIcon.setImageResource(R.drawable.icon_topic);
+                holder.ivTopicIcon.setImageResource(R.drawable.topiclist_icon_topic);
             }
         } else {
             if (item.isStarred()) {
-                holder.ivTopicIcon.setImageResource(R.drawable.icon_topic_private_f);
+                holder.ivTopicIcon.setImageResource(R.drawable.topiclist_icon_topic_private_fav);
             } else {
-                holder.ivTopicIcon.setImageResource(R.drawable.icon_topic_private);
+                holder.ivTopicIcon.setImageResource(R.drawable.topiclist_icon_topic_private);
             }
         }
 

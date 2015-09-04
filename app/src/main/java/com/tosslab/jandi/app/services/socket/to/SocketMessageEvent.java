@@ -14,6 +14,7 @@ public class SocketMessageEvent {
     private String event;
     private String messageType;
     private int messageId;
+    private int teamId;
 
     private MessageRoom room;
     private int writer;
@@ -78,6 +79,14 @@ public class SocketMessageEvent {
                 ", rooms=" + rooms +
                 ", comment=" + comment +
                 '}';
+    }
+
+    public int getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
     }
 
     public int getMessageId() {

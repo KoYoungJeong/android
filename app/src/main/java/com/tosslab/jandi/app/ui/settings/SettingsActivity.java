@@ -38,7 +38,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Set up the action bar.
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));

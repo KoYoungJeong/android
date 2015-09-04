@@ -109,7 +109,7 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));

@@ -20,7 +20,7 @@
             android:layout_centerHorizontal="true"
             android:adjustViewBounds="true"
             android:scaleType="centerInside"
-            android:src="@drawable/jandi_img_tutorial_01" />
+            android:src="@drawable/tutorial_img_01" />
 
         <View
             android:layout_width="match_parent"

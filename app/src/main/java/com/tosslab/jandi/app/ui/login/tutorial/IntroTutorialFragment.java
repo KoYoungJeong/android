@@ -44,18 +44,18 @@ public class IntroTutorialFragment extends Fragment {
         int resMessageText;
         switch (pageType) {
             case FIRST_PAGE:
-                resImageHead = R.drawable.jandi_img_tutorial_01;
+                resImageHead = R.drawable.tutorial_img_01;
                 resTitleText = R.string.jandi_tutorial_welcome;
                 resMessageText = R.string.jandi_tutorial_welcome_message;
                 break;
             case SECOND_PAGE:
-                resImageHead = R.drawable.jandi_img_tutorial_02;
+                resImageHead = R.drawable.tutorial_img_02;
                 resTitleText = R.string.jandi_tutorial_topic;
                 resMessageText = R.string.jandi_tutorial_topic_message;
                 break;
             case LAST_PAGE:
             default:
-                resImageHead = R.drawable.jandi_img_tutorial_03;
+                resImageHead = R.drawable.tutorial_img_03;
                 resTitleText = R.string.jandi_tutorial_file;
                 resMessageText = R.string.jandi_tutorial_file_message;
                 break;

@@ -117,7 +117,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         ActionBar actionBar = activity.getSupportActionBar();
 
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
+            toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
             actionBar.setDisplayUseLogoEnabled(false);
             actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 

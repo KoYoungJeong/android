@@ -60,7 +60,7 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
 
 
         boolean hasAlarmCount = mainTopicModel.hasAlarmCount(joinEntities);
-        EventBus.getDefault().post(new TopicBadgeEvent(hasAlarmCount));
+        EventBus.getDefault().post(new TopicBadgeEvent(hasAlarmCount, 0));
     }
 
     @Background
@@ -87,7 +87,7 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
 
         boolean isBadge = mainTopicModel.hasAlarmCount(
                 Observable.from(view.getJoinedTopics()));
-        EventBus.getDefault().post(new TopicBadgeEvent(isBadge));
+        EventBus.getDefault().post(new TopicBadgeEvent(isBadge, 0));
 
         if (item.isJoined() || !item.isPublic()) {
             int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
@@ -161,7 +161,7 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
 
         if (mainTopicModel.updateBadge(event, joinedTopics)) {
             view.notifyDatasetChanged();
-            EventBus.getDefault().post(new TopicBadgeEvent(true));
+            EventBus.getDefault().post(new TopicBadgeEvent(true, 0));
         }
     }
 

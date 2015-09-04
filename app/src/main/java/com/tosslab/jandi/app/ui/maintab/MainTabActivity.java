@@ -38,6 +38,7 @@ import com.tosslab.jandi.app.push.PushInterfaceActivity;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
+import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
@@ -48,7 +49,6 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
@@ -56,6 +56,7 @@ import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
+import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -75,6 +76,7 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
+import rx.Observable;
 
 /**
  * Created by justinygchoi on 2014. 8. 11..
@@ -182,6 +184,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         if (NetworkCheckUtil.isConnected()) {
             getEntities();
         }
+
+        updateMoreBadge();
     }
 
     private void showInvitePopup() {
@@ -384,20 +388,34 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     }
 
     public void onEventMainThread(ChatBadgeEvent event) {
-        if (event.isBadge()) {
-            mMainTabPagerAdapter.showNewChatBadge();
-        } else {
-            mMainTabPagerAdapter.hideNewChatBadge();
-
-        }
+        mMainTabPagerAdapter.updateChatBadge(event.getCount());
     }
 
     public void onEventMainThread(TopicBadgeEvent event) {
-        if (event.isBadge()) {
-            mMainTabPagerAdapter.showNewTopicBadge();
+        mMainTabPagerAdapter.updateTopicBadge(event.getCount());
+    }
+
+    public void onEventMainThread(MessageOfOtherTeamEvent event) {
+        updateMoreBadge();
+    }
+
+    public void updateMoreBadge() {
+        int messageCount = getOtherTeamMessageCount();
+        if (messageCount > 0) {
+            mMainTabPagerAdapter.showMoreNewBadge();
         } else {
-            mMainTabPagerAdapter.hideNewTopicBadge();
+            mMainTabPagerAdapter.hideMoreNewBadge();
         }
+    }
+
+    private int getOtherTeamMessageCount() {
+        final int[] messageCount = {0};
+        int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+        Observable.from(AccountRepository.getRepository().getAccountTeams())
+                .filter(userTeam -> userTeam.getTeamId() != selectedTeamId)
+                .map(ResAccountInfo.UserTeam::getUnread)
+                .subscribe(integer -> messageCount[0] += integer);
+        return messageCount[0];
     }
 
     public void onEvent(TeamInfoChangeEvent event) {

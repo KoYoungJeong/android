@@ -62,9 +62,9 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(chatItems -> {
                     view.setChatItems(chatItems);
-                    boolean hasAlarmCount = mainChatListModel.hasAlarmCount(chatItems);
-
-                    EventBus.getDefault().post(new ChatBadgeEvent(hasAlarmCount));
+                    int count = mainChatListModel.getUnreadCount(chatItems);
+                    boolean isBadge = count > 0;
+                    EventBus.getDefault().post(new ChatBadgeEvent(isBadge, count));
 
                 }, Throwable::printStackTrace);
     }
@@ -115,9 +115,9 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
             }
 
             view.scrollToPosition(selectedEntityPosition);
-            boolean hasAlarmCount = mainChatListModel.hasAlarmCount(chatItems);
+            int unreadCount = mainChatListModel.getUnreadCount(chatItems);
 
-            EventBus.getDefault().post(new ChatBadgeEvent(hasAlarmCount));
+            EventBus.getDefault().post(new ChatBadgeEvent(unreadCount > 0, unreadCount));
 
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -166,8 +166,8 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         JandiPreference.setBadgeCount(context, badgeCount);
         BadgeUtils.setBadge(context, badgeCount);
 
-        boolean hasAlarmCount = mainChatListModel.hasAlarmCount(view.getChatItems());
-        EventBus.getDefault().post(new ChatBadgeEvent(hasAlarmCount));
+        int unreadCount = mainChatListModel.getUnreadCount(view.getChatItems());
+        EventBus.getDefault().post(new ChatBadgeEvent(unreadCount > 0, unreadCount));
 
         int entityId = chatItem.getEntityId();
 

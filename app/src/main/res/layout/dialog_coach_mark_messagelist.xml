@@ -12,7 +12,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="8dp"
         android:layout_marginTop="-10dp"
-        android:src="@drawable/icon_topic_search_guide" />
+        android:src="@drawable/coachmark_img_search" />
 
     <TextView
         android:layout_width="115dp"
@@ -66,7 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
-            android:src="@drawable/icon_check_btn" />
+            android:src="@drawable/coachmark_btn_check" />
 
     </LinearLayout>
 
@@ -78,7 +78,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="19.5dp"
         android:layout_marginRight="-1.3dp"
-        android:src="@drawable/icon_create_guide" />
+        android:src="@drawable/coachmark_img_create" />
 
     <TextView
         android:layout_width="170dp"

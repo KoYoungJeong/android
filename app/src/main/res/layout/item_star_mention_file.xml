@@ -44,7 +44,7 @@
             android:layout_height="56.6dp"
             android:layout_below="@id/tv_star_mention_name"
             android:layout_marginTop="10dp"
-            android:src="@drawable/jandi_fl_icon_audio_dropbox" />
+            android:src="@drawable/file_icon_audio_dropbox" />
 
         <TextView
             android:id="@+id/tv_star_mention_file_name"

@@ -376,8 +376,8 @@ public class RoomSelectorImpl implements RoomSelector {
                 roomholder.tvName.setText(R.string.jandi_file_category_everywhere);
             } else if (item.isUser()) {
                 Ion.with(roomholder.ivIcon)
-                        .placeholder(R.drawable.jandi_profile_comment)
-                        .error(R.drawable.jandi_profile_comment)
+                        .placeholder(R.drawable.profile_img_comment)
+                        .error(R.drawable.profile_img_comment)
                         .fitCenter()
                         .transform(new IonCircleTransform())
                         .crossfade(true)
@@ -386,16 +386,16 @@ public class RoomSelectorImpl implements RoomSelector {
                 roomholder.tvName.setText(item.getName());
             } else if (item.isPublicTopic()) {
                 if (item.isStarred) {
-                    roomholder.ivIcon.setImageResource(R.drawable.icon_topic_f);
+                    roomholder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic_fav);
                 } else {
-                    roomholder.ivIcon.setImageResource(R.drawable.icon_topic);
+                    roomholder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic);
                 }
                 roomholder.tvName.setText(item.getName());
             } else {
                 if (item.isStarred) {
-                    roomholder.ivIcon.setImageResource(R.drawable.icon_topic_private_f);
+                    roomholder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic_private_fav);
                 } else {
-                    roomholder.ivIcon.setImageResource(R.drawable.icon_topic_private);
+                    roomholder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic_private);
                 }
                 roomholder.tvName.setText(item.getName());
             }

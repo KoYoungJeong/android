@@ -59,7 +59,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:singleLine">true</item>
         <item name="android:textColor">@color/jandi_text_light</item>
-        <item name="android:drawableRight">@drawable/jandi_arrow_down_gray</item>
+        <item name="android:drawableRight">@drawable/file_arrow_down_gray</item>
         <item name="android:drawablePadding">3dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">13sp</item>
@@ -273,7 +273,7 @@
         <item name="android:layout_marginRight">25dp</item>
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/jandi_text</item>
-        <item name="android:background">@drawable/jandi_bg_topic_create_input</item>
+        <item name="android:background">@drawable/bg_topic_create_input</item>
     </style>
 
     <style name="JandiTopic.Create.TextView.TextCount" parent="JandiTopic">

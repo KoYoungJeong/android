@@ -70,16 +70,16 @@ public class EntitySelectDialogAdatper extends BaseAdapter {
         if (entity.getType() == JandiConstants.TYPE_DIRECT_MESSAGE) {
             // 프로필 사진
             Ion.with(holder.imageView)
-                    .placeholder(R.drawable.jandi_profile_comment)
-                    .error(R.drawable.jandi_profile_comment)
+                    .placeholder(R.drawable.profile_img_comment)
+                    .error(R.drawable.profile_img_comment)
                     .transform(new IonCircleTransform())
                     .load(entity.getPhoto());
         } else if (entity.getType() == JandiConstants.TYPE_PUBLIC_TOPIC) {
-            holder.imageView.setImageResource(R.drawable.jandi_icon_topic);
+            holder.imageView.setImageResource(R.drawable.topiclist_icon_topic);
         } else if (entity.getType() == JandiConstants.TYPE_PRIVATE_TOPIC) {
-            holder.imageView.setImageResource(R.drawable.jandi_icon_privategroup);
+            holder.imageView.setImageResource(R.drawable.topiclist_icon_topic_private);
         } else {
-            holder.imageView.setImageResource(R.drawable.jandi_icon_channel);
+            holder.imageView.setImageResource(R.drawable.topiclist_icon_topic);
         }
         return convertView;
     }

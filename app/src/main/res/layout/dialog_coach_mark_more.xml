@@ -11,7 +11,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="209dp"
-        android:src="@drawable/icon_more_invite_guide" />
+        android:src="@drawable/coachmark_img_invite" />
 
     <TextView
         android:layout_width="115dp"
@@ -35,7 +35,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="209dp"
-        android:src="@drawable/icon_more_member_guide" />
+        android:src="@drawable/coachmark_img_member" />
 
     <TextView
         android:id="@+id/tv_more_member_guide_icon"
@@ -61,7 +61,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="108dp"
-        android:src="@drawable/icon_more_profile_guide" />
+        android:src="@drawable/coachmark_img_profile" />
 
     <TextView
         android:layout_width="115dp"
@@ -135,7 +135,7 @@
             android:layout_height="59dp"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:src="@drawable/icon_check_btn" />
+            android:src="@drawable/coachmark_btn_check" />
 
     </LinearLayout>
 

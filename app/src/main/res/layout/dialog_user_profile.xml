@@ -17,7 +17,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="40dp"
-            android:src="@drawable/jandi_profile"/>
+            android:src="@drawable/profile_img"/>
 
         <TextView
             android:id="@+id/txt_user_info_name"
@@ -105,7 +105,7 @@
             android:layout_width="9dp"
             android:layout_height="match_parent"
             android:scaleType="centerInside"
-            android:src="@drawable/jandi_icon_mail_bt"/>
+            android:src="@drawable/btn_icon_mail"/>
 
         <TextView
             android:id="@+id/txt_user_info_email"
@@ -131,7 +131,7 @@
             android:layout_width="9dp"
             android:layout_height="match_parent"
             android:scaleType="centerInside"
-            android:src="@drawable/jandi_icon_call_bt"/>
+            android:src="@drawable/btn_icon_call"/>
 
         <TextView
             android:id="@+id/txt_user_info_phone"

@@ -211,9 +211,9 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
             }
 
             if (topic.isPublic()) {
-                imageViewIcon.setImageResource(R.drawable.jandi_topic_icon);
+                imageViewIcon.setImageResource(R.drawable.topiclist_icon_topic);
             } else {
-                imageViewIcon.setImageResource(R.drawable.jandi_private_topic_icon);
+                imageViewIcon.setImageResource(R.drawable.topiclist_icon_topic_private);
             }
 
             // 이름
