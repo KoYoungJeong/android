@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.starmention.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -13,9 +14,14 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.files.DeleteFileEvent;
+import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldStarMentionedEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.adapter.StarMentionListAdapter;
 import com.tosslab.jandi.app.ui.starmention.presentor.StarMentionListPresentor;
@@ -30,6 +36,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
@@ -80,6 +87,18 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
         lvStarMention.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         starMentionListAdapter = new StarMentionListAdapter();
         starMentionListAdapter.setListType(listType);
+        starMentionListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                if (starMentionListAdapter.getItemCount() == 0) {
+                    lvStarMention.setVisibility(View.GONE);
+                    llEmptyListStarMention.setVisibility(View.VISIBLE);
+                } else {
+                    lvStarMention.setVisibility(View.VISIBLE);
+                    llEmptyListStarMention.setVisibility(View.GONE);
+                }
+            }
+        });
         lvStarMention.setAdapter(starMentionListAdapter);
         loadStarMentionList();
         setOnItemClickListener();
@@ -92,20 +111,13 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
         starMentionListPresentor.addStarMentionMessagesToList(listType);
     }
 
-    private void notifyViewStatus() {
-        if (starMentionListPresentor.isEmpty()) {
-            lvStarMention.setVisibility(View.GONE);
-            llEmptyListStarMention.setVisibility(View.VISIBLE);
-            if (listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
-                tvNoContent.setText(R.string.jandi_mention_no_mentions);
-            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL)) {
-                tvNoContent.setText(R.string.jandi_starred_no_all);
-            } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
-                tvNoContent.setText(R.string.jandi_starred_no_file);
-            }
-        } else {
-            lvStarMention.setVisibility(View.VISIBLE);
-            llEmptyListStarMention.setVisibility(View.GONE);
+    private void initNoContentMessage() {
+        if (listType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
+            tvNoContent.setText(R.string.jandi_mention_no_mentions);
+        } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL)) {
+            tvNoContent.setText(R.string.jandi_starred_no_all);
+        } else if (listType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
+            tvNoContent.setText(R.string.jandi_starred_no_file);
         }
     }
 
@@ -113,12 +125,13 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     @UiThread
     public void onAddAndShowList(List<StarMentionVO> starMentionMessageList) {
         starMentionListAdapter.addStarMentionList(starMentionMessageList);
-        notifyViewStatus();
+        initNoContentMessage();
     }
 
     public void setOnItemClickListener() {
         StarMentionListAdapter.OnItemClickListener onItemClickListener = (adapter, position) -> {
-            starMentionListPresentor.executeClickEvent(adapter.getItemsByPosition(position), getActivity());
+            starMentionListPresentor.executeClickEvent(adapter.getItemsByPosition(position),
+                    StarMentionListFragment.this);
         };
         starMentionListAdapter.setOnItemClickListener(onItemClickListener);
     }
@@ -172,6 +185,40 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
             loadStarMentionList();
         }
     }
+
+    public void onEventMainThread(DeleteFileEvent event) {
+        int messageId = event.getId();
+        starMentionListAdapter.deleteMessage(messageId);
+        starMentionListAdapter.notifyDataSetChanged();
+    }
+
+    public void onEventMainThread(SocketMessageEvent event) {
+        if (TextUtils.equals(event.getMessageType(), "message_delete")) {
+            int messageId = event.getMessageId();
+            starMentionListAdapter.deleteMessage(messageId);
+            starMentionListAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void onEventMainThread(FileCommentRefreshEvent event) {
+        if (TextUtils.equals(event.getEventType(), "file_comment_deleted")) {
+            starMentionListAdapter.deleteMessage(event.getCommentId());
+            starMentionListAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @OnActivityResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH)
+    void onFileDetailResult(Intent data) {
+        if (data != null && data.getBooleanExtra(MessageListFragment.EXTRA_FILE_DELETE, false)) {
+            int fileId = data.getIntExtra(MessageListFragment.EXTRA_FILE_ID, -1);
+            if (fileId != -1) {
+                if (starMentionListAdapter.deleteMessage(fileId)) {
+                    starMentionListAdapter.notifyDataSetChanged();
+                }
+            }
+        }
+    }
+
 
     public void onEventMainThread(SocketMessageStarEvent event) {
 

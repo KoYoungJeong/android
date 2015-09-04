@@ -10,7 +10,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class SocketFileEvent {
     private EventFileInfo file;
-    private String type;
+    private String event;
 
     public EventFileInfo getFile() {
         return file;
@@ -20,12 +20,12 @@ public class SocketFileEvent {
         this.file = file;
     }
 
-    public String getType() {
-        return type;
+    public String getEvent() {
+        return event;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setEvent(String event) {
+        this.event = event;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
