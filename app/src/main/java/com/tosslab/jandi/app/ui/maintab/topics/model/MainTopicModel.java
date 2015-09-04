@@ -17,13 +17,13 @@ import com.tosslab.jandi.app.ui.maintab.topics.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topics.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topics.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topics.domain.TopicItemData;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -61,7 +61,7 @@ public class MainTopicModel {
 
         List<FormattedEntity> joinedChannels = entityManager.getJoinedChannels();
         List<FormattedEntity> groups = entityManager.getGroups();
-        LinkedHashMap topicHashMap = new LinkedHashMap<Integer, Topic>();
+        LinkedHashMap<Integer, Topic> topicHashMap = new LinkedHashMap<>();
 
         Observable<Topic> observable = Observable.merge(Observable.from(joinedChannels), Observable.from(groups))
                 .map(formattedEntity -> new Topic.Builder()
@@ -100,44 +100,31 @@ public class MainTopicModel {
     }
 
     // 리스트에 보여 줄 Data Provider 가져오기
-    public TopicFolderListDataProvider getDataProvider() {
-
-        TopicFolderRepository repository = TopicFolderRepository.getRepository();
+    public TopicFolderListDataProvider getDataProvider(List<ResFolder> topicFolders, List<ResFolderItem> topicFolderItems) {
 
         List<Pair<AbstractExpandableDataProvider.GroupData,
                 List<AbstractExpandableDataProvider.ChildData>>> datas = new LinkedList<>();
-
-        List<ResFolder> topicFolders = null;
-        List<ResFolderItem> topicFolderItems = null;
-
-        if (NetworkCheckUtil.isConnected()) {
-            // 네트워크를 통해 가져오기
-            topicFolders = getTopicFolders();
-            topicFolderItems = getTopicFolderItems();
-            saveFolderDataInDB(topicFolders, topicFolderItems);
-        } else {
-            // 로컬에서 가져오기
-            topicFolderItems = repository.getFolderItems();
-            topicFolders = repository.getFolders();
-        }
 
         LinkedHashMap<Integer, Topic> joinTopics = getJoinEntities();
 
         long folderIndex = 0;
 
+        Collections.sort(topicFolders, (lhs, rhs) -> lhs.seq - rhs.seq);
+
         // 각 폴더와 종속된 토픽 데이터 셋팅
         for (ResFolder folder : topicFolders) {
 
             TopicFolderData topicFolderData = new TopicFolderData(folderIndex, folder.name, folder.id, -1);
-            long itemBadgeCount = 0;
-            int itemCount = 0;
+            final long[] itemBadgeCount = {0};
+            final int[] itemCount = {0};
             List<AbstractExpandableDataProvider.ChildData> topicItemDatas = new ArrayList<>();
 
-            for (ResFolderItem folderItem : topicFolderItems) {
-                if (folderItem.folderId != -1 && folderItem.folderId == folder.id) {
-                    Topic topic = joinTopics.get(folderItem.roomId);
-                    if (topic != null) {
-                        joinTopics.remove(folderItem.roomId);
+            Observable.from(topicFolderItems)
+                    .filter(folderItem -> folderItem.folderId != -1 && folderItem.folderId == folder.id)
+                    .filter(folderItem -> joinTopics.containsKey(folderItem.roomId))
+                            // 참여한 토픽 중에서 폴더링 대상 추출
+                    .map(folderItem -> joinTopics.remove(folderItem.roomId))
+                    .subscribe(topic -> {
                         long itemIndex = topicFolderData.generateNewChildId();
                         TopicItemData topicItemData = TopicItemData.newInstance(
                                 itemIndex, -1, topic.getCreatorId(), topic.getName(),
@@ -145,15 +132,13 @@ public class MainTopicModel {
                                 topic.getUnreadCount(), topic.getMarkerLinkId(), topic.isPushOn(),
                                 topic.isSelected(), topic.getDescription(), topic.isPublic(),
                                 topic.getMemberCount());
-                        itemCount++;
-                        itemBadgeCount += topic.getUnreadCount();
+                        itemCount[0]++;
+                        itemBadgeCount[0] += topic.getUnreadCount();
                         topicItemDatas.add(topicItemData);
-                    }
-                }
-            }
+                    }, Throwable::printStackTrace);
 
-            topicFolderData.setItemCount(itemCount);
-            topicFolderData.setChildBadgeCnt(itemBadgeCount);
+            topicFolderData.setItemCount(itemCount[0]);
+            topicFolderData.setChildBadgeCnt(itemBadgeCount[0]);
 
             datas.add(new Pair<>(topicFolderData, topicItemDatas));
 
@@ -162,22 +147,22 @@ public class MainTopicModel {
 
         // 폴더가 없는 토픽 데이터 셋팅
         TopicFolderData fakeFolder = getFakeFolder(folderIndex);
-        Iterator joinTopicKeySets = joinTopics.keySet().iterator();
+        Iterator<Integer> joinTopicKeySets = joinTopics.keySet().iterator();
 
         List<AbstractExpandableDataProvider.ChildData> noFolderTopicItemDatas = new ArrayList<>();
 
-        while (joinTopicKeySets.hasNext()) {
-            long itemIndex = fakeFolder.generateNewChildId();
-            Topic topic = joinTopics.get(joinTopicKeySets.next());
-            if (topic != null) {
-                TopicItemData topicItemData = TopicItemData.newInstance(
-                        itemIndex, -1, topic.getCreatorId(), topic.getName(),
-                        topic.isStarred(), topic.isJoined(), topic.getEntityId(),
-                        topic.getUnreadCount(), topic.getMarkerLinkId(), topic.isPushOn(),
-                        topic.isSelected(), topic.getDescription(), topic.isPublic(), topic.getMemberCount());
-                noFolderTopicItemDatas.add(topicItemData);
-            }
-        }
+        Observable.from(joinTopics.keySet())
+                .map(topicId -> {
+                    long itemIndex = fakeFolder.generateNewChildId();
+                    Topic topic = joinTopics.get(joinTopicKeySets.next());
+                    return TopicItemData.newInstance(
+                            itemIndex, -1, topic.getCreatorId(), topic.getName(),
+                            topic.isStarred(), topic.isJoined(), topic.getEntityId(),
+                            topic.getUnreadCount(), topic.getMarkerLinkId(), topic.isPushOn(),
+                            topic.isSelected(), topic.getDescription(), topic.isPublic(), topic.getMemberCount());
+
+                })
+                .subscribe(noFolderTopicItemDatas::add);
 
         // Topic join button을 위한 더미 인스턴스 추가
         noFolderTopicItemDatas.add(TopicItemData.getDummyInstance());

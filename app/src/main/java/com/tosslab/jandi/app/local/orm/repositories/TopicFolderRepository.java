@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
+import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
 
@@ -227,6 +228,45 @@ public class TopicFolderRepository {
             lock.unlock();
             return result;
         }
+    }
+
+    public List<FolderExpand> getFolderExpands() {
+        lock.lock();
+        try {
+            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            Dao<FolderExpand, ?> dao = helper.getDao(FolderExpand.class);
+            return dao.queryBuilder()
+                    .where()
+                    .eq("teamId", selectedTeamId)
+                    .query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+
+        return new ArrayList<>();
+    }
+
+    public boolean upsertFolderExpands(int folderId, boolean expand) {
+        lock.lock();
+        try {
+            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            Dao<FolderExpand, ?> dao = helper.getDao(FolderExpand.class);
+            FolderExpand data = new FolderExpand();
+            data.setExpand(expand);
+            data.setFolderId(folderId);
+            data.setTeamId(selectedTeamId);
+            dao.createOrUpdate(data);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+
+        return false;
+
     }
 
 }

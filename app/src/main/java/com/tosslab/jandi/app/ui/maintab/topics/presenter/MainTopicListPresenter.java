@@ -5,7 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
+import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
+import com.tosslab.jandi.app.network.models.ResFolder;
+import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.maintab.topics.adapter.ExpandableTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.topics.domain.TopicFolderData;
@@ -22,6 +26,7 @@ import org.androidannotations.annotations.EBean;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -40,14 +45,29 @@ public class MainTopicListPresenter {
         this.view = view;
     }
 
+    public void onLoadList() {
+        TopicFolderRepository repository = TopicFolderRepository.getRepository();
+
+        List<ResFolderItem> topicFolderItems = repository.getFolderItems();
+        List<ResFolder> topicFolders = repository.getFolders();
+        List<FolderExpand> folderExpands = repository.getFolderExpands();
+        view.showList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems), folderExpands);
+    }
+
     @Background
     public void onInitList() {
-        view.showList(mainTopicModel.getDataProvider());
+        List<ResFolder> topicFolders = mainTopicModel.getTopicFolders();
+        List<ResFolderItem> topicFolderItems = mainTopicModel.getTopicFolderItems();
+        mainTopicModel.saveFolderDataInDB(topicFolders, topicFolderItems);
+        view.refreshList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
     }
 
     @Background
     public void onRefreshList() {
-        view.refreshList(mainTopicModel.getDataProvider());
+        List<ResFolder> topicFolders = mainTopicModel.getTopicFolders();
+        List<ResFolderItem> topicFolderItems = mainTopicModel.getTopicFolderItems();
+        mainTopicModel.saveFolderDataInDB(topicFolders, topicFolderItems);
+        view.refreshList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
     }
 
     public void onChildItemClick(RecyclerView.Adapter adapter, int groupPosition, int childPosition) {
@@ -76,11 +96,6 @@ public class MainTopicListPresenter {
         view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
                 item.getMarkerLinkId());
 
-//        int selectedEntity = item.getEntityId();
-//        view.setSelectedItem(selectedEntity);
-
-//        EventBus.getDefault().post(new MainSelectTopicEvent(selectedEntity));
-
         view.notifyDatasetChanged();
     }
 
@@ -92,24 +107,30 @@ public class MainTopicListPresenter {
 
     @Background
     public void onDeleteTopicFolder(int folderId) {
-        mainTopicModel.deleteTopicFolder(folderId);
+        try {
+            mainTopicModel.deleteTopicFolder(folderId);
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//        onRefreshList();
     }
 
     @Background
     public void onRenameFolder(int folderId, String name) {
-        mainTopicModel.renameFolder(folderId, name);
+        try {
+            mainTopicModel.renameFolder(folderId, name);
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//        onRefreshList();
     }
 
     public boolean hasAlarmCount(Observable<TopicItemData> joinEntities) {
@@ -137,9 +158,19 @@ public class MainTopicListPresenter {
         EventBus.getDefault().post(new TopicBadgeEvent(isBadge));
     }
 
+    public void onFolderExpand(TopicFolderData topicFolderData) {
+        TopicFolderRepository.getRepository()
+                .upsertFolderExpands(topicFolderData.getFolderId(), true);
+    }
+
+    public void onFolderCollapse(TopicFolderData topicFolderData) {
+        TopicFolderRepository.getRepository()
+                .upsertFolderExpands(topicFolderData.getFolderId(), false);
+    }
+
 
     public interface View {
-        void showList(TopicFolderListDataProvider topicFolderListDataProvider);
+        void showList(TopicFolderListDataProvider topicFolderListDataProvider, List<FolderExpand> folderExpands);
 
         void refreshList(TopicFolderListDataProvider topicFolderListDataProvider);
 
