@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.maintab.topic.create;
+package com.tosslab.jandi.app.ui.maintab.topic.views.create;
 
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
@@ -15,7 +15,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.ui.maintab.topic.create.model.TopicCreateModel;
+import com.tosslab.jandi.app.ui.maintab.topic.views.create.model.TopicCreateModel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 

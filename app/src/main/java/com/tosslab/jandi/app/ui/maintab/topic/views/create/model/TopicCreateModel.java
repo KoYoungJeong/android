@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.maintab.topic.create.model;
+package com.tosslab.jandi.app.ui.maintab.topic.views.create.model;
 
 import android.content.Context;
 import android.text.TextUtils;

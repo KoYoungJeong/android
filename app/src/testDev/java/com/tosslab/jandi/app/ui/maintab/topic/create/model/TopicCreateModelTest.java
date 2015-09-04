@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.maintab.topic.create.model;
+package com.tosslab.jandi.app.ui.maintab.topic.views.create.model;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;

@@ -35,7 +35,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
-import com.tosslab.jandi.app.ui.maintab.topic.create.TopicCreateActivity_;
+import com.tosslab.jandi.app.ui.maintab.topic.views.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.ExpandableTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;

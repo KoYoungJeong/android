@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.maintab.topic.create;
+package com.tosslab.jandi.app.ui.maintab.topic.views.create;
 
 import android.app.Activity;
 import android.content.Intent;

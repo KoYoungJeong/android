@@ -134,7 +134,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.maintab.topic.create.TopicCreateActivity_"
+            android:name=".ui.maintab.topic.views.create.TopicCreateActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_create_channel"
             android:screenOrientation="portrait"
