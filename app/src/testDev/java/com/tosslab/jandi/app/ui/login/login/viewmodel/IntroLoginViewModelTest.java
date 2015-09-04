@@ -138,8 +138,8 @@ public class IntroLoginViewModelTest {
         // when : hide keypad
         introLoginViewModel.hideKeypad();
 
-        // then : check to hide keypad
-//        ShadowInputMethodManager shadowInputMethodManager = Shadows.shadowOf(introLoginViewModel.imm);
+////        // then : check to hide keypad
+////        ShadowInputMethodManager shadowInputMethodManager = Shadows.shadowOf(introLoginViewModel.imm);
 //        assertThat(shadowInputMethodManager.isSoftInputVisible(), is(false));
 
     }

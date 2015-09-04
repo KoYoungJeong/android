@@ -2,8 +2,6 @@ package com.tosslab.jandi.app.ui.selector.room;
 
 import android.view.View;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
-
 public interface RoomSelector {
 
     void show(View roomView);
@@ -15,7 +13,7 @@ public interface RoomSelector {
     void setOnRoomDismissListener(OnRoomDismissListener onRoomDismissListener);
 
     interface OnRoomSelectListener {
-        void onRoomSelect(FormattedEntity item);
+        void onRoomSelect(RoomSelectorImpl.ExpandRoomData item);
     }
 
     interface OnRoomDismissListener {

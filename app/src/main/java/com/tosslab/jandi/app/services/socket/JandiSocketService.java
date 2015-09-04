@@ -117,8 +117,7 @@ public class JandiSocketService extends Service {
     }
 
     private void initEventMapper() {
-        EventListener entityRefreshListener = objects ->
-                jandiSocketServiceModel.refreshEntity(null, true);
+        EventListener entityRefreshListener = objects -> jandiSocketServiceModel.refreshEntity(null, true);
 
         eventHashMap.put("team_joined", entityRefreshListener);
         eventHashMap.put("topic_created", entityRefreshListener);
@@ -233,6 +232,15 @@ public class JandiSocketService extends Service {
                 objects -> jandiSocketServiceModel.updateTopicPushSubscribe(objects[0]);
         eventHashMap.put("room_subscription_updated", topicTopicPushSubscribeUpdateListener);
 
+
+        EventListener topicFolderUpdateListener =
+                objects -> jandiSocketServiceModel.refreshTopicFolder(objects[0]);
+
+        eventHashMap.put("folder_updated", topicFolderUpdateListener);
+        eventHashMap.put("folder_item_deleted", topicFolderUpdateListener);
+        eventHashMap.put("folder_item_created", topicFolderUpdateListener);
+        eventHashMap.put("folder_deleted", topicFolderUpdateListener);
+        eventHashMap.put("folder_created", topicFolderUpdateListener);
     }
 
     private void setUpSocketListener() {

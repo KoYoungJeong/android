@@ -15,6 +15,7 @@ import java.sql.SQLException;
  * Created by Steve SeongUg Jung on 15. 7. 28..
  */
 public class AccountInfoDaoImpl extends BaseDaoImpl<ResAccountInfo, String> {
+
     public AccountInfoDaoImpl(ConnectionSource connectionSource) throws SQLException {
         super(connectionSource, ResAccountInfo.class);
     }
@@ -57,9 +58,11 @@ public class AccountInfoDaoImpl extends BaseDaoImpl<ResAccountInfo, String> {
             userEmail.setAccountInfo(accountInfo);
             userEmailDao.create(userEmail);
         }
+
     }
 
     private void upsertUserTeam(ResAccountInfo accountInfo) throws SQLException {
+
         Dao<ResAccountInfo.UserTeam, Integer> userTeamDao
                 = DaoManager.createDao(getConnectionSource(), ResAccountInfo.UserTeam.class);
 
@@ -76,6 +79,7 @@ public class AccountInfoDaoImpl extends BaseDaoImpl<ResAccountInfo, String> {
             userTeam.setOrder(order++);
             userTeamDao.create(userTeam);
         }
+
     }
 
     private void upsertUserDevice(ResAccountInfo accountInfo) throws SQLException {

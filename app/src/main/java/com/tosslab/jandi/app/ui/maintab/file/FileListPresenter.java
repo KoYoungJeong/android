@@ -177,15 +177,15 @@ public class FileListPresenter {
         RoomSelector roomSelector = new RoomSelectorImpl();
         roomSelector.setOnRoomSelectListener(new RoomSelector.OnRoomSelectListener() {
             @Override
-            public void onRoomSelect(FormattedEntity item) {
+            public void onRoomSelect(RoomSelectorImpl.ExpandRoomData item) {
 
                 int sharedEntityId = CategorizingAsEntity.EVERYWHERE;
 
-                if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
+                if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
                     // 첫번째는 "Everywhere"인 더미 entity
                     mCurrentEntityCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everywhere);
                 } else {
-                    sharedEntityId = item.getId();
+                    sharedEntityId = item.getEntityId();
                     mCurrentEntityCategorizingAccodingBy = item.getName();
                 }
                 textViewFileListWhere.setText(mCurrentEntityCategorizingAccodingBy);

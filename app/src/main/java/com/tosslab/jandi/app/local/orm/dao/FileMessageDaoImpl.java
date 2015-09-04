@@ -43,7 +43,6 @@ public class FileMessageDaoImpl extends BaseDaoImpl<ResMessages.FileMessage, Int
             dao.create(shareEntity);
         }
 
-
         DaoManager.createDao(connectionSource, ResMessages.FileContent.class)
                 .createOrUpdate(fileMessage.content);
         DaoManager.createDao(connectionSource, ResMessages.ThumbnailUrls.class)

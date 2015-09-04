@@ -40,10 +40,10 @@ public class LeftSideMenuRepositoryTest {
         leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(userTeam.getTeamId());
 
     }
+
     @After
     public void tearDown() throws Exception {
         BaseInitUtil.releaseDatabase();
-
     }
 
     @Test

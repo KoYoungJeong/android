@@ -159,7 +159,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                     case 2:
                         TutorialCoachMarkUtil.showCoachMarkFileListIfNotShown(MainTabActivity.this);
                         break;
-
                     case 3:
                         TutorialCoachMarkUtil.showCoachMarkMoreIfNotShown(MainTabActivity.this);
                         break;
@@ -346,6 +345,11 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     }
 
     private void postAllEvents() {
+        if (isFirst) {
+            // 처음 TabActivity를 시도하면 0번째 탭이 자동 선택됨으로 이를 tracking
+            trackGaTab(mEntityManager, 0);
+            isFirst = false;
+        }
         postShowChattingListEvent();
     }
 

@@ -59,7 +59,6 @@ public class ChatRepository {
             e.printStackTrace();
         }
         return false;
-
     }
 
     public List<ResChat> getChats() {
@@ -130,6 +129,5 @@ public class ChatRepository {
         ResChat resChat = new ResChat();
         resChat.setEntityId(-1);
         return resChat;
-
     }
 }
