@@ -1,5 +1,9 @@
 package com.tosslab.jandi.app.ui.maintab.topic.adapter;
 
+import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
+import android.content.Context;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -20,6 +24,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.views.listeners.OnExpandableChildItemClickListener;
 import com.tosslab.jandi.app.views.listeners.OnExpandableChildItemLongClickListener;
 import com.tosslab.jandi.app.views.listeners.OnExpandableGroupItemClickListener;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +47,10 @@ public class ExpandableTopicAdapter
     private OnExpandableGroupItemClickListener onExpandableGroupItemClickListener;
 
     private TopicFolderListDataProvider provider;
+
+    private int selectedEntity;
+    private AnimStatus animStatus = AnimStatus.READY;
+
 
     public ExpandableTopicAdapter(TopicFolderListDataProvider dataProvider) {
         this.provider = dataProvider;
@@ -177,6 +186,7 @@ public class ExpandableTopicAdapter
             }
         });
 
+
     }
 
     @Override
@@ -266,6 +276,28 @@ public class ExpandableTopicAdapter
             return false;
         });
 
+        if (item.getEntityId() == selectedEntity && animStatus == AnimStatus.READY) {
+
+            Context context = holder.itemView.getContext();
+            animStatus = AnimStatus.IN_ANIM;
+            Integer colorFrom = context.getResources().getColor(R.color.transparent);
+            Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);
+            final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+            colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
+            colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
+            colorAnimation.setRepeatCount(1);
+            colorAnimation.addUpdateListener(animator -> holder.container.setBackgroundColor((Integer)
+                    animator.getAnimatedValue()));
+
+            colorAnimation.addListener(new SimpleEndAnimatorListener() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    animStatus = AnimStatus.FINISH;
+                }
+            });
+            colorAnimation.start();
+        }
+
     }
 
     @Override
@@ -316,6 +348,21 @@ public class ExpandableTopicAdapter
             }
             getTopicFolderData(groupIdx).setChildBadgeCnt(badgeCount);
         }
+    }
+
+    public void setSelectedEntity(int selectedEntity) {
+        this.selectedEntity = selectedEntity;
+        animStatus = AnimStatus.IDLE;
+    }
+
+    public void startAnimation() {
+        if (animStatus == AnimStatus.IDLE) {
+            animStatus = AnimStatus.READY;
+        }
+    }
+
+    private enum AnimStatus {
+        READY, IN_ANIM, FINISH, IDLE
     }
 
 }

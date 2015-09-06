@@ -181,6 +181,8 @@ public class MainTopicListPresenter {
 
         void showEntityMenuDialog(int entityId, int folderId);
 
+        void scrollToPosition(int selectedEntityPosition);
+
         List<TopicItemData> getJoinedTopics();
 
         void showProgressWheel();

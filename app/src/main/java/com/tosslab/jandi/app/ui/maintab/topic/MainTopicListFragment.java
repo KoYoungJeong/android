@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
+import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
 import com.tosslab.jandi.app.lists.libs.advancerecyclerview.animator.GeneralItemAnimator;
@@ -60,6 +61,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
@@ -79,6 +81,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
 
+    @FragmentArg
+    int selectedEntity = -1;
     @Bean(MainTopicListPresenter.class)
     MainTopicListPresenter mainTopicListPresenter;
     @ViewById(R.id.btn_main_topic_fab)
@@ -443,6 +447,24 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     public void showDeleteFolderToast() {
         ColoredToast.show(getActivity().getApplicationContext(),
                 getActivity().getString(R.string.jandi_folder_removed));
+    }
+
+    public void onEvent(MainSelectTopicEvent event) {
+        selectedEntity = event.getSelectedEntity();
+        setSelectedItem(selectedEntity);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void setSelectedItem(int selectedEntity) {
+        this.selectedEntity = selectedEntity;
+        adapter.setSelectedEntity(selectedEntity);
+    }
+
+    @Override
+    public void scrollToPosition(int selectedEntityPosition) {
+        if (selectedEntityPosition > 0) {
+            lvMainTopic.getLayoutManager().scrollToPosition(selectedEntityPosition - 1);
+        }
     }
 
 
