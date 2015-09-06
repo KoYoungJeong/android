@@ -15,7 +15,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:text="Rename"
+        android:text="@string/jandi_folder_rename"
         android:textColor="#212121" />
 
     <TextView
@@ -27,7 +27,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:text="Remove folder"
+        android:text="@string/jandi_folder_delete"
         android:textColor="#212121" />
 
 </LinearLayout>

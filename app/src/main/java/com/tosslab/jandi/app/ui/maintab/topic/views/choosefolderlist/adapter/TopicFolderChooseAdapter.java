@@ -21,9 +21,8 @@ public class TopicFolderChooseAdapter extends RecyclerView.Adapter<RecyclerView.
     public static final int TYPE_REMOVE_FROM_FOLDER = 1;
     public static final int TYPE_MAKE_NEW_FOLDER = 2;
     public static final int TYPE_FOLDER_LIST = 0;
-
     List<ResFolder> folders = null;
-
+    private int folderId = -1;
     private OnRecyclerItemWithTypeCLickListener onRecyclerItemClickListener;
 
     public List<ResFolder> getFolders() {
@@ -40,8 +39,10 @@ public class TopicFolderChooseAdapter extends RecyclerView.Adapter<RecyclerView.
     public void addAll(List<ResFolder> folders) {
         this.folders = folders;
 
-        //for dummy items (remove / make folder)
-        folders.add(new ResFolder());
+        //for dummy items (remove from/ make folder)
+        if (folderId != -1) {
+            folders.add(new ResFolder());
+        }
         folders.add(new ResFolder());
     }
 
@@ -61,6 +62,7 @@ public class TopicFolderChooseAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
         if (holder.getItemViewType() == TYPE_FOLDER_LIST) {
             FolderChooseAdapterViewHolder viewHolder = (FolderChooseAdapterViewHolder) holder;
             viewHolder.tvChooseFolder.setText(getFolders().get(position).name);
@@ -77,7 +79,9 @@ public class TopicFolderChooseAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public int getItemViewType(int position) {
         if (position == getItemCount() - 2) {
-            return TYPE_REMOVE_FROM_FOLDER;
+            if (folderId != -1) {
+                return TYPE_REMOVE_FROM_FOLDER;
+            }
         } else if (position == getItemCount() - 1) {
             return TYPE_MAKE_NEW_FOLDER;
         }
@@ -97,6 +101,10 @@ public class TopicFolderChooseAdapter extends RecyclerView.Adapter<RecyclerView.
         this.onRecyclerItemClickListener = onRecyclerItemClickListener;
     }
 
+    public void setFolderId(int folderId) {
+        this.folderId = folderId;
+    }
+
     static class FolderChooseAdapterViewHolder extends RecyclerView.ViewHolder {
         public TextView tvChooseFolder;
 
@@ -111,5 +119,4 @@ public class TopicFolderChooseAdapter extends RecyclerView.Adapter<RecyclerView.
             super(itemView);
         }
     }
-
 }

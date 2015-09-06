@@ -17,7 +17,6 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -35,18 +34,19 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
-import com.tosslab.jandi.app.ui.maintab.topic.views.create.TopicCreateActivity_;
-import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.ExpandableTopicAdapter;
+import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.topic.presenter.MainTopicListPresenter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.TopicFolderChooseActivity_;
+import com.tosslab.jandi.app.ui.maintab.topic.views.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
@@ -194,7 +194,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             TopicFolderData topicFolderData = expandableTopicAdapter.getTopicFolderData(groupPosition);
             int folderId = topicFolderData.getFolderId();
             String folderName = topicFolderData.getTitle();
-            showGroupSettingPopupView(view, folderId, folderName);
+            showGroupSettingPopupView(view, folderId, folderName, topicFolderData.getSeq());
         });
 
         int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
@@ -202,12 +202,17 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
     }
 
-    public void showGroupSettingPopupView(View view, int folderId, String folderName) {
+    public void showGroupSettingPopupView(View view, int folderId, String folderName, int seq) {
 
         View popupView = View.inflate(getActivity(), R.layout.popup_folder_setting, null);
         PopupWindow popup = new PopupWindow(popupView);
-        popup.setWidth(LinearLayout.LayoutParams.WRAP_CONTENT);
-        popup.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 176f, displayMetrics);
+        int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120f, displayMetrics);
+
+        popup.setWidth(width);
+        popup.setHeight(height);
         popup.setTouchable(true);
         popup.setFocusable(true);
         popup.setAnimationStyle(-1);
@@ -219,13 +224,13 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         TextView tvFolderSettingRemove = (TextView) popupView.findViewById(R.id.tv_folder_setting_remove);
 
         tvFolderSettingRename.setOnClickListener(v -> {
-            showCreateNewFolderDialog(folderId, folderName);
+            showRenameFolderDialog(folderId, folderName, seq);
             popup.dismiss();
 
         });
 
         tvFolderSettingRemove.setOnClickListener(v -> {
-            mainTopicListPresenter.onDeleteTopicFolder(folderId);
+            showDeleteFolderDialog(folderId);
             popup.dismiss();
         });
 
@@ -334,7 +339,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
     }
 
-    public void showCreateNewFolderDialog(int folderId, String name) {
+    public void showRenameFolderDialog(int folderId, String name, int seq) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         final EditText input = new EditText(getActivity());
@@ -352,14 +357,33 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         input.setSelection(name.length());
 
         builder.setView(input)
-                .setTitle("Insert folder name")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setTitle(getActivity().getString(R.string.jandi_folder_insert_name))
+                .setPositiveButton(getActivity().getString(R.string.jandi_confirm), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mainTopicListPresenter.onRenameFolder(folderId, input.getText().toString());
+                        mainTopicListPresenter.onRenameFolder(folderId, input.getText().toString(), seq);
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getActivity().getString(R.string.jandi_cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        builder.show();
+    }
+
+    public void showDeleteFolderDialog(int folderId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setMessage(R.string.jandi_folder_ask_delete)
+                .setPositiveButton(getActivity().getString(R.string.jandi_confirm), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mainTopicListPresenter.onDeleteTopicFolder(folderId);
+                    }
+                })
+                .setNegativeButton(getActivity().getString(R.string.jandi_cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
@@ -410,5 +434,16 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             progressWheel.dismiss();
         }
     }
+
+    public void showRenameFolderToast() {
+        ColoredToast.show(getActivity().getApplicationContext(),
+                getActivity().getString(R.string.jandi_folder_renamed));
+    }
+
+    public void showDeleteFolderToast() {
+        ColoredToast.show(getActivity().getApplicationContext(),
+                getActivity().getString(R.string.jandi_folder_removed));
+    }
+
 
 }

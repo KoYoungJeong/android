@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="32dp"
-        android:text="새 폴더 만들기"
+        android:text="@string/jandi_folder_new_folder"
         android:textColor="#00a3e1"
         android:textSize="16sp" />
 

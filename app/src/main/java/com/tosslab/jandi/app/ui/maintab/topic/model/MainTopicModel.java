@@ -115,6 +115,7 @@ public class MainTopicModel {
         for (ResFolder folder : topicFolders) {
 
             TopicFolderData topicFolderData = new TopicFolderData(folderIndex, folder.name, folder.id, -1);
+            topicFolderData.setSeq(folder.seq);
             final long[] itemBadgeCount = {0};
             final int[] itemCount = {0};
             List<AbstractExpandableDataProvider.ChildData> topicItemDatas = new ArrayList<>();
@@ -200,11 +201,12 @@ public class MainTopicModel {
         RequestApiManager.getInstance().deleteFolderByTeamApi(teamId, folderId);
     }
 
-    public void renameFolder(int folderId, String name) throws RetrofitError {
+    public void renameFolder(int folderId, String name, int seq) throws RetrofitError {
         int teamId = entityClientManager.getSelectedTeamId();
         ReqUpdateFolder reqUpdateFolder = new ReqUpdateFolder();
         reqUpdateFolder.updateItems = new ReqUpdateFolder.UpdateItems();
         reqUpdateFolder.updateItems.setName(name);
+        reqUpdateFolder.updateItems.setSeq(seq);
         RequestApiManager.getInstance().updateFolderByTeamApi(teamId, folderId, reqUpdateFolder);
     }
 

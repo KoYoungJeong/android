@@ -29,13 +29,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_margin="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="13dp"
             android:layout_toRightOf="@id/tv_topic_cnt"
             android:ellipsize="end"
             android:maxLines="1"
             android:maxWidth="200dp"
             android:text="Design Topic"
-            android:textColor="#a6a6a6" />
+            android:textColor="#a6a6a6"
+            android:textSize="16sp" />
 
         <RelativeLayout
             android:id="@+id/rl_folder_listitem_badge"

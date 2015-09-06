@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="32dp"
-        android:text="폴더에서 제거하기"
+        android:text="@string/jandi_folder_remove_from"
         android:textColor="#999999"
         android:textSize="16sp" />
 </LinearLayout>

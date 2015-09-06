@@ -13,6 +13,7 @@ public class TopicFolderData extends AbstractExpandableDataProvider.GroupData {
 
     private long childBadgeCnt = 0;
     private int itemCount = 0;
+    private int seq;
     private String title;
     private int folderId;
     private boolean pinnedToSwipeLeft;
@@ -76,6 +77,14 @@ public class TopicFolderData extends AbstractExpandableDataProvider.GroupData {
 
     public void setItemCount(int itemCount) {
         this.itemCount = itemCount;
+    }
+
+    public int getSeq() {
+        return seq;
+    }
+
+    public void setSeq(int seq) {
+        this.seq = seq;
     }
 
     public long generateNewChildId() {

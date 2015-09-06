@@ -107,25 +107,29 @@ public class MainTopicListPresenter {
     public void onDeleteTopicFolder(int folderId) {
         try {
             mainTopicModel.deleteTopicFolder(folderId);
+            view.showDeleteFolderToast();
         } catch (RetrofitError retrofitError) {
             retrofitError.printStackTrace();
         }
         try {
             Thread.sleep(200);
+            onRefreshList();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     @Background
-    public void onRenameFolder(int folderId, String name) {
+    public void onRenameFolder(int folderId, String name, int seq) {
         try {
-            mainTopicModel.renameFolder(folderId, name);
+            mainTopicModel.renameFolder(folderId, name, seq);
+            view.showRenameFolderToast();
         } catch (RetrofitError retrofitError) {
             retrofitError.printStackTrace();
         }
         try {
             Thread.sleep(200);
+            onRefreshList();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -184,6 +188,10 @@ public class MainTopicListPresenter {
         void dismissProgressWheel();
 
         void updateGroupBadgeCount();
+
+        void showRenameFolderToast();
+
+        void showDeleteFolderToast();
     }
 
 }

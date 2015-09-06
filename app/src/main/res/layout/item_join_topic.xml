@@ -1,5 +1,4 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_join_topic"
     android:layout_width="match_parent"
     android:layout_height="45dp"
@@ -23,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
-            android:text="토픽 가입하기"
+            android:text="@string/jandi_browse_other_topics"
             android:textColor="#ffffff"
             android:textSize="15sp" />
     </LinearLayout>

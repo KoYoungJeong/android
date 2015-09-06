@@ -16,7 +16,7 @@ import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.adapter.TopicRecyclerAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.model.UnjoinTopicDialog;
-import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.presenter.MainTopicListPresenter;
+import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.presenter.JoinableTopicListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -38,13 +38,13 @@ import rx.Observable;
 
 @EActivity(R.layout.activity_unjoined_topic_list)
 public class JoinableTopicListActivity extends BaseAnalyticsActivity
-        implements MainTopicListPresenter.View {
+        implements JoinableTopicListPresenter.View {
 
     @ViewById(R.id.rv_unjoined_topic)
     RecyclerView lvUnjoinedTopic;
 
     @Bean
-    MainTopicListPresenter mainTopicListPresenter;
+    JoinableTopicListPresenter mainTopicListPresenter;
 
     private TopicRecyclerAdapter adapter;
     private ProgressWheel progressWheel;
@@ -109,12 +109,17 @@ public class JoinableTopicListActivity extends BaseAnalyticsActivity
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setEntities(Observable<Topic> unjoinEntities) {
-
         adapter.clear();
-
-        unjoinEntities.toSortedList((lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()))
-                .subscribe(adapter::addAll);
-
+        unjoinEntities
+                .toSortedList((lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()))
+                .subscribe(entities -> {
+                    if (entities.size() == 0) {
+                        JoinableTopicListActivity.this.finish();
+                        showToast(getString(R.string.jandi_no_topic_to_join));
+                    } else {
+                        adapter.addAll(entities);
+                    }
+                });
         adapter.notifyDataSetChanged();
     }
 
@@ -129,6 +134,7 @@ public class JoinableTopicListActivity extends BaseAnalyticsActivity
                 .lastMarker(markerLinkId)
                 .isFavorite(starred)
                 .startForResult(MainTabActivity.REQ_START_MESSAGE);
+        finish();
     }
 
     @Override
@@ -158,7 +164,6 @@ public class JoinableTopicListActivity extends BaseAnalyticsActivity
     @Override
     public void showToast(String message) {
         ColoredToast.show(getApplicationContext(), message);
-
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

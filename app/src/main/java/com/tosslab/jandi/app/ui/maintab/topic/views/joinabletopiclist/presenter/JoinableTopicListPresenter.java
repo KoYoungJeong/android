@@ -22,7 +22,7 @@ import retrofit.RetrofitError;
 import rx.Observable;
 
 @EBean
-public class MainTopicListPresenter {
+public class JoinableTopicListPresenter {
 
     @Bean
     JoinableTopicModel mainTopicModel;
@@ -37,6 +37,7 @@ public class MainTopicListPresenter {
         EntityManager entityManager = EntityManager.getInstance();
         Observable<Topic> unjoinEntities =
                 mainTopicModel.getUnjoinEntities(entityManager.getUnjoinedChannels());
+        //unjoinEntities.
         view.setEntities(unjoinEntities);
     }
 

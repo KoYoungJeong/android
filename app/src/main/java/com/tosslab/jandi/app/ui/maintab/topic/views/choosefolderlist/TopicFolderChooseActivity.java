@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.adapter.TopicFolderChooseAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.presenter.TopicFolderChoosePresenter;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
@@ -33,8 +34,6 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
-
 /**
  * Created by tee on 15. 8. 30..
  */
@@ -47,7 +46,6 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
 
     @Extra
     int folderId;
-
     @Bean
     TopicFolderChoosePresenter topicFolderChoosePresentor;
     @ViewById(R.id.rv_choose_folder)
@@ -56,8 +54,12 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
     LinearLayout vgNoFolder;
     @ViewById(R.id.ll_folder_list)
     LinearLayout vgFolderList;
-
+    private String currentItemFolderName = "";
     private TopicFolderChooseAdapter adapter;
+
+    public void setCurrentTopicFolderName(String currentItemFolderName) {
+        this.currentItemFolderName = currentItemFolderName;
+    }
 
     @AfterInject
     void initObject() {
@@ -71,8 +73,9 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
         lvTopicFolderChoose.setLayoutManager(new LinearLayoutManager(TopicFolderChooseActivity.this,
                 RecyclerView.VERTICAL, false));
         lvTopicFolderChoose.addItemDecoration(new SimpleDividerItemDecoration(TopicFolderChooseActivity.this));
+        adapter.setFolderId(folderId);
         lvTopicFolderChoose.setAdapter(adapter);
-        topicFolderChoosePresentor.onRefreshFolders();
+        topicFolderChoosePresentor.onRefreshFolders(folderId);
 
         adapter.setOnRecyclerItemClickListener((view, adapter, position, type) -> {
             topicFolderChoosePresentor.onItemClick(adapter, position, type, folderId, topicId);
@@ -81,8 +84,8 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
 
     @UiThread
     @Override
-    public void showFolderList(List<ResFolder> folders) {
-        if (folders.size() != 0) {
+    public void showFolderList(List<ResFolder> folders, boolean hasFolder) {
+        if (hasFolder) {
             viewGroupSelect(true);
             adapter.clear();
             adapter.addAll(folders);
@@ -113,7 +116,7 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle("Move topic");
+        actionBar.setTitle(getString(R.string.jandi_folder_move_to));
     }
 
     @Override
@@ -146,28 +149,24 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
         input.setCursorVisible(true);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input)
-                .setTitle("Insert folder name")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.jandi_folder_insert_name))
+                .setPositiveButton(getString(R.string.jandi_confirm), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         createNewFolder(input.getText().toString());
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.jandi_cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
                 });
-        AlertDialog dialog = builder.show();
+        builder.show();
     }
 
     public void createNewFolder(String title) {
-        try {
-            topicFolderChoosePresentor.onCreateFolers(title);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-        }
+        topicFolderChoosePresentor.onCreateFolers(title, folderId);
     }
 
     @Override
@@ -175,4 +174,18 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
         this.finish();
     }
 
+    public void showMoveToFolderToast(String folderName) {
+        ColoredToast.show(getApplicationContext(),
+                getString(R.string.jandi_folder_has_been_move_to, folderName));
+    }
+
+    public void showRemoveFromFolderToast() {
+        ColoredToast.show(getApplicationContext(),
+                getString(R.string.jandi_folder_has_been_remove_from, currentItemFolderName));
+    }
+
+    public void showAlreadyHasFolderToast() {
+        ColoredToast.show(getApplicationContext(),
+                getString(R.string.jandi_folder_alread_has_name));
+    }
 }
