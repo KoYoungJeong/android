@@ -109,7 +109,7 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:text="@string/jandi_team_switch"
-                    app:img="@drawable/more_icon_team_swich"/>
+                    app:img="@drawable/more_icon_team_switch"/>
 
             </LinearLayout>
 
