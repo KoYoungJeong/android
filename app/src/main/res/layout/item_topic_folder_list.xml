@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?><!-- NOTE: should use FrameLayout or RelativeLayout for parent of the "@id/container" view (for Android 2.3 compatibility) -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white">
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@color/white">
 
     <RelativeLayout
         android:id="@+id/rl_folder_container"
@@ -22,7 +22,7 @@
             android:gravity="center"
             android:text="1"
             android:textColor="#a6a6a6"
-            android:textSize="12sp" />
+            android:textSize="12sp"/>
 
         <TextView
             android:id="@+id/tv_topic_folder_title"
@@ -37,7 +37,7 @@
             android:maxWidth="200dp"
             android:text="Design Topic"
             android:textColor="#a6a6a6"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
         <RelativeLayout
             android:id="@+id/rl_folder_listitem_badge"
@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:src="@drawable/topiclist_unread_badge" />
+                android:src="@drawable/topiclist_unread_badge"/>
 
             <TextView
                 android:id="@+id/tv_folder_listitem_badge"
@@ -63,8 +63,7 @@
                 android:gravity="center"
                 android:text="121"
                 android:textColor="@color/jandi_text_white"
-                android:textSize="@dimen/jandi_entity_badge_font"
-                android:textStyle="bold" />
+                android:textSize="11sp"/>
 
         </RelativeLayout>
 
@@ -84,7 +83,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
             android:clickable="false"
-            android:src="@drawable/topiclist_icon_folder_setting" />
+            android:src="@drawable/topiclist_icon_folder_setting"/>
 
         <ImageView
             android:id="@+id/iv_folder_default_underline"
