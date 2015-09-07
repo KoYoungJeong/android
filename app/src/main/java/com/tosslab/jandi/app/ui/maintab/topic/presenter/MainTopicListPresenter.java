@@ -55,18 +55,26 @@ public class MainTopicListPresenter {
 
     @Background
     public void onInitList() {
-        List<ResFolder> topicFolders = mainTopicModel.getTopicFolders();
-        List<ResFolderItem> topicFolderItems = mainTopicModel.getTopicFolderItems();
-        mainTopicModel.saveFolderDataInDB(topicFolders, topicFolderItems);
-        view.refreshList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
+        try {
+            List<ResFolder> topicFolders = mainTopicModel.getTopicFolders();
+            List<ResFolderItem> topicFolderItems = mainTopicModel.getTopicFolderItems();
+            mainTopicModel.saveFolderDataInDB(topicFolders, topicFolderItems);
+            view.refreshList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
     }
 
     @Background
     public void onRefreshList() {
-        List<ResFolder> topicFolders = mainTopicModel.getTopicFolders();
-        List<ResFolderItem> topicFolderItems = mainTopicModel.getTopicFolderItems();
-        mainTopicModel.saveFolderDataInDB(topicFolders, topicFolderItems);
-        view.refreshList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
+        try {
+            List<ResFolder> topicFolders = mainTopicModel.getTopicFolders();
+            List<ResFolderItem> topicFolderItems = mainTopicModel.getTopicFolderItems();
+            mainTopicModel.saveFolderDataInDB(topicFolders, topicFolderItems);
+            view.refreshList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
         view.startAnimationSelectedItem();
     }
 

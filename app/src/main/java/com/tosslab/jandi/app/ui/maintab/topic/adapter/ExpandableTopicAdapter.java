@@ -369,6 +369,22 @@ public class ExpandableTopicAdapter
         }
     }
 
+    public int findGroupIdOfChildEntity(int entityId) {
+        if (entityId <= 0) {
+            return -1;
+        }
+        int groupCount = getGroupCount();
+        for (int groupIdx = 0; groupIdx < groupCount; groupIdx++) {
+            int childCount = getChildCount(groupIdx);
+            for (int childIdx = 0; childIdx < childCount; childIdx++) {
+                if (getTopicItemData(groupIdx, childIdx).getEntityId() == entityId) {
+                    return getTopicFolderData(groupIdx).getFolderId();
+                }
+            }
+        }
+        return -1;
+    }
+
     private enum AnimStatus {
         READY, IN_ANIM, FINISH, IDLE
     }

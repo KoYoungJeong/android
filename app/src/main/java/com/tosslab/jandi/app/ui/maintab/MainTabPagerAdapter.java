@@ -38,6 +38,7 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
             case TAB_TOPIC:
                 return MainTopicListFragment_
                         .builder()
+                        .selectedEntity(selectedEntity)
                         .build();
             case TAB_CHAT:
                 return MainChatListFragment_

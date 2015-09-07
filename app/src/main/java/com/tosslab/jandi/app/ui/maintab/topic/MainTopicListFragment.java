@@ -160,11 +160,14 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
         if (adapter.getGroupCount() > 1 && folderExpands != null && !folderExpands.isEmpty()) {
             int groupCount = adapter.getGroupCount();
+            boolean expand;
+            int seledtedGruopId = adapter.findGroupIdOfChildEntity(selectedEntity);
             for (int idx = 0; idx < groupCount; idx++) {
                 TopicFolderData topicFolderData = adapter.getTopicFolderData(idx);
-                boolean expand = Observable.from(folderExpands)
-                        .filter(folderExpand -> topicFolderData.getFolderId() == folderExpand
-                                .getFolderId())
+                expand = Observable.from(folderExpands)
+                        .filter(folderExpand ->
+                                topicFolderData.getFolderId() == folderExpand.getFolderId()
+                                        || topicFolderData.getFolderId() == seledtedGruopId)
                         .map(FolderExpand::isExpand)
                         .firstOrDefault(false)
                         .toBlocking().first();
@@ -203,7 +206,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
         int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
-
+        setSelectedItem(selectedEntity);
+        adapter.startAnimation();
     }
 
     public void showGroupSettingPopupView(View view, int folderId, String folderName, int seq) {
