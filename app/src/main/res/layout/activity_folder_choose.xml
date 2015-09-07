@@ -24,7 +24,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="You have no folder"
+            android:text="@string/jandi_folder_no_have"
             android:textColor="#404040"
             android:textSize="18sp" />
 
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="17dp"
             android:clickable="true"
-            android:text="Make new folder"
+            android:text="@string/jandi_folder_new_folder"
             android:textColor="#00a3e1"
             android:textSize="16sp" />
 
@@ -53,7 +53,7 @@
             android:layout_height="48dp"
             android:gravity="center_vertical"
             android:paddingLeft="16dp"
-            android:text="Choose Your Folder"
+            android:text="@string/jandi_folder_choose"
             android:textColor="#999999"
             android:textSize="14sp" />
 

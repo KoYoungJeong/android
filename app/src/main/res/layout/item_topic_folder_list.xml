@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?><!-- NOTE: should use FrameLayout or RelativeLayout for parent of the "@id/container" view (for Android 2.3 compatibility) -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:background="@color/white">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
 
     <RelativeLayout
         android:id="@+id/rl_folder_container"
@@ -22,20 +22,22 @@
             android:gravity="center"
             android:text="1"
             android:textColor="#a6a6a6"
-            android:textSize="12sp"/>
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/tv_topic_folder_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_margin="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="13dp"
             android:layout_toRightOf="@id/tv_topic_cnt"
             android:ellipsize="end"
             android:maxLines="1"
             android:maxWidth="200dp"
             android:text="Design Topic"
-            android:textColor="#a6a6a6"/>
+            android:textColor="#a6a6a6"
+            android:textSize="16sp" />
 
         <RelativeLayout
             android:id="@+id/rl_folder_listitem_badge"
@@ -62,13 +64,13 @@
                 android:text="121"
                 android:textColor="@color/jandi_text_white"
                 android:textSize="@dimen/jandi_entity_badge_font"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
         </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/ll_folder_setting"
-            android:layout_width="60dp"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:clickable="true"
@@ -81,7 +83,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
-            android:clickable="true"
+            android:clickable="false"
             android:src="@drawable/topiclist_icon_folder_setting" />
 
         <ImageView

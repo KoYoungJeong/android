@@ -134,7 +134,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.maintab.topic.create.TopicCreateActivity_"
+            android:name=".ui.maintab.topic.views.create.TopicCreateActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_create_channel"
             android:screenOrientation="portrait"
@@ -274,7 +274,7 @@
         </activity>
 
         <activity
-            android:name=".ui.maintab.topics.views.choosefolderlist.TopicFolderChooseActivity_"
+            android:name=".ui.maintab.topic.views.choosefolderlist.TopicFolderChooseActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Move topic"
             android:screenOrientation="portrait">
@@ -287,7 +287,7 @@
 
 
         <activity
-            android:name=".ui.maintab.topics.views.joinabletopiclist.JoinableTopicListActivity_"
+            android:name=".ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Join topic"
             android:screenOrientation="portrait">

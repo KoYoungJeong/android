@@ -488,5 +488,22 @@
 
     <string name="jandi_msg_network_offline">"連線中斷。"</string>
     <string name="jandi_msg_network_offline_warn">"目前為無網路狀態 JANDI會於連上網路後，"</string>
+
+    <string name="jandi_folder_removed">資料夾已被移除</string>
+    <string name="jandi_folder_renamed">資料夾已被重新命名</string>
+    <string name="jandi_folder_delete">刪除資料夾</string>
+    <string name="jandi_folder_ask_delete">你確定要刪除此資料夾？</string>
+    <string name="jandi_folder_move_to">移動到資料夾</string>
+    <string name="jandi_folder_alread_has_name">這名稱已被使用</string>
+    <string name="jandi_folder_remove_from">從此資料夾中移除</string>
+    <string name="jandi_folder_choose">選擇資料夾</string>
+    <string name="jandi_folder_has_been_move_to">議題已被移至 %s</string>
+    <string name="jandi_folder_has_been_remove_from">議題已從 %s 中移除</string>
+    <string name="jandi_folder_no_have">尚無資料夾</string>
+    <string name="jandi_folder_insert_name">鍵入資料夾名稱</string>
+    <string name="jandi_folder_new_folder">建立新的資料夾</string>
+    <string name="jandi_browse_other_topics">瀏覽其他議題</string>
+    <string name="jandi_folder_rename">重新命名</string>
+    <string name="jandi_no_topic_to_join">沒有可加入的議題</string>
 </resources>
 

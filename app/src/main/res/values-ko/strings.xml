@@ -507,4 +507,21 @@
     <string name="jandi_msg_network_offline">"인터넷이 연결되어 있지 않습니다."</string>
     <string name="jandi_msg_network_offline_warn">"현재 네트워크에 접속되지 않은 것으로 보입니다."</string>
 
+
+    <string name="jandi_folder_removed">폴더가 삭제되었습니다.</string>
+    <string name="jandi_folder_renamed">폴더명이 변경되었습니다.</string>
+    <string name="jandi_folder_delete">폴더 삭제</string>
+    <string name="jandi_folder_ask_delete">폴더를 정말 삭제하시겠습니까?</string>
+    <string name="jandi_folder_move_to">폴더로 이동하기</string>
+    <string name="jandi_folder_alread_has_name">이미 존재하는 이름입니다</string>
+    <string name="jandi_folder_remove_from">폴더에서 제거하기</string>
+    <string name="jandi_folder_choose">이동할 폴더를 선택해주세요.</string>
+    <string name="jandi_folder_has_been_move_to">토픽을 %s 폴더로 이동했습니다.</string>
+    <string name="jandi_folder_has_been_remove_from">토픽이 %s 폴더에서 제거되었습니다.</string>
+    <string name="jandi_folder_no_have">폴더가 없습니다.</string>
+    <string name="jandi_folder_insert_name">폴더명을 입력해주세요.</string>
+    <string name="jandi_folder_new_folder">새 폴더 만들기</string>
+    <string name="jandi_browse_other_topics">참여하지 않은 토픽 목록 보기</string>
+    <string name="jandi_folder_rename">이름 변경</string>
+    <string name="jandi_no_topic_to_join">참여 가능한 토픽이 없습니다</string>
 </resources>

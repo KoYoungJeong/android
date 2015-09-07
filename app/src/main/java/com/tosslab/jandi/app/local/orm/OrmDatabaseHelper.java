@@ -7,6 +7,7 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
+import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.domain.LeftSideMenu;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.RecentSticker;
@@ -16,8 +17,8 @@ import com.tosslab.jandi.app.local.orm.domain.UploadedFileInfo;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResChat;
-import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.network.models.ResFolder;
+import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
@@ -96,6 +97,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             createTable(connectionSource, ResFolder.class);
             createTable(connectionSource, ResFolderItem.class);
+            createTable(connectionSource, FolderExpand.class);
 
             createTable(connectionSource, UploadedFileInfo.class);
 
@@ -176,6 +178,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             dropTable(connectionSource, ResFolder.class);
             dropTable(connectionSource, ResFolderItem.class);
+            dropTable(connectionSource, FolderExpand.class);
 
             onCreate(database, connectionSource);
 

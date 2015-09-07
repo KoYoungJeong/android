@@ -1,62 +1,197 @@
 package com.tosslab.jandi.app.ui.maintab.topic.presenter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.events.TopicBadgeEvent;
+import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
+import com.tosslab.jandi.app.network.models.ResFolder;
+import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
-import com.tosslab.jandi.app.ui.maintab.topics.domain.Topic;
+import com.tosslab.jandi.app.ui.maintab.topic.adapter.ExpandableTopicAdapter;
+import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
+import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider;
+import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
+import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
+import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.JandiPreference;
+
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
 
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
- * Created by Steve SeongUg Jung on 15. 7. 16..
+ * Created by tee on 15. 8. 26..
  */
-public interface MainTopicListPresenter {
 
-    void setView(View view);
+@EBean
+public class MainTopicListPresenter {
 
-    void onInitTopics(Context context, int selectedEntity);
+    @Bean(MainTopicModel.class)
+    MainTopicModel mainTopicModel;
 
-    void onItemClick(Context context, RecyclerView.Adapter adapter, int position);
+    View view;
 
-    void onJoinTopic(Context context, Topic topic);
+    public void setView(View view) {
+        this.view = view;
+    }
 
-    void onNewMessage(SocketMessageEvent event);
+    public void onLoadList() {
+        TopicFolderRepository repository = TopicFolderRepository.getRepository();
 
-    void onItemLongClick(Context context, RecyclerView.Adapter adapter, int position);
+        List<ResFolderItem> topicFolderItems = repository.getFolderItems();
+        List<ResFolder> topicFolders = repository.getFolders();
+        List<FolderExpand> folderExpands = repository.getFolderExpands();
+        view.showList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems), folderExpands);
+    }
 
-    void onFocusTopic(int selectedEntity);
+    @Background
+    public void onInitList() {
+        List<ResFolder> topicFolders = mainTopicModel.getTopicFolders();
+        List<ResFolderItem> topicFolderItems = mainTopicModel.getTopicFolderItems();
+        mainTopicModel.saveFolderDataInDB(topicFolders, topicFolderItems);
+        view.refreshList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
+    }
 
-    void onRefreshTopicList();
+    @Background
+    public void onRefreshList() {
+        List<ResFolder> topicFolders = mainTopicModel.getTopicFolders();
+        List<ResFolderItem> topicFolderItems = mainTopicModel.getTopicFolderItems();
+        mainTopicModel.saveFolderDataInDB(topicFolders, topicFolderItems);
+        view.refreshList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
+    }
 
-    interface View {
+    public void onChildItemClick(RecyclerView.Adapter adapter, int groupPosition, int childPosition) {
+        ExpandableTopicAdapter topicAdapter = (ExpandableTopicAdapter) adapter;
+        TopicItemData item = topicAdapter.getTopicItemData(groupPosition, childPosition);
+        if (item == null) {
+            return;
+        }
+        TopicFolderData topicFolderData = topicAdapter.getTopicFolderData(groupPosition);
+        topicFolderData.setChildBadgeCnt(topicFolderData.getChildBadgeCnt() - item.getUnreadCount());
+        item.setUnreadCount(0);
+        adapter.notifyDataSetChanged();
 
-        void setEntities(Observable<Topic> joinEntities, Observable<Topic> unjoinEntities);
+        mainTopicModel.resetBadge(item.getEntityId());
+        int badgeCount = JandiPreference.getBadgeCount(JandiApplication.getContext()) - item.getUnreadCount();
+        JandiPreference.setBadgeCount(JandiApplication.getContext(), badgeCount);
+        BadgeUtils.setBadge(JandiApplication.getContext(), badgeCount);
 
-        List<Topic> getJoinedTopics();
+        int unreadCount = getUnreadCount(Observable.from(view.getJoinedTopics()));
+        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+
+        int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
+        int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
+        view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
+                item.getMarkerLinkId());
+
+        view.notifyDatasetChanged();
+    }
+
+    public void onChildItemLongClick(RecyclerView.Adapter adapter, int groupPosition, int childPosition) {
+        int entityId = ((ExpandableTopicAdapter) adapter).getTopicItemData(groupPosition, childPosition).getEntityId();
+        int folderId = ((ExpandableTopicAdapter) adapter).getTopicFolderData(groupPosition).getFolderId();
+        view.showEntityMenuDialog(entityId, folderId);
+    }
+
+    @Background
+    public void onDeleteTopicFolder(int folderId) {
+        try {
+            mainTopicModel.deleteTopicFolder(folderId);
+            view.showDeleteFolderToast();
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
+        try {
+            Thread.sleep(200);
+            onRefreshList();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Background
+    public void onRenameFolder(int folderId, String name, int seq) {
+        try {
+            mainTopicModel.renameFolder(folderId, name, seq);
+            view.showRenameFolderToast();
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
+        try {
+            Thread.sleep(200);
+            onRefreshList();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getUnreadCount(Observable<TopicItemData> joinEntities) {
+        final int[] value = {0};
+        joinEntities.filter(topicItemData -> topicItemData.getUnreadCount() > 0)
+                .subscribe(topicItemData -> value[0] += topicItemData.getUnreadCount());
+
+        return value[0];
+    }
+
+    public void onNewMessage(SocketMessageEvent event) {
+
+        if (mainTopicModel.isMe(event.getWriter())) {
+            return;
+        }
+
+        List<TopicItemData> joinedTopics = view.getJoinedTopics();
+
+        mainTopicModel.updateMessageCount(event, joinedTopics);
+        view.updateGroupBadgeCount();
+        view.notifyDatasetChanged();
+
+        int unreadCount = getUnreadCount(Observable.from(view.getJoinedTopics()));
+        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+    }
+
+    public void onFolderExpand(TopicFolderData topicFolderData) {
+        TopicFolderRepository.getRepository()
+                .upsertFolderExpands(topicFolderData.getFolderId(), true);
+    }
+
+    public void onFolderCollapse(TopicFolderData topicFolderData) {
+        TopicFolderRepository.getRepository()
+                .upsertFolderExpands(topicFolderData.getFolderId(), false);
+    }
+
+
+    public interface View {
+        void showList(TopicFolderListDataProvider topicFolderListDataProvider, List<FolderExpand> folderExpands);
+
+        void refreshList(TopicFolderListDataProvider topicFolderListDataProvider);
 
         void moveToMessageActivity(int entityId, int entityType, boolean starred, int teamId, int markerLinkId);
 
-        void setSelectedItem(int selectedEntity);
-
-        void startAnimationSelectedItem();
-
-        void showUnjoinDialog(Topic item);
-
         void notifyDatasetChanged();
+
+        void showEntityMenuDialog(int entityId, int folderId);
+
+        List<TopicItemData> getJoinedTopics();
 
         void showProgressWheel();
 
-        void showToast(String message);
-
-        void showErrorToast(String message);
-
         void dismissProgressWheel();
 
-        void showEntityMenuDialog(Topic item);
+        void updateGroupBadgeCount();
 
-        void scrollToPosition(int selectedEntityPosition);
+        void showRenameFolderToast();
+
+        void showDeleteFolderToast();
     }
+
 }

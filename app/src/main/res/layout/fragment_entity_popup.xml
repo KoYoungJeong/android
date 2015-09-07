@@ -2,47 +2,52 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:minWidth="300dp"
-    android:orientation="vertical"
-    android:padding="20dp">
+    android:background="@color/white"
+    android:minWidth="263dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_popup_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:paddingBottom="20dp"
+        android:paddingTop="24dp"
+        android:text="title"
+        android:textColor="#212121"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/btn_entity_popup_move_folder"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/jandi_btn_dynamic_selector_v2"
-        android:text="Move to another folder"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:layout_height="48dp"
+        android:background="@drawable/bg_list_item"
+        android:text="@string/jandi_folder_move_to"
+        android:textColor="#212121"
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/btn_entity_popup_starred"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/jandi_btn_dynamic_selector_v2"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:layout_height="48dp"
+        android:background="@drawable/bg_list_item"
+        android:text="starred"
+        android:textColor="#212121"
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/btn_entity_popup_leave"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/jandi_btn_dynamic_selector_v2"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_list_item"
         android:text="@string/jandi_action_leave"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:textColor="#212121"
+        android:textSize="16sp" />
 
-    <Button
-        android:id="@+id/btn_entity_popup_close"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/btn_line_corner_rect_green"
-        android:text="@string/jandi_cancel"
-        android:textColor="@color/text_color_green"
-        android:textStyle="bold" />
-
+        android:layout_height="8dp"
+        android:background="@color/white"></LinearLayout>
 </LinearLayout>

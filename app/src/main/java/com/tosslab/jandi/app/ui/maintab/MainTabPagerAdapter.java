@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.chat.MainChatListFragment_;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment_;
 import com.tosslab.jandi.app.ui.maintab.more.MainMoreFragment_;
-import com.tosslab.jandi.app.ui.maintab.topics.MainTopicListFragment_;
+import com.tosslab.jandi.app.ui.maintab.topic.MainTopicListFragment_;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 
 /**

@@ -488,4 +488,22 @@
     <string name="jandi_msg_network_offline">"联机中断。"</string>
     <string name="jandi_msg_network_offline_warn">"目前为无网络状态 JANDI会于连上网络后，"</string>
 
+    <string name="jandi_folder_removed">文件夹已被移除</string>
+    <string name="jandi_folder_renamed">文件夹已被重新命名</string>
+    <string name="jandi_folder_delete">删除文件夹</string>
+    <string name="jandi_folder_ask_delete">你确定要删除此文件夹？</string>
+    <string name="jandi_folder_move_to">移动到文件夹</string>
+    <string name="jandi_folder_alread_has_name">这名称已被使用</string>
+    <string name="jandi_folder_remove_from">从此文件夹中移除</string>
+    <string name="jandi_folder_choose">选择文件夹</string>
+    <string name="jandi_folder_has_been_move_to">议题已被移至 %s </string>
+    <string name="jandi_folder_has_been_remove_from">议题已从 %s 中移除</string>
+    <string name="jandi_folder_no_have">尚无文件夹</string>
+    <string name="jandi_folder_insert_name">键入文件夹名称</string>
+    <string name="jandi_folder_new_folder">建立新的文件夹</string>
+    <string name="jandi_browse_other_topics">浏览其他议题</string>
+    <string name="jandi_folder_rename">重新命名</string>
+    <string name="jandi_no_topic_to_join">没有可加入的议题</string>
+
+
 </resources>
