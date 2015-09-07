@@ -47,7 +47,6 @@ public class MainTopicListPresenter {
 
     public void onLoadList() {
         TopicFolderRepository repository = TopicFolderRepository.getRepository();
-
         List<ResFolderItem> topicFolderItems = repository.getFolderItems();
         List<ResFolder> topicFolders = repository.getFolders();
         List<FolderExpand> folderExpands = repository.getFolderExpands();
@@ -68,6 +67,7 @@ public class MainTopicListPresenter {
         List<ResFolderItem> topicFolderItems = mainTopicModel.getTopicFolderItems();
         mainTopicModel.saveFolderDataInDB(topicFolders, topicFolderItems);
         view.refreshList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
+        view.startAnimationSelectedItem();
     }
 
     public void onChildItemClick(RecyclerView.Adapter adapter, int groupPosition, int childPosition) {
@@ -93,7 +93,8 @@ public class MainTopicListPresenter {
         int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
         view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
                 item.getMarkerLinkId());
-
+        view.setSelectedItem(((ExpandableTopicAdapter) adapter)
+                .getTopicItemData(groupPosition, childPosition).getEntityId());
         view.notifyDatasetChanged();
     }
 
@@ -181,8 +182,6 @@ public class MainTopicListPresenter {
 
         void showEntityMenuDialog(int entityId, int folderId);
 
-        void scrollToPosition(int selectedEntityPosition);
-
         List<TopicItemData> getJoinedTopics();
 
         void showProgressWheel();
@@ -194,6 +193,10 @@ public class MainTopicListPresenter {
         void showRenameFolderToast();
 
         void showDeleteFolderToast();
+
+        void setSelectedItem(int selectedEntity);
+
+        void startAnimationSelectedItem();
     }
 
 }

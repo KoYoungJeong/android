@@ -460,12 +460,10 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         adapter.setSelectedEntity(selectedEntity);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void scrollToPosition(int selectedEntityPosition) {
-        if (selectedEntityPosition > 0) {
-            lvMainTopic.getLayoutManager().scrollToPosition(selectedEntityPosition - 1);
-        }
+    public void startAnimationSelectedItem() {
+        adapter.startAnimation();
+        adapter.notifyDataSetChanged();
     }
-
-
 }

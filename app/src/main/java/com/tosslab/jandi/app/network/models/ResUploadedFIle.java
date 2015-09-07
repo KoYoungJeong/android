@@ -1,5 +1,9 @@
 package com.tosslab.jandi.app.network.models;
 
+/**
+ * Created by tee on 15. 9. 7..
+ */
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
