@@ -280,14 +280,21 @@ public class ExpandableTopicAdapter
 
             Context context = holder.itemView.getContext();
             animStatus = AnimStatus.IN_ANIM;
-            Integer colorFrom = context.getResources().getColor(R.color.transparent);
+            Integer colorFrom;
+            if (getGroupItemViewType(groupPosition) != TYPE_NO_GROUP) {
+                colorFrom = context.getResources().getColor(
+                        R.color.jandi_list_item_background_inner_folder);
+            } else {
+                colorFrom = context.getResources().getColor(R.color.white);
+            }
             Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);
+
             final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
             colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
             colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
             colorAnimation.setRepeatCount(1);
-            colorAnimation.addUpdateListener(animator -> holder.container.setBackgroundColor((Integer)
-                    animator.getAnimatedValue()));
+            colorAnimation.addUpdateListener(animator -> holder.container.setBackgroundColor(
+                    (Integer) animator.getAnimatedValue()));
 
             colorAnimation.addListener(new SimpleEndAnimatorListener() {
                 @Override
@@ -295,6 +302,7 @@ public class ExpandableTopicAdapter
                     animStatus = AnimStatus.FINISH;
                 }
             });
+
             colorAnimation.start();
         }
 
