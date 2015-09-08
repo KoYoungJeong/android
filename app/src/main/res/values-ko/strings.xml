@@ -129,6 +129,12 @@
     <string name="err_profile_photo_upload">"사진 업로드가 실패하였습니다"</string>
     <string name="err_email_exists">"이미 사용중인 이메일입니다"</string>
 
+    <string name="jandi_member_profile_edit">프로필 편집</string>
+    <string name="jandi_member_profile_mention">내 멘션</string>
+    <string name="jandi_member_profile_email">메일</string>
+    <string name="jandi_member_profile_phone">전화</string>
+    <string name="jandi_member_profile_dm">1:1 메세지</string>
+
     <!-- 회원 초대 -->
     <string name="jandi_team_info">"팀 정보"</string>
     <string name="jandi_invitation">"팀으로 초대"</string>

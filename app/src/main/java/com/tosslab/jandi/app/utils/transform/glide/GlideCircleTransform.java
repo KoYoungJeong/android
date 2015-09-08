@@ -1,10 +1,11 @@
-package com.tosslab.jandi.app.utils;
+package com.tosslab.jandi.app.utils.transform.glide;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
+import com.tosslab.jandi.app.utils.BitmapUtil;
 
 /**
  * Created by justinygchoi on 14. 12. 5..

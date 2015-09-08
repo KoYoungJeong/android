@@ -13,9 +13,9 @@ import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
-import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -61,16 +61,15 @@ public class MainChatListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_chat_list, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.selector = convertView.findViewById(R.id
-                    .view_entity_listitem_selector);
-            viewHolder.textViewName = (TextView) convertView.findViewById(R.id.txt_entity_listitem_name);
-            viewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
-            viewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
-            viewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_user_count);
-            viewHolder.textViewBadgeCount = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
-            viewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
-            viewHolder.disableWarningView = convertView.findViewById(R.id.img_entity_listitem_warning);
-            viewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
+            viewHolder.selector = convertView.findViewById(R.id.v_entity_listitem_selector);
+            viewHolder.tvName = (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
+            viewHolder.ivIcon = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_icon);
+            viewHolder.ivFavorite = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_fav);
+            viewHolder.tvAdditional = (TextView) convertView.findViewById(R.id.tv_entity_listitem_user_count);
+            viewHolder.tvBadgeCount = (TextView) convertView.findViewById(R.id.tv_entity_listitem_badge);
+            viewHolder.vDisableLineThrough = convertView.findViewById(R.id.iv_entity_listitem_line_through);
+            viewHolder.vDisableWarning = convertView.findViewById(R.id.iv_entity_listitem_warning);
+            viewHolder.vDisableCover = convertView.findViewById(R.id.v_entity_listitem_warning);
 
             convertView.setTag(viewHolder);
 
@@ -80,35 +79,35 @@ public class MainChatListAdapter extends BaseAdapter {
 
         ChatItem item = getItem(position);
 
-        viewHolder.textViewName.setText(item.getName());
+        viewHolder.tvName.setText(item.getName());
         if (item.isStarred()) {
-            viewHolder.imageViewFavorite.setVisibility(View.VISIBLE);
+            viewHolder.ivFavorite.setVisibility(View.VISIBLE);
         } else {
-            viewHolder.imageViewFavorite.setVisibility(View.INVISIBLE);
+            viewHolder.ivFavorite.setVisibility(View.INVISIBLE);
         }
 
-        viewHolder.textViewBadgeCount.setText(String.valueOf(item.getUnread()));
+        viewHolder.tvBadgeCount.setText(String.valueOf(item.getUnread()));
 
         if (item.getUnread() <= 0) {
-            viewHolder.textViewBadgeCount.setVisibility(View.INVISIBLE);
+            viewHolder.tvBadgeCount.setVisibility(View.INVISIBLE);
         } else {
-            viewHolder.textViewBadgeCount.setVisibility(View.VISIBLE);
+            viewHolder.tvBadgeCount.setVisibility(View.VISIBLE);
         }
 
-        viewHolder.textViewAdditional.setText(item.getLastMessage());
+        viewHolder.tvAdditional.setText(item.getLastMessage());
 
 
         if (item.getStatus()) {
 
-            viewHolder.disableLineThrouthView.setVisibility(View.GONE);
-            viewHolder.disableWarningView.setVisibility(View.GONE);
-            viewHolder.disableCoverView.setVisibility(View.GONE);
+            viewHolder.vDisableLineThrough.setVisibility(View.GONE);
+            viewHolder.vDisableWarning.setVisibility(View.GONE);
+            viewHolder.vDisableCover.setVisibility(View.GONE);
 
         } else {
 
-            viewHolder.disableLineThrouthView.setVisibility(View.VISIBLE);
-            viewHolder.disableWarningView.setVisibility(View.VISIBLE);
-            viewHolder.disableCoverView.setVisibility(View.VISIBLE);
+            viewHolder.vDisableLineThrough.setVisibility(View.VISIBLE);
+            viewHolder.vDisableWarning.setVisibility(View.VISIBLE);
+            viewHolder.vDisableCover.setVisibility(View.VISIBLE);
 
         }
 
@@ -132,9 +131,9 @@ public class MainChatListAdapter extends BaseAdapter {
             colorAnimation.start();
         }
 
-        viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
-        viewHolder.imageViewIcon.setImageResource(R.drawable.profile_img);
-        Ion.with(viewHolder.imageViewIcon)
+        viewHolder.ivIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
+        viewHolder.ivIcon.setImageResource(R.drawable.profile_img);
+        Ion.with(viewHolder.ivIcon)
                 .placeholder(R.drawable.profile_img)
                 .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
@@ -145,8 +144,7 @@ public class MainChatListAdapter extends BaseAdapter {
 
     private View.OnClickListener getProfileClickListener(int entityId) {
         return v -> {
-
-            EventBus.getDefault().post(new ProfileDetailEvent(entityId));
+            EventBus.getDefault().post(new ShowProfileEvent(entityId));
         };
     }
 
@@ -176,14 +174,14 @@ public class MainChatListAdapter extends BaseAdapter {
 
     static class ViewHolder {
         public Context context;
-        public ImageView imageViewIcon;
-        public ImageView imageViewFavorite;
-        public TextView textViewName;
-        public TextView textViewAdditional;
-        public TextView textViewBadgeCount;
-        public View disableLineThrouthView;
-        public View disableWarningView;
-        public View disableCoverView;
+        public ImageView ivIcon;
+        public ImageView ivFavorite;
+        public TextView tvName;
+        public TextView tvAdditional;
+        public TextView tvBadgeCount;
+        public View vDisableLineThrough;
+        public View vDisableWarning;
+        public View vDisableCover;
         public View selector;
     }
 

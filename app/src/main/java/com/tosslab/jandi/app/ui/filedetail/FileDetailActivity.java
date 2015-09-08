@@ -1,8 +1,5 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -36,9 +33,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
-import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
-import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.entities.MoveSharedEntityEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.ConfirmDeleteFileEvent;
@@ -65,6 +61,8 @@ import com.tosslab.jandi.app.ui.filedetail.fileinfo.FileHeadManager;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
@@ -865,10 +863,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     /**
      * 사용자 프로필 보기
      */
-    public void onEvent(RequestUserInfoEvent event) {
+    public void onEvent(ShowProfileEvent event) {
         if (!isForeground) {
             return;
         }
+
         int userEntityId = event.userId;
         fileDetailPresenter.getProfile(userEntityId);
     }
@@ -900,15 +899,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @UiThread
     @Override
     public void showUserInfoDialog(FormattedEntity user) {
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        Fragment prev = fragmentManager.findFragmentByTag("dialog");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        UserInfoDialogFragment_.builder()
-                .entityId(user.getId()).build()
-                .show(getSupportFragmentManager(), "dialog");
+        MemberProfileActivity_.intent(this)
+                .memberId(user.getId())
+                .start();
     }
 
     public void copyToClipboard(String contentString) {

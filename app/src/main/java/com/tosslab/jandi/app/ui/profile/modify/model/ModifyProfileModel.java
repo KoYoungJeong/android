@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.profile.member.model;
+package com.tosslab.jandi.app.ui.profile.modify.model;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -34,7 +34,7 @@ import rx.Observable;
  * Created by Steve SeongUg Jung on 14. 12. 31..
  */
 @EBean
-public class MemberProfileModel {
+public class ModifyProfileModel {
 
     @RootContext
     Context context;

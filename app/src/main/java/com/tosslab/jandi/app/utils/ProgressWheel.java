@@ -2,11 +2,8 @@ package com.tosslab.jandi.app.utils;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 
 import com.tosslab.jandi.app.R;
-
-import java.lang.ref.WeakReference;
 
 /**
  * Created by justinygchoi on 2014. 2. 15..
@@ -15,7 +12,7 @@ public class ProgressWheel extends ProgressDialog {
     private Activity activity;
 
     public ProgressWheel(Activity activity) {
-        super(activity, R.style.Jandi_Transparent);
+        super(activity, R.style.Jandi_Transparent_Dialog);
         this.activity = activity;
         setIndeterminate(true);
         setCancelable(true);

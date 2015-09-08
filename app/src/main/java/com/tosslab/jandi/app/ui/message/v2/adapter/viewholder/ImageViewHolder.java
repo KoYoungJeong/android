@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -21,7 +21,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
-import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
@@ -33,37 +33,37 @@ import de.greenrobot.event.EventBus;
  */
 public class ImageViewHolder implements BodyViewHolder {
 
-    private ImageView profileImageView;
-    private TextView nameTextView;
-    private TextView dateTextView;
-    private ImageView fileImageView;
-    private TextView fileNameTextView;
-    private TextView fileTypeTextView;
+    private ImageView ivProfile;
+    private TextView tvName;
+    private TextView tvDate;
+    private ImageView ivFileImage;
+    private TextView tvFileName;
+    private TextView tvFileType;
     private TextView tvUploader;
-    private View disableCoverView;
-    private View disableLineThroughView;
-    private TextView unreadTextView;
+    private View vDisableCover;
+    private View vDisableLineThrough;
+    private TextView tvUnread;
     private Context context;
-    private View lastReadView;
+    private View vLastRead;
     private View contentView;
 
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
-        profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
-        nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
-        dateTextView = (TextView) rootView.findViewById(R.id.txt_message_create_date);
+        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+        tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
+        tvDate = (TextView) rootView.findViewById(R.id.tv_message_create_date);
 
-        fileImageView = (ImageView) rootView.findViewById(R.id.iv_message_photo);
-        fileNameTextView = (TextView) rootView.findViewById(R.id.txt_message_image_file_name);
-        fileTypeTextView = (TextView) rootView.findViewById(R.id.txt_img_file_type);
-        tvUploader = (TextView) rootView.findViewById(R.id.txt_img_file_uploader);
-        disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
-        disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+        ivFileImage = (ImageView) rootView.findViewById(R.id.iv_message_photo);
+        tvFileName = (TextView) rootView.findViewById(R.id.tv_message_image_file_name);
+        tvFileType = (TextView) rootView.findViewById(R.id.tv_img_file_type);
+        tvUploader = (TextView) rootView.findViewById(R.id.tv_img_file_uploader);
+        vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
+        vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
 
-        unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
+        tvUnread = (TextView) rootView.findViewById(R.id.tv_entity_listitem_unread);
         context = rootView.getContext();
-        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
+        vLastRead = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class ImageViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        Ion.with(profileImageView)
+        Ion.with(ivProfile)
                 .placeholder(R.drawable.profile_img)
                 .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
@@ -88,28 +88,28 @@ public class ImageViewHolder implements BodyViewHolder {
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById != null ? entityById.getUser() : null;
         if (user != null && TextUtils.equals(user.status, "enabled")) {
-            nameTextView.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
-            disableCoverView.setVisibility(View.GONE);
-            disableLineThroughView.setVisibility(View.GONE);
+            tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
+            vDisableCover.setVisibility(View.GONE);
+            vDisableLineThrough.setVisibility(View.GONE);
         } else {
-            nameTextView.setTextColor(
+            tvName.setTextColor(
                     context.getResources().getColor(R.color.deactivate_text_color));
-            disableCoverView.setVisibility(View.VISIBLE);
-            disableLineThroughView.setVisibility(View.VISIBLE);
+            vDisableCover.setVisibility(View.VISIBLE);
+            vDisableLineThrough.setVisibility(View.VISIBLE);
         }
 
         int unreadCount = UnreadCountUtil.getUnreadCount(
                 teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
 
-        unreadTextView.setText(String.valueOf(unreadCount));
+        tvUnread.setText(String.valueOf(unreadCount));
         if (unreadCount <= 0) {
-            unreadTextView.setVisibility(View.GONE);
+            tvUnread.setVisibility(View.GONE);
         } else {
-            unreadTextView.setVisibility(View.VISIBLE);
+            tvUnread.setVisibility(View.VISIBLE);
         }
 
-        nameTextView.setText(fromEntity.name);
-        dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
+        tvName.setText(fromEntity.name);
+        tvDate.setText(DateTransformator.getTimeStringForSimple(link.time));
 
         if (link.message instanceof ResMessages.FileMessage) {
             ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
@@ -148,10 +148,10 @@ public class ImageViewHolder implements BodyViewHolder {
 
             if (TextUtils.equals(fileMessage.status, "archived")) {
 
-                fileNameTextView.setText(R.string.jandi_deleted_file);
-                fileImageView.setImageResource(R.drawable.jandi_fview_icon_deleted);
-                fileImageView.setClickable(false);
-                fileTypeTextView.setText("");
+                tvFileName.setText(R.string.jandi_deleted_file);
+                ivFileImage.setImageResource(R.drawable.jandi_fview_icon_deleted);
+                ivFileImage.setClickable(false);
+                tvFileType.setText("");
             } else {
                 if (BitmapUtil.hasImageUrl(fileContent)) {
                     // Google, Dropbox 파일이 인 경우
@@ -160,8 +160,8 @@ public class ImageViewHolder implements BodyViewHolder {
                         int mimeTypeIconImage =
                                 MimeTypeUtil.getMimeTypeIconImage(
                                         fileContent.serverUrl, fileContent.icon);
-                        fileImageView.setImageResource(mimeTypeIconImage);
-                        fileTypeTextView.setText(fileContent.ext);
+                        ivFileImage.setImageResource(mimeTypeIconImage);
+                        tvFileType.setText(fileContent.ext);
                     } else {
 
                         // small 은 80 x 80 사이즈가 로딩됨 -> medium 으로 로딩
@@ -177,36 +177,36 @@ public class ImageViewHolder implements BodyViewHolder {
                                     fileContent, BitmapUtil.Thumbnails.LARGE);
                         }
 
-                        Glide.with(fileImageView.getContext())
+                        Glide.with(ivFileImage.getContext())
                                 .load(thumbPath)
                                 .placeholder(R.drawable.file_icon_img)
                                 .error(R.drawable.file_icon_img)
                                 .crossFade()
                                 .centerCrop()
-                                .into(fileImageView);
-                        fileTypeTextView.setText(FileSizeUtil.fileSizeCalculation(fileContent.size) + ", "
+                                .into(ivFileImage);
+                        tvFileType.setText(FileSizeUtil.fileSizeCalculation(fileContent.size) + ", "
                                 + fileContent.ext);
                     }
                 } else {
-                    fileImageView.setImageResource(R.drawable.file_icon_img);
+                    ivFileImage.setImageResource(R.drawable.file_icon_img);
                 }
 
-                fileNameTextView.setText(fileContent.title);
+                tvFileName.setText(fileContent.title);
             }
 
         }
-        profileImageView.setOnClickListener(v ->
-                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
-        nameTextView.setOnClickListener(v ->
-                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+
+        final ShowProfileEvent event = new ShowProfileEvent(fromEntity.id);
+        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(event));
+        tvName.setOnClickListener(v -> EventBus.getDefault().post(event));
     }
 
     @Override
     public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
         if (currentLinkId == lastReadLinkId) {
-            lastReadView.setVisibility(View.VISIBLE);
+            vLastRead.setVisibility(View.VISIBLE);
         } else {
-            lastReadView.setVisibility(View.GONE);
+            vLastRead.setVisibility(View.GONE);
         }
     }
 

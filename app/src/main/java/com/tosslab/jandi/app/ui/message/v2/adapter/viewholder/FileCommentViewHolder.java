@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -21,7 +21,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
-import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
@@ -35,39 +35,39 @@ import de.greenrobot.event.EventBus;
  */
 public class FileCommentViewHolder implements BodyViewHolder {
 
-    private ImageView profileImageView;
-    private TextView nameTextView;
-    private TextView fileOwnerTextView;
-    private TextView fileNameTextView;
-    private TextView commentTextView;
-    private TextView fileOwnerPostfixTextView;
-    private ImageView fileImageView;
-    private View disableCoverView;
-    private View disableLineThroughView;
+    private ImageView ivProfile;
+    private TextView tvName;
+    private TextView tvFileOwner;
+    private TextView tvFileName;
+    private TextView tvComment;
+    private TextView tvFileOwnerPostFix;
+    private ImageView ivFileImage;
+    private View vDisableCover;
+    private View vDisableLineThrough;
     private Context context;
-    private View lastReadView;
-    private View fileImageRound;
+    private View vLastRead;
+    private View vFileImageRound;
     private View contentView;
 
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
-        profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
-        nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
+        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+        tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
 
-        fileOwnerTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_owner);
-        fileOwnerPostfixTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_postfix);
-        fileNameTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_file_name);
-        commentTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_content);
+        tvFileOwner = (TextView) rootView.findViewById(R.id.tv_message_commented_owner);
+        tvFileOwnerPostFix = (TextView) rootView.findViewById(R.id.tv_message_commented_postfix);
+        tvFileName = (TextView) rootView.findViewById(R.id.tv_message_commented_file_name);
+        tvComment = (TextView) rootView.findViewById(R.id.tv_message_commented_content);
 
-        fileImageView = (ImageView) rootView.findViewById(R.id.img_message_commented_photo);
-        fileImageRound = rootView.findViewById(R.id.img_message_commented_photo_round);
+        ivFileImage = (ImageView) rootView.findViewById(R.id.iv_message_commented_photo);
+        vFileImageRound = rootView.findViewById(R.id.iv_message_commented_photo_round);
 
-        disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
-        disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+        vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
+        vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
 
         context = rootView.getContext();
-        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
+        vLastRead = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        Ion.with(profileImageView)
+        Ion.with(ivProfile)
                 .placeholder(R.drawable.profile_img)
                 .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
@@ -95,43 +95,43 @@ public class FileCommentViewHolder implements BodyViewHolder {
         ResLeftSideMenu.User feedbackUser = feedbackEntityById != null ? feedbackEntityById.getUser() : null;
 
         if (user != null && TextUtils.equals(user.status, "enabled")) {
-            nameTextView.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
-            disableCoverView.setVisibility(View.GONE);
-            disableLineThroughView.setVisibility(View.GONE);
+            tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
+            vDisableCover.setVisibility(View.GONE);
+            vDisableLineThrough.setVisibility(View.GONE);
         } else {
-            nameTextView.setTextColor(
+            tvName.setTextColor(
                     context.getResources().getColor(R.color.deactivate_text_color));
-            disableCoverView.setVisibility(View.VISIBLE);
-            disableLineThroughView.setVisibility(View.VISIBLE);
+            vDisableCover.setVisibility(View.VISIBLE);
+            vDisableLineThrough.setVisibility(View.VISIBLE);
         }
 
-        nameTextView.setText(fromEntity.name);
+        tvName.setText(fromEntity.name);
 
         if (link.feedback instanceof ResMessages.FileMessage) {
 
             ResMessages.FileMessage feedbackFileMessage = link.feedback;
 
-            fileImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            fileImageRound.setVisibility(View.GONE);
+            ivFileImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            vFileImageRound.setVisibility(View.GONE);
             if (TextUtils.equals(link.feedback.status, "archived")) {
-                fileOwnerTextView.setVisibility(View.GONE);
-                fileOwnerPostfixTextView.setVisibility(View.GONE);
+                tvFileOwner.setVisibility(View.GONE);
+                tvFileOwnerPostFix.setVisibility(View.GONE);
 
-                fileNameTextView.setText(R.string.jandi_deleted_file);
-                fileNameTextView.setTextColor(fileNameTextView.getResources().getColor(R.color
+                tvFileName.setText(R.string.jandi_deleted_file);
+                tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
                         .jandi_text_light));
-                fileImageView.setBackgroundDrawable(null);
-                fileImageView.setImageResource(R.drawable.jandi_fl_icon_deleted);
-                fileImageView.setOnClickListener(null);
+                ivFileImage.setBackgroundDrawable(null);
+                ivFileImage.setImageResource(R.drawable.jandi_fl_icon_deleted);
+                ivFileImage.setOnClickListener(null);
             } else {
-                fileOwnerTextView.setText(feedbackUser.name);
+                tvFileOwner.setText(feedbackUser.name);
                 ResMessages.FileContent content = feedbackFileMessage.content;
-                fileNameTextView.setText(content.title);
-                fileNameTextView.setTextColor(fileNameTextView.getResources().getColor(R.color
+                tvFileName.setText(content.title);
+                tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
                         .jandi_messages_file_name));
 
-                fileOwnerTextView.setVisibility(View.VISIBLE);
-                fileOwnerPostfixTextView.setVisibility(View.VISIBLE);
+                tvFileOwner.setVisibility(View.VISIBLE);
+                tvFileOwnerPostFix.setVisibility(View.VISIBLE);
 
                 String fileType = content.type;
                 if (fileType.startsWith("image/")) {
@@ -146,9 +146,9 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 int mimeTypeIconImage =
                                         MimeTypeUtil.getMimeTypeIconImage(
                                                 content.serverUrl, content.icon);
-                                fileImageView.setBackgroundDrawable(null);
-                                fileImageView.setImageResource(mimeTypeIconImage);
-                                fileImageView.setOnClickListener(view -> {
+                                ivFileImage.setBackgroundDrawable(null);
+                                ivFileImage.setImageResource(mimeTypeIconImage);
+                                ivFileImage.setOnClickListener(view -> {
                                     Intent intent = new Intent(Intent.ACTION_VIEW,
                                             Uri.parse(
                                                     BitmapUtil.getThumbnailUrlOrOriginal(
@@ -157,8 +157,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 });
                                 break;
                             default:
-                                fileImageRound.setVisibility(View.VISIBLE);
-                                Ion.with(fileImageView)
+                                vFileImageRound.setVisibility(View.VISIBLE);
+                                Ion.with(ivFileImage)
                                         .placeholder(R.drawable.file_icon_img)
                                         .error(R.drawable.file_icon_img)
                                         .crossfade(true)
@@ -169,13 +169,13 @@ public class FileCommentViewHolder implements BodyViewHolder {
                         }
 
                     } else {
-                        fileImageView.setBackgroundDrawable(null);
-                        fileImageView.setImageResource(
+                        ivFileImage.setBackgroundDrawable(null);
+                        ivFileImage.setImageResource(
                                 MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon));
                     }
                 } else {
-                    fileImageView.setBackgroundDrawable(null);
-                    fileImageView.setImageResource(
+                    ivFileImage.setBackgroundDrawable(null);
+                    ivFileImage.setImageResource(
                             MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon));
                 }
             }
@@ -195,7 +195,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
             int endIndex = builder.length();
 
             DateViewSpannable spannable =
-                    new DateViewSpannable(commentTextView.getContext(),
+                    new DateViewSpannable(tvComment.getContext(),
                             DateTransformator.getTimeStringForSimple(link.message.createTime));
             builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -217,34 +217,33 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
 
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                    commentTextView, builder, commentMessage.mentions, entityManager.getMe().getId())
+                    tvComment, builder, commentMessage.mentions, entityManager.getMe().getId())
                     .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
             builder = generateMentionMessageUtil.generate(true);
 
 
             if (hasLink) {
-                commentTextView.setText(
+                tvComment.setText(
                         Spannable.Factory.getInstance().newSpannable(builder));
 
-                LinkifyUtil.setOnLinkClick(commentTextView);
+                LinkifyUtil.setOnLinkClick(tvComment);
             } else {
-                commentTextView.setText(builder);
+                tvComment.setText(builder);
             }
 
         }
 
-        profileImageView.setOnClickListener(v ->
-                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
-        nameTextView.setOnClickListener(v ->
-                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+        final ShowProfileEvent event = new ShowProfileEvent(fromEntity.id);
+        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(event));
+        tvName.setOnClickListener(v -> EventBus.getDefault().post(event));
     }
 
     @Override
     public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
         if (currentLinkId == lastReadLinkId) {
-            lastReadView.setVisibility(View.VISIBLE);
+            vLastRead.setVisibility(View.VISIBLE);
         } else {
-            lastReadView.setVisibility(View.GONE);
+            vLastRead.setVisibility(View.GONE);
         }
     }
 

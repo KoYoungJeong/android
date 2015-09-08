@@ -40,7 +40,7 @@
         android:visibility="visible">
         <!-- 사용자 프로필 사진 -->
         <ImageView
-            android:id="@+id/img_message_user_profile"
+            android:id="@+id/iv_message_user_profile"
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
             android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
@@ -58,7 +58,7 @@
                 android:layout_marginBottom="@dimen/jandi_messages_default_margin_bottom">
 
                 <TextView
-                    android:id="@+id/txt_message_user_name"
+                    android:id="@+id/tv_message_user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -71,7 +71,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txt_message_create_date"
+                    android:id="@+id/tv_message_create_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="6dp"
@@ -82,12 +82,12 @@
             </LinearLayout>
             <!-- 댓글일 경우 표시 레이어 -->
             <RelativeLayout
-                android:id="@+id/ly_message_commented"
+                android:id="@+id/vg_message_commented"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/txt_message_commented_prefix"
+                    android:id="@+id/tv_message_commented_prefix"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Commented on "
@@ -95,29 +95,29 @@
                     android:textSize="@dimen/jandi_messages_comment" />
 
                 <TextView
-                    android:id="@+id/txt_message_commented_owner"
+                    android:id="@+id/tv_message_commented_owner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/txt_message_commented_prefix"
+                    android:layout_toRightOf="@id/tv_message_commented_prefix"
                     android:text="justin"
                     android:textColor="@color/jandi_messages_name"
                     android:textSize="@dimen/jandi_messages_comment"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txt_message_commented_postfix"
+                    android:id="@+id/tv_message_commented_postfix"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/txt_message_commented_owner"
+                    android:layout_toRightOf="@id/tv_message_commented_owner"
                     android:text="'s file"
                     android:textColor="@color/jandi_messages_commented"
                     android:textSize="@dimen/jandi_messages_comment" />
 
                 <TextView
-                    android:id="@+id/txt_message_commented_file_name"
+                    android:id="@+id/tv_message_commented_file_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/txt_message_commented_prefix"
+                    android:layout_below="@id/tv_message_commented_prefix"
                     android:layout_marginTop="10dp"
                     android:text="File Name"
                     android:textColor="@color/jandi_messages_name"
@@ -125,10 +125,10 @@
                     android:textStyle="bold" />
                 <!-- 실제 댓글 내용 -->
                 <TextView
-                    android:id="@+id/txt_message_commented_content"
+                    android:id="@+id/tv_message_commented_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/txt_message_commented_file_name"
+                    android:layout_below="@id/tv_message_commented_file_name"
                     android:layout_marginTop="8dp"
                     android:text="Comment"
                     android:textColor="@color/jandi_messages_content"
@@ -143,7 +143,7 @@
             </RelativeLayout>
             <!-- 내부에 포함된 댓글일 경우 -->
             <RelativeLayout
-                android:id="@+id/ly_message_nested_comment"
+                android:id="@+id/vg_message_nested_comment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -154,7 +154,7 @@
                     android:background="#999999" />
 
                 <TextView
-                    android:id="@+id/txt_message_nested_comment_user_name"
+                    android:id="@+id/tv_message_nested_comment_user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/divider_messages_nested_comment"
@@ -165,21 +165,21 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txt_message_commented_create_date"
+                    android:id="@+id/tv_message_commented_create_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@id/txt_message_nested_comment_user_name"
+                    android:layout_alignBaseline="@id/tv_message_nested_comment_user_name"
                     android:layout_marginLeft="6dp"
-                    android:layout_toRightOf="@id/txt_message_nested_comment_user_name"
+                    android:layout_toRightOf="@id/tv_message_nested_comment_user_name"
                     android:text="AM ??:??"
                     android:textColor="@color/jandi_messages_date"
                     android:textSize="@dimen/jandi_messages_date" />
 
                 <TextView
-                    android:id="@+id/txt_message_nested_comment_content"
+                    android:id="@+id/tv_message_nested_comment_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/txt_message_nested_comment_user_name"
+                    android:layout_below="@id/tv_message_nested_comment_user_name"
                     android:layout_marginTop="8dp"
                     android:text="Nested comment"
                     android:textColor="@color/jandi_messages_content"
@@ -194,7 +194,7 @@
             </RelativeLayout>
             <!-- 이미지일 경우 -->
             <RelativeLayout
-                android:id="@+id/ry_message_image_file"
+                android:id="@+id/vg_message_image_file"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -205,7 +205,7 @@
                     android:layout_marginRight="12dp" />
 
                 <TextView
-                    android:id="@+id/txt_message_image_file_name"
+                    android:id="@+id/tv_message_image_file_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@id/img_message_photo"
@@ -217,10 +217,10 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txt_img_file_type"
+                    android:id="@+id/tv_img_file_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/txt_message_image_file_name"
+                    android:layout_below="@id/tv_message_image_file_name"
                     android:layout_marginTop="4dp"
                     android:layout_toRightOf="@+id/img_message_photo"
                     android:text="file type"
@@ -236,35 +236,35 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/ry_message_common_file"
+                android:id="@+id/vg_message_common_file"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp">
                 <!-- 일반 파일일 경우 -->
                 <ImageView
-                    android:id="@+id/img_message_common_file"
+                    android:id="@+id/iv_message_common_file"
                     android:layout_width="@dimen/jandi_messages_file_icon_width"
                     android:layout_height="@dimen/jandi_messages_file_icon_height"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="5dp"/>
 
                 <TextView
-                    android:id="@+id/txt_message_common_file_name"
+                    android:id="@+id/tv_message_common_file_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:layout_toRightOf="@id/img_message_common_file"
+                    android:layout_toRightOf="@id/iv_message_common_file"
                     android:text="file name"
                     android:textColor="@color/jandi_messages_file_name"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txt_common_file_type"
+                    android:id="@+id/tv_common_file_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/txt_message_common_file_name"
-                    android:layout_below="@id/txt_message_common_file_name"
+                    android:layout_alignLeft="@id/tv_message_common_file_name"
+                    android:layout_below="@id/tv_message_common_file_name"
                     android:layout_marginTop="4dp"
                     android:text="file type"
                     android:textColor="#999999"
@@ -279,7 +279,7 @@
             </RelativeLayout>
             <!-- 실제 메시지 내용 -->
             <TextView
-                android:id="@+id/txt_message_content"
+                android:id="@+id/tv_message_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Text"

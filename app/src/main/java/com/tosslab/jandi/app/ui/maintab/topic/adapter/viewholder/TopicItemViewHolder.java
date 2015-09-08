@@ -32,7 +32,7 @@ public class TopicItemViewHolder extends AbstractExpandableItemViewHolder {
     public TopicItemViewHolder(View itemView) {
         super(itemView);
         container = (RelativeLayout) itemView.findViewById(R.id.rl_topic_item_container);
-        vTopicSelector = (View) itemView.findViewById(R.id.view_entity_listitem_selector);
+        vTopicSelector = (View) itemView.findViewById(R.id.v_entity_listitem_selector);
         ivTopicIcon = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_icon);
         vgTopicName = (FixedLinearLayout) itemView.findViewById(R.id.vg_entity_listitem_name);
         tvTopicName = (TextView) itemView.findViewById(R.id.tv_entity_listitem_name);

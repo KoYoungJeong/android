@@ -1,6 +1,8 @@
-package com.tosslab.jandi.app.utils;
+package com.tosslab.jandi.app.utils.transform.ion;
 
 import android.graphics.Bitmap;
+
+import com.tosslab.jandi.app.utils.BitmapUtil;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 11..
