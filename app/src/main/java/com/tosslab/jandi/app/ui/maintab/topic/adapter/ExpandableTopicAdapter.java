@@ -152,12 +152,6 @@ public class ExpandableTopicAdapter
         holder.container.setVisibility(View.VISIBLE);
         holder.tvTitle.setText(item.getTitle());
         holder.tvTopicCnt.setText(String.valueOf(item.getItemCount()));
-        if (item.getChildBadgeCnt() > 0) {
-            holder.vgChildBadgeCnt.setVisibility(View.VISIBLE);
-            holder.tvChildBadgeCnt.setText(String.valueOf(item.getChildBadgeCnt()));
-        } else {
-            holder.vgChildBadgeCnt.setVisibility(View.GONE);
-        }
 
         holder.itemView.setClickable(true);
         if (viewType == TYPE_NO_GROUP) {
@@ -170,11 +164,18 @@ public class ExpandableTopicAdapter
             holder.tvTopicCnt.setBackgroundResource(R.drawable.topiclist_icon_folder_open);
             holder.tvTopicCnt.setTextColor(0xff154a67);
             holder.tvTitle.setTextColor(0xff154a67);
+            holder.vgChildBadgeCnt.setVisibility(View.GONE);
             holder.ivDefaultUnderline.setVisibility(View.GONE);
         } else {
             holder.tvTopicCnt.setBackgroundResource(R.drawable.topiclist_icon_folder);
             holder.tvTopicCnt.setTextColor(0xffa6a6a6);
             holder.tvTitle.setTextColor(0xffa6a6a6);
+            if (item.getChildBadgeCnt() > 0) {
+                holder.vgChildBadgeCnt.setVisibility(View.VISIBLE);
+                holder.tvChildBadgeCnt.setText(String.valueOf(item.getChildBadgeCnt()));
+            } else {
+                holder.vgChildBadgeCnt.setVisibility(View.GONE);
+            }
             holder.ivDefaultUnderline.setVisibility(View.VISIBLE);
         }
 

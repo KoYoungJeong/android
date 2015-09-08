@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.lists.libs.advancerecyclerview.provider.AbstractExp
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
-import com.tosslab.jandi.app.network.models.ReqUpdateFolder;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -194,20 +193,6 @@ public class MainTopicModel {
 
     public void resetBadge(int entityId) {
         EntityManager.getInstance().getEntityById(entityId).alarmCount = 0;
-    }
-
-    public void deleteTopicFolder(int folderId) throws RetrofitError {
-        int teamId = entityClientManager.getSelectedTeamId();
-        RequestApiManager.getInstance().deleteFolderByTeamApi(teamId, folderId);
-    }
-
-    public void renameFolder(int folderId, String name, int seq) throws RetrofitError {
-        int teamId = entityClientManager.getSelectedTeamId();
-        ReqUpdateFolder reqUpdateFolder = new ReqUpdateFolder();
-        reqUpdateFolder.updateItems = new ReqUpdateFolder.UpdateItems();
-        reqUpdateFolder.updateItems.setName(name);
-        reqUpdateFolder.updateItems.setSeq(seq);
-        RequestApiManager.getInstance().updateFolderByTeamApi(teamId, folderId, reqUpdateFolder);
     }
 
     public boolean isMe(int writer) {
