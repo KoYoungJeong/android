@@ -86,7 +86,7 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
             tvBadge.setText((String.valueOf(count)));
             showBadge(position);
         } else {
-            tvBadge.setText((String.format("%d+", 999)));
+            tvBadge.setText(String.valueOf(999));
             showBadge(position);
         }
     }

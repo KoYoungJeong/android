@@ -331,7 +331,7 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
 
     @Override
     public void setClearToMicImage() {
-        micImageView.setImageResource(R.drawable.account_mic);
+        micImageView.setImageResource(R.drawable.account_icon_mic);
     }
 
     @Override

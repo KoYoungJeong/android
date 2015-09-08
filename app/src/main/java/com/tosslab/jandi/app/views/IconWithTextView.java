@@ -124,7 +124,7 @@ public class IconWithTextView extends RelativeLayout {
             tvBadge.setVisibility(View.GONE);
         } else if (count > 999) {
             tvBadge.setVisibility(View.VISIBLE);
-            tvBadge.setText(String.format("%d+", 999));
+            tvBadge.setText(String.valueOf(999));
         } else {
             tvBadge.setVisibility(View.VISIBLE);
             tvBadge.setText(String.valueOf(count));
