@@ -87,15 +87,6 @@ public class FormattedEntity {
 
     }
 
-//    private void patchMessageMarker(ResLeftSideMenu.Entity entity, List<ResLeftSideMenu.MessageMarker> markers) {
-//        for (ResLeftSideMenu.MessageMarker marker : markers) {
-//            if (entity.id == marker.entityId) {
-//                alarmCount = marker.alarmCount;
-//                lastLinkId = marker.lastLinkId;
-//            }
-//        }
-//    }
-
     public boolean isPublicTopic() {
         return (type == FormattedEntity.TYPE_REAL_CHANNEL);
     }
@@ -148,9 +139,9 @@ public class FormattedEntity {
 
     public int getIconImageResId() {
         if (isPublicTopic()) {
-            return R.drawable.jandi_icon_topic;
+            return R.drawable.topiclist_icon_topic;
         } else if (isPrivateGroup()) {
-            return R.drawable.jandi_private_topic_icon;
+            return R.drawable.topiclist_icon_topic_private;
         } else if (isDummy()) {
             return getDummyImageRes();
         } else {
@@ -197,7 +188,7 @@ public class FormattedEntity {
                     .toBlocking()
                     .first();
         } else {
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -220,7 +211,7 @@ public class FormattedEntity {
         }
 
         if (TextUtils.isEmpty(userProfileUrl)) {
-            return null;
+            return "";
         }
 
         if (hasProtocol(userProfileUrl)) {
@@ -239,7 +230,7 @@ public class FormattedEntity {
         }
 
         if (TextUtils.isEmpty(userProfileUrl)) {
-            return null;
+            return "";
         }
 
         if (hasProtocol(userProfileUrl)) {
@@ -289,7 +280,7 @@ public class FormattedEntity {
     }
 
     private int getDummyImageRes() {
-        return R.drawable.jandi_icon_channel;
+        return R.drawable.topiclist_icon_topic;
     }
 
     public int getMyColor() {

@@ -6,12 +6,14 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Menu;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.DeleteEmailEvent;
 import com.tosslab.jandi.app.events.profile.NewEmailEvent;
 import com.tosslab.jandi.app.events.profile.RetryNewEmailEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.exception.ExceptionData;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.profile.email.model.EmailChooseModel;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
@@ -30,6 +32,7 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 12..
@@ -81,10 +84,10 @@ public class EmailChooseActivity extends AppCompatActivity {
         try {
             ResAccountInfo resAccountInfo = emailChooseModel.updatePrimaryEmail(selectedEmail);
             AccountRepository.getRepository().upsertUserEmail(resAccountInfo.getEmails());
-            
+
             String accountId = resAccountInfo.getId();
             emailChooseModel.trackChangeAccountEmailSuccess(accountId);
-            
+
             emailChoosePresenter.finishWithResultOK();
         } catch (RetrofitError e) {
             int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
@@ -136,7 +139,7 @@ public class EmailChooseActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
@@ -222,20 +225,40 @@ public class EmailChooseActivity extends AppCompatActivity {
         try {
             ResAccountInfo resAccountInfo = emailChooseModel.requestNewEmail(email);
             AccountRepository.getRepository().upsertUserEmail(resAccountInfo.getEmails());
- 
+
             emailChooseModel.trackRequestVerifyEmailSuccess();
-            
+
             emailChoosePresenter.refreshEmails(emailChooseModel.getAccountEmails());
             emailChoosePresenter.showSuccessToast(getString(R.string.sent_auth_email));
         } catch (RetrofitError e) {
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
-            emailChooseModel.trackRequestVerifyEmailFail(errorCode);
             e.printStackTrace();
-            emailChoosePresenter.showFailToast(getString(R.string.err_team_creation_failed));
+
+            int errorCode = -1;
+            try {
+                ExceptionData exceptionData = (ExceptionData) e.getBodyAs(ExceptionData.class);
+                errorCode = exceptionData.getCode();
+            } catch (RuntimeException conversionException) {
+                conversionException.printStackTrace();
+                if (e.getResponse() != null) {
+                    errorCode = e.getResponse().getStatus();
+                }
+            }
+            emailChooseModel.trackRequestVerifyEmailFail(errorCode);
+
+            String errorMessage = getString(R.string.err_team_creation_failed);
+            if (errorCode == 40001) {
+                errorMessage = getString(R.string.err_email_exists);
+            }
+            emailChoosePresenter.showFailToast(errorMessage);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             emailChoosePresenter.dismissProgressWheel();
         }
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
     }
 }

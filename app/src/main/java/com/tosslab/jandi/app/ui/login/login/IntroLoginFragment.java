@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.events.profile.ForgotPasswordEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.ui.login.IntroMainActivity;
 import com.tosslab.jandi.app.ui.login.login.model.IntroLoginModel;
 import com.tosslab.jandi.app.ui.login.login.viewmodel.IntroLoginViewModel;
 import com.tosslab.jandi.app.ui.signup.account.SignUpActivity_;
@@ -38,7 +39,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 14. 11. 13..
  */
 @EFragment(R.layout.fragment_intro_input_id)
-public class IntroLoginFragment extends Fragment {
+public class IntroLoginFragment extends Fragment implements IntroMainActivity.KeyboardHandler {
 
     private static final int REQ_SIGNUP = 1081;
 
@@ -71,8 +72,8 @@ public class IntroLoginFragment extends Fragment {
             JandiPreference.setFirstLogin(getActivity());
 
             ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
-            MixpanelAccountAnalyticsClient mixpanelAccountAnalyticsClient = MixpanelAccountAnalyticsClient.getInstance(getActivity(), accountInfo.getId());
-            mixpanelAccountAnalyticsClient.trackAccountSingingIn();
+            MixpanelAccountAnalyticsClient.getInstance(getActivity(), accountInfo.getId())
+                    .trackAccountSingingIn();
 
             introLoginModel.trackSignInSuccess();
 
@@ -143,7 +144,9 @@ public class IntroLoginFragment extends Fragment {
 
     @Click(R.id.txt_intro_login_forgot_password)
     void onClickForgotPassword() {
-        DialogFragment dialogFragment = EditTextDialogFragment.newInstance(EditTextDialogFragment.ACTION_FORGOT_PASSWORD, introLoginViewModel.getEmailText());
+        DialogFragment dialogFragment =
+                EditTextDialogFragment.newInstance(
+                        EditTextDialogFragment.ACTION_FORGOT_PASSWORD, introLoginViewModel.getEmailText());
         dialogFragment.show(getFragmentManager(), "dialog");
     }
 
@@ -160,5 +163,14 @@ public class IntroLoginFragment extends Fragment {
         } catch (Exception e) {
             introLoginViewModel.showFailPasswordResetToast();
         }
+    }
+
+    @Override
+    public void hideKeyboard() {
+        if (introLoginViewModel == null) {
+            return;
+        }
+
+        introLoginViewModel.hideKeypad();
     }
 }

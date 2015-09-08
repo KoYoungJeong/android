@@ -53,9 +53,9 @@ public class FileStarMentionViewHolder extends CommonStarMentionViewHolder {
             if (!TextUtils.isEmpty(thumbnailUrl)) {
                 BitmapUtil.loadImageByGlideOrIonWhenGif(
                         ivFile, thumbnailUrl,
-                        R.drawable.jandi_fl_icon_img, R.drawable.jandi_fl_icon_img);
+                        R.drawable.file_icon_img, R.drawable.file_icon_img);
             } else {
-                ivFile.setImageResource(R.drawable.jandi_fl_icon_img);
+                ivFile.setImageResource(R.drawable.file_icon_img);
             }
         } else {
             // 파일 타입에 해당하는 아이콘 연결

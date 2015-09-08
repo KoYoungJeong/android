@@ -4,13 +4,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.chat.MainChatListFragment_;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment_;
 import com.tosslab.jandi.app.ui.maintab.more.MainMoreFragment_;
 import com.tosslab.jandi.app.ui.maintab.topic.MainTopicListFragment_;
-import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
+import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 
 /**
  * Created by justinygchoi on 2014. 8. 11..
@@ -67,12 +68,27 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
         return mTabs[position];
     }
 
-    public void showNewTopicBadge() {
-        showBadge(TAB_TOPIC);
+    public void updateTopicBadge(int count) {
+        TextView tvTopicBadge = (TextView) getBadgeView(TAB_TOPIC);
+        updateBadgeText(count, tvTopicBadge, TAB_TOPIC);
+
     }
 
-    public void showNewChatBadge() {
-        showBadge(TAB_CHAT);
+    public void updateChatBadge(int count) {
+        TextView tvChatBadge = (TextView) getBadgeView(TAB_CHAT);
+        updateBadgeText(count, tvChatBadge, TAB_CHAT);
+    }
+
+    private void updateBadgeText(int count, TextView tvBadge, int position) {
+        if (count <= 0) {
+            hideBadge(position);
+        } else if (count < 1000) {
+            tvBadge.setText((String.valueOf(count)));
+            showBadge(position);
+        } else {
+            tvBadge.setText(String.valueOf(999));
+            showBadge(position);
+        }
     }
 
     private void showBadge(int position) {
@@ -80,14 +96,6 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
         if (badge != null) {
             badge.setVisibility(View.VISIBLE);
         }
-    }
-
-    public void hideNewTopicBadge() {
-        hideBadge(TAB_TOPIC);
-    }
-
-    public void hideNewChatBadge() {
-        hideBadge(TAB_CHAT);
     }
 
     private void hideBadge(int position) {
@@ -103,11 +111,21 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
             return tabView.findViewById(R.id.tab_badge_topic_new);
         } else if (position == TAB_CHAT) {
             return tabView.findViewById(R.id.tab_badge_chat_new);
+        } else if (position == TAB_MORE) {
+            return tabView.findViewById(R.id.tab_badge_more_new);
         }
         return null;
     }
 
     public void setSelectedEntity(int selectedEntity) {
         this.selectedEntity = selectedEntity;
+    }
+
+    public void showMoreNewBadge() {
+        showBadge(TAB_MORE);
+    }
+
+    public void hideMoreNewBadge() {
+        hideBadge(TAB_MORE);
     }
 }

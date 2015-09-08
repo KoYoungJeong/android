@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -196,7 +197,7 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
+            toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
             actionBar.setDisplayUseLogoEnabled(false);
             actionBar.setIcon(
                     new ColorDrawable(getResources().getColor(android.R.color.transparent)));
@@ -264,11 +265,6 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
     void onCommentTextChange(Editable text) {
         int currentItemPosition = vpFilePreview.getCurrentItem();
         fileUploadPresenter.onCommentTextChange(text.toString(), currentItemPosition);
-    }
-
-    @Click(R.id.tv_file_upload_entity)
-    void onEntityTextClick() {
-        fileUploadPresenter.onEntitySelect(vpFilePreview.getCurrentItem());
     }
 
     @Click(R.id.iv_file_upload_preview_previous)
@@ -380,4 +376,8 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
         this.selectedEntityIdToBeShared = entityId;
     }
 
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
+    }
 }

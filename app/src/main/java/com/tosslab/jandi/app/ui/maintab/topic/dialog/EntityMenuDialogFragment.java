@@ -7,10 +7,13 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
+import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -39,11 +42,17 @@ public class EntityMenuDialogFragment extends DialogFragment {
     @FragmentArg
     int entityId;
 
+    @FragmentArg
+    int folderId;
+
     @ViewById(R.id.btn_entity_popup_starred)
     Button starredButton;
 
     @ViewById(R.id.btn_entity_popup_leave)
     Button leaveButton;
+
+    @ViewById(R.id.tv_popup_title)
+    TextView title;
 
     @Bean
     EntityMenuDialogModel entityMenuDialogModel;
@@ -55,7 +64,8 @@ public class EntityMenuDialogFragment extends DialogFragment {
     @AfterViews
     void initView() {
         FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
-        getDialog().setTitle(entity.getName());
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+        title.setText(entity.getName());
 
         if (entity.isUser()) {
             if (!TextUtils.equals(entity.getUser().status, "enabled")) {
@@ -205,11 +215,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
         }
     }
 
-    @Click(R.id.btn_entity_popup_close)
-    void onCloseClick() {
-        dismiss();
-    }
-
     @UiThread
     void showProgressWheel() {
         if (progressWheel != null && progressWheel.isShowing()) {
@@ -226,5 +231,14 @@ public class EntityMenuDialogFragment extends DialogFragment {
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
+    }
+
+    @Click(R.id.btn_entity_popup_move_folder)
+    void onMoveFolderClick() {
+        TopicFolderMoveCallEvent topicFolderMoveCallEvent = new TopicFolderMoveCallEvent();
+        topicFolderMoveCallEvent.setTopicId(entityId);
+        topicFolderMoveCallEvent.setFolderId(folderId);
+        EventBus.getDefault().post(topicFolderMoveCallEvent);
+        dismiss();
     }
 }

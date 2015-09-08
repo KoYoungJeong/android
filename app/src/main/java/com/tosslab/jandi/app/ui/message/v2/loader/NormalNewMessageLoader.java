@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2.loader;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
@@ -44,6 +45,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
     @Override
     public void load(int roomId, int linkId) {
         if (linkId <= 0) {
+            // 첫 메세지로 간주함
             return;
         }
 
@@ -57,7 +59,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 Collections.sort(messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
                 messageState.setLastUpdateLinkId(newMessage.lastLinkId);
                 messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), newMessage.lastLinkId);
-                updateMarker();
+                updateMarker(roomId);
 
                 messageListPresenter.setUpNewMessage(messages, messageListModel.getMyId(), linkId, firstLoad);
             } else {
@@ -97,11 +99,14 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 });
     }
 
-    private void updateMarker() {
+    private void updateMarker(int roomId) {
+        if (messageState.getLastUpdateLinkId() <= 0) {
+            // 마지막 메세지 정보가 갱신되지 않은 것으로 간주함
+            return;
+        }
         try {
-            if (messageState.getLastUpdateLinkId() > 0) {
-                messageListModel.updateMarker(messageState.getLastUpdateLinkId());
-            }
+            messageListModel.updateMarker(messageState.getLastUpdateLinkId());
+            messageListModel.updateMarkerInfo(AccountRepository.getRepository().getSelectedTeamId(), roomId);
         } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {

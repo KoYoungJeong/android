@@ -14,9 +14,7 @@ import android.text.TextUtils;
 import com.koushikdutta.ion.Ion;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
-
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
@@ -265,7 +263,7 @@ public class JandiPushReceiverModel {
         }
 
         builder.setDefaults(led | sound | vibrate);
-        builder.setSmallIcon(R.drawable.jandi_icon_push_notification);
+        builder.setSmallIcon(R.drawable.icon_push_notification);
         builder.setPriority(Notification.PRIORITY_HIGH);
         builder.setAutoCancel(true);
         builder.setNumber(badgeCount);

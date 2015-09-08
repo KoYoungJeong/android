@@ -117,6 +117,7 @@
     <string name="err_profile_update">"プロフィールは更新されませんでした"</string>
     <string name="jandi_profile_photo_upload_succeed">"プロフィール画像は正常に更新されました"</string>
     <string name="err_profile_photo_upload">"プロフィール画像は更新されませんでした"</string>
+    <string name="err_email_exists">"そのメールアドレスは既に使用されています"</string>
 
     <!-- 회원 초대 -->
     <string name="jandi_team_info">"チーム"</string>
@@ -495,6 +496,23 @@
     <string name="jandi_starmention_no_longer_in_topic">すでに参加していないトピックなので原本が表示できません</string>
     <string name="jandi_msg_network_offline">"インターネット接続が切断されました。"</string>
     <string name="jandi_msg_network_offline_warn">"現在ネットワークに接続されていません。"</string>
+
+    <string name="jandi_folder_removed">フォルダが削除されました</string>
+    <string name="jandi_folder_renamed">フォルダ名が変更されました</string>
+    <string name="jandi_folder_delete">フォルダ削除</string>
+    <string name="jandi_folder_ask_delete">本当にこのフォルダを削除しますか？</string>
+    <string name="jandi_folder_move_to">フォルダに移動する</string>
+    <string name="jandi_folder_alread_has_name">その名前は既に使用されています</string>
+    <string name="jandi_folder_remove_from">フォルダから除く</string>
+    <string name="jandi_folder_choose">フォルダを選択してください</string>
+    <string name="jandi_folder_has_been_move_to">トピックを%sフォルダに移動しました</string>
+    <string name="jandi_folder_has_been_remove_from">%sフォルダからトピックが除かれました</string>
+    <string name="jandi_folder_no_have">フォルダがありません</string>
+    <string name="jandi_folder_insert_name">フォルダ名を入力ください</string>
+    <string name="jandi_folder_new_folder">新規フォルダを作成する</string>
+    <string name="jandi_browse_other_topics">未参加のトピック一覧</string>
+    <string name="jandi_folder_rename">リネーム</string>
+    <string name="jandi_no_topic_to_join">参加できるトピックがありません</string>
 
 
 </resources>

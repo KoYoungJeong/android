@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="84dp"
-        android:src="@drawable/help_share_a_file" />
+        android:src="@drawable/img_upload_file" />
 
     <TextView
         android:layout_width="wrap_content"

@@ -65,7 +65,7 @@ public class EmailChooseAdapter extends BaseAdapter {
 
         } else {
 
-            imageView.setImageResource(R.drawable.jandi_icon_teamlist_add);
+            imageView.setImageResource(R.drawable.account_icon_teamlist_add);
 
             nameView.setText(R.string.jandi_add_an_email_address);
             nameView.setEnabled(false);

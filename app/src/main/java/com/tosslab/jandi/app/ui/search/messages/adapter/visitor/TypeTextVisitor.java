@@ -27,10 +27,10 @@ public class TypeTextVisitor implements TextVisitor {
 
         ImageSpan imageSpan = null;
         if (TextUtils.equals(type, "file")) {
-            imageSpan = new TypeImageSpannable(context, R.drawable.jandi_account_upload);
+            imageSpan = new TypeImageSpannable(context, R.drawable.account_icon_upload);
         } else if (TextUtils.equals(type, "text")) {
         } else if (TextUtils.equals(type, "comment")) {
-            imageSpan = new TypeImageSpannable(context, R.drawable.jandi_account_comment);
+            imageSpan = new TypeImageSpannable(context, R.drawable.account_icon_comment);
         }
 
         if (imageSpan != null) {

@@ -56,7 +56,7 @@ public class StarMentionListActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
         actionBar.setDisplayUseLogoEnabled(false);
 
         actionBar.setIcon(

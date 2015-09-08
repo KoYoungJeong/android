@@ -218,6 +218,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         addStarredButtonExecution();
     }
 
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
+    }
+
     private void addFileDetailViewAsListviewHeader() {
         // ListView(댓글에 대한 List)의 Header에 File detail 정보를 보여주는 View 연결한다.
         View header = fileHeadManager.getHeaderView();
@@ -292,7 +297,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
@@ -374,7 +379,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     @UiThread(propagation = Propagation.REUSE)
     @Override
-    public void loadSuccess(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages, boolean isSendAction, int selectMessageId) {
+    public void loadSuccess(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages,
+                            boolean isSendAction, int selectMessageId) {
 
         drawFileDetail(fileMessage, commentMessages, isSendAction);
 
@@ -474,16 +480,18 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                 .setPositiveButton(R.string.jandi_confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        FormattedEntity entity = EntityManager.getInstance()
+                        EntityManager entityManager = EntityManager.getInstance();
+                        FormattedEntity entity = entityManager
                                 .getEntityById(entityIdToBeShared);
 
                         MessageListV2Activity_.intent(FileDetailActivity.this)
-                                .teamId(EntityManager.getInstance().getTeamId())
+                                .teamId(entityManager.getTeamId())
                                 .entityId(entityIdToBeShared)
                                 .entityType(entity.type)
                                 .roomId(entity.isUser() ? -1 : entityIdToBeShared)
                                 .isFavorite(entity.isStarred)
-                                .teamId(entity.getEntity().teamId)
+                                .teamId(entityManager.getTeamId())
+                                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                 .start();
                     }
                 })
@@ -512,7 +520,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     }
 
     @Override
-    public void initUnShareListDialog(List<Integer> shareEntitiesIds) {
+    public void initUnShareListDialog(List<FormattedEntity> sharedEntities) {
         /**
          * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
          */
@@ -524,7 +532,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         final AlertDialog entitySelectDialog = dialog.show();
 
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-        final List<FormattedEntity> sharedEntities = entityManager.retrieveGivenEntities(shareEntitiesIds);
         final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, sharedEntities);
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -592,7 +599,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     }
 
     public void onEvent(FileCommentRefreshEvent event) {
-        if (fileId == event.getId()) {
+        if (fileId == event.getFileId()) {
             fileDetailPresenter.getFileDetail(fileId, false, false, -1);
         }
     }
@@ -677,7 +684,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
             dismissStickerPreview();
-            StickerRepository.getRepository().upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+            StickerRepository.getRepository()
+                    .upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
 
             fileDetailPresenter.sendCommentWithSticker(
                     fileId, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(),
@@ -745,7 +753,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @UiThread(propagation = Propagation.REUSE)
     @Override
     public void loadSticker(StickerInfo stickerInfo) {
-        StickerManager.getInstance().loadStickerDefaultOption(ivStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+        StickerManager.getInstance()
+                .loadStickerDefaultOption(
+                        ivStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
     }
 
     @UiThread(propagation = Propagation.REUSE)
@@ -815,7 +825,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     @UiThread
     @Override
-    public void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage, boolean execute) {
+    public void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage,
+                                      boolean execute) {
         trackDownloadingFile(entityManager, fileMessage);
 
         try {
@@ -844,7 +855,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
         if (idx >= 0) {
-            return mimeTypeMap.getMimeTypeFromExtension(fileName.substring(idx + 1, fileName.length()).toLowerCase());
+            return mimeTypeMap.getMimeTypeFromExtension(
+                    fileName.substring(idx + 1, fileName.length()).toLowerCase());
         } else {
             return mimeTypeMap.getExtensionFromMimeType(fileType.toLowerCase());
         }
@@ -894,7 +906,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         if (prev != null) {
             ft.remove(prev);
         }
-        UserInfoDialogFragment_.builder().entityId(user.getId()).build().show(getSupportFragmentManager(), "dialog");
+        UserInfoDialogFragment_.builder()
+                .entityId(user.getId()).build()
+                .show(getSupportFragmentManager(), "dialog");
     }
 
     public void copyToClipboard(String contentString) {
@@ -920,7 +934,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     @UiThread(propagation = Propagation.REUSE)
     @Override
-    public void drawFileDetail(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages, boolean isSendAction) {
+    public void drawFileDetail(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages,
+                               boolean isSendAction) {
 
         fileHeadManager.setFileInfo(fileMessage);
 

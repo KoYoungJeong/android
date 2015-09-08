@@ -12,7 +12,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="17dp"
-        android:src="@drawable/jandi_topic_icon"/>
+        android:src="@drawable/topiclist_icon_topic"/>
 
     <ImageView
         android:id="@+id/img_entity_listitem_fav"

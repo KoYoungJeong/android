@@ -803,6 +803,10 @@ public class MessageListPresenter {
         return messageListAdapter.getItemCount();
     }
 
+    public int getItemCountWithoutDummy() {
+        return messageListAdapter.getItemCount() - messageListAdapter.getDummyMessageCount();
+    }
+
     public int getRoomId() {
         return messageListAdapter.getRoomId();
     }
@@ -1068,6 +1072,7 @@ public class MessageListPresenter {
     public void deleteLinkByMessageId(int messageId) {
         int position = messageListAdapter.indexByMessageId(messageId);
         messageListAdapter.remove(position);
+        messageListAdapter.notifyDataSetChanged();
     }
 
     public boolean isLastOfLastReadPosition() {

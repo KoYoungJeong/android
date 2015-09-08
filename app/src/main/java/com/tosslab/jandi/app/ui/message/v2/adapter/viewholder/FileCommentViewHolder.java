@@ -81,8 +81,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
         String profileUrl = entity.getUserLargeProfileUrl();
 
         Ion.with(profileImageView)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
+                .placeholder(R.drawable.profile_img)
+                .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
                 .crossfade(true)
                 .load(profileUrl);
@@ -159,8 +159,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
                             default:
                                 fileImageRound.setVisibility(View.VISIBLE);
                                 Ion.with(fileImageView)
-                                        .placeholder(R.drawable.jandi_fl_icon_img)
-                                        .error(R.drawable.jandi_fl_icon_img)
+                                        .placeholder(R.drawable.file_icon_img)
+                                        .error(R.drawable.file_icon_img)
                                         .crossfade(true)
                                         .centerCrop()
                                         .load(thumbnailUrl);

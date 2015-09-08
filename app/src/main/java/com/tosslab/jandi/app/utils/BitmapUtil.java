@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.utils;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,7 +14,10 @@ import com.bumptech.glide.Glide;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.local.orm.repositories.UploadedFileInfoRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+
+import java.io.File;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 11..
@@ -217,6 +219,12 @@ public class BitmapUtil {
                 })  // Avoid doesn't working 'fitCenter with crossfade'
                 .fitCenter()
                 .into(imageView);
+    }
+
+    public static String getLocalFilePath(int messageId) {
+        String localPath = UploadedFileInfoRepository.getRepository()
+                .getUploadedFileInfo(messageId).getLocalPath();
+        return new File(localPath).exists() ? localPath : "";
     }
 
     public enum Thumbnails {

@@ -9,8 +9,13 @@ import com.tosslab.jandi.app.events.files.FileUploadProgressEvent;
 import com.tosslab.jandi.app.events.files.FileUploadStartEvent;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel_;
+import com.tosslab.jandi.app.local.orm.domain.UploadedFileInfo;
+import com.tosslab.jandi.app.local.orm.repositories.UploadedFileInfoRepository;
+import com.tosslab.jandi.app.network.models.ResUploadedFile;
+import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -55,6 +60,17 @@ public class FileUploadManager {
                         });
 
                         if (result.get("code") == null) {
+                            try {
+                                ResUploadedFile resUploadedFile = JacksonMapper.getInstance().getObjectMapper().readValue(result
+                                        .toString(), ResUploadedFile.class);
+                                UploadedFileInfo fileInfo = new UploadedFileInfo();
+                                fileInfo.setMessageId(resUploadedFile.getMessageId());
+                                fileInfo.setLocalPath(fileUploadDTO.getFilePath());
+                                UploadedFileInfoRepository.getRepository().insertFileInfo(fileInfo);
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                             fileUploadDTO.setUploadState(FileUploadDTO.UploadState.SUCCESS);
                             fileUploadDTOList.remove(fileUploadDTO);
                         } else {

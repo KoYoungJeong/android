@@ -76,8 +76,8 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
         if (entity.isUser()) {
             // 프로필 사진
             Ion.with(holder.imageView)
-                    .placeholder(R.drawable.jandi_profile)
-                    .error(R.drawable.jandi_profile)
+                    .placeholder(R.drawable.profile_img)
+                    .error(R.drawable.profile_img)
                     .transform(new IonCircleTransform())
                     .load(entity.getUserSmallProfileUrl());
             holder.textView.setText(entity.getName());

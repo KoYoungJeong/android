@@ -226,7 +226,7 @@ public class InternalWebPresenter {
 
     public void sendOtherApp(Context context, String currentTitle, String currentUrl) {
         Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plan");
+        intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, currentTitle);
         intent.putExtra(Intent.EXTRA_TEXT, currentUrl);
 

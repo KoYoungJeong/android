@@ -79,7 +79,7 @@ public class DefaultAlbumAdapter extends RecyclerView.Adapter {
 
         Glide.with(context)
                 .load(imagePath)
-                .error(R.drawable.jandi_icon_list_thumbnail)
+                .error(R.drawable.upload_icon_list_thumbnail)
                 .centerCrop()
                 .into(viewHolder.ivSample);
 

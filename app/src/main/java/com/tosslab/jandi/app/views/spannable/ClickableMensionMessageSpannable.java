@@ -11,7 +11,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tee on 15. 7. 20..
  */
-public class ClickableMensionMessageSpannable extends MentionMessageSpannable {
+public class ClickableMensionMessageSpannable extends MentionMessageSpannable implements ClickableSpannable{
 
     private int entityId;
 

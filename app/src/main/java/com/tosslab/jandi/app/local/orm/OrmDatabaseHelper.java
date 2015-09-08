@@ -7,14 +7,18 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
+import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.domain.LeftSideMenu;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.RecentSticker;
 import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
+import com.tosslab.jandi.app.local.orm.domain.UploadedFileInfo;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResChat;
+import com.tosslab.jandi.app.network.models.ResFolder;
+import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
@@ -26,7 +30,7 @@ import java.sql.SQLException;
  */
 public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -91,6 +95,12 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             createTable(connectionSource, FileDetail.class);
 
+            createTable(connectionSource, ResFolder.class);
+            createTable(connectionSource, ResFolderItem.class);
+            createTable(connectionSource, FolderExpand.class);
+
+            createTable(connectionSource, UploadedFileInfo.class);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -98,6 +108,21 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
+
+        if (oldVersion == 1) {
+            if (newVersion == 2) {
+                try {
+                    createTable(connectionSource, UploadedFileInfo.class);
+                    createTable(connectionSource, ResFolder.class);
+                    createTable(connectionSource, ResFolderItem.class);
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+        }
+
         try {
             // ResAccountInfo.java
             dropTable(connectionSource, ResAccountInfo.ThumbnailInfo.class);
@@ -148,6 +173,12 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             dropTable(connectionSource, ResAnnouncement.class);
 
             dropTable(connectionSource, FileDetail.class);
+
+            dropTable(connectionSource, UploadedFileInfo.class);
+
+            dropTable(connectionSource, ResFolder.class);
+            dropTable(connectionSource, ResFolderItem.class);
+            dropTable(connectionSource, FolderExpand.class);
 
             onCreate(database, connectionSource);
 
@@ -211,6 +242,10 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), ResAnnouncement.class);
 
         clearTable(getConnectionSource(), FileDetail.class);
+
+        clearTable(getConnectionSource(), ResFolder.class);
+        clearTable(getConnectionSource(), ResFolderItem.class);
+        clearTable(connectionSource, UploadedFileInfo.class);
 
     }
 

@@ -9,10 +9,10 @@
                     <solid android:color="@color/jandi_pressed_gray_light_alpha" />
                 </shape>
             </item>
-            <item android:drawable="@drawable/jandi_account_arrow_back" />
+            <item android:drawable="@drawable/account_icon_back" />
         </layer-list>
     </item>
 
-    <item android:drawable="@drawable/jandi_account_arrow_back" />
+    <item android:drawable="@drawable/account_icon_back" />
 
 </selector>

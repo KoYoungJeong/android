@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context="com.tosslab.jandi.app.FileDetailActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.tosslab.jandi.app.FileDetailActivity">
     <item
         android:id="@+id/menu_carousel_close"
-        android:icon="@drawable/jandi_actionb_remove"
-        android:showAsAction="always"
-        app:showAsAction="always">
-    </item>
+        android:icon="@drawable/actionbar_icon_remove"
+        app:showAsAction="always"></item>
 </menu>

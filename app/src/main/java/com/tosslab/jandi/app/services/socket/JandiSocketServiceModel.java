@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
+import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
@@ -40,6 +41,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -65,8 +67,10 @@ public class JandiSocketServiceModel {
     private final Context context;
     private final ObjectMapper objectMapper;
     private PublishSubject<SocketRoomMarkerEvent> markerPublishSubject;
+    private PublishSubject<SocketMessageEvent> messagePublishSubject;
     private Subscription markerSubscribe;
     private EntitySocketModel entitySocketModel;
+    private Subscription messageSubscribe;
 
     public JandiSocketServiceModel(Context context) {
 
@@ -141,9 +145,13 @@ public class JandiSocketServiceModel {
 
     public void refreshFileComment(Object object) {
         try {
-            SocketFileEvent socketFileEvent =
+            SocketFileCommentEvent socketFileEvent =
                     objectMapper.readValue(object.toString(), SocketFileCommentEvent.class);
-            postEvent(new FileCommentRefreshEvent(socketFileEvent.getFile().getId()));
+            postEvent(
+                    new FileCommentRefreshEvent(socketFileEvent.getEvent(),
+                            socketFileEvent.getFile().getId(),
+                            socketFileEvent.getComment().getId()
+                    ));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -163,6 +171,8 @@ public class JandiSocketServiceModel {
             } else {
                 postEvent(socketMessageEvent);
             }
+
+            messagePublishSubject.onNext(socketMessageEvent);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -327,6 +337,25 @@ public class JandiSocketServiceModel {
         }
     }
 
+    public void startMessageObserver() {
+        messagePublishSubject = PublishSubject.create();
+        messageSubscribe = messagePublishSubject
+                .filter(event -> event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId())
+                .throttleWithTimeout(1000 * 3, TimeUnit.MILLISECONDS)
+                .onBackpressureBuffer()
+                .subscribe(event -> {
+                    ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+                    AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+                    postEvent(new MessageOfOtherTeamEvent());
+                }, Throwable::printStackTrace);
+    }
+
+    public void stopMessageObserver() {
+        if (messageSubscribe != null && !messageSubscribe.isUnsubscribed()) {
+            messageSubscribe.unsubscribe();
+        }
+    }
+
     public boolean refreshToken() {
         try {
             String jandiRefreshToken = JandiPreference.getRefreshToken(context);
@@ -376,6 +405,36 @@ public class JandiSocketServiceModel {
                     .getMessageId(), true);
 
             postEvent(new SocketMessageStarEvent(socketFileEvent.getStarredInfo().getMessageId(), true));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //todo
+    public void refreshTopicFolder(Object object) {
+        try {
+            SocketTopicFolderEvent socketTopicFolderEvent
+                    = objectMapper.readValue(object.toString(), SocketTopicFolderEvent.class);
+
+            postEvent(socketTopicFolderEvent);
+
+
+            //todo
+//            ResFolder resFolder = new ResFolder();
+//
+//            if (socketTopicFolderEvent.getEvent().equals("folder_create")) {
+//
+//            } else if (socketTopicFolderEvent.getEvent().equals("folder_update")) {
+//
+//            } else if (socketTopicFolderEvent.getEvent().equals("folder_deleted")) {
+//
+//            } else if (socketTopicFolderEvent.getEvent().equals("folder_item_created")) {
+//
+//            } else if (socketTopicFolderEvent.getEvent().equals("folder_item_deleted")) {
+//
+//            }
 
         } catch (IOException e) {
             e.printStackTrace();

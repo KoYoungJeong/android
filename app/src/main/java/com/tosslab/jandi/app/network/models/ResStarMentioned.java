@@ -2,11 +2,16 @@ package com.tosslab.jandi.app.network.models;
 
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import java.util.List;
 
 /**
  * Created by tee on 15. 7. 29..
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResStarMentioned {
 
     private boolean hasMore;

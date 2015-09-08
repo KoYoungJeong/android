@@ -13,8 +13,9 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
-import com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
@@ -26,6 +27,7 @@ import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.views.IconWithTextView;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -35,6 +37,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
 /**
  * Created by justinygchoi on 2014. 10. 11..
@@ -50,7 +53,11 @@ public class MainMoreFragment extends Fragment {
 
     protected Context mContext;
 
+    @ViewById(R.id.ly_more_profile)
     IconWithTextView profileIconView;
+
+    @ViewById(R.id.ly_more_go_to_main)
+    IconWithTextView switchTeamIconView;
 
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
@@ -71,9 +78,8 @@ public class MainMoreFragment extends Fragment {
     void initView() {
         LogUtil.d("initView MainMoreFragment");
 
-        profileIconView = (IconWithTextView) getView().findViewById(R.id.ly_more_profile);
-
         showJandiVersion();
+        showOtherTeamMessageCount();
     }
 
     @Override
@@ -87,8 +93,8 @@ public class MainMoreFragment extends Fragment {
         if (mEntityManager != null) {
             FormattedEntity me = mEntityManager.getMe();
             Ion.with(profileIconView.getImageView())
-                    .placeholder(R.drawable.jandi_profile)
-                    .error(R.drawable.jandi_profile)
+                    .placeholder(R.drawable.profile_img)
+                    .error(R.drawable.profile_img)
                     .transform(new IonCircleTransform())
                     .load(me.getUserSmallProfileUrl());
         }
@@ -98,6 +104,21 @@ public class MainMoreFragment extends Fragment {
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         menu.clear();
+    }
+
+    public void onEventMainThread(MessageOfOtherTeamEvent event) {
+        showOtherTeamMessageCount();
+    }
+
+    public void showOtherTeamMessageCount() {
+        AccountRepository accountRepository = AccountRepository.getRepository();
+        int selectedTeamId = accountRepository.getSelectedTeamId();
+        final int badgeCount[] = {0};
+        Observable.from(accountRepository.getAccountTeams())
+                .filter(userTeam -> userTeam.getTeamId() != selectedTeamId)
+                .subscribe(userTeam -> badgeCount[0] += userTeam.getUnread());
+
+        switchTeamIconView.setBadgeCount(badgeCount[0]);
     }
 
     private void showJandiVersion() {

@@ -51,7 +51,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
     public View getView(int i, View convertView, ViewGroup viewGroup) {
         final ViewHolder holder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_select_cdp, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_select_cdp, viewGroup, false);
             holder = new ViewHolder();
             holder.textView = (TextView) convertView.findViewById(R.id.txt_select_cdp_name);
             holder.imageView = (ImageView) convertView.findViewById(R.id.img_select_cdp_icon);
@@ -74,8 +74,8 @@ public class EntitySimpleListAdapter extends BaseAdapter {
         if (entity.isUser()) {
             // 프로필 사진
             Ion.with(holder.imageView)
-                    .placeholder(R.drawable.jandi_profile_comment)
-                    .error(R.drawable.jandi_profile_comment)
+                    .placeholder(R.drawable.profile_img_comment)
+                    .error(R.drawable.profile_img_comment)
                     .transform(new IonCircleTransform())
                     .load(entity.getUserSmallProfileUrl());
         } else {

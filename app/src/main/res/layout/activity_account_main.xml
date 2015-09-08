@@ -60,7 +60,7 @@
                     android:layout_alignTop="@+id/txt_account_main_name"
                     android:layout_centerVertical="true"
                     android:scaleType="centerInside"
-                    android:src="@drawable/account_edit"/>
+                    android:src="@drawable/account_icon_edit"/>
 
             </RelativeLayout>
 
@@ -125,7 +125,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/account_arrow_more"/>
+                        android:src="@drawable/account_icon_arrow"/>
 
                 </RelativeLayout>
 

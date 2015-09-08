@@ -127,7 +127,7 @@
             android:layout_alignParentRight="true"
             android:padding="15dp"
             android:scaleType="centerInside"
-            android:src="@drawable/jandi_icon_sticker_close"/>
+            android:src="@drawable/icon_sticker_close"/>
 
 
     </RelativeLayout>
@@ -148,7 +148,7 @@
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
             android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-            android:background="@drawable/jandi_profile"/>
+            android:background="@drawable/profile_img"/>
 
         <!-- 기본 표시 레이어 -->
         <TextView
@@ -206,7 +206,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:background="@drawable/jandi_upload_file"/>
+            android:background="@drawable/icon_upload_file"/>
 
         <EditText
             android:id="@+id/et_message"
@@ -273,7 +273,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/jandi_account_arrow_more"/>
+            android:src="@drawable/account_icon_arrow"/>
 
         <ProgressBar
             android:id="@+id/progress_go_to_latest"

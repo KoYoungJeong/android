@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.Spanned;
-import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -13,6 +12,10 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.regex.Regex;
 import com.tosslab.jandi.app.utils.regex.TelRegex;
 import com.tosslab.jandi.app.views.spannable.ClickableMensionMessageSpannable;
+import com.tosslab.jandi.app.views.spannable.ClickableSpannable;
+import com.tosslab.jandi.app.views.spannable.JandiEmailSpan;
+import com.tosslab.jandi.app.views.spannable.JandiTelSpan;
+import com.tosslab.jandi.app.views.spannable.JandiURLSpan;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,22 +25,24 @@ import java.util.regex.Pattern;
  */
 public class LinkifyUtil {
 
-    private static final Pattern WEB_URL = Pattern.compile(
-            "((?:(http|https|Http|Https|rtsp|Rtsp):\\/\\/(?:(?:[a-zA-Z0-9\\$\\-\\_\\.\\+\\!\\*\\'\\(\\)"
-                    + "\\,\\;\\?\\&\\=]|(?:\\%[a-fA-F0-9]{2})){1,64}(?:\\:(?:[a-zA-Z0-9\\$\\-\\_"
-                    + "\\.\\+\\!\\*\\'\\(\\)\\,\\;\\?\\&\\=]|(?:\\%[a-fA-F0-9]{2})){1,25})?\\@)?)?"
-                    + "(?:" + Patterns.DOMAIN_NAME + ")"
-                    + "(?:\\:\\d{1,5})?)" // plus option port number
-                    + "(\\/(?:(?:[" + Patterns.GOOD_IRI_CHAR + "\\;\\/\\?\\:\\@\\&\\=\\#\\~\\|"  // plus option query params
-                    + "\\-\\.\\+\\!\\*\\'\\(\\)\\,\\_])|(?:\\%[a-fA-F0-9]{2}))*)?"
-                    + "(?:\\b|$)"); // and finally, a word boundary or end of
+    static final String REG_EX_EMAIL = "^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})$";
 
-    public static final boolean addLinks(Context context, Spannable text) {
+    private static final Class[] clickableSpannables = {
+            JandiURLSpan.class,
+            JandiTelSpan.class,
+            JandiEmailSpan.class,
+            ClickableMensionMessageSpannable.class
+    };
+
+    private LinkifyUtil() {}
+
+    public static boolean addLinks(Context context, Spannable text) {
 
         boolean hasWebLink = addWebLinks(context, text);
         boolean hasPhoneLink = addPhoneLinks(context, text);
+        boolean hasEmailLink = addEmailLinks(context, text);
 
-        return hasWebLink || hasPhoneLink;
+        return hasWebLink || hasPhoneLink || hasEmailLink;
     }
 
     public static boolean addWebLinks(Context context, Spannable text) {
@@ -95,7 +100,27 @@ public class LinkifyUtil {
         return hasLink;
     }
 
-    public static final void setOnLinkClick(TextView textView) {
+    public static boolean addEmailLinks(Context context, Spannable spannable) {
+        Matcher matcher = Pattern.compile(REG_EX_EMAIL).matcher(spannable);
+
+        boolean hasLink = false;
+
+        int color = context.getResources().getColor(R.color.jandi_accent_color);
+
+        while (matcher.find()) {
+            hasLink = true;
+
+            String email = matcher.group();
+            int start = matcher.start();
+            int end = matcher.end();
+            JandiEmailSpan jandiEmailSpan = new JandiEmailSpan(email, color);
+            spannable.setSpan(jandiEmailSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        return hasLink;
+    }
+
+    public static void setOnLinkClick(TextView textView) {
         textView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -124,35 +149,20 @@ public class LinkifyUtil {
                     int line = layout.getLineForVertical(y);
                     int off = layout.getOffsetForHorizontal(line, x);
 
-                    JandiURLSpan[] link = buffer.getSpans(off, off, JandiURLSpan.class);
 
-                    if (link.length != 0) {
-                        if (action == MotionEvent.ACTION_UP) {
-                            link[0].onClick();
+                    for (int idx = 0, size = clickableSpannables.length; idx < size; idx++) {
+
+                        ClickableSpannable[] clickableSpan = (ClickableSpannable[]) buffer.getSpans
+                                (off, off, clickableSpannables[idx]);
+                        if (clickableSpan != null && clickableSpan.length > 0) {
+                            if (action == MotionEvent.ACTION_UP) {
+                                clickableSpan[0].onClick();
+                            }
+
+                            return true;
                         }
-
-                        return true;
                     }
 
-                    ClickableMensionMessageSpannable[] mention = buffer.getSpans(off, off,
-                            ClickableMensionMessageSpannable.class);
-
-                    if (mention.length != 0) {
-                        if (action == MotionEvent.ACTION_UP) {
-                            mention[0].onClick();
-                        }
-
-                        return true;
-                    }
-
-                    JandiTelSpan[] telSpans = buffer.getSpans(off, off, JandiTelSpan.class);
-                    if (telSpans.length != 0) {
-                        if (action == MotionEvent.ACTION_UP) {
-                            telSpans[0].onClick();
-                        }
-
-                        return true;
-                    }
                 }
 
                 return false;

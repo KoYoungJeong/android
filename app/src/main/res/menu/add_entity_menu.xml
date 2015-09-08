@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_add_channel"
-        android:icon="@drawable/jandi_actionb_add"
+        android:icon="@drawable/actionbar_icon_add"
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="@string/jandi_create"

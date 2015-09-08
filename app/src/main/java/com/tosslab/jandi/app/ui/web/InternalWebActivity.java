@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -157,8 +158,8 @@ public class InternalWebActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.jandi_actionb_remove);
+            toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
+            actionBar.setHomeAsUpIndicator(R.drawable.actionbar_icon_remove);
             actionBar.setIcon(new ColorDrawable(Color.TRANSPARENT));
             if (hideActionBar) {
                 actionBar.hide();
@@ -250,5 +251,10 @@ public class InternalWebActivity extends AppCompatActivity {
             internalWebPresenter.zendeskCookieRemove(getApplicationContext());
         }
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
     }
 }

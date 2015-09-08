@@ -18,15 +18,15 @@ public class CategorizedMenuOfFileType {
             R.string.jandi_file_category_audio
     };
     public static final int[] drawableResourceList = {      // 위에랑 hash map으로 합칠까...
-            R.drawable.jandi_fl_icon_etc,
+            R.drawable.file_icon_etc,
             R.drawable.jandi_fl_icon_set_googledocs,
-            R.drawable.jandi_fl_icon_txt,
-            R.drawable.jandi_fl_icon_ppt,
-            R.drawable.jandi_fl_icon_exel,
-            R.drawable.jandi_fl_icon_pdf,
-            R.drawable.jandi_fl_icon_img,
-            R.drawable.jandi_fl_icon_video,
-            R.drawable.jandi_fl_icon_audio
+            R.drawable.file_icon_txt,
+            R.drawable.file_icon_ppt,
+            R.drawable.file_icon_exel,
+            R.drawable.file_icon_pdf,
+            R.drawable.file_icon_img,
+            R.drawable.file_icon_video,
+            R.drawable.file_icon_audio
     };
 
     // 서버 통신용 쿼리

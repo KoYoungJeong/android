@@ -18,7 +18,7 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:padding="5dp"
-        android:src="@drawable/jandi_image_left" />
+        android:src="@drawable/upload_arrow_left" />
 
     <ImageView
         android:id="@+id/iv_file_upload_preview_next"
@@ -27,14 +27,14 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:padding="5dp"
-        android:src="@drawable/jandi_image_right" />
+        android:src="@drawable/upload_arrow_right" />
 
     <LinearLayout
         android:id="@+id/vg_file_upload_preview_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/jandi_bg_upload"
+        android:background="@drawable/upload_bg"
         android:orientation="vertical">
 
         <View
@@ -100,6 +100,7 @@
 
             <TextView
                 android:id="@+id/tv_file_upload_entity"
+                android:clickable="true"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="6"

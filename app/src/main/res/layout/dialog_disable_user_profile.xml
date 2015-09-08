@@ -11,7 +11,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="40dp"
-        android:src="@drawable/jandi_profile" />
+        android:src="@drawable/profile_img" />
 
     <TextView
         android:id="@+id/txt_user_info_name"
@@ -67,7 +67,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/alert_disabled_members" />
+            android:src="@drawable/alert_icon_warning" />
 
         <TextView
             android:layout_width="match_parent"

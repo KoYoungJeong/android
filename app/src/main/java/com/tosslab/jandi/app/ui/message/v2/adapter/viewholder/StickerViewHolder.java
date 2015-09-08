@@ -57,8 +57,8 @@ public class StickerViewHolder implements BodyViewHolder {
         String profileUrl = entity.getUserLargeProfileUrl();
 
         Ion.with(profileImageView)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
+                .placeholder(R.drawable.profile_img)
+                .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
                 .crossfade(true)
                 .load(profileUrl);

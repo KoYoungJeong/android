@@ -2,17 +2,25 @@ package com.tosslab.jandi.app.network.client.teams;
 
 import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
 import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
+import com.tosslab.jandi.app.network.models.ReqCreateFolder;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
+import com.tosslab.jandi.app.network.models.ReqRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
+import com.tosslab.jandi.app.network.models.ReqUpdateFolder;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResCreateFolder;
+import com.tosslab.jandi.app.network.models.ResFolder;
+import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.ResUpdateFolder;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 
 import java.util.List;
@@ -32,9 +40,11 @@ public interface ITeamApiLoader {
 
     IExecutor<ResAnnouncement> loadGetAnnouncement(int teamId, int topicId);
 
-    IExecutor<ResCommon> loadCreateAnnouncement(int teamId, int topicId, ReqCreateAnnouncement reqCreateAnnouncement);
+    IExecutor<ResCommon> loadCreateAnnouncement(int teamId, int topicId,
+                                                ReqCreateAnnouncement reqCreateAnnouncement);
 
-    IExecutor<ResCommon> loadUpdateAnnouncementStatus(int teamId, int memberId, ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus);
+    IExecutor<ResCommon> loadUpdateAnnouncementStatus(int teamId, int memberId,
+                                                      ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus);
 
     IExecutor<ResCommon> loadDeleteAnnouncement(int teamId, int topicId);
 
@@ -49,5 +59,23 @@ public interface ITeamApiLoader {
     IExecutor<ResStarMentioned> loadGetStarredMessagesByTeamApi(int teamId, Integer starredId,
                                                                 int count, String type);
 
-    IExecutor<ResCommon> loadUpdateTopicPushSubscribe(int teamId, int topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe);
+    IExecutor<ResCommon> loadUpdateTopicPushSubscribe(int teamId, int topicId,
+                                                      ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe);
+
+    IExecutor<ResCreateFolder> loadCreateFolderByTeamApi(int teamId, ReqCreateFolder reqCreateFolder);
+
+    IExecutor<ResCommon> loadDeleteFolderByTeamApi(int teamId, int folderId);
+
+    IExecutor<ResUpdateFolder> loadUpdateFolderByTeamApi(int teamId, int folderId,
+                                                   ReqUpdateFolder reqUpdateFolder);
+
+    IExecutor<List<ResFolder>> loadGetFoldersByTeamApi(int teamId);
+
+    IExecutor<List<ResFolderItem>> loadGetFolderItemsByTeamApi(int teamId);
+
+    IExecutor<ResRegistFolderItem> loadRegistFolderItemByTeamApi(int teamId, int folderId,
+                                                                 ReqRegistFolderItem reqRegistFolderItem);
+
+    IExecutor<ResCommon> loadDeleteFolderItemByTeamApi(int teamId, int folderId, int itemId);
+
 }

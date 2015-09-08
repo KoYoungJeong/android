@@ -170,6 +170,7 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
         final ProgressDialog progressDialog = new ProgressDialog(activity);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setMessage(activity.getString(R.string.jandi_file_uploading) + " " + realFilePath);
+        progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
 
         return progressDialog;

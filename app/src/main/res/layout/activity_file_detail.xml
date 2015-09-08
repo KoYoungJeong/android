@@ -67,7 +67,7 @@
             android:layout_alignParentRight="true"
             android:padding="15dp"
             android:scaleType="centerInside"
-            android:src="@drawable/jandi_icon_sticker_close"/>
+            android:src="@drawable/icon_sticker_close"/>
 
 
     </RelativeLayout>

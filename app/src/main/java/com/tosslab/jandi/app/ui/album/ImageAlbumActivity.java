@@ -65,7 +65,7 @@ public class ImageAlbumActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
 
             ActionBar actionBar = getSupportActionBar();
-            actionBar.setDisplayHomeAsUpEnabled(true);
+            toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
             actionBar.setDisplayUseLogoEnabled(false);
             actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
         }
@@ -85,6 +85,11 @@ public class ImageAlbumActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
     }
 
     @OptionsItem(R.id.action_select_picture)

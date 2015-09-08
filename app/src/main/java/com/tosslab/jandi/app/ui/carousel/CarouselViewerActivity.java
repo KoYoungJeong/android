@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -235,7 +236,7 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(false);
+        toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
@@ -273,6 +274,10 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
     @Override
     public void downloadDone(File file, String fileType, ProgressDialog progressDialog) {
 
+        if (isFinishing()) {
+            return;
+        }
+
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
@@ -290,4 +295,8 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
         void onCarouselImageClick();
     }
 
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
+    }
 }

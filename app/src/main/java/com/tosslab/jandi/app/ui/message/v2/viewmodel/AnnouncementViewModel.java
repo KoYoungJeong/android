@@ -109,8 +109,8 @@ public class AnnouncementViewModel {
 
         String profileUrl = fromEntity.getUserLargeProfileUrl();
         Ion.with(ivAnnouncementUser)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
+                .placeholder(R.drawable.profile_img)
+                .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
                 .crossfade(true)
                 .load(profileUrl);

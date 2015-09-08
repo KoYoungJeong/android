@@ -177,15 +177,15 @@ public class FileListPresenter {
         RoomSelector roomSelector = new RoomSelectorImpl();
         roomSelector.setOnRoomSelectListener(new RoomSelector.OnRoomSelectListener() {
             @Override
-            public void onRoomSelect(FormattedEntity item) {
+            public void onRoomSelect(RoomSelectorImpl.ExpandRoomData item) {
 
                 int sharedEntityId = CategorizingAsEntity.EVERYWHERE;
 
-                if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
+                if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
                     // 첫번째는 "Everywhere"인 더미 entity
                     mCurrentEntityCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everywhere);
                 } else {
-                    sharedEntityId = item.getId();
+                    sharedEntityId = item.getEntityId();
                     mCurrentEntityCategorizingAccodingBy = item.getName();
                 }
                 textViewFileListWhere.setText(mCurrentEntityCategorizingAccodingBy);
@@ -205,17 +205,17 @@ public class FileListPresenter {
         Drawable rightDrawable;
         if (isFocused) {
             if (context instanceof SearchActivity) {
-                rightDrawable = textVew.getResources().getDrawable(R.drawable.jandi_arrow_up);
+                rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_up);
                 ((View) textVew.getParent()).setBackgroundColor(context.getResources().getColor(R.color.jandi_primary_color_focus));
             } else {
-                rightDrawable = textVew.getResources().getDrawable(R.drawable.jandi_arrow_up_gray);
+                rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_up_gray);
                 ((View) textVew.getParent()).setBackgroundColor(Color.WHITE);
             }
         } else {
             if (context instanceof SearchActivity) {
-                rightDrawable = textVew.getResources().getDrawable(R.drawable.jandi_arrow_down);
+                rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_down);
             } else {
-                rightDrawable = textVew.getResources().getDrawable(R.drawable.jandi_arrow_down_gray);
+                rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_down_gray);
             }
             ((View) textVew.getParent()).setBackgroundColor(Color.TRANSPARENT);
         }

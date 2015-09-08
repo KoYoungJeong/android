@@ -4,6 +4,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -83,7 +84,7 @@ public class TopicDescriptionEditActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
 
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
+            toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
             actionBar.setDisplayUseLogoEnabled(false);
             actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
@@ -129,4 +130,8 @@ public class TopicDescriptionEditActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
+    }
 }

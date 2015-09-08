@@ -55,11 +55,14 @@ public class SearchedFileItemView extends RelativeLayout {
         String searchedFileName = content.title;
         textViewSearchedFileName.setText(searchedFileName);
 
-        FormattedEntity entityById = EntityManager.getInstance().getEntityById(searchedFile.writerId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(searchedFile.writerId);
 
-        String searchedFileOwnerName = entityById.getName();
-
-        textViewSearchedFileOwnerName.setText(searchedFileOwnerName);
+        if (entity != null) {
+            String searchedFileOwnerName = entity.getName();
+            textViewSearchedFileOwnerName.setText(searchedFileOwnerName);
+        } else {
+            textViewSearchedFileOwnerName.setText("");
+        }
 
         textViewSearchedFileType.setText(content.ext);
 
@@ -75,9 +78,9 @@ public class SearchedFileItemView extends RelativeLayout {
                         BitmapUtil.getThumbnailUrlOrOriginal(content, BitmapUtil.Thumbnails.MEDIUM);
                 BitmapUtil.loadImageByGlideOrIonWhenGif(
                         imageViewSearchedFileType, thumbnailUrl,
-                        R.drawable.jandi_fl_icon_img, R.drawable.jandi_fl_icon_img);
+                        R.drawable.file_icon_img, R.drawable.file_icon_img);
             } else {
-                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_img);
+                imageViewSearchedFileType.setImageResource(R.drawable.file_icon_img);
             }
         } else {
             // 파일 타입에 해당하는 아이콘 연결
@@ -95,14 +98,12 @@ public class SearchedFileItemView extends RelativeLayout {
             commentTextView.setVisibility(View.INVISIBLE);
         }
 
-        if (entityById != null && entityById.getUser() != null && TextUtils.equals(entityById.getUser().status, "enabled")) {
+        if (entity != null && entity.getUser() != null && TextUtils.equals(entity.getUser().status, "enabled")) {
             textViewSearchedFileOwnerName.setTextColor(getResources().getColor(R.color.jandi_file_search_item_owner_text));
             imageViewLineThrough.setVisibility(View.GONE);
         } else {
             textViewSearchedFileOwnerName.setTextColor(getResources().getColor(R.color.deactivate_text_color));
             imageViewLineThrough.setVisibility(View.VISIBLE);
-
-
         }
     }
 }

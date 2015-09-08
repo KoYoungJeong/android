@@ -1,13 +1,11 @@
 package com.tosslab.jandi.app.ui.filedetail.fileinfo;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
@@ -40,8 +38,6 @@ public class ImageThumbLoader implements FileThumbLoader {
         iconFileType.setImageResource(
                 MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon));
 
-        String thumbnailPhotoUrl =
-                BitmapUtil.getThumbnailUrlOrOriginal(content, BitmapUtil.Thumbnails.LARGE);
 
         if (BitmapUtil.hasImageUrl(content)) {
             imageViewPhotoFile.setEnabled(true);
@@ -54,9 +50,19 @@ public class ImageThumbLoader implements FileThumbLoader {
                     imageViewPhotoFile.setImageResource(R.drawable.jandi_down_placeholder_dropbox);
                     break;
                 default:
+
+                    String localFilePath = BitmapUtil.getLocalFilePath(fileMessage.id);
+                    String thumbnailPhotoUrl;
+                    if (!TextUtils.isEmpty(localFilePath)) {
+                        thumbnailPhotoUrl = localFilePath;
+                    } else {
+                        thumbnailPhotoUrl = BitmapUtil.getThumbnailUrlOrOriginal(content, BitmapUtil.Thumbnails.LARGE);
+                    }
+
+
                     BitmapUtil.loadImageByGlideOrIonWhenGif(
                             imageViewPhotoFile, thumbnailPhotoUrl,
-                            R.drawable.jandi_down_placeholder_img, R.drawable.jandi_down_img_disable);
+                            R.drawable.jandi_down_placeholder_img, R.drawable.jandi_down_placeholder_img);
                     break;
             }
 
@@ -103,9 +109,10 @@ public class ImageThumbLoader implements FileThumbLoader {
                     imageViewPhotoFile.setImageResource(R.drawable.jandi_down_placeholder_dropbox);
                     break;
                 default:
-                    imageViewPhotoFile.setImageResource(R.drawable.jandi_down_img_disable);
+                    imageViewPhotoFile.setImageResource(R.drawable.file_down_img_disable);
                     break;
             }
         }
     }
+
 }

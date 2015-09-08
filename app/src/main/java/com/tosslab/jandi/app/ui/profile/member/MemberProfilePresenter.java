@@ -131,8 +131,8 @@ public class MemberProfilePresenter {
                 && !activity.isFinishing()) {
             Glide.with(activity)
                     .load(profileImageUrlPath)
-                    .placeholder(R.drawable.jandi_profile)
-                    .error(R.drawable.jandi_profile)
+                    .placeholder(R.drawable.profile_img)
+                    .error(R.drawable.profile_img)
                     .transform(new GlideCircleTransform(activity))
                     .into(imageViewProfilePhoto);
         }
@@ -159,8 +159,8 @@ public class MemberProfilePresenter {
     public void updateLocalProfileImage(File mTempPhotoFile) {
         Glide.with(activity)
                 .load(mTempPhotoFile)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
+                .placeholder(R.drawable.profile_img)
+                .error(R.drawable.profile_img)
                 .transform(new GlideCircleTransform(activity))
                 .into(imageViewProfilePhoto);
 

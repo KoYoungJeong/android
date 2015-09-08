@@ -38,6 +38,7 @@ import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
+import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
@@ -80,9 +81,9 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
+import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel_;
@@ -141,6 +142,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -423,21 +425,21 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     private void initMessageList() {
-        messageListPresenter.setOnItemClickListener(new MessageListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(RecyclerView.Adapter adapter, int position) {
-
-                MessageListFragment.this.onMessageItemClick(messageListPresenter.getItem
-                        (position), entityId);
+        messageListPresenter.setOnItemClickListener((adapter, position) -> {
+            try {
+                onMessageItemClick(messageListPresenter.getItem(position), entityId);
+            } catch (Exception e) {
+                messageListPresenter.justRefresh();
             }
         });
 
-        messageListPresenter.setOnItemLongClickListener(new MessageListAdapter.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(RecyclerView.Adapter adapter, int position) {
-                MessageListFragment.this.onMessageItemLongClick(messageListPresenter.getItem(position));
-                return true;
+        messageListPresenter.setOnItemLongClickListener((adapter, position) -> {
+            try {
+                onMessageItemLongClick(messageListPresenter.getItem(position));
+            } catch (Exception e) {
+                messageListPresenter.justRefresh();
             }
+            return true;
         });
 
         ((RecyclerView) getView().findViewById(R.id.list_messages)).setOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -522,9 +524,16 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     private void loadNewMessage(MessageQueue messageQueue) {
+
+
         if (newsMessageLoader != null) {
             MessageState data = (MessageState) messageQueue.getData();
             int lastUpdateLinkId = data.getLastUpdateLinkId();
+
+            if (lastUpdateLinkId < 0 && oldMessageLoader != null) {
+                oldMessageLoader.load(roomId, lastUpdateLinkId);
+            }
+
             newsMessageLoader.load(roomId, lastUpdateLinkId);
         }
     }
@@ -540,7 +549,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
         if (linkId > 0) {
             messageListPresenter.updateDummyMessageState(data.getLocalId(), SendMessage.Status.COMPLETE);
-            EventBus.getDefault().post(new RefreshNewMessageEvent());
+            if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
+                // 소켓이 안 붙어 있으면 임의로 갱신 요청
+                EventBus.getDefault().post(new RefreshNewMessageEvent());
+            }
         } else {
             messageListPresenter.updateDummyMessageState(data.getLocalId(), SendMessage.Status.FAIL);
         }
@@ -616,10 +628,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (activity.getSupportActionBar() == null) {
             Toolbar toolbar = (Toolbar) activity.findViewById(R.id.layout_search_bar);
             activity.setSupportActionBar(toolbar);
+            toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
         }
 
         ActionBar actionBar = activity.getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
@@ -733,10 +745,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         fileUploadStateViewModel.unregisterEventBus();
 
         isForeground = false;
-
-        if (!isFromSearch) {
-            messageListModel.stopRefreshTimer();
-        }
 
         if (roomId > 0) {
             messageListModel.saveTempMessage(roomId, messageListPresenter.getSendEditText());
@@ -943,7 +951,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListPresenter.setGotoLatestLayoutShowProgress();
             loadLastMessage();
         } else {
-            messageListModel.startRefreshTimer();
             messageListPresenter.setGotoLatestLayoutVisibleGone();
         }
     }
@@ -959,7 +966,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         newsMessageLoader.load(roomId, messageState.getLastUpdateLinkId());
         messageListPresenter.setGotoLatestLayoutVisibleGone();
         messageListPresenter.moveLastPage();
-        messageListModel.startRefreshTimer();
 
     }
 
@@ -1181,6 +1187,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         deleteTopic();
     }
 
+    public void onEvent(FileUploadFinishEvent event) {
+        messageListPresenter.justRefresh();
+    }
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
 
@@ -1311,6 +1320,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 TextUtils.equals(messageType, "topic_invite")) {
 
             updateRoomInfo();
+
+            updateMentionInfo();
         } else {
             if (!isForeground) {
                 messageListModel.updateMarkerInfo(teamId, roomId);
@@ -1319,6 +1330,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void updateMentionInfo() {
+        mentionControlViewModel.refreshMembers(Arrays.asList(roomId));
     }
 
     public void onEvent(SocketLinkPreviewMessageEvent event) {

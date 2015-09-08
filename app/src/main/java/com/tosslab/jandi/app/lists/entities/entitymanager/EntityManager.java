@@ -6,11 +6,13 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +24,37 @@ import rx.Observable;
  */
 public class EntityManager {
 
+    private static FormattedEntity UNKNOWN_USER_ENTITY;
     private static EntityManager entityManager;
+
+    static {
+        ResLeftSideMenu.User unknownUser = new ResLeftSideMenu.User();
+        unknownUser.id = -1;
+        unknownUser.name = "";
+
+        unknownUser.u_email = "";
+        unknownUser.u_authority = "";
+        unknownUser.accountId = "";
+        unknownUser.status = "disabled";
+        unknownUser.createdAt = new Date();
+        unknownUser.u_statusMessage = "";
+
+        unknownUser.u_extraData = new ResLeftSideMenu.ExtraData();
+        unknownUser.u_extraData.department = "";
+        unknownUser.u_extraData.phoneNumber = "";
+        unknownUser.u_extraData.position = "";
+
+        unknownUser.u_photoUrl = "";
+        unknownUser.u_photoThumbnailUrl = new ResMessages.ThumbnailUrls();
+        unknownUser.u_photoThumbnailUrl.largeThumbnailUrl = "";
+        unknownUser.u_photoThumbnailUrl.mediumThumbnailUrl = "";
+        unknownUser.u_photoThumbnailUrl.smallThumbnailUrl = "";
+
+        unknownUser.u_messageMarkers = new ArrayList<>();
+        unknownUser.u_starredEntities = new ArrayList<>();
+
+        UNKNOWN_USER_ENTITY = new FormattedEntity(unknownUser);
+    }
 
     private ResLeftSideMenu.Team mMyTeam;
     private ResLeftSideMenu.User mMe;   // with MessageMarker
@@ -351,7 +383,7 @@ public class EntityManager {
             return group;
         }
 
-        return null;
+        return UNKNOWN_USER_ENTITY;
     }
 
     public String getEntityNameById(int entityId) {

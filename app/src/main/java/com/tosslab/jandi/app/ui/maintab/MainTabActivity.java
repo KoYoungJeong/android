@@ -10,8 +10,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -26,6 +28,7 @@ import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -35,8 +38,10 @@ import com.tosslab.jandi.app.push.PushInterfaceActivity;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
+import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -44,13 +49,14 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
+import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -70,6 +76,7 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
+import rx.Observable;
 
 /**
  * Created by justinygchoi on 2014. 8. 11..
@@ -154,7 +161,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                     case 2:
                         TutorialCoachMarkUtil.showCoachMarkFileListIfNotShown(MainTabActivity.this);
                         break;
-
                     case 3:
                         TutorialCoachMarkUtil.showCoachMarkMoreIfNotShown(MainTabActivity.this);
                         break;
@@ -178,6 +184,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         if (NetworkCheckUtil.isConnected()) {
             getEntities();
         }
+
+        updateMoreBadge();
     }
 
     private void showInvitePopup() {
@@ -293,6 +301,14 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             e.printStackTrace();
             if (e.getResponse() != null) {
                 if (e.getResponse().getStatus() == JandiConstants.NetworkError.UNAUTHORIZED) {
+
+                    JandiPreference.signOut(JandiApplication.getContext());
+
+                    ParseUpdateUtil.deleteChannelOnServer();
+
+                    OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
+                            .clearAllData();
+
                     getEntitiesFailed(getString(R.string.err_expired_session));
                     stopJandiServiceInMainThread();
                 } else if (e.getResponse().getStatus() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
@@ -325,10 +341,19 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @UiThread
     public void getEntitiesFailed(String errMessage) {
         ColoredToast.showError(mContext, errMessage);
-        returnToIntroStartActivity();
+        if (isFinishing()) {
+            return;
+        }
+        IntroMainActivity_.intent(MainTabActivity.this).start();
+        finish();
     }
 
     private void postAllEvents() {
+        if (isFirst) {
+            // 처음 TabActivity를 시도하면 0번째 탭이 자동 선택됨으로 이를 tracking
+            trackGaTab(mEntityManager, 0);
+            isFirst = false;
+        }
         postShowChattingListEvent();
     }
 
@@ -363,20 +388,34 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     }
 
     public void onEventMainThread(ChatBadgeEvent event) {
-        if (event.isBadge()) {
-            mMainTabPagerAdapter.showNewChatBadge();
-        } else {
-            mMainTabPagerAdapter.hideNewChatBadge();
-
-        }
+        mMainTabPagerAdapter.updateChatBadge(event.getCount());
     }
 
     public void onEventMainThread(TopicBadgeEvent event) {
-        if (event.isBadge()) {
-            mMainTabPagerAdapter.showNewTopicBadge();
+        mMainTabPagerAdapter.updateTopicBadge(event.getCount());
+    }
+
+    public void onEventMainThread(MessageOfOtherTeamEvent event) {
+        updateMoreBadge();
+    }
+
+    public void updateMoreBadge() {
+        int messageCount = getOtherTeamMessageCount();
+        if (messageCount > 0) {
+            mMainTabPagerAdapter.showMoreNewBadge();
         } else {
-            mMainTabPagerAdapter.hideNewTopicBadge();
+            mMainTabPagerAdapter.hideMoreNewBadge();
         }
+    }
+
+    private int getOtherTeamMessageCount() {
+        final int[] messageCount = {0};
+        int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+        Observable.from(AccountRepository.getRepository().getAccountTeams())
+                .filter(userTeam -> userTeam.getTeamId() != selectedTeamId)
+                .map(ResAccountInfo.UserTeam::getUnread)
+                .subscribe(integer -> messageCount[0] += integer);
+        return messageCount[0];
     }
 
     public void onEvent(TeamInfoChangeEvent event) {
@@ -424,4 +463,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                         .build());
     }
 
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
+    }
 }

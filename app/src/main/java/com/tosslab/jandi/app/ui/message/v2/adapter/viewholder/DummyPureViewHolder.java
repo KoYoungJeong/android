@@ -47,7 +47,7 @@ public class DummyPureViewHolder implements BodyViewHolder {
                 builder.append("  ");
                 int beforLenghth = builder.length();
                 Drawable drawable = messageTextView.getContext().getResources()
-                        .getDrawable(R.drawable.jandi_icon_message_failure);
+                        .getDrawable(R.drawable.icon_message_failure);
                 drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable
                         .getIntrinsicHeight());
                 builder.append(" ")
@@ -62,7 +62,7 @@ public class DummyPureViewHolder implements BodyViewHolder {
                 builder.append("  ");
                 int beforLenghth = builder.length();
                 Drawable drawable = messageTextView.getContext().getResources()
-                        .getDrawable(R.drawable.jandi_icon_message_sending);
+                        .getDrawable(R.drawable.icon_message_sending);
                 drawable.setBounds(0, 0,
                         drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
                 builder.append(" ")

@@ -165,7 +165,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="16dp"
-                    android:src="@drawable/jandi_icon_comment_arrow"/>
+                    android:src="@drawable/icon_comment_arrow"/>
 
             </RelativeLayout>
 

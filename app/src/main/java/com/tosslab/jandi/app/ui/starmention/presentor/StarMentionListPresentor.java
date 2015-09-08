@@ -1,8 +1,7 @@
 package com.tosslab.jandi.app.ui.starmention.presentor;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.widget.Toast;
+import android.support.v4.app.Fragment;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -13,6 +12,7 @@ import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.starmention.model.StarMentionListModel;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
+import com.tosslab.jandi.app.utils.ColoredToast;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -60,7 +60,7 @@ public class StarMentionListPresentor {
         }
     }
 
-    public void executeClickEvent(StarMentionVO starMentionVO, Activity activity) {
+    public void executeClickEvent(StarMentionVO starMentionVO, Fragment fragment) {
         int contentType = starMentionVO.getContentType();
         if (contentType == StarMentionVO.Type.Text.getValue()) {
             boolean isJoinedTopic = false;
@@ -80,7 +80,7 @@ public class StarMentionListPresentor {
                 }
             }
             if (isJoinedTopic) {
-                MessageListV2Activity_.intent(activity)
+                MessageListV2Activity_.intent(fragment)
                         .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         .teamId(starMentionVO.getTeamId())
                         .entityId(starMentionVO.getRoomId())
@@ -88,15 +88,15 @@ public class StarMentionListPresentor {
                         .roomId(starMentionVO.getRoomType() != JandiConstants.TYPE_DIRECT_MESSAGE ?
                                 starMentionVO.getRoomId() : -1)
                         .isFromSearch(true)
-                        .lastMarker(starMentionVO.getLinkId()).start();
+                        .lastMarker(starMentionVO.getLinkId())
+                        .start();
             } else {
-                Toast.makeText(activity,
-                        R.string.jandi_starmention_no_longer_in_topic, Toast.LENGTH_SHORT).show();
+                ColoredToast.show(fragment.getActivity(), fragment.getString(R.string.jandi_starmention_no_longer_in_topic));
             }
         } else if (contentType == StarMentionVO.Type.Comment.getValue()
                 || contentType == StarMentionVO.Type.File.getValue()) {
             FileDetailActivity_
-                    .intent(activity)
+                    .intent(fragment)
                     .fileId(starMentionVO.getFileId())
                     .selectMessageId(starMentionVO.getMessageId())
                     .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
@@ -150,6 +150,10 @@ public class StarMentionListPresentor {
 
     public boolean isEmpty() {
         return starMentionListModel.isEmpty();
+    }
+
+    public void onDeletedFile(int linkId) {
+
     }
 
     public interface View {
