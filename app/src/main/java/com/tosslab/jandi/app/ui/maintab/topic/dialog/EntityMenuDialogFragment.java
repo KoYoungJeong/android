@@ -99,6 +99,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
         dialog.setCanceledOnTouchOutside(true);
 
         return dialog;
+
     }
 
 

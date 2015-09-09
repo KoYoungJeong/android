@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical">
 
@@ -9,17 +10,16 @@
         android:id="@+id/tv_popup_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
         android:background="@color/white"
         android:ellipsize="end"
         android:maxLines="1"
         android:paddingBottom="20dp"
+        android:paddingLeft="24dp"
         android:paddingTop="24dp"
         android:text="title"
         android:textColor="#212121"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/tv_folder_rename"
@@ -31,7 +31,7 @@
         android:paddingLeft="24dp"
         android:text="@string/jandi_folder_rename"
         android:textColor="#212121"
-        android:textSize="16sp" />
+        android:textSize="16sp"/>
 
     <TextView
         android:id="@+id/tv_folder_delete"
@@ -43,12 +43,12 @@
         android:paddingLeft="24dp"
         android:text="@string/jandi_folder_delete"
         android:textColor="#212121"
-        android:textSize="16sp" />
+        android:textSize="16sp"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="8dp"
-        android:background="@color/white" />
+        android:background="@color/white"/>
 
 
 </LinearLayout>

@@ -1,11 +1,10 @@
 package com.tosslab.jandi.app.ui.maintab.topic.dialog;
 
-import android.content.DialogInterface;
+import android.app.Dialog;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.text.InputType;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Window;
 import android.widget.EditText;
@@ -47,6 +46,12 @@ public class TopicFolderDialogFragment extends DialogFragment {
     @Bean
     TopicFolderDialogModel topicFolderDialogModel;
 
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        return super.onCreateDialog(savedInstanceState);
+    }
+
     @AfterViews
     void initView() {
         tvFolderTitle.setText(folderName);
@@ -63,7 +68,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
         showDeleteFolderDialog(folderId);
     }
 
-    public void showRenameFolderDialog(int folderId, String name, int seq) {
+    private void showRenameFolderDialog(int folderId, String name, int seq) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LinearLayout vgInputEditText = (LinearLayout) LayoutInflater
@@ -71,72 +76,33 @@ public class TopicFolderDialogFragment extends DialogFragment {
 
         EditText input = (EditText) vgInputEditText.findViewById(R.id.et_input);
 
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int minWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300f, displayMetrics);
-        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, displayMetrics);
-        vgInputEditText.setMinimumWidth(minWidth);
-        vgInputEditText.setPadding(padding, input.getPaddingTop(), padding, input.getPaddingBottom());
-
         input.setText(name);
-        input.setMaxLines(1);
-        input.setCursorVisible(true);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
         input.setSelection(name.length());
 
-        TextView tvTitle = new TextView(getActivity());
-        tvTitle.setText(R.string.jandi_folder_insert_name);
-        tvTitle.setTextColor(getResources().getColor(R.color.black));
-        tvTitle.setTextSize(20);
-        int paddingTopLeftRight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24f, displayMetrics);
-        tvTitle.setPadding(paddingTopLeftRight, paddingTopLeftRight, paddingTopLeftRight, 0);
-
         builder.setView(vgInputEditText)
-                .setCustomTitle(tvTitle)
-                .setPositiveButton(getActivity().getString(R.string.jandi_confirm), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        renameFolder(folderId, input.getText().toString(), seq);
-                    }
+                .setPositiveButton(getActivity().getString(R.string.jandi_confirm), (dialog, which) -> {
+                    renameFolder(folderId, input.getText().toString(), seq);
                 })
-                .setNegativeButton(getActivity().getString(R.string.jandi_cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        TopicFolderDialogFragment.this.dismiss();
-                    }
+                .setNegativeButton(getActivity().getString(R.string.jandi_cancel), (dialog, which) -> {
+                    dialog.cancel();
+                    TopicFolderDialogFragment.this.dismiss();
                 })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        TopicFolderDialogFragment.this.dismiss();
-                    }
-                });
+                .setOnCancelListener(dialog -> TopicFolderDialogFragment.this.dismiss());
         builder.show();
     }
 
-    public void showDeleteFolderDialog(int folderId) {
+    private void showDeleteFolderDialog(int folderId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         builder.setMessage(R.string.jandi_folder_ask_delete)
-                .setPositiveButton(getActivity().getString(R.string.jandi_confirm), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteTopicFolder(folderId);
-                    }
+                .setPositiveButton(getActivity().getString(R.string.jandi_confirm), (dialog, which) -> {
+                    deleteTopicFolder(folderId);
                 })
-                .setNegativeButton(getActivity().getString(R.string.jandi_cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        TopicFolderDialogFragment.this.dismiss();
-                    }
+                .setNegativeButton(getActivity().getString(R.string.jandi_cancel), (dialog, which) -> {
+                    dialog.cancel();
+                    TopicFolderDialogFragment.this.dismiss();
                 })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        TopicFolderDialogFragment.this.dismiss();
-                    }
-                });
+                .setOnCancelListener(dialog -> TopicFolderDialogFragment.this.dismiss());
         builder.show();
     }
 

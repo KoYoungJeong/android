@@ -4,8 +4,6 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -144,13 +142,6 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mainView = inflater.inflate(R.layout.dialog_manipulate_message, null);
-
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int minWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300f, displayMetrics);
-        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, displayMetrics);
-        mainView.setMinimumWidth(minWidth);
-        mainView.setPadding(mainView.getPaddingLeft(), mainView.getPaddingTop(), mainView.getPaddingRight(), mainView.getPaddingBottom());
-
 
         final TextView actionDel = (TextView) mainView.findViewById(R.id.tv_action_del_message);
         final TextView actionCopy = (TextView) mainView.findViewById(R.id.tv_action_copy_message);
