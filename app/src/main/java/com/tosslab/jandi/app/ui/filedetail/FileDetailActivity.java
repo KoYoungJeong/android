@@ -90,7 +90,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ItemLongClick;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -112,7 +111,6 @@ import static org.androidannotations.annotations.UiThread.Propagation;
 /**
  * Created by justinygchoi on 2014. 7. 19..
  */
-@OptionsMenu(R.menu.file_detail_activity_menu)
 @EActivity(R.layout.activity_file_detail)
 public class FileDetailActivity extends BaseAnalyticsActivity implements FileDetailPresenter.View {
 
@@ -935,7 +933,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         isDeleted = TextUtils.equals(fileMessage.status, "archived");
 
-        isMyFile = fileMessage.writerId == EntityManager.getInstance().getMe().getId();
+        isMyFile = fileMessage.writerId == EntityManager.getInstance().getMe().getId() ||
+                fileDetailPresenter.isTeamOwner();
 
         invalidateOptionsMenu();
 

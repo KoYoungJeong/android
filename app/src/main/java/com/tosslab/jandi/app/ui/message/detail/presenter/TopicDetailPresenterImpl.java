@@ -54,7 +54,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         String topicDescription = topicDetailModel.getTopicDescription(context, entityId);
         int topicMemberCount = topicDetailModel.getTopicMemberCount(context, entityId);
         boolean isStarred = topicDetailModel.isStarred(context, entityId);
-        boolean owner = topicDetailModel.isOwner(context, entityId);
+        boolean owner = topicDetailModel.isOwner(context, entityId)
+                || topicDetailModel.isTeamOwner();
         boolean isTopicPushSubscribe = topicDetailModel.isPushOn(context, entityId);
 
         boolean defaultTopic = topicDetailModel.isDefaultTopic(context, entityId);
@@ -82,7 +83,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
     @Override
     public void onTopicDescriptionMove(Context context, int entityId) {
-        if (topicDetailModel.isOwner(context, entityId)) {
+        if (topicDetailModel.isOwner(context, entityId) || topicDetailModel.isTeamOwner()) {
             view.moveTopicDescriptionEdit();
         }
     }
@@ -159,7 +160,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
     @Override
     public void onChangeTopicName(Context context, int entityId) {
-        if (topicDetailModel.isOwner(context, entityId)) {
+        if (topicDetailModel.isOwner(context, entityId) || topicDetailModel.isTeamOwner()) {
             String topicName = topicDetailModel.getTopicName(context, entityId);
             int entityType = topicDetailModel.getEntityType(context, entityId);
             view.showTopicNameChangeDialog(entityId, topicName, entityType);

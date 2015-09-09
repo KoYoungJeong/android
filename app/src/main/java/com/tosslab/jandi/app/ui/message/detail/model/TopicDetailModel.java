@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.detail.model;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -223,5 +224,9 @@ public class TopicDetailModel {
 
     public boolean isDefaultTopic(Context context, int entityId) {
         return EntityManager.getInstance().getDefaultTopicId() == entityId;
+    }
+
+    public boolean isTeamOwner() {
+        return TextUtils.equals(EntityManager.getInstance().getMe().getUser().u_authority, "owner");
     }
 }

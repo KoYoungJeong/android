@@ -1106,14 +1106,18 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
             boolean isDirectMessage = messageListModel.isDirectMessage(entityType);
-            boolean isMyMessage = messageListModel.isMyMessage(textMessage.writerId) && !isFromSearch;
+            boolean isOwner = messageListModel.isTeamOwner();
+            boolean isMyMessage = (messageListModel.isMyMessage(textMessage.writerId) || isOwner)
+                    && !isFromSearch;
             messageListPresenter.showMessageMenuDialog(isDirectMessage, isMyMessage, textMessage);
         } else if (messageListModel.isCommentType(link.message)) {
             messageListPresenter.showMessageMenuDialog(((ResMessages.CommentMessage) link.message));
         } else if (messageListModel.isFileType(link.message)) {
         } else if (messageListModel.isStickerType(link.message)) {
             ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) link.message;
-            boolean isMyMessage = messageListModel.isMyMessage(stickerMessage.writerId) && !isFromSearch;
+            boolean isOwner = messageListModel.isTeamOwner();
+            boolean isMyMessage = (messageListModel.isMyMessage(stickerMessage.writerId) || isOwner)
+                    && !isFromSearch;
 
             if (!isMyMessage) {
                 return;

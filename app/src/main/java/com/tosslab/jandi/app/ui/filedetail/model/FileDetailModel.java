@@ -426,4 +426,8 @@ public class FileDetailModel {
 
         return MessageRepository.getRepository().getFileMessage(fileId);
     }
+
+    public boolean isTeamOwner() {
+        return TextUtils.equals(EntityManager.getInstance().getMe().getUser().u_authority, "owner");
+    }
 }
