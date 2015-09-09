@@ -481,18 +481,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         EntityManager entityManager = EntityManager.getInstance();
-                        FormattedEntity entity = entityManager
-                                .getEntityById(entityIdToBeShared);
+                        FormattedEntity entity = entityManager.getEntityById(entityIdToBeShared);
 
-                        MessageListV2Activity_.intent(FileDetailActivity.this)
-                                .teamId(entityManager.getTeamId())
-                                .entityId(entityIdToBeShared)
-                                .entityType(entity.type)
-                                .roomId(entity.isUser() ? -1 : entityIdToBeShared)
-                                .isFavorite(entity.isStarred)
-                                .teamId(entityManager.getTeamId())
-                                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                                .start();
+                        moveToMessageListActivity(entityIdToBeShared, entity.type,
+                                entity.isUser() ? -1 : entityIdToBeShared, entity.isStarred);
                     }
                 })
                 .create()
@@ -625,25 +617,26 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             if (entity.isPublicTopic() && entity.isJoined
                     || entity.isPrivateGroup()) {
 
-                moveToMessageListActivity(entityId, entityType, teamId, isStarred);
+                moveToMessageListActivity(entityId, entityType, entityId, isStarred);
             } else {
                 fileDetailPresenter.joinAndMove(entity);
             }
         } else {
-            moveToMessageListActivity(entityId, entityType, teamId, isStarred);
+            moveToMessageListActivity(entityId, entityType, entityId, isStarred);
         }
     }
 
-    @UiThread
+    @UiThread(propagation = Propagation.REUSE)
     @Override
-    public void moveToMessageListActivity(int entityId, int entityType, int teamId, boolean isStarred) {
+    public void moveToMessageListActivity(int entityId, int entityType, int roomId, boolean isStarred) {
         MessageListV2Activity_.intent(FileDetailActivity.this)
-                .teamId(teamId)
+                .teamId(EntityManager.getInstance().getTeamId())
                 .entityId(entityId)
                 .entityType(entityType)
-                .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : -1)
+                .roomId(roomId)
                 .isFromPush(false)
                 .isFavorite(isStarred)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
     }
 
@@ -887,14 +880,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         }
 
         EntityManager entityManager = EntityManager.getInstance();
-        MessageListV2Activity_.intent(FileDetailActivity.this)
-                .teamId(entityManager.getTeamId())
-                .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
-                .entityId(event.userId)
-                .roomId(-1)
-                .isFavorite(entityManager.getEntityById(event.userId).isStarred)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+        moveToMessageListActivity(
+                event.userId, JandiConstants.TYPE_DIRECT_MESSAGE, -1,
+                entityManager.getEntityById(event.userId).isStarred);
     }
 
     @UiThread

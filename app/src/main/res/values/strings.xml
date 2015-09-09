@@ -507,5 +507,6 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_folder_new_folder">Make a new folder</string>
     <string name="jandi_browse_other_topics">Browse other topics</string>
     <string name="jandi_no_topic_to_join">No topics to join</string>
+    <string name="jandi_1_1_message">1:1 Message</string>
 
 </resources>

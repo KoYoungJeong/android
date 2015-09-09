@@ -504,6 +504,7 @@
     <string name="jandi_browse_other_topics">浏览其他议题</string>
     <string name="jandi_folder_rename">重新命名</string>
     <string name="jandi_no_topic_to_join">没有可加入的议题</string>
+    <string name="jandi_1_1_message">"直接传讯"</string>
 
 
 </resources>
