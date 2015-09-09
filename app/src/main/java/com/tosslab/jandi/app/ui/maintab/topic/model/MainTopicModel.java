@@ -24,7 +24,6 @@ import org.androidannotations.annotations.EBean;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -102,7 +101,6 @@ public class MainTopicModel {
 
     // 리스트에 보여 줄 Data Provider 가져오기
     public TopicFolderListDataProvider getDataProvider(List<ResFolder> topicFolders, List<ResFolderItem> topicFolderItems) {
-        long startTime = System.currentTimeMillis();
 
         List<Pair<AbstractExpandableDataProvider.GroupData,
                 List<AbstractExpandableDataProvider.ChildData>>> datas = new LinkedList<>();
@@ -114,28 +112,30 @@ public class MainTopicModel {
         Map<Integer, List<TopicItemData>> topicItemMap = new HashMap<>();
         Map<Integer, TopicFolderData> folderMap = new LinkedHashMap<>();
         Map<Integer, Integer> badgeCountMap = new HashMap<>();
+
         for (ResFolder topicFolder : topicFolders) {
             if (!topicItemMap.containsKey(topicFolder.id)) {
-                topicItemMap.put(topicFolder.id, new ArrayList<>());
+                topicItemMap.put(new Integer(topicFolder.id), new ArrayList<>());
             }
 
             if (!badgeCountMap.containsKey(topicFolder.id)) {
-                badgeCountMap.put(topicFolder.id, 0);
+                badgeCountMap.put(new Integer(topicFolder.id), 0);
             }
 
-            if (!folderMap.containsKey(topicFolder.id)) {
+            if (!folderMap.containsKey(new Integer(topicFolder.id))) {
                 TopicFolderData topicFolderData = new TopicFolderData(folderIndex, topicFolder.name, topicFolder.id, -1);
                 topicFolderData.setSeq(topicFolder.seq);
-                folderMap.put(topicFolder.id, topicFolderData);
+                folderMap.put(new Integer(topicFolder.id), topicFolderData);
             }
+            folderIndex++;
         }
 
         Observable.from(topicFolderItems)
-                .filter(resFolderItem -> resFolderItem.folderId > 0)
+                .filter(topicFolderItem -> topicFolderItem.folderId > 0)
                 .subscribe(topicFolderItem -> {
-                    Topic topic = joinTopics.remove(topicFolderItem.roomId);
+                    Topic topic = joinTopics.remove(new Integer(topicFolderItem.roomId));
 
-                    long itemIndex = folderMap.get(topicFolderItem.folderId).generateNewChildId();
+                    long itemIndex = folderMap.get(new Integer(topicFolderItem.folderId)).generateNewChildId();
 
                     TopicItemData topicItemData = TopicItemData.newInstance(
                             itemIndex, -1, topic.getCreatorId(), topic.getName(),
@@ -144,15 +144,15 @@ public class MainTopicModel {
                             topic.isSelected(), topic.getDescription(), topic.isPublic(),
                             topic.getMemberCount());
 
-                    topicItemMap.get(topicFolderItem.folderId).add(topicItemData);
+                    topicItemMap.get(new Integer(topicFolderItem.folderId)).add(topicItemData);
 
-                    int badgeCount = badgeCountMap.get(topicFolderItem.folderId);
-                    badgeCountMap.put(topicFolderItem.folderId, badgeCount + topicItemData
+                    int badgeCount = badgeCountMap.get(new Integer(topicFolderItem.folderId));
+                    badgeCountMap.put(new Integer(topicFolderItem.folderId), badgeCount + topicItemData
                             .getUnreadCount());
                 }, Throwable::printStackTrace);
 
-
         for (Integer folderId : folderMap.keySet()) {
+
             List<TopicItemData> topicItemDatas = topicItemMap.get(folderId);
             List<AbstractExpandableDataProvider.ChildData> providerTopicItemDatas = new ArrayList<>();
 
@@ -175,28 +175,26 @@ public class MainTopicModel {
             topicFolderData.setChildBadgeCnt(badgeCountMap.get(folderId));
 
             datas.add(new Pair<>(topicFolderData, providerTopicItemDatas));
-        }
 
+        }
 
         folderIndex = folderMap.size();
 
-
         // 폴더가 없는 토픽 데이터 셋팅
         TopicFolderData fakeFolder = getFakeFolder(folderIndex);
-        Iterator<Integer> joinTopicKeySets = joinTopics.keySet().iterator();
+//        Iterator<Integer> joinTopicKeySets = joinTopics.keySet().iterator();
 
         List<AbstractExpandableDataProvider.ChildData> noFolderTopicItemDatas = new ArrayList<>();
 
         Observable.from(joinTopics.keySet())
                 .map(topicId -> {
                     long itemIndex = fakeFolder.generateNewChildId();
-                    Topic topic = joinTopics.get(joinTopicKeySets.next());
+                    Topic topic = joinTopics.get(topicId);
                     return TopicItemData.newInstance(
                             itemIndex, -1, topic.getCreatorId(), topic.getName(),
                             topic.isStarred(), topic.isJoined(), topic.getEntityId(),
                             topic.getUnreadCount(), topic.getMarkerLinkId(), topic.isPushOn(),
                             topic.isSelected(), topic.getDescription(), topic.isPublic(), topic.getMemberCount());
-
                 })
                 .subscribe(noFolderTopicItemDatas::add);
 
