@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
@@ -62,9 +65,13 @@ public class OpenAction implements Action {
         accessToken.setTokenType("bearer");
 
         try {
-            ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+
+            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
+            helper.clearAllData();
 
             TokenUtil.saveTokenInfoByRefresh(accessToken);
+            ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+
             AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
 
             successAccessToken(accountInfo);

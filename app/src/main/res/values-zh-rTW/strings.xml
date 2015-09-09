@@ -505,5 +505,6 @@
     <string name="jandi_browse_other_topics">瀏覽其他議題</string>
     <string name="jandi_folder_rename">重新命名</string>
     <string name="jandi_no_topic_to_join">沒有可加入的議題</string>
+    <string name="jandi_1_1_message">"直接傳訊"</string>
 </resources>
 

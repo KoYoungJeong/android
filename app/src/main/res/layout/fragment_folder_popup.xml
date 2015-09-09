@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical">
 
@@ -22,38 +22,26 @@
         android:textStyle="bold"/>
 
     <TextView
-        android:id="@+id/btn_entity_popup_move_folder"
+        android:id="@+id/tv_folder_rename"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@drawable/bg_list_item"
         android:clickable="true"
         android:gravity="left|center_vertical"
         android:paddingLeft="24dp"
-        android:text="@string/jandi_folder_move_to"
+        android:text="@string/jandi_folder_rename"
         android:textColor="#212121"
         android:textSize="16sp"/>
 
     <TextView
-        android:id="@+id/btn_entity_popup_starred"
+        android:id="@+id/tv_folder_delete"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@drawable/bg_list_item"
         android:clickable="true"
         android:gravity="left|center_vertical"
         android:paddingLeft="24dp"
-        android:text="starred"
-        android:textColor="#212121"
-        android:textSize="16sp"/>
-
-    <TextView
-        android:id="@+id/btn_entity_popup_leave"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@drawable/bg_list_item"
-        android:clickable="true"
-        android:gravity="center_vertical"
-        android:paddingLeft="24dp"
-        android:text="@string/jandi_action_leave"
+        android:text="@string/jandi_folder_delete"
         android:textColor="#212121"
         android:textSize="16sp"/>
 
@@ -61,5 +49,6 @@
         android:layout_width="match_parent"
         android:layout_height="8dp"
         android:background="@color/white"/>
+
 
 </LinearLayout>

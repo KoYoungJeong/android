@@ -32,7 +32,7 @@
             android:layout_weight="1"
             android:background="@drawable/btn_line_rect_gray"
             android:gravity="center"
-            android:text="토픽"
+            android:text="@string/jandi_tab_topic"
             android:textColor="@color/text_color_gray"
             android:textSize="11sp"/>
 
@@ -43,7 +43,7 @@
             android:layout_weight="1"
             android:background="@drawable/btn_line_rect_gray"
             android:gravity="center"
-            android:text="1:1메세지"
+            android:text="@string/jandi_1_1_message"
             android:textColor="@color/text_color_gray"
             android:textSize="11sp"/>
 

@@ -129,7 +129,6 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final String title = getArguments().getString(TITLE, "");
         final int messageId = getArguments().getInt(MESSAGE_ID);
         final int messageType = getArguments().getInt(MESSAGE_TYPE);
         final int feedbackId = getArguments().getInt(FEEDBACK_ID, -1);
@@ -216,9 +215,9 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         });
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setView(mainView)
-                .setTitle(title);
+        builder.setView(mainView);
 
         return builder.create();
     }
+
 }

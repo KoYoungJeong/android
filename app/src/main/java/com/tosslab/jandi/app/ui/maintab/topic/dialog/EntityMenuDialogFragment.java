@@ -8,7 +8,6 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -46,10 +45,10 @@ public class EntityMenuDialogFragment extends DialogFragment {
     int folderId;
 
     @ViewById(R.id.btn_entity_popup_starred)
-    Button starredButton;
+    TextView starredButton;
 
     @ViewById(R.id.btn_entity_popup_leave)
-    Button leaveButton;
+    TextView leaveButton;
 
     @ViewById(R.id.tv_popup_title)
     TextView title;
@@ -100,6 +99,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
         dialog.setCanceledOnTouchOutside(true);
 
         return dialog;
+
     }
 
 

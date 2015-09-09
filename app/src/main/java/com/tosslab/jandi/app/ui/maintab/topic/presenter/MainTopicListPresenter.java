@@ -112,37 +112,6 @@ public class MainTopicListPresenter {
         view.showEntityMenuDialog(entityId, folderId);
     }
 
-    @Background
-    public void onDeleteTopicFolder(int folderId) {
-        try {
-            mainTopicModel.deleteTopicFolder(folderId);
-            view.showDeleteFolderToast();
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
-        }
-        try {
-            Thread.sleep(200);
-            onRefreshList();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Background
-    public void onRenameFolder(int folderId, String name, int seq) {
-        try {
-            mainTopicModel.renameFolder(folderId, name, seq);
-            view.showRenameFolderToast();
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
-        }
-        try {
-            Thread.sleep(200);
-            onRefreshList();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
     public int getUnreadCount(Observable<TopicItemData> joinEntities) {
         final int[] value = {0};
@@ -197,10 +166,6 @@ public class MainTopicListPresenter {
         void dismissProgressWheel();
 
         void updateGroupBadgeCount();
-
-        void showRenameFolderToast();
-
-        void showDeleteFolderToast();
 
         void setSelectedItem(int selectedEntity);
 

@@ -55,7 +55,8 @@
             android:paddingLeft="16dp"
             android:text="@string/jandi_folder_choose"
             android:textColor="#999999"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_choose_folder"

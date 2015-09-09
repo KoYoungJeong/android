@@ -1,24 +1,14 @@
 package com.tosslab.jandi.app.ui.maintab.topic;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.PopupWindow;
-import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -37,6 +27,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.ExpandableTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
+import com.tosslab.jandi.app.ui.maintab.topic.dialog.TopicFolderDialogFragment_;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
@@ -47,7 +38,6 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.JoinableTo
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
@@ -165,9 +155,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             for (int idx = 0; idx < groupCount; idx++) {
                 TopicFolderData topicFolderData = adapter.getTopicFolderData(idx);
                 expand = Observable.from(folderExpands)
-                        .filter(folderExpand ->
-                                topicFolderData.getFolderId() == folderExpand.getFolderId()
-                                        || topicFolderData.getFolderId() == seledtedGruopId)
+                        .filter(folderExpand -> topicFolderData.getFolderId() == folderExpand.getFolderId()
+                                || topicFolderData.getFolderId() == seledtedGruopId)
                         .map(FolderExpand::isExpand)
                         .firstOrDefault(false)
                         .toBlocking().first();
@@ -175,7 +164,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
                     expandableItemManager.expandGroup(idx);
                 }
             }
-
         }
 
         expandableItemManager.setOnGroupCollapseListener((groupPosition, fromUser) -> {
@@ -211,37 +199,12 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     }
 
     public void showGroupSettingPopupView(View view, int folderId, String folderName, int seq) {
-
-        View popupView = View.inflate(getActivity(), R.layout.popup_folder_setting, null);
-        PopupWindow popup = new PopupWindow(popupView);
-
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 176f, displayMetrics);
-        int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120f, displayMetrics);
-
-        popup.setWidth(width);
-        popup.setHeight(height);
-        popup.setTouchable(true);
-        popup.setFocusable(true);
-        popup.setAnimationStyle(-1);
-        popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        popup.setOutsideTouchable(true);
-        popup.showAsDropDown(view);
-
-        TextView tvFolderSettingRename = (TextView) popupView.findViewById(R.id.tv_folder_setting_rename);
-        TextView tvFolderSettingRemove = (TextView) popupView.findViewById(R.id.tv_folder_setting_remove);
-
-        tvFolderSettingRename.setOnClickListener(v -> {
-            showRenameFolderDialog(folderId, folderName, seq);
-            popup.dismiss();
-
-        });
-
-        tvFolderSettingRemove.setOnClickListener(v -> {
-            showDeleteFolderDialog(folderId);
-            popup.dismiss();
-        });
-
+        TopicFolderDialogFragment_.builder()
+                .folderId(folderId)
+                .folderName(folderName)
+                .seq(seq)
+                .build()
+                .show(getFragmentManager(), "dialog");
     }
 
     @Override
@@ -342,69 +305,15 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         adapter.setProvider(topicFolderListDataProvider);
         notifyDatasetChanged();
 
-        int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics
-                ()));
+        int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
     }
 
-    public void showRenameFolderDialog(int folderId, String name, int seq) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-        final EditText input = new EditText(getActivity());
-
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int minWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300f, displayMetrics);
-        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, displayMetrics);
-        input.setMinWidth(minWidth);
-        input.setPadding(padding, input.getPaddingTop(), padding, input.getPaddingBottom());
-
-        input.setText(name);
-        input.setMaxLines(1);
-        input.setCursorVisible(true);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setSelection(name.length());
-
-        builder.setView(input)
-                .setTitle(getActivity().getString(R.string.jandi_folder_insert_name))
-                .setPositiveButton(getActivity().getString(R.string.jandi_confirm), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mainTopicListPresenter.onRenameFolder(folderId, input.getText().toString(), seq);
-                    }
-                })
-                .setNegativeButton(getActivity().getString(R.string.jandi_cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-        builder.show();
-    }
-
-    public void showDeleteFolderDialog(int folderId) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-        builder.setMessage(R.string.jandi_folder_ask_delete)
-                .setPositiveButton(getActivity().getString(R.string.jandi_confirm), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mainTopicListPresenter.onDeleteTopicFolder(folderId);
-                    }
-                })
-                .setNegativeButton(getActivity().getString(R.string.jandi_cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-        builder.show();
-    }
 
     public void onEvent(SocketMessageEvent event) {
         if (TextUtils.equals(event.getMessageType(), "chat")) {
             return;
         }
-
         // 내부적으로 메세지만 갱신시키도록 변경
         mainTopicListPresenter.onNewMessage(event);
 
@@ -443,16 +352,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         }
     }
 
-    public void showRenameFolderToast() {
-        ColoredToast.show(getActivity().getApplicationContext(),
-                getActivity().getString(R.string.jandi_folder_renamed));
-    }
-
-    public void showDeleteFolderToast() {
-        ColoredToast.show(getActivity().getApplicationContext(),
-                getActivity().getString(R.string.jandi_folder_removed));
-    }
-
     public void onEvent(MainSelectTopicEvent event) {
         selectedEntity = event.getSelectedEntity();
         setSelectedItem(selectedEntity);
@@ -470,4 +369,5 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         adapter.startAnimation();
         adapter.notifyDataSetChanged();
     }
+
 }
