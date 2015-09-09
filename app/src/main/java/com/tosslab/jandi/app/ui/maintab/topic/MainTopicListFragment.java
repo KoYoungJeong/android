@@ -165,7 +165,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
                     expandableItemManager.expandGroup(idx);
                 }
             }
-
         }
 
         expandableItemManager.setOnGroupCollapseListener((groupPosition, fromUser) -> {
