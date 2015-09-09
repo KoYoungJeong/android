@@ -324,7 +324,7 @@ public class FileDetailPresenter {
 
             view.dismissProgress();
 
-            view.moveToMessageListActivity(entityId.getId(), entityType, entityManager.getTeamId(), false);
+            view.moveToMessageListActivity(entityId.getId(), entityType, entityId.getId(), false);
         } catch (Exception e) {
             e.printStackTrace();
             view.dismissProgress();
@@ -664,7 +664,7 @@ public class FileDetailPresenter {
 
         void hideSoftKeyboard();
 
-        void moveToMessageListActivity(int entityId, int entityType, int teamId, boolean isStarred);
+        void moveToMessageListActivity(int entityId, int entityType, int roomId, boolean isStarred);
 
         void startGoogleOrDropboxFileActivity(String fileUrl);
 
