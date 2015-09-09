@@ -20,7 +20,7 @@
             android:layout_marginLeft="16dp"
             android:background="@drawable/topiclist_icon_folder"
             android:gravity="center"
-            android:paddingTop="1dp"
+            android:paddingTop="3dp"
             android:text="1"
             android:textColor="#a6a6a6"
             android:textSize="12sp" />

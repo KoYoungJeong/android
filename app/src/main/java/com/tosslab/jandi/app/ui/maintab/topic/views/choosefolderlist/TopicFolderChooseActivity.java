@@ -10,10 +10,12 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResFolder;
@@ -21,7 +23,6 @@ import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.adapter.TopicFolderChooseAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.presenter.TopicFolderChoosePresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -72,7 +73,6 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
         setupActionBar();
         lvTopicFolderChoose.setLayoutManager(new LinearLayoutManager(TopicFolderChooseActivity.this,
                 RecyclerView.VERTICAL, false));
-        lvTopicFolderChoose.addItemDecoration(new SimpleDividerItemDecoration(TopicFolderChooseActivity.this));
         adapter.setFolderId(folderId);
         lvTopicFolderChoose.setAdapter(adapter);
         topicFolderChoosePresentor.onRefreshFolders(folderId);
@@ -134,21 +134,33 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
 
     @Override
     public void showCreateNewFolderDialog() {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        final EditText input = new EditText(this);
+        LinearLayout vgInputEditText = (LinearLayout) LayoutInflater
+                .from(this.getApplicationContext()).inflate(R.layout.input_edit_text_view, null);
+
+        EditText input = (EditText) vgInputEditText.findViewById(R.id.et_input);
+
+        input.setMaxLines(1);
+        input.setCursorVisible(true);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setHint("Folder Name");
 
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         int minWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300f, displayMetrics);
         int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, displayMetrics);
-        input.setMinWidth(minWidth);
-        input.setPadding(padding, input.getPaddingTop(), padding, input.getPaddingBottom());
+        vgInputEditText.setMinimumWidth(minWidth);
+        vgInputEditText.setPadding(padding, input.getPaddingTop(), padding, input.getPaddingBottom());
 
-        input.setHint("Folder Name");
-        input.setMaxLines(1);
-        input.setCursorVisible(true);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input)
+        TextView tvTitle = new TextView(this.getApplicationContext());
+        tvTitle.setText(R.string.jandi_folder_insert_name);
+        tvTitle.setTextColor(getResources().getColor(R.color.black));
+        tvTitle.setTextSize(20);
+        int paddingTopLeftRight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24f, displayMetrics);
+        tvTitle.setPadding(paddingTopLeftRight, paddingTopLeftRight, paddingTopLeftRight, 0);
+
+        builder.setView(vgInputEditText)
                 .setTitle(getString(R.string.jandi_folder_insert_name))
                 .setPositiveButton(getString(R.string.jandi_confirm), new DialogInterface.OnClickListener() {
                     @Override
