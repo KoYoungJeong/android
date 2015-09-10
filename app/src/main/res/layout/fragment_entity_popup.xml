@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -15,11 +14,12 @@
         android:maxLines="1"
         android:paddingBottom="20dp"
         android:paddingLeft="24dp"
+        android:paddingRight="24dp"
         android:paddingTop="24dp"
         android:text="title"
         android:textColor="#212121"
         android:textSize="20sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/btn_entity_popup_move_folder"
@@ -29,9 +29,10 @@
         android:clickable="true"
         android:gravity="left|center_vertical"
         android:paddingLeft="24dp"
+        android:paddingRight="24dp"
         android:text="@string/jandi_folder_move_to"
         android:textColor="#212121"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/btn_entity_popup_starred"
@@ -41,9 +42,10 @@
         android:clickable="true"
         android:gravity="left|center_vertical"
         android:paddingLeft="24dp"
+        android:paddingRight="24dp"
         android:text="starred"
         android:textColor="#212121"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/btn_entity_popup_leave"
@@ -53,13 +55,14 @@
         android:clickable="true"
         android:gravity="center_vertical"
         android:paddingLeft="24dp"
+        android:paddingRight="24dp"
         android:text="@string/jandi_action_leave"
         android:textColor="#212121"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="8dp"
-        android:background="@color/white"/>
+        android:background="@color/white" />
 
 </LinearLayout>

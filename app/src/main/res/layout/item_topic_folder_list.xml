@@ -65,8 +65,7 @@
                 android:gravity="center"
                 android:text="121"
                 android:textColor="@color/jandi_text_white"
-                android:textSize="@dimen/jandi_entity_badge_font"
-                android:textStyle="bold" />
+                android:textSize="11sp" />
 
         </RelativeLayout>
 
