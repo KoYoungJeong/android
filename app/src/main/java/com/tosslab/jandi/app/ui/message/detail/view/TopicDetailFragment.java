@@ -165,7 +165,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     public void onEventMainThread(RetrieveTopicListEvent event) {
         FormattedEntity entity =
                 EntityManager.getInstance().getEntityById(entityId);
-        if (entity == null) {
+        if (entity == EntityManager.UNKNOWN_USER_ENTITY) {
             return;
         }
         topicDetailPresenter.onInit(getActivity(), entityId);

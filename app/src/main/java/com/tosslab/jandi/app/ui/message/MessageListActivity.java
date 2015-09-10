@@ -428,7 +428,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public void getEntitiesSucceed(ResLeftSideMenu resLeftSideMenu) {
         mEntityManager = EntityManager.getInstance();
         FormattedEntity entity = mEntityManager.getEntityById(mChattingInformations.entityId);
-        if (entity == null) {
+        if (entity == EntityManager.UNKNOWN_USER_ENTITY) {
             getEntitiesFailed(getString(R.string.err_messages_invaild_entity));
             return;
         }

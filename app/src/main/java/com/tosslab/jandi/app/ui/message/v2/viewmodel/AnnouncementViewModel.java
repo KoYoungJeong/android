@@ -100,7 +100,7 @@ public class AnnouncementViewModel {
 
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity fromEntity = entityManager.getEntityById(writerId);
-        if (fromEntity == null) {
+        if (fromEntity == EntityManager.UNKNOWN_USER_ENTITY) {
             vgAnnouncement.setVisibility(View.GONE);
             return;
         }

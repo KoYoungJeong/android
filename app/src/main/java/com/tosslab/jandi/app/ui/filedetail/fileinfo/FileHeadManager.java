@@ -117,7 +117,7 @@ public class FileHeadManager {
             while (iterator.hasNext()) {
                 FormattedEntity sharedEntity = mEntityManager.getEntityById(iterator.next().getShareEntity());
 
-                if (sharedEntity == null) {
+                if (sharedEntity == EntityManager.UNKNOWN_USER_ENTITY) {
                     continue;
                 }
 

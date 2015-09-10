@@ -74,6 +74,7 @@ public class FileUploadModel {
     }
 
     public boolean isValid(Context context, int selectedEntityIdToBeShared) {
-        return EntityManager.getInstance().getEntityById(selectedEntityIdToBeShared) != null;
+        return EntityManager.getInstance().getEntityById(selectedEntityIdToBeShared) !=
+                EntityManager.UNKNOWN_USER_ENTITY;
     }
 }

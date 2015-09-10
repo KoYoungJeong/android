@@ -21,4 +21,14 @@
         <item>@string/jandi_invite_facebook_messenger</item>
         <item>@string/jandi_invite_copy_link</item>
     </string-array>
+
+    <string-array name="jandi_pref_orientation">
+        <item>자동</item>
+        <item>세로 고정</item>
+    </string-array>
+
+    <integer-array name="jandi_pref_orientation_values">
+        <item>0</item>
+        <item>1</item>
+    </integer-array>
 </resources>

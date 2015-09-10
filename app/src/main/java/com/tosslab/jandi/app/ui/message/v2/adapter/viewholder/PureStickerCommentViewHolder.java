@@ -53,7 +53,7 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById.getUser();
-        if (entityById != null && user != null && TextUtils.equals(user.status, "enabled")) {
+        if (entityById != EntityManager.UNKNOWN_USER_ENTITY && user != null && TextUtils.equals(user.status, "enabled")) {
             disableLineThroughView.setVisibility(View.GONE);
             nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.jandi_messages_name));
         } else {

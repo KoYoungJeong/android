@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.lists.libs.advancerecyclerview.provider.AbstractExp
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
-import com.tosslab.jandi.app.network.models.ReqUpdateFolder;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -24,10 +23,11 @@ import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import retrofit.RetrofitError;
 import rx.Observable;
@@ -109,59 +109,92 @@ public class MainTopicModel {
 
         long folderIndex = 0;
 
-        Collections.sort(topicFolders, (lhs, rhs) -> lhs.seq - rhs.seq);
+        Map<Integer, List<TopicItemData>> topicItemMap = new HashMap<>();
+        Map<Integer, TopicFolderData> folderMap = new LinkedHashMap<>();
+        Map<Integer, Integer> badgeCountMap = new HashMap<>();
 
-        // 각 폴더와 종속된 토픽 데이터 셋팅
-        for (ResFolder folder : topicFolders) {
+        for (ResFolder topicFolder : topicFolders) {
+            if (!topicItemMap.containsKey(topicFolder.id)) {
+                topicItemMap.put(new Integer(topicFolder.id), new ArrayList<>());
+            }
 
-            TopicFolderData topicFolderData = new TopicFolderData(folderIndex, folder.name, folder.id, -1);
-            topicFolderData.setSeq(folder.seq);
-            final long[] itemBadgeCount = {0};
-            final int[] itemCount = {0};
-            List<AbstractExpandableDataProvider.ChildData> topicItemDatas = new ArrayList<>();
+            if (!badgeCountMap.containsKey(topicFolder.id)) {
+                badgeCountMap.put(new Integer(topicFolder.id), 0);
+            }
 
-            Observable.from(topicFolderItems)
-                    .filter(folderItem -> folderItem.folderId != -1 && folderItem.folderId == folder.id)
-                    .filter(folderItem -> joinTopics.containsKey(folderItem.roomId))
-                            // 참여한 토픽 중에서 폴더링 대상 추출
-                    .map(folderItem -> joinTopics.remove(folderItem.roomId))
-                    .subscribe(topic -> {
-                        long itemIndex = topicFolderData.generateNewChildId();
-                        TopicItemData topicItemData = TopicItemData.newInstance(
-                                itemIndex, -1, topic.getCreatorId(), topic.getName(),
-                                topic.isStarred(), topic.isJoined(), topic.getEntityId(),
-                                topic.getUnreadCount(), topic.getMarkerLinkId(), topic.isPushOn(),
-                                topic.isSelected(), topic.getDescription(), topic.isPublic(),
-                                topic.getMemberCount());
-                        itemCount[0]++;
-                        itemBadgeCount[0] += topic.getUnreadCount();
-                        topicItemDatas.add(topicItemData);
-                    }, Throwable::printStackTrace);
-
-            topicFolderData.setItemCount(itemCount[0]);
-            topicFolderData.setChildBadgeCnt(itemBadgeCount[0]);
-
-            datas.add(new Pair<>(topicFolderData, topicItemDatas));
-
+            if (!folderMap.containsKey(new Integer(topicFolder.id))) {
+                TopicFolderData topicFolderData = new TopicFolderData(folderIndex, topicFolder.name, topicFolder.id, -1);
+                topicFolderData.setSeq(topicFolder.seq);
+                folderMap.put(new Integer(topicFolder.id), topicFolderData);
+            }
             folderIndex++;
         }
 
+        Observable.from(topicFolderItems)
+                .filter(topicFolderItem -> topicFolderItem.folderId > 0)
+                .subscribe(topicFolderItem -> {
+                    Topic topic = joinTopics.remove(new Integer(topicFolderItem.roomId));
+
+                    long itemIndex = folderMap.get(new Integer(topicFolderItem.folderId)).generateNewChildId();
+
+                    TopicItemData topicItemData = TopicItemData.newInstance(
+                            itemIndex, -1, topic.getCreatorId(), topic.getName(),
+                            topic.isStarred(), topic.isJoined(), topic.getEntityId(),
+                            topic.getUnreadCount(), topic.getMarkerLinkId(), topic.isPushOn(),
+                            topic.isSelected(), topic.getDescription(), topic.isPublic(),
+                            topic.getMemberCount());
+
+                    topicItemMap.get(new Integer(topicFolderItem.folderId)).add(topicItemData);
+
+                    int badgeCount = badgeCountMap.get(new Integer(topicFolderItem.folderId));
+                    badgeCountMap.put(new Integer(topicFolderItem.folderId), badgeCount + topicItemData
+                            .getUnreadCount());
+                }, Throwable::printStackTrace);
+
+        for (Integer folderId : folderMap.keySet()) {
+
+            List<TopicItemData> topicItemDatas = topicItemMap.get(folderId);
+            List<AbstractExpandableDataProvider.ChildData> providerTopicItemDatas = new ArrayList<>();
+
+            Collections.sort(topicItemDatas, (lhs, rhs) -> {
+                if (lhs.isStarred() && rhs.isStarred()) {
+                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                } else if (lhs.isStarred()) {
+                    return -1;
+                } else if (rhs.isStarred()) {
+                    return 1;
+                } else {
+                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                }
+            });
+
+            providerTopicItemDatas.addAll(topicItemDatas);
+
+            TopicFolderData topicFolderData = folderMap.get(folderId);
+            topicFolderData.setItemCount(topicItemDatas.size());
+            topicFolderData.setChildBadgeCnt(badgeCountMap.get(folderId));
+
+            datas.add(new Pair<>(topicFolderData, providerTopicItemDatas));
+
+        }
+
+        folderIndex = folderMap.size();
+
         // 폴더가 없는 토픽 데이터 셋팅
         TopicFolderData fakeFolder = getFakeFolder(folderIndex);
-        Iterator<Integer> joinTopicKeySets = joinTopics.keySet().iterator();
+//        Iterator<Integer> joinTopicKeySets = joinTopics.keySet().iterator();
 
         List<AbstractExpandableDataProvider.ChildData> noFolderTopicItemDatas = new ArrayList<>();
 
         Observable.from(joinTopics.keySet())
                 .map(topicId -> {
                     long itemIndex = fakeFolder.generateNewChildId();
-                    Topic topic = joinTopics.get(joinTopicKeySets.next());
+                    Topic topic = joinTopics.get(topicId);
                     return TopicItemData.newInstance(
                             itemIndex, -1, topic.getCreatorId(), topic.getName(),
                             topic.isStarred(), topic.isJoined(), topic.getEntityId(),
                             topic.getUnreadCount(), topic.getMarkerLinkId(), topic.isPushOn(),
                             topic.isSelected(), topic.getDescription(), topic.isPublic(), topic.getMemberCount());
-
                 })
                 .subscribe(noFolderTopicItemDatas::add);
 
@@ -194,20 +227,6 @@ public class MainTopicModel {
 
     public void resetBadge(int entityId) {
         EntityManager.getInstance().getEntityById(entityId).alarmCount = 0;
-    }
-
-    public void deleteTopicFolder(int folderId) throws RetrofitError {
-        int teamId = entityClientManager.getSelectedTeamId();
-        RequestApiManager.getInstance().deleteFolderByTeamApi(teamId, folderId);
-    }
-
-    public void renameFolder(int folderId, String name, int seq) throws RetrofitError {
-        int teamId = entityClientManager.getSelectedTeamId();
-        ReqUpdateFolder reqUpdateFolder = new ReqUpdateFolder();
-        reqUpdateFolder.updateItems = new ReqUpdateFolder.UpdateItems();
-        reqUpdateFolder.updateItems.setName(name);
-        reqUpdateFolder.updateItems.setSeq(seq);
-        RequestApiManager.getInstance().updateFolderByTeamApi(teamId, folderId, reqUpdateFolder);
     }
 
     public boolean isMe(int writer) {

@@ -518,6 +518,7 @@
     <string name="jandi_browse_other_topics">未参加のトピック一覧</string>
     <string name="jandi_folder_rename">リネーム</string>
     <string name="jandi_no_topic_to_join">参加できるトピックがありません</string>
+    <string name="jandi_1_1_message">"ダイレクトメッセージ"</string>
 
 
 </resources>

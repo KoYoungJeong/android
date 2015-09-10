@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?><!-- NOTE: should use FrameLayout or RelativeLayout for parent of the "@id/container" view (for Android 2.3 compatibility) -->
-<RelativeLayout
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rl_topic_item_container"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/jandi_entity_item_title_margin_left"
     android:clickable="true"
@@ -18,13 +17,13 @@
             android:layout_width="match_parent"
             android:layout_height="4dp"
             android:layout_alignParentTop="true"
-            android:background="@drawable/folder_shadow"/>
+            android:background="@drawable/folder_shadow" />
 
         <View
             android:id="@+id/v_entity_listitem_selector"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_topic_selector"/>
+            android:background="@drawable/bg_topic_selector" />
 
         <ImageView
             android:id="@+id/iv_entity_listitem_icon"
@@ -33,7 +32,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="19dp"
             android:layout_marginRight="19dp"
-            android:src="@drawable/topiclist_icon_topic"/>
+            android:src="@drawable/topiclist_icon_topic" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -64,7 +63,7 @@
                     android:text="Topic Name4231412341234123412341234"
                     android:textColor="@color/jandi_text"
                     android:textSize="@dimen/jandi_entity_item_title_font"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tv_entity_listitem_user_count"
@@ -76,7 +75,7 @@
                     android:text="(11)"
                     android:textColor="@color/jandi_text"
                     android:textSize="@dimen/jandi_entity_item_title_font"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
                 <View
                     android:id="@+id/v_push_off"
@@ -84,7 +83,7 @@
                     android:layout_height="20dp"
                     android:layout_gravity="center"
                     android:layout_marginLeft="5dp"
-                    android:background="@drawable/icon_notification_off"/>
+                    android:background="@drawable/icon_notification_off" />
             </com.tosslab.jandi.app.views.FixedLinearLayout>
 
             <TextView
@@ -94,10 +93,11 @@
                 android:layout_marginTop="11dp"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:maxWidth="210dp"
                 android:singleLine="true"
                 android:text="Descroption"
                 android:textColor="@color/jandi_text_medium"
-                android:textSize="@dimen/jandi_text_size_small"/>
+                android:textSize="@dimen/jandi_text_size_small" />
 
         </LinearLayout>
 
@@ -114,7 +114,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:src="@drawable/topiclist_unread_badge"/>
+                android:src="@drawable/topiclist_unread_badge" />
 
             <TextView
                 android:id="@+id/tv_entity_listitem_badge"
@@ -125,7 +125,8 @@
                 android:gravity="center"
                 android:text="121"
                 android:textColor="@color/jandi_text_white"
-                android:textSize="11sp"/>
+                android:textSize="@dimen/jandi_entity_badge_font"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 

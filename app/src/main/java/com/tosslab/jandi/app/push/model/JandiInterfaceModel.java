@@ -151,7 +151,7 @@ public class JandiInterfaceModel {
         // Topic 인지 확인
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity targetEntity = entityManager.getEntityById(roomId);
-        if (targetEntity != null) {
+        if (targetEntity != EntityManager.UNKNOWN_USER_ENTITY) {
             return roomId;
         }
 

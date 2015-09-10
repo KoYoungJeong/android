@@ -228,7 +228,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), ResMessages.FileContent.class);
         clearTable(getConnectionSource(), ResMessages.ThumbnailUrls.class);
         clearTable(getConnectionSource(), ResMessages.StickerMessage.class);
-        clearTable(getConnectionSource(), ResMessages.StickerContent.class);
         clearTable(getConnectionSource(), RecentSticker.class);
         clearTable(getConnectionSource(), ResMessages.CommentStickerMessage.class);
         clearTable(getConnectionSource(), ResMessages.CommentStickerMessage.class);
@@ -245,7 +244,12 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         clearTable(getConnectionSource(), ResFolder.class);
         clearTable(getConnectionSource(), ResFolderItem.class);
-        clearTable(connectionSource, UploadedFileInfo.class);
+        clearTable(getConnectionSource(), UploadedFileInfo.class);
+
+
+        clearTable(getConnectionSource(), ResFolder.class);
+        clearTable(getConnectionSource(), ResFolderItem.class);
+        clearTable(getConnectionSource(), FolderExpand.class);
 
     }
 
