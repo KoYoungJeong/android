@@ -2,45 +2,31 @@ package com.tosslab.jandi.app.ui.profile.member;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Matrix;
-import android.graphics.RectF;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.SharedElementCallback;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.profile.modify.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.profile.modify.ModifyProfileActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.transform.ion.IonBlurTransform;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleStrokeTransform;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.SwipeExitLayout;
 
 import org.androidannotations.annotations.AfterViews;
@@ -49,10 +35,8 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.ViewById;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by tonyjs on 15. 9. 8..
@@ -107,17 +91,11 @@ public class MemberProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
     }
 
+    @OnActivityResult(ModifyProfileActivity.REQUEST_CODE)
     @AfterViews
-    void init() {
+    void initViews() {
         swipeExitLayout.setOnExitListener(this::finish);
-
         swipeExitLayout.sevBackgroundDimView(vBackground);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
         FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
 
         tvProfileDescription.setText(member.getUserStatusMessage());
@@ -145,6 +123,7 @@ public class MemberProfileActivity extends AppCompatActivity {
         }
 
         btnProfileStar.setSelected(member.isStarred);
+        btnProfileStar.setVisibility(isMe() ? View.INVISIBLE : View.VISIBLE);
 
         addButtons(member);
 
@@ -237,6 +216,9 @@ public class MemberProfileActivity extends AppCompatActivity {
 
     @Click(R.id.btn_member_profile_star)
     public void star(View v) {
+        if (isMe()) {
+            return;
+        }
         boolean futureSelected = !v.isSelected();
         v.setSelected(futureSelected);
         postStar(futureSelected);
@@ -262,9 +244,7 @@ public class MemberProfileActivity extends AppCompatActivity {
 
         final EntityManager entityManager = EntityManager.getInstance();
 
-        boolean isMe = entityManager.isMe(member.getId());
-
-        if (isMe) {
+        if (isMe()) {
             vgProfileTeamButtons.addView(
                     getButton(R.drawable.icon_profile_edit,
                             getString(R.string.jandi_member_profile_edit), (v) -> {
@@ -321,7 +301,7 @@ public class MemberProfileActivity extends AppCompatActivity {
     private void startModifyProfileActivity() {
         ModifyProfileActivity_.intent(MemberProfileActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .start();
+                .startForResult(ModifyProfileActivity.REQUEST_CODE);
     }
 
     private void startStarMentionListActivity() {
@@ -362,5 +342,9 @@ public class MemberProfileActivity extends AppCompatActivity {
                 .isFavorite(isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
+    }
+
+    private boolean isMe() {
+        return EntityManager.getInstance().isMe(memberId);
     }
 }

@@ -58,6 +58,7 @@ import retrofit.RetrofitError;
  */
 @EActivity(R.layout.activity_profile)
 public class ModifyProfileActivity extends BaseAnalyticsActivity {
+    public static final int REQUEST_CODE = 1000;
 
     @Bean
     ModifyProfileModel modifyProfileModel;
@@ -124,6 +125,12 @@ public class ModifyProfileActivity extends BaseAnalyticsActivity {
     protected void onStop() {
         super.onStop();
         memberProfileView.dismissProgressWheel();
+    }
+
+    @Override
+    public void finish() {
+        setResult(RESULT_OK);
+        super.finish();
     }
 
     /**
