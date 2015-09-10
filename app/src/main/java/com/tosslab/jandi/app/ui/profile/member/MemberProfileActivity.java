@@ -249,6 +249,8 @@ public class MemberProfileActivity extends AppCompatActivity {
         } else {
             entityClientManager.disableFavorite(memberId);
         }
+
+        EntityManager.getInstance().getEntityById(memberId).isStarred = star;
     }
 
     private boolean hasChangedProfileUrl(String url) {
