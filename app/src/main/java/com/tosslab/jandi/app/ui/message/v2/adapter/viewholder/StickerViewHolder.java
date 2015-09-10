@@ -65,7 +65,7 @@ public class StickerViewHolder implements BodyViewHolder {
 
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
-        ResLeftSideMenu.User user = entityById != null ? entityById.getUser() : null;
+        ResLeftSideMenu.User user = entityById != EntityManager.UNKNOWN_USER_ENTITY ? entityById.getUser() : null;
         if (user != null && TextUtils.equals(user.status, "enabled")) {
             nameTextView.setTextColor(nameTextView.getContext().getResources().getColor(R.color.jandi_messages_name));
             disableCoverView.setVisibility(View.GONE);

@@ -383,7 +383,7 @@ public class MessageListModel {
 
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
-        if (entity != null && entity.isUser()) {
+        if (entity != EntityManager.UNKNOWN_USER_ENTITY && entity.isUser()) {
             return TextUtils.equals(entity.getUser().status, "enabled");
         } else {
             return true;

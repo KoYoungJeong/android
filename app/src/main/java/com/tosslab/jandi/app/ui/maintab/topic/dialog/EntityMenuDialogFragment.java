@@ -190,7 +190,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
         try {
             FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
 
-            if (entity != null) {
+            if (entity != EntityManager.UNKNOWN_USER_ENTITY) {
                 entityMenuDialogModel.leaveEntity(entity.isPublicTopic());
             }
 
