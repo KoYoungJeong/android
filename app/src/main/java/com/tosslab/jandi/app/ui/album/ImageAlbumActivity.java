@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.ui.album.fragment.vo.SelectPictures;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -56,6 +57,12 @@ public class ImageAlbumActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.vg_image_album_content, fragment);
         fragmentTransaction.commit();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     private void setupActionbar() {

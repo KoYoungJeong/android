@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -67,6 +68,7 @@ public class PhotoViewActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         setUpFullScreen(isFullScreen);
+        ActivityHelper.setOrientation(this);
     }
 
     private void setUpFullScreen(boolean isFullScreen) {

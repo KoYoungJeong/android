@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -187,6 +188,7 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     protected void onResume() {
         super.onResume();
         membersListPresenter.onEventBusRegister();
+        ActivityHelper.setOrientation(this);
     }
 
     @Override

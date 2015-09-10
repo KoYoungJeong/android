@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.starmention.views.StarMentionListFragment;
 import com.tosslab.jandi.app.ui.starmention.views.StarMentionListFragment_;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -49,6 +50,12 @@ public class StarMentionListActivity extends AppCompatActivity {
             setupTabButton();
             onTabClick(allTabView);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     private void setupActionBar() {

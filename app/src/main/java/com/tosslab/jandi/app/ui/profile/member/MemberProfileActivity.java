@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -112,6 +113,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         super.onResume();
         EventBus.getDefault().register(this);
         trackGaProfile(getDistictId());
+        ActivityHelper.setOrientation(this);
     }
 
     @Override

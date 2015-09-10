@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.ui.invites.email.model.bean.EmailVO;
 import com.tosslab.jandi.app.ui.invites.email.presenter.InviteEmailPresenter;
 import com.tosslab.jandi.app.ui.invites.email.presenter.InviteEmailPresenterImpl;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -93,6 +94,7 @@ public class InviteEmailActivity extends BaseAnalyticsActivity
         super.onResume();
         EntityManager entityManager = EntityManager.getInstance();
         trackGaInviteMember(entityManager.getDistictId());
+        ActivityHelper.setOrientation(this);
     }
 
     @OptionsItem(android.R.id.home)

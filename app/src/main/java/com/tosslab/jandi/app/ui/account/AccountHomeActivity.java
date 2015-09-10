@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.app.views.AccountPendingTeamRowView;
@@ -112,6 +113,7 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
     protected void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
+        ActivityHelper.setOrientation(this);
     }
 
     @Override

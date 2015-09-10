@@ -73,6 +73,7 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -338,6 +339,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         super.onResume();
         isForeground = true;
         trackGaFileDetail(entityManager);
+        ActivityHelper.setOrientation(this);
     }
 
     @Override

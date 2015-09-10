@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.ShareEntityEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.web.model.InternalWebModel;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -142,6 +143,7 @@ public class InternalWebActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
+        ActivityHelper.setOrientation(this);
     }
 
     @Override

@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.presenter.
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
@@ -61,6 +62,7 @@ public class JoinableTopicListActivity extends BaseAnalyticsActivity
     public void onResume() {
         super.onResume();
         isForeground = true;
+        ActivityHelper.setOrientation(this);
     }
 
     @Override

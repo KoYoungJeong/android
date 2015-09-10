@@ -2,12 +2,15 @@ package com.tosslab.jandi.app.ui.settings;
 
 import android.app.Fragment;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -17,6 +20,11 @@ import org.androidannotations.annotations.EActivity;
  */
 @EActivity(R.layout.activity_setting)
 public class SettingsActivity extends AppCompatActivity {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
+    }
 
     @AfterViews
     void initView() {

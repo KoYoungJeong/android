@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.fileexplorer.model.FileExplorerModel;
 import com.tosslab.jandi.app.ui.fileexplorer.model.FileExplorerModel_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.views.listeners.SimpleOnItemSelectedListner;
 
 import java.util.ArrayList;
@@ -102,6 +103,7 @@ public class FileExplorerActivity extends AppCompatActivity {
     protected void onResume() {
         super.onPostResume();
         sdcardStateReciver();
+        ActivityHelper.setOrientation(this);
     }
 
     private void setupActionbar() {

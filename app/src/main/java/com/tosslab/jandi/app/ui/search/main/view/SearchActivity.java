@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment;
 import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment_;
 import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -225,6 +226,7 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         super.onResume();
         isForeground = true;
         EventBus.getDefault().register(this);
+        ActivityHelper.setOrientation(this);
     }
 
     @Override

@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -135,6 +136,7 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
     protected void onResume() {
         super.onResume();
         setUpFullScreen(isFullScreen);
+        ActivityHelper.setOrientation(this);
     }
 
     private void setUpFullScreen(boolean isFullScreen) {

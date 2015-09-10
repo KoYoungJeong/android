@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.adapter.TopicFolderChooseAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.presenter.TopicFolderChoosePresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -75,6 +76,12 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
         adapter.setOnRecyclerItemClickListener((view, adapter, position, type) -> {
             topicFolderChoosePresentor.onItemClick(adapter, position, type, folderId, topicId);
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     @UiThread

@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.signup.verify;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +22,7 @@ import com.tosslab.jandi.app.ui.signup.verify.view.SignUpVerifyView;
 import com.tosslab.jandi.app.ui.signup.verify.widget.VerificationCodeView;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -69,6 +72,7 @@ public class SignUpVerifyActivity extends AppCompatActivity implements SignUpVer
     @SystemService
     InputMethodManager inputMethodManager;
 
+
     @AfterViews
     void init() {
         Sprinkler.with(JandiApplication.getContext())
@@ -89,6 +93,12 @@ public class SignUpVerifyActivity extends AppCompatActivity implements SignUpVer
         verificationCodeView.setOnVerificationCodeChangedListener(() ->
                 presenter.validateVerificationCode(verificationCodeView.getVerificationCode()));
         verificationCodeView.setOnActionDoneListener(() -> hideKeyboard());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     @Override

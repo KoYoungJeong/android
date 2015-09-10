@@ -144,11 +144,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -453,6 +455,21 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 }
             }
         });
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // 100ms - 100ms 간격으로 화면 갱신토록 함
+        // 사유 1: 헤더가 사이즈 변경을 인식하는데 시간이 소요됨
+        // 사유 2: 2번 하는 이유는 첫 100ms 에서 갱신안되는 단말을 위함...
+        // 구형단말을 위한 배려 -_-v
+        Observable.just(1, 1)
+                .delay(100, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(integer -> {
+                    messageListPresenter.justRefresh();
+                });
     }
 
     @Background
