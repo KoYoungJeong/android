@@ -58,7 +58,7 @@ public class MainChatListModel {
         List<ChatItem> chatItems = new ArrayList<ChatItem>();
 
         Observable.from(chatList)
-                .filter(resChat -> EntityManager.getInstance().getEntityById(resChat.getCompanionId()) != null)
+                .filter(resChat -> EntityManager.getInstance().getEntityById(resChat.getCompanionId()) != EntityManager.UNKNOWN_USER_ENTITY)
                 .map(resChat -> {
 
                     FormattedEntity userEntity = EntityManager.getInstance().getEntityById(resChat.getCompanionId());

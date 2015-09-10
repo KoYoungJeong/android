@@ -175,7 +175,7 @@ public class EventViewHolder implements BodyViewHolder {
         boolean first = true;
         while (iterator.hasNext()) {
             tempEntity = entityManager.getEntityById(iterator.next().getInviteUserId());
-            if (tempEntity != null) {
+            if (tempEntity != EntityManager.UNKNOWN_USER_ENTITY) {
                 if (!first) {
                     builder.insert(tempIndex, ", ");
                     tempIndex += 2;
@@ -198,7 +198,7 @@ public class EventViewHolder implements BodyViewHolder {
         FormattedEntity entity =
                 EntityManager.getInstance().getEntityById(fromEntity);
         String name;
-        if (entity != null) {
+        if (entity != EntityManager.UNKNOWN_USER_ENTITY) {
             name = entity.getName();
         } else {
             name = " ";

@@ -50,7 +50,6 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -143,7 +142,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
         if (selectedEntity > 0) {
             FormattedEntity entity = EntityManager.getInstance().getEntityById(selectedEntity);
-            if (entity == null || entity.isUser()) {
+            if (entity == EntityManager.UNKNOWN_USER_ENTITY || entity.isUser()) {
                 mViewPager.setCurrentItem(CHAT_INDEX);
             }
         }
