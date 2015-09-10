@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
-import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -85,7 +84,7 @@ public class PoolableRequestApiExecutor {
                 }
             } else {
                 // exception, not unauthorized
-                JandiSocketService.stopService(JandiApplication.getContext());
+//                JandiSocketService.stopService(JandiApplication.getContext());
                 LogUtil.e("Request Fail", e);
                 throw e;
             }
