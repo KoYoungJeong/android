@@ -598,4 +598,8 @@ public class MessageListModel {
     public int getMyId() {
         return EntityManager.getInstance().getMe().getId();
     }
+
+    public boolean isCurrentTeam(int teamId) {
+        return AccountRepository.getRepository().getSelectedTeamId() == teamId;
+    }
 }
