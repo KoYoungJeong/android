@@ -119,11 +119,11 @@
     <string name="err_profile_photo_upload">"プロフィール画像は更新されませんでした"</string>
     <string name="err_email_exists">"そのメールアドレスは既に使用されています"</string>
 
-    <string name="jandi_member_profile_edit">프로필 편집</string>
-    <string name="jandi_member_profile_mention">내 멘션</string>
-    <string name="jandi_member_profile_email">메일</string>
-    <string name="jandi_member_profile_phone">전화</string>
-    <string name="jandi_member_profile_dm">1:1 메세지</string>
+    <string name="jandi_member_profile_edit">"プロフィール編集"</string>
+    <string name="jandi_member_profile_mention">"私のメンション"</string>
+    <string name="jandi_member_profile_email">"メールアドレス"</string>
+    <string name="jandi_member_profile_phone">"電話番号"</string>
+    <string name="jandi_member_profile_dm">"ダイレクトメッセージ"</string>
     <!-- 회원 초대 -->
     <string name="jandi_team_info">"チーム"</string>
     <string name="jandi_invitation">"招待"</string>

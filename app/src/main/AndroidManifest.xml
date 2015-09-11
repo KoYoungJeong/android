@@ -194,8 +194,7 @@
 
         <activity
             android:name=".ui.profile.member.MemberProfileActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_topic_paricipants"
+            android:screenOrientation="fullUser"
             android:theme="@style/Jandi.Transparent"/>
 
         <service android:name="com.parse.PushService" />

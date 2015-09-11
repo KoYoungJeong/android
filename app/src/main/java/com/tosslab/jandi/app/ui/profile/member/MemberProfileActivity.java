@@ -4,10 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -43,6 +45,8 @@ import org.androidannotations.annotations.ViewById;
  */
 @EActivity(R.layout.activity_member_profile)
 public class MemberProfileActivity extends AppCompatActivity {
+    private static final int SCROLL_EVENT_MARGIN = 160;
+    private static final String KEY_FULL_SIZE_IMAGE_SHOWING = "full_size_image_showing";
 
     @Extra
     int memberId;
@@ -70,6 +74,8 @@ public class MemberProfileActivity extends AppCompatActivity {
 
     @ViewById(R.id.vg_member_profile_img_large_overlay)
     ViewGroup vgProfileImageOverlay;
+    @ViewById(R.id.vg_member_profile_detail)
+    ViewGroup vgProfileTeamDetail;
     @ViewById(R.id.vg_member_profile_team_info)
     ViewGroup vgProfileTeamInfo;
     @ViewById(R.id.vg_member_profile_buttons)
@@ -85,18 +91,99 @@ public class MemberProfileActivity extends AppCompatActivity {
     @ViewById(R.id.iv_member_profile_img_small)
     ImageView ivProfileImageSmall;
 
+    private int scrollEventMargin;
+    private boolean isFullSizeImageShowing = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         overridePendingTransition(R.anim.slide_in_bottom_with_allpha, 0);
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            isFullSizeImageShowing = savedInstanceState.getBoolean(KEY_FULL_SIZE_IMAGE_SHOWING);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_FULL_SIZE_IMAGE_SHOWING, ivProfileImageFull.isShown());
     }
 
     @OnActivityResult(ModifyProfileActivity.REQUEST_CODE)
     @AfterViews
     void initViews() {
+        scrollEventMargin = (int) (SCROLL_EVENT_MARGIN * getResources().getDisplayMetrics().density);
+
+        FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
+
+        final String profileImageUrlLarge = member.getUserLargeProfileUrl();
+
+        if (!hasChangedProfileUrl(profileImageUrlLarge)) {
+            int color = getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
+            vgProfileImageOverlay.setBackgroundColor(color);
+        }
+
         swipeExitLayout.setOnExitListener(this::finish);
         swipeExitLayout.sevBackgroundDimView(vBackground);
-        FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
+        swipeExitLayout.setStatusListener(new SwipeExitLayout.StatusListener() {
+            @Override
+            public void onScroll(float distance) {
+                float translationY = ivProfileImageLarge.getTranslationY() - distance;
+
+                if (distance > 0) {
+                    translationY = Math.max(-scrollEventMargin, translationY);
+                } else {
+                    translationY = Math.min(0, translationY);
+                }
+
+                ivProfileImageLarge.setTranslationY(translationY);
+            }
+
+            @Override
+            public void onIgnore(float spareDistance) {
+                float distance = spareDistance - scrollEventMargin;
+                int duration = Math.min(
+                        SwipeExitLayout.MIN_IGNORE_ANIM_DURATION, (int) Math.abs(distance));
+
+                ivProfileImageLarge.animate()
+                        .setDuration(duration)
+                        .translationY(-scrollEventMargin);
+            }
+
+            @Override
+            public void onExit(float spareDistance) {
+                float distance = spareDistance - scrollEventMargin;
+                int duration = Math.min(
+                        SwipeExitLayout.MIN_EXIT_ANIM_DURATION, (int) Math.abs(distance));
+
+                ivProfileImageLarge.animate()
+                        .setDuration(duration)
+                        .translationY(0);
+            }
+        });
+
+        vgProfileTeamDetail.post(new Runnable() {
+            @Override
+            public void run() {
+                int screenHeight = findViewById(android.R.id.content).getMeasuredHeight();
+                int vgProfileTeamDetailHeight = vgProfileTeamDetail.getMeasuredHeight();
+
+                int ivProfileImageLargeHeight =
+                        screenHeight - vgProfileTeamDetailHeight + scrollEventMargin;
+
+                ViewGroup.LayoutParams layoutParams = ivProfileImageLarge.getLayoutParams();
+                layoutParams.height = ivProfileImageLargeHeight;
+                ivProfileImageLarge.setLayoutParams(layoutParams);
+                ivProfileImageLarge.setTranslationY(-scrollEventMargin);
+
+                Ion.with(ivProfileImageLarge)
+                        .placeholder(R.drawable.profile_img)
+                        .error(R.drawable.profile_img)
+                        .centerCrop()
+                        .transform(new IonBlurTransform())
+                        .load(profileImageUrlLarge);
+            }
+        });
 
         tvProfileDescription.setText(member.getUserStatusMessage());
         tvProfileName.setText(member.getName());
@@ -127,19 +214,6 @@ public class MemberProfileActivity extends AppCompatActivity {
 
         addButtons(member);
 
-        String profileImageUrlLarge = member.getUserLargeProfileUrl();
-
-        if (!hasChangedProfileUrl(profileImageUrlLarge)) {
-            int color = getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
-            vgProfileImageOverlay.setBackgroundColor(color);
-        }
-        Ion.with(ivProfileImageLarge)
-                .placeholder(R.drawable.profile_img)
-                .error(R.drawable.profile_img)
-                .centerCrop()
-                .transform(new IonBlurTransform())
-                .load(profileImageUrlLarge);
-
         String profileImageUrlMedium = member.getUserMediumProfileUrl();
         IonCircleStrokeTransform transform = new IonCircleStrokeTransform(
                 1, getResources().getColor(R.color.jandi_member_profile_img_circle_line_color));
@@ -154,10 +228,22 @@ public class MemberProfileActivity extends AppCompatActivity {
                 .error(R.drawable.profile_img)
                 .fitCenter()
                 .load(profileImageUrlLarge);
+
+        if (isFullSizeImageShowing) {
+            ivProfileImageFull.setAlpha(1.0f);
+            ivProfileImageFull.setVisibility(View.VISIBLE);
+
+            ivProfileImageSmall.setScaleX(3.0f);
+            ivProfileImageSmall.setScaleY(3.0f);
+            ivProfileImageSmall.setAlpha(0.0f);
+        }
     }
 
     @Click(R.id.iv_member_profile_img_small)
     void showFullImage(View v) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            v.setPivotX(0);
+        }
         v.animate()
                 .scaleX(3.0f)
                 .scaleY(3.0f)

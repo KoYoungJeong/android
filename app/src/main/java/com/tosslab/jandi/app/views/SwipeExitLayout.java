@@ -19,12 +19,20 @@ import java.util.List;
  * Created by tonyjs on 15. 9. 7..
  */
 public class SwipeExitLayout extends FrameLayout {
+
+    public static final int MIN_EXIT_ANIM_DURATION = 250;
+    public static final int MIN_IGNORE_ANIM_DURATION = 300;
+
     public interface OnExitListener {
         void onExit();
     }
 
-    public interface OnScrollListener {
+    public interface StatusListener {
         void onScroll(float distance);
+
+        void onIgnore(float spareDistance);
+
+        void onExit(float spareDistance);
     }
 
     public static final String TAG = SwipeExitLayout.class.getSimpleName();
@@ -41,8 +49,8 @@ public class SwipeExitLayout extends FrameLayout {
     private float ignorablePixelAmount;
 
     private OnExitListener onExitListener;
-    private OnScrollListener onScrollListener;
-    private List<OnScrollListener> onScrollListenerList;
+    private StatusListener statusListener;
+    private List<StatusListener> statusListenerList;
 
     private View vBackgroundDim;
 
@@ -79,16 +87,16 @@ public class SwipeExitLayout extends FrameLayout {
         this.onExitListener = onExitListener;
     }
 
-    public void setOnScrollListener(OnScrollListener onScrollListener) {
-        this.onScrollListener = onScrollListener;
+    public void setStatusListener(StatusListener statusListener) {
+        this.statusListener = statusListener;
     }
 
-    public void addOnScrollListener(OnScrollListener onScrollListener) {
-        if (onScrollListenerList == null) {
-            onScrollListenerList = new ArrayList<>();
+    public void addOnScrollListener(StatusListener statusListener) {
+        if (statusListenerList == null) {
+            statusListenerList = new ArrayList<>();
         }
 
-        onScrollListenerList.add(onScrollListener);
+        statusListenerList.add(statusListener);
     }
 
     public void sevBackgroundDimView(View dimView) {
@@ -161,13 +169,37 @@ public class SwipeExitLayout extends FrameLayout {
     }
 
     private void deliverScrollDistance(float distance) {
-        if (onScrollListener != null) {
-            onScrollListener.onScroll(distance);
+        if (statusListener != null) {
+            statusListener.onScroll(distance);
         }
 
-        if (onScrollListenerList != null && !onScrollListenerList.isEmpty()) {
-            for (OnScrollListener onScrollListener : onScrollListenerList) {
-                onScrollListener.onScroll(distance);
+        if (statusListenerList != null && !statusListenerList.isEmpty()) {
+            for (StatusListener statusListener : statusListenerList) {
+                statusListener.onScroll(distance);
+            }
+        }
+    }
+
+    private void deliverIgnore(float spareDistance) {
+        if (statusListener != null) {
+            statusListener.onIgnore(spareDistance);
+        }
+
+        if (statusListenerList != null && !statusListenerList.isEmpty()) {
+            for (StatusListener statusListener : statusListenerList) {
+                statusListener.onIgnore(spareDistance);
+            }
+        }
+    }
+
+    private void deliverExit(float spareDistance) {
+        if (statusListener != null) {
+            statusListener.onExit(spareDistance);
+        }
+
+        if (statusListenerList != null && !statusListenerList.isEmpty()) {
+            for (StatusListener statusListener : statusListenerList) {
+                statusListener.onExit(spareDistance);
             }
         }
     }
@@ -184,15 +216,16 @@ public class SwipeExitLayout extends FrameLayout {
         int duration;
         Animator.AnimatorListener listener = null;
         float alpha = 0.9f;
-
+        boolean exit = false;
         if (translationY > ignorablePixelAmount) {
             alpha = 0.1f;
             distance = getMeasuredHeight();
-            duration = Math.min(250, getMeasuredHeight() - (int) translationY);
+            duration = Math.min(MIN_EXIT_ANIM_DURATION, getMeasuredHeight() - (int) translationY);
             listener = exitListener;
+            exit = true;
         } else {
             distance = 0;
-            duration = Math.min(300, (int) translationY);
+            duration = Math.min(MIN_IGNORE_ANIM_DURATION, (int) translationY);
         }
 
         for (int i = 0; i < childCount; i++) {
@@ -205,6 +238,12 @@ public class SwipeExitLayout extends FrameLayout {
         }
 
         setBackgroundDimWithAlpha(NEEDLESS_ALPHA_VALUE, alpha, duration);
+
+        if (exit) {
+            deliverExit(distance);
+        } else {
+            deliverIgnore(distance);
+        }
     }
 
     public void exit() {
@@ -227,6 +266,8 @@ public class SwipeExitLayout extends FrameLayout {
         }
 
         setBackgroundDimWithAlpha(0.9f, 0.1f, duration);
+
+        deliverExit(distance);
     }
 
     private void setBackgroundDim(float distance) {

@@ -113,11 +113,11 @@
     <string name="err_profile_photo_upload">"簡介照片無法更新"</string>
     <string name="err_email_exists">"此電子郵箱已被註冊"</string>
 
-    <string name="jandi_member_profile_edit">프로필 편집</string>
-    <string name="jandi_member_profile_mention">내 멘션</string>
-    <string name="jandi_member_profile_email">메일</string>
-    <string name="jandi_member_profile_phone">전화</string>
-    <string name="jandi_member_profile_dm">1:1 메세지</string>
+    <string name="jandi_member_profile_edit">"編輯簡介"</string>
+    <string name="jandi_member_profile_mention">"我的提及列表"</string>
+    <string name="jandi_member_profile_email">"電子郵件"</string>
+    <string name="jandi_member_profile_phone">"連絡電話"</string>
+    <string name="jandi_member_profile_dm">"直接傳訊"</string>
     <!-- 회원 초대 -->
     <string name="jandi_team_info">"團隊"</string>
     <string name="jandi_invitation">"邀請"</string>
