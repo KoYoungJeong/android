@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.members.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -27,19 +28,21 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
 
     private Context context;
 
-    private List<ChatChooseItem> chatChooseItems;
+    private List<ChatChooseItem> memberChooseItems;
+
+    private boolean checkMode = false;
 
     public MembersAdapter(Context context) {
         this.context = context;
-        chatChooseItems = new ArrayList<ChatChooseItem>();
+        memberChooseItems = new ArrayList<>();
     }
 
     public int getCount() {
-        return chatChooseItems.size();
+        return memberChooseItems.size();
     }
 
     public ChatChooseItem getItem(int position) {
-        return chatChooseItems.get(position);
+        return memberChooseItems.get(position);
     }
 
     @Override
@@ -54,7 +57,7 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
         membersViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_user_count);
         membersViewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
         membersViewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
-
+        membersViewHolder.chooseCheckBox = (AppCompatCheckBox) convertView.findViewById(R.id.cb_check_user);
 
         return membersViewHolder;
     }
@@ -97,6 +100,10 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
             membersViewHolder.disableCoverView.setVisibility(View.VISIBLE);
         }
 
+        if (checkMode) {
+            membersViewHolder.chooseCheckBox.setVisibility(View.VISIBLE);
+        }
+
         membersViewHolder.itemView.setOnClickListener(v -> EventBus.getDefault().post(new
                 ProfileDetailEvent(item.getEntityId())));
 
@@ -109,15 +116,19 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
 
     @Override
     public int getItemCount() {
-        return chatChooseItems.size();
+        return memberChooseItems.size();
     }
 
-    public void addAll(List<ChatChooseItem> chatListWithoutMe) {
-        chatChooseItems.addAll(chatListWithoutMe);
+    public void addAll(List<ChatChooseItem> memberList) {
+        memberChooseItems.addAll(memberList);
     }
 
     public void clear() {
-        chatChooseItems.clear();
+        memberChooseItems.clear();
+    }
+
+    public void setEnableCheckMode() {
+        checkMode = true;
     }
 
     static class MembersViewHolder extends RecyclerView.ViewHolder {
@@ -128,6 +139,7 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
         public TextView textViewAdditional;
         public View disableLineThrouthView;
         public View disableCoverView;
+        public AppCompatCheckBox chooseCheckBox;
 
         public MembersViewHolder(View itemView) {
             super(itemView);

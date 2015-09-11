@@ -62,22 +62,22 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                         int type = view.getType();
 
                         List<ChatChooseItem> members;
+                        members = memberModel.getTeamMembers();
                         if (type == MembersListActivity.TYPE_MEMBERS_LIST_TEAM) {
                             members = memberModel.getTeamMembers();
-                        } else {
+                        } else if (type == MembersListActivity.TYPE_MEMBERS_LIST_TOPIC) {
                             members = memberModel.getTopicMembers(entityId);
+                        } else if (type == MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC) {
+                            members = memberModel.getUnjoinedTopicMembers(entityId);
                         }
 
                         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
                         Observable.from(members)
-                                .filter(new Func1<ChatChooseItem, Boolean>() {
-                                    @Override
-                                    public Boolean call(ChatChooseItem chatChooseItem) {
-                                        if (TextUtils.isEmpty(s)) {
-                                            return true;
-                                        } else
-                                            return chatChooseItem.getName().toLowerCase().contains(s.toLowerCase());
-                                    }
+                                .filter(chatChooseItem -> {
+                                    if (TextUtils.isEmpty(s)) {
+                                        return true;
+                                    } else
+                                        return chatChooseItem.getName().toLowerCase().contains(s.toLowerCase());
                                 })
                                 .toSortedList((chatChooseItem, chatChooseItem2) ->
                                         chatChooseItem.getName().toLowerCase()
@@ -93,7 +93,9 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                 })
                 .subscribe(new Action1<List<ChatChooseItem>>() {
                     @Override
-                    public void call(List<ChatChooseItem> topicMembers) {view.showListMembers(topicMembers);}
+                    public void call(List<ChatChooseItem> topicMembers) {
+                        view.showListMembers(topicMembers);
+                    }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.detail.presenter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -10,7 +11,8 @@ import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
-import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
+import com.tosslab.jandi.app.ui.members.MembersListActivity;
+import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.TopicDetailModel;
 
@@ -34,8 +36,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     @Bean
     LeaveViewModel leaveViewModel;
 
-    @Bean
-    InvitationViewModel invitationViewModel;
+//    @Bean
+//    InvitationViewModel invitationViewModel;
 
     @Bean
     EntityClientManager entityClientManager;
@@ -77,7 +79,12 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
     @Override
     public void onTopicInvite(Activity activity, int entityId) {
-        invitationViewModel.inviteMembersToEntity(activity, entityId);
+        MembersListActivity_.intent(activity)
+                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .entityId(entityId)
+                .type(MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC)
+                .start();
+//        invitationViewModel.inviteMembersToEntity(activity, entityId);
     }
 
     @Override

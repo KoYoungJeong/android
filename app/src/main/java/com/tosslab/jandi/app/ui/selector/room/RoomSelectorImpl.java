@@ -260,7 +260,6 @@ public class RoomSelectorImpl implements RoomSelector {
 
         LinkedHashMap<Integer, List<ExpandRoomData>> topicDataMap = new LinkedHashMap<>();
 
-
         for (ResFolder topicFolder : topicFolders) {
             if (!topicDataMap.containsKey(topicFolder.id)) {
                 topicDataMap.put(new Integer(topicFolder.id), new ArrayList<>());
