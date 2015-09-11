@@ -109,13 +109,6 @@
             android:layout_centerVertical="true">
 
 
-            <ImageView
-                android:id="@+id/iv_entity_listitem_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/topiclist_unread_badge" />
-
             <TextView
                 android:id="@+id/tv_entity_listitem_badge"
                 android:layout_width="wrap_content"
@@ -125,8 +118,7 @@
                 android:gravity="center"
                 android:text="121"
                 android:textColor="@color/jandi_text_white"
-                android:textSize="@dimen/jandi_entity_badge_font"
-                android:textStyle="bold" />
+                android:textSize="11sp" />
 
         </RelativeLayout>
 
