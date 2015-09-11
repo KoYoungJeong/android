@@ -14,6 +14,8 @@ import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.LanguageUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterTextChange;
@@ -138,6 +140,8 @@ public class SignUpActivity extends AppCompatActivity {
 
         boolean allValid = signUpModel.isAllValid();
         signUpViewModel.activateSignUpButton(allValid);
+
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.AgreeTermsofService);
     }
 
     @Click({R.id.btn_signup_agree_pp, R.id.ly_signup_agree_pp})
@@ -148,6 +152,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         boolean allValid = signUpModel.isAllValid();
         signUpViewModel.activateSignUpButton(allValid);
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.AgreePrivacyPolicy);
     }
 
     @Click({R.id.btn_signup_agree_all, R.id.ly_signup_agree_all})
@@ -158,6 +163,8 @@ public class SignUpActivity extends AppCompatActivity {
 
         boolean allValid = signUpModel.isAllValid();
         signUpViewModel.activateSignUpButton(allValid);
+
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.AcceptAll);
     }
 
     @Click(R.id.btn_signup_confirm)

@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.push;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -15,6 +17,8 @@ import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -46,6 +50,12 @@ public class PushInterfaceActivity extends AppCompatActivity {
     int teamId;
     @Bean
     JandiInterfaceModel jandiInterfaceModel;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
+        super.onCreate(savedInstanceState, persistentState);
+        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.PushNotification);
+    }
 
     @AfterInject
     void initObject() {

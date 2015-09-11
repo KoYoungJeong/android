@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.ui.login.login.viewmodel.IntroLoginViewModel;
 import com.tosslab.jandi.app.ui.signup.account.SignUpActivity_;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -57,7 +58,7 @@ public class IntroLoginFragment extends Fragment implements IntroMainActivity.Ke
                         .property(PropertyKey.ScreenView, ScreenViewProperty.LOGIN_PAGE)
                         .build());
 
-        GoogleAnalyticsUtil.sendScreenName("LOGIN_PAGE");
+        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SignIn);
     }
 
     @Background
@@ -127,6 +128,8 @@ public class IntroLoginFragment extends Fragment implements IntroMainActivity.Ke
         SignUpActivity_.intent(IntroLoginFragment.this)
                 .email(emailText)
                 .start();
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignIn, AnalyticsValue.Action.SignUp);
+
     }
 
     /**
@@ -140,6 +143,7 @@ public class IntroLoginFragment extends Fragment implements IntroMainActivity.Ke
         String emailText = introLoginViewModel.getEmailText();
         String passwordText = introLoginViewModel.getPasswordText();
         startLogin(emailText, passwordText);
+
     }
 
     @Click(R.id.txt_intro_login_forgot_password)
@@ -148,6 +152,7 @@ public class IntroLoginFragment extends Fragment implements IntroMainActivity.Ke
                 EditTextDialogFragment.newInstance(
                         EditTextDialogFragment.ACTION_FORGOT_PASSWORD, introLoginViewModel.getEmailText());
         dialogFragment.show(getFragmentManager(), "dialog");
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignIn, AnalyticsValue.Action.ForgotPW);
     }
 
     public void onEvent(ForgotPasswordEvent event) {

@@ -6,7 +6,8 @@ import com.tosslab.jandi.app.JandiApplication;
 
 public class GoogleAnalyticsUtil {
 
-    private GoogleAnalyticsUtil() {}
+    private GoogleAnalyticsUtil() {
+    }
 
     public static void sendScreenName(String screenName) {
         try {
@@ -29,5 +30,13 @@ public class GoogleAnalyticsUtil {
             e.printStackTrace();
         }
 
+    }
+
+    public static void sendScreenName(AnalyticsValue.Screen screen) {
+        sendScreenName(screen.name());
+    }
+
+    public static void sendEvent(AnalyticsValue.Screen screen, AnalyticsValue.Action action) {
+        sendEvent(screen.name(), action.name());
     }
 }
