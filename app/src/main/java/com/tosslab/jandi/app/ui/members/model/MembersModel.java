@@ -142,9 +142,10 @@ public class MembersModel {
                             .email(unjoinedEntity.getUserStatusMessage())
                             .photoUrl(unjoinedEntity.getUserLargeProfileUrl())
                             .starred(unjoinedEntity.isStarred)
-                            .enabled(TextUtils.equals(entity.getUser().status, "enabled"))
+                            .enabled(TextUtils.equals(unjoinedEntity.getUser().status, "enabled"))
                             .name(unjoinedEntity.getName());
                 })
+                .filter(chatChooseItem -> chatChooseItem.isEnabled())
                 .toSortedList((lhs, rhs) -> {
                     if (lhs.isStarred()) {
                         if (rhs.isStarred()) {

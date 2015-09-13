@@ -63,12 +63,12 @@ public class MainChatListAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.selector = convertView.findViewById(R.id
                     .view_entity_listitem_selector);
-            viewHolder.textViewName = (TextView) convertView.findViewById(R.id.txt_entity_listitem_name);
-            viewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
-            viewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
-            viewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_user_count);
+            viewHolder.textViewName = (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
+            viewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_icon);
+            viewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.tv_entity_listitem_fav);
+            viewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.tv_entity_listitem_additional);
             viewHolder.textViewBadgeCount = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
-            viewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
+            viewHolder.disableLineThrouthView = convertView.findViewById(R.id.iv_entity_listitem_line_through);
             viewHolder.disableWarningView = convertView.findViewById(R.id.img_entity_listitem_warning);
             viewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
 

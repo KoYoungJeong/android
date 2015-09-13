@@ -43,7 +43,7 @@ public class StickerViewHolder implements BodyViewHolder {
         tvUnread = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
         ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_sticker);
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
-        disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+        disableLineThroughView = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         lastReadView = rootView.findViewById(R.id.vg_message_last_read);
     }
 

@@ -46,8 +46,8 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
 
         TopicViewHolder viewHolder = new TopicViewHolder(view);
         viewHolder.selector = view.findViewById(R.id.view_entity_listitem_selector);
-        viewHolder.tvName = (TextView) view.findViewById(R.id.txt_entity_listitem_name);
-        viewHolder.tvMemberCount = (TextView) view.findViewById(R.id.txt_entity_listitem_user_count);
+        viewHolder.tvName = (TextView) view.findViewById(R.id.tv_entity_listitem_name);
+        viewHolder.tvMemberCount = (TextView) view.findViewById(R.id.tv_entity_listitem_additional);
         viewHolder.tvDescription =
                 (TextView) view.findViewById(R.id.tv_entity_listitem_description);
         return viewHolder;

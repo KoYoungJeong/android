@@ -43,7 +43,7 @@ public class FileDetailCommentStickerView implements CommentViewHolder {
         textViewCommentUserName = (TextView) rootView.findViewById(R.id.txt_file_detail_comment_user_name);
         textViewCommentFileCreateDate = (TextView) rootView.findViewById(R.id.txt_file_detail_comment_create_date);
         ivCommentSticker = (ImageView) rootView.findViewById(R.id.iv_file_detail_comment_sticker);
-        disableLineThrougView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+        disableLineThrougView = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         selectedView = rootView.findViewById(R.id.view_file_detail_comment_anim);
     }

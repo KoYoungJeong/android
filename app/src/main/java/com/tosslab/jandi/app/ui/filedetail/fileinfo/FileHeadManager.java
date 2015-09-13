@@ -69,7 +69,7 @@ public class FileHeadManager {
         imageViewPhotoFile = (ImageView) header.findViewById(R.id.img_file_detail_photo);
         fileInfoLayout = (LinearLayout) header.findViewById(R.id.ly_file_detail_info);
         iconFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
-        disableLineThroughView = header.findViewById(R.id.img_entity_listitem_line_through);
+        disableLineThroughView = header.findViewById(R.id.iv_entity_listitem_line_through);
         disableCoverView = header.findViewById(R.id.view_entity_listitem_warning);
         btnFileDetailStarred = (ImageView) header.findViewById(R.id.bt_file_detail_starred);
 

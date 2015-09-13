@@ -64,7 +64,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
         fileImageRound = rootView.findViewById(R.id.img_message_commented_photo_round);
 
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
-        disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+        disableLineThroughView = rootView.findViewById(R.id.iv_entity_listitem_line_through);
 
         context = rootView.getContext();
         lastReadView = rootView.findViewById(R.id.vg_message_last_read);

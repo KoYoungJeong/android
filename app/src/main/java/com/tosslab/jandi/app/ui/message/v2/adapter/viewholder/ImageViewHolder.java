@@ -59,7 +59,7 @@ public class ImageViewHolder implements BodyViewHolder {
         fileTypeTextView = (TextView) rootView.findViewById(R.id.txt_img_file_type);
         tvUploader = (TextView) rootView.findViewById(R.id.txt_img_file_uploader);
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
-        disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+        disableLineThroughView = rootView.findViewById(R.id.iv_entity_listitem_line_through);
 
         unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
         context = rootView.getContext();

@@ -48,7 +48,7 @@ public class FileDetailCommentView implements CommentViewHolder {
         imageViewCommentUserProfile = (ImageView) rootView.findViewById(R.id.img_file_detail_comment_user_profile);
         textViewCommentUserName = (TextView) rootView.findViewById(R.id.txt_file_detail_comment_user_name);
         textViewCommentContent = (TextView) rootView.findViewById(R.id.txt_file_detail_comment_content_2);
-        disableLineThrougView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+        disableLineThrougView = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         selectedView = rootView.findViewById(R.id.view_file_detail_comment_anim);
     }

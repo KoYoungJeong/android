@@ -3,18 +3,33 @@ package com.tosslab.jandi.app.ui.members.presenter;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
+import com.tosslab.jandi.app.events.entities.InvitationSuccessEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
+import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -25,6 +40,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action1;
@@ -42,6 +58,9 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     AppCompatActivity activity;
     @Bean
     MembersModel memberModel;
+
+    @Bean
+    EntityClientManager entityClientManager;
 
     @Bean
     InvitationViewModel invitationViewModel;
@@ -152,6 +171,63 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                 .entityId(entityId)
                 .build()
                 .show(activity.getSupportFragmentManager(), "dialog");
+    }
+
+    @Background
+    @Override
+    public void inviteInBackground(List<Integer> invitedUsers, int entityId) {
+        try {
+
+            FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
+
+            if (entity.isPublicTopic()) {
+                entityClientManager.inviteChannel(entityId, invitedUsers);
+            } else if (entity.isPrivateGroup()) {
+                entityClientManager.invitePrivateGroup(entityId, invitedUsers);
+            }
+
+            ResLeftSideMenu resLeftSideMenu = entityClientManager.getTotalEntitiesInfo();
+            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
+            EntityManager.getInstance().refreshEntity();
+            EventBus.getDefault().post(new InvitationSuccessEvent());
+            trackTopicMemberInviteSuccess(invitedUsers.size(), entityId);
+            view.showInviteSucceed(invitedUsers.size());
+        } catch (RetrofitError e) {
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            trackTopicMemberInviteFail(errorCode);
+            LogUtil.e("fail to invite entity");
+            view.showInviteFailed(JandiApplication.getContext().getString(R.string.err_entity_invite));
+        } catch (Exception e) {
+            trackTopicMemberInviteFail(-1);
+            view.showInviteFailed(JandiApplication.getContext().getString(R.string.err_entity_invite));
+        }
+    }
+
+    private void trackTopicMemberInviteSuccess(int memberCount, int entityId) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.TopicMemberInvite)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TopicId, entityId)
+                        .property(PropertyKey.MemberCount, memberCount)
+                        .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.TopicMemberInvite.name(), "ResponseSuccess");
+    }
+
+    private void trackTopicMemberInviteFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.TopicMemberInvite)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+
+        GoogleAnalyticsUtil.sendEvent(Event.TopicMemberInvite.name(), "ResponseFail");
     }
 
     public void onEvent(RetrieveTopicListEvent event) {

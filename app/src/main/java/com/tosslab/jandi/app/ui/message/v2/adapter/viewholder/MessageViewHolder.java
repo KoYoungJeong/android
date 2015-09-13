@@ -49,7 +49,7 @@ public class MessageViewHolder implements BodyViewHolder {
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
         messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
-        disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+        disableLineThroughView = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         context = rootView.getContext();
 
         linkPreviewViewModel = new LinkPreviewViewModel(context);

@@ -1,12 +1,12 @@
 package com.tosslab.jandi.app.ui.members.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -49,15 +49,25 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
     public MembersViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         MembersViewHolder membersViewHolder;
-        View convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body, parent, false);
+        View convertView;
+        if (checkMode) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body_one_line, parent, false);
+        } else {
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body_two_line, parent, false);
+        }
+
         membersViewHolder = new MembersViewHolder(convertView);
-        membersViewHolder.textViewName = (TextView) convertView.findViewById(R.id.txt_entity_listitem_name);
-        membersViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
-        membersViewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
-        membersViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_user_count);
-        membersViewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
+        membersViewHolder.textViewName = (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
+        membersViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_icon);
+        membersViewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.tv_entity_listitem_fav);
+        membersViewHolder.disableLineThrouthView = convertView.findViewById(R.id.iv_entity_listitem_line_through);
         membersViewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
-        membersViewHolder.chooseCheckBox = (AppCompatCheckBox) convertView.findViewById(R.id.cb_check_user);
+
+        if (!checkMode) {
+            membersViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.tv_entity_listitem_additional);
+        } else {
+            membersViewHolder.chooseCheckBox = (CheckBox) convertView.findViewById(R.id.cb_user);
+        }
 
         return membersViewHolder;
     }
@@ -69,13 +79,16 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
 
         membersViewHolder.textViewName.setText(item.getName());
 
-        if (!TextUtils.isEmpty(item.getEmail())) {
-            membersViewHolder.textViewAdditional.setVisibility(View.VISIBLE);
-        } else {
-            membersViewHolder.textViewAdditional.setVisibility(View.GONE);
-        }
-        membersViewHolder.textViewAdditional.setText(item.getEmail());
+        if (!checkMode) {
 
+            if (!TextUtils.isEmpty(item.getEmail())) {
+                membersViewHolder.textViewAdditional.setVisibility(View.VISIBLE);
+            } else {
+                membersViewHolder.textViewAdditional.setVisibility(View.GONE);
+            }
+            membersViewHolder.textViewAdditional.setText(item.getEmail());
+
+        }
 
         if (item.isStarred()) {
             membersViewHolder.imageViewFavorite.setVisibility(View.VISIBLE);
@@ -102,11 +115,21 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
 
         if (checkMode) {
             membersViewHolder.chooseCheckBox.setVisibility(View.VISIBLE);
+            membersViewHolder.imageViewIcon.setOnClickListener(v -> EventBus.getDefault().post(new
+                    ProfileDetailEvent(item.getEntityId())));
+            membersViewHolder.chooseCheckBox.setChecked(item.isChooseItem());
+            membersViewHolder.chooseCheckBox.setTag(item);
+
+            membersViewHolder.chooseCheckBox.setOnClickListener(v -> {
+                CheckBox cb = (CheckBox) v;
+                ChatChooseItem selectedItem = (ChatChooseItem) cb.getTag();
+                selectedItem.setIsChooseItem(cb.isChecked());
+            });
+
+        } else {
+            membersViewHolder.itemView.setOnClickListener(v -> EventBus.getDefault().post(new
+                    ProfileDetailEvent(item.getEntityId())));
         }
-
-        membersViewHolder.itemView.setOnClickListener(v -> EventBus.getDefault().post(new
-                ProfileDetailEvent(item.getEntityId())));
-
     }
 
     @Override
@@ -131,6 +154,16 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
         checkMode = true;
     }
 
+    public List<Integer> getSelectedUserIds() {
+        List<Integer> selectedUserIds = new ArrayList<Integer>();
+        for (ChatChooseItem item : memberChooseItems) {
+            if (item.isChooseItem()) {
+                selectedUserIds.add(item.getEntityId());
+            }
+        }
+        return selectedUserIds;
+    }
+
     static class MembersViewHolder extends RecyclerView.ViewHolder {
         public Context context;
         public ImageView imageViewIcon;
@@ -139,7 +172,7 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
         public TextView textViewAdditional;
         public View disableLineThrouthView;
         public View disableCoverView;
-        public AppCompatCheckBox chooseCheckBox;
+        public CheckBox chooseCheckBox;
 
         public MembersViewHolder(View itemView) {
             super(itemView);

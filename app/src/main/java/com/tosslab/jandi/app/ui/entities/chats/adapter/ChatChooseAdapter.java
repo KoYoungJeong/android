@@ -123,13 +123,13 @@ public class ChatChooseAdapter extends BaseAdapter {
     private View setChatChooseView(int position, View convertView, ViewGroup parent) {
         ChatCHooseViewHolder chatCHooseViewHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body, parent, false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body_two_line, parent, false);
             chatCHooseViewHolder = new ChatCHooseViewHolder();
-            chatCHooseViewHolder.textViewName = (TextView) convertView.findViewById(R.id.txt_entity_listitem_name);
-            chatCHooseViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
-            chatCHooseViewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
-            chatCHooseViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_user_count);
-            chatCHooseViewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
+            chatCHooseViewHolder.textViewName = (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
+            chatCHooseViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_icon);
+            chatCHooseViewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.tv_entity_listitem_fav);
+            chatCHooseViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.tv_entity_listitem_additional);
+            chatCHooseViewHolder.disableLineThrouthView = convertView.findViewById(R.id.iv_entity_listitem_line_through);
             chatCHooseViewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
 
 

@@ -44,7 +44,7 @@
 
 
         <ImageView
-            android:id="@+id/img_entity_listitem_line_through"
+            android:id="@+id/iv_entity_listitem_line_through"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/txt_message_user_name"
