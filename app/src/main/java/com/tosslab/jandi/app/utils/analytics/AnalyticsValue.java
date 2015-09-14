@@ -69,6 +69,7 @@ public class AnalyticsValue {
         TopicSubMenu_Star,
         TopicSubMenu_Unstar,
         TopicSubMenu_Cancel,
+        TopicSubMenu_Leave,
         TopicSubMenu_Close,
         TopicFolderExpand,
         TopicFolderCollapse,

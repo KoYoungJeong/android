@@ -32,7 +32,7 @@
         android:paddingRight="24dp"
         android:text="@string/jandi_folder_move_to"
         android:textColor="#212121"
-        android:textSize="16sp" />
+        android:textSize="@dimen/jandi_text_size_large" />
 
     <TextView
         android:id="@+id/btn_entity_popup_starred"
@@ -45,7 +45,7 @@
         android:paddingRight="24dp"
         android:text="starred"
         android:textColor="#212121"
-        android:textSize="16sp" />
+        android:textSize="@dimen/jandi_text_size_large" />
 
     <TextView
         android:id="@+id/btn_entity_popup_leave"
@@ -58,7 +58,7 @@
         android:paddingRight="24dp"
         android:text="@string/jandi_action_leave"
         android:textColor="#212121"
-        android:textSize="16sp" />
+        android:textSize="@dimen/jandi_text_size_large" />
 
     <View
         android:layout_width="match_parent"

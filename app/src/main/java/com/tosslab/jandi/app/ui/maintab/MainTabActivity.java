@@ -439,27 +439,27 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     private void trackScreenView(int position) {
         int screenView = ScreenViewProperty.TOPIC_PANEL;
-        String screenViewForGA = "TOPIC_PANEL";
+        AnalyticsValue.Screen screen = AnalyticsValue.Screen.TopicsTab;
         switch (position) {
             case 0:
                 screenView = ScreenViewProperty.TOPIC_PANEL;
-                screenViewForGA = "TOPIC_PANEL";
+                screen = AnalyticsValue.Screen.TopicsTab;
                 break;
             case 1:
                 screenView = ScreenViewProperty.MESSAGE_PANEL;
-                screenViewForGA = "MESSAGE_PANEL";
+                screen = AnalyticsValue.Screen.TopicChat;
                 break;
             case 2:
                 screenView = ScreenViewProperty.FILE_PANEL;
-                screenViewForGA = "FILE_PANEL";
+                screen = AnalyticsValue.Screen.FilesTab;
                 break;
             case 3:
                 screenView = ScreenViewProperty.SETTING_PANEL;
-                screenViewForGA = "SETTING_PANEL";
+                screen = AnalyticsValue.Screen.MoreTab;
                 break;
         }
 
-        GoogleAnalyticsUtil.sendScreenName(screenViewForGA);
+        GoogleAnalyticsUtil.sendScreenName(screen);
 
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
