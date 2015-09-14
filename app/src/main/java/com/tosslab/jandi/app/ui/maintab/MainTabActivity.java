@@ -51,6 +51,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -191,14 +192,19 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainTabActivity.this);
         View view = LayoutInflater.from(MainTabActivity.this).inflate(R.layout.dialog_invite_popup, null);
 
+        builder.setOnDismissListener(dialog ->
+                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.CloseModal));
+
         final AlertDialog materialDialog = builder.setView(view)
                 .show();
-        //FIXME
+
         view.findViewById(R.id.btn_invitation_popup_invite).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 materialDialog.dismiss();
                 invitationDialogExecutor.execute();
+
+                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.SendInvitations);
             }
         });
 
@@ -206,8 +212,10 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             @Override
             public void onClick(View v) {
                 materialDialog.dismiss();
+                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.Later);
             }
         });
+
 
     }
 

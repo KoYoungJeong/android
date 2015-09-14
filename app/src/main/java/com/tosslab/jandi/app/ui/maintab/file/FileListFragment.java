@@ -50,6 +50,7 @@ import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -157,7 +158,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
                             .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_SEARCH)
                             .build());
 
-            GoogleAnalyticsUtil.sendScreenName("FILE_SEARCH");
+            GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FilesSearch);
         }
 
         setHasOptionsMenu(true);
@@ -174,6 +175,11 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
                     .id, mSearchQuery.mSearchEntity);
             if (onSearchItemSelect != null) {
                 onSearchItemSelect.onSearchItemSelect();
+            }
+            if (getActivity() instanceof SearchActivity) {
+                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.ChooseFile);
+            } else {
+                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.ChooseFile);
             }
         });
 

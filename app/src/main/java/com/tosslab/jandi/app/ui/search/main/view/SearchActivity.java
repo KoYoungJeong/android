@@ -113,7 +113,6 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
             onFileTabClick();
         }
 
-        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MsgSearch);
     }
 
     private void addFragments() {
@@ -171,6 +170,8 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         fragmentTransaction.commit();
 
         if (searchSelectView != null) {
+            // 메세지 -> 파일 검색 선택
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.GoToMsgSearch);
             searchSelectView.setOnSearchItemSelect(null);
         }
         searchSelectView = messageSearchFragment;
@@ -184,6 +185,7 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         setSelectTab(messageTabView, filesTabView);
         setSearchText(searchQueries[0]);
         initSearchSelectView();
+
     }
 
     @Click(R.id.txt_search_category_files)
@@ -208,6 +210,8 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
 
         if (searchSelectView != null) {
             searchSelectView.setOnSearchItemSelect(null);
+            // 메세지 -> 파일 검색 선택
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.GoToFilesSearch);
         }
         searchSelectView = fileListFragment;
         searchSelectView.setOnSearchItemSelect(this::finish);
@@ -221,6 +225,7 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         setSelectTab(filesTabView, messageTabView);
         setSearchText(searchQueries[1]);
         initSearchSelectView();
+
     }
 
     @Override
@@ -268,6 +273,14 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
     @Click(R.id.img_search_mic)
     void onVoiceSearch() {
         searchPresenter.onSearchVoice();
+
+        if (TextUtils.isEmpty(getSearchText())) {
+            if (searchSelectView instanceof MessageSearchFragment) {
+                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.DeleteInputField);
+            } else {
+                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.DeleteInputField);
+            }
+        }
     }
 
     @TextChange(R.id.txt_search_keyword)
@@ -325,6 +338,13 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         }
 
         searchSelectView.onNewQuery(searchText);
+
+        if (searchSelectView instanceof MessageSearchFragment) {
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.SearchInputField);
+        } else {
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.SearchInputField);
+        }
+
     }
 
     @Override
@@ -377,6 +397,11 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
 
     }
 
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
+    }
+
     public interface SearchSelectView {
         void onNewQuery(String query);
 
@@ -395,10 +420,5 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
 
     public interface OnSearchText {
         String getSearchText();
-    }
-
-    @Override
-    public boolean onMenuOpened(int featureId, Menu menu) {
-        return false;
     }
 }
