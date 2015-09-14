@@ -163,6 +163,7 @@ public class AnalyticsValue {
         CommentLongTap,
         CommentLongTap_Copy,
         CommentLongTap_Star,
+        CommentLongTap_Unstar,
         CommentLongTap_Delete,
         MessageInputField,
         Sticker,

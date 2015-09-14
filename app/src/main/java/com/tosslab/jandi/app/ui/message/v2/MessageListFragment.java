@@ -427,7 +427,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             }
         });
 
-        stickerViewModel.setEntityId(entityId);
+        stickerViewModel.setType(messageListModel.isUser(entityId) ? StickerViewModel.TYPE_MESSAGE : StickerViewModel.TYPE_TOPIC);
     }
 
     private void initMessageList() {

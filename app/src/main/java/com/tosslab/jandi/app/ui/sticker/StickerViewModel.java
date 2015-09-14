@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -31,6 +30,10 @@ public class StickerViewModel {
 
     public static final int STICKER_GROUP_RECENT = 0;
     public static final int STICKER_GROUP_MOZZI = 1;
+
+    public static final int TYPE_MESSAGE = 11;
+    public static final int TYPE_TOPIC = 12;
+    public static final int TYPE_FILE_DETAIL = 13;
     @ViewById(R.id.vg_message_sticker_selector)
     ViewGroup vgStickerSelector;
 
@@ -45,7 +48,7 @@ public class StickerViewModel {
     private ViewPagerIndicator viewPagerIndicator;
 
     private OnStickerClick onStickerClick;
-    private int entityId;
+    private int type;
 
     @AfterViews
     void initViews() {
@@ -126,11 +129,7 @@ public class StickerViewModel {
 
             AnalyticsValue.Screen screen;
             AnalyticsValue.Action action;
-            if (EntityManager.getInstance().getEntityById(entityId).isUser()) {
-                screen = AnalyticsValue.Screen.Message;
-            } else {
-                screen = AnalyticsValue.Screen.TopicChat;
-            }
+            screen = getScreen();
 
             if (groupIdx == 0) {
                 action = AnalyticsValue.Action.Sticker_RecentTab;
@@ -138,6 +137,19 @@ public class StickerViewModel {
                 action = AnalyticsValue.Action.Sticker_StickerTab;
             }
             GoogleAnalyticsUtil.sendEvent(screen.name(), action.name() + String.valueOf(groupIdx));
+        }
+    }
+
+    private AnalyticsValue.Screen getScreen() {
+        switch (type) {
+            case TYPE_FILE_DETAIL:
+                return AnalyticsValue.Screen.FileDetail;
+            case TYPE_MESSAGE:
+                return AnalyticsValue.Screen.Message;
+            default:
+            case TYPE_TOPIC:
+                return AnalyticsValue.Screen.TopicChat;
+
         }
     }
 
@@ -168,8 +180,8 @@ public class StickerViewModel {
         return vgStickerSelector.getVisibility() == View.VISIBLE;
     }
 
-    public void setEntityId(int entityId) {
-        this.entityId = entityId;
+    public void setType(int type) {
+        this.type = type;
     }
 
 
