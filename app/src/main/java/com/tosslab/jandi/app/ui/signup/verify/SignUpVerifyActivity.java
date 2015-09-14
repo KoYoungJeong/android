@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.ui.signup.verify.view.SignUpVerifyView;
 import com.tosslab.jandi.app.ui.signup.verify.widget.VerificationCodeView;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -63,11 +64,9 @@ public class SignUpVerifyActivity extends AppCompatActivity implements SignUpVer
 
     @ViewById(R.id.tv_invalidate_code)
     TextView tvInvalidateCode;
-
-    private ProgressWheel progressWheel;
-
     @SystemService
     InputMethodManager inputMethodManager;
+    private ProgressWheel progressWheel;
 
     @AfterViews
     void init() {
@@ -88,7 +87,9 @@ public class SignUpVerifyActivity extends AppCompatActivity implements SignUpVer
         progressWheel = new ProgressWheel(this);
         verificationCodeView.setOnVerificationCodeChangedListener(() ->
                 presenter.validateVerificationCode(verificationCodeView.getVerificationCode()));
-        verificationCodeView.setOnActionDoneListener(() -> hideKeyboard());
+        verificationCodeView.setOnActionDoneListener(this::hideKeyboard);
+
+        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.CodeVerification);
     }
 
     @Override
@@ -232,11 +233,15 @@ public class SignUpVerifyActivity extends AppCompatActivity implements SignUpVer
             return;
         }
         presenter.verifyCode(email, verificationCodeView.getVerificationCode());
+
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.CodeVerification, AnalyticsValue.Action.LaunchJandi);
     }
 
     @Click(R.id.tv_resend_email)
     void resendEmail() {
         presenter.requestNewVerificationCode(email);
+
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.CodeVerification, AnalyticsValue.Action.Resend);
     }
 
     @OptionsItem(android.R.id.home)

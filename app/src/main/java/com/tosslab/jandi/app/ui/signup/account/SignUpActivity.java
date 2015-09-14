@@ -173,6 +173,8 @@ public class SignUpActivity extends AppCompatActivity {
         LogUtil.d("Click : clickSignUp");
 
         signUp();
+
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.SignUpNow);
     }
 
     @Background

@@ -28,6 +28,8 @@ import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment;
 import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment_;
 import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -111,6 +113,7 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
             onFileTabClick();
         }
 
+        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MsgSearch);
     }
 
     private void addFragments() {

@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.app.views.AccountPendingTeamRowView;
@@ -96,6 +97,8 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
 
         progressWheel = new ProgressWheel(AccountHomeActivity.this);
         setUpActionBar();
+
+        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.AccountHome);
     }
 
     private void setUpActionBar() {
@@ -128,11 +131,15 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
     @Click(R.id.txt_account_main_name)
     void onNameEditClick() {
         accountHomePresenter.onAccountNameEditClick(accountNameTextView.getText().toString());
+
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.AccountName);
     }
 
     @Click(R.id.ll_account_main_email)
     void onEmailEditClick() {
         accountHomePresenter.onAccountEmailEditClick();
+
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.ChooseAnEmail);
     }
 
     @UiThread
@@ -164,6 +171,7 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
                     accountTeamRowView.setOnClickListener(v -> {
                         Team clickedTeam = (Team) v.getTag();
                         accountHomePresenter.onJoinedTeamSelect(clickedTeam.getTeamId(), false);
+                        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.ChooseTeam);
                     });
                     view = accountTeamRowView;
                     break;
@@ -176,8 +184,10 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
                             Team selectedTeam = (Team) view.getTag();
                             if (join) {
                                 accountHomePresenter.onRequestJoin(selectedTeam);
+                                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.AcceptTeamInvitation);
                             } else {
                                 accountHomePresenter.onRequestIgnore(selectedTeam, true);
+                                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.IgnoreTeamInvitation);
                             }
                         }
                     });
@@ -189,7 +199,10 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
                     accountTeamRowView1.setIcon(R.drawable.account_icon_teamlist_add);
                     accountTeamRowView1.setBadgeCount(0);
                     accountTeamRowView1.setNameTextColor(getResources().getColorStateList(R.color.jandi_accent_color));
-                    accountTeamRowView1.setOnClickListener(v -> accountHomePresenter.onCreateTeamSelect());
+                    accountTeamRowView1.setOnClickListener(v -> {
+                        accountHomePresenter.onCreateTeamSelect();
+                        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.CreateTeam);
+                    });
 
                     view = accountTeamRowView1;
                     break;

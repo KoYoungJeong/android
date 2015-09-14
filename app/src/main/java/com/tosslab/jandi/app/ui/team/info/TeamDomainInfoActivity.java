@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -92,6 +93,7 @@ public class TeamDomainInfoActivity extends AppCompatActivity {
         initUserEmailInfo();
         initUserDefaultName();
 
+        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.CreateaTeam);
     }
 
     @Background

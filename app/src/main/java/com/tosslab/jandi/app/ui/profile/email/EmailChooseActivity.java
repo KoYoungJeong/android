@@ -17,6 +17,8 @@ import com.tosslab.jandi.app.network.exception.ExceptionData;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.profile.email.model.EmailChooseModel;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -32,7 +34,6 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 12..
@@ -58,6 +59,7 @@ public class EmailChooseActivity extends AppCompatActivity {
 
         getAccountEmailFromServer();
 
+        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.ChooseAnEmail);
     }
 
     @OptionsItem(R.id.action_confirm)
@@ -167,8 +169,10 @@ public class EmailChooseActivity extends AppCompatActivity {
                 emailChoosePresenter.showRetryEmailDialog(selectedEmail.getEmail());
             }
 
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.ChooseAnEmail, AnalyticsValue.Action.ChooseEmail);
         } else {
             emailChoosePresenter.showNewEmailDialog();
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.ChooseAnEmail, AnalyticsValue.Action.AddNewEmail);
         }
 
     }
