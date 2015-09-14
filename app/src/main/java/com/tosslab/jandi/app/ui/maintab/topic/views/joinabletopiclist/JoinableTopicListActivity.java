@@ -20,6 +20,8 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.presenter.
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
@@ -105,6 +107,7 @@ public class JoinableTopicListActivity extends BaseAnalyticsActivity
 
         mainTopicListPresenter.onInitUnjoinedTopics();
 
+        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.BrowseOtherTopics);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -142,8 +145,12 @@ public class JoinableTopicListActivity extends BaseAnalyticsActivity
 
         UnjoinTopicDialog dialog = UnjoinTopicDialog.instantiate(item);
         dialog.setOnJoinClickListener(
-                (dialog1, which) -> mainTopicListPresenter.onJoinTopic(getApplicationContext(), item));
+                (dialog1, which) -> {
+                    mainTopicListPresenter.onJoinTopic(getApplicationContext(), item);
+                    GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.BrowseOtherTopics, AnalyticsValue.Action.JoinTopic);
+                });
         dialog.show(getSupportFragmentManager(), "dialog");
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.BrowseOtherTopics, AnalyticsValue.Action.ViewTopicInfo);
 
     }
 

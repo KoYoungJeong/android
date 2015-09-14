@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.lists.messages;
 
 import android.content.Context;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -133,12 +132,7 @@ public class MessageItemView extends LinearLayout {
                 .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
                 .load(item.getUserProfileUrl());
-        mUserProfileImage.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EventBus.getDefault().post(new RequestUserInfoEvent(item.getUserId()));
-            }
-        });
+        mUserProfileImage.setOnClickListener(view -> EventBus.getDefault().post(new RequestUserInfoEvent(item.getUserId())));
     }
 
     private void showStringMessage(MessageItem item) {

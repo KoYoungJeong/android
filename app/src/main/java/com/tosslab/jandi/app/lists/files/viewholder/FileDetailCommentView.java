@@ -79,7 +79,7 @@ public class FileDetailCommentView implements CommentViewHolder {
                 .transform(new IonCircleTransform())
                 .load(profileUrl);
 
-        imageViewCommentUserProfile.setOnClickListener(view -> EventBus.getDefault().post(new RequestUserInfoEvent(writer.getId())));
+        imageViewCommentUserProfile.setOnClickListener(view -> EventBus.getDefault().post(new RequestUserInfoEvent(writer.getId(), RequestUserInfoEvent.From.Image)));
         // 이름
         String userName = writer.getName();
         textViewCommentUserName.setText(userName);

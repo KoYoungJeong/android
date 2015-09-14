@@ -6,6 +6,8 @@ import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.adapter.TopicFolderChooseAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.model.TopicFolderChooseModel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
@@ -94,10 +96,12 @@ public class TopicFolderChoosePresenter {
                 onAddTopicIntoFolder(newfolderId, topicId);
                 String name = ((TopicFolderChooseAdapter) adapter).getFolders().get(position).name;
                 view.showMoveToFolderToast(name);
+                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.ChooseFolder);
                 break;
             case TopicFolderChooseAdapter.TYPE_REMOVE_FROM_FOLDER:
                 onDeleteItemFromFolder(folderId, topicId);
                 view.showRemoveFromFolderToast();
+                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.RemoveFromThisFolder);
                 break;
             case TopicFolderChooseAdapter.TYPE_MAKE_NEW_FOLDER:
                 view.showCreateNewFolderDialog();

@@ -27,7 +27,7 @@ public class ClickableMensionMessageSpannable extends MentionMessageSpannable im
                 .getEntityById(entityId);
 
         if (entity != EntityManager.UNKNOWN_USER_ENTITY && entity.isUser()) {
-            EventBus.getDefault().post(new RequestUserInfoEvent(entityId));
+            EventBus.getDefault().post(new RequestUserInfoEvent(entityId, RequestUserInfoEvent.From.Mention));
         }
 
     }

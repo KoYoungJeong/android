@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -85,6 +86,13 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     void initObject() {
         topicMembersAdapter = new MembersAdapter(getApplicationContext());
         membersListPresenter.setView(this);
+
+        AnalyticsValue.Screen screen = getScreen();
+
+    }
+
+    private AnalyticsValue.Screen getScreen() {
+        return type == TYPE_MEMBERS_LIST_TOPIC ? AnalyticsValue.Screen.Participants : AnalyticsValue.Screen.TeamMembers;
     }
 
     @AfterViews

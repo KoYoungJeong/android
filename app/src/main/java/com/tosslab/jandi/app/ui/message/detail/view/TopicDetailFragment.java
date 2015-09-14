@@ -37,6 +37,8 @@ import com.tosslab.jandi.app.ui.message.detail.presenter.TopicDetailPresenter;
 import com.tosslab.jandi.app.ui.message.detail.presenter.TopicDetailPresenterImpl;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -107,6 +109,8 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         setUpActionbar();
 
         topicDetailPresenter.onInit(getActivity(), entityId);
+
+        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.TopicDescription);
     }
 
     private void setUpActionbar() {
@@ -214,6 +218,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @Click(R.id.vg_topic_detail_description)
     void onTopicDescriptionClick() {
         topicDetailPresenter.onTopicDescriptionMove(getActivity(), entityId);
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TopicDescription);
     }
 
     @Click(R.id.vg_topic_detail_member_count)
@@ -223,6 +228,8 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
                 .type(MembersListActivity.TYPE_MEMBERS_LIST_TOPIC)
                 .entityId(entityId)
                 .start();
+
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Participants);
     }
 
     // Topic Push
@@ -233,6 +240,12 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         setTopicPushSwitch(checked);
 
         topicDetailPresenter.updateTopicPushSubscribe(getActivity(), teamId, entityId, checked);
+
+        if (checked) {
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TurnOnNotifications);
+        } else {
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TurnOffNotifications);
+        }
     }
 
     @UiThread
@@ -245,6 +258,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @Click(R.id.vg_topic_detail_invite)
     void onTopicInviteClick() {
         topicDetailPresenter.onTopicInvite(getActivity(), entityId);
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.InviteTeamMembers);
     }
 
     @Click(R.id.vg_topic_detail_starred)
@@ -255,11 +269,13 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @Click(R.id.vg_topic_detail_leave)
     void onTopicLeaveClick() {
         topicDetailPresenter.onTopicLeave(getActivity(), entityId);
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Leave);
     }
 
     @Click(R.id.vg_topic_detail_delete)
     void onTopicDeleteClick() {
         topicDetailPresenter.onTopicDelete(getActivity(), entityId);
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Delete);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -357,6 +373,8 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
                 , entityId
                 , entityName);
         newFragment.show(getActivity().getFragmentManager(), "dialog");
+
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TopicName);
     }
 
     @OnActivityResult(TopicDescriptionEditActivity.REQUEST_EDIT)

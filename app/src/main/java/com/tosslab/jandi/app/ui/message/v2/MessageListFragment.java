@@ -101,6 +101,7 @@ import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.UpdateMessageQueue;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
@@ -118,6 +119,7 @@ import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -370,6 +372,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
 
+        GoogleAnalyticsUtil.sendScreenName(messageListModel.getScreen(entityId));
     }
 
     private void initKeyboardEvent() {
@@ -420,8 +423,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 stickerInfo.setStickerId(stickerId);
                 showStickerPreview(oldSticker, stickerInfo);
                 messageListPresenter.setEnableSendButton(true);
+                GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_Select);
             }
         });
+
+        stickerViewModel.setEntityId(entityId);
     }
 
     private void initMessageList() {
@@ -431,6 +437,24 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             } catch (Exception e) {
                 messageListPresenter.justRefresh();
             }
+
+            int itemViewType = adapter.getItemViewType(position);
+
+            BodyViewHolder.Type type = BodyViewHolder.Type.values()[itemViewType];
+            switch (type) {
+                case File:
+                    GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.FileView_ByFile);
+                    break;
+                case FileComment:
+                case FileStickerComment:
+                    break;
+                case CollapseStickerComment:
+                case CollapseComment:
+                case PureComment:
+                case PureStickerComment:
+                    GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.FileView_ByComment);
+                    break;
+            }
         });
 
         messageListPresenter.setOnItemLongClickListener((adapter, position) -> {
@@ -439,6 +463,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             } catch (Exception e) {
                 messageListPresenter.justRefresh();
             }
+            GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MsgLongTap);
+
             return true;
         });
 
@@ -589,6 +615,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.dismissStickerPreview();
         messageListPresenter.setEnableSendButton(false);
 
+        GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_cancel);
     }
 
     @Click(R.id.vg_message_offline)
@@ -775,6 +802,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (selected) {
             stickerViewModel.dismissStickerSelector();
+
+            GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MessageInputField);
         } else {
             int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity());
             if (keyboardHeight > 0) {
@@ -787,6 +816,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                         }
                     });
                 }
+                GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MessageInputField);
             } else {
                 initKeyboardHeight();
             }
@@ -822,6 +852,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Click(R.id.btn_upload_file)
     void onUploadClick() {
         filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
+        GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Upload);
     }
 
     @Click(R.id.btn_send_message)
@@ -856,6 +887,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
             StickerRepository.getRepository().upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo), mentions)));
+
+            GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_Send);
         } else {
             if (TextUtils.isEmpty(message)) {
                 return;
@@ -885,6 +918,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         stickerInfo = NULL_STICKER;
         messageListPresenter.setEnableSendButton(false);
         messageListPresenter.setSendEditText("");
+
+        GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Send);
+
 
     }
 
@@ -974,6 +1010,23 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
         filePickerViewModel.selectFileSelector(event.type, MessageListFragment.this, entityId);
+
+        AnalyticsValue.Action action;
+        switch (event.type) {
+            default:
+            case FilePickerViewModel.TYPE_UPLOAD_GALLERY:
+                action = AnalyticsValue.Action.Upload_Photo;
+                break;
+            case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
+                action = AnalyticsValue.Action.Upload_Camera;
+                break;
+            case FilePickerViewModel.TYPE_UPLOAD_EXPLORER:
+                action = AnalyticsValue.Action.Upload_File;
+                break;
+        }
+
+        AnalyticsValue.Screen screen = messageListModel.getScreen(entityId);
+        GoogleAnalyticsUtil.sendEvent(screen, action);
     }
 
     public void onEvent(NetworkConnectEvent event) {
@@ -1044,6 +1097,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     }
 
+    @Click(R.id.et_message)
+    void onMessageInputClick() {
+        GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MessageInputField);
+    }
+
     void onMessageItemClick(ResMessages.Link link, int entityId) {
         if (link instanceof DummyMessageLink) {
             DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
@@ -1063,6 +1121,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message
                     .feedbackId, roomId, link.messageId);
         }
+
     }
 
     @OnActivityResult(TopicDetailActivity.REQUEST_DETAIL)
@@ -1158,6 +1217,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         deleteMessage(event.messageType, event.messageId);
 
+        GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MsgLongTap_Delete);
+
     }
 
     public void onEvent(ConfirmCopyMessageEvent event) {
@@ -1165,6 +1226,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
         messageListPresenter.copyToClipboard(event.contentString);
+        GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MsgLongTap_Copy);
     }
 
     public void onEvent(ConfirmFileUploadEvent event) {
@@ -1379,7 +1441,36 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
 
-        UserInfoDialogFragment_.builder().entityId(event.userId).build().show(getFragmentManager(), "dialog");
+        UserInfoDialogFragment_.builder()
+                .entityId(event.userId)
+                .build()
+                .show(getFragmentManager(), "dialog");
+
+        if (event.from != null) {
+
+            AnalyticsValue.Screen screen = messageListModel.getScreen(entityId);
+
+            AnalyticsValue.Action action;
+            switch (event.from) {
+                case Name:
+                    action = AnalyticsValue.Action.ViewProfile;
+                    break;
+                case Image:
+                    action = AnalyticsValue.Action.ViewProfile_Image;
+                    break;
+                case Mention:
+                    if (event.userId != EntityManager.getInstance().getMe().getId()) {
+                        action = AnalyticsValue.Action.ViewProfile_Mention;
+                    } else {
+                        action = AnalyticsValue.Action.ViewProfile_MyMention;
+                    }
+                    break;
+                case SystemMessage:
+                    action = AnalyticsValue.Action.ViewProfile_SysMessage;
+                    break;
+            }
+        }
+
     }
 
     public void onEventMainThread(ChatCloseEvent event) {
@@ -1478,19 +1569,22 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             announcementViewModel.openAnnouncement(false);
             announcementModel.setActionFromUser(true);
             announcementModel.updateAnnouncementStatus(teamId, roomId, false);
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Minimize);
         });
         announcementViewModel.setOnAnnouncementOpenListener(() -> {
             announcementViewModel.openAnnouncement(true);
             announcementModel.setActionFromUser(true);
             announcementModel.updateAnnouncementStatus(teamId, roomId, true);
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Announcement_ExpandFromMinimize);
         });
     }
 
     public void onEvent(SocketAnnouncementEvent event) {
         SocketAnnouncementEvent.Type eventType = event.getEventType();
         switch (eventType) {
-            case CREATED:
             case DELETED:
+                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Delete);
+            case CREATED:
                 if (!isForeground) {
                     messageListModel.updateMarkerInfo(teamId, roomId);
                     return;
@@ -1519,6 +1613,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         switch (event.getAction()) {
             case CREATE:
                 checkAnnouncementExistsAndCreate(event.getMessageId());
+                GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MsgLongTap_Announce);
                 break;
             case DELETE:
                 deleteAnnouncement();
@@ -1545,6 +1640,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                     e.printStackTrace();
                 }
 
+                GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MsgLongTap_Star);
                 break;
             case UNSTARRED:
                 try {
@@ -1555,6 +1651,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 } catch (RetrofitError e) {
                     e.printStackTrace();
                 }
+                GoogleAnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MsgLongTap_Unstar);
                 break;
         }
     }

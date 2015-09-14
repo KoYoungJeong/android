@@ -8,8 +8,11 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.views.ViewPagerIndicator;
 
 import org.androidannotations.annotations.AfterViews;
@@ -42,6 +45,7 @@ public class StickerViewModel {
     private ViewPagerIndicator viewPagerIndicator;
 
     private OnStickerClick onStickerClick;
+    private int entityId;
 
     @AfterViews
     void initViews() {
@@ -119,6 +123,21 @@ public class StickerViewModel {
             } else {
                 vgStickerGroups.getChildAt(idx).setSelected(true);
             }
+
+            AnalyticsValue.Screen screen;
+            AnalyticsValue.Action action;
+            if (EntityManager.getInstance().getEntityById(entityId).isUser()) {
+                screen = AnalyticsValue.Screen.Message;
+            } else {
+                screen = AnalyticsValue.Screen.TopicChat;
+            }
+
+            if (groupIdx == 0) {
+                action = AnalyticsValue.Action.Sticker_RecentTab;
+            } else {
+                action = AnalyticsValue.Action.Sticker_StickerTab;
+            }
+            GoogleAnalyticsUtil.sendEvent(screen.name(), action.name() + String.valueOf(groupIdx));
         }
     }
 
@@ -147,6 +166,10 @@ public class StickerViewModel {
 
     public boolean isShowStickerSelector() {
         return vgStickerSelector.getVisibility() == View.VISIBLE;
+    }
+
+    public void setEntityId(int entityId) {
+        this.entityId = entityId;
     }
 
 

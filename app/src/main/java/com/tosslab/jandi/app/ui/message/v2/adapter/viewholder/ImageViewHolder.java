@@ -196,9 +196,9 @@ public class ImageViewHolder implements BodyViewHolder {
 
         }
         profileImageView.setOnClickListener(v ->
-                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id, RequestUserInfoEvent.From.Image)));
         nameTextView.setOnClickListener(v ->
-                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id, RequestUserInfoEvent.From.Name)));
     }
 
     @Override
