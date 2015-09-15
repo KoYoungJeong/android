@@ -506,5 +506,9 @@
     <string name="jandi_folder_rename">重新命名</string>
     <string name="jandi_no_topic_to_join">沒有可加入的議題</string>
     <string name="jandi_1_1_message">"直接傳訊"</string>
+    <string name="jandi_screen_orientation">"畫面方向"</string>
+    <string name="jandi_screen_auto">"自動調整"</string>
+    <string name="jandi_screen_horizontal">"畫面水平鎖定"</string>
+    <string name="jandi_screen_vertical">"畫面垂直鎖定"</string>
 </resources>
 
