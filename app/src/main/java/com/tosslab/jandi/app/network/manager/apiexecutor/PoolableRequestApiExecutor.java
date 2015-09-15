@@ -1,21 +1,31 @@
 package com.tosslab.jandi.app.network.manager.apiexecutor;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.util.Pools;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
+import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import retrofit.RetrofitError;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by tee on 15. 6. 20..
@@ -81,6 +91,21 @@ public class PoolableRequestApiExecutor {
                 } else {
                     // unauthorized exception
                     LogUtil.e("Refresh Token Fail", e);
+                    Observable.just(1)
+                            .filter(integer -> !TextUtils.isEmpty(JandiPreference.getRefreshToken(JandiApplication.getContext())))
+                            .doOnNext(integer -> SignOutUtil.removeSignData())
+                            .subscribeOn(Schedulers.computation())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(integer -> {
+                                Context context = JandiApplication.getContext();
+                                ColoredToast.showError(context, context.getString(R.string.err_expired_session));
+                                JandiSocketService.stopService(context);
+                                IntroMainActivity_
+                                        .intent(context)
+                                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                        .start();
+
+                            });
                     throw e;
                 }
             } else {
@@ -94,8 +119,7 @@ public class PoolableRequestApiExecutor {
         }
     }
 
-    //Todo 네트워크 상태를 체크하는 공용 클래스 생성 필요 - 중복 사용이 예상되는 메서드
-    public boolean isActiveNetwork() {
+    private boolean isActiveNetwork() {
         return NetworkCheckUtil.isConnected();
     }
 
@@ -112,7 +136,7 @@ public class PoolableRequestApiExecutor {
                 TokenUtil.saveTokenInfoByRefresh(accessToken);
             } catch (RetrofitError e) {
                 LogUtil.e("Refresh Token Fail", e);
-                if (e.getResponse().getStatus() != JandiConstants.NetworkError.UNAUTHORIZED) {
+                if (e.getKind() == RetrofitError.Kind.HTTP) {
                     return null;
                 }
             }
