@@ -149,5 +149,6 @@
 
     <!-- Profile -->
     <dimen name="jandi_member_profile_margin_top">0dp</dimen>
+    <dimen name="jandi_member_profile_buttons_height">80dp</dimen>
 
 </resources>

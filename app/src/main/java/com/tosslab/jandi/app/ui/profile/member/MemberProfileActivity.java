@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -40,12 +39,14 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.ViewById;
 
+import uk.co.senab.photoview.PhotoView;
+import uk.co.senab.photoview.PhotoViewAttacher;
+
 /**
  * Created by tonyjs on 15. 9. 8..
  */
 @EActivity(R.layout.activity_member_profile)
 public class MemberProfileActivity extends AppCompatActivity {
-    private static final int SCROLL_EVENT_MARGIN = 160;
     private static final String KEY_FULL_SIZE_IMAGE_SHOWING = "full_size_image_showing";
 
     @Extra
@@ -85,7 +86,7 @@ public class MemberProfileActivity extends AppCompatActivity {
     View btnProfileStar;
 
     @ViewById(R.id.iv_member_profile_img_full)
-    ImageView ivProfileImageFull;
+    PhotoView ivProfileImageFull;
     @ViewById(R.id.iv_member_profile_img_large)
     ImageView ivProfileImageLarge;
     @ViewById(R.id.iv_member_profile_img_small)
@@ -112,78 +113,23 @@ public class MemberProfileActivity extends AppCompatActivity {
     @OnActivityResult(ModifyProfileActivity.REQUEST_CODE)
     @AfterViews
     void initViews() {
-        scrollEventMargin = (int) (SCROLL_EVENT_MARGIN * getResources().getDisplayMetrics().density);
+        // Scroll 시 추가 애니메이션을 위한 임의의 사이즈
+        //  #R.id.vg_member_profile_buttons 의 Height 만큼의 사이즈를 가진다.
+        scrollEventMargin = getResources().getDimensionPixelSize(R.dimen.jandi_member_profile_buttons_height);
 
         FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
 
         final String profileImageUrlLarge = member.getUserLargeProfileUrl();
 
+        // 기본 프로필 이미지 인 경우 디폴트 컬러를 보여준다.
         if (!hasChangedProfileUrl(profileImageUrlLarge)) {
             int color = getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
             vgProfileImageOverlay.setBackgroundColor(color);
         }
 
-        swipeExitLayout.setOnExitListener(this::finish);
-        swipeExitLayout.sevBackgroundDimView(vBackground);
-        swipeExitLayout.setStatusListener(new SwipeExitLayout.StatusListener() {
-            @Override
-            public void onScroll(float distance) {
-                float translationY = ivProfileImageLarge.getTranslationY() - distance;
+        initSwipeLayout();
 
-                if (distance > 0) {
-                    translationY = Math.max(-scrollEventMargin, translationY);
-                } else {
-                    translationY = Math.min(0, translationY);
-                }
-
-                ivProfileImageLarge.setTranslationY(translationY);
-            }
-
-            @Override
-            public void onIgnore(float spareDistance) {
-                float distance = spareDistance - scrollEventMargin;
-                int duration = Math.min(
-                        SwipeExitLayout.MIN_IGNORE_ANIM_DURATION, (int) Math.abs(distance));
-
-                ivProfileImageLarge.animate()
-                        .setDuration(duration)
-                        .translationY(-scrollEventMargin);
-            }
-
-            @Override
-            public void onExit(float spareDistance) {
-                float distance = spareDistance - scrollEventMargin;
-                int duration = Math.min(
-                        SwipeExitLayout.MIN_EXIT_ANIM_DURATION, (int) Math.abs(distance));
-
-                ivProfileImageLarge.animate()
-                        .setDuration(duration)
-                        .translationY(0);
-            }
-        });
-
-        vgProfileTeamDetail.post(new Runnable() {
-            @Override
-            public void run() {
-                int screenHeight = findViewById(android.R.id.content).getMeasuredHeight();
-                int vgProfileTeamDetailHeight = vgProfileTeamDetail.getMeasuredHeight();
-
-                int ivProfileImageLargeHeight =
-                        screenHeight - vgProfileTeamDetailHeight + scrollEventMargin;
-
-                ViewGroup.LayoutParams layoutParams = ivProfileImageLarge.getLayoutParams();
-                layoutParams.height = ivProfileImageLargeHeight;
-                ivProfileImageLarge.setLayoutParams(layoutParams);
-                ivProfileImageLarge.setTranslationY(-scrollEventMargin);
-
-                Ion.with(ivProfileImageLarge)
-                        .placeholder(R.drawable.profile_img)
-                        .error(R.drawable.profile_img)
-                        .centerCrop()
-                        .transform(new IonBlurTransform())
-                        .load(profileImageUrlLarge);
-            }
-        });
+        initLargeImageSize(profileImageUrlLarge);
 
         tvProfileDescription.setText(member.getUserStatusMessage());
         tvProfileName.setText(member.getName());
@@ -223,6 +169,11 @@ public class MemberProfileActivity extends AppCompatActivity {
                 .transform(transform)
                 .load(profileImageUrlMedium);
 
+        ivProfileImageFull.setOnViewTapListener((view, x, y) -> {
+            ivProfileImageFull.setScale(1.0f, true);
+            hideFullImage(view);
+        });
+
         Ion.with(ivProfileImageFull)
                 .placeholder(R.drawable.profile_img)
                 .error(R.drawable.profile_img)
@@ -239,9 +190,87 @@ public class MemberProfileActivity extends AppCompatActivity {
         }
     }
 
+    private void initSwipeLayout() {
+        swipeExitLayout.setOnExitListener(this::finish);
+        swipeExitLayout.sevBackgroundDimView(vBackground);
+        swipeExitLayout.setStatusListener(new SwipeExitLayout.StatusListener() {
+            @Override
+            public void onScroll(float distance) {
+                float translationY = ivProfileImageLarge.getTranslationY() - distance;
+
+                if (distance > 0) {
+                    translationY = Math.max(-scrollEventMargin, translationY);
+                } else {
+                    translationY = Math.min(0, translationY);
+                }
+
+                ivProfileImageLarge.setTranslationY(translationY);
+            }
+
+            @Override
+            public void onIgnore(float spareDistance) {
+                float distance = spareDistance - scrollEventMargin;
+                int duration = Math.min(
+                        SwipeExitLayout.MIN_IGNORE_ANIM_DURATION, (int) Math.abs(distance));
+
+                ivProfileImageLarge.animate()
+                        .setDuration(duration)
+                        .translationY(-scrollEventMargin);
+            }
+
+            @Override
+            public void onExit(float spareDistance) {
+                float distance = spareDistance - scrollEventMargin;
+                int duration = Math.min(
+                        SwipeExitLayout.MIN_EXIT_ANIM_DURATION, (int) Math.abs(distance));
+
+                ivProfileImageLarge.animate()
+                        .setDuration(duration)
+                        .translationY(0);
+            }
+        });
+    }
+
+    private void initLargeImageSize(final String profileImageUrlLarge) {
+        if (isLandscape()) {
+            ivProfileImageLarge.setTranslationY(-scrollEventMargin);
+
+            loadLargeImage(profileImageUrlLarge);
+            return;
+        }
+
+
+        vgProfileTeamDetail.post(new Runnable() {
+            @Override
+            public void run() {
+                int screenHeight = findViewById(android.R.id.content).getMeasuredHeight();
+                int vgProfileTeamDetailHeight = vgProfileTeamDetail.getMeasuredHeight();
+                int ivProfileImageLargeHeight =
+                        screenHeight - vgProfileTeamDetailHeight + scrollEventMargin;
+
+                ViewGroup.LayoutParams layoutParams = ivProfileImageLarge.getLayoutParams();
+                layoutParams.height = ivProfileImageLargeHeight;
+                ivProfileImageLarge.setLayoutParams(layoutParams);
+
+                ivProfileImageLarge.setTranslationY(-scrollEventMargin);
+
+                loadLargeImage(profileImageUrlLarge);
+            }
+        });
+    }
+
+    private void loadLargeImage(String profileImageUrlLarge) {
+        Ion.with(ivProfileImageLarge)
+                .placeholder(R.drawable.profile_img)
+                .error(R.drawable.profile_img)
+                .centerCrop()
+                .transform(new IonBlurTransform())
+                .load(profileImageUrlLarge);
+    }
+
     @Click(R.id.iv_member_profile_img_small)
     void showFullImage(View v) {
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (isLandscape()) {
             v.setPivotX(0);
         }
         v.animate()
@@ -260,7 +289,6 @@ public class MemberProfileActivity extends AppCompatActivity {
                 .setListener(null);
     }
 
-    @Click(R.id.iv_member_profile_img_full)
     void hideFullImage(final View v) {
         v.animate()
                 .setDuration(300)
@@ -432,5 +460,9 @@ public class MemberProfileActivity extends AppCompatActivity {
 
     private boolean isMe() {
         return EntityManager.getInstance().isMe(memberId);
+    }
+
+    private boolean isLandscape() {
+        return getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 }

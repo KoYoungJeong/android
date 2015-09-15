@@ -163,7 +163,7 @@
                 <LinearLayout
                     android:id="@+id/vg_member_profile_buttons"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
+                    android:layout_height="@dimen/jandi_member_profile_buttons_height"
                     android:orientation="horizontal"/>
 
             </LinearLayout>
@@ -181,7 +181,7 @@
 
     </com.tosslab.jandi.app.views.SwipeExitLayout>
 
-    <ImageView
+    <uk.co.senab.photoview.PhotoView
         android:id="@+id/iv_member_profile_img_full"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

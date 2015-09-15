@@ -18,8 +18,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/white">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/iv_member_profile_img_large"
@@ -30,14 +29,13 @@
                 android:id="@+id/vg_member_profile_img_large_overlay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@+id/vg_member_profile_detail"
+                android:layout_above="@+id/vg_member_profile_bottoms"
                 android:background="@color/jandi_member_profile_img_overlay">
 
                 <ImageView
                     android:id="@+id/btn_member_profile_close"
                     android:layout_width="39dp"
                     android:layout_height="40dp"
-                    android:layout_gravity="right"
                     android:layout_marginTop="@dimen/jandi_member_profile_margin_top"
                     android:scaleType="center"
                     android:src="@drawable/actionbar_icon_remove"/>
@@ -60,10 +58,9 @@
 
             <LinearLayout
                 android:id="@+id/vg_member_profile_detail"
-                android:background="@android:color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
+                android:layout_above="@+id/vg_member_profile_bottoms"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -175,11 +172,29 @@
                     </LinearLayout>
                 </LinearLayout>
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/vg_member_profile_bottoms"
+                android:layout_alignParentBottom="true"
+                android:background="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/jandi_member_profile_buttons_height"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
+
+                </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/vg_member_profile_buttons"
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:orientation="horizontal"/>
+                    android:layout_height="match_parent"/>
 
             </LinearLayout>
 
@@ -196,7 +211,7 @@
 
     </com.tosslab.jandi.app.views.SwipeExitLayout>
 
-    <ImageView
+    <uk.co.senab.photoview.PhotoView
         android:id="@+id/iv_member_profile_img_full"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
