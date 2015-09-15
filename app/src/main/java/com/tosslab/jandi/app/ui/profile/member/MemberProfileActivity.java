@@ -82,6 +82,8 @@ public class MemberProfileActivity extends AppCompatActivity {
     @ViewById(R.id.vg_member_profile_buttons)
     ViewGroup vgProfileTeamButtons;
 
+    @ViewById(R.id.v_member_profile_disable)
+    View vDisableIcon;
     @ViewById(R.id.btn_member_profile_star)
     View btnProfileStar;
 
@@ -131,7 +133,15 @@ public class MemberProfileActivity extends AppCompatActivity {
 
         initLargeImageSize(profileImageUrlLarge);
 
-        tvProfileDescription.setText(member.getUserStatusMessage());
+        boolean isDisableUser = !isEnableUser(member.getUser().status);
+        vDisableIcon.setVisibility(isDisableUser ? View.VISIBLE : View.GONE);
+
+        String description = isDisableUser
+                ? getString(R.string.jandi_disable_user_profile_explain)
+                : member.getUserStatusMessage();
+
+        tvProfileDescription.setText(description);
+
         tvProfileName.setText(member.getName());
 
         String userDivision = member.getUserDivision();
@@ -142,23 +152,6 @@ public class MemberProfileActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(userDivision) && TextUtils.isEmpty(userPosition)) {
             vgProfileTeamInfo.setVisibility(View.GONE);
         }
-
-        String userEmail = member.getUserEmail();
-        tvProfileEmail.setText(userEmail);
-        if (TextUtils.isEmpty(userEmail)) {
-            tvProfileEmail.setVisibility(View.GONE);
-        }
-
-        String userPhoneNumber = member.getUserPhoneNumber();
-        tvProfilePhone.setText(userPhoneNumber);
-        if (TextUtils.isEmpty(userPhoneNumber)) {
-            tvProfilePhone.setVisibility(View.GONE);
-        }
-
-        btnProfileStar.setSelected(member.isStarred);
-        btnProfileStar.setVisibility(isMe() ? View.INVISIBLE : View.VISIBLE);
-
-        addButtons(member);
 
         String profileImageUrlMedium = member.getUserMediumProfileUrl();
         IonCircleStrokeTransform transform = new IonCircleStrokeTransform(
@@ -188,6 +181,30 @@ public class MemberProfileActivity extends AppCompatActivity {
             ivProfileImageSmall.setScaleY(3.0f);
             ivProfileImageSmall.setAlpha(0.0f);
         }
+
+        if (isDisableUser) {
+            tvProfileEmail.setVisibility(View.GONE);
+            tvProfilePhone.setVisibility(View.GONE);
+            btnProfileStar.setVisibility(View.GONE);
+            return;
+        }
+
+        String userEmail = member.getUserEmail();
+        tvProfileEmail.setText(userEmail);
+        if (TextUtils.isEmpty(userEmail)) {
+            tvProfileEmail.setVisibility(View.GONE);
+        }
+
+        String userPhoneNumber = member.getUserPhoneNumber();
+        tvProfilePhone.setText(userPhoneNumber);
+        if (TextUtils.isEmpty(userPhoneNumber)) {
+            tvProfilePhone.setVisibility(View.GONE);
+        }
+
+        btnProfileStar.setSelected(member.isStarred);
+        btnProfileStar.setVisibility(isMe() ? View.INVISIBLE : View.VISIBLE);
+
+        addButtons(member);
     }
 
     private void initSwipeLayout() {
@@ -238,7 +255,6 @@ public class MemberProfileActivity extends AppCompatActivity {
             loadLargeImage(profileImageUrlLarge);
             return;
         }
-
 
         vgProfileTeamDetail.post(new Runnable() {
             @Override
@@ -404,9 +420,16 @@ public class MemberProfileActivity extends AppCompatActivity {
 
         buttonView.setOnClickListener(onClickListener);
 
+        boolean landscape = isLandscape();
+        int width = landscape
+                ? getResources().getDimensionPixelSize(R.dimen.jandi_member_profile_buttons_width)
+                : 0;
+
         LinearLayout.LayoutParams params =
-                new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
-        params.weight = 1;
+                new LinearLayout.LayoutParams(width, ViewGroup.LayoutParams.MATCH_PARENT);
+        if (!landscape) {
+            params.weight = 1;
+        }
         buttonView.setLayoutParams(params);
 
         return buttonView;
@@ -460,6 +483,10 @@ public class MemberProfileActivity extends AppCompatActivity {
 
     private boolean isMe() {
         return EntityManager.getInstance().isMe(memberId);
+    }
+
+    private boolean isEnableUser(String status) {
+        return "enabled".equals(status);
     }
 
     private boolean isLandscape() {

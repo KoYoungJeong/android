@@ -325,7 +325,7 @@
     <string name="jandi_tos_and_pp">"TERMS &amp; CONDITIONS"</string>
     <string name="jandi_topic_ask_about_deleting">"Are you sure you want to delete this topic?"</string>
     <string name="jandi_disabled_user">"This member has been temporarily disabled"</string>
-    <string name="jandi_disable_user_profile_explain">"This member has been temporarily disabled. Please contact the team administrator for more information."</string>
+    <string name="jandi_disable_user_profile_explain">"This member has been temporarily disabled.\n Please contact the team administrator for more information."</string>
     <string name="jandi_share_to_jandi">"Share to JANDI"</string>
     <string name="jandi_create">Create</string>
     <string name="jandi_copy_link">Copy Link</string>

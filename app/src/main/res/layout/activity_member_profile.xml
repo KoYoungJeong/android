@@ -35,25 +35,41 @@
 
                 <ImageView
                     android:id="@+id/btn_member_profile_close"
-                    android:layout_width="39dp"
-                    android:layout_height="40dp"
+                    android:layout_width="@dimen/jandi_member_profile_btn_close_width"
+                    android:layout_height="@dimen/jandi_member_profile_btn_close_height"
                     android:layout_marginTop="@dimen/jandi_member_profile_margin_top"
                     android:scaleType="center"
                     android:src="@drawable/actionbar_icon_remove"/>
 
-                <TextView
-                    android:id="@+id/tv_member_profile_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                <LinearLayout
                     android:layout_gravity="center"
-                    android:layout_marginLeft="35dp"
-                    android:layout_marginRight="35dp"
-                    android:ellipsize="end"
-                    android:gravity="center"
-                    android:lineSpacingExtra="5dp"
-                    android:maxLines="3"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"/>
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <View
+                        android:id="@+id/v_member_profile_disable"
+                        android:layout_marginBottom="20dp"
+                        android:visibility="gone"
+                        android:layout_gravity="center"
+                        android:background="@drawable/alert_icon_warning"
+                        android:layout_width="45dp"
+                        android:layout_height="40dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_member_profile_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="35dp"
+                        android:layout_marginRight="35dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:lineSpacingExtra="5dp"
+                        android:maxLines="3"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"/>
+                </LinearLayout>
 
             </FrameLayout>
 
@@ -95,7 +111,6 @@
                         android:gravity="center"
                         android:lineSpacingExtra="2dp"
                         android:maxLines="2"
-                        android:text="TonyTonyTonyTonyTonyTonyTonyTonyTonyTonyTonyTonyTonyTonyTonyTonyTonyTonyTony"
                         android:textColor="@color/jandi_member_profile_user_name"
                         android:textSize="20dp"
                         android:textStyle="bold"/>
@@ -116,7 +131,6 @@
                             android:ellipsize="end"
                             android:gravity="center"
                             android:maxLines="2"
-                            android:text="hello"
                             android:textColor="@color/jandi_text_light"
                             android:textSize="13dp"/>
                         <TextView
@@ -129,7 +143,6 @@
                             android:ellipsize="end"
                             android:gravity="center"
                             android:maxLines="2"
-                            android:text="world"
                             android:textColor="@color/jandi_text_light"
                             android:textSize="13dp"/>
                     </LinearLayout>
@@ -143,7 +156,6 @@
                         android:layout_marginTop="3dp"
                         android:background="@drawable/bg_profile_info"
                         android:gravity="center"
-                        android:text="01031082515"
                         android:textColor="@color/jandi_text_light"
                         android:textSize="13dp"/>
 
@@ -154,7 +166,6 @@
                         android:layout_gravity="center"
                         android:background="@drawable/bg_profile_info"
                         android:gravity="center"
-                        android:text="a@a.com"
                         android:textColor="@color/jandi_text_light"
                         android:textSize="13dp"/>
 
