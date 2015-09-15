@@ -13,6 +13,8 @@ import android.widget.LinearLayout;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.starmention.views.StarMentionListFragment;
 import com.tosslab.jandi.app.ui.starmention.views.StarMentionListFragment_;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -48,6 +50,12 @@ public class StarMentionListActivity extends AppCompatActivity {
         if (isShowTab) {
             setupTabButton();
             onTabClick(allTabView);
+        }
+
+        if (type == TYPE_STAR_LIST) {
+            GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.Stars);
+        } else {
+            GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.Mentions);
         }
     }
 
@@ -158,10 +166,12 @@ public class StarMentionListActivity extends AppCompatActivity {
             setSelectTab(allTabView, filesTabView);
             fragmentTransaction.hide(filesStarListFragment);
             fragmentTransaction.show(allStarListFragment);
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.Filter_All);
         } else if (view.hashCode() == filesTabView.hashCode()) {
             setSelectTab(filesTabView, allTabView);
             fragmentTransaction.hide(allStarListFragment);
             fragmentTransaction.show(filesStarListFragment);
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.Filter_Files);
         }
 
         fragmentTransaction.commit();

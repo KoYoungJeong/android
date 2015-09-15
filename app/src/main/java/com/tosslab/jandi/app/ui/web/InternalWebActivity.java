@@ -17,6 +17,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.ShareEntityEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.web.model.InternalWebModel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -136,6 +138,9 @@ public class InternalWebActivity extends AppCompatActivity {
     @AfterViews
     void initView() {
         setUpActionBar();
+        if (helpSite) {
+            GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.Help);
+        }
     }
 
     @Override

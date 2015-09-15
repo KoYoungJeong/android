@@ -60,6 +60,7 @@ class InviteCommand implements MenuCommand {
         int teamMemberCountWithoutMe = entityManager.getFormattedUsersWithoutMe().size();
 
         if (teamMemberCountWithoutMe <= 0) {
+            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_TOPIC_CHAT);
             invitationDialogExecutor.execute();
         } else {
             InvitationViewModel invitationViewModel = InvitationViewModel_.getInstance_(activity);

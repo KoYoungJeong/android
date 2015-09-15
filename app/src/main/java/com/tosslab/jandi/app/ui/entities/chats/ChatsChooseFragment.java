@@ -188,6 +188,7 @@ public class ChatsChooseFragment extends Fragment {
 
     @Click(R.id.layout_member_empty)
     public void invitationDialogExecution() {
+        invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_CHAT_CHOOSE);
         invitationDialogExecutor.execute();
     }
 

@@ -733,7 +733,10 @@ public class MessageListPresenter {
         }
         emptyMessageView.removeAllViews();
         View view = LayoutInflater.from(activity).inflate(R.layout.view_team_member_empty, emptyMessageView, true);
-        View.OnClickListener onClickListener = v -> invitationDialogExecutor.execute();
+        View.OnClickListener onClickListener = v -> {
+            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_TOPIC_CHAT);
+            invitationDialogExecutor.execute();
+        };
         view.findViewById(R.id.img_chat_choose_member_empty).setOnClickListener(onClickListener);
         view.findViewById(R.id.btn_chat_choose_member_empty).setOnClickListener(onClickListener);
     }

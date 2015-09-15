@@ -27,6 +27,7 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
@@ -69,7 +70,7 @@ public class SettingsFragment extends PreferenceFragment {
                         .property(PropertyKey.ScreenView, ScreenViewProperty.SETTING)
                         .build());
 
-        GoogleAnalyticsUtil.sendScreenName("SETTING");
+        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.Setting);
 
         addPreferencesFromResource(R.xml.pref_setting);
 
@@ -105,6 +106,8 @@ public class SettingsFragment extends PreferenceFragment {
                 isEnabled = false;
             }
 
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, isEnabled ? AnalyticsValue.Action.TurnOnNotifications : AnalyticsValue.Action.TurnOffNotifications);
+
             setPushSubState(isEnabled);
         } else if (TextUtils.equals(preference.getKey(), "setting_tos")) {
 
@@ -113,11 +116,13 @@ public class SettingsFragment extends PreferenceFragment {
                     .termMode(TermActivity.Mode.Agreement.name())
                     .start();
 
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.TermsOfService);
         } else if (TextUtils.equals(preference.getKey(), "setting_pp")) {
             TermActivity_
                     .intent(getActivity())
                     .termMode(TermActivity.Mode.Privacy.name())
                     .start();
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.PrivacyPolicy);
         } else if (preference.getKey().equals("setting_logout")) {
 
             if (NetworkCheckUtil.isConnected()) {
@@ -125,7 +130,17 @@ public class SettingsFragment extends PreferenceFragment {
             } else {
                 settingFragmentViewModel.showCheckNetworkDialog(getActivity());
             }
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.SignOut);
 
+        } else if (preference.getKey().equals("setting_push_alarm_sound")) {
+            CheckBoxPreference pref = (CheckBoxPreference) preference;
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, pref.isChecked() ? AnalyticsValue.Action.SoundsOn : AnalyticsValue.Action.SoundsOff);
+        } else if (preference.getKey().equals("setting_push_alarm_vibration")) {
+            CheckBoxPreference pref = (CheckBoxPreference) preference;
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, pref.isChecked() ? AnalyticsValue.Action.VibrateOn : AnalyticsValue.Action.VibrateOff);
+        } else if (preference.getKey().equals("setting_push_alarm_led")) {
+            CheckBoxPreference pref = (CheckBoxPreference) preference;
+            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, pref.isChecked() ? AnalyticsValue.Action.PhoneLedOn : AnalyticsValue.Action.PhoneLedOff);
         }
         return false;
     }

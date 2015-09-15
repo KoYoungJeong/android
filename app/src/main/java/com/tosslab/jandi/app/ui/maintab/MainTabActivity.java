@@ -202,6 +202,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             @Override
             public void onClick(View v) {
                 materialDialog.dismiss();
+                invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_POPUP);
                 invitationDialogExecutor.execute();
 
                 GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.SendInvitations);
@@ -374,6 +375,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
 
     public void onEvent(InvitationDisableCheckEvent event) {
+        invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_INVITE);
         invitationDialogExecutor.execute();
     }
 

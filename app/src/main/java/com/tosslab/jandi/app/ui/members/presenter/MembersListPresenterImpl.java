@@ -95,7 +95,9 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                 })
                 .subscribe(new Action1<List<ChatChooseItem>>() {
                     @Override
-                    public void call(List<ChatChooseItem> topicMembers) {view.showListMembers(topicMembers);}
+                    public void call(List<ChatChooseItem> topicMembers) {
+                        view.showListMembers(topicMembers);
+                    }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
@@ -152,7 +154,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                 .entityId(entityId)
                 .build()
                 .show(activity.getSupportFragmentManager(), "dialog");
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Participants, AnalyticsValue.Action.ViewProfile);
+        GoogleAnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.ViewProfile);
     }
 
     public void onEvent(RetrieveTopicListEvent event) {
@@ -161,5 +163,9 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     public void setView(View view) {
         this.view = view;
+    }
+
+    private AnalyticsValue.Screen getScreen() {
+        return view.getType() == MembersListActivity.TYPE_MEMBERS_LIST_TOPIC ? AnalyticsValue.Screen.Participants : AnalyticsValue.Screen.TeamMembers;
     }
 }

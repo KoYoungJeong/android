@@ -936,6 +936,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         int teamMemberCountWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe().size();
 
         if (teamMemberCountWithoutMe <= 0) {
+            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_TOPIC_CHAT);
             invitationDialogExecutor.execute();
         } else {
             InvitationViewModel invitationViewModel = InvitationViewModel_.getInstance_(getActivity());

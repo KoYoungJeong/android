@@ -37,6 +37,7 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
@@ -86,9 +87,6 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     void initObject() {
         topicMembersAdapter = new MembersAdapter(getApplicationContext());
         membersListPresenter.setView(this);
-
-        AnalyticsValue.Screen screen = getScreen();
-
     }
 
     private AnalyticsValue.Screen getScreen() {
@@ -105,7 +103,7 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
                         .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_MEMBER)
                         .build());
 
-        GoogleAnalyticsUtil.sendScreenName("TEAM_MEMBER");
+        GoogleAnalyticsUtil.sendScreenName(getScreen());
 
         setupActionbar();
 
@@ -143,6 +141,11 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
         membersListPresenter.onSearch(text);
     }
 
+
+    @Click(R.id.et_topic_member_search)
+    void onSearchInputClick() {
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamMembers, AnalyticsValue.Action.SearchInputField);
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -227,6 +230,7 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     @OptionsItem(R.id.action_invitation)
     void onInviteOptionSelect() {
         if (type == TYPE_MEMBERS_LIST_TEAM) {
+            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_MEMBER);
             invitationDialogExecutor.execute();
         } else {
             membersListPresenter.inviteMemberToTopic(entityId);

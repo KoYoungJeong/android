@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -78,7 +79,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
                         .property(PropertyKey.ScreenView, ScreenViewProperty.PROFILE)
                         .build());
 
-        GoogleAnalyticsUtil.sendScreenName("PROFILE");
+        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.EditProfile);
 
         setupActionBar();
 
@@ -168,6 +169,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
                     ((TextView) view)
             );
         }
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Status);
     }
 
     @Click(R.id.profile_user_phone_number)
@@ -179,6 +181,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
                     ((TextView) view)
             );
         }
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Mobile);
     }
 
     @Click(R.id.profile_user_realname)
@@ -189,6 +192,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
                     ((TextView) view)
             );
         }
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Name);
     }
 
     @Click(R.id.profile_user_division)
@@ -200,6 +204,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
                     ((TextView) view)
             );
         }
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Division);
     }
 
     @Click(R.id.profile_user_position)
@@ -211,6 +216,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
                     ((TextView) view)
             );
         }
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Position);
     }
 
     @Click(R.id.profile_user_email)
@@ -220,13 +226,14 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             String email = memberProfileView.getEmail();
             memberProfileView.showEmailChooseDialog(accountEmails, email);
         }
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Email);
     }
 
     @Click(R.id.profile_photo)
     void getPicture() {
         // 프로필 사진
         filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, MemberProfileActivity.this);
-
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.PhotoEdit);
     }
 
     public void onEvent(MemberEmailChangeEvent event) {

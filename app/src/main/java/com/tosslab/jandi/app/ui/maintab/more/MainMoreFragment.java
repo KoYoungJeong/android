@@ -26,6 +26,8 @@ import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LanguageUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.IconWithTextView;
 
@@ -136,6 +138,8 @@ public class MainMoreFragment extends Fragment {
         MemberProfileActivity_.intent(mContext)
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .start();
+
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.EditProfile);
     }
 
     @Click(R.id.ly_more_team_member)
@@ -144,17 +148,20 @@ public class MainMoreFragment extends Fragment {
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .type(MembersListActivity.TYPE_MEMBERS_LIST_TEAM)
                 .start();
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.TeamMembers);
     }
 
     @Click(R.id.ly_more_invite)
     public void onInvitationDisableCheck() {
         EventBus.getDefault().post(new InvitationDisableCheckEvent());
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.InviteMember);
     }
 
     @Click(R.id.ly_more_go_to_main)
     public void moveToAccountActivity() {
         AccountHomeActivity_.intent(mContext)
                 .start();
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.TeamSelect);
     }
 
     @Click(R.id.rl_more_setting)
@@ -162,6 +169,7 @@ public class MainMoreFragment extends Fragment {
         SettingsActivity_.intent(mContext)
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .start();
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.Setting);
     }
 
     @Click(R.id.rl_more_help)
@@ -172,6 +180,7 @@ public class MainMoreFragment extends Fragment {
                 .hideActionBar(true)
                 .helpSite(true)
                 .start();
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.Help);
     }
 
     @Click(R.id.ly_more_mentioned)
@@ -180,6 +189,7 @@ public class MainMoreFragment extends Fragment {
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .extra("type", StarMentionListActivity.TYPE_MENTION_LIST)
                 .start();
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.Mentions);
     }
 
     @Click(R.id.ly_more_starred)
@@ -188,6 +198,7 @@ public class MainMoreFragment extends Fragment {
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .extra("type", StarMentionListActivity.TYPE_STAR_LIST)
                 .start();
+        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.Stars);
     }
 
     String getSupportUrlEachLanguage() {
