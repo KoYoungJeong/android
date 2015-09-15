@@ -1098,7 +1098,7 @@ public class MessageListPresenter {
     @UiThread
     public void showLeavedMemberDialog(int entityId) {
         String name = EntityManager.getInstance().getEntityNameById(entityId);
-        String msg = String.format("%s님은 더이상 팀 멤버가 아닙니다. ",name);
+        String msg = activity.getString(R.string.jandi_no_long_team_member, name);
 
         AlertUtil.showConfirmDialog(activity, msg, (dialog, which) -> finish(), false);
     }
