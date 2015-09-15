@@ -35,6 +35,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberProfileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -257,6 +258,17 @@ public class JandiSocketServiceModel {
         try {
             SocketLinkPreviewMessageEvent socketLinkPreviewMessageEvent =
                     objectMapper.readValue(object.toString(), SocketLinkPreviewMessageEvent.class);
+
+            postEvent(socketLinkPreviewMessageEvent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateLinkPreviewThumbnail(Object object) {
+        try {
+            SocketLinkPreviewThumbnailEvent socketLinkPreviewMessageEvent =
+                    objectMapper.readValue(object.toString(), SocketLinkPreviewThumbnailEvent.class);
 
             postEvent(socketLinkPreviewMessageEvent);
         } catch (Exception e) {

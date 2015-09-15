@@ -104,20 +104,6 @@ public class SocketLinkPreviewMessageEvent {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class CommentInfo {
-        private int id;
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Message {
         private int id = -1;
         private String type;

@@ -39,6 +39,7 @@ import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
@@ -474,11 +475,8 @@ public class MessageListPresenter {
     @UiThread
     public void updateMessage(ResMessages.OriginalMessage message) {
         if (message == null) {
-            Log.e("INFO", "updateMessage is null");
             return;
         }
-
-        Log.i("INFO", "updateMessage - " + message.toString());
 
         if (message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) message;
@@ -492,7 +490,6 @@ public class MessageListPresenter {
     private void updateLinkPreviewMessage(ResMessages.OriginalMessage message) {
         int messageId = message.id;
         int index = messageListAdapter.indexByMessageId(messageId);
-        Log.i("INFO", "updateLinkPreviewMessage index = " + index);
         if (index < 0) {
             return;
         }
@@ -504,6 +501,20 @@ public class MessageListPresenter {
         link.message = message;
 
         messageListAdapter.notifyDataSetChanged();
+    }
+
+    public void updateLinkPreviewMessage(int messageId, ResMessages.LinkPreview linkPreview) {
+        int index = messageListAdapter.indexByMessageId(messageId);
+        if (index < 0) {
+            return;
+        }
+
+        ResMessages.Link link = getItem(index);
+        if (!(link.message instanceof ResMessages.TextMessage)) {
+            return;
+        }
+        ResMessages.TextMessage message = (ResMessages.TextMessage) link.message;
+        message.linkPreview = linkPreview;
     }
 
     public void updateMessageIdAtSendingMessage(long localId, int messageId) {

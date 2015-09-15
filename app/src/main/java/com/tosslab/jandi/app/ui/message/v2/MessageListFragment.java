@@ -75,6 +75,7 @@ import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
@@ -99,6 +100,7 @@ import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
+import com.tosslab.jandi.app.ui.message.to.queue.UpdateLinkPreviewQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.UpdateMessageQueue;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerNewMessageLoader;
@@ -261,6 +263,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                             break;
                         case Update:
                             updateMessage(messageQueue);
+                            break;
+                        case UpdateLinkPreview:
+                            updateLinkPreview(messageQueue);
                             break;
                     }
                 }, throwable -> {
@@ -568,7 +573,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         UpdateMessage updateMessage = (UpdateMessage) messageQueue.getData();
         ResMessages.OriginalMessage message =
                 messageListModel.getMessage(teamId, updateMessage.getMessageId());
-
         if (message != null && message instanceof ResMessages.TextMessage) {
             MessageRepository.getRepository().upsertTextMessage((ResMessages.TextMessage) message);
         }
@@ -576,9 +580,23 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.updateMessage(message);
     }
 
+    private void updateLinkPreview(MessageQueue messageQueue) {
+        SocketLinkPreviewThumbnailEvent event = (SocketLinkPreviewThumbnailEvent) messageQueue.getData();
+        if (!messageListModel.upsertLinkPreviewThumbnail(event)) {
+            return;
+        }
+        SocketLinkPreviewThumbnailEvent.Data data = event.getData();
+
+        messageListPresenter.updateLinkPreviewMessage(data.getMessageId(), data.getLinkPreview());
+        if (isForeground) {
+            messageListPresenter.justRefresh();
+        }
+    }
+
     private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
         messageListPresenter.showStickerPreview(stickerInfo);
-        if (oldSticker.getStickerGroupId() != stickerInfo.getStickerGroupId() || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
+        if (oldSticker.getStickerGroupId() != stickerInfo.getStickerGroupId()
+                || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
             messageListPresenter.loadSticker(stickerInfo);
         }
     }
@@ -1344,6 +1362,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
 
         sendMessagePublisherEvent(new UpdateMessageQueue(teamId, message.getId()));
+    }
+
+    public void onEvent(SocketLinkPreviewThumbnailEvent event) {
+        String imageUrl = event.getData() != null ? event.getData().getLinkPreview() != null ?
+                event.getData().getLinkPreview().imageUrl : "null" : "null";
+
+        sendMessagePublisherEvent(new UpdateLinkPreviewQueue(event));
     }
 
     void updateRoomInfo() {
