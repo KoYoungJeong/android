@@ -229,7 +229,7 @@ public class BitmapUtil {
         return result;
     }
 
-    public static Bitmap getCircularBitmap(Bitmap source) {
+    public static Bitmap getCircularBitmap(Bitmap source, int bgColor) {
         int size = Math.min(source.getWidth(), source.getHeight());
         int x = (source.getWidth() - size) / 2;
         int y = (source.getHeight() - size) / 2;
@@ -239,11 +239,20 @@ public class BitmapUtil {
         }
         Bitmap bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
+
+        float r = size / 2f;
+
+        Paint bgPaint = new Paint();
+        bgPaint.setAntiAlias(true);
+        bgPaint.setDither(true);
+        bgPaint.setColor(bgColor);
+        bgPaint.setStyle(Paint.Style.FILL);
+
+        canvas.drawCircle(r, r, r, bgPaint);
         Paint paint = new Paint();
         BitmapShader shader = new BitmapShader(squaredBitmap, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
         paint.setShader(shader);
         paint.setAntiAlias(true);
-        float r = size / 2f;
         canvas.drawCircle(r, r, r, paint);
         squaredBitmap.recycle();
         return bitmap;
@@ -292,15 +301,6 @@ public class BitmapUtil {
         Canvas canvas = new Canvas(bitmap);
         float r = size / 2f;
 
-        Paint linePaint = new Paint();
-        linePaint.setAntiAlias(true);
-        linePaint.setDither(true);
-        linePaint.setColor(lineColor);
-        linePaint.setStrokeWidth(lineWidth);
-        linePaint.setStyle(Paint.Style.STROKE);
-
-        canvas.drawCircle(r, r, r, linePaint);
-
         Paint bgPaint = new Paint();
         bgPaint.setAntiAlias(true);
         bgPaint.setDither(true);
@@ -314,6 +314,15 @@ public class BitmapUtil {
         paint.setShader(shader);
         paint.setAntiAlias(true);
         canvas.drawCircle(r, r, r, paint);
+
+        Paint linePaint = new Paint();
+        linePaint.setAntiAlias(true);
+        linePaint.setDither(true);
+        linePaint.setColor(lineColor);
+        linePaint.setStrokeWidth(lineWidth);
+        linePaint.setStyle(Paint.Style.STROKE);
+
+        canvas.drawCircle(r, r, r, linePaint);
 
         squaredBitmap.recycle();
         return bitmap;
