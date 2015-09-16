@@ -5,6 +5,9 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -40,7 +43,6 @@ import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.ViewById;
 
 import uk.co.senab.photoview.PhotoView;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by tonyjs on 15. 9. 8..
@@ -96,6 +98,7 @@ public class MemberProfileActivity extends AppCompatActivity {
 
     private int scrollEventMargin;
     private boolean isFullSizeImageShowing = false;
+    private boolean hasChangedProfileImage = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +127,7 @@ public class MemberProfileActivity extends AppCompatActivity {
         final String profileImageUrlLarge = member.getUserLargeProfileUrl();
 
         // 기본 프로필 이미지 인 경우 디폴트 컬러를 보여준다.
-        if (!hasChangedProfileUrl(profileImageUrlLarge)) {
+        if (!(hasChangedProfileImage = hasChangedProfileImage(profileImageUrlLarge))) {
             int color = getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
             vgProfileImageOverlay.setBackgroundColor(color);
         }
@@ -153,12 +156,16 @@ public class MemberProfileActivity extends AppCompatActivity {
             vgProfileTeamInfo.setVisibility(View.GONE);
         }
 
+        float lineWidth = 1;
+        int lineColor = getResources().getColor(R.color.jandi_member_profile_img_circle_line_color);
+        int bgColor = Color.BLACK;
+        IonCircleStrokeTransform transform = new IonCircleStrokeTransform(lineWidth, lineColor, bgColor);
+
         String profileImageUrlMedium = member.getUserMediumProfileUrl();
-        IonCircleStrokeTransform transform = new IonCircleStrokeTransform(
-                1, getResources().getColor(R.color.jandi_member_profile_img_circle_line_color));
         Ion.with(ivProfileImageSmall)
-                .fitXY()
+                .placeholder(R.drawable.profile_img)
                 .error(R.drawable.profile_img)
+                .fitXY()
                 .transform(transform)
                 .load(profileImageUrlMedium);
 
@@ -185,7 +192,8 @@ public class MemberProfileActivity extends AppCompatActivity {
         if (isDisableUser) {
             tvProfileEmail.setVisibility(View.GONE);
             tvProfilePhone.setVisibility(View.GONE);
-            btnProfileStar.setVisibility(View.GONE);
+            btnProfileStar.setVisibility(View.INVISIBLE);
+            btnProfileStar.setEnabled(false);
             return;
         }
 
@@ -203,6 +211,7 @@ public class MemberProfileActivity extends AppCompatActivity {
 
         btnProfileStar.setSelected(member.isStarred);
         btnProfileStar.setVisibility(isMe() ? View.INVISIBLE : View.VISIBLE);
+        btnProfileStar.setEnabled(!isMe());
 
         addButtons(member);
     }
@@ -276,9 +285,11 @@ public class MemberProfileActivity extends AppCompatActivity {
     }
 
     private void loadLargeImage(String profileImageUrlLarge) {
+        Drawable placeHolder = new ColorDrawable(
+                getResources().getColor(R.color.jandi_member_profile_img_overlay_default));
         Ion.with(ivProfileImageLarge)
-                .placeholder(R.drawable.profile_img)
-                .error(R.drawable.profile_img)
+                .placeholder(placeHolder)
+                .error(placeHolder)
                 .centerCrop()
                 .transform(new IonBlurTransform())
                 .load(profileImageUrlLarge);
@@ -286,6 +297,10 @@ public class MemberProfileActivity extends AppCompatActivity {
 
     @Click(R.id.iv_member_profile_img_small)
     void showFullImage(View v) {
+        if (!hasChangedProfileImage) {
+            return;
+        }
+
         if (isLandscape()) {
             v.setPivotX(0);
         }
@@ -346,7 +361,7 @@ public class MemberProfileActivity extends AppCompatActivity {
 
     @Click(R.id.btn_member_profile_star)
     public void star(View v) {
-        if (isMe()) {
+        if (!v.isEnabled()) {
             return;
         }
         boolean futureSelected = !v.isSelected();
@@ -365,7 +380,7 @@ public class MemberProfileActivity extends AppCompatActivity {
         EntityManager.getInstance().getEntityById(memberId).isStarred = star;
     }
 
-    private boolean hasChangedProfileUrl(String url) {
+    private boolean hasChangedProfileImage(String url) {
         return !TextUtils.isEmpty(url) && url.contains("files-profile");
     }
 

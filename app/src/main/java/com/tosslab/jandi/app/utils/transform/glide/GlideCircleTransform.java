@@ -20,7 +20,7 @@ public class GlideCircleTransform extends BitmapTransformation {
 
     @Override
     protected Bitmap transform(BitmapPool pool, Bitmap source, int outWidth, int outHeight) {
-        return BitmapUtil.getCircularBitmapImage(source);
+        return BitmapUtil.getCircularBitmap(source);
     }
 
     @Override

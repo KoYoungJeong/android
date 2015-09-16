@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.utils.BitmapUtil;
 public class IonCircleTransform implements com.koushikdutta.ion.bitmap.Transform {
     @Override
     public Bitmap transform(Bitmap source) {
-        return BitmapUtil.getCircularBitmapImage(source);
+        return BitmapUtil.getCircularBitmap(source);
     }
 
     @Override
