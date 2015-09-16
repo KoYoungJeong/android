@@ -23,9 +23,9 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import retrofit.RetrofitError;
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
 
 /**
  * Created by tee on 15. 6. 20..
@@ -35,6 +35,27 @@ public class PoolableRequestApiExecutor {
     public static final int MAX_POOL_SIZE = 10;
     private static final int RETRY_COUNT = 2;
     private static final Pools.SynchronizedPool sExecutorPool = new Pools.SynchronizedPool(MAX_POOL_SIZE);
+    private static PublishSubject<Integer> introPublishSubject;
+
+    static {
+        introPublishSubject = PublishSubject.create();
+        introPublishSubject
+                .filter(integer -> !TextUtils.isEmpty(JandiPreference.getRefreshToken(JandiApplication.getContext())))
+                .doOnNext(integer -> SignOutUtil.removeSignData())
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(integer -> {
+                    Context context = JandiApplication.getContext();
+                    ColoredToast.showError(context, context.getString(R.string.err_expired_session));
+                    JandiSocketService.stopService(context);
+                    IntroMainActivity_
+                            .intent(context)
+                            .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                            .start();
+
+                });
+    }
+
     //    private static final AwaitablePool sExecutorPool = new AwaitablePool(MAX_POOL_SIZE);
     private int retryCnt = 0;
 
@@ -91,21 +112,7 @@ public class PoolableRequestApiExecutor {
                 } else {
                     // unauthorized exception
                     LogUtil.e("Refresh Token Fail", e);
-                    Observable.just(1)
-                            .filter(integer -> !TextUtils.isEmpty(JandiPreference.getRefreshToken(JandiApplication.getContext())))
-                            .doOnNext(integer -> SignOutUtil.removeSignData())
-                            .subscribeOn(Schedulers.computation())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(integer -> {
-                                Context context = JandiApplication.getContext();
-                                ColoredToast.showError(context, context.getString(R.string.err_expired_session));
-                                JandiSocketService.stopService(context);
-                                IntroMainActivity_
-                                        .intent(context)
-                                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                        .start();
-
-                            });
+                    introPublishSubject.onNext(1);
                     throw e;
                 }
             } else {
