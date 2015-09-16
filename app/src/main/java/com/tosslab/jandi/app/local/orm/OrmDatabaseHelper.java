@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.tosslab.jandi.app.local.orm.domain.BadgeCount;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.domain.LeftSideMenu;
@@ -29,8 +30,10 @@ import java.sql.SQLException;
  * Created by Steve SeongUg Jung on 15. 7. 20..
  */
 public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
-
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION_ORIGIN = 1;
+    private static final int DATABASE_VERSION_FOLDER = 2;
+    private static final int DATABASE_VERSION_BADGE = 3;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_BADGE;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -101,6 +104,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             createTable(connectionSource, UploadedFileInfo.class);
 
+            createTable(connectionSource, BadgeCount.class);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -108,18 +113,17 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
-
-        if (oldVersion == 1) {
-            if (newVersion == 2) {
-                try {
+        if (oldVersion < newVersion) {
+            try {
+                if (oldVersion == DATABASE_VERSION_ORIGIN) {
                     createTable(connectionSource, UploadedFileInfo.class);
                     createTable(connectionSource, ResFolder.class);
                     createTable(connectionSource, ResFolderItem.class);
-
-                } catch (SQLException e) {
-                    e.printStackTrace();
                 }
-                return;
+
+                createTable(connectionSource, BadgeCount.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
@@ -179,6 +183,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             dropTable(connectionSource, ResFolder.class);
             dropTable(connectionSource, ResFolderItem.class);
             dropTable(connectionSource, FolderExpand.class);
+
+            dropTable(connectionSource, BadgeCount.class);
 
             onCreate(database, connectionSource);
 
@@ -251,6 +257,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), ResFolderItem.class);
         clearTable(getConnectionSource(), FolderExpand.class);
 
+        clearTable(getConnectionSource(), BadgeCount.class);
     }
 
     private void clearTable(ConnectionSource connectionSource, Class<?> dataClass) {

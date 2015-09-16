@@ -5,8 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
@@ -85,20 +87,23 @@ public class MainTopicListPresenter {
             return;
         }
         TopicFolderData topicFolderData = topicAdapter.getTopicFolderData(groupPosition);
-        topicFolderData.setChildBadgeCnt(topicFolderData.getChildBadgeCnt() - item.getUnreadCount());
+        int itemsUnreadCount = item.getUnreadCount();
+        topicFolderData.setChildBadgeCnt(topicFolderData.getChildBadgeCnt() - itemsUnreadCount);
         item.setUnreadCount(0);
         adapter.notifyDataSetChanged();
 
         mainTopicModel.resetBadge(item.getEntityId());
-        int badgeCount = JandiPreference.getBadgeCount(JandiApplication.getContext()) - item.getUnreadCount();
-        JandiPreference.setBadgeCount(JandiApplication.getContext(), badgeCount);
-        BadgeUtils.setBadge(JandiApplication.getContext(), badgeCount);
+
+        int teamId = EntityManager.getInstance().getTeamId();
+        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+        int badgeCount = badgeCountRepository.findBadgeCountByTeamId(teamId) - itemsUnreadCount;
+        badgeCountRepository.upsertBadgeCount(EntityManager.getInstance().getTeamId(), badgeCount);
+        BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
 
         int unreadCount = getUnreadCount(Observable.from(view.getJoinedTopics()));
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
 
         int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
-        int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
         view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
                 item.getMarkerLinkId());
         view.setSelectedItem(((ExpandableTopicAdapter) adapter)

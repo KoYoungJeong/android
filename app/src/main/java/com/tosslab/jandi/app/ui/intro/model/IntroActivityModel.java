@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.DatabaseConsts;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -125,8 +126,9 @@ public class IntroActivityModel {
                     RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            JandiPreference.setBadgeCount(context.getApplicationContext(), totalUnreadCount);
-            BadgeUtils.setBadge(context.getApplicationContext(), totalUnreadCount);
+            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+            badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
+            BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
             EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitError e) {

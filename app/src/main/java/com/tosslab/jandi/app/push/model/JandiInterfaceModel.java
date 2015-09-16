@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
@@ -68,7 +69,9 @@ public class JandiInterfaceModel {
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-        JandiPreference.setBadgeCount(context, totalUnreadCount);
+        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+        badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
+        BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
         BadgeUtils.setBadge(context, totalUnreadCount);
 
     }
@@ -133,8 +136,9 @@ public class JandiInterfaceModel {
             ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            JandiPreference.setBadgeCount(context, totalUnreadCount);
-            BadgeUtils.setBadge(context, totalUnreadCount);
+            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+            badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
+            BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
             EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitError e) {

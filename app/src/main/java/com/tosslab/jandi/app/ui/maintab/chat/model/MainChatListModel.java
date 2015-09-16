@@ -39,14 +39,13 @@ public class MainChatListModel {
 
     }
 
-    public int getMemberId(Context context) {
+    public int getMemberId() {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         return selectedTeamInfo != null ? selectedTeamInfo.getMemberId() : -1;
     }
 
-    public int getTeamId(Context context) {
-        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
-        return selectedTeamInfo != null ? selectedTeamInfo.getTeamId() : -1;
+    public int getTeamId() {
+        return EntityManager.getInstance().getTeamId();
     }
 
     public List<ResChat> getChatList(int memberId) throws RetrofitError {

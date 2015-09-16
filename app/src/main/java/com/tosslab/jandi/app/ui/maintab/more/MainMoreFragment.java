@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
@@ -24,6 +25,7 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -116,8 +118,13 @@ public class MainMoreFragment extends Fragment {
         final int badgeCount[] = {0};
         Observable.from(accountRepository.getAccountTeams())
                 .filter(userTeam -> userTeam.getTeamId() != selectedTeamId)
-                .subscribe(userTeam -> badgeCount[0] += userTeam.getUnread());
+                .subscribe(userTeam -> {
+                    badgeCount[0] += userTeam.getUnread();
+                    BadgeCountRepository.getRepository()
+                            .upsertBadgeCount(userTeam.getTeamId(), userTeam.getUnread());
+                });
 
+        BadgeUtils.setBadge(getActivity(), BadgeCountRepository.getRepository().getTotalBadgeCount());
         switchTeamIconView.setBadgeCount(badgeCount[0]);
     }
 
