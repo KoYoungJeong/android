@@ -29,8 +29,8 @@ import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -193,7 +193,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
                     .show
                             (getFragmentManager(), "dialog");
 
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.ViewProfile);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.ViewProfile);
 
         }
     }
@@ -247,7 +247,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     void onSearchOptionSelect() {
         SearchActivity_.intent(getActivity())
                 .start();
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.Search);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.Search);
 
     }
 
@@ -260,7 +260,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     void onEntityItemClick(int position) {
 
         mainChatListPresenter.onEntityItemClick(getActivity(), position);
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.ChooseDM);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.ChooseDM);
     }
 
     @ItemLongClick(R.id.lv_main_chat_list)
@@ -279,9 +279,9 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
 
         if (view.getId() == R.id.btn_main_chat_fab) {
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.SelectTeamMember);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.SelectTeamMember);
         } else {
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.SelectTeamMember_EmptyData);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.SelectTeamMember_EmptyData);
         }
     }
 

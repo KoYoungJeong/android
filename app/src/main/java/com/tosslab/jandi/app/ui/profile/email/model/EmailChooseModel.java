@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.LanguageUtil;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -116,7 +116,7 @@ public class EmailChooseModel {
                         .property(PropertyKey.Email, email)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.ChangeAccountPrimaryEmail.name(), "ResponseSuccess");
+        AnalyticsUtil.sendEvent(Event.ChangeAccountPrimaryEmail.name(), "ResponseSuccess");
 
     }
 
@@ -129,7 +129,7 @@ public class EmailChooseModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.ChangeAccountPrimaryEmail.name(), "ResponseFail");
+        AnalyticsUtil.sendEvent(Event.ChangeAccountPrimaryEmail.name(), "ResponseFail");
 
     }
 
@@ -143,7 +143,7 @@ public class EmailChooseModel {
                         .property(PropertyKey.Email, email)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.RequestVerificationEmail.name(), "ResponseSuccess");
+        AnalyticsUtil.sendEvent(Event.RequestVerificationEmail.name(), "ResponseSuccess");
 
     }
 
@@ -156,7 +156,7 @@ public class EmailChooseModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.RequestVerificationEmail.name(), "ResponseFail");
+        AnalyticsUtil.sendEvent(Event.RequestVerificationEmail.name(), "ResponseFail");
 
     }
 }

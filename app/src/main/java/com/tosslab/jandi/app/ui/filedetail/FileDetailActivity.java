@@ -57,7 +57,8 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
+import com.tosslab.jandi.app.ui.MixpanelAnalytics;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
@@ -73,8 +74,8 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
@@ -115,7 +116,7 @@ import static org.androidannotations.annotations.UiThread.Propagation;
  */
 @OptionsMenu(R.menu.file_detail_activity_menu)
 @EActivity(R.layout.activity_file_detail)
-public class FileDetailActivity extends BaseAnalyticsActivity implements FileDetailPresenter.View {
+public class FileDetailActivity extends BaseAppCompatActivity implements FileDetailPresenter.View {
 
     private static final StickerInfo NULL_STICKER = new StickerInfo();
     @Extra
@@ -166,9 +167,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     private ProgressWheel progressWheel;
     private ProgressDialog progressDialog;
     private StickerInfo stickerInfo = NULL_STICKER;
+    private MixpanelAnalytics mixpanelAnalytics;
 
     @AfterViews
     public void initForm() {
+        mixpanelAnalytics = new MixpanelAnalytics();
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.ScreenView)
@@ -177,7 +180,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                         .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_DETAIL)
                         .build());
 
-        GoogleAnalyticsUtil.sendScreenName("FILE_DETAIL");
+        AnalyticsUtil.sendScreenName("FILE_DETAIL");
 
         setUpActionBar();
 
@@ -206,7 +209,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                 }
                 setSendButtonSelected(true);
 
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Select);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Select);
             }
         });
         stickerViewModel.setType(StickerViewModel.TYPE_FILE_DETAIL);
@@ -221,7 +224,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         JandiPreference.setKeyboardHeight(FileDetailActivity.this, 0);
         addStarredButtonExecution();
 
-        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FileDetail);
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FileDetail);
     }
 
     @Override
@@ -243,7 +246,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             boolean starred = v.isSelected();
             updateFileStarred(!starred);
             fileDetailPresenter.changeStarredFileMessageState(fileId, !starred);
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, !starred ? AnalyticsValue.Action.TurnOnStar : AnalyticsValue.Action.TurnOffStar);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, !starred ? AnalyticsValue.Action.TurnOnStar : AnalyticsValue.Action.TurnOffStar);
 
         });
 
@@ -269,7 +272,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @ItemLongClick(R.id.lv_file_detail_comments)
     void onCommentLongClick(ResMessages.OriginalMessage item) {
         fileDetailPresenter.onLongClickComment(item);
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap);
     }
 
     @Click(R.id.iv_file_detail_preview_sticker_close)
@@ -278,7 +281,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         dismissStickerPreview();
         setSendButtonSelected(false);
 
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_cancel);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_cancel);
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {
@@ -287,7 +290,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         }
 
         fileDetailPresenter.deleteComment(fileId, event.messageType, event.messageId, event.feedbackId);
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap_Delete);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap_Delete);
 
     }
 
@@ -296,7 +299,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             return;
         }
         copyToClipboard(event.contentString);
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap_Copy);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap_Copy);
     }
 
     public void onEventMainThread(TopicDeleteEvent event) {
@@ -323,22 +326,22 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                 return true;
             case R.id.action_file_detail_download:
                 download();
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu_Download);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu_Download);
                 return true;
             case R.id.action_file_detail_share:
                 clickShareButton();
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu_Share);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu_Share);
                 return true;
             case R.id.action_file_detail_unshare:
                 clickUnShareButton();
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu_UnShare);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu_UnShare);
                 return true;
             case R.id.action_file_detail_delete:
                 showDeleteFileDialog(fileId);
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu_Delete);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu_Delete);
                 return true;
             case R.id.menu_overflow:
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu);
                 return true;
 
         }
@@ -356,7 +359,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     public void onResume() {
         super.onResume();
         isForeground = true;
-        trackGaFileDetail(entityManager);
     }
 
     @Override
@@ -392,7 +394,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     @Click(R.id.et_message)
     void onMessageInputClick() {
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.MessageInputField);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.MessageInputField);
     }
 
     @UiThread(propagation = Propagation.REUSE)
@@ -519,7 +521,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @Override
     public void onShareMessageSucceed(int entityIdToBeShared, ResMessages.FileMessage fileMessage) {
         ColoredToast.show(this, getString(R.string.jandi_share_succeed, getSupportActionBar().getTitle()));
-        trackSharingFile(entityManager,
+        mixpanelAnalytics.trackSharingFile(entityManager,
                 entityManager.getEntityById(entityIdToBeShared).type,
                 fileMessage);
         clearAdapter();
@@ -565,7 +567,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @Override
     public void onUnShareMessageSucceed(int entityIdToBeUnshared, ResMessages.FileMessage fileMessage) {
         ColoredToast.show(this, getString(R.string.jandi_unshare_succeed, getSupportActionBar().getTitle()));
-        trackUnsharingFile(entityManager,
+        mixpanelAnalytics.trackUnsharingFile(entityManager,
                 entityManager.getEntityById(entityIdToBeUnshared).type,
                 fileMessage);
         clearAdapter();
@@ -649,7 +651,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             moveToMessageListActivity(entityId, entityType, entityId, isStarred);
         }
 
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.TapSharedTopic);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.TapSharedTopic);
     }
 
     @UiThread(propagation = Propagation.REUSE)
@@ -711,10 +713,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                     mentions.getMessage(), mentions.getMentions());
             stickerInfo = NULL_STICKER;
 
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Send);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Send);
         } else {
             fileDetailPresenter.sendComment(fileId, mentions.getMessage(), mentions.getMentions());
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Send);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Send);
         }
 
         etComment.setText("");
@@ -738,7 +740,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         if (selected) {
             stickerViewModel.dismissStickerSelector();
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker);
         } else {
             int keyboardHeight =
                     JandiPreference.getKeyboardHeight(FileDetailActivity.this.getApplicationContext());
@@ -752,7 +754,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                         }
                     });
                 }
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker);
             } else {
                 initKeyboardHeight();
             }
@@ -851,7 +853,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @Override
     public void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage,
                                       boolean execute) {
-        trackDownloadingFile(entityManager, fileMessage);
+        mixpanelAnalytics.trackDownloadingFile(entityManager, fileMessage);
 
         try {
             if (execute) {
@@ -895,7 +897,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         }
         int userEntityId = event.userId;
         fileDetailPresenter.getProfile(userEntityId);
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewProfile_FromComment);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewProfile_FromComment);
     }
 
     @UiThread
@@ -1069,11 +1071,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         switch (event.getAction()) {
             case STARRED:
                 fileDetailPresenter.registStarredComment(messageId);
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap_Star);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap_Star);
                 break;
             case UNSTARRED:
                 fileDetailPresenter.unregistStarredComment(messageId);
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap_Unstar);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap_Unstar);
                 break;
         }
     }

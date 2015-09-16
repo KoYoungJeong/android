@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -102,7 +102,7 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, entityId)
                         .build());
-        GoogleAnalyticsUtil.sendEvent(Event.TopicDelete.name(), "ResponseSuccess");
+        AnalyticsUtil.sendEvent(Event.TopicDelete.name(), "ResponseSuccess");
     }
 
     public void trackTopicDeleteFail(int errorCode) {
@@ -114,7 +114,7 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-        GoogleAnalyticsUtil.sendEvent(Event.TopicDelete.name(), "ResponseFail");
+        AnalyticsUtil.sendEvent(Event.TopicDelete.name(), "ResponseFail");
     }
 
     public void modifyTopicName(int entityType, int entityId, String inputName) throws RetrofitError {
@@ -155,7 +155,7 @@ public class TopicDetailModel {
                         .property(PropertyKey.TopicId, entityId)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.TopicNameChange.name(), "ResponseSuccess");
+        AnalyticsUtil.sendEvent(Event.TopicNameChange.name(), "ResponseSuccess");
     }
 
     public void trackChangingEntityNameFail(int errorCode) {
@@ -168,7 +168,7 @@ public class TopicDetailModel {
                         .property(PropertyKey.TopicId, errorCode)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.TopicNameChange.name(), "ResponseFail");
+        AnalyticsUtil.sendEvent(Event.TopicNameChange.name(), "ResponseFail");
     }
 
     public void trackTopicStarSuccess(int topicId) {
@@ -180,7 +180,7 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, topicId)
                         .build());
-        GoogleAnalyticsUtil.sendEvent(Event.TopicStar.name(), "ResponseSuccess");
+        AnalyticsUtil.sendEvent(Event.TopicStar.name(), "ResponseSuccess");
     }
 
     public void trackTopicUnStarSuccess(int topicId) {
@@ -193,7 +193,7 @@ public class TopicDetailModel {
                         .property(PropertyKey.TopicId, topicId)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.TopicUnStar.name(), "ResponseSuccess");
+        AnalyticsUtil.sendEvent(Event.TopicUnStar.name(), "ResponseSuccess");
     }
 
     public void trackTopicStarFail(int errorCode) {
@@ -205,7 +205,7 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-        GoogleAnalyticsUtil.sendEvent(Event.TopicStar.name(), "ResponseFail");
+        AnalyticsUtil.sendEvent(Event.TopicStar.name(), "ResponseFail");
     }
 
     public void trackTopicUnStarFail(int errorCode) {
@@ -218,7 +218,7 @@ public class TopicDetailModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.TopicUnStar.name(), "ResponseFail");
+        AnalyticsUtil.sendEvent(Event.TopicUnStar.name(), "ResponseFail");
     }
 
     public boolean isDefaultTopic(Context context, int entityId) {

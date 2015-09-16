@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.profile.email;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -15,10 +14,11 @@ import com.tosslab.jandi.app.events.profile.RetryNewEmailEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.ExceptionData;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.email.model.EmailChooseModel;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -40,7 +40,7 @@ import retrofit.RetrofitError;
  */
 @EActivity(R.layout.activity_email_choose)
 @OptionsMenu(R.menu.email_choose)
-public class EmailChooseActivity extends AppCompatActivity {
+public class EmailChooseActivity extends BaseAppCompatActivity {
 
     @Bean
     EmailChoosePresenter emailChoosePresenter;
@@ -59,7 +59,7 @@ public class EmailChooseActivity extends AppCompatActivity {
 
         getAccountEmailFromServer();
 
-        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.ChooseAnEmail);
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.ChooseAnEmail);
     }
 
     @OptionsItem(R.id.action_confirm)
@@ -169,10 +169,10 @@ public class EmailChooseActivity extends AppCompatActivity {
                 emailChoosePresenter.showRetryEmailDialog(selectedEmail.getEmail());
             }
 
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.ChooseAnEmail, AnalyticsValue.Action.ChooseEmail);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ChooseAnEmail, AnalyticsValue.Action.ChooseEmail);
         } else {
             emailChoosePresenter.showNewEmailDialog();
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.ChooseAnEmail, AnalyticsValue.Action.AddNewEmail);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ChooseAnEmail, AnalyticsValue.Action.AddNewEmail);
         }
 
     }

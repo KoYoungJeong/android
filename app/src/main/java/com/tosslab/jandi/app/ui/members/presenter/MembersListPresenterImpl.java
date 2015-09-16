@@ -12,8 +12,8 @@ import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -154,7 +154,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                 .entityId(entityId)
                 .build()
                 .show(activity.getSupportFragmentManager(), "dialog");
-        GoogleAnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.ViewProfile);
+        AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.ViewProfile);
     }
 
     public void onEvent(RetrieveTopicListEvent event) {

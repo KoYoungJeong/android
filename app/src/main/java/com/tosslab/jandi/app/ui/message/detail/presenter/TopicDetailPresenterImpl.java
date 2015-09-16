@@ -13,8 +13,8 @@ import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.TopicDetailModel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -101,13 +101,13 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
                 topicDetailModel.trackTopicUnStarSuccess(entityId);
                 view.showSuccessToast(context.getString(R.string.jandi_starred_unstarred));
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TurnOffStar);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TurnOffStar);
             } else {
                 entityClientManager.enableFavorite(entityId);
 
                 topicDetailModel.trackTopicStarSuccess(entityId);
                 view.showSuccessToast(context.getString(R.string.jandi_message_starred));
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TurnOnStar);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TurnOnStar);
             }
 
             EntityManager.getInstance().getEntityById(entityId).isStarred = !isStarred;

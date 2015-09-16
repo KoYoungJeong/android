@@ -4,17 +4,17 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.starmention.views.StarMentionListFragment;
 import com.tosslab.jandi.app.ui.starmention.views.StarMentionListFragment_;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -24,7 +24,7 @@ import org.androidannotations.annotations.Extra;
  * Created by tee on 15. 7. 28..
  */
 @EActivity(R.layout.activity_star_mention)
-public class StarMentionListActivity extends AppCompatActivity {
+public class StarMentionListActivity extends BaseAppCompatActivity {
 
     public static final String TYPE_STAR_LIST = "type_star_list";
     public static final String TYPE_MENTION_LIST = "type_mention_list";
@@ -53,9 +53,9 @@ public class StarMentionListActivity extends AppCompatActivity {
         }
 
         if (type == TYPE_STAR_LIST) {
-            GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.Stars);
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.Stars);
         } else {
-            GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.Mentions);
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.Mentions);
         }
     }
 
@@ -166,12 +166,12 @@ public class StarMentionListActivity extends AppCompatActivity {
             setSelectTab(allTabView, filesTabView);
             fragmentTransaction.hide(filesStarListFragment);
             fragmentTransaction.show(allStarListFragment);
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.Filter_All);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.Filter_All);
         } else if (view.hashCode() == filesTabView.hashCode()) {
             setSelectTab(filesTabView, allTabView);
             fragmentTransaction.hide(allStarListFragment);
             fragmentTransaction.show(filesStarListFragment);
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.Filter_Files);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.Filter_Files);
         }
 
         fragmentTransaction.commit();

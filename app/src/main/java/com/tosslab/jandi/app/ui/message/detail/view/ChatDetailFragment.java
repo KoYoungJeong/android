@@ -21,8 +21,8 @@ import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.TopicDetailModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -61,7 +61,7 @@ public class ChatDetailFragment extends Fragment {
         boolean isStarred = entity.isStarred;
         setStarred(isStarred);
 
-        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MessageDescription);
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MessageDescription);
 
     }
 

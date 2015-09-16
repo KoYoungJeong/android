@@ -17,8 +17,8 @@ import android.view.ViewGroup;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.invites.email.InviteEmailActivity_;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 
 /**
  * Created by Bill Minwook Heo on 15. 4. 21..
@@ -111,7 +111,7 @@ public class InvitationDialogFragment extends DialogFragment {
                         startInvitation(eventType);
                         dismiss();
                         if (action != null) {
-                            GoogleAnalyticsUtil.sendEvent(screen, action);
+                            AnalyticsUtil.sendEvent(screen, action);
                         }
                     }
                 })

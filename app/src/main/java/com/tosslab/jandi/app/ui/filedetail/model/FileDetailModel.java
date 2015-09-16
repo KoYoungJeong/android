@@ -30,7 +30,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -245,7 +245,7 @@ public class FileDetailModel {
                         .property(PropertyKey.FileId, fileId)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.FileDownload.name(), "ResponseSuccess");
+        AnalyticsUtil.sendEvent(Event.FileDownload.name(), "ResponseSuccess");
 
     }
 
@@ -261,7 +261,7 @@ public class FileDetailModel {
                         .property(PropertyKey.FileId, fileId)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.FileShare.name(), "ResponseSuccess");
+        AnalyticsUtil.sendEvent(Event.FileShare.name(), "ResponseSuccess");
 
     }
 
@@ -275,7 +275,7 @@ public class FileDetailModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.FileShare.name(), "ResponseFail");
+        AnalyticsUtil.sendEvent(Event.FileShare.name(), "ResponseFail");
 
     }
 
@@ -291,7 +291,7 @@ public class FileDetailModel {
                         .property(PropertyKey.FileId, fileId)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.FileUnShare.name(), "ResponseSuccess");
+        AnalyticsUtil.sendEvent(Event.FileUnShare.name(), "ResponseSuccess");
 
     }
 
@@ -305,7 +305,7 @@ public class FileDetailModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.FileUnShare.name(), "ResponseFail");
+        AnalyticsUtil.sendEvent(Event.FileUnShare.name(), "ResponseFail");
 
     }
 
@@ -321,7 +321,7 @@ public class FileDetailModel {
                         .property(PropertyKey.FileId, fileId)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.FileDelete.name(), "ResponseSuccess");
+        AnalyticsUtil.sendEvent(Event.FileDelete.name(), "ResponseSuccess");
 
     }
 
@@ -335,7 +335,7 @@ public class FileDetailModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.FileDelete.name(), "ResponseFail");
+        AnalyticsUtil.sendEvent(Event.FileDelete.name(), "ResponseFail");
 
     }
 

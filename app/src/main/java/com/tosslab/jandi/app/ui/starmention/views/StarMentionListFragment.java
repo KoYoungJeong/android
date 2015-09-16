@@ -28,8 +28,8 @@ import com.tosslab.jandi.app.ui.starmention.presentor.StarMentionListPresentor;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
@@ -137,11 +137,11 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
                     StarMentionListFragment.this);
             if (!TextUtils.equals(listType, StarMentionListActivity.TYPE_MENTION_LIST)) {
                 if (starMentionVO.getContentType() == StarMentionVO.Type.Text.getValue()) {
-                    GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.ChooseMsg);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.ChooseMsg);
                 } else if (starMentionVO.getContentType() == StarMentionVO.Type.File.getValue()) {
-                    GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.ChooseFile);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.ChooseFile);
                 } else if (starMentionVO.getContentType() == StarMentionVO.Type.Comment.getValue()) {
-                    GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.ChooseComment);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.ChooseComment);
                 }
             }
         };

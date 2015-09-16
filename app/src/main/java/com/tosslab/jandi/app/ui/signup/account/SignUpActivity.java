@@ -2,20 +2,20 @@ package com.tosslab.jandi.app.ui.signup.account;
 
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.signup.account.model.SignUpModel;
 import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.LanguageUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterTextChange;
@@ -34,7 +34,7 @@ import retrofit.mime.TypedByteArray;
  * Created by justinygchoi on 14. 12. 11..
  */
 @EActivity(R.layout.activity_signup)
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends BaseAppCompatActivity {
 
     @Bean
     SignUpViewModel signUpViewModel;
@@ -141,7 +141,7 @@ public class SignUpActivity extends AppCompatActivity {
         boolean allValid = signUpModel.isAllValid();
         signUpViewModel.activateSignUpButton(allValid);
 
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.AgreeTermsofService);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.AgreeTermsofService);
     }
 
     @Click({R.id.btn_signup_agree_pp, R.id.ly_signup_agree_pp})
@@ -152,7 +152,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         boolean allValid = signUpModel.isAllValid();
         signUpViewModel.activateSignUpButton(allValid);
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.AgreePrivacyPolicy);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.AgreePrivacyPolicy);
     }
 
     @Click({R.id.btn_signup_agree_all, R.id.ly_signup_agree_all})
@@ -164,7 +164,7 @@ public class SignUpActivity extends AppCompatActivity {
         boolean allValid = signUpModel.isAllValid();
         signUpViewModel.activateSignUpButton(allValid);
 
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.AcceptAll);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.AcceptAll);
     }
 
     @Click(R.id.btn_signup_confirm)
@@ -174,7 +174,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         signUp();
 
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.SignUpNow);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.SignUpNow);
     }
 
     @Background

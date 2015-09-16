@@ -36,8 +36,8 @@ import com.tosslab.jandi.app.ui.selector.user.UserSelectorImpl;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -128,7 +128,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                         onSearchItemSelect.onSearchItemSelect();
                     }
 
-                    GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseSearchResult);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseSearchResult);
 
                 }
             }
@@ -166,7 +166,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
             messageSearchPresenter.onInitEntityId(entityId);
         }
 
-        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MsgSearch);
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MsgSearch);
 
     }
 
@@ -256,13 +256,13 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         roomSelector.setOnRoomSelectListener(item -> {
             if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
                 EventBus.getDefault().post(new SelectEntityEvent(-1, getString(R.string.jandi_file_category_everywhere)));
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
             } else {
                 EventBus.getDefault().post(new SelectEntityEvent(item.getEntityId(), item.getName()));
                 if (item.isUser()) {
-                    GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
                 } else {
-                    GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
                 }
             }
             roomSelector.dismiss();
@@ -271,13 +271,13 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         roomSelector.setOnRoomDismissListener(
                 () -> {
                     setUpCategoryView(vgEntity, entityTextView, false);
-                    GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.CloseTopicFilter);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.CloseTopicFilter);
 
                 });
 
         roomSelector.show(vgEntity);
 
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter);
     }
 
     @Override
@@ -290,10 +290,10 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
             public void onUserSelect(FormattedEntity item) {
                 if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
                     EventBus.getDefault().post(new SelectMemberEvent(-1, getString(R.string.jandi_file_category_everyone)));
-                    GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
                 } else {
                     EventBus.getDefault().post(new SelectMemberEvent(item.getId(), item.getName()));
-                    GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
                 }
                 userSelector.dismiss();
             }
@@ -302,12 +302,12 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         userSelector.setOnUserDismissListener(
                 () -> {
                     setUpCategoryView(vgMember, memberTextView, false);
-                    GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.CloseMemberFilter);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.CloseMemberFilter);
                 });
 
         userSelector.show(vgMember);
 
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenMemberFilter);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenMemberFilter);
 
     }
 

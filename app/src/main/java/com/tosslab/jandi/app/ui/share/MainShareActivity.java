@@ -3,9 +3,9 @@ package com.tosslab.jandi.app.ui.share;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.share.model.MainShareModel;
 import com.tosslab.jandi.app.ui.share.type.etc.EtcShareDialogFragment_;
@@ -16,7 +16,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 /**
  * Created by Steve SeongUg Jung on 15. 2. 13..
  */
-public class MainShareActivity extends AppCompatActivity {
+public class MainShareActivity extends BaseAppCompatActivity {
 
     private MainShareModel mainShareModel;
 

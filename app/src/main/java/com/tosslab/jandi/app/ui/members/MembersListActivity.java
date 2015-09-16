@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.members;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +15,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
@@ -25,8 +25,8 @@ import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -53,7 +53,7 @@ import java.util.List;
  */
 
 @EActivity(R.layout.activity_topic_member)
-public class MembersListActivity extends AppCompatActivity implements MembersListPresenter.View {
+public class MembersListActivity extends BaseAppCompatActivity implements MembersListPresenter.View {
 
     public static final int TYPE_MEMBERS_LIST_TEAM = 0x01;
     public static final int TYPE_MEMBERS_LIST_TOPIC = 0x02;
@@ -103,7 +103,7 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
                         .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_MEMBER)
                         .build());
 
-        GoogleAnalyticsUtil.sendScreenName(getScreen());
+        AnalyticsUtil.sendScreenName(getScreen());
 
         setupActionbar();
 
@@ -144,7 +144,7 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
 
     @Click(R.id.et_topic_member_search)
     void onSearchInputClick() {
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamMembers, AnalyticsValue.Action.SearchInputField);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamMembers, AnalyticsValue.Action.SearchInputField);
     }
     @Override
     protected void onDestroy() {

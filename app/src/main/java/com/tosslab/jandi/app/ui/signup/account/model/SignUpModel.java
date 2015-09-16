@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.PasswordChecker;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -143,7 +143,7 @@ public class SignUpModel {
                         .property(PropertyKey.Email, email)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.SendAccountVerificationMail.name(), "ResponseSuccess");
+        AnalyticsUtil.sendEvent(Event.SendAccountVerificationMail.name(), "ResponseSuccess");
     }
 
     public void trackSendEmailFail(int errorCode) {
@@ -154,7 +154,7 @@ public class SignUpModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.SendAccountVerificationMail.name(), "ResponseFail");
+        AnalyticsUtil.sendEvent(Event.SendAccountVerificationMail.name(), "ResponseFail");
     }
 
 }

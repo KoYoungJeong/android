@@ -11,7 +11,7 @@ import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.adapter.TopicRecyclerAdapter;
@@ -20,8 +20,8 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.presenter.
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
@@ -39,7 +39,7 @@ import rx.Observable;
  */
 
 @EActivity(R.layout.activity_unjoined_topic_list)
-public class JoinableTopicListActivity extends BaseAnalyticsActivity
+public class JoinableTopicListActivity extends BaseAppCompatActivity
         implements JoinableTopicListPresenter.View {
 
     @ViewById(R.id.rv_unjoined_topic)
@@ -107,7 +107,7 @@ public class JoinableTopicListActivity extends BaseAnalyticsActivity
 
         mainTopicListPresenter.onInitUnjoinedTopics();
 
-        GoogleAnalyticsUtil.sendScreenName(AnalyticsValue.Screen.BrowseOtherTopics);
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.BrowseOtherTopics);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -147,10 +147,10 @@ public class JoinableTopicListActivity extends BaseAnalyticsActivity
         dialog.setOnJoinClickListener(
                 (dialog1, which) -> {
                     mainTopicListPresenter.onJoinTopic(getApplicationContext(), item);
-                    GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.BrowseOtherTopics, AnalyticsValue.Action.JoinTopic);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.BrowseOtherTopics, AnalyticsValue.Action.JoinTopic);
                 });
         dialog.show(getSupportFragmentManager(), "dialog");
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.BrowseOtherTopics, AnalyticsValue.Action.ViewTopicInfo);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.BrowseOtherTopics, AnalyticsValue.Action.ViewTopicInfo);
 
     }
 

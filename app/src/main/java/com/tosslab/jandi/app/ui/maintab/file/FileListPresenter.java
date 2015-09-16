@@ -32,8 +32,8 @@ import com.tosslab.jandi.app.ui.selector.room.RoomSelectorImpl;
 import com.tosslab.jandi.app.ui.selector.user.UserSelector;
 import com.tosslab.jandi.app.ui.selector.user.UserSelectorImpl;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import org.androidannotations.annotations.AfterViews;
@@ -166,9 +166,9 @@ public class FileListPresenter {
             }
 
             if (context instanceof SearchActivity) {
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, action);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, action);
             } else {
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, action);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, action);
             }
 
         });
@@ -176,17 +176,17 @@ public class FileListPresenter {
         fileSelector.setOnFileTypeDismissListener(() -> {
             setUpTypeTextView(textViewFileListType, false);
             if (context instanceof SearchActivity) {
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseTypeFilter);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseTypeFilter);
             } else {
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseTypeFilter);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseTypeFilter);
             }
         });
         fileSelector.show(((View) textViewFileListType.getParent().getParent()));
 
         if (context instanceof SearchActivity) {
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTypeFilter);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTypeFilter);
         } else {
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTypeFilter);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTypeFilter);
         }
     }
 
@@ -219,15 +219,15 @@ public class FileListPresenter {
 
                 if (context instanceof SearchActivity) {
                     if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
-                        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
                     } else {
-                        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
                     }
                 } else {
                     if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
-                        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
                     } else {
-                        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
                     }
                 }
             }
@@ -236,18 +236,18 @@ public class FileListPresenter {
         userSelector.setOnUserDismissListener(() -> {
             setUpTypeTextView(textViewFileListWhom, false);
             if (context instanceof SearchActivity) {
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseMemberFilter);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseMemberFilter);
             } else {
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseMemberFilter);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseMemberFilter);
             }
         });
 
         userSelector.show(((View) textViewFileListWhom.getParent().getParent()));
 
         if (context instanceof SearchActivity) {
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter);
         } else {
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter);
         }
     }
 
@@ -276,19 +276,19 @@ public class FileListPresenter {
 
                 if (context instanceof SearchActivity) {
                     if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-                        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
                     } else if (item.isUser()) {
-                        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
                     } else {
-                        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
                     }
                 } else {
                     if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-                        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
                     } else if (item.isUser()) {
-                        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
                     } else {
-                        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
                     }
                 }
 
@@ -298,17 +298,17 @@ public class FileListPresenter {
         roomSelector.setOnRoomDismissListener(() -> {
             setUpTypeTextView(textViewFileListWhere, false);
             if (context instanceof SearchActivity) {
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseTopicFilter);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseTopicFilter);
             } else {
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseTopicFilter);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseTopicFilter);
             }
         });
         roomSelector.show(((View) textViewFileListWhere.getParent().getParent()));
 
         if (context instanceof SearchActivity) {
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter);
         } else {
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter);
         }
 
 

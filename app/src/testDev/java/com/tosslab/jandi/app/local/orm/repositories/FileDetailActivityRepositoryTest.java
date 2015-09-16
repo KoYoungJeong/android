@@ -30,7 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * Created by Steve SeongUg Jung on 15. 7. 27..
  */
 @RunWith(JandiRobolectricGradleTestRunner.class)
-public class FileDetailRepositoryTest {
+public class FileDetailActivityRepositoryTest {
 
     private ResFileDetail fileDetail;
 

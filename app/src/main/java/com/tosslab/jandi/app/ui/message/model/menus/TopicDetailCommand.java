@@ -6,8 +6,8 @@ import android.view.MenuItem;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity_;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 9..
@@ -32,9 +32,9 @@ public class TopicDetailCommand implements MenuCommand {
                 .startForResult(TopicDetailActivity.REQUEST_DETAIL);
 
         if (EntityManager.getInstance().getEntityById(entityId).isUser()) {
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.Message, AnalyticsValue.Action.Message_Decription);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Message, AnalyticsValue.Action.Message_Decription);
         } else {
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.TopicChat_Decription);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.TopicChat_Decription);
         }
     }
 }

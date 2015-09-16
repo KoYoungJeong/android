@@ -19,8 +19,8 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.EntityMenuDialogModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -118,7 +118,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         AnalyticsValue.Screen category = entity.isUser() ? AnalyticsValue.Screen.MessageTab : AnalyticsValue.Screen.TopicsTab;
         AnalyticsValue.Action action = entity.isStarred ? AnalyticsValue.Action.TopicSubMenu_Unstar : AnalyticsValue.Action.TopicSubMenu_Star;
-        GoogleAnalyticsUtil.sendEvent(category, action);
+        AnalyticsUtil.sendEvent(category, action);
 
     }
 
@@ -215,9 +215,9 @@ public class EntityMenuDialogFragment extends DialogFragment {
             entityMenuDialogModel.refreshEntities();
 
             if (entity.isUser()) {
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.TopicSubMenu_Leave);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.TopicSubMenu_Leave);
             } else {
-                GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicSubMenu_Leave);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicSubMenu_Leave);
             }
             EventBus.getDefault().post(new RetrieveTopicListEvent());
         } catch (RetrofitError e) {
@@ -258,7 +258,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
         EventBus.getDefault().post(topicFolderMoveCallEvent);
         dismiss();
 
-        GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicSubMenu_Move);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicSubMenu_Move);
 
     }
 }

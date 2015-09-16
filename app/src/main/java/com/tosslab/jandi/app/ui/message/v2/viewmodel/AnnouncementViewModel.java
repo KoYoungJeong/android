@@ -24,8 +24,8 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -170,13 +170,13 @@ public class AnnouncementViewModel {
             tvAnnouncementMessage.setSingleLine(false);
             tvAnnouncementMessage.setMaxLines(7);
             tvAnnouncementMessage.post(textLineDetermineRunnable);
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Announcement_Expand);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Announcement_Expand);
         } else {
             tvAnnouncementMessage.setSingleLine();
             tvAnnouncementMessage.setVerticalScrollBarEnabled(false);
             tvAnnouncementMessage.setMovementMethod(null);
             tvAnnouncementMessage.setText(tvAnnouncementMessage.getText());
-            GoogleAnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Restore);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Restore);
         }
     }
 

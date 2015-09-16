@@ -23,7 +23,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -205,7 +205,7 @@ public class InvitationViewModel {
                         .property(PropertyKey.MemberCount, memberCount)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.TopicMemberInvite.name(), "ResponseSuccess");
+        AnalyticsUtil.sendEvent(Event.TopicMemberInvite.name(), "ResponseSuccess");
     }
 
     private void trackTopicMemberInviteFail(int errorCode) {
@@ -218,7 +218,7 @@ public class InvitationViewModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.TopicMemberInvite.name(), "ResponseFail");
+        AnalyticsUtil.sendEvent(Event.TopicMemberInvite.name(), "ResponseFail");
     }
 
     @UiThread

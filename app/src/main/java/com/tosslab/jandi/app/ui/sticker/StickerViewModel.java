@@ -10,8 +10,8 @@ import android.widget.LinearLayout;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.views.ViewPagerIndicator;
 
 import org.androidannotations.annotations.AfterViews;
@@ -136,7 +136,7 @@ public class StickerViewModel {
             } else {
                 action = AnalyticsValue.Action.Sticker_StickerTab;
             }
-            GoogleAnalyticsUtil.sendEvent(screen.name(), action.name() + String.valueOf(groupIdx));
+            AnalyticsUtil.sendEvent(screen.name(), action.name() + String.valueOf(groupIdx));
         }
     }
 

@@ -14,7 +14,7 @@ import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -106,7 +106,7 @@ public class FileListModel {
                         .property(PropertyKey.SearchKeyword, keyword)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.FileKeywordSearch.name(), "ResponseSuccess");
+        AnalyticsUtil.sendEvent(Event.FileKeywordSearch.name(), "ResponseSuccess");
     }
 
     public void trackFileKeywordSearchFail(int errorCode) {
@@ -119,6 +119,6 @@ public class FileListModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.FileKeywordSearch.name(), "ResponseFail");
+        AnalyticsUtil.sendEvent(Event.FileKeywordSearch.name(), "ResponseFail");
     }
 }

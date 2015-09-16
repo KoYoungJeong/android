@@ -1,12 +1,17 @@
 package com.tosslab.jandi.app.utils.analytics;
 
+import android.os.Bundle;
+
+import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.tosslab.jandi.app.JandiApplication;
 
-public class GoogleAnalyticsUtil {
+public class AnalyticsUtil {
 
-    private GoogleAnalyticsUtil() {
+    public static final String FACEBOOK_ACTION = "action";
+
+    private AnalyticsUtil() {
     }
 
     public static void sendScreenName(String screenName) {
@@ -26,6 +31,15 @@ public class GoogleAnalyticsUtil {
                             .setCategory(category)
                             .setAction(action)
                             .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Bundle parameters = new Bundle();
+            parameters.putString(FACEBOOK_ACTION, action);
+            AppEventsLogger.newLogger(JandiApplication.getContext())
+                    .logEvent(category, parameters);
         } catch (Exception e) {
             e.printStackTrace();
         }
