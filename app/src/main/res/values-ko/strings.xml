@@ -64,6 +64,8 @@
     <string name="jandi_tab_more">"더보기"</string>
     <string name="jandi_action_direct_message">"1:1 대화"</string>
     <string name="jandi_action_starred">"즐겨찾기"</string>
+    <string name="jandi_notification_on">"알림 켜기"</string>
+    <string name="jandi_notification_off">"알림 끄기"</string>
 
     <!-- 튜토리얼 -->
     <string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>

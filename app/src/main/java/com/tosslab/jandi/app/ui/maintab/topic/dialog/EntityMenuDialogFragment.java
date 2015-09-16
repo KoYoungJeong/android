@@ -45,16 +45,19 @@ public class EntityMenuDialogFragment extends DialogFragment {
     int folderId;
 
     @ViewById(R.id.btn_entity_popup_starred)
-    TextView starredButton;
+    TextView btnStarred;
 
     @ViewById(R.id.btn_entity_popup_leave)
-    TextView leaveButton;
+    TextView btnLeave;
 
     @ViewById(R.id.tv_popup_title)
-    TextView title;
+    TextView tvTitle;
 
     @ViewById(R.id.btn_entity_popup_move_folder)
-    TextView tvMoveFolder;
+    TextView btnMoveFolder;
+
+    @ViewById(R.id.btn_entity_popup_notification)
+    TextView btnNotification;
 
     @Bean
     EntityMenuDialogModel entityMenuDialogModel;
@@ -67,21 +70,38 @@ public class EntityMenuDialogFragment extends DialogFragment {
     void initView() {
         FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-        title.setText(entity.getName());
+        tvTitle.setText(entity.getName());
 
-        if (entity.isUser()) {
+        boolean isDirectMessage = entity.isUser();
+        if (isDirectMessage) {
             if (!TextUtils.equals(entity.getUser().status, "enabled")) {
-                starredButton.setVisibility(View.GONE);
+                btnStarred.setVisibility(View.GONE);
             }
-            tvMoveFolder.setVisibility(View.GONE);
+            btnMoveFolder.setVisibility(View.GONE);
+            btnNotification.setVisibility(View.GONE);
+        } else {
+            btnNotification.setVisibility(View.VISIBLE);
+
+            final boolean isTopicPushOn = entity.isTopicPushOn;
+
+            String notificationText = getActivity().getResources().getString(R.string.jandi_notification_off);
+            if (!isTopicPushOn) {
+                notificationText = getActivity().getResources().getString(R.string.jandi_notification_on);
+            }
+            btnNotification.setText(notificationText);
+
+            btnNotification.setOnClickListener(v -> {
+                entityMenuDialogModel.updateNotificationOnOff(entityId, !isTopicPushOn);
+                dismiss();
+            });
         }
 
         setStarredButtonText(entity.isStarred);
 
         if (entityMenuDialogModel.isDefaultTopic(entityId)) {
-            leaveButton.setVisibility(View.GONE);
+            btnLeave.setVisibility(View.GONE);
         } else {
-            leaveButton.setVisibility(View.VISIBLE);
+            btnLeave.setVisibility(View.VISIBLE);
         }
 
         progressWheel = new ProgressWheel(getActivity());
@@ -90,9 +110,9 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
     public void setStarredButtonText(boolean isStarred) {
         if (isStarred) {
-            starredButton.setText(R.string.jandi_unstarred);
+            btnStarred.setText(R.string.jandi_unstarred);
         } else {
-            starredButton.setText(R.string.jandi_starred);
+            btnStarred.setText(R.string.jandi_starred);
         }
     }
 
@@ -245,5 +265,11 @@ public class EntityMenuDialogFragment extends DialogFragment {
         topicFolderMoveCallEvent.setFolderId(folderId);
         EventBus.getDefault().post(topicFolderMoveCallEvent);
         dismiss();
+    }
+
+    @Click(R.id.btn_entity_popup_cancel)
+    @Override
+    public void dismiss() {
+        super.dismiss();
     }
 }

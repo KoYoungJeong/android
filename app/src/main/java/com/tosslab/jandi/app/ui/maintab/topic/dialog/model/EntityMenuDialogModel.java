@@ -10,21 +10,26 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.push.model.PushOnOffModel;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.json.JSONException;
 
+import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 7..
  */
 @EBean
-public class EntityMenuDialogModel {
+public class EntityMenuDialogModel extends PushOnOffModel {
 
     @RootContext
     Context context;
@@ -77,5 +82,17 @@ public class EntityMenuDialogModel {
 
     public boolean isDefaultTopic(int entityId) {
         return EntityManager.getInstance().getDefaultTopicId() == entityId;
+    }
+
+    @Background
+    public void updateNotificationOnOff(int entityId, boolean isTopicPushOn) {
+        if (!NetworkCheckUtil.isConnected()) {
+            getEntity(entityId).isTopicPushOn = isTopicPushOn;
+            EventBus.getDefault().post(new SocketTopicPushEvent());
+            return;
+        }
+
+        final int teamId = EntityManager.getInstance().getTeamId();
+        updatePushStatus(teamId, entityId, isTopicPushOn);
     }
 }

@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.push.model.PushOnOffModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -25,18 +26,18 @@ import org.json.JSONException;
 import retrofit.RetrofitError;
 
 @EBean
-public class TopicDetailModel {
+public class TopicDetailModel extends PushOnOffModel {
 
     @Bean
     EntityClientManager entityClientManager;
 
 
-    public String getTopicName(Context context, int entityId) {
+    public String getTopicName(int entityId) {
 
         return EntityManager.getInstance().getEntityById(entityId).getName();
     }
 
-    public String getTopicDescription(Context context, int entityId) {
+    public String getTopicDescription(int entityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         ResLeftSideMenu.Entity rawEntity = entity.getEntity();
         if (entity.isPublicTopic()) {
@@ -48,17 +49,17 @@ public class TopicDetailModel {
         }
     }
 
-    public int getTopicMemberCount(Context context, int entityId) {
+    public int getTopicMemberCount(int entityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         return entity.getMemberCount();
     }
 
-    public boolean isStarred(Context context, int entityId) {
+    public boolean isStarred(int entityId) {
 
         return EntityManager.getInstance().getEntityById(entityId).isStarred;
     }
 
-    public boolean isOwner(Context context, int entityId) {
+    public boolean isOwner(int entityId) {
         return EntityManager.getInstance().isMyTopic(entityId);
 
     }
@@ -71,7 +72,7 @@ public class TopicDetailModel {
         }
     }
 
-    public int getEntityType(Context context, int entityId) {
+    public int getEntityType(int entityId) {
 
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         if (entity.isPublicTopic()) {
@@ -123,16 +124,6 @@ public class TopicDetailModel {
         } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
             entityClientManager.modifyPrivateGroupName(entityId, inputName);
         }
-    }
-
-    public void updatePushStatus(int teamId, int entityId, boolean pushOn) throws RetrofitError {
-        ReqUpdateTopicPushSubscribe req = new ReqUpdateTopicPushSubscribe(pushOn);
-        RequestApiManager.getInstance().updateTopicPushSubscribe(teamId, entityId, req);
-    }
-
-    public boolean isPushOn(Context context, int entityId) {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        return entity.isTopicPushOn;
     }
 
     public void trackChangingEntityName(Context context, int entityId, int entityType) {
@@ -221,7 +212,7 @@ public class TopicDetailModel {
         GoogleAnalyticsUtil.sendEvent(Event.TopicUnStar.name(), "ResponseFail");
     }
 
-    public boolean isDefaultTopic(Context context, int entityId) {
+    public boolean isDefaultTopic(int entityId) {
         return EntityManager.getInstance().getDefaultTopicId() == entityId;
     }
 }

@@ -50,14 +50,14 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
     @Override
     public void onInit(Context context, int entityId) {
-        String topicName = topicDetailModel.getTopicName(context, entityId);
-        String topicDescription = topicDetailModel.getTopicDescription(context, entityId);
-        int topicMemberCount = topicDetailModel.getTopicMemberCount(context, entityId);
-        boolean isStarred = topicDetailModel.isStarred(context, entityId);
-        boolean owner = topicDetailModel.isOwner(context, entityId);
-        boolean isTopicPushSubscribe = topicDetailModel.isPushOn(context, entityId);
+        String topicName = topicDetailModel.getTopicName(entityId);
+        String topicDescription = topicDetailModel.getTopicDescription(entityId);
+        int topicMemberCount = topicDetailModel.getTopicMemberCount(entityId);
+        boolean isStarred = topicDetailModel.isStarred(entityId);
+        boolean owner = topicDetailModel.isOwner(entityId);
+        boolean isTopicPushSubscribe = topicDetailModel.isPushOn(entityId);
 
-        boolean defaultTopic = topicDetailModel.isDefaultTopic(context, entityId);
+        boolean defaultTopic = topicDetailModel.isDefaultTopic(entityId);
 
         if (TextUtils.isEmpty(topicDescription)) {
             if (owner) {
@@ -81,8 +81,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
-    public void onTopicDescriptionMove(Context context, int entityId) {
-        if (topicDetailModel.isOwner(context, entityId)) {
+    public void onTopicDescriptionMove(int entityId) {
+        if (topicDetailModel.isOwner(entityId)) {
             view.moveTopicDescriptionEdit();
         }
     }
@@ -90,7 +90,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     @Background
     @Override
     public void onTopicStar(Context context, int entityId) {
-        boolean isStarred = topicDetailModel.isStarred(context, entityId);
+        boolean isStarred = topicDetailModel.isStarred(entityId);
 
         try {
 
@@ -127,8 +127,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
-    public void onTopicDelete(Context context, int entityId) {
-        if (!topicDetailModel.isOwner(context, entityId)) {
+    public void onTopicDelete(int entityId) {
+        if (!topicDetailModel.isOwner(entityId)) {
             return;
         }
 
@@ -140,7 +140,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     public void deleteTopic(Context context, int entityId) {
         view.showProgressWheel();
         try {
-            int entityType = topicDetailModel.getEntityType(context, entityId);
+            int entityType = topicDetailModel.getEntityType(entityId);
             topicDetailModel.deleteTopic(entityId, entityType);
             topicDetailModel.trackDeletingEntity(context, entityType);
             topicDetailModel.trackTopicDeleteSuccess(entityId);
@@ -158,10 +158,10 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
-    public void onChangeTopicName(Context context, int entityId) {
-        if (topicDetailModel.isOwner(context, entityId)) {
-            String topicName = topicDetailModel.getTopicName(context, entityId);
-            int entityType = topicDetailModel.getEntityType(context, entityId);
+    public void onChangeTopicName(int entityId) {
+        if (topicDetailModel.isOwner(entityId)) {
+            String topicName = topicDetailModel.getTopicName(entityId);
+            int entityType = topicDetailModel.getEntityType(entityId);
             view.showTopicNameChangeDialog(entityId, topicName, entityType);
         }
     }
@@ -205,7 +205,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
         try {
             topicDetailModel.updatePushStatus(teamId, entityId, pushOn);
-
+            EntityManager.getInstance().getEntityById(entityId).isTopicPushOn = pushOn;
             view.dismissProgressWheel();
         } catch (RetrofitError e) {
             e.printStackTrace();

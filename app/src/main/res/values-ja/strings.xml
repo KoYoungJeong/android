@@ -62,6 +62,8 @@
     <string name="jandi_tab_direct_message">"ダイレクトメッセージ"</string>
     <string name="jandi_tab_file">"ファイル"</string>
     <string name="jandi_tab_more">"もっと見る"</string>
+    <string name="jandi_notification_on">"通知をオンにする"</string>
+    <string name="jandi_notification_off">"通知をオフにする"</string>
 
     <!-- Fuzzy -->
     <string name="jandi_action_direct_message">"ダイレクトメッセージ"</string>

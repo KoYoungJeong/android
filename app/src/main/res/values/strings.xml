@@ -79,6 +79,8 @@
     <string name="jandi_tab_more">"More"</string>
     <string name="jandi_action_direct_message">"Direct Message"</string>
     <string name="jandi_action_starred">"Star"</string>
+    <string name="jandi_notification_on">"Turn on notifications"</string>
+    <string name="jandi_notification_off">"Turn off notifications"</string>
 
     <!-- 튜토리얼 -->
     <string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
