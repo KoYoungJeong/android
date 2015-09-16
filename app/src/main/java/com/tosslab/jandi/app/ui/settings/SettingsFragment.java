@@ -8,13 +8,11 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.text.TextUtils;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
@@ -27,7 +25,7 @@ import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
@@ -146,7 +144,7 @@ public class SettingsFragment extends PreferenceFragment {
         settingFragmentViewModel.showProgressDialog();
         try {
 
-            removeSignData();
+            SignOutUtil.removeSignData();
 
             Activity activity = getActivity();
 
@@ -191,15 +189,6 @@ public class SettingsFragment extends PreferenceFragment {
                 .flush();
 
         GoogleAnalyticsUtil.sendEvent(Event.SignOut.name(), "ResponseSuccess");
-    }
-
-    private void removeSignData() {
-        JandiPreference.signOut(getActivity());
-
-        ParseUpdateUtil.deleteChannelOnServer();
-
-        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
-                .clearAllData();
     }
 
     private void setPushSubState(boolean isEnabled) {

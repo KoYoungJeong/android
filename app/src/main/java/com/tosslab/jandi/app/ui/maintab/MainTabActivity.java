@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -28,7 +27,6 @@ import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
@@ -51,6 +49,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -303,12 +302,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             if (e.getResponse() != null) {
                 if (e.getResponse().getStatus() == JandiConstants.NetworkError.UNAUTHORIZED) {
 
-                    JandiPreference.signOut(JandiApplication.getContext());
-
-                    ParseUpdateUtil.deleteChannelOnServer();
-
-                    OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
-                            .clearAllData();
+                    SignOutUtil.removeSignData();
 
                     getEntitiesFailed(getString(R.string.err_expired_session));
                     stopJandiServiceInMainThread();
@@ -345,7 +339,9 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         if (isFinishing()) {
             return;
         }
-        IntroMainActivity_.intent(MainTabActivity.this).start();
+        IntroMainActivity_.intent(MainTabActivity.this)
+                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                .start();
         finish();
     }
 

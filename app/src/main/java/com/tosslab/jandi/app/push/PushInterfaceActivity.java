@@ -146,8 +146,7 @@ public class PushInterfaceActivity extends AppCompatActivity {
     @UiThread
     void moveIntroActivity() {
         IntroActivity_.intent(PushInterfaceActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .start();
         finish();
     }
