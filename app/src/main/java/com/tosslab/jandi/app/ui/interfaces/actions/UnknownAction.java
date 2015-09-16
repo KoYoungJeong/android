@@ -26,7 +26,7 @@ class UnknownAction implements Action {
     public void execute(Uri uri) {
         IntroActivity_
                 .intent(context)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .start();
         ((Activity) context).finish();
 
