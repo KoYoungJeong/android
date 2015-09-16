@@ -125,6 +125,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            return;
         }
 
         try {
