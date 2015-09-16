@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -237,7 +238,6 @@ public class RoomSelectorImpl implements RoomSelector {
         });
 
         return topicHashMap;
-
     }
 
     public List<ExpandRoomData> getTopicDatas() {
@@ -258,6 +258,45 @@ public class RoomSelectorImpl implements RoomSelector {
         dummyData.setType(FormattedEntity.TYPE_EVERYWHERE);
         topicDatas.add(dummyData);
 
+        LinkedHashMap<Integer, List<ExpandRoomData>> topicDataMap = new LinkedHashMap<>();
+
+
+        for (ResFolder topicFolder : topicFolders) {
+            if (!topicDataMap.containsKey(topicFolder.id)) {
+                topicDataMap.put(new Integer(topicFolder.id), new ArrayList<>());
+            }
+        }
+
+        Observable.from(topicFolderItems)
+                .filter(item -> item.folderId > 0)
+                .subscribe(item -> {
+                    ExpandRoomData topicData = new ExpandRoomData();
+                    FormattedEntity topic = joinTopics.get(item.roomId);
+                    joinTopics.remove(item.roomId);
+                    topicData.setEntityId(item.roomId);
+                    topicData.setIsUser(false);
+                    topicData.setName(topic.getName());
+                    topicData.setType(topic.type);
+                    topicData.setIsFolder(false);
+                    topicData.setIsPublicTopic(topic.isPublicTopic());
+                    topicData.setIsStarred(topic.isStarred);
+                    topicDataMap.get(new Integer(item.folderId)).add(topicData);
+                });
+
+        for (ResFolder folder : topicFolders) {
+            Collections.sort(topicDataMap.get(new Integer(folder.id)), (lhs, rhs) -> {
+                if (lhs.isStarred() && rhs.isStarred()) {
+                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                } else if (lhs.isStarred()) {
+                    return -1;
+                } else if (rhs.isStarred()) {
+                    return 1;
+                } else {
+                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                }
+            });
+        }
+
         // 각 폴더와 종속된 토픽 데이터 셋팅
         for (ResFolder folder : topicFolders) {
             ExpandRoomData folderdata = new ExpandRoomData();
@@ -265,20 +304,8 @@ public class RoomSelectorImpl implements RoomSelector {
             folderdata.setIsUser(false);
             folderdata.setName(folder.name);
             topicDatas.add(folderdata);
-            for (ResFolderItem folderItem : topicFolderItems) {
-                if (folderItem.folderId == folder.id) {
-                    ExpandRoomData topicData = new ExpandRoomData();
-                    FormattedEntity topic = joinTopics.get(folderItem.roomId);
-                    joinTopics.remove(folderItem.roomId);
-                    topicData.setEntityId(folderItem.roomId);
-                    topicData.setIsUser(false);
-                    topicData.setName(topic.getName());
-                    topicData.setType(topic.type);
-                    topicData.setIsFolder(false);
-                    topicData.setIsPublicTopic(topic.isPublicTopic());
-                    topicData.setIsStarred(topic.isStarred);
-                    topicDatas.add(topicData);
-                }
+            for (ExpandRoomData roomData : topicDataMap.get(new Integer(folder.id))) {
+                topicDatas.add(roomData);
             }
         }
 
@@ -287,7 +314,7 @@ public class RoomSelectorImpl implements RoomSelector {
         boolean FirstAmongNoFolderItem = true;
 
         while (joinTopicKeySets.hasNext()) {
-            FormattedEntity entity = joinTopics.get((Integer) joinTopicKeySets.next());
+            FormattedEntity entity = joinTopics.get(joinTopicKeySets.next());
             ExpandRoomData topicData = new ExpandRoomData();
             topicData.setIsFirstAmongNoFolderItem(FirstAmongNoFolderItem);
             FirstAmongNoFolderItem = false;

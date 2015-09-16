@@ -53,6 +53,9 @@ public class EntityMenuDialogFragment extends DialogFragment {
     @ViewById(R.id.tv_popup_title)
     TextView title;
 
+    @ViewById(R.id.btn_entity_popup_move_folder)
+    TextView tvMoveFolder;
+
     @Bean
     EntityMenuDialogModel entityMenuDialogModel;
 
@@ -70,6 +73,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
             if (!TextUtils.equals(entity.getUser().status, "enabled")) {
                 starredButton.setVisibility(View.GONE);
             }
+            tvMoveFolder.setVisibility(View.GONE);
         }
 
         setStarredButtonText(entity.isStarred);
@@ -81,6 +85,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
         }
 
         progressWheel = new ProgressWheel(getActivity());
+
     }
 
     public void setStarredButtonText(boolean isStarred) {
@@ -99,6 +104,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
         dialog.setCanceledOnTouchOutside(true);
 
         return dialog;
+
     }
 
 
@@ -189,7 +195,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
         try {
             FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
 
-            if (entity != null) {
+            if (entity != EntityManager.UNKNOWN_USER_ENTITY) {
                 entityMenuDialogModel.leaveEntity(entity.isPublicTopic());
             }
 

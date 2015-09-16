@@ -600,7 +600,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     void insertEmptyMessage() {
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entity = entityManager.getEntityById(entityId);
-        if (entity != null && !entity.isUser()) {
+        if (entity != EntityManager.UNKNOWN_USER_ENTITY && !entity.isUser()) {
             int topicMemberCount = entity.getMemberCount();
             int teamMemberCount = entityManager.getFormattedUsersWithoutMe().size();
 
@@ -655,9 +655,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        FormattedEntity entityById = EntityManager.getInstance().getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         boolean isStarred;
-        isStarred = entityById != null ? entityById.isStarred : false;
+        isStarred = entity != EntityManager.UNKNOWN_USER_ENTITY ? entity.isStarred : false;
         ChattingInfomations infomations =
                 new ChattingInfomations(getActivity(), teamId, entityId, entityType, isFromPush, isStarred);
         MenuCommand menuCommand = messageListModel.getMenuCommand(MessageListFragment.this,

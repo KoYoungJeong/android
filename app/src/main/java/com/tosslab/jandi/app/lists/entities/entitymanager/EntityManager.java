@@ -24,7 +24,7 @@ import rx.Observable;
  */
 public class EntityManager {
 
-    private static FormattedEntity UNKNOWN_USER_ENTITY;
+    public static FormattedEntity UNKNOWN_USER_ENTITY;
     private static EntityManager entityManager;
 
     static {
@@ -388,7 +388,7 @@ public class EntityManager {
 
     public String getEntityNameById(int entityId) {
         FormattedEntity entity = getEntityById(entityId);
-        return (entity != null) ? entity.getName() : "";
+        return (entity != UNKNOWN_USER_ENTITY) ? entity.getName() : "";
     }
 
     public List<FormattedEntity> getUnjoinedMembersOfEntity(int entityId, int entityType) {

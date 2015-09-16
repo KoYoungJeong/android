@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
     android:background="?android:attr/selectableItemBackground"
@@ -17,11 +16,14 @@
 
     <TextView
         android:id="@+id/tv_choose_folder"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="32dp"
+        android:layout_marginRight="20dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:text="Etc.Folder"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
 </LinearLayout>

@@ -48,7 +48,7 @@ public class MessageSearchModel {
     }
 
     public boolean hasEntity(int entityId) {
-        return EntityManager.getInstance().getEntityById(entityId) != null;
+        return EntityManager.getInstance().getEntityById(entityId) != EntityManager.UNKNOWN_USER_ENTITY;
     }
 
     public int getEntityType(int entityId) {

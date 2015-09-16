@@ -276,7 +276,7 @@
         <activity
             android:name=".ui.maintab.topic.views.choosefolderlist.TopicFolderChooseActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="Move topic"
+            android:label="@string/jandi_folder_move_to"
             android:screenOrientation="portrait">
 
             <intent-filter>
@@ -289,7 +289,7 @@
         <activity
             android:name=".ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="Join topic"
+            android:label="@string/jandi_browse_other_topics"
             android:screenOrientation="portrait">
 
             <intent-filter>

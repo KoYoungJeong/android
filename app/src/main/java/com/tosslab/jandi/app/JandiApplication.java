@@ -90,7 +90,6 @@ public class JandiApplication extends MultiDexApplication {
             analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
 
             Tracker tracker = analytics.newTracker(JandiConstantsForFlavors.GA_TRACK_ID);
-            tracker.enableAutoActivityTracking(true);
             tracker.enableAdvertisingIdCollection(true);
 
             mTrackers.put(trackerId, tracker);

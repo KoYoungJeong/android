@@ -74,6 +74,7 @@ public class InvitationViewModel {
             ColoredToast.showWarning(context, context.getString(R.string.warn_all_users_are_already_invited));
             return;
         }
+
         final UnjoinedUserListAdapter adapter = new UnjoinedUserListAdapter(activity.getBaseContext());
 
         PublishSubject<String> publishSubject = PublishSubject.create();

@@ -155,9 +155,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             for (int idx = 0; idx < groupCount; idx++) {
                 TopicFolderData topicFolderData = adapter.getTopicFolderData(idx);
                 expand = Observable.from(folderExpands)
-                        .filter(folderExpand ->
-                                topicFolderData.getFolderId() == folderExpand.getFolderId()
-                                        || topicFolderData.getFolderId() == seledtedGruopId)
+                        .filter(folderExpand -> topicFolderData.getFolderId() == folderExpand.getFolderId()
+                                || topicFolderData.getFolderId() == seledtedGruopId)
                         .map(FolderExpand::isExpand)
                         .firstOrDefault(false)
                         .toBlocking().first();
@@ -370,4 +369,5 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         adapter.startAnimation();
         adapter.notifyDataSetChanged();
     }
+
 }

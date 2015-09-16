@@ -103,8 +103,7 @@
         android:paddingRight="4dp"
         android:text="9"
         android:textColor="@color/jandi_text_white"
-        android:textSize="@dimen/jandi_text_size_small"
-        android:textStyle="bold"/>
+        android:textSize="11sp"/>
 
     <View
         android:id="@+id/view_entity_listitem_warning"

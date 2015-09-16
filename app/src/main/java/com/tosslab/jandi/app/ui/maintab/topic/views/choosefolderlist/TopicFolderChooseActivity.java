@@ -1,15 +1,12 @@
 package com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist;
 
-import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -21,7 +18,6 @@ import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.adapter.TopicFolderChooseAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.presenter.TopicFolderChoosePresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -72,7 +68,6 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
         setupActionBar();
         lvTopicFolderChoose.setLayoutManager(new LinearLayoutManager(TopicFolderChooseActivity.this,
                 RecyclerView.VERTICAL, false));
-        lvTopicFolderChoose.addItemDecoration(new SimpleDividerItemDecoration(TopicFolderChooseActivity.this));
         adapter.setFolderId(folderId);
         lvTopicFolderChoose.setAdapter(adapter);
         topicFolderChoosePresentor.onRefreshFolders(folderId);
@@ -134,33 +129,20 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
 
     @Override
     public void showCreateNewFolderDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        final EditText input = new EditText(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(TopicFolderChooseActivity.this);
 
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int minWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300f, displayMetrics);
-        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, displayMetrics);
-        input.setMinWidth(minWidth);
-        input.setPadding(padding, input.getPaddingTop(), padding, input.getPaddingBottom());
+        LinearLayout vgInputEditText = (LinearLayout) LayoutInflater
+                .from(TopicFolderChooseActivity.this).inflate(R.layout.input_edit_text_view, null);
 
-        input.setHint("Folder Name");
-        input.setMaxLines(1);
-        input.setCursorVisible(true);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input)
-                .setTitle(getString(R.string.jandi_folder_insert_name))
-                .setPositiveButton(getString(R.string.jandi_confirm), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        createNewFolder(input.getText().toString());
-                    }
+        EditText input = (EditText) vgInputEditText.findViewById(R.id.et_input);
+
+        builder.setView(vgInputEditText)
+                .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
+                    createNewFolder(input.getText().toString());
                 })
-                .setNegativeButton(R.string.jandi_cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
+                .setNegativeButton(R.string.jandi_cancel, (dialog, which) -> {
+                    dialog.cancel();
                 });
         builder.show();
     }

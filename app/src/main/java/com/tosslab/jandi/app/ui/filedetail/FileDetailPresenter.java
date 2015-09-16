@@ -92,7 +92,7 @@ public class FileDetailPresenter {
         ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
         for (ResMessages.OriginalMessage.IntegerWrapper entity : fileMessage.shareEntities) {
             FormattedEntity formattedEntity = entityManager.getEntityById(entity.getShareEntity());
-            if (formattedEntity != null && !formattedEntity.isUser()) {
+            if (formattedEntity != EntityManager.UNKNOWN_USER_ENTITY && !formattedEntity.isUser()) {
                 sharedTopicIds.add(formattedEntity.getId());
             }
         }
