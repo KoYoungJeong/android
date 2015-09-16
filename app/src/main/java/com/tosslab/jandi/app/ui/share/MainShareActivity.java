@@ -77,6 +77,7 @@ public class MainShareActivity extends AppCompatActivity {
 
     private void startIntro() {
         IntroActivity_.intent(MainShareActivity.this)
+                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .start();
     }
 
