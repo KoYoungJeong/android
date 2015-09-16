@@ -121,7 +121,7 @@ public class OpenAction implements Action {
     @UiThread
     void startIntroActivity() {
         IntroActivity_.intent(activity)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .startForInvite(true)
                 .start();
         activity.finish();
