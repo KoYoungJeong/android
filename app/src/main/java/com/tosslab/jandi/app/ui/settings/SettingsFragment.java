@@ -165,13 +165,13 @@ public class SettingsFragment extends PreferenceFragment {
                     .flush()
                     .clear();
 
-            JandiSocketService.stopService(getActivity());
+            JandiSocketService.stopService(activity);
 
             BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
             badgeCountRepository.deleteAll();
-            BadgeUtils.setBadge(getActivity(), 0);
+            BadgeUtils.setBadge(activity, 0);
 
-            ColoredToast.show(getActivity(), getString(R.string.jandi_message_logout));
+            ColoredToast.show(activity, getString(R.string.jandi_message_logout));
 
         } catch (Exception e) {
         } finally {

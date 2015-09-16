@@ -166,6 +166,9 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         int teamId = mainChatListModel.getTeamId();
         BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
         int badgeCount = badgeCountRepository.findBadgeCountByTeamId(teamId) - unread;
+        if (badgeCount <= 0) {
+            badgeCount = 0;
+        }
         badgeCountRepository.upsertBadgeCount(teamId, badgeCount);
         BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
 

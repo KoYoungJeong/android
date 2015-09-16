@@ -22,7 +22,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -68,12 +67,11 @@ public class JandiInterfaceModel {
         EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
+
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
         BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
         badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
         BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
-        BadgeUtils.setBadge(context, totalUnreadCount);
-
     }
 
     public boolean hasBackStackActivity() {

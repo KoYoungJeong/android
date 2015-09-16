@@ -83,7 +83,7 @@ public class JandiPushIntentService extends IntentService {
                 LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
 
         if (leftSideMenu == null) {
-            showNotification(context, pushTOInfo, true);
+            showNotification(context, pushTOInfo, false);
             postEvent(roomId, pushTOInfo.getRoomType());
             return;
         }

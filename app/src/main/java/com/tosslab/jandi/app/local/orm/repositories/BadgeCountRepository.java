@@ -73,7 +73,6 @@ public class BadgeCountRepository {
         try {
             Dao<BadgeCount, ?> dao = helper.getDao(BadgeCount.class);
             List<BadgeCount> badgeCountList = dao.queryForAll();
-
             int totalBadgeCount = 0;
             for (BadgeCount badgeCount : badgeCountList) {
                 totalBadgeCount += badgeCount.getBadgeCount();
