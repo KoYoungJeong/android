@@ -103,6 +103,7 @@ import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.UpdateLinkPreviewQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.UpdateMessageQueue;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.manager.LinkPreviewManager;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
@@ -1362,6 +1363,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
 
         sendMessagePublisherEvent(new UpdateMessageQueue(teamId, message.getId()));
+
     }
 
     public void onEvent(SocketLinkPreviewThumbnailEvent event) {

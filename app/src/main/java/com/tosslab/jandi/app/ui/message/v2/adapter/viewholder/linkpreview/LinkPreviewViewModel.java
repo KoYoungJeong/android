@@ -16,8 +16,10 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.manager.LinkPreviewManager;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -93,37 +95,54 @@ public class LinkPreviewViewModel {
             }
 
             vgThumb.setVisibility(View.VISIBLE);
-            Glide.with(context)
-                    .load(imageUrl)
-                    .asBitmap()
-                    .centerCrop()
-                    .placeholder(R.drawable.link_preview)
-                    .listener(new RequestListener<String, Bitmap>() {
-                        @Override
-                        public boolean onException(Exception e,
-                                                   String model, Target<Bitmap> target,
-                                                   boolean isFirstResource) {
-                            LogUtil.e(TAG, "error - " + model);
-                            LogUtil.e(TAG, Log.getStackTraceString(e));
 
-                            if (imageUrl.equals(model)) {
-                                errorThumbnailMap.put(model, true);
-                                vgThumb.setVisibility(View.GONE);
-                            }
-                            return true;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Bitmap resource,
+            if (!isThumbnail(imageUrl)) {
+                if (!LinkPreviewManager.getInstance().isError(link.id)) {
+                    ivThumb.setImageResource(R.drawable.link_preview);
+                    LinkPreviewManager.getInstance().setWait(link.id, linkId ->
+                            isThumbnail(((ResMessages.TextMessage) link.message).linkPreview.imageUrl));
+                } else {
+                    vgThumb.setVisibility(View.GONE);
+                    ivThumb.setImageDrawable(null);
+                }
+            } else {
+                LinkPreviewManager.getInstance().setComplete(link.id);
+                Glide.with(context)
+                        .load(imageUrl)
+                        .asBitmap()
+                        .centerCrop()
+                        .placeholder(R.drawable.link_preview)
+                        .listener(new RequestListener<String, Bitmap>() {
+                            @Override
+                            public boolean onException(Exception e,
                                                        String model, Target<Bitmap> target,
-                                                       boolean isFromMemoryCache,
                                                        boolean isFirstResource) {
-                            return false;
-                        }
-                    })
-                    .into(ivThumb);
+                                LogUtil.e(TAG, "error - " + model);
+                                LogUtil.e(TAG, Log.getStackTraceString(e));
+
+                                if (imageUrl.equals(model)) {
+                                    errorThumbnailMap.put(model, true);
+                                    vgThumb.setVisibility(View.GONE);
+                                }
+                                return true;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Bitmap resource,
+                                                           String model, Target<Bitmap> target,
+                                                           boolean isFromMemoryCache,
+                                                           boolean isFirstResource) {
+
+                                return false;
+                            }
+                        })
+                        .into(ivThumb);
+            }
+
         }
     }
+
+    private boolean isThumbnail(String imageUrl) {return imageUrl.contains("jandi-box.com/linkpreview-thumb");}
 
     private static class OnLinkPreviewClickListener implements View.OnClickListener {
         private final Context context;
