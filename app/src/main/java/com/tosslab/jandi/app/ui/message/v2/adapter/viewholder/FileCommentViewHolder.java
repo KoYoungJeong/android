@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -40,7 +41,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
     private TextView tvFileOwner;
     private TextView tvFileName;
     private TextView tvComment;
-    private TextView tvFileOwnerPostFix;
     private ImageView ivFileImage;
     private View vDisableCover;
     private View vDisableLineThrough;
@@ -56,7 +56,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
 
         tvFileOwner = (TextView) rootView.findViewById(R.id.tv_message_commented_owner);
-        tvFileOwnerPostFix = (TextView) rootView.findViewById(R.id.tv_message_commented_postfix);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_message_commented_file_name);
         tvComment = (TextView) rootView.findViewById(R.id.tv_message_commented_content);
 
@@ -115,7 +114,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
             vFileImageRound.setVisibility(View.GONE);
             if (TextUtils.equals(link.feedback.status, "archived")) {
                 tvFileOwner.setVisibility(View.GONE);
-                tvFileOwnerPostFix.setVisibility(View.GONE);
 
                 tvFileName.setText(R.string.jandi_deleted_file);
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
@@ -124,14 +122,13 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 ivFileImage.setImageResource(R.drawable.jandi_fl_icon_deleted);
                 ivFileImage.setOnClickListener(null);
             } else {
-                tvFileOwner.setText(feedbackUser.name);
+                tvFileOwner.setText(Html.fromHtml(tvFileOwner.getResources().getString(R.string.jandi_commented_on, feedbackUser.name)));
                 ResMessages.FileContent content = feedbackFileMessage.content;
                 tvFileName.setText(content.title);
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
                         .jandi_messages_file_name));
 
                 tvFileOwner.setVisibility(View.VISIBLE);
-                tvFileOwnerPostFix.setVisibility(View.VISIBLE);
 
                 String fileType = content.type;
                 if (fileType.startsWith("image/")) {
@@ -187,6 +184,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
             SpannableStringBuilder builder = new SpannableStringBuilder();
             builder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
+            builder.append(" ");
 
             boolean hasLink = LinkifyUtil.addLinks(context, builder);
 
@@ -207,7 +205,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                         new NameSpannable(
                                 context.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_small)
                                 , context.getResources().getColor(R.color.jandi_accent_color));
-                builder.append("  ");
+                builder.append(" ");
                 int beforeLength = builder.length();
                 builder.append(" ");
                 builder.append(String.valueOf(unreadCount))

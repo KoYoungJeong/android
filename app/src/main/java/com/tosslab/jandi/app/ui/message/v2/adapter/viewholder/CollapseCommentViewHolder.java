@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -49,8 +48,6 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
         }
 
         builder.append(" ");
-
-        Resources resources = context.getResources();
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 tvMessage, builder, commentMessage.mentions,

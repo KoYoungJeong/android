@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -103,8 +102,6 @@ public class MessageViewHolder implements BodyViewHolder {
             }
 
             messageStringBuilder.append(" ");
-
-            Resources resources = context.getResources();
 
             int startIndex = messageStringBuilder.length();
             messageStringBuilder.append(

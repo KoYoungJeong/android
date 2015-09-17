@@ -490,7 +490,7 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_this_is_disabled_user_explain">"This member has been temporarily disabled. Please contact the team administrator for more information."</string>
     <string name="jandi_who_of_file">"\'s file"</string>
     <string name="jandi_shared">"Shared"</string>
-    <string name="jandi_commented_on">"Commented on "</string>
+    <string name="jandi_commented_on">"<![CDATA[<font color="#999999">Commented on</font> <font color="#000000">%s</font><font color="#999999">'s file"</font>]]></string>
 
     <string name="jandi_file_downloaded_into">"File downloaded to %s"</string>
     <string name="jandi_file_deleted_with_date">"%s, file was deleted."</string>

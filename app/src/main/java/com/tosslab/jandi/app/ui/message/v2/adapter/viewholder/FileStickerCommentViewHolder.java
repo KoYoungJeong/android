@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -35,7 +36,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
     private TextView tvFileOwner;
     private TextView tvFileName;
     private ImageView ivSticker;
-    private TextView tvFileOwnerPostfix;
     private ImageView ivFileImage;
     private View vDisableCover;
     private View vDisableLineThrough;
@@ -53,7 +53,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
         tvDate = (TextView) rootView.findViewById(R.id.tv_message_create_date);
 
         tvFileOwner = (TextView) rootView.findViewById(R.id.tv_message_commented_owner);
-        tvFileOwnerPostfix = (TextView) rootView.findViewById(R.id.tv_message_commented_postfix);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_message_commented_file_name);
         ivSticker = (ImageView) rootView.findViewById(R.id.iv_sticker_message_commented_content);
 
@@ -126,7 +125,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
             ivFileImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
             if (TextUtils.equals(link.feedback.status, "archived")) {
                 tvFileOwner.setVisibility(View.GONE);
-                tvFileOwnerPostfix.setVisibility(View.GONE);
 
                 tvFileName.setText(R.string.jandi_deleted_file);
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
@@ -135,14 +133,13 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                 ivFileImage.setVisibility(View.VISIBLE);
                 ivFileImage.setOnClickListener(null);
             } else {
-                tvFileOwner.setText(feedbackUser.name);
+                tvFileOwner.setText(Html.fromHtml(tvFileOwner.getResources().getString(R.string.jandi_commented_on, feedbackUser.name)));
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
                         .jandi_messages_file_name));
                 ResMessages.FileContent content = feedbackFileMessage.content;
                 tvFileName.setText(content.title);
 
                 tvFileOwner.setVisibility(View.VISIBLE);
-                tvFileOwnerPostfix.setVisibility(View.VISIBLE);
 
                 String fileType = content.type;
                 if (fileType.startsWith("image/")) {
