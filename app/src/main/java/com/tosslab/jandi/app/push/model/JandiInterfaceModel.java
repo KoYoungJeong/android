@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
@@ -21,7 +22,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -67,10 +67,11 @@ public class JandiInterfaceModel {
         EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-        JandiPreference.setBadgeCount(context, totalUnreadCount);
-        BadgeUtils.setBadge(context, totalUnreadCount);
 
+        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
+        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+        badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
+        BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
     }
 
     public boolean hasBackStackActivity() {
@@ -133,8 +134,9 @@ public class JandiInterfaceModel {
             ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            JandiPreference.setBadgeCount(context, totalUnreadCount);
-            BadgeUtils.setBadge(context, totalUnreadCount);
+            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+            badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
+            BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
             EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitError e) {

@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -162,10 +163,13 @@ public class SettingsFragment extends PreferenceFragment {
                     .flush()
                     .clear();
 
-            JandiSocketService.stopService(getActivity());
+            JandiSocketService.stopService(activity);
 
-            BadgeUtils.setBadge(getActivity(), 0);
-            ColoredToast.show(getActivity(), getString(R.string.jandi_message_logout));
+            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+            badgeCountRepository.deleteAll();
+            BadgeUtils.setBadge(activity, 0);
+
+            ColoredToast.show(activity, getString(R.string.jandi_message_logout));
 
         } catch (Exception e) {
         } finally {

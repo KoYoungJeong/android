@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.gson.JsonObject;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
@@ -47,6 +48,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
@@ -413,8 +415,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             ResLeftSideMenu resLeftSideMenu = mEntityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
-            JandiPreference.setBadgeCount(MessageListActivity.this, totalUnreadCount);
-            BadgeUtils.setBadge(MessageListActivity.this, totalUnreadCount);
+            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+            badgeCountRepository.upsertBadgeCount(EntityManager.getInstance().getTeamId(), totalUnreadCount);
+            BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
             getEntitiesSucceed(resLeftSideMenu);
         } catch (Exception e) {
             // TODO 에러 상황 나누기

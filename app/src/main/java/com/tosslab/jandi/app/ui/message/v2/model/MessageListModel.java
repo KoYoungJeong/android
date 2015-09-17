@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
@@ -432,8 +433,9 @@ public class MessageListModel {
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             EntityManager.getInstance().refreshEntity();
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            JandiPreference.setBadgeCount(activity, totalUnreadCount);
-            BadgeUtils.setBadge(activity, totalUnreadCount);
+            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+            badgeCountRepository.upsertBadgeCount(EntityManager.getInstance().getTeamId(), totalUnreadCount);
+            BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
         } catch (RetrofitError e) {
             e.printStackTrace();
         }

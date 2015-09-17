@@ -15,8 +15,11 @@ import com.koushikdutta.ion.Ion;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -25,6 +28,7 @@ import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -80,15 +84,8 @@ public class JandiPushReceiverModel {
         }
     }
 
-    public ResLeftSideMenu getTeamInfo(int teamId) {
-        ResLeftSideMenu resLeftSideMenu = null;
-        try {
-            resLeftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
-        }
-        return resLeftSideMenu;
+    public int getBadgeCount(int teamId) {
+        return BadgeCountRepository.getRepository().findBadgeCountByTeamId(teamId);
     }
 
     public boolean isTopicPushOn(ResLeftSideMenu leftSideMenu, int roomId) {
@@ -107,10 +104,10 @@ public class JandiPushReceiverModel {
         return isTopicPushOn;
     }
 
-    public void updateBadgeCount(Context context, int badgeCount) {
-        LogUtil.e(TAG, "badgeCount - " + badgeCount);
-        BadgeUtils.setBadge(context, badgeCount);
-        JandiPreference.setBadgeCount(context, badgeCount);
+    public void updateBadgeCount(Context context, int teamId, int badgeCount) {
+        BadgeCountRepository repository = BadgeCountRepository.getRepository();
+        repository.upsertBadgeCount(teamId, badgeCount);
+        BadgeUtils.setBadge(context, repository.getTotalBadgeCount());
     }
 
     public boolean isPushForMyAccountId(Bundle extras, String accountId) {
@@ -147,6 +144,19 @@ public class JandiPushReceiverModel {
         }
     }
 
+    // LeftSideMenu 를 DB를 통해 불러오고 없다면 서버에서 받고 디비에 저장한다.
+    public ResLeftSideMenu getLeftSideMenu(int teamId) {
+        ResLeftSideMenu leftSideMenu =
+                LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
+        if (leftSideMenu == null) {
+            leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
+            if (leftSideMenu != null) {
+                LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+            }
+        }
+        return leftSideMenu;
+    }
+
     public boolean isMyEntityId(int writerId) {
         List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
 
@@ -161,7 +171,7 @@ public class JandiPushReceiverModel {
     public boolean isMentionToMe(List<PushTO.Mention> mentions, ResLeftSideMenu leftSideMenu) {
         boolean isMentionToMe = false;
         if (mentions == null || mentions.isEmpty()) {
-            return isMentionToMe;
+            return false;
         }
 
         int myTeamMemberId = leftSideMenu.user.id;
@@ -210,10 +220,6 @@ public class JandiPushReceiverModel {
                 LogUtil.d(TAG, "topic joinEntityId = " + joinEntity.id);
             }
         }
-    }
-
-    public boolean isPushFromSelectedTeam(Context context, int teamId) {
-        return teamId == EntityClientManager_.getInstance_(context).getSelectedTeamId();
     }
 
     public boolean isPushOn() {
@@ -291,8 +297,7 @@ public class JandiPushReceiverModel {
         return bigTextStyle;
     }
 
-    public void showNotification(Context context, PushTO.PushInfo pushInfo,
-                                 boolean isMentionMessage, int badgeCount) {
+    public void showNotification(Context context, PushTO.PushInfo pushInfo, boolean isMentionMessage) {
         String createdAt = pushInfo.getCreatedAt();
         if (isPreviousMessage(createdAt)) {
             return;
@@ -324,6 +329,8 @@ public class JandiPushReceiverModel {
             notificationTitle =
                     context.getResources().getString(R.string.jandi_mention_push_message, writerName);
         }
+
+        int badgeCount = BadgeCountRepository.getRepository().getTotalBadgeCount();
 
         Notification notification =
                 getNotification(context, notificationTitle,
