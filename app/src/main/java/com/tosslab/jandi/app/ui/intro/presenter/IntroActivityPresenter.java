@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.intro.presenter;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -76,11 +77,27 @@ public class IntroActivityPresenter {
 
                 if (!model.isNeedLogin(context)) {
                     if (model.hasMigration()) {
-                        refreshAccountInfo(context);
-                        moveNextActivity(context, initTime, startForInvite);
+                        try {
+                            refreshAccountInfo(context);
+                            moveNextActivity(context, initTime, startForInvite);
+                        } catch (RetrofitError retrofitError) {
+                            retrofitError.printStackTrace();
+                            if (retrofitError.getKind() != RetrofitError.Kind.HTTP
+                                    || retrofitError.getResponse().getStatus() != JandiConstants.NetworkError.UNAUTHORIZED) {
+                                moveNextActivity(context, initTime, startForInvite);
+                            }
+                        }
                     } else {
-                        migrationAccountInfos(context, initTime, startForInvite);
-                        moveNextActivity(context, initTime, startForInvite);
+                        try {
+                            migrationAccountInfos(context, initTime, startForInvite);
+                            moveNextActivity(context, initTime, startForInvite);
+                        } catch (RetrofitError retrofitError) {
+                            retrofitError.printStackTrace();
+                            if (retrofitError.getKind() != RetrofitError.Kind.HTTP
+                                    || retrofitError.getResponse().getStatus() != JandiConstants.NetworkError.UNAUTHORIZED) {
+                                moveNextActivity(context, initTime, startForInvite);
+                            }
+                        }
                     }
                 } else {
                     model.sleep(initTime, MAX_DELAY_MS);
@@ -106,7 +123,7 @@ public class IntroActivityPresenter {
 
     }
 
-    private void migrationAccountInfos(Context context, long initTime, final boolean startForInvite) {
+    private void migrationAccountInfos(Context context, long initTime, final boolean startForInvite) throws RetrofitError {
         // v1.0.7 이전 설치자가 넘어온 경우
 
         model.refreshAccountInfo(context);
@@ -124,13 +141,8 @@ public class IntroActivityPresenter {
 
     }
 
-    @Background
-    void refreshAccountInfo(Context context) {
-        try {
-            model.refreshAccountInfo(context);
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
-        }
+    void refreshAccountInfo(Context context) throws RetrofitError {
+        model.refreshAccountInfo(context);
     }
 
     void moveNextActivity(Context context, long initTime, final boolean startForInvite) {
@@ -143,14 +155,14 @@ public class IntroActivityPresenter {
 
         if (selectedTeamInfo != null && !startForInvite) {
             ParseUpdateUtil.addChannelOnServer();
-            
+
             // Track Auto Sign In (with flush)
             model.trackAutoSignInSuccessAndFlush(true);
-            
+
             view.moveToMainActivity();
         } else {
             model.trackAutoSignInSuccessAndFlush(false);
-            
+
             view.moveTeamSelectActivity();
         }
     }
