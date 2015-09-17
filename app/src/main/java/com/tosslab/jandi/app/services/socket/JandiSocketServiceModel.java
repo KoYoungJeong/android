@@ -137,7 +137,7 @@ public class JandiSocketServiceModel {
 
             MessageRepository.getRepository().updateStatus(socketFileEvent.getFile().getId(), "archived");
 
-            postEvent(new DeleteFileEvent(socketFileEvent.getFile().getId()));
+            postEvent(new DeleteFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -211,7 +211,7 @@ public class JandiSocketServiceModel {
             SocketTopicEvent socketTopicEvent =
                     objectMapper.readValue(object.toString(), SocketTopicEvent.class);
 
-            refreshEntity(new TopicDeleteEvent(socketTopicEvent.getTopic().getId()), true);
+            refreshEntity(new TopicDeleteEvent(socketTopicEvent.getTeamId(), socketTopicEvent.getTopic().getId()), true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -232,7 +232,7 @@ public class JandiSocketServiceModel {
             SocketFileEvent socketFileEvent =
                     objectMapper.readValue(object.toString(), SocketFileUnsharedEvent.class);
 
-            postEvent(new ShareFileEvent(socketFileEvent.getFile().getId()));
+            postEvent(new ShareFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -371,7 +371,7 @@ public class JandiSocketServiceModel {
         try {
             SocketFileEvent socketFileEvent =
                     objectMapper.readValue(object.toString(), SocketFileEvent.class);
-            postEvent(new CreateFileEvent(socketFileEvent.getFile().getId()));
+            postEvent(new CreateFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
