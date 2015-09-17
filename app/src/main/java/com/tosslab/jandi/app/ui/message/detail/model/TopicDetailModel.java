@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.push.model.PushOnOffModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -26,7 +25,7 @@ import org.json.JSONException;
 import retrofit.RetrofitError;
 
 @EBean
-public class TopicDetailModel extends PushOnOffModel {
+public class TopicDetailModel {
 
     @Bean
     EntityClientManager entityClientManager;
@@ -124,6 +123,16 @@ public class TopicDetailModel extends PushOnOffModel {
         } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
             entityClientManager.modifyPrivateGroupName(entityId, inputName);
         }
+    }
+
+    public void updatePushStatus(int teamId, int entityId, boolean pushOn) throws RetrofitError {
+        ReqUpdateTopicPushSubscribe req = new ReqUpdateTopicPushSubscribe(pushOn);
+        RequestApiManager.getInstance().updateTopicPushSubscribe(teamId, entityId, req);
+    }
+
+    public boolean isPushOn(int entityId) {
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
+        return entity.isTopicPushOn;
     }
 
     public void trackChangingEntityName(Context context, int entityId, int entityType) {

@@ -8,9 +8,9 @@ import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.push.model.PushOnOffModel;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -29,7 +29,7 @@ import retrofit.RetrofitError;
  * Created by Steve SeongUg Jung on 15. 1. 7..
  */
 @EBean
-public class EntityMenuDialogModel extends PushOnOffModel {
+public class EntityMenuDialogModel {
 
     @RootContext
     Context context;
@@ -94,5 +94,15 @@ public class EntityMenuDialogModel extends PushOnOffModel {
 
         final int teamId = EntityManager.getInstance().getTeamId();
         updatePushStatus(teamId, entityId, isTopicPushOn);
+    }
+
+    public void updatePushStatus(int teamId, int entityId, boolean pushOn) throws RetrofitError {
+        ReqUpdateTopicPushSubscribe req = new ReqUpdateTopicPushSubscribe(pushOn);
+        RequestApiManager.getInstance().updateTopicPushSubscribe(teamId, entityId, req);
+    }
+
+    public boolean isPushOn(int entityId) {
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
+        return entity.isTopicPushOn;
     }
 }
