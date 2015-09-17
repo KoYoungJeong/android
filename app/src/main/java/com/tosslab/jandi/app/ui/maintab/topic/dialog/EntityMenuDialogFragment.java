@@ -48,9 +48,8 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
     TextView tvTitle;
 
-    TextView tvMoveFolder;
+    TextView btnMoveFolder;
 
-    @ViewById(R.id.btn_entity_popup_notification)
     TextView btnNotification;
 
     @Bean
@@ -69,7 +68,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
     void initView() {
         FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
-        title.setText(entity.getName());
+        tvTitle.setText(entity.getName());
 
         boolean isDirectMessage = entity.isUser();
         if (isDirectMessage) {
@@ -122,20 +121,21 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
         View view = LayoutInflater.from(getActivity()).inflate((R.layout.fragment_entity_popup), null);
 
-        starredButton = (TextView) view.findViewById(R.id.btn_entity_popup_starred);
-        leaveButton = (TextView) view.findViewById(R.id.btn_entity_popup_leave);
-        title = (TextView) view.findViewById(R.id.tv_popup_title);
-        tvMoveFolder = (TextView) view.findViewById(R.id.btn_entity_popup_move_folder);
+        btnStarred = (TextView) view.findViewById(R.id.btn_entity_popup_starred);
+        btnLeave = (TextView) view.findViewById(R.id.btn_entity_popup_leave);
+        tvTitle = (TextView) view.findViewById(R.id.tv_popup_title);
+        btnMoveFolder = (TextView) view.findViewById(R.id.btn_entity_popup_move_folder);
+        btnNotification = (TextView) view.findViewById(R.id.btn_entity_popup_notification);
 
-        starredButton.setOnClickListener(v -> onStarredClick());
-        leaveButton.setOnClickListener(v -> onLeaveClick());
-        tvMoveFolder.setOnClickListener(v -> onMoveFolderClick());
+        btnStarred.setOnClickListener(v -> onStarredClick());
+        btnLeave.setOnClickListener(v -> onLeaveClick());
+        btnMoveFolder.setOnClickListener(v -> onMoveFolderClick());
+
+        view.findViewById(R.id.btn_entity_popup_cancel).setOnClickListener(v -> dismiss());
 
         return new AlertDialog.Builder(getActivity())
                 .setView(view)
                 .create();
-
-
     }
 
 
@@ -272,11 +272,5 @@ public class EntityMenuDialogFragment extends DialogFragment {
         topicFolderMoveCallEvent.setFolderId(folderId);
         EventBus.getDefault().post(topicFolderMoveCallEvent);
         dismiss();
-    }
-
-    @Click(R.id.btn_entity_popup_cancel)
-    @Override
-    public void dismiss() {
-        super.dismiss();
     }
 }
