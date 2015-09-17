@@ -55,10 +55,10 @@ public class GenerateMentionMessageUtil {
             }
             if (mention.getId() == myId) {
                 spannable = new ClickableMensionMessageSpannable(context,
-                        name, mention.getId(), pxSize, meTextColor, meBackgroundColor);
+                        name, mention.getId(), tvMessageView.getTextSize(), meTextColor, meBackgroundColor);
             } else {
                 spannable = new ClickableMensionMessageSpannable(context,
-                        name, mention.getId(), pxSize, textColor, backgroundColor);
+                        name, mention.getId(), tvMessageView.getTextSize(), textColor, backgroundColor);
             }
 
             int dp = 260;

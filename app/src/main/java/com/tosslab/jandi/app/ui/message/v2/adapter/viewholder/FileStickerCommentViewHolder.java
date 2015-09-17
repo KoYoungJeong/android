@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -35,7 +36,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
     private TextView fileOwnerTextView;
     private TextView fileNameTextView;
     private ImageView ivSticker;
-    private TextView fileOwnerPostfixTextView;
     private ImageView fileImageView;
     private View disableCoverView;
     private View disableLineThroughView;
@@ -53,7 +53,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
         dateTextView = (TextView) rootView.findViewById(R.id.txt_message_create_date);
 
         fileOwnerTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_owner);
-        fileOwnerPostfixTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_postfix);
         fileNameTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_file_name);
         ivSticker = (ImageView) rootView.findViewById(R.id.iv_sticker_message_commented_content);
 
@@ -126,7 +125,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
             fileImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             if (TextUtils.equals(link.feedback.status, "archived")) {
                 fileOwnerTextView.setVisibility(View.GONE);
-                fileOwnerPostfixTextView.setVisibility(View.GONE);
 
                 fileNameTextView.setText(R.string.jandi_deleted_file);
                 fileNameTextView.setTextColor(fileNameTextView.getResources().getColor(R.color
@@ -135,14 +133,13 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                 fileImageView.setVisibility(View.VISIBLE);
                 fileImageView.setOnClickListener(null);
             } else {
-                fileOwnerTextView.setText(feedbackUser.name);
+                fileOwnerTextView.setText(Html.fromHtml(fileOwnerTextView.getResources().getString(R.string.jandi_commented_on, feedbackUser.name)));
                 fileNameTextView.setTextColor(fileNameTextView.getResources().getColor(R.color
                         .jandi_messages_file_name));
                 ResMessages.FileContent content = feedbackFileMessage.content;
                 fileNameTextView.setText(content.title);
 
                 fileOwnerTextView.setVisibility(View.VISIBLE);
-                fileOwnerPostfixTextView.setVisibility(View.VISIBLE);
 
                 String fileType = content.type;
                 if (fileType.startsWith("image/")) {

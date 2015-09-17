@@ -505,6 +505,7 @@
     <string name="jandi_folder_rename">重新命名</string>
     <string name="jandi_no_topic_to_join">没有可加入的议题</string>
     <string name="jandi_1_1_message">"直接传讯"</string>
+    <string name="jandi_commented_on">"<![CDATA[<font color="#999999">留言于</font><font color="#000000"><b>%s</b></font><font color="#999999">的文件</font>]]>"</string>
 
 
 </resources>
