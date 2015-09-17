@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -24,25 +24,25 @@ import de.greenrobot.event.EventBus;
  */
 public class PureCommentViewHolder implements BodyViewHolder {
 
-    private TextView nameTextView;
-    private TextView dateTextView;
-    private TextView commentTextView;
-    private View disableLineThroughView;
-    private TextView unreadTextView;
+    private TextView tvName;
+    private TextView tvDate;
+    private TextView tvComment;
+    private View vDisableLineThrough;
+    private TextView tvUnread;
     private Context context;
-    private View lastReadView;
+    private View vLastRead;
     private View contentView;
 
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
-        nameTextView = (TextView) rootView.findViewById(R.id.txt_message_nested_comment_user_name);
-        dateTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_create_date);
-        commentTextView = (TextView) rootView.findViewById(R.id.txt_message_nested_comment_content);
-        disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
-        unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
+        tvName = (TextView) rootView.findViewById(R.id.tv_message_nested_comment_user_name);
+        tvDate = (TextView) rootView.findViewById(R.id.tv_message_commented_create_date);
+        tvComment = (TextView) rootView.findViewById(R.id.tv_message_nested_comment_content);
+        vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+        tvUnread = (TextView) rootView.findViewById(R.id.tv_entity_listitem_unread);
         context = rootView.getContext();
-        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
+        vLastRead = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -56,29 +56,29 @@ public class PureCommentViewHolder implements BodyViewHolder {
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById.getUser();
         if (entityById != EntityManager.UNKNOWN_USER_ENTITY && user != null && TextUtils.equals(user.status, "enabled")) {
-            disableLineThroughView.setVisibility(View.GONE);
-            nameTextView.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
+            vDisableLineThrough.setVisibility(View.GONE);
+            tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
         } else {
-            nameTextView.setTextColor(context.getResources().getColor(R.color.deactivate_text_color));
-            disableLineThroughView.setVisibility(View.VISIBLE);
+            tvName.setTextColor(context.getResources().getColor(R.color.deactivate_text_color));
+            vDisableLineThrough.setVisibility(View.VISIBLE);
         }
 
-        nameTextView.setText(fromEntity.name);
-        dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
+        tvName.setText(fromEntity.name);
+        tvDate.setText(DateTransformator.getTimeStringForSimple(link.time));
 
         int unreadCount = UnreadCountUtil.getUnreadCount(
                 teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
 
-        unreadTextView.setText(String.valueOf(unreadCount));
+        tvUnread.setText(String.valueOf(unreadCount));
         if (unreadCount <= 0) {
-            unreadTextView.setVisibility(View.GONE);
+            tvUnread.setVisibility(View.GONE);
         } else {
-            unreadTextView.setVisibility(View.VISIBLE);
+            tvUnread.setVisibility(View.VISIBLE);
         }
 
         if (link.message instanceof ResMessages.CommentMessage) {
             ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
-            commentTextView.setText(commentMessage.content.body);
+            tvComment.setText(commentMessage.content.body);
 
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
             spannableStringBuilder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
@@ -86,31 +86,31 @@ public class PureCommentViewHolder implements BodyViewHolder {
             boolean hasLink = LinkifyUtil.addLinks(context, spannableStringBuilder);
 
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                    commentTextView, spannableStringBuilder, commentMessage.mentions, entityManager.getMe().getId())
+                    tvComment, spannableStringBuilder, commentMessage.mentions, entityManager.getMe().getId())
                     .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
             spannableStringBuilder = generateMentionMessageUtil.generate(true);
 
             if (hasLink) {
-                commentTextView.setText(
+                tvComment.setText(
                         Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
-                LinkifyUtil.setOnLinkClick(commentTextView);
+                LinkifyUtil.setOnLinkClick(tvComment);
             } else {
-                commentTextView.setText(spannableStringBuilder);
+                tvComment.setText(spannableStringBuilder);
             }
 
 
         }
 
-        nameTextView.setOnClickListener(v ->
-                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+        tvName.setOnClickListener(v ->
+                EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id)));
     }
 
     @Override
     public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
         if (currentLinkId == lastReadLinkId) {
-            lastReadView.setVisibility(View.VISIBLE);
+            vLastRead.setVisibility(View.VISIBLE);
         } else {
-            lastReadView.setVisibility(View.GONE);
+            vLastRead.setVisibility(View.GONE);
         }
     }
 

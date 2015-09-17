@@ -20,7 +20,7 @@
             android:background="@drawable/folder_shadow" />
 
         <View
-            android:id="@+id/view_entity_listitem_selector"
+            android:id="@+id/v_entity_listitem_selector"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/bg_topic_selector" />

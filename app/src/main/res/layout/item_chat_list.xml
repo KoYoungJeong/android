@@ -5,13 +5,13 @@
                 android:orientation="horizontal">
 
     <View
-        android:id="@+id/view_entity_listitem_selector"
+        android:id="@+id/v_entity_listitem_selector"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_topic_selector"/>
 
     <ImageView
-        android:id="@+id/img_entity_listitem_icon"
+        android:id="@+id/iv_entity_listitem_icon"
         android:layout_width="@dimen/jandi_entity_item_icon"
         android:layout_height="@dimen/jandi_entity_item_icon"
         android:layout_centerVertical="true"
@@ -20,25 +20,25 @@
         android:src="@drawable/topiclist_icon_topic"/>
 
     <ImageView
-        android:id="@+id/img_entity_listitem_fav"
+        android:id="@+id/iv_entity_listitem_fav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/img_entity_listitem_icon"
-        android:layout_alignRight="@+id/img_entity_listitem_icon"
+        android:layout_alignBottom="@+id/iv_entity_listitem_icon"
+        android:layout_alignRight="@+id/iv_entity_listitem_icon"
         android:layout_marginBottom="-2dp"
         android:layout_marginRight="-2dp"
         android:src="@drawable/icon_team_member_star"/>
 
 
     <TextView
-        android:id="@+id/txt_entity_listitem_user_count"
+        android:id="@+id/tv_entity_listitem_user_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/vg_entity_listitem_name"
         android:layout_alignWithParentIfMissing="true"
         android:layout_below="@+id/vg_entity_listitem_name"
         android:layout_marginRight="16dp"
-        android:layout_toLeftOf="@+id/txt_entity_listitem_badge"
+        android:layout_toLeftOf="@+id/tv_entity_listitem_badge"
         android:ellipsize="end"
         android:maxLines="2"
         android:text="ahahahaha"
@@ -53,12 +53,12 @@
         android:layout_marginBottom="3dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="12dp"
-        android:layout_toLeftOf="@+id/txt_entity_listitem_badge"
-        android:layout_toRightOf="@+id/img_entity_listitem_icon">
+        android:layout_toLeftOf="@+id/tv_entity_listitem_badge"
+        android:layout_toRightOf="@+id/iv_entity_listitem_icon">
 
 
         <TextView
-            android:id="@+id/txt_entity_listitem_name"
+            android:id="@+id/tv_entity_listitem_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -69,28 +69,28 @@
             android:textStyle="bold"/>
 
         <ImageView
-            android:id="@+id/img_entity_listitem_line_through"
+            android:id="@+id/iv_entity_listitem_line_through"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/txt_entity_listitem_name"
-            android:layout_alignLeft="@+id/txt_entity_listitem_name"
-            android:layout_alignRight="@+id/txt_entity_listitem_name"
-            android:layout_alignTop="@+id/txt_entity_listitem_name"
+            android:layout_alignBottom="@+id/tv_entity_listitem_name"
+            android:layout_alignLeft="@+id/tv_entity_listitem_name"
+            android:layout_alignRight="@+id/tv_entity_listitem_name"
+            android:layout_alignTop="@+id/tv_entity_listitem_name"
             android:src="@drawable/line_black"/>
 
         <ImageView
-            android:id="@+id/img_entity_listitem_warning"
+            android:id="@+id/iv_entity_listitem_warning"
             android:layout_width="30dp"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/img_entity_listitem_line_through"
-            android:layout_alignTop="@+id/img_entity_listitem_line_through"
-            android:layout_toRightOf="@+id/img_entity_listitem_line_through"
+            android:layout_alignBottom="@+id/iv_entity_listitem_line_through"
+            android:layout_alignTop="@+id/iv_entity_listitem_line_through"
+            android:layout_toRightOf="@+id/iv_entity_listitem_line_through"
             android:scaleType="centerInside"
             android:src="@drawable/alert_icon_warning"/>
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/txt_entity_listitem_badge"
+        android:id="@+id/tv_entity_listitem_badge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -106,7 +106,7 @@
         android:textSize="11sp"/>
 
     <View
-        android:id="@+id/view_entity_listitem_warning"
+        android:id="@+id/v_entity_listitem_warning"
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_entity_item_height"
         android:background="#66ffffff"

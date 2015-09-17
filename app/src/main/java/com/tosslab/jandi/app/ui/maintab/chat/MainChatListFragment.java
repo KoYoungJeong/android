@@ -10,11 +10,10 @@ import android.widget.ListView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
-import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -27,6 +26,8 @@ import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenterImpl
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 
@@ -185,11 +186,11 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     }
 
 
-    public void onEventMainThread(ProfileDetailEvent event) {
+    public void onEventMainThread(ShowProfileEvent event) {
         if (foreground) {
-            UserInfoDialogFragment_.builder().entityId(event.getEntityId()).build()
-                    .show
-                            (getFragmentManager(), "dialog");
+            MemberProfileActivity_.intent(getActivity())
+                    .memberId(event.userId)
+                    .start();
         }
     }
 

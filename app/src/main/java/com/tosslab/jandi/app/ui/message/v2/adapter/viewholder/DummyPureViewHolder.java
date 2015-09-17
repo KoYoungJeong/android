@@ -19,13 +19,13 @@ import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
  */
 public class DummyPureViewHolder implements BodyViewHolder {
 
-    private TextView messageTextView;
+    private TextView tvMessage;
     private View contentView;
 
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
-        messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
+        tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
     }
 
     @Override
@@ -41,12 +41,12 @@ public class DummyPureViewHolder implements BodyViewHolder {
         }
 
         SendMessage.Status status = SendMessage.Status.valueOf(dummyMessageLink.getStatus());
-        int textColor = messageTextView.getContext().getResources().getColor(R.color.jandi_messages_name);
+        int textColor = tvMessage.getContext().getResources().getColor(R.color.jandi_messages_name);
         switch (status) {
             case FAIL: {
                 builder.append("  ");
                 int beforLenghth = builder.length();
-                Drawable drawable = messageTextView.getContext().getResources()
+                Drawable drawable = tvMessage.getContext().getResources()
                         .getDrawable(R.drawable.icon_message_failure);
                 drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable
                         .getIntrinsicHeight());
@@ -55,13 +55,13 @@ public class DummyPureViewHolder implements BodyViewHolder {
                                 new ImageSpan(drawable,
                                         ImageSpan.ALIGN_BASELINE),
                                 beforLenghth, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                messageTextView.setTextColor(textColor);
+                tvMessage.setTextColor(textColor);
                 break;
             }
             case SENDING: {
                 builder.append("  ");
                 int beforLenghth = builder.length();
-                Drawable drawable = messageTextView.getContext().getResources()
+                Drawable drawable = tvMessage.getContext().getResources()
                         .getDrawable(R.drawable.icon_message_sending);
                 drawable.setBounds(0, 0,
                         drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -70,22 +70,22 @@ public class DummyPureViewHolder implements BodyViewHolder {
                                 new ImageSpan(drawable,
                                         ImageSpan.ALIGN_BASELINE),
                                 beforLenghth, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                messageTextView.setTextColor(textColor);
+                tvMessage.setTextColor(textColor);
                 break;
             }
             case COMPLETE:
                 builder.append(" ");
-                messageTextView.setTextColor(textColor);
+                tvMessage.setTextColor(textColor);
                 break;
         }
 
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                messageTextView, builder, ((DummyMessageLink) link).getMentions(),
+                tvMessage, builder, ((DummyMessageLink) link).getMentions(),
                 EntityManager.getInstance().getMe().getId());
         builder = generateMentionMessageUtil.generate(false);
 
-        messageTextView.setText(builder);
+        tvMessage.setText(builder);
 
 
     }

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.filedetail;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.widget.EditText;
 import android.widget.ListView;

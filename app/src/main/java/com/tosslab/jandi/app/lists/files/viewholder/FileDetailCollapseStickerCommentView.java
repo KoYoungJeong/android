@@ -23,7 +23,7 @@ public class FileDetailCollapseStickerCommentView implements CommentViewHolder {
     public void init(View rootView) {
         ivStickerContent = (ImageView) rootView.findViewById(R.id.iv_file_detail_collapse_comment_content);
         tvCreatedTime = (TextView) rootView.findViewById(R.id.tv_file_detail_collapse_comment_create_date);
-        selectedView = rootView.findViewById(R.id.view_file_detail_comment_anim);
+        selectedView = rootView.findViewById(R.id.v_file_detail_comment_anim);
     }
 
     @Override

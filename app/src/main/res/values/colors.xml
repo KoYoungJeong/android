@@ -123,6 +123,10 @@
     <!-- profile -->
     <color name="jandi_profile_bg">#f0f0f0</color>
     <color name="jandi_profile_edited_text">#f3a71e</color>
+    <color name="jandi_member_profile_user_name">#FF1A1A1A</color>
+    <color name="jandi_member_profile_img_overlay">#7F000000</color>
+    <color name="jandi_member_profile_img_overlay_default">#FFF3B14C</color>
+    <color name="jandi_member_profile_img_circle_line_color">#19000000</color>
 
     <!-- File detail -->
     <color name="jandi_file_detail_bg">#FFFFFF</color>

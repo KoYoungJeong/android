@@ -3,15 +3,16 @@ package com.tosslab.jandi.app.ui.members.presenter;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
-import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -144,12 +145,10 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         view.moveDirectMessageActivity(entityManager.getTeamId(), event.userId, entityManager.getEntityById(event.userId).isStarred);
     }
 
-    public void onEventMainThread(ProfileDetailEvent event) {
-        int entityId = event.getEntityId();
-        UserInfoDialogFragment_.builder()
-                .entityId(entityId)
-                .build()
-                .show(activity.getSupportFragmentManager(), "dialog");
+    public void onEventMainThread(ShowProfileEvent event) {
+        MemberProfileActivity_.intent(activity)
+                .memberId(event.userId)
+                .start();
     }
 
     public void onEvent(RetrieveTopicListEvent event) {

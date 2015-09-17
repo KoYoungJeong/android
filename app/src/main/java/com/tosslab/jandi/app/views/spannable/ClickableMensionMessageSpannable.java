@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.views.spannable;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 
@@ -27,7 +27,7 @@ public class ClickableMensionMessageSpannable extends MentionMessageSpannable im
                 .getEntityById(entityId);
 
         if (entity != EntityManager.UNKNOWN_USER_ENTITY && entity.isUser()) {
-            EventBus.getDefault().post(new RequestUserInfoEvent(entityId));
+            EventBus.getDefault().post(new ShowProfileEvent(entityId));
         }
 
     }

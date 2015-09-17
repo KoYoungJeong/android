@@ -1,389 +1,510 @@
 package com.tosslab.jandi.app.ui.profile.member;
 
-import android.app.DialogFragment;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.soundcloud.android.crop.Crop;
-import com.tosslab.jandi.app.JandiApplication;
+import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
-import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
-import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
-import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
-import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
-import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
-import com.tosslab.jandi.app.files.upload.ProfileFileUploadViewModelImpl;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.models.ReqProfileName;
-import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
-import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
-import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.profile.modify.ModifyProfileActivity;
+import com.tosslab.jandi.app.ui.profile.modify.ModifyProfileActivity_;
+import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
+import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
+import com.tosslab.jandi.app.utils.transform.ion.IonBlurTransform;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleStrokeTransform;
+import com.tosslab.jandi.app.views.SwipeExitLayout;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
-import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
 
-import java.io.File;
-import java.io.IOException;
-
-import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+import uk.co.senab.photoview.PhotoView;
 
 /**
- * Created by justinygchoi on 2014. 8. 27..
+ * Created by tonyjs on 15. 9. 8..
  */
-@EActivity(R.layout.activity_profile)
-public class MemberProfileActivity extends BaseAnalyticsActivity {
+@EActivity(R.layout.activity_member_profile)
+public class MemberProfileActivity extends AppCompatActivity {
+    private static final String KEY_FULL_SIZE_IMAGE_SHOWING = "full_size_image_showing";
+
+    @Extra
+    int memberId;
 
     @Bean
-    MemberProfileModel memberProfileModel;
+    EntityClientManager entityClientManager;
 
-    @Bean
-    MemberProfilePresenter memberProfileView;
+    @ViewById(R.id.vg_swipe_exit_layout)
+    SwipeExitLayout swipeExitLayout;
+    @ViewById(R.id.v_background)
+    View vBackground;
 
-    @Bean(ProfileFileUploadViewModelImpl.class)
-    FilePickerViewModel filePickerViewModel;
+    @ViewById(R.id.tv_member_profile_description)
+    TextView tvProfileDescription;
+    @ViewById(R.id.tv_member_profile_name)
+    TextView tvProfileName;
+    @ViewById(R.id.tv_member_profile_division)
+    TextView tvProfileDivision;
+    @ViewById(R.id.tv_member_profile_position)
+    TextView tvProfilePosition;
+    @ViewById(R.id.tv_member_profile_phone)
+    TextView tvProfilePhone;
+    @ViewById(R.id.tv_member_profile_email)
+    TextView tvProfileEmail;
 
+    @ViewById(R.id.vg_member_profile_img_large_overlay)
+    ViewGroup vgProfileImageOverlay;
+    @ViewById(R.id.vg_member_profile_detail)
+    ViewGroup vgProfileTeamDetail;
+    @ViewById(R.id.vg_member_profile_team_info)
+    ViewGroup vgProfileTeamInfo;
+    @ViewById(R.id.vg_member_profile_buttons)
+    ViewGroup vgProfileTeamButtons;
+
+    @ViewById(R.id.v_member_profile_disable)
+    View vDisableIcon;
+    @ViewById(R.id.btn_member_profile_star)
+    View btnProfileStar;
+
+    @ViewById(R.id.iv_member_profile_img_full)
+    PhotoView ivProfileImageFull;
+    @ViewById(R.id.iv_member_profile_img_large)
+    ImageView ivProfileImageLarge;
+    @ViewById(R.id.iv_member_profile_img_small)
+    ImageView ivProfileImageSmall;
+
+    private int scrollEventMargin;
+    private boolean isFullSizeImageShowing = false;
+    private boolean hasChangedProfileImage = true;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        overridePendingTransition(R.anim.slide_in_bottom_with_allpha, 0);
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            isFullSizeImageShowing = savedInstanceState.getBoolean(KEY_FULL_SIZE_IMAGE_SHOWING);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_FULL_SIZE_IMAGE_SHOWING, ivProfileImageFull.isShown());
+    }
+
+    @OnActivityResult(ModifyProfileActivity.REQUEST_CODE)
     @AfterViews
-    void bindAdapter() {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.ScreenView)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ScreenView, ScreenViewProperty.PROFILE)
-                        .build());
+    void initViews() {
+        // Scroll 시 추가 애니메이션을 위한 임의의 사이즈
+        //  #R.id.vg_member_profile_buttons 의 Height 만큼의 사이즈를 가진다.
+        scrollEventMargin = getResources().getDimensionPixelSize(R.dimen.jandi_member_profile_buttons_height);
 
-        GoogleAnalyticsUtil.sendScreenName("PROFILE");
+        FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
 
-        setupActionBar();
+        final String profileImageUrlLarge = member.getUserLargeProfileUrl();
 
-        getProfileInBackground();
-    }
-
-    private void setupActionBar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
-        setSupportActionBar(toolbar);
-
-        ActionBar actionBar = getSupportActionBar();
-        toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
-        actionBar.setDisplayUseLogoEnabled(false);
-        actionBar.setIcon(
-                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
+        // 기본 프로필 이미지 인 경우 디폴트 컬러를 보여준다.
+        if (!(hasChangedProfileImage = hasChangedProfileImage(profileImageUrlLarge))) {
+            int color = getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
+            vgProfileImageOverlay.setBackgroundColor(color);
         }
 
-        return super.onOptionsItemSelected(item);
-    }
+        initSwipeLayout();
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        EventBus.getDefault().register(this);
-        trackGaProfile(getDistictId());
-    }
+        initLargeImageSize(profileImageUrlLarge);
 
-    @Override
-    public void onPause() {
-        EventBus.getDefault().unregister(this);
-        super.onPause();
-    }
+        boolean isDisableUser = !isEnableUser(member.getUser().status);
+        vDisableIcon.setVisibility(isDisableUser ? View.VISIBLE : View.GONE);
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        memberProfileView.dismissProgressWheel();
-    }
+        String description = isDisableUser
+                ? getString(R.string.jandi_disable_user_profile_explain)
+                : member.getUserStatusMessage();
 
-    /**
-     * *********************************************************
-     * 프로필 가져오기
-     * TODO Background 는 공통으로 빼고 Success, Fail 리스너를 둘 것.
-     * **********************************************************
-     */
-    @Background
-    void getProfileInBackground() {
-        memberProfileView.showProgressWheel();
-        try {
-            ResLeftSideMenu.User me;
-            if (!NetworkCheckUtil.isConnected()) {
-                me = memberProfileModel.getSavedProfile(JandiApplication.getContext());
-            } else {
-                me = memberProfileModel.getProfile();
-            }
-            memberProfileView.displayProfile(me);
-        } catch (RetrofitError e) {
-            LogUtil.e("get profile failed", e);
-            memberProfileView.getProfileFailed();
-        } catch (Exception e) {
-            LogUtil.e("get profile failed", e);
-            memberProfileView.getProfileFailed();
-        } finally {
-            memberProfileView.dismissProgressWheel();
+        tvProfileDescription.setText(description);
+
+        tvProfileName.setText(member.getName());
+
+        String userDivision = member.getUserDivision();
+        String userPosition = member.getUserPosition();
+        tvProfileDivision.setText(userDivision);
+        tvProfilePosition.setText(userPosition);
+
+        if (TextUtils.isEmpty(userDivision) && TextUtils.isEmpty(userPosition)) {
+            vgProfileTeamInfo.setVisibility(View.GONE);
         }
-    }
 
-    /**
-     * *********************************************************
-     * 프로필 수정
-     * **********************************************************
-     */
-    @Click(R.id.profile_user_status_message)
-    void editStatusMessage(View view) {
-        // 닉네임
-        if (NetworkCheckUtil.isConnected()) {
-            memberProfileView.launchEditDialog(
-                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS,
-                    ((TextView) view)
-            );
+        float lineWidth = 1;
+        int lineColor = getResources().getColor(R.color.jandi_member_profile_img_circle_line_color);
+        int bgColor = Color.BLACK;
+        IonCircleStrokeTransform transform = new IonCircleStrokeTransform(lineWidth, lineColor, bgColor);
+
+        String profileImageUrlMedium = member.getUserMediumProfileUrl();
+        Ion.with(ivProfileImageSmall)
+                .placeholder(R.drawable.profile_img)
+                .error(R.drawable.profile_img)
+                .fitXY()
+                .transform(transform)
+                .load(profileImageUrlMedium);
+
+        ivProfileImageFull.setOnViewTapListener((view, x, y) -> {
+            ivProfileImageFull.setScale(1.0f, true);
+            hideFullImage(view);
+        });
+
+        Ion.with(ivProfileImageFull)
+                .placeholder(R.drawable.profile_img)
+                .error(R.drawable.profile_img)
+                .fitCenter()
+                .load(profileImageUrlLarge);
+
+        if (isFullSizeImageShowing) {
+            ivProfileImageFull.setAlpha(1.0f);
+            ivProfileImageFull.setVisibility(View.VISIBLE);
+
+            ivProfileImageSmall.setScaleX(3.0f);
+            ivProfileImageSmall.setScaleY(3.0f);
+            ivProfileImageSmall.setAlpha(0.0f);
         }
-    }
 
-    @Click(R.id.profile_user_phone_number)
-    void editPhoneNumber(View view) {
-        // 핸드폰 번호
-        if (NetworkCheckUtil.isConnected()) {
-            memberProfileView.launchEditDialog(
-                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE,
-                    ((TextView) view)
-            );
-        }
-    }
-
-    @Click(R.id.profile_user_realname)
-    void editName(View view) {
-        if (NetworkCheckUtil.isConnected()) {
-            memberProfileView.launchEditDialog(
-                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME,
-                    ((TextView) view)
-            );
-        }
-    }
-
-    @Click(R.id.profile_user_division)
-    void editDivision(View view) {
-        // 부서
-        if (NetworkCheckUtil.isConnected()) {
-            memberProfileView.launchEditDialog(
-                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_DIVISION,
-                    ((TextView) view)
-            );
-        }
-    }
-
-    @Click(R.id.profile_user_position)
-    void editPosition(View view) {
-        // 직책
-        if (NetworkCheckUtil.isConnected()) {
-            memberProfileView.launchEditDialog(
-                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_POSITION,
-                    ((TextView) view)
-            );
-        }
-    }
-
-    @Click(R.id.profile_user_email)
-    void editEmail(View view) {
-        if (NetworkCheckUtil.isConnected()) {
-            String[] accountEmails = memberProfileModel.getAccountEmails();
-            String email = memberProfileView.getEmail();
-            memberProfileView.showEmailChooseDialog(accountEmails, email);
-        }
-    }
-
-    @Click(R.id.profile_photo)
-    void getPicture() {
-        // 프로필 사진
-        filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, MemberProfileActivity.this);
-
-    }
-
-    public void onEvent(MemberEmailChangeEvent event) {
-        if (NetworkCheckUtil.isConnected()) {
-            memberProfileView.updateEmailTextColor(event.getEmail());
-            uploadEmail(event.getEmail());
-        }
-    }
-
-    public void onEvent(ProfileChangeEvent event) {
-        ResLeftSideMenu.User member = event.getMember();
-        if (memberProfileModel.isMyId(member.id)) {
-            memberProfileView.displayProfile(member);
-            closeDialogFragment();
-        }
-    }
-
-    @UiThread
-    void closeDialogFragment() {
-        android.app.Fragment dialogFragment = getFragmentManager().findFragmentByTag("dialog");
-        if (dialogFragment != null && dialogFragment instanceof DialogFragment) {
-            ((DialogFragment) dialogFragment).dismiss();
-        }
-    }
-
-    public void onEvent(ConfirmModifyProfileEvent event) {
-
-
-        if (!NetworkCheckUtil.isConnected()) {
-            memberProfileView.showCheckNetworkDialog();
+        if (isDisableUser) {
+            tvProfileEmail.setVisibility(View.GONE);
+            tvProfilePhone.setVisibility(View.GONE);
+            btnProfileStar.setVisibility(View.INVISIBLE);
+            btnProfileStar.setEnabled(false);
             return;
         }
 
-        memberProfileView.updateProfileTextColor(event.actionType, event.inputMessage);
-        if (event.actionType == EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME) {
-            updateProfileName(event.inputMessage);
+        String userEmail = member.getUserEmail();
+        tvProfileEmail.setText(userEmail);
+        if (TextUtils.isEmpty(userEmail)) {
+            tvProfileEmail.setVisibility(View.GONE);
+        }
+
+        String userPhoneNumber = member.getUserPhoneNumber();
+        tvProfilePhone.setText(userPhoneNumber);
+        if (TextUtils.isEmpty(userPhoneNumber)) {
+            tvProfilePhone.setVisibility(View.GONE);
+        }
+
+        btnProfileStar.setSelected(member.isStarred);
+        btnProfileStar.setVisibility(isMe() ? View.INVISIBLE : View.VISIBLE);
+        btnProfileStar.setEnabled(!isMe());
+
+        addButtons(member);
+    }
+
+    private void initSwipeLayout() {
+        swipeExitLayout.setOnExitListener(this::finish);
+        swipeExitLayout.sevBackgroundDimView(vBackground);
+        swipeExitLayout.setStatusListener(new SwipeExitLayout.StatusListener() {
+            @Override
+            public void onScroll(float distance) {
+                float translationY = ivProfileImageLarge.getTranslationY() - distance;
+
+                if (distance > 0) {
+                    translationY = Math.max(-scrollEventMargin, translationY);
+                } else {
+                    translationY = Math.min(0, translationY);
+                }
+
+                ivProfileImageLarge.setTranslationY(translationY);
+            }
+
+            @Override
+            public void onIgnore(float spareDistance) {
+                float distance = spareDistance - scrollEventMargin;
+                int duration = Math.min(
+                        SwipeExitLayout.MIN_IGNORE_ANIM_DURATION, (int) Math.abs(distance));
+
+                ivProfileImageLarge.animate()
+                        .setDuration(duration)
+                        .translationY(-scrollEventMargin);
+            }
+
+            @Override
+            public void onExit(float spareDistance) {
+                float distance = spareDistance - scrollEventMargin;
+                int duration = Math.min(
+                        SwipeExitLayout.MIN_EXIT_ANIM_DURATION, (int) Math.abs(distance));
+
+                ivProfileImageLarge.animate()
+                        .setDuration(duration)
+                        .translationY(0);
+            }
+        });
+    }
+
+    private void initLargeImageSize(final String profileImageUrlLarge) {
+        if (isLandscape()) {
+            ivProfileImageLarge.setTranslationY(-scrollEventMargin);
+
+            loadLargeImage(profileImageUrlLarge);
+            return;
+        }
+
+        vgProfileTeamDetail.post(new Runnable() {
+            @Override
+            public void run() {
+                int screenHeight = findViewById(android.R.id.content).getMeasuredHeight();
+                int vgProfileTeamDetailHeight = vgProfileTeamDetail.getMeasuredHeight();
+                int ivProfileImageLargeHeight =
+                        screenHeight - vgProfileTeamDetailHeight + scrollEventMargin;
+
+                ViewGroup.LayoutParams layoutParams = ivProfileImageLarge.getLayoutParams();
+                layoutParams.height = ivProfileImageLargeHeight;
+                ivProfileImageLarge.setLayoutParams(layoutParams);
+
+                ivProfileImageLarge.setTranslationY(-scrollEventMargin);
+
+                loadLargeImage(profileImageUrlLarge);
+            }
+        });
+    }
+
+    private void loadLargeImage(String profileImageUrlLarge) {
+        Drawable placeHolder = new ColorDrawable(
+                getResources().getColor(R.color.jandi_member_profile_img_overlay_default));
+        Ion.with(ivProfileImageLarge)
+                .placeholder(placeHolder)
+                .error(placeHolder)
+                .centerCrop()
+                .transform(new IonBlurTransform())
+                .load(profileImageUrlLarge);
+    }
+
+    @Click(R.id.iv_member_profile_img_small)
+    void showFullImage(View v) {
+        if (!hasChangedProfileImage) {
+            return;
+        }
+
+        if (isLandscape()) {
+            v.setPivotX(0);
+        }
+        v.animate()
+                .scaleX(3.0f)
+                .scaleY(3.0f)
+                .setDuration(300)
+                .alpha(0.0f);
+
+        ivProfileImageFull.setScaleX(1.0f);
+        ivProfileImageFull.setScaleY(1.0f);
+        ivProfileImageFull.setAlpha(0.0f);
+        ivProfileImageFull.setVisibility(View.VISIBLE);
+        ivProfileImageFull.animate()
+                .setDuration(300)
+                .alpha(1.0f)
+                .setListener(null);
+    }
+
+    void hideFullImage(final View v) {
+        v.animate()
+                .setDuration(300)
+                .alpha(0.0f)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        v.setVisibility(View.GONE);
+                    }
+                });
+
+        ivProfileImageSmall.animate()
+                .scaleX(1.0f)
+                .scaleY(1.0f)
+                .setDuration(300)
+                .alpha(1.0f);
+    }
+
+    @Click(R.id.btn_member_profile_close)
+    @Override
+    public void onBackPressed() {
+        if (ivProfileImageFull.isShown()) {
+            hideFullImage(ivProfileImageFull);
+            return;
+        }
+
+        if (swipeExitLayout != null) {
+            swipeExitLayout.exit();
         } else {
-            ReqUpdateProfile reqUpdateProfile = memberProfileView.getUpdateProfile();
-            switch (event.actionType) {
-                case EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS:
-                    reqUpdateProfile.statusMessage = event.inputMessage;
-                    break;
-                case EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE:
-                    reqUpdateProfile.phoneNumber = event.inputMessage;
-                    break;
-                case EditTextDialogFragment.ACTION_MODIFY_PROFILE_DIVISION:
-                    reqUpdateProfile.department = event.inputMessage;
-                    break;
-                case EditTextDialogFragment.ACTION_MODIFY_PROFILE_POSITION:
-                    reqUpdateProfile.position = event.inputMessage;
-                    break;
-            }
-
-            updateProfileExtraInfo(reqUpdateProfile);
+            super.onBackPressed();
         }
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
+    }
+
+    @Click(R.id.btn_member_profile_star)
+    public void star(View v) {
+        if (!v.isEnabled()) {
+            return;
+        }
+        boolean futureSelected = !v.isSelected();
+        v.setSelected(futureSelected);
+        postStar(futureSelected);
+    }
+
     @Background
-    void updateProfileExtraInfo(ReqUpdateProfile reqUpdateProfile) {
-        memberProfileView.showProgressWheel();
+    void postStar(boolean star) {
+        if (star) {
+            entityClientManager.enableFavorite(memberId);
+        } else {
+            entityClientManager.disableFavorite(memberId);
+        }
+
+        EntityManager.getInstance().getEntityById(memberId).isStarred = star;
+    }
+
+    private boolean hasChangedProfileImage(String url) {
+        return !TextUtils.isEmpty(url) && url.contains("files-profile");
+    }
+
+    private void addButtons(final FormattedEntity member) {
+        vgProfileTeamButtons.removeAllViews();
+
+        final EntityManager entityManager = EntityManager.getInstance();
+
+        if (isMe()) {
+            vgProfileTeamButtons.addView(
+                    getButton(R.drawable.icon_profile_edit,
+                            getString(R.string.jandi_member_profile_edit), (v) -> {
+                                startModifyProfileActivity();
+                            }));
+
+            vgProfileTeamButtons.addView(
+                    getButton(R.drawable.icon_profile_mention,
+                            getString(R.string.jandi_member_profile_mention), (v) -> {
+                                startStarMentionListActivity();
+                            }));
+        } else {
+            vgProfileTeamButtons.addView(
+                    getButton(R.drawable.icon_profile_mobile,
+                            getString(R.string.jandi_member_profile_phone), (v) -> {
+                                call(member.getUserPhoneNumber());
+                            }));
+            vgProfileTeamButtons.addView(
+                    getButton(R.drawable.icon_profile_mail,
+                            getString(R.string.jandi_member_profile_email), (v) -> {
+                                sendEmail(member.getUserEmail());
+                            }));
+            vgProfileTeamButtons.addView(
+                    getButton(R.drawable.icon_profile_message,
+                            getString(R.string.jandi_member_profile_dm), (v) -> {
+                                int teamId = entityManager.getTeamId();
+                                int entityId = member.getId();
+                                boolean isStarred = member.isStarred;
+                                startMessageListActivity(teamId, entityId, isStarred);
+                            }));
+        }
+    }
+
+    private View getButton(int iconResource, String title, View.OnClickListener onClickListener) {
+        View buttonView = getLayoutInflater()
+                .inflate(R.layout.item_member_profile_button, vgProfileTeamButtons, false);
+
+        View vIcon = buttonView.findViewById(R.id.v_member_profile_button_icon);
+        TextView tvTitle = (TextView) buttonView.findViewById(R.id.tv_member_profile_button_title);
+
+        vIcon.setBackgroundResource(iconResource);
+        tvTitle.setText(title);
+
+        buttonView.setOnClickListener(onClickListener);
+
+        boolean landscape = isLandscape();
+        int width = landscape
+                ? getResources().getDimensionPixelSize(R.dimen.jandi_member_profile_buttons_width)
+                : 0;
+
+        LinearLayout.LayoutParams params =
+                new LinearLayout.LayoutParams(width, ViewGroup.LayoutParams.MATCH_PARENT);
+        if (!landscape) {
+            params.weight = 1;
+        }
+        buttonView.setLayoutParams(params);
+
+        return buttonView;
+    }
+
+    private void startModifyProfileActivity() {
+        ModifyProfileActivity_.intent(MemberProfileActivity.this)
+                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .startForResult(ModifyProfileActivity.REQUEST_CODE);
+    }
+
+    private void startStarMentionListActivity() {
+        StarMentionListActivity_.intent(MemberProfileActivity.this)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .extra("type", StarMentionListActivity.TYPE_MENTION_LIST)
+                .start();
+    }
+
+    private void sendEmail(String userEmail) {
+        if (TextUtils.isEmpty(userEmail)) {
+            return;
+        }
+        String uri = "mailto:" + userEmail;
+        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse(uri));
+        startActivity(intent);
+    }
+
+    private void call(String userPhoneNumber) {
+        if (TextUtils.isEmpty(userPhoneNumber)) {
+            return;
+        }
+        String uri = "tel:" + userPhoneNumber.replaceAll("[^0-9|\\+]", "");
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse(uri));
         try {
-            ResLeftSideMenu.User me = memberProfileModel.updateProfile(reqUpdateProfile);
-            memberProfileView.updateProfileSucceed();
-            trackUpdateProfile(getDistictId(), me);
-            memberProfileView.displayProfile(me);
-        } catch (RetrofitError e) {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
             e.printStackTrace();
-            LogUtil.e("get profile failed", e);
-            memberProfileView.updateProfileFailed();
-        } finally {
-            memberProfileView.dismissProgressWheel();
         }
     }
 
-    @Background
-    void updateProfileName(String name) {
-        memberProfileView.showProgressWheel();
-        try {
-            memberProfileModel.updateProfileName(new ReqProfileName(name));
-            memberProfileView.updateProfileSucceed();
-            memberProfileView.successUpdateNameColor();
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            memberProfileView.updateProfileFailed();
-        } finally {
-            memberProfileView.dismissProgressWheel();
-        }
+    private void startMessageListActivity(int teamId, int entityId, boolean isStarred) {
+        MessageListV2Activity_.intent(MemberProfileActivity.this)
+                .teamId(teamId)
+                .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                .entityId(entityId)
+                .roomId(-1)
+                .isFavorite(isStarred)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .start();
     }
 
-    public void onEvent(ErrorDialogFragmentEvent event) {
-        ColoredToast.showError(this, getString(event.errorMessageResId));
+    private boolean isMe() {
+        return EntityManager.getInstance().isMe(memberId);
     }
 
-    @Background
-    void uploadEmail(String email) {
-
-        if (!NetworkCheckUtil.isConnected()) {
-            memberProfileView.showCheckNetworkDialog();
-            return;
-        }
-
-        try {
-            memberProfileModel.updateProfileEmail(email);
-            memberProfileView.updateProfileSucceed();
-            memberProfileView.successUpdateEmailColor();
-        } catch (RetrofitError e) {
-            memberProfileView.updateProfileFailed();
-        }
+    private boolean isEnableUser(String status) {
+        return "enabled".equals(status);
     }
 
-    @UiThread
-    void upateOptionMenu() {
-        invalidateOptionsMenu();
-    }
-
-    @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_GALLERY)
-    public void onImagePickResult(int resultCode, Intent imageData) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-
-        String filePath = filePickerViewModel.getFilePath(getApplicationContext(), FilePickerViewModel.TYPE_UPLOAD_GALLERY, imageData).get(0);
-        if (!TextUtils.isEmpty(filePath)) {
-            try {
-                Crop.of(Uri.fromFile(new File(filePath)),
-                        Uri.fromFile(File.createTempFile("temp_", ".jpg",
-                                new File(GoogleImagePickerUtil.getDownloadPath()))))
-                        .asSquare()
-                        .start(MemberProfileActivity.this);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
-    @OnActivityResult(Crop.REQUEST_CROP)
-    public void onImageCropResult(int resultCode, Intent imageData) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-
-        if (!NetworkCheckUtil.isConnected()) {
-            memberProfileView.showCheckNetworkDialog();
-            return;
-        }
-
-        Uri output = Crop.getOutput(imageData);
-
-        String filePath = output.getPath();
-        if (!TextUtils.isEmpty(filePath)) {
-            filePickerViewModel.startUpload(MemberProfileActivity.this, null, -1, filePath, null);
-        }
-    }
-
-    private String getDistictId() {
-        EntityManager entityManager = EntityManager.getInstance();
-        return entityManager.getDistictId();
+    private boolean isLandscape() {
+        return getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 }

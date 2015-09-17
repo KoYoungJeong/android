@@ -113,6 +113,11 @@
     <string name="err_profile_photo_upload">"简介照片无法更新"</string>
     <string name="err_email_exists">"此电子邮箱已被注册"</string>
 
+    <string name="jandi_member_profile_edit">"编辑简介"</string>
+    <string name="jandi_member_profile_mention">"我的提及列表"</string>
+    <string name="jandi_member_profile_email">"电子邮件"</string>
+    <string name="jandi_member_profile_phone">"联系电话"</string>
+    <string name="jandi_member_profile_dm">"直接传信"</string>
     <!-- 회원 초대 -->
     <string name="jandi_team_info">"团队"</string>
     <string name="jandi_invitation">"邀请"</string>
@@ -336,7 +341,7 @@
     <string name="jandi_go_to_main">"回到账号首页"</string>
     <string name="jandi_team_switch">"更换团队"</string>
     <string name="jandi_sign_in_ids_explain">"请选择一个电子邮件地址让我们将全部与JANDI相关的电子邮件寄给您。增加其它电子邮件地址以指定给特定团队。"</string>
-    <string name="jandi_disable_user_profile_explain">"此成员权限已被暂时关闭。 欲知更多细节，请联络团队管理員。"</string>
+    <string name="jandi_disable_user_profile_explain">"此成员权限已被暂时关闭。\n 欲知更多细节，请联络团队管理員。"</string>
     <string name="jandi_share_to_jandi">"分享到JANDI"</string>
     <string name="jandi_no_message_in_topic_dm">"输入信息以开始对话"</string>
     <string name="err_invalid_team_domain">"网域名称无效"</string>

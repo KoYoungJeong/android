@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.profile.member;
+package com.tosslab.jandi.app.ui.profile.modify;
 
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -17,7 +17,7 @@ import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.transform.glide.GlideCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -34,7 +34,7 @@ import de.greenrobot.event.EventBus;
  * Created by Steve SeongUg Jung on 14. 12. 31..
  */
 @EBean
-public class MemberProfilePresenter {
+public class ModifyProfilePresenter {
 
     @RootContext
     Activity activity;

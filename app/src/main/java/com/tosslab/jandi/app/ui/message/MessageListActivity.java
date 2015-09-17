@@ -29,10 +29,9 @@ import com.tosslab.jandi.app.dialogs.DeleteTopicDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
-import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
-import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
@@ -67,6 +66,8 @@ import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -1068,7 +1069,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
      * TODO Background 는 공통으로 빼고 Success, Fail 리스너를 둘 것.
      * **********************************************************
      */
-    public void onEvent(RequestUserInfoEvent event) {
+    public void onEvent(ShowProfileEvent event) {
         int userEntityId = event.userId;
         getProfileInBackground(userEntityId);
     }
@@ -1106,7 +1107,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             ft.remove(prev);
         }
 
-        UserInfoDialogFragment_.builder().entityId(user.getId()).build().show(getSupportFragmentManager(), "dialog");
+        MemberProfileActivity_.intent(this)
+                .memberId(user.getId())
+                .start();
     }
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {

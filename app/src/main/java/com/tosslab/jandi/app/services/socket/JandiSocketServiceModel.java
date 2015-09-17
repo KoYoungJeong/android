@@ -111,12 +111,12 @@ public class JandiSocketServiceModel {
         refreshEntity(true, null, event, parseUpdate);
     }
 
-    public void refreshEntity(boolean postRetrieveEvent
-            , String socketMessageEventContent
-            , Object event, boolean parseUpdate) {
+    public void refreshEntity(boolean postRetrieveEvent, String socketMessageEventContent,
+                              Object event, boolean parseUpdate) {
 
-        entitySocketModel.refreshEntity(new EntitySocketModel.EntityRefreshEventWrapper
-                (postRetrieveEvent, parseUpdate, socketMessageEventContent, event));
+        entitySocketModel.refreshEntity(
+                new EntitySocketModel.EntityRefreshEventWrapper(
+                        postRetrieveEvent, parseUpdate, socketMessageEventContent, event));
     }
 
     public void refreshAccountInfo() {

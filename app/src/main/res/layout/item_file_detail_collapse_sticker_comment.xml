@@ -30,7 +30,7 @@
 
 
         <View
-            android:id="@+id/view_file_detail_comment_anim"
+            android:id="@+id/v_file_detail_comment_anim"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignBottom="@+id/iv_file_detail_collapse_comment_content"
