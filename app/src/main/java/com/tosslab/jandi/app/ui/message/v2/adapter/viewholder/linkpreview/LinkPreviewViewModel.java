@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -17,8 +18,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.views.AutoScaleImageView;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,14 +26,12 @@ import java.util.Map;
  */
 public class LinkPreviewViewModel {
 
-    public static final int LINK_PREVIEW_WIDTH_RATIO = 338;
-    public static final int LINK_PREVIEW_HEIGHT_RATIO = 180;
     public static final String TAG = "LinkPreviewViewModel";
     private TextView tvTitle;
     private TextView tvDomain;
     private TextView tvDescription;
     private View vgThumb;
-    private AutoScaleImageView ivThumb;
+    private ImageView ivThumb;
     private OnLinkPreviewClickListener onLinkPreviewClickListener;
 
     private Context context;
@@ -56,8 +53,7 @@ public class LinkPreviewViewModel {
         tvDomain = (TextView) rootView.findViewById(R.id.tv_linkpreview_domain);
         tvDescription = (TextView) rootView.findViewById(R.id.tv_linkpreview_description);
         vgThumb = rootView.findViewById(R.id.vg_linkpreview_thumb);
-        ivThumb = (AutoScaleImageView) rootView.findViewById(R.id.iv_linkpreview_thumb);
-        ivThumb.setRatio(LINK_PREVIEW_WIDTH_RATIO, LINK_PREVIEW_HEIGHT_RATIO);
+        ivThumb = (ImageView) rootView.findViewById(R.id.iv_linkpreview_thumb);
     }
 
     public void bindData(ResMessages.Link link) {
