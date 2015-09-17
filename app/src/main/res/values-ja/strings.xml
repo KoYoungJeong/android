@@ -519,6 +519,7 @@
     <string name="jandi_folder_rename">リネーム</string>
     <string name="jandi_no_topic_to_join">参加できるトピックがありません</string>
     <string name="jandi_1_1_message">"ダイレクトメッセージ"</string>
+    <string name="jandi_no_long_team_member">"%sさんはもうこのチームのメンバーではありません"</string>
 
 
 </resources>

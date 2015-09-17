@@ -56,6 +56,7 @@ import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
+import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
@@ -1288,6 +1289,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
+    }
+
+    public void onEvent(TeamLeaveEvent event) {
+        if (!messageListModel.isCurrentTeam(event.getTeamId())) {
+            return;
+        }
+
+
+        if (event.getMemberId() == entityId) {
+            messageListPresenter.showLeavedMemberDialog(entityId);
+        }
     }
 
     public void onEvent(SocketMessageStarEvent event) {

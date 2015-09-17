@@ -603,4 +603,8 @@ public class MessageListModel {
     public boolean isTeamOwner() {
         return TextUtils.equals(EntityManager.getInstance().getMe().getUser().u_authority, "owner");
     }
+
+    public boolean isCurrentTeam(int teamId) {
+        return AccountRepository.getRepository().getSelectedTeamId() == teamId;
+    }
 }

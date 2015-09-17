@@ -531,4 +531,5 @@
     <string name="jandi_folder_rename">이름 변경</string>
     <string name="jandi_no_topic_to_join">참여 가능한 토픽이 없습니다</string>
     <string name="jandi_1_1_message">"1:1 메시지"</string>
+    <string name="jandi_no_long_team_member">"%s님은 더이상 팀 멤버가 아닙니다."</string>
 </resources>
