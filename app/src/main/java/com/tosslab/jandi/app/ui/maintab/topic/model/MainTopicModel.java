@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -44,12 +45,20 @@ public class MainTopicModel {
 
     // 폴더 정보 가져오기
     public List<ResFolder> getTopicFolders() throws RetrofitError {
+        if (!NetworkCheckUtil.isConnected()) {
+            return TopicFolderRepository.getRepository().getFolders();
+        }
+
         return RequestApiManager.getInstance()
                 .getFoldersByTeamApi(entityClientManager.getSelectedTeamId());
     }
 
     // 폴더 속 토픽 아이디 가져오기
     public List<ResFolderItem> getTopicFolderItems() throws RetrofitError {
+        if (!NetworkCheckUtil.isConnected()) {
+            return TopicFolderRepository.getRepository().getFolderItems();
+        }
+
         return RequestApiManager.getInstance()
                 .getFolderItemsByTeamApi(entityClientManager.getSelectedTeamId());
     }

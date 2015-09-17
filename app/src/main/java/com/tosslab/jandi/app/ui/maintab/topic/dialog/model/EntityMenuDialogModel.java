@@ -8,16 +8,21 @@ import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.json.JSONException;
 
+import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 
 /**
@@ -77,5 +82,27 @@ public class EntityMenuDialogModel {
 
     public boolean isDefaultTopic(int entityId) {
         return EntityManager.getInstance().getDefaultTopicId() == entityId;
+    }
+
+    @Background
+    public void updateNotificationOnOff(int entityId, boolean isTopicPushOn) {
+        if (!NetworkCheckUtil.isConnected()) {
+            getEntity(entityId).isTopicPushOn = isTopicPushOn;
+            EventBus.getDefault().post(new SocketTopicPushEvent());
+            return;
+        }
+
+        final int teamId = EntityManager.getInstance().getTeamId();
+        updatePushStatus(teamId, entityId, isTopicPushOn);
+    }
+
+    public void updatePushStatus(int teamId, int entityId, boolean pushOn) throws RetrofitError {
+        ReqUpdateTopicPushSubscribe req = new ReqUpdateTopicPushSubscribe(pushOn);
+        RequestApiManager.getInstance().updateTopicPushSubscribe(teamId, entityId, req);
+    }
+
+    public boolean isPushOn(int entityId) {
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
+        return entity.isTopicPushOn;
     }
 }

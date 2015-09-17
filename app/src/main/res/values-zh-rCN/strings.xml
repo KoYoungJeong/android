@@ -64,6 +64,8 @@
     <string name="jandi_tab_more">"更多"</string>
     <string name="jandi_action_direct_message">"直接传信"</string>
     <string name="jandi_action_starred">"标记"</string>
+    <string name="jandi_notification_on">"开启推送通知"</string>
+    <string name="jandi_notification_off">"关闭推送通知"</string>
 
     <!-- 튜토리얼 -->
     <string name="jandi_tutorial_welcome">"欢迎使用"</string>
