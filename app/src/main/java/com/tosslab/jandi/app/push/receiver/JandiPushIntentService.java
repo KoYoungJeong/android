@@ -79,8 +79,7 @@ public class JandiPushIntentService extends IntentService {
             return;
         }
 
-        ResLeftSideMenu leftSideMenu =
-                LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
+        ResLeftSideMenu leftSideMenu = jandiPushReceiverModel.getLeftSideMenu(teamId);
 
         if (leftSideMenu == null) {
             showNotification(context, pushTOInfo, false);

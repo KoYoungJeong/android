@@ -15,9 +15,11 @@ import com.koushikdutta.ion.Ion;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -26,6 +28,7 @@ import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -139,6 +142,19 @@ public class JandiPushReceiverModel {
             e.printStackTrace();
             return null;
         }
+    }
+
+    // LeftSideMenu 를 DB를 통해 불러오고 없다면 서버에서 받고 디비에 저장한다.
+    public ResLeftSideMenu getLeftSideMenu(int teamId) {
+        ResLeftSideMenu leftSideMenu =
+                LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
+        if (leftSideMenu == null) {
+            leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
+            if (leftSideMenu != null) {
+                LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+            }
+        }
+        return leftSideMenu;
     }
 
     public boolean isMyEntityId(int writerId) {
