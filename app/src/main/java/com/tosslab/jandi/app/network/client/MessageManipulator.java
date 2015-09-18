@@ -6,7 +6,6 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
@@ -14,6 +13,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -194,5 +194,9 @@ public class MessageManipulator {
 
     public void setRoomId(int roomId) {
         this.roomId = roomId;
+    }
+
+    public void setTeamId(int teamId) {
+        this.selectedTeamId = teamId;
     }
 }

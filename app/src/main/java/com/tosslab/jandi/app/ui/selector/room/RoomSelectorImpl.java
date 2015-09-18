@@ -60,7 +60,6 @@ public class RoomSelectorImpl implements RoomSelector {
         popupWindow.setOutsideTouchable(true);
         popupWindow.setBackgroundDrawable(new BitmapDrawable());
 
-
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_room_selector);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 //        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context));
@@ -68,7 +67,6 @@ public class RoomSelectorImpl implements RoomSelector {
         adapter.setOnRecyclerItemClickListener((view, adapter1, position) -> {
             if (onRoomSelectListener != null) {
                 ExpandRoomData roomData = adapter.getItem(position);
-
                 onRoomSelectListener.onRoomSelect(roomData);
             }
         });
@@ -112,7 +110,7 @@ public class RoomSelectorImpl implements RoomSelector {
                         }
                         userData.setType(entity.type);
                         if (entity.type != FormattedEntity.TYPE_EVERYWHERE) {
-                            userData.setEntityId(entity.getId());
+                            userData.setEntityId(entity.getUser().id);
                         }
                         userData.setIsStarred(entity.isStarred);
                         userData.setIsFolder(false);
@@ -140,7 +138,6 @@ public class RoomSelectorImpl implements RoomSelector {
         topicView.performClick();
 
         PopupWindowCompat.showAsDropDown(popupWindow, roomView, 0, 0, Gravity.TOP | Gravity.START);
-
 
     }
 

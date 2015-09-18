@@ -61,7 +61,7 @@
 //
 //    // 내 팀 정보 획득
 //    @Get("/info/teamlist/email/{userEmail}")
-//    ResMyTeam getTeamId(String userEmail);
+//    ResMyTeam getCurrentTeamId(String userEmail);
 //
 //    // 로그인
 //    @Post("/token")
