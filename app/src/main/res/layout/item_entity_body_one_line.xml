@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="?android:attr/selectableItemBackground"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:orientation="horizontal">
-
+    android:layout_height="48dp">
 
     <ImageView
         android:id="@+id/iv_entity_listitem_icon"
@@ -71,8 +70,9 @@
         android:background="#66ffffff"
         android:visibility="gone" />
 
-    <CheckBox
+    <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/cb_user"
+        android:clickable="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
