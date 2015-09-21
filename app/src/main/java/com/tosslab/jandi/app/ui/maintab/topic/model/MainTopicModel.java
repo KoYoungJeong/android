@@ -102,6 +102,12 @@ public class MainTopicModel {
     // 리스트에 보여 줄 Data Provider 가져오기
     public TopicFolderListDataProvider getDataProvider(List<ResFolder> topicFolders, List<ResFolderItem> topicFolderItems) {
 
+        final List<ResFolder> orderedFolders = new ArrayList<>();
+
+        Observable.from(topicFolders)
+                .toSortedList((lhs, rhs) -> lhs.seq - rhs.seq)
+                .subscribe(orderedFolders::addAll);
+
         List<Pair<AbstractExpandableDataProvider.GroupData,
                 List<AbstractExpandableDataProvider.ChildData>>> datas = new LinkedList<>();
 
@@ -113,7 +119,7 @@ public class MainTopicModel {
         Map<Integer, TopicFolderData> folderMap = new LinkedHashMap<>();
         Map<Integer, Integer> badgeCountMap = new HashMap<>();
 
-        for (ResFolder topicFolder : topicFolders) {
+        for (ResFolder topicFolder : orderedFolders) {
             if (!topicItemMap.containsKey(topicFolder.id)) {
                 topicItemMap.put(new Integer(topicFolder.id), new ArrayList<>());
             }

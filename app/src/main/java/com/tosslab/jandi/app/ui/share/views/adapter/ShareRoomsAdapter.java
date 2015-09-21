@@ -32,6 +32,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private final Context context;
     private List<ExpandRoomData> roomDatas;
     private OnItemClickListener onItemClickListener;
+    private boolean hasFolder = false;
 
     public ShareRoomsAdapter(Context context) {
         this.context = context;
@@ -77,6 +78,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         LogUtil.e("item", item.toString());
 
         if (getItemViewType(position) == TYPE_FOLDER) {
+            hasFolder = true;
             FolderViewHolder folderViewHolder = (FolderViewHolder) holder;
             folderViewHolder.tvName.setText(item.getName().toString());
             folderViewHolder.itemView.setClickable(false);
@@ -86,7 +88,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         RoomViewHolder roomholder = (RoomViewHolder) holder;
 
         // 폴더가 없는 첫번째 폴더는 상단에 라인이 그려져야 함.
-        if (item.isFirstAmongNoFolderItem()) {
+        if (item.isFirstAmongNoFolderItem() && hasFolder) {
             roomholder.vgLine.setVisibility(View.VISIBLE);
         } else {
             roomholder.vgLine.setVisibility(View.GONE);

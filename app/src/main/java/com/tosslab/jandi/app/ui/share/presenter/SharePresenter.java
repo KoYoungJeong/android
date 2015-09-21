@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.share.presenter;
 
 import android.app.ProgressDialog;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -162,7 +161,6 @@ public class SharePresenter {
         } finally {
             // 이동해야 함.
             setupSelectedTeam(teamId);
-            Looper.prepare();
             view.moveEntity(teamId, roomId, roomType);
 
         }
@@ -223,7 +221,7 @@ public class SharePresenter {
         view.showProgressBar();
         try {
             shareModel.sendMessage(teamId, roomId, roomType, messageText);
-            view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_share_succeed));
+            view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_share_succeed, view.getComment()));
             view.finishOnUiThread();
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -289,6 +287,8 @@ public class SharePresenter {
         void setRoomName(String name);
 
         void moveEntity(int teamId, int entityId, int entityType);
+
+        String getComment();
 
         void setComment(String comment);
     }
