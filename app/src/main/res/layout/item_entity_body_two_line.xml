@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/jandi_entity_item_title_margin_left"
-                android:orientation="horizontal">
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/jandi_entity_item_title_margin_left"
+    android:orientation="horizontal">
 
 
     <ImageView
@@ -12,7 +12,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="17dp"
-        android:src="@drawable/topiclist_icon_topic"/>
+        android:src="@drawable/topiclist_icon_topic" />
 
     <ImageView
         android:id="@+id/iv_entity_listitem_fav"
@@ -22,7 +22,7 @@
         android:layout_alignRight="@+id/iv_entity_listitem_icon"
         android:layout_marginBottom="-2dp"
         android:layout_marginRight="-2dp"
-        android:src="@drawable/icon_team_member_star"/>
+        android:src="@drawable/icon_team_member_star" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -47,7 +47,7 @@
                 android:text="Topic Name"
                 android:textColor="@color/jandi_text"
                 android:textSize="@dimen/jandi_text_size_large"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/iv_entity_listitem_line_through"
@@ -75,7 +75,7 @@
             android:singleLine="true"
             android:text="So Good"
             android:textColor="@color/jandi_text_light"
-            android:textSize="@dimen/jandi_text_size_small"/>
+            android:textSize="@dimen/jandi_text_size_small" />
 
     </LinearLayout>
 
@@ -85,6 +85,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_entity_item_height"
         android:background="#66ffffff"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </RelativeLayout>

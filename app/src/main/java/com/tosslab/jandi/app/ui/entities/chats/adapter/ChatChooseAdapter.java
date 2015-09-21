@@ -123,7 +123,7 @@ public class ChatChooseAdapter extends BaseAdapter {
     private View setChatChooseView(int position, View convertView, ViewGroup parent) {
         ChatCHooseViewHolder chatCHooseViewHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body, parent, false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body_two_line, parent, false);
             chatCHooseViewHolder = new ChatCHooseViewHolder();
             chatCHooseViewHolder.textViewName = (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
             chatCHooseViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_icon);

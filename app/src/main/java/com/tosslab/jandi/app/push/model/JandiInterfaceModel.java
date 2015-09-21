@@ -125,6 +125,7 @@ public class JandiInterfaceModel {
             } catch (Exception e) {
                 return getEntityInfo();
             }
+
         }
     }
 

@@ -8,20 +8,20 @@
     android:paddingRight="@dimen/jandi_account_home_layout_margin">
 
     <ImageView
-        android:id="@+id/img_team_list_icon"
+        android:id="@+id/iv_team_list_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:src="@drawable/account_icon_teamlist_invited" />
 
     <TextView
-        android:id="@+id/txt_team_list_name"
+        android:id="@+id/tv_team_list_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="27dp"
         android:layout_toLeftOf="@+id/btn_team_list_ignore"
-        android:layout_toRightOf="@+id/img_team_list_icon"
+        android:layout_toRightOf="@+id/iv_team_list_icon"
         android:ellipsize="end"
         android:singleLine="true"
         android:text="Team Name"

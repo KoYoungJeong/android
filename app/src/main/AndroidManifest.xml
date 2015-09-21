@@ -253,15 +253,13 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.share.MainShareActivity"
+            android:name=".ui.share.MainShareActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@style/Jandi.Transparent.Dialog">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="*/*" />
             </intent-filter>
 
@@ -297,6 +295,29 @@
             android:label="@string/jandi_browse_other_topics"
             android:screenOrientation="portrait">
 
+            <intent-filter>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.share.views.ShareSelectRoomActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_share_to_jandi"
+            android:screenOrientation="portrait">
+
+            <intent-filter>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.share.views.ShareSelectTeamActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_share_to_jandi"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW" />
                 <action android:name="android.intent.category.DEFAULT" />

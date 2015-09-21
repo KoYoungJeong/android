@@ -10,7 +10,7 @@
     android:paddingLeft="20dp"
     android:paddingRight="20dp">
     <TextView
-        android:id="@+id/txt_team_list_name"
+        android:id="@+id/tv_team_list_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"

@@ -24,9 +24,9 @@ import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
-import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -53,8 +53,9 @@ import java.util.List;
 @EActivity(R.layout.activity_topic_member)
 public class MembersListActivity extends AppCompatActivity implements MembersListPresenter.View {
 
-    public static final int TYPE_MEMBERS_LIST_TEAM = 0x01;
-    public static final int TYPE_MEMBERS_LIST_TOPIC = 0x02;
+    public static final int TYPE_MEMBERS_LIST_TEAM = 1;
+    public static final int TYPE_MEMBERS_LIST_TOPIC = 2;
+    public static final int TYPE_MEMBERS_JOINABLE_TOPIC = 3;
 
     @Extra
     int entityId;
@@ -84,6 +85,9 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     @AfterInject
     void initObject() {
         topicMembersAdapter = new MembersAdapter(getApplicationContext());
+        if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
+            topicMembersAdapter.setEnableCheckMode();
+        }
         membersListPresenter.setView(this);
     }
 
@@ -103,7 +107,6 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
 
         memberListView.setLayoutManager(new LinearLayoutManager(MembersListActivity.this,
                 RecyclerView.VERTICAL, false));
-        memberListView.addItemDecoration(new SimpleDividerItemDecoration(MembersListActivity.this));
         memberListView.setAdapter(topicMembersAdapter);
         initProgressWheel();
 
@@ -128,6 +131,8 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
                 }
             });
         }
+
+
     }
 
     @TextChange(R.id.et_topic_member_search)
@@ -158,10 +163,13 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+
         if (type == TYPE_MEMBERS_LIST_TEAM) {
             actionBar.setTitle(R.string.jandi_team_member);
-        } else {
+        } else if (type == TYPE_MEMBERS_LIST_TOPIC) {
             actionBar.setTitle(R.string.jandi_topic_paricipants);
+        } else if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
+            actionBar.setTitle(R.string.jandi_invite_member_to_topic);
         }
 
     }
@@ -173,7 +181,24 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
 
         if (type == TYPE_MEMBERS_LIST_TOPIC) {
             MenuItem menuItem = menu.findItem(R.id.action_invitation);
-            menuItem.setTitle(R.string.jandi_topic_invitation);
+            menuItem.setVisible(false);
+        } else if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
+            MenuItem menuItem = menu.findItem(R.id.action_invitation);
+            menuItem.setIcon(R.drawable.icon_actionbar_check);
+            menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    List<Integer> selectedCdp = topicMembersAdapter.getSelectedUserIds();
+                    if (selectedCdp != null && !selectedCdp.isEmpty()) {
+                        membersListPresenter.inviteInBackground(selectedCdp, entityId);
+                        finish();
+                        return true;
+                    } else {
+                        showInviteFailed(getString(R.string.title_cdp_invite));
+                        return false;
+                    }
+                }
+            });
         }
         return true;
     }
@@ -220,16 +245,16 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     void onInviteOptionSelect() {
         if (type == TYPE_MEMBERS_LIST_TEAM) {
             invitationDialogExecutor.execute();
-        } else {
+        } else if (type == TYPE_MEMBERS_LIST_TOPIC) {
             membersListPresenter.inviteMemberToTopic(entityId);
         }
     }
 
     @UiThread
     @Override
-    public void showListMembers(List<ChatChooseItem> topicMembers) {
+    public void showListMembers(List<ChatChooseItem> members) {
         topicMembersAdapter.clear();
-        topicMembersAdapter.addAll(topicMembers);
+        topicMembersAdapter.addAll(members);
         topicMembersAdapter.notifyDataSetChanged();
     }
 
@@ -261,4 +286,19 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     public String getSearchText() {
         return tvSearch.getText().toString();
     }
+
+    @Override
+    @UiThread
+    public void showInviteSucceed(int memberSize) {
+        String rawString = getString(R.string.jandi_message_invite_entity);
+        String formatString = String.format(rawString, memberSize);
+        ColoredToast.show(this, formatString);
+    }
+
+    @Override
+    @UiThread
+    public void showInviteFailed(String errMessage) {
+        ColoredToast.showError(this, errMessage);
+    }
+
 }

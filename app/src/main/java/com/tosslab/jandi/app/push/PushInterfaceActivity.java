@@ -169,4 +169,5 @@ public class PushInterfaceActivity extends AppCompatActivity {
 
         finish();
     }
+
 }

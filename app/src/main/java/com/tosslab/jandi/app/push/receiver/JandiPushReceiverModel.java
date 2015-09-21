@@ -49,10 +49,9 @@ import retrofit.RetrofitError;
  */
 @EBean
 public class JandiPushReceiverModel {
+    public static final String TAG = JandiPushReceiverModel.class.getSimpleName();
     private static final String JSON_KEY_DATA = "com.parse.Data";
     private static final String JSON_KEY_CHANNEL = "com.parse.Channel";
-    public static final String TAG = JandiPushReceiverModel.class.getSimpleName();
-
     @SystemService
     AudioManager audioManager;
 
@@ -223,12 +222,9 @@ public class JandiPushReceiverModel {
     }
 
     public boolean isPushOn() {
-        if (ParseUpdateUtil.PARSE_ACTIVATION_OFF.equals(
-                ParseInstallation.getCurrentInstallation().getString(ParseUpdateUtil.PARSE_ACTIVATION))) {
-            return false;
-        }
+        return !ParseUpdateUtil.PARSE_ACTIVATION_OFF.equals(
+                ParseInstallation.getCurrentInstallation().getString(ParseUpdateUtil.PARSE_ACTIVATION));
 
-        return true;
     }
 
     private Notification getNotification(Context context,
@@ -370,4 +366,5 @@ public class JandiPushReceiverModel {
             nm.notify(JandiConstants.NOTIFICATION_ID, notification);
         }
     }
+
 }
