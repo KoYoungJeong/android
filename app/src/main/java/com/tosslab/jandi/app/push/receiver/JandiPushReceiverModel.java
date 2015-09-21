@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
@@ -46,6 +47,8 @@ public class JandiPushReceiverModel {
     public static final String TAG = JandiPushReceiverModel.class.getSimpleName();
     private static final String JSON_KEY_DATA = "com.parse.Data";
     private static final String JSON_KEY_CHANNEL = "com.parse.Channel";
+    // FIXME must be unique????
+    public static final int REQUEST_CODE = 1;
     @SystemService
     AudioManager audioManager;
 
@@ -62,7 +65,7 @@ public class JandiPushReceiverModel {
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getActivity(context, REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public int getEntityType(String roomType) {
@@ -260,7 +263,9 @@ public class JandiPushReceiverModel {
 
         builder.setDefaults(led | sound | vibrate);
         builder.setSmallIcon(R.drawable.icon_push_notification);
-        builder.setPriority(Notification.PRIORITY_HIGH);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            builder.setPriority(Notification.PRIORITY_HIGH);
+        }
         builder.setAutoCancel(true);
         builder.setNumber(badgeCount);
 
