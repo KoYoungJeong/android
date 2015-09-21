@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.share;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
@@ -204,6 +205,7 @@ public class ShareDialogFragment extends Fragment implements SharePresenter.View
     public void moveEntity(int teamId, int entityId, int entityType) {
 
         MainTabActivity_.intent(getActivity())
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
 
         MessageListV2Activity_.intent(getActivity())
@@ -211,6 +213,7 @@ public class ShareDialogFragment extends Fragment implements SharePresenter.View
                 .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : -1)
                 .entityId(entityId)
                 .entityType(entityType)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
     }
 
@@ -267,6 +270,11 @@ public class ShareDialogFragment extends Fragment implements SharePresenter.View
         sharePresenter.initEntityData(
                 sharePresenter.getTeamId(), sharePresenter.getTeamName(),
                 false, roomId, roomName, roomType);
+    }
+
+    @Override
+    public String getComment() {
+        return etComment.getText().toString();
     }
 
     @Override
