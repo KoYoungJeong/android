@@ -14,9 +14,11 @@ import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
+import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -40,6 +42,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketMemberProfileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamLeaveEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
@@ -111,12 +114,12 @@ public class JandiSocketServiceModel {
         refreshEntity(true, null, event, parseUpdate);
     }
 
-    public void refreshEntity(boolean postRetrieveEvent
-            , String socketMessageEventContent
-            , Object event, boolean parseUpdate) {
+    public void refreshEntity(boolean postRetrieveEvent, String socketMessageEventContent,
+                              Object event, boolean parseUpdate) {
 
-        entitySocketModel.refreshEntity(new EntitySocketModel.EntityRefreshEventWrapper
-                (postRetrieveEvent, parseUpdate, socketMessageEventContent, event));
+        entitySocketModel.refreshEntity(
+                new EntitySocketModel.EntityRefreshEventWrapper(
+                        postRetrieveEvent, parseUpdate, socketMessageEventContent, event));
     }
 
     public void refreshAccountInfo() {
@@ -137,7 +140,7 @@ public class JandiSocketServiceModel {
 
             MessageRepository.getRepository().updateStatus(socketFileEvent.getFile().getId(), "archived");
 
-            postEvent(new DeleteFileEvent(socketFileEvent.getFile().getId()));
+            postEvent(new DeleteFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -211,7 +214,7 @@ public class JandiSocketServiceModel {
             SocketTopicEvent socketTopicEvent =
                     objectMapper.readValue(object.toString(), SocketTopicEvent.class);
 
-            refreshEntity(new TopicDeleteEvent(socketTopicEvent.getTopic().getId()), true);
+            refreshEntity(new TopicDeleteEvent(socketTopicEvent.getTeamId(), socketTopicEvent.getTopic().getId()), true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -232,7 +235,7 @@ public class JandiSocketServiceModel {
             SocketFileEvent socketFileEvent =
                     objectMapper.readValue(object.toString(), SocketFileUnsharedEvent.class);
 
-            postEvent(new ShareFileEvent(socketFileEvent.getFile().getId()));
+            postEvent(new ShareFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -317,8 +320,9 @@ public class JandiSocketServiceModel {
                         ResLeftSideMenu entitiesInfo = entityClientManager.getTotalEntitiesInfo();
                         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entitiesInfo);
                         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
-                        JandiPreference.setBadgeCount(context, totalUnreadCount);
-                        BadgeUtils.setBadge(context, totalUnreadCount);
+                        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+                        badgeCountRepository.upsertBadgeCount(entitiesInfo.team.id, totalUnreadCount);
+                        BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
 
                         EntityManager.getInstance().refreshEntity();
 
@@ -371,7 +375,7 @@ public class JandiSocketServiceModel {
         try {
             SocketFileEvent socketFileEvent =
                     objectMapper.readValue(object.toString(), SocketFileEvent.class);
-            postEvent(new CreateFileEvent(socketFileEvent.getFile().getId()));
+            postEvent(new CreateFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -436,6 +440,16 @@ public class JandiSocketServiceModel {
 //
 //            }
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void refreshLeaveMember(Object object) {
+        try {
+            SocketTeamLeaveEvent socketTeamLeaveEvent = objectMapper.readValue(object.toString(), SocketTeamLeaveEvent.class);
+            TeamLeaveEvent teamLeaveEvent = new TeamLeaveEvent(socketTeamLeaveEvent.getTeam().getId(), socketTeamLeaveEvent.getMember().getId());
+            refreshEntity(teamLeaveEvent, false);
         } catch (IOException e) {
             e.printStackTrace();
         }

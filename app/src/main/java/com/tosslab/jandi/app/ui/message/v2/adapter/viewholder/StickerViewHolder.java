@@ -7,14 +7,14 @@ import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 import de.greenrobot.event.EventBus;
 
@@ -23,28 +23,28 @@ import de.greenrobot.event.EventBus;
  */
 public class StickerViewHolder implements BodyViewHolder {
 
-    private ImageView profileImageView;
-    private TextView nameTextView;
+    private ImageView ivProfile;
+    private TextView tvName;
     private ImageView ivSticker;
-    private View disableCoverView;
-    private View disableLineThroughView;
+    private View vDisableCover;
+    private View vDisableLineThrough;
     private TextView tvUnread;
     private TextView tvDate;
 
-    private View lastReadView;
+    private View vLastRead;
     private View contentView;
 
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
-        profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
-        nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
-        tvDate = (TextView) rootView.findViewById(R.id.txt_message_create_date);
-        tvUnread = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
+        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+        tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
+        tvDate = (TextView) rootView.findViewById(R.id.tv_message_create_date);
+        tvUnread = (TextView) rootView.findViewById(R.id.tv_entity_listitem_unread);
         ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_sticker);
-        disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
-        disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
-        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
+        vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
+        vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+        vLastRead = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class StickerViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        Ion.with(profileImageView)
+        Ion.with(ivProfile)
                 .placeholder(R.drawable.profile_img)
                 .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
@@ -67,17 +67,17 @@ public class StickerViewHolder implements BodyViewHolder {
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById != EntityManager.UNKNOWN_USER_ENTITY ? entityById.getUser() : null;
         if (user != null && TextUtils.equals(user.status, "enabled")) {
-            nameTextView.setTextColor(nameTextView.getContext().getResources().getColor(R.color.jandi_messages_name));
-            disableCoverView.setVisibility(View.GONE);
-            disableLineThroughView.setVisibility(View.GONE);
+            tvName.setTextColor(tvName.getContext().getResources().getColor(R.color.jandi_messages_name));
+            vDisableCover.setVisibility(View.GONE);
+            vDisableLineThrough.setVisibility(View.GONE);
         } else {
-            nameTextView.setTextColor(
-                    nameTextView.getResources().getColor(R.color.deactivate_text_color));
-            disableCoverView.setVisibility(View.VISIBLE);
-            disableLineThroughView.setVisibility(View.VISIBLE);
+            tvName.setTextColor(
+                    tvName.getResources().getColor(R.color.deactivate_text_color));
+            vDisableCover.setVisibility(View.VISIBLE);
+            vDisableLineThrough.setVisibility(View.VISIBLE);
         }
 
-        nameTextView.setText(fromEntity.name);
+        tvName.setText(fromEntity.name);
         tvDate.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
 
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
@@ -96,17 +96,17 @@ public class StickerViewHolder implements BodyViewHolder {
         StickerManager.getInstance().loadStickerNoOption(ivSticker, content.groupId, content.stickerId);
 
         profileImageView.setOnClickListener(v ->
-                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id, RequestUserInfoEvent.From.Image)));
+                EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
         nameTextView.setOnClickListener(v ->
-                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id, RequestUserInfoEvent.From.Name)));
+                EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
     }
 
     @Override
     public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
         if (currentLinkId == lastReadLinkId) {
-            lastReadView.setVisibility(View.VISIBLE);
+            vLastRead.setVisibility(View.VISIBLE);
         } else {
-            lastReadView.setVisibility(View.GONE);
+            vLastRead.setVisibility(View.GONE);
         }
     }
 

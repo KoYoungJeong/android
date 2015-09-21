@@ -22,6 +22,8 @@ public interface MembersListPresenter {
 
     void inviteMemberToTopic(int entityId);
 
+    void inviteInBackground(List<Integer> invitedUsers, int entityId);
+
     interface View {
         void showListMembers(List<ChatChooseItem> topicMembers);
 
@@ -32,6 +34,10 @@ public interface MembersListPresenter {
         void moveDirectMessageActivity(int teamId, int userId, boolean isStarred);
 
         String getSearchText();
+
+        void showInviteSucceed(int memberSize);
+
+        void showInviteFailed(String errMessage);
     }
 
 }

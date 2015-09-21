@@ -1,9 +1,10 @@
 package com.tosslab.jandi.app.ui.maintab.topic.adapter;
 
-import android.animation.Animator;
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.TransitionDrawable;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -24,7 +25,6 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.views.listeners.OnExpandableChildItemClickListener;
 import com.tosslab.jandi.app.views.listeners.OnExpandableChildItemLongClickListener;
 import com.tosslab.jandi.app.views.listeners.OnExpandableGroupItemClickListener;
-import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -284,31 +284,34 @@ public class ExpandableTopicAdapter
             Context context = holder.itemView.getContext();
             animStatus = AnimStatus.IN_ANIM;
             Integer colorFrom;
+
             if (getGroupItemViewType(groupPosition) != TYPE_NO_GROUP) {
-                colorFrom = context.getResources().getColor(
-                        R.color.jandi_list_item_background_inner_folder);
+                colorFrom = context.getResources().getColor(R.color.jandi_list_item_background_inner_folder);
             } else {
                 colorFrom = context.getResources().getColor(R.color.white);
             }
+
             Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);
 
-            final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-            colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
-            colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
-            colorAnimation.setRepeatCount(1);
-            colorAnimation.addUpdateListener(animator -> holder.container.setBackgroundColor(
-                    (Integer) animator.getAnimatedValue()));
+            ColorDrawable[] color = {new ColorDrawable(colorFrom), new ColorDrawable(colorTo)};
+            TransitionDrawable trans = new TransitionDrawable(color);
+            holder.container.setBackgroundDrawable(trans);
+            trans.setCrossFadeEnabled(true);
+            trans.startTransition(500);
 
-            colorAnimation.addListener(new SimpleEndAnimatorListener() {
+            Handler handler = new Handler(context.getMainLooper()) {
                 @Override
-                public void onAnimationEnd(Animator animation) {
-                    animStatus = AnimStatus.FINISH;
+                public void handleMessage(Message msg) {
+                    if (trans != null) {
+                        trans.reverseTransition(500);
+                        animStatus = AnimStatus.FINISH;
+                    }
                 }
-            });
+            };
 
-            colorAnimation.start();
+            handler.sendEmptyMessageDelayed(0, 500);
+
         }
-
     }
 
     @Override

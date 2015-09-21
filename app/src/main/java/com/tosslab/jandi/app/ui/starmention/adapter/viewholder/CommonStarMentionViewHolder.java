@@ -9,7 +9,7 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 /**
  * Created by tee on 15. 8. 2..

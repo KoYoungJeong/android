@@ -1,12 +1,10 @@
 package com.tosslab.jandi.app.views.spannable;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.text.style.ReplacementSpan;
-import android.util.TypedValue;
-import android.view.View;
-import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 
@@ -15,47 +13,36 @@ import com.tosslab.jandi.app.R;
  */
 public class DateViewSpannable extends ReplacementSpan {
 
-    private TextView tvDate;
+    private final String date;
+    private final int textColor;
+    private final int textSize;
 
     public DateViewSpannable(Context context, String date) {
 
         super();
+        this.date = date;
+        Resources resources = context.getResources();
+        textColor = resources.getColor(R.color.jandi_file_detail_date);
+        textSize = resources.getDimensionPixelSize(R.dimen.jandi_file_detail_comment_date_text);
 
-        tvDate = new TextView(context);
-        tvDate.setText(date);
-        tvDate.setTextColor(context.getResources().getColor(R.color.jandi_file_detail_date));
-        tvDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources().getDimensionPixelSize(R.dimen.jandi_file_detail_comment_date_text));
-
-        prepareView();
 
     }
-
-    private void prepareView() {
-
-        int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-
-
-        tvDate.measure(widthSpec, heightSpec);
-        tvDate.layout(0, 0, tvDate.getMeasuredWidth(), tvDate.getMeasuredHeight());
-
-    }
-
 
     @Override
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
-        return tvDate.getWidth();
+        paint.setTextSize(textSize);
+        return (int) paint.measureText(date);
     }
 
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+        // http://flavienlaurent.com/blog/2014/01/31/spans/ 참조할것
 
         canvas.save();
 
-        int padding = (bottom - top - tvDate.getBottom()) / 2;
-        canvas.translate(x, bottom - tvDate.getBottom() - padding);
-        tvDate.draw(canvas);
-
+        paint.setTextSize(textSize);
+        paint.setColor(textColor);
+        canvas.drawText(date, x, y, paint);
 
         canvas.restore();
 

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.detail.model;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -30,12 +31,12 @@ public class TopicDetailModel {
     EntityClientManager entityClientManager;
 
 
-    public String getTopicName(Context context, int entityId) {
+    public String getTopicName(int entityId) {
 
         return EntityManager.getInstance().getEntityById(entityId).getName();
     }
 
-    public String getTopicDescription(Context context, int entityId) {
+    public String getTopicDescription(int entityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         ResLeftSideMenu.Entity rawEntity = entity.getEntity();
         if (entity.isPublicTopic()) {
@@ -47,17 +48,17 @@ public class TopicDetailModel {
         }
     }
 
-    public int getTopicMemberCount(Context context, int entityId) {
+    public int getTopicMemberCount(int entityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         return entity.getMemberCount();
     }
 
-    public boolean isStarred(Context context, int entityId) {
+    public boolean isStarred(int entityId) {
 
         return EntityManager.getInstance().getEntityById(entityId).isStarred;
     }
 
-    public boolean isOwner(Context context, int entityId) {
+    public boolean isOwner(int entityId) {
         return EntityManager.getInstance().isMyTopic(entityId);
 
     }
@@ -70,7 +71,7 @@ public class TopicDetailModel {
         }
     }
 
-    public int getEntityType(Context context, int entityId) {
+    public int getEntityType(int entityId) {
 
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         if (entity.isPublicTopic()) {
@@ -127,7 +128,7 @@ public class TopicDetailModel {
         RequestApiManager.getInstance().updateTopicPushSubscribe(teamId, entityId, req);
     }
 
-    public boolean isPushOn(Context context, int entityId) {
+    public boolean isPushOn(int entityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         return entity.isTopicPushOn;
     }
@@ -212,7 +213,11 @@ public class TopicDetailModel {
 
     }
 
-    public boolean isDefaultTopic(Context context, int entityId) {
+    public boolean isDefaultTopic(int entityId) {
         return EntityManager.getInstance().getDefaultTopicId() == entityId;
+    }
+
+    public boolean isTeamOwner() {
+        return TextUtils.equals(EntityManager.getInstance().getMe().getUser().u_authority, "owner");
     }
 }

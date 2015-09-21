@@ -45,9 +45,9 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
         View view = LayoutInflater.from(context).inflate(R.layout.item_topic_body, parent, false);
 
         TopicViewHolder viewHolder = new TopicViewHolder(view);
-        viewHolder.selector = view.findViewById(R.id.view_entity_listitem_selector);
-        viewHolder.tvName = (TextView) view.findViewById(R.id.txt_entity_listitem_name);
-        viewHolder.tvMemberCount = (TextView) view.findViewById(R.id.txt_entity_listitem_user_count);
+        viewHolder.selector = view.findViewById(R.id.v_entity_listitem_selector);
+        viewHolder.tvName = (TextView) view.findViewById(R.id.tv_entity_listitem_name);
+        viewHolder.tvMemberCount = (TextView) view.findViewById(R.id.tv_entity_listitem_user_count);
         viewHolder.tvDescription =
                 (TextView) view.findViewById(R.id.tv_entity_listitem_description);
         return viewHolder;

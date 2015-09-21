@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.ui.maintab.chat.model.MainChatListModel;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
@@ -48,8 +49,8 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
                 .onBackpressureBuffer()
                 .map(integer -> {
 
-                    int memberId = mainChatListModel.getMemberId(JandiApplication.getContext());
-                    int teamId = mainChatListModel.getTeamId(JandiApplication.getContext());
+                    int memberId = mainChatListModel.getMemberId();
+                    int teamId = mainChatListModel.getTeamId();
 
                     List<ResChat> chatList = mainChatListModel.getChatList(memberId);
                     mainChatListModel.saveChatList(teamId, chatList);
@@ -77,8 +78,8 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
     @Background
     @Override
     public void onInitChatList(Context context, int selectedEntity) {
-        int memberId = mainChatListModel.getMemberId(context);
-        int teamId = mainChatListModel.getTeamId(context);
+        int memberId = mainChatListModel.getMemberId();
+        int teamId = mainChatListModel.getTeamId();
 
         if (memberId < 0 || teamId < 0) {
             return;
@@ -129,8 +130,8 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
     @Override
     public void onReloadChatList(Context context) {
-        int memberId = mainChatListModel.getMemberId(context);
-        int teamId = mainChatListModel.getTeamId(context);
+        int memberId = mainChatListModel.getMemberId();
+        int teamId = mainChatListModel.getTeamId();
 
         if (memberId < 0 || teamId < 0) {
             return;
@@ -162,9 +163,14 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         view.setSelectedItem(chatItem.getRoomId());
         EventBus.getDefault().post(new MainSelectTopicEvent(chatItem.getEntityId()));
 
-        int badgeCount = JandiPreference.getBadgeCount(context) - unread;
-        JandiPreference.setBadgeCount(context, badgeCount);
-        BadgeUtils.setBadge(context, badgeCount);
+        int teamId = mainChatListModel.getTeamId();
+        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+        int badgeCount = badgeCountRepository.findBadgeCountByTeamId(teamId) - unread;
+        if (badgeCount <= 0) {
+            badgeCount = 0;
+        }
+        badgeCountRepository.upsertBadgeCount(teamId, badgeCount);
+        BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
 
         int unreadCount = mainChatListModel.getUnreadCount(view.getChatItems());
         EventBus.getDefault().post(new ChatBadgeEvent(unreadCount > 0, unreadCount));
@@ -175,7 +181,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
                 .getEntityById(entityId)
                 .isStarred;
 
-        view.moveMessageActivity(mainChatListModel.getTeamId(context), entityId, chatItem
+        view.moveMessageActivity(mainChatListModel.getTeamId(), entityId, chatItem
                 .getRoomId(), isStarred, chatItem.getLastLinkId());
 
     }

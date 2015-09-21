@@ -236,7 +236,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity implements Car
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
+        actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));

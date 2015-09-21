@@ -12,10 +12,10 @@ import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
-import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,10 +102,10 @@ public class ChatChooseAdapter extends BaseAdapter {
 
             convertView = LayoutInflater.from(context).inflate(R.layout.item_disabled_folding, parent, false);
 
-            disableFoldingViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_disabled_folding_icon);
-            disableFoldingViewHolder.imageViewArrow = (ImageView) convertView.findViewById(R.id.img_disabled_folding_arrow);
-            disableFoldingViewHolder.textViewTitle = (TextView) convertView.findViewById(R.id.txt_disabled_folding_title);
-            disableFoldingViewHolder.textViewCount = (TextView) convertView.findViewById(R.id.txt_disabled_folding_count);
+            disableFoldingViewHolder.ivIcon = (ImageView) convertView.findViewById(R.id.iv_disabled_folding_icon);
+            disableFoldingViewHolder.ivArrow = (ImageView) convertView.findViewById(R.id.iv_disabled_folding_arrow);
+            disableFoldingViewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tv_disabled_folding_title);
+            disableFoldingViewHolder.tvCount = (TextView) convertView.findViewById(R.id.tv_disabled_folding_count);
 
             convertView.setTag(R.id.chatchoose_disable_folding, disableFoldingViewHolder);
 
@@ -115,7 +115,7 @@ public class ChatChooseAdapter extends BaseAdapter {
 
         DisableDummyItem item = ((DisableDummyItem) getItem(position));
 
-        disableFoldingViewHolder.textViewCount.setText(context.getString(R.string.jandi_count_with_brace, item.getDisabledCount()));
+        disableFoldingViewHolder.tvCount.setText(context.getString(R.string.jandi_count_with_brace, item.getDisabledCount()));
 
         return convertView;
     }
@@ -123,14 +123,14 @@ public class ChatChooseAdapter extends BaseAdapter {
     private View setChatChooseView(int position, View convertView, ViewGroup parent) {
         ChatCHooseViewHolder chatCHooseViewHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body, parent, false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body_two_line, parent, false);
             chatCHooseViewHolder = new ChatCHooseViewHolder();
-            chatCHooseViewHolder.textViewName = (TextView) convertView.findViewById(R.id.txt_entity_listitem_name);
-            chatCHooseViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
-            chatCHooseViewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
-            chatCHooseViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_user_count);
-            chatCHooseViewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
-            chatCHooseViewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
+            chatCHooseViewHolder.textViewName = (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
+            chatCHooseViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_icon);
+            chatCHooseViewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_fav);
+            chatCHooseViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.tv_entity_listitem_user_count);
+            chatCHooseViewHolder.disableLineThrouthView = convertView.findViewById(R.id.iv_entity_listitem_line_through);
+            chatCHooseViewHolder.disableCoverView = convertView.findViewById(R.id.v_entity_listitem_warning);
 
 
             convertView.setTag(R.id.chatchoose_item, chatCHooseViewHolder);
@@ -177,7 +177,7 @@ public class ChatChooseAdapter extends BaseAdapter {
 
     private View.OnClickListener getProfileClickListener(int entityId) {
         return v -> {
-            EventBus.getDefault().post(new ProfileDetailEvent(entityId));
+            EventBus.getDefault().post(new ShowProfileEvent(entityId));
         };
     }
 
@@ -218,9 +218,9 @@ public class ChatChooseAdapter extends BaseAdapter {
     }
 
     static class DisableFoldingViewHolder {
-        public TextView textViewTitle;
-        public ImageView imageViewIcon;
-        public ImageView imageViewArrow;
-        public TextView textViewCount;
+        public TextView tvTitle;
+        public ImageView ivIcon;
+        public ImageView ivArrow;
+        public TextView tvCount;
     }
 }

@@ -70,7 +70,10 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         // Move TutorialActivity
         JandiSocketService.stopService(IntroActivity.this);
 
-        IntroMainActivity_.intent(IntroActivity.this).start();
+        IntroMainActivity_
+                .intent(IntroActivity.this)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+                .start();
 
         finish();
     }

@@ -56,8 +56,10 @@ public class FileListPresenter {
     // 카테코리 탭
     @ViewById(R.id.txt_file_list_where)
     TextView textViewFileListWhere;
+
     @ViewById(R.id.txt_file_list_whom)
     TextView textViewFileListWhom;
+
     @ViewById(R.id.txt_file_list_type)
     TextView textViewFileListType;
 

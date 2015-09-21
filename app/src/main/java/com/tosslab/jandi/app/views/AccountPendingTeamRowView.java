@@ -32,7 +32,7 @@ public class AccountPendingTeamRowView extends RelativeLayout {
     }
 
     private void initView() {
-        nameTextView = ((TextView) findViewById(R.id.txt_team_list_name));
+        nameTextView = ((TextView) findViewById(R.id.tv_team_list_name));
 
         findViewById(R.id.btn_team_list_ignore).setOnClickListener(new OnClickListener() {
             @Override

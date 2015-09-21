@@ -221,6 +221,25 @@ public class FormattedEntity {
         return JandiConstantsForFlavors.SERVICE_FILE_URL + userProfileUrl;
     }
 
+    public String getUserMediumProfileUrl() {
+        String userProfileUrl;
+        if (getUser().u_photoThumbnailUrl != null) {
+            userProfileUrl = getUser().u_photoThumbnailUrl.mediumThumbnailUrl;
+        } else {
+            userProfileUrl = getUser().u_photoUrl;
+        }
+
+        if (TextUtils.isEmpty(userProfileUrl)) {
+            return "";
+        }
+
+        if (hasProtocol(userProfileUrl)) {
+            return userProfileUrl;
+        }
+
+        return JandiConstantsForFlavors.SERVICE_FILE_URL + userProfileUrl;
+    }
+
     public String getUserLargeProfileUrl() {
         String userProfileUrl;
         if (getUser().u_photoThumbnailUrl != null) {

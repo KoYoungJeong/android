@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.FileDetailRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
@@ -208,8 +209,9 @@ public class FileDetailModel {
             ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            JandiPreference.setBadgeCount(context, totalUnreadCount);
-            BadgeUtils.setBadge(context, totalUnreadCount);
+            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+            badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
+            BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
             EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitError e) {
@@ -410,5 +412,9 @@ public class FileDetailModel {
     public ResMessages.FileMessage getFileMessage(int fileId) {
 
         return MessageRepository.getRepository().getFileMessage(fileId);
+    }
+
+    public boolean isTeamOwner() {
+        return TextUtils.equals(EntityManager.getInstance().getMe().getUser().u_authority, "owner");
     }
 }

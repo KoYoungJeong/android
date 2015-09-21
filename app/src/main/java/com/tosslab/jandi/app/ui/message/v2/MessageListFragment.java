@@ -24,9 +24,8 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
-import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
@@ -57,6 +56,7 @@ import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
+import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
@@ -114,6 +114,8 @@ import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -1169,14 +1171,18 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
             boolean isDirectMessage = messageListModel.isDirectMessage(entityType);
-            boolean isMyMessage = messageListModel.isMyMessage(textMessage.writerId) && !isFromSearch;
+            boolean isOwner = messageListModel.isTeamOwner();
+            boolean isMyMessage = (messageListModel.isMyMessage(textMessage.writerId) || isOwner)
+                    && !isFromSearch;
             messageListPresenter.showMessageMenuDialog(isDirectMessage, isMyMessage, textMessage);
         } else if (messageListModel.isCommentType(link.message)) {
             messageListPresenter.showMessageMenuDialog(((ResMessages.CommentMessage) link.message));
         } else if (messageListModel.isFileType(link.message)) {
         } else if (messageListModel.isStickerType(link.message)) {
             ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) link.message;
-            boolean isMyMessage = messageListModel.isMyMessage(stickerMessage.writerId) && !isFromSearch;
+            boolean isOwner = messageListModel.isTeamOwner();
+            boolean isMyMessage = (messageListModel.isMyMessage(stickerMessage.writerId) || isOwner)
+                    && !isFromSearch;
 
             if (!isMyMessage) {
                 return;
@@ -1351,6 +1357,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
     }
 
+    public void onEvent(TeamLeaveEvent event) {
+        if (!messageListModel.isCurrentTeam(event.getTeamId())) {
+            return;
+        }
+
+
+        if (event.getMemberId() == entityId) {
+            messageListPresenter.showLeavedMemberDialog(entityId);
+        }
+    }
+
     public void onEvent(SocketMessageStarEvent event) {
         int messageId = event.getMessageId();
         boolean starred = event.isStarred();
@@ -1439,16 +1456,14 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
     }
 
-    public void onEvent(RequestUserInfoEvent event) {
-
+    public void onEvent(ShowProfileEvent event) {
         if (!isForeground) {
             return;
         }
 
-        UserInfoDialogFragment_.builder()
-                .entityId(event.userId)
-                .build()
-                .show(getFragmentManager(), "dialog");
+        MemberProfileActivity_.intent(getActivity())
+                .memberId(event.userId)
+                .start();
 
         if (event.from != null) {
 
@@ -1474,7 +1489,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                     break;
             }
         }
-
     }
 
     public void onEventMainThread(ChatCloseEvent event) {

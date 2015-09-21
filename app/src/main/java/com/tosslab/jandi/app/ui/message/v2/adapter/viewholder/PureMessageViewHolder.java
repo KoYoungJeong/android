@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -26,7 +25,7 @@ public class PureMessageViewHolder implements BodyViewHolder {
 
     private TextView tvMessage;
     private LinkPreviewViewModel linkPreviewViewModel;
-    private View lastReadView;
+    private View vLastRead;
     private View contentView;
 
     @Override
@@ -35,7 +34,7 @@ public class PureMessageViewHolder implements BodyViewHolder {
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         linkPreviewViewModel = new LinkPreviewViewModel(rootView.getContext());
         linkPreviewViewModel.initView(rootView);
-        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
+        vLastRead = rootView.findViewById(R.id.vg_message_last_read);
 
     }
 
@@ -57,8 +56,6 @@ public class PureMessageViewHolder implements BodyViewHolder {
         }
 
         builder.append(" ");
-
-        Resources resources = context.getResources();
 
         int startIndex = builder.length();
         builder.append(DateTransformator.getTimeStringForSimple(link.message.createTime));
@@ -99,9 +96,9 @@ public class PureMessageViewHolder implements BodyViewHolder {
     @Override
     public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
         if (currentLinkId == lastReadLinkId) {
-            lastReadView.setVisibility(View.VISIBLE);
+            vLastRead.setVisibility(View.VISIBLE);
         } else {
-            lastReadView.setVisibility(View.GONE);
+            vLastRead.setVisibility(View.GONE);
         }
     }
 

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/tv_popup_title"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:ellipsize="end"
@@ -17,13 +17,13 @@
         android:paddingRight="24dp"
         android:paddingTop="24dp"
         android:text="title"
-        android:textColor="#212121"
+        android:textColor="@color/message_controller_popup_text_color"
         android:textSize="20sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/btn_entity_popup_move_folder"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:background="@drawable/bg_list_item"
         android:clickable="true"
@@ -35,8 +35,21 @@
         android:textSize="@dimen/jandi_text_size_large" />
 
     <TextView
-        android:id="@+id/btn_entity_popup_starred"
+        android:id="@+id/btn_entity_popup_notification"
         android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_list_item"
+        android:clickable="true"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:text="@string/jandi_notification_off"
+        android:textColor="@color/message_controller_popup_text_color"
+        android:textSize="@dimen/jandi_text_size_large" />
+
+    <TextView
+        android:id="@+id/btn_entity_popup_starred"
+        android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:background="@drawable/bg_list_item"
         android:clickable="true"
@@ -49,7 +62,7 @@
 
     <TextView
         android:id="@+id/btn_entity_popup_leave"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:background="@drawable/bg_list_item"
         android:clickable="true"
@@ -60,6 +73,19 @@
         android:textColor="#212121"
         android:textSize="@dimen/jandi_text_size_large" />
 
+    <TextView
+        android:id="@+id/btn_entity_popup_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_list_item"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:text="@string/jandi_cancel"
+        android:textColor="@color/message_controller_popup_text_color"
+        android:textSize="@dimen/jandi_text_size_large" />
+    
     <View
         android:layout_width="match_parent"
         android:layout_height="8dp"

@@ -14,17 +14,17 @@ public interface TopicDetailPresenter {
 
     void onTopicInvite(Activity activity, int entityId);
 
-    void onTopicDescriptionMove(Context context, int entityId);
+    void onTopicDescriptionMove(int entityId);
 
     void onTopicStar(Context context, int entityId);
 
     void onTopicLeave(Context context, int entityId);
 
-    void onTopicDelete(Context context, int entityId);
+    void onTopicDelete(int entityId);
 
     void deleteTopic(Context context, int entityId);
 
-    void onChangeTopicName(Context context, int entityId);
+    void onChangeTopicName(int entityId);
 
     void onConfirmChangeTopicName(Context context, int entityId, String topicName, int entityType);
 

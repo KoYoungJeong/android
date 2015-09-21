@@ -8,14 +8,13 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.text.TextUtils;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -26,7 +25,7 @@ import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -160,7 +159,7 @@ public class SettingsFragment extends PreferenceFragment {
         settingFragmentViewModel.showProgressDialog();
         try {
 
-            removeSignData();
+            SignOutUtil.removeSignData();
 
             Activity activity = getActivity();
 
@@ -179,10 +178,13 @@ public class SettingsFragment extends PreferenceFragment {
                     .flush()
                     .clear();
 
-            JandiSocketService.stopService(getActivity());
+            JandiSocketService.stopService(activity);
 
-            BadgeUtils.setBadge(getActivity(), 0);
-            ColoredToast.show(getActivity(), getString(R.string.jandi_message_logout));
+            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+            badgeCountRepository.deleteAll();
+            BadgeUtils.setBadge(activity, 0);
+
+            ColoredToast.show(activity, getString(R.string.jandi_message_logout));
 
         } catch (Exception e) {
         } finally {
@@ -201,15 +203,6 @@ public class SettingsFragment extends PreferenceFragment {
                         .build())
                 .flush();
 
-    }
-
-    private void removeSignData() {
-        JandiPreference.signOut(getActivity());
-
-        ParseUpdateUtil.deleteChannelOnServer();
-
-        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
-                .clearAllData();
     }
 
     private void setPushSubState(boolean isEnabled) {

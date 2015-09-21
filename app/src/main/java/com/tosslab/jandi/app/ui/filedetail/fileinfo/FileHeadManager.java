@@ -15,13 +15,13 @@ import android.widget.TextView;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
-import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -34,6 +34,8 @@ import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 
 import java.util.Iterator;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 29..
@@ -71,8 +73,8 @@ public class FileHeadManager {
         imageViewPhotoFile = (ImageView) header.findViewById(R.id.img_file_detail_photo);
         fileInfoLayout = (LinearLayout) header.findViewById(R.id.ly_file_detail_info);
         iconFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
-        disableLineThroughView = header.findViewById(R.id.img_entity_listitem_line_through);
-        disableCoverView = header.findViewById(R.id.view_entity_listitem_warning);
+        disableLineThroughView = header.findViewById(R.id.iv_entity_listitem_line_through);
+        disableCoverView = header.findViewById(R.id.v_entity_listitem_warning);
         btnFileDetailStarred = (ImageView) header.findViewById(R.id.bt_file_detail_starred);
 
         vgDeleted = header.findViewById(R.id.vg_file_detail_deleted);
@@ -165,14 +167,14 @@ public class FileHeadManager {
         String userName = writer.getName();
         textViewUserName.setText(userName);
 
+        final ShowProfileEvent event = new ShowProfileEvent(writer.getId());
         imageViewUserProfile.setOnClickListener(v -> {
-            UserInfoDialogFragment_.builder().entityId(fileMessage.writerId).build().show(activity.getSupportFragmentManager(), "dialog");
+            EventBus.getDefault().post(event);
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewProfile);
         });
         textViewUserName.setOnClickListener(v -> {
-            UserInfoDialogFragment_.builder().entityId(fileMessage.writerId).build().show(activity.getSupportFragmentManager(), "dialog");
+            EventBus.getDefault().post(event);
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewProfile);
-
         });
 
         btnFileDetailStarred.setSelected(fileMessage.isStarred);

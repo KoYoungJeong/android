@@ -5,9 +5,7 @@
     <item
         android:id="@+id/action_confirm"
         android:orderInCategory="100"
-        android:showAsAction="always"
         android:title="@string/jandi_confirm"
         app:showAsAction="always" />
-
 
 </menu>

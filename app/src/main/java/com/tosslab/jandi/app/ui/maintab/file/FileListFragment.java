@@ -23,12 +23,12 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
-import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.events.files.CreateFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
@@ -260,6 +260,10 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             return;
         }
 
+        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
+            return;
+        }
+
         int itemCount = searchedFileItemListAdapter.getItemCount();
         searchedFileItemListAdapter.clearAdapter();
         initSearchSubject.onNext(itemCount + 1);
@@ -405,6 +409,10 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             return;
         }
 
+        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
+            return;
+        }
+
         int fileId = event.getId();
         int positionByFileId = searchedFileItemListAdapter.findPositionByFileId(fileId);
         if (positionByFileId >= 0) {
@@ -417,21 +425,28 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             return;
         }
 
+        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
+            return;
+        }
         // 토픽이 삭제되거나 나간 경우 해당 토픽의 파일 접근 여부를 알 수 없으므로
         // 리로드하도록 처리함
         int itemCount = searchedFileItemListAdapter.getItemCount();
         initSearchSubject.onNext(itemCount);
     }
 
-    public void onEvent(RetrieveTopicListEvent event) {
+    public void onEvent(CreateFileEvent event) {
         if (isInSearchActivity()) {
+            return;
+        }
+
+        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
         int itemCount = searchedFileItemListAdapter.getItemCount();
         initSearchSubject.onNext(itemCount);
     }
 
-    public void onEVent(NetworkConnectEvent event) {
+    public void onEvent(NetworkConnectEvent event) {
         if (isInSearchActivity()) {
             return;
         }

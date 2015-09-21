@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -44,12 +45,20 @@ public class MainTopicModel {
 
     // 폴더 정보 가져오기
     public List<ResFolder> getTopicFolders() throws RetrofitError {
+        if (!NetworkCheckUtil.isConnected()) {
+            return TopicFolderRepository.getRepository().getFolders();
+        }
+
         return RequestApiManager.getInstance()
                 .getFoldersByTeamApi(entityClientManager.getSelectedTeamId());
     }
 
     // 폴더 속 토픽 아이디 가져오기
     public List<ResFolderItem> getTopicFolderItems() throws RetrofitError {
+        if (!NetworkCheckUtil.isConnected()) {
+            return TopicFolderRepository.getRepository().getFolderItems();
+        }
+
         return RequestApiManager.getInstance()
                 .getFolderItemsByTeamApi(entityClientManager.getSelectedTeamId());
     }
@@ -102,6 +111,12 @@ public class MainTopicModel {
     // 리스트에 보여 줄 Data Provider 가져오기
     public TopicFolderListDataProvider getDataProvider(List<ResFolder> topicFolders, List<ResFolderItem> topicFolderItems) {
 
+        final List<ResFolder> orderedFolders = new ArrayList<>();
+
+        Observable.from(topicFolders)
+                .toSortedList((lhs, rhs) -> lhs.seq - rhs.seq)
+                .subscribe(orderedFolders::addAll);
+
         List<Pair<AbstractExpandableDataProvider.GroupData,
                 List<AbstractExpandableDataProvider.ChildData>>> datas = new LinkedList<>();
 
@@ -113,7 +128,7 @@ public class MainTopicModel {
         Map<Integer, TopicFolderData> folderMap = new LinkedHashMap<>();
         Map<Integer, Integer> badgeCountMap = new HashMap<>();
 
-        for (ResFolder topicFolder : topicFolders) {
+        for (ResFolder topicFolder : orderedFolders) {
             if (!topicItemMap.containsKey(topicFolder.id)) {
                 topicItemMap.put(new Integer(topicFolder.id), new ArrayList<>());
             }

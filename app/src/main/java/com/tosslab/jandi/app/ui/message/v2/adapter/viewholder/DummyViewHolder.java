@@ -16,24 +16,24 @@ import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
-import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 4..
  */
 public class DummyViewHolder implements BodyViewHolder {
 
-    private ImageView profileImageView;
-    private TextView nameTextView;
-    private TextView messageTextView;
+    private ImageView ivProfile;
+    private TextView tvName;
+    private TextView tvMessage;
     private View contentView;
 
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
-        profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
-        nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
-        messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
+        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+        tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
+        tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
     }
 
     @Override
@@ -46,14 +46,14 @@ public class DummyViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        Ion.with(profileImageView)
+        Ion.with(ivProfile)
                 .placeholder(R.drawable.profile_img)
                 .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
                 .crossfade(true)
                 .load(profileUrl);
 
-        nameTextView.setText(entity.getName());
+        tvName.setText(entity.getName());
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
 
@@ -63,12 +63,12 @@ public class DummyViewHolder implements BodyViewHolder {
         }
 
         SendMessage.Status status = SendMessage.Status.valueOf(dummyMessageLink.getStatus());
-        int textColor = nameTextView.getContext().getResources().getColor(R.color.jandi_messages_name);
+        int textColor = tvName.getContext().getResources().getColor(R.color.jandi_messages_name);
         switch (status) {
             case FAIL: {
                 builder.append("  ");
                 int beforLenghth = builder.length();
-                Drawable drawable = messageTextView.getContext().getResources()
+                Drawable drawable = tvMessage.getContext().getResources()
                         .getDrawable(R.drawable.icon_message_failure);
                 drawable.setBounds(0, 0,
                         drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -77,14 +77,14 @@ public class DummyViewHolder implements BodyViewHolder {
                                 new ImageSpan(drawable,
                                         ImageSpan.ALIGN_BASELINE),
                                 beforLenghth, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                nameTextView.setTextColor(textColor);
-                messageTextView.setTextColor(textColor);
+                tvName.setTextColor(textColor);
+                tvMessage.setTextColor(textColor);
                 break;
             }
             case SENDING: {
                 builder.append("  ");
                 int beforLenghth = builder.length();
-                Drawable drawable = messageTextView.getContext().getResources()
+                Drawable drawable = tvMessage.getContext().getResources()
                         .getDrawable(R.drawable.icon_message_sending);
                 drawable.setBounds(0, 0,
                         drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -93,24 +93,24 @@ public class DummyViewHolder implements BodyViewHolder {
                                 new ImageSpan(drawable,
                                         ImageSpan.ALIGN_BASELINE),
                                 beforLenghth, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                messageTextView.setTextColor(textColor);
-                nameTextView.setTextColor(textColor);
-                messageTextView.setTextColor(textColor);
+                tvMessage.setTextColor(textColor);
+                tvName.setTextColor(textColor);
+                tvMessage.setTextColor(textColor);
                 break;
             }
             case COMPLETE:
                 builder.append(" ");
-                nameTextView.setTextColor(textColor);
-                messageTextView.setTextColor(textColor);
+                tvName.setTextColor(textColor);
+                tvMessage.setTextColor(textColor);
                 break;
         }
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                messageTextView, builder, ((DummyMessageLink) link).getMentions(),
+                tvMessage, builder, ((DummyMessageLink) link).getMentions(),
                 EntityManager.getInstance().getMe().getId());
         builder = generateMentionMessageUtil.generate(false);
 
-        messageTextView.setText(builder);
+        tvMessage.setText(builder);
 
     }
 

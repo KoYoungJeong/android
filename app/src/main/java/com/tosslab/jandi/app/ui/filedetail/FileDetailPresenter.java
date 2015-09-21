@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.filedetail;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -197,7 +198,7 @@ public class FileDetailPresenter {
         if (item == null) {
             return;
         }
-        boolean isMine = fileDetailModel.isMyComment(item.writerId);
+        boolean isMine = fileDetailModel.isMyComment(item.writerId) || fileDetailModel.isTeamOwner();
         view.showManipulateMessageDialogFragment(item, isMine);
     }
 
@@ -240,7 +241,7 @@ public class FileDetailPresenter {
         final List<FormattedEntity> sharedEntities = entityManager.retrieveGivenEntities(sharedEntityWithoutMe);
         List<FormattedEntity> unjoinedChannels = entityManager.getUnjoinedChannels();
         for (FormattedEntity unjoinedEntity : unjoinedChannels) {
-            if(unjoinedEntity.hasGivenIds(sharedEntityWithoutMe)) {
+            if (unjoinedEntity.hasGivenIds(sharedEntityWithoutMe)) {
                 sharedEntities.add(unjoinedEntity);
             }
         }
@@ -610,6 +611,10 @@ public class FileDetailPresenter {
     public void changeStarredFileMessageState(int fileId, boolean starred) {
         // 클릭 여러번을 막기 위함
         starredPublishSubject.onNext(new FileStarredInfo(fileId, starred));
+    }
+
+    public boolean isTeamOwner() {
+        return fileDetailModel.isTeamOwner();
     }
 
     public interface View {

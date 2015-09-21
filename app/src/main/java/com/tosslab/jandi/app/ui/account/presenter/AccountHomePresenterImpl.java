@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
@@ -13,6 +14,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterViews;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.RetrofitError;
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 3..
@@ -262,6 +265,16 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
         try {
             List<Team> teamList = accountHomeModel.getTeamInfos(context);
+
+            Observable.from(teamList)
+                    .filter(team -> team.getStatus() == Team.Status.JOINED)
+                    .subscribe(team -> {
+                        BadgeCountRepository.getRepository()
+                                .upsertBadgeCount(team.getTeamId(), team.getUnread());
+                    });
+
+            BadgeUtils.setBadge(context, BadgeCountRepository.getRepository().getTotalBadgeCount());
+
             ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo();
             view.setTeamInfo((ArrayList<Team>) teamList, selectedTeamInfo);
         } catch (RetrofitError e) {

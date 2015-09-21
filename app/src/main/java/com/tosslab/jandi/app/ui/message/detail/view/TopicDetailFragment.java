@@ -181,20 +181,6 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         }
     }
 
-    public void onEventMainThread(SocketTopicPushEvent event) {
-        if (event.getData() == null) {
-            LogUtil.e("SocketTopicPushEvent - event.data is null");
-            return;
-        }
-
-        boolean isPushSubscribe = event.getData().isSubscribe();
-        LogUtil.e("SocketTopicPushEvent - isPushSubscribe ? " + isPushSubscribe);
-
-        if (switchSetPush.isChecked() != isPushSubscribe) {
-            setTopicPushSwitch(isPushSubscribe);
-        }
-    }
-
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void leaveTopic() {
@@ -212,12 +198,12 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @Click(R.id.vg_topic_detail_name)
     void onTopicNameClick() {
-        topicDetailPresenter.onChangeTopicName(getActivity(), entityId);
+        topicDetailPresenter.onChangeTopicName(entityId);
     }
 
     @Click(R.id.vg_topic_detail_description)
     void onTopicDescriptionClick() {
-        topicDetailPresenter.onTopicDescriptionMove(getActivity(), entityId);
+        topicDetailPresenter.onTopicDescriptionMove(entityId);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TopicDescription);
     }
 
@@ -274,7 +260,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @Click(R.id.vg_topic_detail_delete)
     void onTopicDeleteClick() {
-        topicDetailPresenter.onTopicDelete(getActivity(), entityId);
+        topicDetailPresenter.onTopicDelete(entityId);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Delete);
     }
 

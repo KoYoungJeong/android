@@ -4,13 +4,14 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -47,9 +48,9 @@ public class TopicCreateModel {
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-        JandiPreference.setBadgeCount(context, totalUnreadCount);
-        BadgeUtils.setBadge(context, totalUnreadCount);
-
+        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+        badgeCountRepository.upsertBadgeCount(EntityManager.getInstance().getTeamId(), totalUnreadCount);
+        BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
     }
 
     public boolean validTitle(String topicTitle) {
