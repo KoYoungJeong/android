@@ -53,6 +53,7 @@ public class SignUpActivity extends BaseAppCompatActivity {
         MixpanelAccountAnalyticsClient.getInstance(SignUpActivity.this, null)
                 .pageViewAccountCreate();
 
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SignUp);
     }
 
     private void setUpActionBar() {

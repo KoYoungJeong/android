@@ -234,7 +234,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
         addButtons(member);
 
-        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.EditProfile);
     }
 
     private void initSwipeLayout() {

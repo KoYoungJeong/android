@@ -143,6 +143,8 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
                 } else if (starMentionVO.getContentType() == StarMentionVO.Type.Comment.getValue()) {
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.ChooseComment);
                 }
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Mentions, AnalyticsValue.Action.ChooseMention);
             }
         };
         starMentionListAdapter.setOnItemClickListener(onItemClickListener);

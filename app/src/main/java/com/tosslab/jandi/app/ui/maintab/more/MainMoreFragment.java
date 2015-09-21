@@ -168,7 +168,7 @@ public class MainMoreFragment extends Fragment {
     public void moveToAccountActivity() {
         AccountHomeActivity_.intent(mContext)
                 .start();
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.TeamSelect);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.TeamSwitch);
     }
 
     @Click(R.id.rl_more_setting)

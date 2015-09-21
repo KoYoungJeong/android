@@ -159,7 +159,11 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @Click(R.id.et_topic_member_search)
     void onSearchInputClick() {
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamMembers, AnalyticsValue.Action.SearchInputField);
+        if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
+            AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.SearchInviteMember);
+        } else {
+            AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.SearchInputField);
+        }
     }
 
     @Override
@@ -212,7 +216,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
                 public boolean onMenuItemClick(MenuItem item) {
                     List<Integer> selectedCdp = topicMembersAdapter.getSelectedUserIds();
 
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.Invite);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMembers, AnalyticsValue.Action.Invite);
 
                     if (selectedCdp != null && !selectedCdp.isEmpty()) {
                         membersListPresenter.inviteInBackground(selectedCdp, entityId);

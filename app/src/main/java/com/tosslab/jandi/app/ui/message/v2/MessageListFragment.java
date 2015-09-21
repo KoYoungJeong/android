@@ -801,7 +801,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (selected) {
             stickerViewModel.dismissStickerSelector();
 
-            AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MessageInputField);
+            AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker);
         } else {
             int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity());
             if (keyboardHeight > 0) {
@@ -814,7 +814,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                         }
                     });
                 }
-                AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MessageInputField);
+                AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker);
             } else {
                 initKeyboardHeight();
             }

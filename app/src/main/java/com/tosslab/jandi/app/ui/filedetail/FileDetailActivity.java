@@ -892,7 +892,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         int userEntityId = event.userId;
         fileDetailPresenter.getProfile(userEntityId);
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsUtil.getProfileAction(event.userId, event.from));
     }
 
     @UiThread

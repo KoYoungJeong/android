@@ -176,10 +176,18 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             if (onSearchItemSelect != null) {
                 onSearchItemSelect.onSearchItemSelect();
             }
-            if (getActivity() instanceof SearchActivity) {
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.ChooseFile);
+
+            AnalyticsValue.Action action;
+            if (isDefault(mSearchQuery)) {
+                action = AnalyticsValue.Action.ChooseFile;
             } else {
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.ChooseFile);
+                action = AnalyticsValue.Action.ChooseFilteredFile;
+            }
+
+            if (getActivity() instanceof SearchActivity) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, action);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, action);
             }
         });
 
@@ -191,6 +199,12 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         initSearchSubject.onNext(-1);
 
+    }
+
+    private boolean isDefault(SearchQuery mSearchQuery) {
+        return mSearchQuery.mSearchEntity == ReqSearchFile.ALL_ENTITIES
+                && mSearchQuery.mSearchFileType.equals("all")
+                && mSearchQuery.mSearchUser.equals("all");
     }
 
     @Override

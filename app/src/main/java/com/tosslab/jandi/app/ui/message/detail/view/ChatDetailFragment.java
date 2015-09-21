@@ -121,9 +121,11 @@ public class ChatDetailFragment extends Fragment {
                 entityClientManager.disableFavorite(entityId);
 
                 topicDetailModel.trackTopicUnStarSuccess(entityId);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.TurnOnStar);
 
             } else {
                 entityClientManager.enableFavorite(entityId);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.TurnOnStar);
 
                 topicDetailModel.trackTopicStarSuccess(entityId);
                 showSuccessToast(getString(R.string.jandi_message_starred));
@@ -157,6 +159,7 @@ public class ChatDetailFragment extends Fragment {
     void onChatLeaveClick() {
         leaveViewModel.initData(getActivity(), entityId);
         leaveViewModel.leave();
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.Leave);
     }
 
 }

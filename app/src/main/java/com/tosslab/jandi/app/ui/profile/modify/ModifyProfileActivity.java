@@ -30,6 +30,8 @@ import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -81,6 +83,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
         setupActionBar();
 
         getProfileInBackground();
+
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.EditProfile);
     }
 
     private void setupActionBar() {
@@ -170,6 +174,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
                     EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS,
                     ((TextView) view)
             );
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Status);
         }
     }
 
@@ -181,6 +187,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
                     EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE,
                     ((TextView) view)
             );
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Mobile);
         }
     }
 
@@ -191,6 +198,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
                     EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME,
                     ((TextView) view)
             );
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Name);
         }
     }
 
@@ -202,6 +210,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
                     EditTextDialogFragment.ACTION_MODIFY_PROFILE_DIVISION,
                     ((TextView) view)
             );
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Division);
         }
     }
 
@@ -213,6 +222,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
                     EditTextDialogFragment.ACTION_MODIFY_PROFILE_POSITION,
                     ((TextView) view)
             );
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Position);
         }
     }
 
@@ -222,6 +232,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
             String[] accountEmails = modifyProfileModel.getAccountEmails();
             String email = memberProfileView.getEmail();
             memberProfileView.showEmailChooseDialog(accountEmails, email);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Email);
         }
     }
 
@@ -230,6 +241,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
         // 프로필 사진
         filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, ModifyProfileActivity.this);
 
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.PhotoEdit);
     }
 
     public void onEvent(MemberEmailChangeEvent event) {

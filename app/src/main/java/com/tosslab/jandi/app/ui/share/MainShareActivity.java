@@ -97,6 +97,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
                 return true;
             case R.id.action_share:
                 fragment.startShare();
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.Send);
                 return true;
         }
 

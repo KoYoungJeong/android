@@ -188,6 +188,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
     }
 
     private void showInvitePopup() {
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.InviteTeamMember);
         AlertDialog.Builder builder = new AlertDialog.Builder(MainTabActivity.this);
         View view = LayoutInflater.from(MainTabActivity.this).inflate(R.layout.dialog_invite_popup, null);
 

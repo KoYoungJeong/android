@@ -18,6 +18,8 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 import de.greenrobot.event.EventBus;
@@ -73,8 +75,10 @@ public class FileDetailCommentStickerView implements CommentViewHolder {
                 .transform(new IonCircleTransform())
                 .load(profileUrl);
 
-        ivCommentUserProfile.setOnClickListener(v ->
-                EventBus.getDefault().post(new ShowProfileEvent(writer.getId(), ShowProfileEvent.From.Image)));
+        ivCommentUserProfile.setOnClickListener(v -> {
+            EventBus.getDefault().post(new ShowProfileEvent(writer.getId(), ShowProfileEvent.From.Image));
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewProfile_FromComment);
+        });
         // 이름
         String userName = writer.getName();
         tvCommentUserName.setText(userName);
