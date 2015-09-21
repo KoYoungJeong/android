@@ -46,6 +46,8 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
+import rx.Observable;
+
 /**
  * Created by tee on 15. 6. 3..
  */
@@ -84,9 +86,9 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
 
     @AfterInject
     void initObject() {
-        topicMembersAdapter = new MembersAdapter(getApplicationContext());
+        topicMembersAdapter = new MembersAdapter(getBaseContext());
         if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
-            topicMembersAdapter.setEnableCheckMode();
+            topicMembersAdapter.setCheckMode();
         }
         membersListPresenter.setView(this);
     }
@@ -253,7 +255,25 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     @UiThread
     @Override
     public void showListMembers(List<ChatChooseItem> members) {
+        final List<Integer> selectedUserIds = topicMembersAdapter.getSelectedUserIds();
+
         topicMembersAdapter.clear();
+
+        if (selectedUserIds != null && !selectedUserIds.isEmpty()) {
+            Observable.from(members)
+                    .filter(member -> {
+                        for (Integer ids : selectedUserIds) {
+                            boolean selected = ids == member.getEntityId();
+                            if (selected) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    })
+                    .subscribe(member -> {
+                        member.setIsChooseItem(true);
+                    });
+        }
         topicMembersAdapter.addAll(members);
         topicMembersAdapter.notifyDataSetChanged();
     }
