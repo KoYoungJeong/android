@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.adapter.strategy.TextStrategy;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -127,7 +126,6 @@ public class MessageSearchModel {
                         .property(PropertyKey.SearchKeyword, keyword)
                         .build());
 
-        AnalyticsUtil.sendEvent(Event.MessageKeywordSearch.name(), "ResponseSuccess");
     }
 
     public void trackMessageKeywordSearchFail(int errorCode) {
@@ -140,7 +138,6 @@ public class MessageSearchModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        AnalyticsUtil.sendEvent(Event.MessageKeywordSearch.name(), "ResponseFail");
     }
 
 }

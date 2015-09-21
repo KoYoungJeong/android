@@ -101,8 +101,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
                         .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_PANEL)
                         .build());
 
-        AnalyticsUtil.sendScreenName("MESSAGE_PANEL");
-
         layoutManager = new LinearLayoutManager(getActivity());
 
         final Parcelable eimSavedState = (savedInstanceState != null) ?

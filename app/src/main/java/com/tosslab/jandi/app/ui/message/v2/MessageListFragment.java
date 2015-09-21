@@ -332,9 +332,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                         .property(PropertyKey.ScreenView, screenView)
                         .build());
 
-        AnalyticsUtil.sendScreenName(screenView == ScreenViewProperty.PRIVATE_TOPIC ?
-                "PRIVATE_TOPIC" : "PUBLIC_TOPIC");
-
         setUpActionbar();
         setHasOptionsMenu(true);
 

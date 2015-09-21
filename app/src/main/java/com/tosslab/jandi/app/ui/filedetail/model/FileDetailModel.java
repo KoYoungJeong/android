@@ -30,7 +30,6 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -245,8 +244,6 @@ public class FileDetailModel {
                         .property(PropertyKey.FileId, fileId)
                         .build());
 
-        AnalyticsUtil.sendEvent(Event.FileDownload.name(), "ResponseSuccess");
-
     }
 
     public void trackFileShareSuccess(int topicId, int fileId) {
@@ -261,8 +258,6 @@ public class FileDetailModel {
                         .property(PropertyKey.FileId, fileId)
                         .build());
 
-        AnalyticsUtil.sendEvent(Event.FileShare.name(), "ResponseSuccess");
-
     }
 
     public void trackFileShareFail(int errorCode) {
@@ -274,8 +269,6 @@ public class FileDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-
-        AnalyticsUtil.sendEvent(Event.FileShare.name(), "ResponseFail");
 
     }
 
@@ -291,8 +284,6 @@ public class FileDetailModel {
                         .property(PropertyKey.FileId, fileId)
                         .build());
 
-        AnalyticsUtil.sendEvent(Event.FileUnShare.name(), "ResponseSuccess");
-
     }
 
     public void trackFileUnShareFail(int errorCode) {
@@ -304,8 +295,6 @@ public class FileDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-
-        AnalyticsUtil.sendEvent(Event.FileUnShare.name(), "ResponseFail");
 
     }
 
@@ -321,8 +310,6 @@ public class FileDetailModel {
                         .property(PropertyKey.FileId, fileId)
                         .build());
 
-        AnalyticsUtil.sendEvent(Event.FileDelete.name(), "ResponseSuccess");
-
     }
 
     public void trackFileDeleteFail(int errorCode) {
@@ -334,8 +321,6 @@ public class FileDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-
-        AnalyticsUtil.sendEvent(Event.FileDelete.name(), "ResponseFail");
 
     }
 

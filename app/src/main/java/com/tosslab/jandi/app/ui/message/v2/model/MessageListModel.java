@@ -52,7 +52,6 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -461,7 +460,6 @@ public class MessageListModel {
                         .build())
                 .flush();
 
-        AnalyticsUtil.sendEvent(Event.MessagePost.name(), "ResponseSuccess");
     }
 
     private void trackMessagePostFail(int errorCode) {
@@ -474,7 +472,6 @@ public class MessageListModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build())
                 .flush();
-        AnalyticsUtil.sendEvent(Event.MessagePost.name(), "ResponseFail");
     }
 
     public void trackMessageDeleteSuccess(int messageId) {
@@ -487,7 +484,6 @@ public class MessageListModel {
                         .property(PropertyKey.MessageId, messageId)
                         .build());
 
-        AnalyticsUtil.sendEvent(Event.MessageDelete.name(), "ResponseSuccess");
     }
 
     public void trackMessageDeleteFail(int errorCode) {
@@ -499,7 +495,6 @@ public class MessageListModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-        AnalyticsUtil.sendEvent(Event.MessageDelete.name(), "ResponseFail");
     }
 
     public void registStarredMessage(int teamId, int messageId) {

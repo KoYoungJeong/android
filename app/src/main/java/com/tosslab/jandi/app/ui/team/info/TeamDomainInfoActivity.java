@@ -67,8 +67,6 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity {
                         .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_CREATE)
                         .build());
 
-        AnalyticsUtil.sendScreenName("TEAM_CREATE");
-
         MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
                 .pageViewTeamCreate();
         teamDomainInfoPresenter.setTeamCreatable(true);

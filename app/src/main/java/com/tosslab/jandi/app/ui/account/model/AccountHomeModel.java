@@ -17,7 +17,6 @@ import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -143,7 +142,6 @@ public class AccountHomeModel {
                         .property(PropertyKey.TeamId, teamId)
                         .build());
 
-        AnalyticsUtil.sendEvent(Event.LaunchTeam.name(), PropertyKey.ResponseSuccess.name());
     }
 
     public void trackLaunchTeamFail(int errorCode) {
@@ -154,8 +152,6 @@ public class AccountHomeModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-
-        AnalyticsUtil.sendEvent(Event.LaunchTeam.name(), "ResponseFail");
 
     }
 
@@ -170,8 +166,6 @@ public class AccountHomeModel {
                         .accountId(accountId)
                         .property(PropertyKey.ResponseSuccess, true)
                         .build());
-
-        AnalyticsUtil.sendEvent(Event.ChangeAccountName.name(), "ResponseSuccess");
     }
 
     public void trackChangeAccountNameFail(int errorCode) {
@@ -183,8 +177,6 @@ public class AccountHomeModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-
-        AnalyticsUtil.sendEvent(Event.ChangeAccountName.name(), "ResponseFail");
 
     }
 

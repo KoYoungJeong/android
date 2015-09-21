@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -109,7 +108,6 @@ public class TeamDomainInfoModel {
                         .property(PropertyKey.TeamId, teamId)
                         .build());
 
-        AnalyticsUtil.sendEvent(Event.CreateTeam.name(), "ResponseSuccess");
     }
 
     public void trackCreateTeamFail(int errorCode) {
@@ -121,7 +119,6 @@ public class TeamDomainInfoModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        AnalyticsUtil.sendEvent(Event.CreateTeam.name(), "ResponseFail");
     }
     
     public interface Callback {

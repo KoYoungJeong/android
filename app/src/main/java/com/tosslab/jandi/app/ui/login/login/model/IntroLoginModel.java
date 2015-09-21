@@ -15,7 +15,6 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -121,8 +120,6 @@ public class IntroLoginModel {
                         .property(PropertyKey.AutoSignIn, false)
                         .build())
                 .flush();
-
-        AnalyticsUtil.sendEvent(Event.SignIn.name(), "ResponseSuccess");
     }
 
     public void trackSignInFail(int errorCode) {
@@ -133,8 +130,6 @@ public class IntroLoginModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build())
                 .flush();
-
-        AnalyticsUtil.sendEvent(Event.SignIn.name(), "ResponseFail");
 
     }
 }

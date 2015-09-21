@@ -201,7 +201,6 @@ public class SettingsFragment extends PreferenceFragment {
                         .build())
                 .flush();
 
-        AnalyticsUtil.sendEvent(Event.SignOut.name(), "ResponseSuccess");
     }
 
     private void removeSignData() {

@@ -93,8 +93,6 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
                         .property(PropertyKey.ScreenView, ScreenViewProperty.ACCOUNT_HOME)
                         .build());
 
-        AnalyticsUtil.sendScreenName("ACCOUNT_HOME");
-
         progressWheel = new ProgressWheel(AccountHomeActivity.this);
         setUpActionBar();
 

@@ -180,8 +180,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                         .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_DETAIL)
                         .build());
 
-        AnalyticsUtil.sendScreenName("FILE_DETAIL");
-
         setUpActionBar();
 
         addFileDetailViewAsListviewHeader();

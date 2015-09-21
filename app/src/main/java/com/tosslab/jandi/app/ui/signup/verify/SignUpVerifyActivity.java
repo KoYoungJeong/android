@@ -76,8 +76,6 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
                         .property(PropertyKey.ScreenView, ScreenViewProperty.CONFIRM_VERIFICATION_NUMBER)
                         .build());
 
-        AnalyticsUtil.sendScreenName("CONFIRM_VERIFICATION_NUMBER");
-
         setUpActionBar();
 
         String resendEmailText = getString(R.string.jandi_signup_resend_email);
