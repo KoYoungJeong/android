@@ -169,6 +169,8 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         MemberProfileActivity_.intent(activity)
                 .memberId(event.userId)
                 .start();
+    }
+
     @Background
     @Override
     public void inviteInBackground(List<Integer> invitedUsers, int entityId) {
