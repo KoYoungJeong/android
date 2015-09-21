@@ -63,7 +63,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initView();
-
     }
 
     void initView() {
@@ -103,7 +102,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
         }
 
         progressWheel = new ProgressWheel(getActivity());
-
     }
 
     public void setStarredButtonText(boolean isStarred) {
@@ -114,11 +112,9 @@ public class EntityMenuDialogFragment extends DialogFragment {
         }
     }
 
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         View view = LayoutInflater.from(getActivity()).inflate((R.layout.fragment_entity_popup), null);
 
         btnStarred = (TextView) view.findViewById(R.id.btn_entity_popup_starred);
@@ -137,7 +133,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
                 .setView(view)
                 .create();
     }
-
 
     void onStarredClick() {
         showProgressWheel();

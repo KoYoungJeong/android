@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:paddingBottom="8dp"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/tv_popup_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:ellipsize="end"
         android:maxLines="1"
         android:paddingBottom="20dp"
@@ -23,7 +22,7 @@
 
     <TextView
         android:id="@+id/btn_entity_popup_move_folder"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@drawable/bg_list_item"
         android:clickable="true"
@@ -49,7 +48,7 @@
 
     <TextView
         android:id="@+id/btn_entity_popup_starred"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@drawable/bg_list_item"
         android:clickable="true"
@@ -62,7 +61,7 @@
 
     <TextView
         android:id="@+id/btn_entity_popup_leave"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@drawable/bg_list_item"
         android:clickable="true"
@@ -85,10 +84,5 @@
         android:text="@string/jandi_cancel"
         android:textColor="@color/message_controller_popup_text_color"
         android:textSize="16sp" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:background="@color/white" />
 
 </LinearLayout>
