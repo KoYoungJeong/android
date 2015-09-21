@@ -34,7 +34,6 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
-import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.entities.MoveSharedEntityEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.ConfirmDeleteFileEvent;
@@ -47,6 +46,7 @@ import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -892,7 +892,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         int userEntityId = event.userId;
         fileDetailPresenter.getProfile(userEntityId);
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewProfile_FromComment);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsUtil.getProfileAction(event.userId, event.from));
     }
 
     @UiThread
@@ -919,6 +919,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public void showUserInfoDialog(FormattedEntity user) {
         MemberProfileActivity_.intent(this)
                 .memberId(user.getId())
+                .from(MemberProfileActivity.EXTRA_FROM_FILE_DETAIL)
                 .start();
     }
 

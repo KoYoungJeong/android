@@ -192,8 +192,9 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         if (foreground) {
             MemberProfileActivity_.intent(getActivity())
                     .memberId(event.userId)
+                    .from(MemberProfileActivity.EXTRA_FROM_MAIN_CHAT)
                     .start();
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.ViewProfile);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsUtil.getProfileAction(event.userId, event.from));
         }
     }
 

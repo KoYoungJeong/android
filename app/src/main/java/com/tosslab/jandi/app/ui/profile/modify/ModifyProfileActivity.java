@@ -25,12 +25,11 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -57,7 +56,7 @@ import retrofit.RetrofitError;
  * Created by justinygchoi on 2014. 8. 27..
  */
 @EActivity(R.layout.activity_profile)
-public class ModifyProfileActivity extends BaseAnalyticsActivity {
+public class ModifyProfileActivity extends BaseAppCompatActivity {
     public static final int REQUEST_CODE = 1000;
 
     @Bean
@@ -78,8 +77,6 @@ public class ModifyProfileActivity extends BaseAnalyticsActivity {
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, ScreenViewProperty.PROFILE)
                         .build());
-
-        GoogleAnalyticsUtil.sendScreenName("PROFILE");
 
         setupActionBar();
 
@@ -112,7 +109,6 @@ public class ModifyProfileActivity extends BaseAnalyticsActivity {
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
-        trackGaProfile(getDistictId());
     }
 
     @Override
@@ -297,7 +293,6 @@ public class ModifyProfileActivity extends BaseAnalyticsActivity {
         try {
             ResLeftSideMenu.User me = modifyProfileModel.updateProfile(reqUpdateProfile);
             memberProfileView.updateProfileSucceed();
-            trackUpdateProfile(getDistictId(), me);
             memberProfileView.displayProfile(me);
         } catch (RetrofitError e) {
             e.printStackTrace();

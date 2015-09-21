@@ -25,7 +25,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
-import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
@@ -56,6 +55,7 @@ import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
@@ -1463,32 +1463,16 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         MemberProfileActivity_.intent(getActivity())
                 .memberId(event.userId)
+                .from(messageListModel.getScreen(entityId) == AnalyticsValue.Screen.Message ?
+                        MemberProfileActivity.EXTRA_FROM_MESSAGE : MemberProfileActivity.EXTRA_FROM_TOPIC_CHAT)
                 .start();
 
         if (event.from != null) {
 
             AnalyticsValue.Screen screen = messageListModel.getScreen(entityId);
-
-            AnalyticsValue.Action action;
-            switch (event.from) {
-                case Name:
-                    action = AnalyticsValue.Action.ViewProfile;
-                    break;
-                case Image:
-                    action = AnalyticsValue.Action.ViewProfile_Image;
-                    break;
-                case Mention:
-                    if (event.userId != EntityManager.getInstance().getMe().getId()) {
-                        action = AnalyticsValue.Action.ViewProfile_Mention;
-                    } else {
-                        action = AnalyticsValue.Action.ViewProfile_MyMention;
-                    }
-                    break;
-                case SystemMessage:
-                    action = AnalyticsValue.Action.ViewProfile_SysMessage;
-                    break;
-            }
+            AnalyticsUtil.sendEvent(screen, AnalyticsUtil.getProfileAction(event.userId, event.from));
         }
+
     }
 
     public void onEventMainThread(ChatCloseEvent event) {

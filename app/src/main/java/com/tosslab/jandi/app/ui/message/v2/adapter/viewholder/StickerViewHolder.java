@@ -95,9 +95,9 @@ public class StickerViewHolder implements BodyViewHolder {
 
         StickerManager.getInstance().loadStickerNoOption(ivSticker, content.groupId, content.stickerId);
 
-        profileImageView.setOnClickListener(v ->
+        ivProfile.setOnClickListener(v ->
                 EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
-        nameTextView.setOnClickListener(v ->
+        tvName.setOnClickListener(v ->
                 EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
     }
 

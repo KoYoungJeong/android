@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;

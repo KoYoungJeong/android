@@ -29,7 +29,6 @@ import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;

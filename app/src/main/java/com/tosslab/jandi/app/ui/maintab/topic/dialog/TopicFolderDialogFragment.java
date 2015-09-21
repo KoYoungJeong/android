@@ -15,6 +15,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.TopicFolderDialogModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -48,8 +50,14 @@ public class TopicFolderDialogFragment extends DialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_folder_popup, null);
         tvFolderTitle = (TextView) view.findViewById(R.id.tv_popup_title);
 
-        view.findViewById(R.id.tv_folder_rename).setOnClickListener(v -> clickFolderRename());
-        view.findViewById(R.id.tv_folder_delete).setOnClickListener(v -> clickFolderDelete());
+        view.findViewById(R.id.tv_folder_rename).setOnClickListener(v -> {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolder_Rename);
+            clickFolderRename();
+        });
+        view.findViewById(R.id.tv_folder_delete).setOnClickListener(v -> {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolder_Delete);
+            clickFolderDelete();
+        });
 
         return new AlertDialog.Builder(getActivity())
                 .setView(view)

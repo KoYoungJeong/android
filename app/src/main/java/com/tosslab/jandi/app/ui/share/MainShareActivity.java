@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.share;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -12,6 +11,8 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.share.model.MainShareModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -78,6 +79,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
                 .add(R.id.vg_share_container, fragment, "detail")
                 .commit();
 
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SharetoJandi);
 
     }
 

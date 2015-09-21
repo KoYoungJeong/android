@@ -14,6 +14,8 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 import java.util.ArrayList;
@@ -59,12 +61,12 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
         membersViewHolder = new MembersViewHolder(convertView);
         membersViewHolder.textViewName = (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
         membersViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_icon);
-        membersViewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.tv_entity_listitem_fav);
+        membersViewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_fav);
         membersViewHolder.disableLineThrouthView = convertView.findViewById(R.id.iv_entity_listitem_line_through);
-        membersViewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
+        membersViewHolder.disableCoverView = convertView.findViewById(R.id.v_entity_listitem_warning);
 
         if (!checkMode) {
-            membersViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.tv_entity_listitem_additional);
+            membersViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.tv_entity_listitem_user_count);
         } else {
             membersViewHolder.chooseCheckBox = (CheckBox) convertView.findViewById(R.id.cb_user);
         }
@@ -80,12 +82,14 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
         membersViewHolder.textViewName.setText(item.getName());
 
 
+        if (!checkMode) {
             if (!TextUtils.isEmpty(item.getEmail())) {
                 membersViewHolder.textViewAdditional.setVisibility(View.VISIBLE);
             } else {
                 membersViewHolder.textViewAdditional.setVisibility(View.GONE);
             }
             membersViewHolder.textViewAdditional.setText(item.getEmail());
+        }
 
         if (item.isStarred()) {
             membersViewHolder.imageViewFavorite.setVisibility(View.VISIBLE);
@@ -112,8 +116,8 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
 
         if (checkMode) {
             membersViewHolder.chooseCheckBox.setVisibility(View.VISIBLE);
-            membersViewHolder.imageViewIcon.setOnClickListener(v -> EventBus.getDefault().post(new
-                    ShowProfileEvent(item.getEntityId())));
+            membersViewHolder.imageViewIcon.setOnClickListener(v ->
+                    EventBus.getDefault().post(new ShowProfileEvent(item.getEntityId(), ShowProfileEvent.From.Image)));
             membersViewHolder.chooseCheckBox.setChecked(item.isChooseItem());
             membersViewHolder.chooseCheckBox.setTag(item);
 
@@ -121,11 +125,14 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
                 CheckBox cb = (CheckBox) v;
                 ChatChooseItem selectedItem = (ChatChooseItem) cb.getTag();
                 selectedItem.setIsChooseItem(cb.isChecked());
+                if (cb.isChecked()) {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.SelectMember);
+                }
             });
 
         } else {
             membersViewHolder.itemView.setOnClickListener(v -> EventBus.getDefault().post(new
-                    ShowProfileEvent(item.getEntityId())));
+                    ShowProfileEvent(item.getEntityId(), ShowProfileEvent.From.Image)));
         }
     }
 

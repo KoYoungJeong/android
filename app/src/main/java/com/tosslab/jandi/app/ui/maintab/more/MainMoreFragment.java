@@ -26,11 +26,11 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.IconWithTextView;
 
 import org.androidannotations.annotations.AfterInject;

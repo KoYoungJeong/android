@@ -74,7 +74,7 @@ public class FileDetailCommentStickerView implements CommentViewHolder {
                 .load(profileUrl);
 
         ivCommentUserProfile.setOnClickListener(v ->
-                EventBus.getDefault().post(new ShowProfileEvent(writer.getId())));
+                EventBus.getDefault().post(new ShowProfileEvent(writer.getId(), ShowProfileEvent.From.Image)));
         // 이름
         String userName = writer.getName();
         tvCommentUserName.setText(userName);

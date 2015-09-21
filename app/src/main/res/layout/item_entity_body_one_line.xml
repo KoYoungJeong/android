@@ -15,7 +15,7 @@
         android:src="@drawable/topiclist_icon_topic" />
 
     <ImageView
-        android:id="@+id/tv_entity_listitem_fav"
+        android:id="@+id/iv_entity_listitem_fav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/iv_entity_listitem_icon"
@@ -65,7 +65,7 @@
 
 
     <View
-        android:id="@+id/view_entity_listitem_warning"
+        android:id="@+id/v_entity_listitem_warning"
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_entity_item_height"
         android:background="#66ffffff"

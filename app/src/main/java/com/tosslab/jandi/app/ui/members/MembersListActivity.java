@@ -28,7 +28,6 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -95,7 +94,17 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     }
 
     private AnalyticsValue.Screen getScreen() {
-        return type == TYPE_MEMBERS_LIST_TOPIC ? AnalyticsValue.Screen.Participants : AnalyticsValue.Screen.TeamMembers;
+
+        switch (type) {
+            case TYPE_MEMBERS_JOINABLE_TOPIC:
+                return AnalyticsValue.Screen.InviteTeamMembers;
+            default:
+            case TYPE_MEMBERS_LIST_TEAM:
+                return AnalyticsValue.Screen.TeamMembers;
+            case TYPE_MEMBERS_LIST_TOPIC:
+                return AnalyticsValue.Screen.Participants;
+        }
+
     }
 
     @AfterViews
@@ -152,6 +161,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     void onSearchInputClick() {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamMembers, AnalyticsValue.Action.SearchInputField);
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -201,6 +211,9 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     List<Integer> selectedCdp = topicMembersAdapter.getSelectedUserIds();
+
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.Invite);
+
                     if (selectedCdp != null && !selectedCdp.isEmpty()) {
                         membersListPresenter.inviteInBackground(selectedCdp, entityId);
                         finish();

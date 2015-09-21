@@ -18,15 +18,16 @@ import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -169,8 +170,11 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     public void onEventMainThread(ShowProfileEvent event) {
         MemberProfileActivity_.intent(activity)
                 .memberId(event.userId)
+                .from(view.getType() == MembersListActivity.TYPE_MEMBERS_LIST_TOPIC ?
+                        MemberProfileActivity.EXTRA_FROM_PARTICIPANT : MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
                 .start();
-        AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.ViewProfile);
+
+        AnalyticsUtil.sendEvent(getScreen(), AnalyticsUtil.getProfileAction(event.userId, event.from));
     }
 
     @Background
@@ -214,7 +218,6 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                         .property(PropertyKey.MemberCount, memberCount)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.TopicMemberInvite.name(), "ResponseSuccess");
     }
 
     private void trackTopicMemberInviteFail(int errorCode) {
@@ -227,7 +230,6 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.TopicMemberInvite.name(), "ResponseFail");
     }
 
     public void onEvent(RetrieveTopicListEvent event) {

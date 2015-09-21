@@ -19,10 +19,10 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 import de.greenrobot.event.EventBus;
 
@@ -199,9 +199,8 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                     .loadStickerNoOption(ivSticker, content.groupId, content.stickerId);
         }
 
-        final ShowProfileEvent event = new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image);
-        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(event));
-        tvName.setOnClickListener(v -> EventBus.getDefault().post(event));
+        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
+        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
     }
 
     @Override

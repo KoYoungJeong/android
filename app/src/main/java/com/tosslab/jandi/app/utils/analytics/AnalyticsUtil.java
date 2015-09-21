@@ -6,6 +6,8 @@ import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 
 public class AnalyticsUtil {
 
@@ -52,5 +54,29 @@ public class AnalyticsUtil {
 
     public static void sendEvent(AnalyticsValue.Screen screen, AnalyticsValue.Action action) {
         sendEvent(screen.name(), action.name());
+    }
+
+    public static AnalyticsValue.Action getProfileAction(int userId, ShowProfileEvent.From from) {
+        AnalyticsValue.Action action;
+        switch (from) {
+            case Name:
+                action = AnalyticsValue.Action.ViewProfile;
+                break;
+            default:
+            case Image:
+                action = AnalyticsValue.Action.ViewProfile_Image;
+                break;
+            case Mention:
+                if (userId == EntityManager.getInstance().getMe().getId()) {
+                    action = AnalyticsValue.Action.ViewProfile_MyMention;
+                } else {
+                    action = AnalyticsValue.Action.ViewProfile_Mention;
+                }
+                break;
+            case SystemMessage:
+                action = AnalyticsValue.Action.ViewProfile_SysMessage;
+                break;
+        }
+        return action;
     }
 }

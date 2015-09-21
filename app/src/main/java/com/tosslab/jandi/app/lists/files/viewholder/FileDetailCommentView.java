@@ -22,8 +22,8 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 
 import de.greenrobot.event.EventBus;
@@ -79,7 +79,7 @@ public class FileDetailCommentView implements CommentViewHolder {
                 .load(profileUrl);
 
         ivCommentUserProfile.setOnClickListener(v ->
-                EventBus.getDefault().post(new ShowProfileEvent(writer.getId())));
+                EventBus.getDefault().post(new ShowProfileEvent(writer.getId(), ShowProfileEvent.From.Image)));
         // 이름
         String userName = writer.getName();
         tvCommentUserName.setText(userName);
