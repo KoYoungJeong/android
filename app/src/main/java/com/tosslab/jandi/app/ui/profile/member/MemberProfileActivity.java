@@ -125,7 +125,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         if (savedInstanceState != null) {
             isFullSizeImageShowing = savedInstanceState.getBoolean(KEY_FULL_SIZE_IMAGE_SHOWING);
         }
-
     }
 
     @Override
@@ -233,7 +232,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         btnProfileStar.setEnabled(!isMe());
 
         addButtons(member);
-
     }
 
     private void initSwipeLayout() {
