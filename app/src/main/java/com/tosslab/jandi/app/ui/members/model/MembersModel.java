@@ -3,9 +3,11 @@ package com.tosslab.jandi.app.ui.members.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -115,5 +117,53 @@ public class MembersModel {
 
 
         return chatChooseItems;
+    }
+
+    public List<ChatChooseItem> getUnjoinedTopicMembers(int entityId) {
+
+        EntityManager entityManager = EntityManager.getInstance();
+
+        FormattedEntity entity = entityManager.getEntityById(entityId);
+
+        int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity
+                .isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
+
+        List<FormattedEntity> unjoinedMembersOfEntity = entityManager.getUnjoinedMembersOfEntity(entityId, entityType);
+
+
+        LogUtil.e("members", unjoinedMembersOfEntity.size() + " ");
+
+        List<ChatChooseItem> chatChooseItems = new ArrayList<>();
+
+        Observable.from(unjoinedMembersOfEntity)
+                .map(unjoinedEntity -> {
+                    ChatChooseItem chatChooseItem = new ChatChooseItem();
+                    return chatChooseItem.entityId(unjoinedEntity.getId())
+                            .email(unjoinedEntity.getUserStatusMessage())
+                            .photoUrl(unjoinedEntity.getUserLargeProfileUrl())
+                            .starred(unjoinedEntity.isStarred)
+                            .enabled(TextUtils.equals(unjoinedEntity.getUser().status, "enabled"))
+                            .name(unjoinedEntity.getName());
+                })
+                .filter(chatChooseItem -> chatChooseItem.isEnabled())
+                .toSortedList((lhs, rhs) -> {
+                    if (lhs.isStarred()) {
+                        if (rhs.isStarred()) {
+                            return lhs.getName().compareToIgnoreCase(rhs.getName());
+                        } else {
+                            return -1;
+                        }
+                    } else {
+                        if (rhs.isEnabled()) {
+                            return 1;
+                        } else {
+                            return lhs.getName().compareToIgnoreCase(rhs.getName());
+                        }
+                    }
+                })
+                .subscribe(chatChooseItems::addAll, Throwable::printStackTrace);
+
+        return chatChooseItems;
+
     }
 }

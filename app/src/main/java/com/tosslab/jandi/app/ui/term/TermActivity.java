@@ -2,12 +2,12 @@ package com.tosslab.jandi.app.ui.term;
 
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.webkit.WebView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -21,7 +21,7 @@ import java.util.Locale;
  * Created by Steve SeongUg Jung on 14. 12. 30..
  */
 @EActivity(R.layout.activity_term)
-public class TermActivity extends AppCompatActivity {
+public class TermActivity extends BaseAppCompatActivity {
 
     @ViewById(R.id.web_term)
     WebView webView;

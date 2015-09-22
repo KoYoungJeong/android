@@ -27,7 +27,6 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -259,8 +258,6 @@ public class FilePickerModel {
                         .property(PropertyKey.TopicId, entityId)
                         .property(PropertyKey.FileId, fileId)
                         .build());
-
-        GoogleAnalyticsUtil.sendEvent(Event.FileUpload.name(), "ResponseSuccess");
     }
 
     public void trackUploadingFileFail(int errorCode) {
@@ -272,8 +269,6 @@ public class FilePickerModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-
-        GoogleAnalyticsUtil.sendEvent(Event.FileUpload.name(), "ResponseFail");
     }
 
     public String uploadProfilePhoto(Context context, File file) throws ExecutionException, InterruptedException {

@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -12,7 +11,7 @@ import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -20,8 +19,8 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
-import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
@@ -33,28 +32,28 @@ import de.greenrobot.event.EventBus;
 public class MessageViewHolder implements BodyViewHolder {
 
     protected Context context;
-    private ImageView profileImageView;
-    private TextView nameTextView;
-    private TextView messageTextView;
-    private View disableCoverView;
-    private View disableLineThroughView;
+    private ImageView ivProfile;
+    private TextView tvName;
+    private TextView tvMessage;
+    private View vDisableCover;
+    private View vDisableLineThrough;
     private LinkPreviewViewModel linkPreviewViewModel;
-    private View lastReadView;
+    private View vLastRead;
     private View contentView;
 
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
-        profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
-        nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
-        messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
-        disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
-        disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+        tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
+        tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
+        vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
+        vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         context = rootView.getContext();
 
         linkPreviewViewModel = new LinkPreviewViewModel(context);
         linkPreviewViewModel.initView(rootView);
-        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
+        vLastRead = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -67,7 +66,7 @@ public class MessageViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        Ion.with(profileImageView)
+        Ion.with(ivProfile)
                 .placeholder(R.drawable.profile_img)
                 .error(R.drawable.profile_img)
                 .transform(new IonCircleTransform())
@@ -75,17 +74,17 @@ public class MessageViewHolder implements BodyViewHolder {
                 .load(profileUrl);
 
         if (fromEntity != null && TextUtils.equals(fromEntity.status, "enabled")) {
-            nameTextView.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
-            disableCoverView.setVisibility(View.GONE);
-            disableLineThroughView.setVisibility(View.GONE);
+            tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
+            vDisableCover.setVisibility(View.GONE);
+            vDisableLineThrough.setVisibility(View.GONE);
         } else {
-            nameTextView.setTextColor(
-                    nameTextView.getResources().getColor(R.color.deactivate_text_color));
-            disableCoverView.setVisibility(View.VISIBLE);
-            disableLineThroughView.setVisibility(View.VISIBLE);
+            tvName.setTextColor(
+                    tvName.getResources().getColor(R.color.deactivate_text_color));
+            vDisableCover.setVisibility(View.VISIBLE);
+            vDisableLineThrough.setVisibility(View.VISIBLE);
         }
 
-        nameTextView.setText(fromEntity.name);
+        tvName.setText(fromEntity.name);
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
@@ -99,12 +98,10 @@ public class MessageViewHolder implements BodyViewHolder {
                         Spannable.Factory.getInstance().newSpannable(messageStringBuilder);
                 messageStringBuilder.setSpan(linkSpannable,
                         0, textMessage.content.body.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                LinkifyUtil.setOnLinkClick(messageTextView);
+                LinkifyUtil.setOnLinkClick(tvMessage);
             }
 
             messageStringBuilder.append(" ");
-
-            Resources resources = context.getResources();
 
             int startIndex = messageStringBuilder.length();
             messageStringBuilder.append(
@@ -112,7 +109,7 @@ public class MessageViewHolder implements BodyViewHolder {
             int endIndex = messageStringBuilder.length();
 
             DateViewSpannable spannable =
-                    new DateViewSpannable(messageTextView.getContext(),
+                    new DateViewSpannable(tvMessage.getContext(),
                             DateTransformator.getTimeStringForSimple(link.message.createTime));
             messageStringBuilder.setSpan(spannable,
                     startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -132,18 +129,15 @@ public class MessageViewHolder implements BodyViewHolder {
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
-
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                    messageTextView, messageStringBuilder, textMessage.mentions, entityManager.getMe().getId());
+                    tvMessage, messageStringBuilder, textMessage.mentions, entityManager.getMe().getId());
             messageStringBuilder = generateMentionMessageUtil.generate(true);
 
-            messageTextView.setText(messageStringBuilder);
+            tvMessage.setText(messageStringBuilder);
 
         }
-        profileImageView.setOnClickListener(v ->
-                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
-        nameTextView.setOnClickListener(v ->
-                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
+        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
 
         linkPreviewViewModel.bindData(link);
     }
@@ -151,9 +145,9 @@ public class MessageViewHolder implements BodyViewHolder {
     @Override
     public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
         if (currentLinkId == lastReadLinkId) {
-            lastReadView.setVisibility(View.VISIBLE);
+            vLastRead.setVisibility(View.VISIBLE);
         } else {
-            lastReadView.setVisibility(View.GONE);
+            vLastRead.setVisibility(View.GONE);
         }
     }
 

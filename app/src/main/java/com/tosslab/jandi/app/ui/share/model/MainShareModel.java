@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.share.model;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -10,17 +9,13 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
 
+import org.androidannotations.annotations.EBean;
+
 /**
  * Created by Steve SeongUg Jung on 15. 2. 13..
  */
+@EBean
 public class MainShareModel {
-
-    private final Context context;
-
-    public MainShareModel(Context context) {
-        this.context = context;
-    }
-
 
     public String handleSendSubject(Intent intent) {
         return intent.getStringExtra(Intent.EXTRA_SUBJECT);
@@ -66,6 +61,6 @@ public class MainShareModel {
 
             return false;
         }
-
     }
+
 }

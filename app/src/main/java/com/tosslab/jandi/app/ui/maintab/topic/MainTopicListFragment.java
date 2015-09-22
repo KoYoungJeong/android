@@ -40,7 +40,8 @@ import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -100,8 +101,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
                         .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_PANEL)
                         .build());
 
-        GoogleAnalyticsUtil.sendScreenName("MESSAGE_PANEL");
-
         layoutManager = new LinearLayoutManager(getActivity());
 
         final Parcelable eimSavedState = (savedInstanceState != null) ?
@@ -124,6 +123,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     void onSearchOptionSelect() {
         SearchActivity_.intent(getActivity())
                 .start();
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.Search);
     }
 
     @Override
@@ -169,18 +170,20 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         expandableItemManager.setOnGroupCollapseListener((groupPosition, fromUser) -> {
             TopicFolderData topicFolderData = adapter.getTopicFolderData(groupPosition);
             mainTopicListPresenter.onFolderCollapse(topicFolderData);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolderCollapse);
         });
         expandableItemManager.setOnGroupExpandListener((groupPosition, fromUser) -> {
             TopicFolderData topicFolderData = adapter.getTopicFolderData(groupPosition);
             mainTopicListPresenter.onFolderExpand(topicFolderData);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolderExpand);
         });
 
-        adapter.setOnChildItemClickListener((view, adapter, groupPosition, childPosition) -> {
-            mainTopicListPresenter.onChildItemClick(adapter, groupPosition, childPosition);
-        });
+        adapter.setOnChildItemClickListener((view, adapter, groupPosition, childPosition)
+                -> mainTopicListPresenter.onChildItemClick(adapter, groupPosition, childPosition));
 
         adapter.setOnChildItemLongClickListener((view, adapter, groupPosition, childPosition) -> {
             mainTopicListPresenter.onChildItemLongClick(adapter, groupPosition, childPosition);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicSubMenu);
             return true;
         });
 
@@ -246,6 +249,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         JoinableTopicListActivity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .start();
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.BrowseOtherTopics);
     }
 
     public void onEvent(TopicFolderMoveCallEvent event) {
@@ -335,6 +340,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
                 .start();
 
         getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.CreateNewTopic);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

@@ -15,7 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.invites.email.InviteEmailActivity_;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 /**
  * Created by Bill Minwook Heo on 15. 4. 21..
@@ -44,14 +47,16 @@ public class InvitationDialogFragment extends DialogFragment {
 
     private static final String INVITE_TEAM_NAME = "invite_team_name";
     private static final String INVITATION_URL = "invite_url";
+    private static final String INVITATION_FROM = "from";
 
     ClipboardManager clipboardManager;
 
-    public static InvitationDialogFragment newInstance(String inviteTeamName, String invitationUrl) {
+    public static InvitationDialogFragment newInstance(String inviteTeamName, String invitationUrl, int from) {
         InvitationDialogFragment fragment = new InvitationDialogFragment();
         Bundle args = new Bundle();
         args.putString(INVITE_TEAM_NAME, inviteTeamName);
         args.putString(INVITATION_URL, invitationUrl);
+        args.putInt(INVITATION_FROM, from);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,33 +72,47 @@ public class InvitationDialogFragment extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        final int from = getArguments().getInt(INVITATION_FROM, -1);
+        final AnalyticsValue.Screen screen = getScreen(from);
+
         builder.setTitle(R.string.jandi_invite_member)
                 .setItems(R.array.types_invitations, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         int eventType = 0;
+                        AnalyticsValue.Action action = null;
                         switch (which) {
                             case 0:     // from email
                                 eventType = TYPE_INVITATION_EMAIL;
+                                action = AnalyticsValue.Action.InviteMember_Email;
                                 break;
                             case 1:     // from kakao
                                 eventType = TYPE_INVITATION_KAKAO;
+                                action = AnalyticsValue.Action.InviteMember_KakaoTalk;
                                 break;
                             case 2:     // from LINE
                                 eventType = TYPE_INVITATION_LINE;
+                                action = AnalyticsValue.Action.InviteMember_Line;
                                 break;
                             case 3:     // from WeChat
                                 eventType = TYPE_INVITATION_WECHAT;
+                                action = AnalyticsValue.Action.InviteMember_WeChat;
                                 break;
                             case 4:     // from Facebook Messenger
                                 eventType = TYPE_INVITATION_FACEBOOK_MESSENGER;
+                                action = AnalyticsValue.Action.InviteMember_FBMessenger;
                                 break;
                             case 5:     // from Copy Link
                                 eventType = TYPE_INVITATION_COPY_LINK;
+                                action = AnalyticsValue.Action.InviteMember_CopyLink;
                                 break;
 
                         }
                         startInvitation(eventType);
                         dismiss();
+                        if (action != null) {
+                            AnalyticsUtil.sendEvent(screen, action);
+                        }
                     }
                 })
                 .setNegativeButton(R.string.jandi_cancel,
@@ -104,6 +123,24 @@ public class InvitationDialogFragment extends DialogFragment {
                         }
                 );
         return builder.create();
+    }
+
+    private AnalyticsValue.Screen getScreen(int from) {
+        switch (from) {
+            default:
+            case InvitationDialogExecutor.FROM_MAIN_INVITE:
+                return AnalyticsValue.Screen.MoreTab;
+            case InvitationDialogExecutor.FROM_MAIN_MEMBER:
+                return AnalyticsValue.Screen.TeamMembers;
+            case InvitationDialogExecutor.FROM_TOPIC_CHAT:
+                return AnalyticsValue.Screen.TopicChat;
+            case InvitationDialogExecutor.FROM_TOPIC_MEMBER:
+                return AnalyticsValue.Screen.Participants;
+            case InvitationDialogExecutor.FROM_MAIN_POPUP:
+                return AnalyticsValue.Screen.TopicsTab;
+            case InvitationDialogExecutor.FROM_CHAT_CHOOSE:
+                return AnalyticsValue.Screen.MessageTab;
+        }
     }
 
     private void startInvitation(int eventType) {

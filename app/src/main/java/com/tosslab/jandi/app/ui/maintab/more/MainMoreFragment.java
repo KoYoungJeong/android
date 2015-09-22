@@ -14,19 +14,23 @@ import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
-import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
+import com.tosslab.jandi.app.ui.profile.modify.ModifyProfileActivity_;
 import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
-import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.LanguageUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.IconWithTextView;
 
 import org.androidannotations.annotations.AfterInject;
@@ -116,8 +120,13 @@ public class MainMoreFragment extends Fragment {
         final int badgeCount[] = {0};
         Observable.from(accountRepository.getAccountTeams())
                 .filter(userTeam -> userTeam.getTeamId() != selectedTeamId)
-                .subscribe(userTeam -> badgeCount[0] += userTeam.getUnread());
+                .subscribe(userTeam -> {
+                    badgeCount[0] += userTeam.getUnread();
+                    BadgeCountRepository.getRepository()
+                            .upsertBadgeCount(userTeam.getTeamId(), userTeam.getUnread());
+                });
 
+        BadgeUtils.setBadge(getActivity(), BadgeCountRepository.getRepository().getTotalBadgeCount());
         switchTeamIconView.setBadgeCount(badgeCount[0]);
     }
 
@@ -133,9 +142,11 @@ public class MainMoreFragment extends Fragment {
 
     @Click(R.id.ly_more_profile)
     public void moveToProfileActivity() {
-        MemberProfileActivity_.intent(mContext)
+        ModifyProfileActivity_.intent(mContext)
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .start();
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.EditProfile);
     }
 
     @Click(R.id.ly_more_team_member)
@@ -144,17 +155,20 @@ public class MainMoreFragment extends Fragment {
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .type(MembersListActivity.TYPE_MEMBERS_LIST_TEAM)
                 .start();
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.TeamMembers);
     }
 
     @Click(R.id.ly_more_invite)
     public void onInvitationDisableCheck() {
         EventBus.getDefault().post(new InvitationDisableCheckEvent());
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.InviteMember);
     }
 
     @Click(R.id.ly_more_go_to_main)
     public void moveToAccountActivity() {
         AccountHomeActivity_.intent(mContext)
                 .start();
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.TeamSwitch);
     }
 
     @Click(R.id.rl_more_setting)
@@ -162,6 +176,7 @@ public class MainMoreFragment extends Fragment {
         SettingsActivity_.intent(mContext)
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .start();
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.Setting);
     }
 
     @Click(R.id.rl_more_help)
@@ -172,6 +187,7 @@ public class MainMoreFragment extends Fragment {
                 .hideActionBar(true)
                 .helpSite(true)
                 .start();
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.Help);
     }
 
     @Click(R.id.ly_more_mentioned)
@@ -180,6 +196,7 @@ public class MainMoreFragment extends Fragment {
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .extra("type", StarMentionListActivity.TYPE_MENTION_LIST)
                 .start();
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.Mentions);
     }
 
     @Click(R.id.ly_more_starred)
@@ -188,6 +205,7 @@ public class MainMoreFragment extends Fragment {
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .extra("type", StarMentionListActivity.TYPE_STAR_LIST)
                 .start();
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.Stars);
     }
 
     String getSupportUrlEachLanguage() {

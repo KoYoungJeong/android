@@ -41,7 +41,7 @@
 //    // File Upload
 //    @Post("/file")
 //    @RequiresAuthentication
-//    RestFileUploadResponse uploadFile(MultiValueMap data);
+//    RestFileUploadResponse startShare(MultiValueMap data);
 //
 //    // Delete file
 //    @Delete("/files/{fileId}?teamId={teamId}")

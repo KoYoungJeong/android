@@ -62,6 +62,8 @@
     <string name="jandi_tab_direct_message">"ダイレクトメッセージ"</string>
     <string name="jandi_tab_file">"ファイル"</string>
     <string name="jandi_tab_more">"もっと見る"</string>
+    <string name="jandi_notification_on">"通知をオンにする"</string>
+    <string name="jandi_notification_off">"通知をオフにする"</string>
 
     <!-- Fuzzy -->
     <string name="jandi_action_direct_message">"ダイレクトメッセージ"</string>
@@ -119,6 +121,11 @@
     <string name="err_profile_photo_upload">"プロフィール画像は更新されませんでした"</string>
     <string name="err_email_exists">"そのメールアドレスは既に使用されています"</string>
 
+    <string name="jandi_member_profile_edit">"プロフィール編集"</string>
+    <string name="jandi_member_profile_mention">"私のメンション"</string>
+    <string name="jandi_member_profile_email">"メールアドレス"</string>
+    <string name="jandi_member_profile_phone">"電話番号"</string>
+    <string name="jandi_member_profile_dm">"ダイレクトメッセージ"</string>
     <!-- 회원 초대 -->
     <string name="jandi_team_info">"チーム"</string>
     <string name="jandi_invitation">"招待"</string>
@@ -343,7 +350,7 @@
     <string name="jandi_go_to_main">"ホームに戻る"</string>
     <string name="jandi_team_switch">"チーム切替"</string>
     <string name="jandi_sign_in_ids_explain">"JANDIからのメールを受信するメールアドレスを一つ選択してください。メールアドレスを追加しチームごとに使い分けられます"</string>
-    <string name="jandi_disable_user_profile_explain">"このメンバーは現在無効化されています。詳細はチーム管理者にお問い合わせ下さい"</string>
+    <string name="jandi_disable_user_profile_explain">"このメンバーは現在無効化されています。\n詳細はチーム管理者にお問い合わせ下さい"</string>
     <string name="jandi_share_to_jandi">"JANDIにシェア"</string>
     <string name="jandi_no_message_in_topic_dm">"メッセージを書いて会話を始めましょう"</string>
     <string name="err_invalid_team_domain">"不適切なドメイン名"</string>
@@ -514,6 +521,8 @@
     <string name="jandi_folder_rename">リネーム</string>
     <string name="jandi_no_topic_to_join">参加できるトピックがありません</string>
     <string name="jandi_1_1_message">"ダイレクトメッセージ"</string>
+    <string name="jandi_no_long_team_member">"%sさんはもうこのチームのメンバーではありません"</string>
+    <string name="jandi_commented_on">"<![CDATA[<font color="#000000"><b>%s</b></font><font color="#999999">さんのファイルにコメントしました</font>]]>"</string>
 
 
 </resources>

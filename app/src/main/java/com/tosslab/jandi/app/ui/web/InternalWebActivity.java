@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.webkit.WebChromeClient;
@@ -16,7 +15,10 @@ import android.webkit.WebViewClient;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.ShareEntityEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.web.model.InternalWebModel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -38,7 +40,7 @@ import retrofit.RetrofitError;
  */
 @EActivity(R.layout.activity_internal_web)
 @OptionsMenu(R.menu.internal_web)
-public class InternalWebActivity extends AppCompatActivity {
+public class InternalWebActivity extends BaseAppCompatActivity {
 
     @Extra
     String url;
@@ -136,6 +138,9 @@ public class InternalWebActivity extends AppCompatActivity {
     @AfterViews
     void initView() {
         setUpActionBar();
+        if (helpSite) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.Help);
+        }
     }
 
     @Override

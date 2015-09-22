@@ -32,6 +32,8 @@ import com.tosslab.jandi.app.ui.selector.room.RoomSelectorImpl;
 import com.tosslab.jandi.app.ui.selector.user.UserSelector;
 import com.tosslab.jandi.app.ui.selector.user.UserSelectorImpl;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import org.androidannotations.annotations.AfterViews;
@@ -54,8 +56,10 @@ public class FileListPresenter {
     // 카테코리 탭
     @ViewById(R.id.txt_file_list_where)
     TextView textViewFileListWhere;
+
     @ViewById(R.id.txt_file_list_whom)
     TextView textViewFileListWhom;
+
     @ViewById(R.id.txt_file_list_type)
     TextView textViewFileListType;
 
@@ -129,10 +133,63 @@ public class FileListPresenter {
             EventBus.getDefault().post(new CategorizedMenuOfFileType(position));
 
             fileSelector.dismiss();
+
+            AnalyticsValue.Action action;
+
+            switch (position) {
+                default:
+                case 0:
+                    action = AnalyticsValue.Action.OpenTypeFilter_ChooseAllType;
+                    break;
+                case 1:
+                    action = AnalyticsValue.Action.OpenTypeFilter_GoogleDocs;
+                    break;
+                case 2:
+                    action = AnalyticsValue.Action.OpenTypeFilter_Words;
+                    break;
+                case 3:
+                    action = AnalyticsValue.Action.OpenTypeFilter_Presentations;
+                    break;
+                case 4:
+                    action = AnalyticsValue.Action.OpenTypeFilter_Spreadsheets;
+                    break;
+                case 5:
+                    action = AnalyticsValue.Action.OpenTypeFilter_PDFs;
+                    break;
+                case 6:
+                    action = AnalyticsValue.Action.OpenTypeFilter_Images;
+                    break;
+                case 7:
+                    action = AnalyticsValue.Action.OpenTypeFilter_Videos;
+                    break;
+                case 8:
+                    action = AnalyticsValue.Action.OpenTypeFilter_Audios;
+                    break;
+            }
+
+            if (context instanceof SearchActivity) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, action);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, action);
+            }
+
         });
 
-        fileSelector.setOnFileTypeDismissListener(() -> setUpTypeTextView(textViewFileListType, false));
+        fileSelector.setOnFileTypeDismissListener(() -> {
+            setUpTypeTextView(textViewFileListType, false);
+            if (context instanceof SearchActivity) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseTypeFilter);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseTypeFilter);
+            }
+        });
         fileSelector.show(((View) textViewFileListType.getParent().getParent()));
+
+        if (context instanceof SearchActivity) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTypeFilter);
+        } else {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTypeFilter);
+        }
     }
 
     public void showUsersDialog() {
@@ -162,12 +219,38 @@ public class FileListPresenter {
                 }
                 userSelector.dismiss();
 
+                if (context instanceof SearchActivity) {
+                    if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
+                    } else {
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
+                    }
+                } else {
+                    if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
+                    } else {
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
+                    }
+                }
             }
         });
 
-        userSelector.setOnUserDismissListener(() -> setUpTypeTextView(textViewFileListWhom, false));
+        userSelector.setOnUserDismissListener(() -> {
+            setUpTypeTextView(textViewFileListWhom, false);
+            if (context instanceof SearchActivity) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseMemberFilter);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseMemberFilter);
+            }
+        });
 
         userSelector.show(((View) textViewFileListWhom.getParent().getParent()));
+
+        if (context instanceof SearchActivity) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter);
+        } else {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter);
+        }
     }
 
     public void showEntityDialog() {
@@ -193,11 +276,44 @@ public class FileListPresenter {
                 EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
                 roomSelector.dismiss();
 
+                if (context instanceof SearchActivity) {
+                    if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
+                    } else if (item.isUser()) {
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
+                    } else {
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
+                    }
+                } else {
+                    if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
+                    } else if (item.isUser()) {
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
+                    } else {
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
+                    }
+                }
+
             }
         });
 
-        roomSelector.setOnRoomDismissListener(() -> setUpTypeTextView(textViewFileListWhere, false));
+        roomSelector.setOnRoomDismissListener(() -> {
+            setUpTypeTextView(textViewFileListWhere, false);
+            if (context instanceof SearchActivity) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseTopicFilter);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseTopicFilter);
+            }
+        });
         roomSelector.show(((View) textViewFileListWhere.getParent().getParent()));
+
+        if (context instanceof SearchActivity) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter);
+        } else {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter);
+        }
+
+
     }
 
     private void setUpTypeTextView(TextView textVew, boolean isFocused) {

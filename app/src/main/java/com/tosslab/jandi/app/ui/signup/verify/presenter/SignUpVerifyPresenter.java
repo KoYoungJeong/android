@@ -62,7 +62,7 @@ public class SignUpVerifyPresenter {
         } catch (VerifyNetworkException e) {
             view.hideProgress();
 
-            LogUtil.d(e.getErrorInfo() + " , Response Body : " + e.httpBody);
+            LogUtil.d(e.getErrorInfo());
             int errCode = e.errCode;
             model.trackSignUpFailAndFlush(errCode);
             switch (errCode) {

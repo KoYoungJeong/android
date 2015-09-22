@@ -56,12 +56,13 @@ import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
+import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -436,7 +437,7 @@ public class MessageListPresenter {
         return lastItems;
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void finish() {
         activity.finish();
     }
@@ -744,7 +745,10 @@ public class MessageListPresenter {
         }
         emptyMessageView.removeAllViews();
         View view = LayoutInflater.from(activity).inflate(R.layout.view_team_member_empty, emptyMessageView, true);
-        View.OnClickListener onClickListener = v -> invitationDialogExecutor.execute();
+        View.OnClickListener onClickListener = v -> {
+            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_TOPIC_CHAT);
+            invitationDialogExecutor.execute();
+        };
         view.findViewById(R.id.img_chat_choose_member_empty).setOnClickListener(onClickListener);
         view.findViewById(R.id.btn_chat_choose_member_empty).setOnClickListener(onClickListener);
     }
@@ -1103,6 +1107,14 @@ public class MessageListPresenter {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showGrayToast(String message) {
         ColoredToast.showGray(activity, message);
+    }
+
+    @UiThread
+    public void showLeavedMemberDialog(int entityId) {
+        String name = EntityManager.getInstance().getEntityNameById(entityId);
+        String msg = activity.getString(R.string.jandi_no_long_team_member, name);
+
+        AlertUtil.showConfirmDialog(activity, msg, (dialog, which) -> finish(), false);
     }
 }
 

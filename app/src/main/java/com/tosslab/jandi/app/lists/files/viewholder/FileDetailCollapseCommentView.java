@@ -27,7 +27,7 @@ public class FileDetailCollapseCommentView implements CommentViewHolder {
     @Override
     public void init(View rootView) {
         textViewCommentContent = (TextView) rootView.findViewById(R.id.txt_file_detail_collapse_comment_content);
-        selectedView = rootView.findViewById(R.id.view_file_detail_comment_anim);
+        selectedView = rootView.findViewById(R.id.v_file_detail_comment_anim);
     }
 
     @Override

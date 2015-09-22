@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.signup.verify;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.View;
@@ -15,12 +14,14 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.signup.verify.presenter.SignUpVerifyPresenter;
 import com.tosslab.jandi.app.ui.signup.verify.view.SignUpVerifyView;
 import com.tosslab.jandi.app.ui.signup.verify.widget.VerificationCodeView;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -41,7 +42,7 @@ import org.androidannotations.annotations.ViewById;
  * Created by tonyjs on 15. 5. 19..
  */
 @EActivity(R.layout.activity_signup_verify)
-public class SignUpVerifyActivity extends AppCompatActivity implements SignUpVerifyView {
+public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignUpVerifyView {
 
     @Extra("email")
     String email;
@@ -63,11 +64,9 @@ public class SignUpVerifyActivity extends AppCompatActivity implements SignUpVer
 
     @ViewById(R.id.tv_invalidate_code)
     TextView tvInvalidateCode;
-
-    private ProgressWheel progressWheel;
-
     @SystemService
     InputMethodManager inputMethodManager;
+    private ProgressWheel progressWheel;
 
     @AfterViews
     void init() {
@@ -76,8 +75,6 @@ public class SignUpVerifyActivity extends AppCompatActivity implements SignUpVer
                         .event(Event.ScreenView)
                         .property(PropertyKey.ScreenView, ScreenViewProperty.CONFIRM_VERIFICATION_NUMBER)
                         .build());
-
-        GoogleAnalyticsUtil.sendScreenName("CONFIRM_VERIFICATION_NUMBER");
 
         setUpActionBar();
 
@@ -88,7 +85,9 @@ public class SignUpVerifyActivity extends AppCompatActivity implements SignUpVer
         progressWheel = new ProgressWheel(this);
         verificationCodeView.setOnVerificationCodeChangedListener(() ->
                 presenter.validateVerificationCode(verificationCodeView.getVerificationCode()));
-        verificationCodeView.setOnActionDoneListener(() -> hideKeyboard());
+        verificationCodeView.setOnActionDoneListener(this::hideKeyboard);
+
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.CodeVerification);
     }
 
     @Override
@@ -232,11 +231,15 @@ public class SignUpVerifyActivity extends AppCompatActivity implements SignUpVer
             return;
         }
         presenter.verifyCode(email, verificationCodeView.getVerificationCode());
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.CodeVerification, AnalyticsValue.Action.LaunchJandi);
     }
 
     @Click(R.id.tv_resend_email)
     void resendEmail() {
         presenter.requestNewVerificationCode(email);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.CodeVerification, AnalyticsValue.Action.Resend);
     }
 
     @OptionsItem(android.R.id.home)

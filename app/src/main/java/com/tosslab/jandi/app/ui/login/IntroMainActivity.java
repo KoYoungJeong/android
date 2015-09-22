@@ -2,13 +2,13 @@ package com.tosslab.jandi.app.ui.login;
 
 import android.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.login.adapter.IntroMainPagerAdapter;
 import com.tosslab.jandi.app.ui.login.tutorial.IntroTutorialFragment;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -22,7 +22,7 @@ import org.androidannotations.annotations.ViewById;
  * Created by justinygchoi on 14. 10. 23..
  */
 @EActivity(R.layout.activity_intro_tutorial)
-public class IntroMainActivity extends AppCompatActivity {
+public class IntroMainActivity extends BaseAppCompatActivity {
     public interface KeyboardHandler {
         void hideKeyboard();
     }

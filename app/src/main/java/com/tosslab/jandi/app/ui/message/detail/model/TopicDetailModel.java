@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.detail.model;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -12,7 +13,6 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -31,12 +31,12 @@ public class TopicDetailModel {
     EntityClientManager entityClientManager;
 
 
-    public String getTopicName(Context context, int entityId) {
+    public String getTopicName(int entityId) {
 
         return EntityManager.getInstance().getEntityById(entityId).getName();
     }
 
-    public String getTopicDescription(Context context, int entityId) {
+    public String getTopicDescription(int entityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         ResLeftSideMenu.Entity rawEntity = entity.getEntity();
         if (entity.isPublicTopic()) {
@@ -48,17 +48,17 @@ public class TopicDetailModel {
         }
     }
 
-    public int getTopicMemberCount(Context context, int entityId) {
+    public int getTopicMemberCount(int entityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         return entity.getMemberCount();
     }
 
-    public boolean isStarred(Context context, int entityId) {
+    public boolean isStarred(int entityId) {
 
         return EntityManager.getInstance().getEntityById(entityId).isStarred;
     }
 
-    public boolean isOwner(Context context, int entityId) {
+    public boolean isOwner(int entityId) {
         return EntityManager.getInstance().isMyTopic(entityId);
 
     }
@@ -71,7 +71,7 @@ public class TopicDetailModel {
         }
     }
 
-    public int getEntityType(Context context, int entityId) {
+    public int getEntityType(int entityId) {
 
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         if (entity.isPublicTopic()) {
@@ -102,7 +102,6 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, entityId)
                         .build());
-        GoogleAnalyticsUtil.sendEvent(Event.TopicDelete.name(), "ResponseSuccess");
     }
 
     public void trackTopicDeleteFail(int errorCode) {
@@ -114,7 +113,6 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-        GoogleAnalyticsUtil.sendEvent(Event.TopicDelete.name(), "ResponseFail");
     }
 
     public void modifyTopicName(int entityType, int entityId, String inputName) throws RetrofitError {
@@ -130,7 +128,7 @@ public class TopicDetailModel {
         RequestApiManager.getInstance().updateTopicPushSubscribe(teamId, entityId, req);
     }
 
-    public boolean isPushOn(Context context, int entityId) {
+    public boolean isPushOn(int entityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         return entity.isTopicPushOn;
     }
@@ -155,7 +153,6 @@ public class TopicDetailModel {
                         .property(PropertyKey.TopicId, entityId)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.TopicNameChange.name(), "ResponseSuccess");
     }
 
     public void trackChangingEntityNameFail(int errorCode) {
@@ -168,7 +165,6 @@ public class TopicDetailModel {
                         .property(PropertyKey.TopicId, errorCode)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.TopicNameChange.name(), "ResponseFail");
     }
 
     public void trackTopicStarSuccess(int topicId) {
@@ -180,7 +176,6 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, topicId)
                         .build());
-        GoogleAnalyticsUtil.sendEvent(Event.TopicStar.name(), "ResponseSuccess");
     }
 
     public void trackTopicUnStarSuccess(int topicId) {
@@ -193,7 +188,6 @@ public class TopicDetailModel {
                         .property(PropertyKey.TopicId, topicId)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.TopicUnStar.name(), "ResponseSuccess");
     }
 
     public void trackTopicStarFail(int errorCode) {
@@ -205,7 +199,6 @@ public class TopicDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-        GoogleAnalyticsUtil.sendEvent(Event.TopicStar.name(), "ResponseFail");
     }
 
     public void trackTopicUnStarFail(int errorCode) {
@@ -218,10 +211,13 @@ public class TopicDetailModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.TopicUnStar.name(), "ResponseFail");
     }
 
-    public boolean isDefaultTopic(Context context, int entityId) {
+    public boolean isDefaultTopic(int entityId) {
         return EntityManager.getInstance().getDefaultTopicId() == entityId;
+    }
+
+    public boolean isTeamOwner() {
+        return TextUtils.equals(EntityManager.getInstance().getMe().getUser().u_authority, "owner");
     }
 }

@@ -1,68 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/img_share_image"
+        <LinearLayout
+            android:id="@+id/vg_viwer"
             android:layout_width="match_parent"
-            android:layout_height="120dp" />
+            android:layout_height="222dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_share_image"
+                android:layout_width="match_parent"
+                android:layout_height="222dp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/vg_file_icon"
+                android:layout_width="match_parent"
+                android:layout_height="222dp"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/iv_share_file_icon"
+                    android:layout_width="66dp"
+                    android:layout_height="79dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="60dp" />
+
+                <TextView
+                    android:id="@+id/tv_share_file_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="14dp"
+                    android:text="Google Docs"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+        </LinearLayout>
 
         <ProgressBar
             android:id="@+id/progress_share_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/img_share_image"
-            android:layout_alignLeft="@+id/img_share_image"
-            android:layout_alignRight="@+id/img_share_image"
-            android:layout_alignTop="@+id/img_share_image"
+            android:layout_alignBottom="@+id/vg_viwer"
+            android:layout_alignLeft="@+id/vg_viwer"
+            android:layout_alignRight="@+id/vg_viwer"
+            android:layout_alignTop="@+id/vg_viwer"
             android:visibility="gone" />
-
-        <com.iangclifton.android.floatlabel.FloatLabel
-            android:id="@+id/txt_share_image_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/img_share_image"
-            android:hint="@string/jandi_topic_title_hint" />
-
-        <Spinner
-            android:id="@+id/spinner_share_image_entity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txt_share_image_title" />
-
-
-        <com.iangclifton.android.floatlabel.FloatLabel
-            android:id="@+id/txt_share_image_comment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/spinner_share_image_entity"
-            android:hint="@string/file_upload_comment"
-            android:inputType="textMultiLine" />
-
-
-        <Button
-            android:id="@+id/btn_share_text_send"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txt_share_image_comment"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/jandi_btn_dynamic_selector_v2"
-            android:text="@string/jandi_message_send"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@+id/btn_share_text_send"
-            android:layout_marginTop="12dp" />
+            android:layout_below="@id/vg_viwer"
+            android:background="#dadada" />
+
+        <TextView
+            android:id="@+id/tv_share_image_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/vg_viwer"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:hint="@string/jandi_topic_title_hint"
+            android:paddingLeft="16dp"
+            android:text="[android]share_sorting_01.png"
+            android:textColor="#999999"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_team_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/tv_share_image_title"
+            android:layout_marginTop="16dp"
+            android:paddingLeft="16dp"
+            android:text="Team"
+            android:textColor="#999999"
+            android:textSize="12sp" />
+
+        <RelativeLayout
+            android:id="@+id/vg_team"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_below="@id/tv_team_title"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_team_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="26dp"
+                android:text="TossLab, Inc"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/dropdown_arrow" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="4dp"
+                android:background="#dadada" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_room_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/vg_team"
+            android:layout_marginTop="16dp"
+            android:paddingLeft="16dp"
+            android:text="Topic or message"
+            android:textColor="#999999"
+            android:textSize="12sp" />
+
+        <RelativeLayout
+            android:id="@+id/vg_room"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_below="@id/tv_room_title"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_room_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="26dp"
+                android:text="TossLab, Inc"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/dropdown_arrow" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="4dp"
+                android:background="#dadada" />
+        </RelativeLayout>
+
+
+        <EditText
+            android:id="@+id/et_share_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/vg_room"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="12dp"
+            android:hint="@string/file_upload_comment"
+            android:inputType="textMultiLine"
+            android:textSize="16sp" />
 
     </RelativeLayout>
 </ScrollView>

@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.views.spannable;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
-import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 
 import de.greenrobot.event.EventBus;
 
@@ -21,6 +21,6 @@ public class ProfileSpannable extends ClickableSpan {
 
     @Override
     public void onClick(View widget) {
-        EventBus.getDefault().post(new RequestUserInfoEvent(entityId));
+        EventBus.getDefault().post(new ShowProfileEvent(entityId, ShowProfileEvent.From.SystemMessage));
     }
 }

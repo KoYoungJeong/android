@@ -3,11 +3,12 @@ package com.tosslab.jandi.app.ui.maintab.topic.dialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -19,15 +20,14 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.EntityMenuDialogModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
@@ -35,7 +35,7 @@ import retrofit.RetrofitError;
 /**
  * Created by Steve SeongUg Jung on 15. 1. 7..
  */
-@EFragment(R.layout.fragment_entity_popup)
+@EFragment
 public class EntityMenuDialogFragment extends DialogFragment {
 
     @FragmentArg
@@ -44,17 +44,15 @@ public class EntityMenuDialogFragment extends DialogFragment {
     @FragmentArg
     int folderId;
 
-    @ViewById(R.id.btn_entity_popup_starred)
-    TextView starredButton;
+    TextView btnStarred;
 
-    @ViewById(R.id.btn_entity_popup_leave)
-    TextView leaveButton;
+    TextView btnLeave;
 
-    @ViewById(R.id.tv_popup_title)
-    TextView title;
+    TextView tvTitle;
 
-    @ViewById(R.id.btn_entity_popup_move_folder)
-    TextView tvMoveFolder;
+    TextView btnMoveFolder;
+
+    TextView btnNotification;
 
     @Bean
     EntityMenuDialogModel entityMenuDialogModel;
@@ -63,55 +61,89 @@ public class EntityMenuDialogFragment extends DialogFragment {
     EntityClientManager entityClientManager;
     private ProgressWheel progressWheel;
 
-    @AfterViews
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        initView();
+    }
+
     void initView() {
         FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
-        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-        title.setText(entity.getName());
+        tvTitle.setText(entity.getName());
 
-        if (entity.isUser()) {
+        boolean isDirectMessage = entity.isUser();
+        if (isDirectMessage) {
             if (!TextUtils.equals(entity.getUser().status, "enabled")) {
-                starredButton.setVisibility(View.GONE);
+                btnStarred.setVisibility(View.GONE);
             }
-            tvMoveFolder.setVisibility(View.GONE);
+            btnMoveFolder.setVisibility(View.GONE);
+            btnNotification.setVisibility(View.GONE);
+        } else {
+            btnNotification.setVisibility(View.VISIBLE);
+
+            final boolean isTopicPushOn = entity.isTopicPushOn;
+
+            String notificationText = getActivity().getResources().getString(R.string.jandi_notification_off);
+            if (!isTopicPushOn) {
+                notificationText = getActivity().getResources().getString(R.string.jandi_notification_on);
+            }
+            btnNotification.setText(notificationText);
+
+            btnNotification.setOnClickListener(v -> {
+                entityMenuDialogModel.updateNotificationOnOff(entityId, !isTopicPushOn);
+                dismiss();
+            });
         }
 
         setStarredButtonText(entity.isStarred);
 
         if (entityMenuDialogModel.isDefaultTopic(entityId)) {
-            leaveButton.setVisibility(View.GONE);
+            btnLeave.setVisibility(View.GONE);
         } else {
-            leaveButton.setVisibility(View.VISIBLE);
+            btnLeave.setVisibility(View.VISIBLE);
         }
 
         progressWheel = new ProgressWheel(getActivity());
-
     }
 
     public void setStarredButtonText(boolean isStarred) {
         if (isStarred) {
-            starredButton.setText(R.string.jandi_unstarred);
+            btnStarred.setText(R.string.jandi_unstarred);
         } else {
-            starredButton.setText(R.string.jandi_starred);
+            btnStarred.setText(R.string.jandi_starred);
         }
     }
 
-
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.setCancelable(true);
-        dialog.setCanceledOnTouchOutside(true);
+        View view = LayoutInflater.from(getActivity()).inflate((R.layout.fragment_entity_popup), null);
 
-        return dialog;
+        btnStarred = (TextView) view.findViewById(R.id.btn_entity_popup_starred);
+        btnLeave = (TextView) view.findViewById(R.id.btn_entity_popup_leave);
+        tvTitle = (TextView) view.findViewById(R.id.tv_popup_title);
+        btnMoveFolder = (TextView) view.findViewById(R.id.btn_entity_popup_move_folder);
+        btnNotification = (TextView) view.findViewById(R.id.btn_entity_popup_notification);
 
+        btnStarred.setOnClickListener(v -> onStarredClick());
+        btnLeave.setOnClickListener(v -> onLeaveClick());
+        btnMoveFolder.setOnClickListener(v -> onMoveFolderClick());
+
+        view.findViewById(R.id.btn_entity_popup_cancel).setOnClickListener(v -> dismiss());
+
+        return new AlertDialog.Builder(getActivity())
+                .setView(view)
+                .create();
     }
 
-
-    @Click(R.id.btn_entity_popup_starred)
     void onStarredClick() {
         showProgressWheel();
         requestStarred();
+
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
+        AnalyticsValue.Screen category = entity.isUser() ? AnalyticsValue.Screen.MessageTab : AnalyticsValue.Screen.TopicsTab;
+        AnalyticsValue.Action action = entity.isStarred ? AnalyticsValue.Action.TopicSubMenu_Unstar : AnalyticsValue.Action.TopicSubMenu_Star;
+        AnalyticsUtil.sendEvent(category, action);
 
     }
 
@@ -163,7 +195,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
         ColoredToast.showError(getActivity(), message);
     }
 
-    @Click(R.id.btn_entity_popup_leave)
     void onLeaveClick() {
 
         FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
@@ -207,6 +238,11 @@ public class EntityMenuDialogFragment extends DialogFragment {
             }
             entityMenuDialogModel.refreshEntities();
 
+            if (entity.isUser()) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.TopicSubMenu_Leave);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicSubMenu_Leave);
+            }
             EventBus.getDefault().post(new RetrieveTopicListEvent());
         } catch (RetrofitError e) {
             showErrorToast(getString(R.string.err_entity_leave));
@@ -238,12 +274,14 @@ public class EntityMenuDialogFragment extends DialogFragment {
         }
     }
 
-    @Click(R.id.btn_entity_popup_move_folder)
     void onMoveFolderClick() {
         TopicFolderMoveCallEvent topicFolderMoveCallEvent = new TopicFolderMoveCallEvent();
         topicFolderMoveCallEvent.setTopicId(entityId);
         topicFolderMoveCallEvent.setFolderId(folderId);
         EventBus.getDefault().post(topicFolderMoveCallEvent);
         dismiss();
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicSubMenu_Move);
+
     }
 }

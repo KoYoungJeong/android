@@ -93,17 +93,17 @@ public class EntityManager {
     }
 
     protected void init(ResLeftSideMenu resLeftSideMenu) {
-        mJoinedTopics = new HashMap<Integer, FormattedEntity>();
-        mUnjoinedTopics = new HashMap<Integer, FormattedEntity>();
-        mGroups = new HashMap<Integer, FormattedEntity>();
-        mUsers = new HashMap<Integer, FormattedEntity>();
-        mJoinedUsers = new HashMap<Integer, FormattedEntity>();
+        mJoinedTopics = new HashMap<>();
+        mUnjoinedTopics = new HashMap<>();
+        mGroups = new HashMap<>();
+        mUsers = new HashMap<>();
+        mJoinedUsers = new HashMap<>();
 
-        mStarredJoinedTopics = new HashMap<Integer, FormattedEntity>();
-        mStarredGroups = new HashMap<Integer, FormattedEntity>();
-        mStarredUsers = new HashMap<Integer, FormattedEntity>();
+        mStarredJoinedTopics = new HashMap<>();
+        mStarredGroups = new HashMap<>();
+        mStarredUsers = new HashMap<>();
 
-        mMarkers = new HashMap<Integer, ResLeftSideMenu.MessageMarker>();
+        mMarkers = new HashMap<>();
 
         this.mMyTeam = resLeftSideMenu.team;
         this.mMe = resLeftSideMenu.user;

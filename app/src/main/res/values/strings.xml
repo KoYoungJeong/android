@@ -79,6 +79,8 @@
     <string name="jandi_tab_more">"More"</string>
     <string name="jandi_action_direct_message">"Direct Message"</string>
     <string name="jandi_action_starred">"Star"</string>
+    <string name="jandi_notification_on">"Turn on notifications"</string>
+    <string name="jandi_notification_off">"Turn off notifications"</string>
 
     <!-- 튜토리얼 -->
     <string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
@@ -128,6 +130,11 @@
     <string name="err_profile_photo_upload">"Profile photo could not be updated"</string>
     <string name="err_email_exists">"That email is already registered"</string>
 
+    <string name="jandi_member_profile_edit">Edit Profile</string>
+    <string name="jandi_member_profile_mention">My Mentions</string>
+    <string name="jandi_member_profile_email">Email</string>
+    <string name="jandi_member_profile_phone">Phone</string>
+    <string name="jandi_member_profile_dm">1:1 Message</string>
     <!-- 회원 초대 -->
     <string name="jandi_team_info">"Team"</string>
     <string name="jandi_invitation">"Invite"</string>
@@ -320,7 +327,7 @@
     <string name="jandi_tos_and_pp">"TERMS &amp; CONDITIONS"</string>
     <string name="jandi_topic_ask_about_deleting">"Are you sure you want to delete this topic?"</string>
     <string name="jandi_disabled_user">"This member has been temporarily disabled"</string>
-    <string name="jandi_disable_user_profile_explain">"This member has been temporarily disabled. Please contact the team administrator for more information."</string>
+    <string name="jandi_disable_user_profile_explain">"This member has been temporarily disabled.\n Please contact the team administrator for more information."</string>
     <string name="jandi_share_to_jandi">"Share to JANDI"</string>
     <string name="jandi_create">Create</string>
     <string name="jandi_copy_link">Copy Link</string>
@@ -483,7 +490,7 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_this_is_disabled_user_explain">"This member has been temporarily disabled. Please contact the team administrator for more information."</string>
     <string name="jandi_who_of_file">"\'s file"</string>
     <string name="jandi_shared">"Shared"</string>
-    <string name="jandi_commented_on">"Commented on "</string>
+    <string name="jandi_commented_on">"<![CDATA[<font color="#999999">Commented on</font> <font color="#000000">%s</font><font color="#999999">'s file"</font>]]></string>
 
     <string name="jandi_file_downloaded_into">"File downloaded to %s"</string>
     <string name="jandi_file_deleted_with_date">"%s, file was deleted."</string>
@@ -508,5 +515,6 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_browse_other_topics">Browse other topics</string>
     <string name="jandi_no_topic_to_join">No topics to join</string>
     <string name="jandi_1_1_message">1:1 Message</string>
+    <string name="jandi_no_long_team_member">"%s is no longer a team member."</string>
 
 </resources>

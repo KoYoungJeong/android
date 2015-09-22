@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
@@ -16,8 +17,6 @@ import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -103,8 +102,9 @@ public class AccountHomeModel {
     public EntityManager updateEntityInfo(Context context, ResLeftSideMenu entityInfo) {
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entityInfo);
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entityInfo);
-        JandiPreference.setBadgeCount(context, totalUnreadCount);
-        BadgeUtils.setBadge(context, totalUnreadCount);
+        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+        badgeCountRepository.upsertBadgeCount(entityInfo.team.id, totalUnreadCount);
+        BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
 
         EntityManager entityManager = EntityManager.getInstance();
         entityManager.refreshEntity();
@@ -143,7 +143,6 @@ public class AccountHomeModel {
                         .property(PropertyKey.TeamId, teamId)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.LaunchTeam.name(), PropertyKey.ResponseSuccess.name());
     }
 
     public void trackLaunchTeamFail(int errorCode) {
@@ -154,8 +153,6 @@ public class AccountHomeModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-
-        GoogleAnalyticsUtil.sendEvent(Event.LaunchTeam.name(), "ResponseFail");
 
     }
 
@@ -170,8 +167,6 @@ public class AccountHomeModel {
                         .accountId(accountId)
                         .property(PropertyKey.ResponseSuccess, true)
                         .build());
-
-        GoogleAnalyticsUtil.sendEvent(Event.ChangeAccountName.name(), "ResponseSuccess");
     }
 
     public void trackChangeAccountNameFail(int errorCode) {
@@ -183,8 +178,6 @@ public class AccountHomeModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-
-        GoogleAnalyticsUtil.sendEvent(Event.ChangeAccountName.name(), "ResponseFail");
 
     }
 

@@ -20,13 +20,13 @@
 
         <!-- 내부에 포함된 댓글일 경우 -->
         <RelativeLayout
-            android:id="@+id/ly_message_nested_comment"
+            android:id="@+id/vg_message_nested_comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="43dp">
 
             <TextView
-                android:id="@+id/txt_message_nested_comment_user_name"
+                android:id="@+id/tv_message_nested_comment_user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -36,22 +36,22 @@
                 android:textStyle="bold"/>
 
             <ImageView
-                android:id="@+id/img_entity_listitem_line_through"
+                android:id="@+id/iv_entity_listitem_line_through"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/txt_message_nested_comment_user_name"
-                android:layout_alignLeft="@+id/txt_message_nested_comment_user_name"
-                android:layout_alignRight="@+id/txt_message_nested_comment_user_name"
-                android:layout_alignTop="@+id/txt_message_nested_comment_user_name"
+                android:layout_alignBottom="@+id/tv_message_nested_comment_user_name"
+                android:layout_alignLeft="@+id/tv_message_nested_comment_user_name"
+                android:layout_alignRight="@+id/tv_message_nested_comment_user_name"
+                android:layout_alignTop="@+id/tv_message_nested_comment_user_name"
                 android:src="@drawable/line_gray"/>
 
             <TextView
-                android:id="@+id/txt_message_commented_create_date"
+                android:id="@+id/tv_message_commented_create_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/txt_message_nested_comment_user_name"
+                android:layout_alignBaseline="@+id/tv_message_nested_comment_user_name"
                 android:layout_marginLeft="6dp"
-                android:layout_toRightOf="@id/txt_message_nested_comment_user_name"
+                android:layout_toRightOf="@id/tv_message_nested_comment_user_name"
                 android:gravity="bottom"
                 android:text="AM ??:??"
                 android:textColor="@color/jandi_messages_date"
@@ -59,12 +59,12 @@
 
 
             <TextView
-                android:id="@+id/txt_entity_listitem_unread"
+                android:id="@+id/tv_entity_listitem_unread"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/txt_message_nested_comment_user_name"
+                android:layout_alignBaseline="@+id/tv_message_nested_comment_user_name"
                 android:layout_marginLeft="4dp"
-                android:layout_toRightOf="@+id/txt_message_commented_create_date"
+                android:layout_toRightOf="@+id/tv_message_commented_create_date"
                 android:text="99"
                 android:textColor="@color/jandi_accent_color"
                 android:textSize="@dimen/jandi_text_size_smaller"
@@ -75,7 +75,7 @@
                 android:id="@+id/iv_message_nested_comment_content"
                 android:layout_width="140dp"
                 android:layout_height="140dp"
-                android:layout_below="@id/txt_message_nested_comment_user_name"
+                android:layout_below="@id/tv_message_nested_comment_user_name"
                 android:layout_marginRight="30dp"
                 android:layout_marginTop="8dp"/>
 

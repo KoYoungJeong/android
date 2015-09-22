@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.view.LayoutInflater;
@@ -27,6 +26,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadPagerAdapter;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenter;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenterImpl;
@@ -64,7 +64,7 @@ import rx.subjects.PublishSubject;
 @EActivity(R.layout.activity_file_upload_insert_commnet)
 @OptionsMenu(R.menu.file_insert_comment_menu)
 @Fullscreen
-public class FileUploadPreviewActivity extends AppCompatActivity implements FileUploadPresenter.View {
+public class FileUploadPreviewActivity extends BaseAppCompatActivity implements FileUploadPresenter.View {
 
     public static final int REQUEST_CODE = 17863;
     public static final String KEY_SINGLE_FILE_UPLOADVO = "file_uploadvo";

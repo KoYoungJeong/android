@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
-import android.view.Window;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,22 +15,21 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.TopicFolderDialogModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
 
 import retrofit.RetrofitError;
 
 /**
  * Created by tee on 15. 9. 8..
  */
-@EFragment(R.layout.fragment_folder_popup)
+@EFragment
 public class TopicFolderDialogFragment extends DialogFragment {
 
     @FragmentArg
@@ -40,7 +39,6 @@ public class TopicFolderDialogFragment extends DialogFragment {
     @FragmentArg
     int seq;
 
-    @ViewById(R.id.tv_popup_title)
     TextView tvFolderTitle;
 
     @Bean
@@ -49,21 +47,37 @@ public class TopicFolderDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return super.onCreateDialog(savedInstanceState);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_folder_popup, null);
+        tvFolderTitle = (TextView) view.findViewById(R.id.tv_popup_title);
+
+        view.findViewById(R.id.tv_folder_rename).setOnClickListener(v -> {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolder_Rename);
+            clickFolderRename();
+        });
+        view.findViewById(R.id.tv_folder_delete).setOnClickListener(v -> {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolder_Delete);
+            clickFolderDelete();
+        });
+
+        return new AlertDialog.Builder(getActivity())
+                .setView(view)
+                .create();
     }
 
-    @AfterViews
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        initView();
+    }
+
     void initView() {
         tvFolderTitle.setText(folderName);
-        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
     }
 
-    @Click(R.id.tv_folder_rename)
     void clickFolderRename() {
         showRenameFolderDialog(folderId, folderName, seq);
     }
 
-    @Click(R.id.tv_folder_delete)
     void clickFolderDelete() {
         showDeleteFolderDialog(folderId);
     }

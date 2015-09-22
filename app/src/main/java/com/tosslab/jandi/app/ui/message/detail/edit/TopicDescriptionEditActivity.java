@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.message.detail.edit;
 
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.EditText;
@@ -13,6 +12,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -31,7 +31,7 @@ import retrofit.RetrofitError;
  */
 @EActivity(R.layout.activity_topic_description_edit)
 @OptionsMenu(R.menu.topic_description_edit)
-public class TopicDescriptionEditActivity extends AppCompatActivity {
+public class TopicDescriptionEditActivity extends BaseAppCompatActivity {
 
     public static final int DESCRIPTION_MAX_LENGTH = 300;
     public static final int REQUEST_EDIT = 321;

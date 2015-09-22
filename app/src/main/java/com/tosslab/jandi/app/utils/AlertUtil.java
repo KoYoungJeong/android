@@ -7,9 +7,6 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
 
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.UiThread;
-
 /**
  * Created by tonyjs on 15. 7. 9..
  */
@@ -38,6 +35,17 @@ public class AlertUtil {
                 cancelable);
     }
 
+    public static void showConfirmDialog(Activity activity, String message,
+                                         DialogInterface.OnClickListener confirmListener,
+                                         boolean cancelable) {
+        showDialog(activity,
+                null, message,
+                R.string.jandi_confirm, confirmListener,
+                NONE_RES_ID, null,
+                NONE_RES_ID, null,
+                cancelable);
+    }
+
     public static void showConfirmDialog(Activity activity, int titleResId, int messageResId,
                                          DialogInterface.OnClickListener confirmListener,
                                          boolean cancelable) {
@@ -48,6 +56,38 @@ public class AlertUtil {
                 NONE_RES_ID, null,
                 cancelable);
     }
+
+    static void showDialog(Activity activity,
+                           String title, String message,
+                           int positiveResId, DialogInterface.OnClickListener positiveListener,
+                           int neutralResId, DialogInterface.OnClickListener neutralListener,
+                           int negativeResId, DialogInterface.OnClickListener negativeListener,
+                           boolean cancelable) {
+        if (activity == null || activity.isFinishing()) {
+            return;
+        }
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        if (!TextUtils.isEmpty(title)) {
+            builder.setTitle(title);
+        }
+        if (!TextUtils.isEmpty(message)) {
+            builder.setMessage(message);
+        }
+        if (positiveResId != NONE_RES_ID) {
+            builder.setPositiveButton(activity.getString(positiveResId), positiveListener);
+        }
+        if (neutralResId != NONE_RES_ID) {
+            builder.setNeutralButton(activity.getString(neutralResId), neutralListener);
+        }
+        if (negativeResId != NONE_RES_ID) {
+            builder.setNegativeButton(activity.getString(negativeResId), negativeListener);
+        }
+        builder.setCancelable(cancelable);
+
+        builder.create().show();
+    }
+
 
     static void showDialog(Activity activity,
                            int titleResId, int messageResId,

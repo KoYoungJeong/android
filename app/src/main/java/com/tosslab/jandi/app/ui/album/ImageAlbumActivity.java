@@ -5,7 +5,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.ui.album.fragment.ImageAlbumFragment_;
 import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
 import com.tosslab.jandi.app.ui.album.fragment.vo.SelectPictures;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -34,7 +34,7 @@ import java.util.List;
  * Created by Steve SeongUg Jung on 15. 6. 12..
  */
 @EActivity(R.layout.activity_image_album)
-public class ImageAlbumActivity extends AppCompatActivity {
+public class ImageAlbumActivity extends BaseAppCompatActivity {
 
     public static final String EXTRA_DATAS = "datas";
 

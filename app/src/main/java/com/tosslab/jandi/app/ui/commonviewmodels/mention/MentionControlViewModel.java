@@ -17,7 +17,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.MentionMemberListAdapter;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
@@ -381,8 +380,7 @@ public class MentionControlViewModel {
         MentionMessageSpannable spannable = new MentionMessageSpannable(
                 etMessage.getContext(),
                 searchedItemVO.getName(),
-                etMessage.getContext().getResources()
-                        .getDimensionPixelSize(R.dimen.jandi_mention_edit_text_item_font_size),
+                etMessage.getTextSize(),
                 0xFFfefefe,
                 0xFF01a4e7
         );
