@@ -47,8 +47,7 @@ public class JandiPushReceiverModel {
     public static final String TAG = JandiPushReceiverModel.class.getSimpleName();
     private static final String JSON_KEY_DATA = "com.parse.Data";
     private static final String JSON_KEY_CHANNEL = "com.parse.Channel";
-    // FIXME must be unique????
-    public static final int REQUEST_CODE = 1;
+    private static final int PENDING_INTENT_REQUEST_CODE = 20140626;
     @SystemService
     AudioManager audioManager;
 
@@ -65,7 +64,13 @@ public class JandiPushReceiverModel {
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        return PendingIntent.getActivity(context, REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // 노티피케이션은 해제 됐지만 PendingIntent 가 살아있는 경우가 있어 cancel 을 호출해줌.
+        PendingIntent.getActivity(context,
+                PENDING_INTENT_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                .cancel();
+
+        return PendingIntent.getActivity(context,
+                PENDING_INTENT_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public int getEntityType(String roomType) {
@@ -263,9 +268,7 @@ public class JandiPushReceiverModel {
 
         builder.setDefaults(led | sound | vibrate);
         builder.setSmallIcon(R.drawable.icon_push_notification);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            builder.setPriority(Notification.PRIORITY_HIGH);
-        }
+        builder.setPriority(NotificationCompat.PRIORITY_HIGH);
         builder.setAutoCancel(true);
         builder.setNumber(badgeCount);
 
