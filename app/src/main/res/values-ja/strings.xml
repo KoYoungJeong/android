@@ -418,7 +418,7 @@
     <string name="jandi_google_docs">"Google Docs"</string>
     <string name="jandi_select_maximum_10">"最大10枚まで選択できます"</string>
     <string name="jandi_decide_choose">"写真を選択"</string>
-    <string name="jandI_select_gallery">"写真を選択"</string>
+    <string name="jandi_select_gallery">"写真を選択"</string>
     <string name="jandi_view_all">"すべて表示"</string>
 
     <string name="jandi_title_name_required">"名前*"</string>

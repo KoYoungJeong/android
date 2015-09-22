@@ -411,7 +411,7 @@
     <string name="jandi_google_docs">"Google Docs"</string>
     <string name="jandi_select_maximum_10">"一次可上传10张照片"</string>
     <string name="jandi_decide_choose">"选择照片"</string>
-    <string name="jandI_select_gallery">"选择照片"</string>
+    <string name="jandi_select_gallery">"选择照片"</string>
     <string name="jandi_view_all">"查看全部"</string>
 
     <string name="jandi_title_name_required">"名字*"</string>
