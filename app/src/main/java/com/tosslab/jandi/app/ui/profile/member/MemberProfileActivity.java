@@ -33,7 +33,7 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.transform.ion.IonBlurTransform;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleStrokeTransform;
 import com.tosslab.jandi.app.views.SwipeExitLayout;
 
 import org.androidannotations.annotations.AfterViews;
@@ -125,7 +125,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         if (savedInstanceState != null) {
             isFullSizeImageShowing = savedInstanceState.getBoolean(KEY_FULL_SIZE_IMAGE_SHOWING);
         }
-
     }
 
     @Override
@@ -175,12 +174,17 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             vgProfileTeamInfo.setVisibility(View.GONE);
         }
 
+        float lineWidth = 1;
+        int lineColor = getResources().getColor(R.color.jandi_member_profile_img_circle_line_color);
+        int bgColor = Color.BLACK;
+        IonCircleStrokeTransform transform = new IonCircleStrokeTransform(lineWidth, lineColor, bgColor);
+
         String profileImageUrlMedium = member.getUserMediumProfileUrl();
         Ion.with(ivProfileImageSmall)
                 .placeholder(R.drawable.profile_img)
                 .error(R.drawable.profile_img)
                 .fitXY()
-                .transform(new IonCircleTransform())
+                .transform(transform)
                 .load(profileImageUrlMedium);
 
         ivProfileImageFull.setOnViewTapListener((view, x, y) -> {
@@ -228,7 +232,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         btnProfileStar.setEnabled(!isMe());
 
         addButtons(member);
-
     }
 
     private void initSwipeLayout() {
