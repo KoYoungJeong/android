@@ -99,7 +99,9 @@ public class MainTopicListPresenter {
                         mainTopicModel.saveFolderDataInDB(resFolders, resFolderItems);
                         this.topicFolders = resFolders;
                         this.topicFolderItems = resFolderItems;
-                        return Pair.create(true, mainTopicModel.getDataProvider(resFolders, resFolderItems));
+                        Pair<Boolean, TopicFolderListDataProvider> dataProviderPair =
+                                new Pair<>(true, mainTopicModel.getDataProvider(resFolders, resFolderItems));
+                        return dataProviderPair;
                     } else {
                         return Pair.create(false, null);
                     }
@@ -108,7 +110,7 @@ public class MainTopicListPresenter {
                 .subscribe(data -> {
                     boolean isExecute = data.first;
                     if (isExecute) {
-                        TopicFolderListDataProvider provider = data.second;
+                        TopicFolderListDataProvider provider = (TopicFolderListDataProvider) data.second;
                         refreshListView(provider);
                         view.setFolderExpansion();
                     }
