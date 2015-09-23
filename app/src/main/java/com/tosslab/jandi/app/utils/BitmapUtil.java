@@ -236,10 +236,18 @@ public class BitmapUtil {
         if (squaredBitmap != source) {
             source.recycle();
         }
-        Bitmap bitmap = Bitmap.createBitmap(size, size, source.getConfig());
+        Bitmap bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
 
         float r = size / 2f;
+
+        Paint bgPaint = new Paint();
+        bgPaint.setAntiAlias(true);
+        bgPaint.setDither(true);
+        bgPaint.setColor(bgColor);
+        bgPaint.setStyle(Paint.Style.FILL);
+
+        canvas.drawCircle(r, r, r, bgPaint);
 
         Paint paint = new Paint();
         BitmapShader shader = new BitmapShader(squaredBitmap, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
