@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
@@ -59,8 +60,14 @@ public class MainTopicModel {
             return TopicFolderRepository.getRepository().getFolderItems();
         }
 
-        return RequestApiManager.getInstance()
+        List<ResFolderItem> folderItems = RequestApiManager.getInstance()
                 .getFolderItemsByTeamApi(entityClientManager.getSelectedTeamId());
+
+        for (ResFolderItem resFolderItem : folderItems) {
+            resFolderItem.teamId = entityClientManager.getSelectedTeamId();
+        }
+
+        return folderItems;
     }
 
     // Join된 Topic에 관한 정보를 가져오기
@@ -314,6 +321,9 @@ public class MainTopicModel {
     }
 
     public boolean isFolderItemSame(List<ResFolderItem> folderItems1, List<ResFolderItem> folderItems2) {
+
+        LogUtil.e("1", folderItems1.size() + "");
+        LogUtil.e("2", folderItems2.size() + "");
         if (folderItems1.size() != folderItems2.size()) {
 
             return false;
@@ -322,6 +332,7 @@ public class MainTopicModel {
 
             Map<Integer, ResFolderItem> folderItemMap1 = new LinkedHashMap<>();
             Map<Integer, ResFolderItem> folderItemMap2 = new HashMap<>();
+
 
             for (int i = 0; i < folderItems1.size(); i++) {
                 folderItemMap1.put(Integer.valueOf(folderItems1.get(i).roomId), folderItems1.get(i));

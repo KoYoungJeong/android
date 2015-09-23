@@ -60,8 +60,11 @@ public class TopicFolderRepository {
 
     public List<ResFolderItem> getFolderItems() {
         try {
+            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             Dao<ResFolderItem, ?> FolderItemDao = helper.getDao(ResFolderItem.class);
             return FolderItemDao.queryBuilder()
+                    .where()
+                    .eq("teamId", selectedTeamId)
                     .query();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -160,10 +163,12 @@ public class TopicFolderRepository {
         lock.lock();
         boolean result = false;
         try {
+            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             Dao<ResFolder, ?> resFolderDao = helper.getDao(ResFolder.class);
             DeleteBuilder<ResFolder, ?> deleteBuilder = resFolderDao.deleteBuilder();
             deleteBuilder
                     .where()
+                    .eq("teamId", selectedTeamId)
                     .eq("id", folderId);
             deleteBuilder.delete();
             result = true;
@@ -200,8 +205,12 @@ public class TopicFolderRepository {
         lock.lock();
         boolean result = false;
         try {
+            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             Dao<ResFolder, ?> resFolderDao = helper.getDao(ResFolder.class);
             DeleteBuilder<ResFolder, ?> deleteBuilder = resFolderDao.deleteBuilder();
+            deleteBuilder
+                    .where()
+                    .eq("teamId", selectedTeamId);
             deleteBuilder.delete();
             result = true;
         } catch (SQLException e) {
@@ -217,8 +226,12 @@ public class TopicFolderRepository {
         lock.lock();
         boolean result = false;
         try {
+            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             Dao<ResFolderItem, ?> resFolderItemDao = helper.getDao(ResFolderItem.class);
             DeleteBuilder<ResFolderItem, ?> deleteBuilder = resFolderItemDao.deleteBuilder();
+            deleteBuilder
+                    .where()
+                    .eq("teamId", selectedTeamId);
             deleteBuilder.delete();
             result = true;
         } catch (SQLException e) {
