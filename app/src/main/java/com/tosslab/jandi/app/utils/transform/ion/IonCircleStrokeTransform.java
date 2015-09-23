@@ -16,8 +16,7 @@ public class IonCircleStrokeTransform implements com.koushikdutta.ion.bitmap.Tra
     }
 
     public IonCircleStrokeTransform(float lineWidth, int lineColor) {
-        this.lineWidth = lineWidth;
-        this.lineColor = lineColor;
+        this(lineWidth, lineColor, NONE_COLOR);
     }
 
     public IonCircleStrokeTransform(float lineWidth, int lineColor, int bgColor) {

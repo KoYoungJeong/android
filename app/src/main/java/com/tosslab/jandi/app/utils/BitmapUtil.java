@@ -241,19 +241,21 @@ public class BitmapUtil {
 
         float r = size / 2f;
 
+        // Background
         Paint bgPaint = new Paint();
-        bgPaint.setAntiAlias(true);
-        bgPaint.setDither(true);
+        bgPaint.setFlags(Paint.DITHER_FLAG | Paint.ANTI_ALIAS_FLAG);
         bgPaint.setColor(bgColor);
         bgPaint.setStyle(Paint.Style.FILL);
-
-        canvas.drawCircle(r, r, r, bgPaint);
+        canvas.drawCircle(r, r, r - 1, bgPaint);
 
         Paint paint = new Paint();
-        BitmapShader shader = new BitmapShader(squaredBitmap, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
+        BitmapShader shader = new BitmapShader(
+                squaredBitmap, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
         paint.setShader(shader);
-        paint.setAntiAlias(true);
+        paint.setFlags(Paint.DITHER_FLAG | Paint.ANTI_ALIAS_FLAG);
+
         canvas.drawCircle(r, r, r, paint);
+
         squaredBitmap.recycle();
         return bitmap;
     }
@@ -276,8 +278,7 @@ public class BitmapUtil {
         canvas.drawCircle(r, r, r, paint);
 
         Paint linePaint = new Paint();
-        linePaint.setAntiAlias(true);
-        linePaint.setDither(true);
+        linePaint.setFlags(Paint.DITHER_FLAG | Paint.ANTI_ALIAS_FLAG);
         linePaint.setColor(lineColor);
         linePaint.setStrokeWidth(lineWidth);
         linePaint.setStyle(Paint.Style.STROKE);
@@ -301,23 +302,21 @@ public class BitmapUtil {
         Canvas canvas = new Canvas(bitmap);
         float r = size / 2f;
 
+        // Background
         Paint bgPaint = new Paint();
-        bgPaint.setAntiAlias(true);
-        bgPaint.setDither(true);
+        bgPaint.setFlags(Paint.DITHER_FLAG | Paint.ANTI_ALIAS_FLAG);
         bgPaint.setColor(bgColor);
         bgPaint.setStyle(Paint.Style.FILL);
-
-        canvas.drawCircle(r, r, r, bgPaint);
+        canvas.drawCircle(r, r, r - 1, bgPaint);
 
         Paint paint = new Paint();
         BitmapShader shader = new BitmapShader(squaredBitmap, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
         paint.setShader(shader);
-        paint.setAntiAlias(true);
+        paint.setFlags(Paint.DITHER_FLAG | Paint.ANTI_ALIAS_FLAG);
         canvas.drawCircle(r, r, r, paint);
 
         Paint linePaint = new Paint();
-        linePaint.setAntiAlias(true);
-        linePaint.setDither(true);
+        linePaint.setFlags(Paint.DITHER_FLAG | Paint.ANTI_ALIAS_FLAG);
         linePaint.setColor(lineColor);
         linePaint.setStrokeWidth(lineWidth);
         linePaint.setStyle(Paint.Style.STROKE);

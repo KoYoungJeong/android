@@ -347,7 +347,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     }
 
     public void onEvent(RetrieveTopicListEvent event) {
-        new Exception().printStackTrace();
         if (!isFirstForRetrieve) {
             List<ResFolder> topicFolders = mainTopicListPresenter.onGetTopicFolders();
             List<ResFolderItem> topicFolderItems = mainTopicListPresenter.onGetTopicFolderItems();
