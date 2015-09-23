@@ -6,6 +6,7 @@ apply plugin: 'android-apt'     // Android-Annotation
 apply plugin: 'me.tatarka.retrolambda'  //RetroLamda
 apply plugin: 'aar-link-sources'
 apply from: 'valid.gradle'       // Gradle Propertie Valid Check
+apply from: 'scripts/string-resource-crawler.gradle'
 
 configurations {
     apt
