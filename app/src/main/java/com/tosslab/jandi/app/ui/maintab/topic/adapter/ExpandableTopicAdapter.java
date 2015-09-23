@@ -51,7 +51,6 @@ public class ExpandableTopicAdapter
     private int selectedEntity;
     private AnimStatus animStatus = AnimStatus.READY;
 
-
     public ExpandableTopicAdapter(TopicFolderListDataProvider dataProvider) {
         this.provider = dataProvider;
         // ExpandableItemAdapter requires stable ID, and also

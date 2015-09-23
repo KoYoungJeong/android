@@ -32,4 +32,22 @@ public class ResFolderItem {
                 ", roomId=" + roomId +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ResFolderItem that = (ResFolderItem) o;
+
+        if (folderId != that.folderId) return false;
+        return roomId == that.roomId;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = folderId;
+        result = 31 * result + roomId;
+        return result;
+    }
 }
