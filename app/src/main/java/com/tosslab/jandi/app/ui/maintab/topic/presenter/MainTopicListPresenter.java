@@ -69,55 +69,52 @@ public class MainTopicListPresenter {
             return;
         }
 
-        try {
-            Observable.combineLatest(
-                    Observable.create(new Observable.OnSubscribe<List<ResFolder>>() {
-                        @Override
-                        public void call(Subscriber<? super List<ResFolder>> subscriber) {
-                            try {
-                                List<ResFolder> topicFolders = mainTopicModel.getTopicFolders();
-                                subscriber.onNext(topicFolders);
-                                subscriber.onCompleted();
-                            } catch (RetrofitError retrofitError) {
-                                subscriber.onError(retrofitError);
-                            }
+        Observable.combineLatest(
+                Observable.create(new Observable.OnSubscribe<List<ResFolder>>() {
+                    @Override
+                    public void call(Subscriber<? super List<ResFolder>> subscriber) {
+                        try {
+                            List<ResFolder> topicFolders = mainTopicModel.getTopicFolders();
+                            subscriber.onNext(topicFolders);
+                            subscriber.onCompleted();
+                        } catch (RetrofitError retrofitError) {
+                            subscriber.onError(retrofitError);
                         }
-                    }), Observable.create(new Observable.OnSubscribe<List<ResFolderItem>>() {
-                        @Override
-                        public void call(Subscriber<? super List<ResFolderItem>> subscriber) {
-                            try {
-                                List<ResFolderItem> topicFolderItems = mainTopicModel.getTopicFolderItems();
-                                subscriber.onNext(topicFolderItems);
-                                subscriber.onCompleted();
-                            } catch (RetrofitError retrofitError) {
-                                subscriber.onError(retrofitError);
-                            }
+                    }
+                }), Observable.create(new Observable.OnSubscribe<List<ResFolderItem>>() {
+                    @Override
+                    public void call(Subscriber<? super List<ResFolderItem>> subscriber) {
+                        try {
+                            List<ResFolderItem> topicFolderItems = mainTopicModel.getTopicFolderItems();
+                            subscriber.onNext(topicFolderItems);
+                            subscriber.onCompleted();
+                        } catch (RetrofitError retrofitError) {
+                            subscriber.onError(retrofitError);
                         }
-                    }), (resFolders, resFolderItems) -> {
-                        if (((inMemTopicFolders == null) && (inMemTopicFolderItems == null))
-                                || !(mainTopicModel.isFolderSame(resFolders, inMemTopicFolders)
-                                && mainTopicModel.isFolderItemSame(resFolderItems, inMemTopicFolderItems))) {
-                            mainTopicModel.saveFolderDataInDB(resFolders, resFolderItems);
-                            this.topicFolders = resFolders;
-                            this.topicFolderItems = resFolderItems;
-                            return Pair.create(true, mainTopicModel.getDataProvider(resFolders, resFolderItems));
-                        } else {
-                            return Pair.create(false, null);
-                        }
+                    }
+                }), (resFolders, resFolderItems) -> {
+                    if (((inMemTopicFolders == null) && (inMemTopicFolderItems == null))
+                            || !(mainTopicModel.isFolderSame(resFolders, inMemTopicFolders)
+                            && mainTopicModel.isFolderItemSame(resFolderItems, inMemTopicFolderItems))) {
+                        mainTopicModel.saveFolderDataInDB(resFolders, resFolderItems);
+                        this.topicFolders = resFolders;
+                        this.topicFolderItems = resFolderItems;
+                        return Pair.create(true, mainTopicModel.getDataProvider(resFolders, resFolderItems));
+                    } else {
+                        return Pair.create(false, null);
+                    }
 
-                    }).subscribeOn(Schedulers.io())
-                    .subscribe(data -> {
-                        boolean isExecute = data.first;
-                        if (isExecute) {
-                            TopicFolderListDataProvider provider = data.second;
-                            refreshListView(provider);
-                            view.setFolderExpansion();
-                        }
-                        //view.startAnimationSelectedItem();
-                    }, Throwable::printStackTrace);
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
-        }
+                }).subscribeOn(Schedulers.io())
+                .subscribe(data -> {
+                    boolean isExecute = data.first;
+                    if (isExecute) {
+                        TopicFolderListDataProvider provider = data.second;
+                        refreshListView(provider);
+                        view.setFolderExpansion();
+                    }
+                    //view.startAnimationSelectedItem();
+                }, Throwable::printStackTrace);
+
     }
 
     public void refreshListView(TopicFolderListDataProvider provider) {
