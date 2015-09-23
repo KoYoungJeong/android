@@ -144,7 +144,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
         AnalyticsValue.Screen category = entity.isUser() ? AnalyticsValue.Screen.MessageTab : AnalyticsValue.Screen.TopicsTab;
         AnalyticsValue.Action action = entity.isStarred ? AnalyticsValue.Action.TopicSubMenu_Unstar : AnalyticsValue.Action.TopicSubMenu_Star;
         AnalyticsUtil.sendEvent(category, action);
-
     }
 
     @Background
@@ -160,6 +159,8 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
             entityMenuDialogModel.refreshEntities();
 
+            dismissProgressWheel();
+
             if (entity.isStarred) {
                 showToast(getString(R.string.jandi_message_starred));
             } else {
@@ -168,21 +169,22 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
             EventBus.getDefault().post(new RetrieveTopicListEvent());
 
+            dismiss();
         } catch (RetrofitError e) {
             e.printStackTrace();
-        } finally {
             dismissProgressWheel();
-        }
-
-        dismissOnUiThread();
-
-    }
-
-    @UiThread
-    void dismissOnUiThread() {
-        if (isVisible()) {
+            dismiss();
+        } catch (Exception e) {
+            e.printStackTrace();
+            dismissProgressWheel();
             dismiss();
         }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void dismiss() {
+        super.dismiss();
     }
 
     @UiThread
@@ -196,7 +198,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
     }
 
     void onLeaveClick() {
-
         FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
 
         if (entity.isPublicTopic() || entity.isUser()) {
@@ -243,16 +244,24 @@ public class EntityMenuDialogFragment extends DialogFragment {
             } else {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicSubMenu_Leave);
             }
+
+            dismissProgressWheel();
+
             EventBus.getDefault().post(new RetrieveTopicListEvent());
+
+            dismiss();
         } catch (RetrofitError e) {
             showErrorToast(getString(R.string.err_entity_leave));
             e.printStackTrace();
+
+            dismissProgressWheel();
+            dismiss();
         } catch (Exception e) {
             showErrorToast(getString(R.string.err_entity_leave));
             e.printStackTrace();
-        } finally {
+
             dismissProgressWheel();
-            dismissOnUiThread();
+            dismiss();
         }
     }
 
@@ -279,9 +288,9 @@ public class EntityMenuDialogFragment extends DialogFragment {
         topicFolderMoveCallEvent.setTopicId(entityId);
         topicFolderMoveCallEvent.setFolderId(folderId);
         EventBus.getDefault().post(topicFolderMoveCallEvent);
+
         dismiss();
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicSubMenu_Move);
-
     }
 }
