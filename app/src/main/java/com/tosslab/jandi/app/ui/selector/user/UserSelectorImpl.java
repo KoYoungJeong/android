@@ -144,7 +144,7 @@ public class UserSelectorImpl implements UserSelector {
 
             if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
                 holder.tvName.setText(R.string.jandi_file_category_everyone);
-                holder.ivIcon.setImageResource(R.drawable.icon_search_all);
+                holder.ivIcon.setImageResource(R.drawable.icon_search_all_members);
             } else {
                 Ion.with(holder.ivIcon)
                         .placeholder(R.drawable.profile_img_comment)

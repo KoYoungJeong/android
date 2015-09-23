@@ -93,12 +93,12 @@ public class FileTypeSelectorImpl implements FileTypeSelector {
         public FileTypeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
             View itemView = LayoutInflater.from(context)
-                    .inflate(R.layout.item_room_select, parent, false);
+                    .inflate(R.layout.item_file_select, parent, false);
 
             FileTypeViewHolder viewHolder = new FileTypeViewHolder(itemView);
 
-            viewHolder.tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
-            viewHolder.ivIcon = (ImageView) itemView.findViewById(R.id.iv_room_selector_item_icon);
+            viewHolder.tvName = (TextView) itemView.findViewById(R.id.tv_file_selector_item_name);
+            viewHolder.ivIcon = (ImageView) itemView.findViewById(R.id.iv_file_selector_item_icon);
 
             return viewHolder;
         }
