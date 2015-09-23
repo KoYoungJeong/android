@@ -8,8 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.builder.Builders;
@@ -44,7 +42,6 @@ import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
@@ -56,7 +53,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -290,23 +287,6 @@ public class MessageListModel {
         }
     }
 
-    public List<ResMessages.Link> sortDescById(List<ResMessages.Link> messages) {
-        Collections.sort(messages, (lhs, rhs) -> lhs.id - rhs.id);
-        return messages;
-    }
-
-    public void trackGetOldMessage(int entityType) {
-        String gaPath = (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) ? BaseAnalyticsActivity.GA_PATH_CHANNEL
-                : (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) ? BaseAnalyticsActivity.GA_PATH_DIRECT_MESSAGE
-                : BaseAnalyticsActivity.GA_PATH_PRIVATE_GROUP;
-
-        Tracker screenViewTracker = ((JandiApplication) activity.getApplicationContext())
-                .getTracker(JandiApplication.TrackerName.APP_TRACKER);
-        screenViewTracker.set("&uid", EntityManager.getInstance().getDistictId());
-        screenViewTracker.setScreenName(gaPath);
-        screenViewTracker.send(new HitBuilders.AppViewBuilder().build());
-    }
-
     public void trackChangingEntityName(int entityType) {
 
         try {
@@ -482,7 +462,6 @@ public class MessageListModel {
                         .build())
                 .flush();
 
-        GoogleAnalyticsUtil.sendEvent(Event.MessagePost.name(), "ResponseSuccess");
     }
 
     private void trackMessagePostFail(int errorCode) {
@@ -495,7 +474,6 @@ public class MessageListModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build())
                 .flush();
-        GoogleAnalyticsUtil.sendEvent(Event.MessagePost.name(), "ResponseFail");
     }
 
     public void trackMessageDeleteSuccess(int messageId) {
@@ -508,7 +486,6 @@ public class MessageListModel {
                         .property(PropertyKey.MessageId, messageId)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.MessageDelete.name(), "ResponseSuccess");
     }
 
     public void trackMessageDeleteFail(int errorCode) {
@@ -520,7 +497,6 @@ public class MessageListModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-        GoogleAnalyticsUtil.sendEvent(Event.MessageDelete.name(), "ResponseFail");
     }
 
     public void registStarredMessage(int teamId, int messageId) {
@@ -608,5 +584,9 @@ public class MessageListModel {
 
     public boolean isCurrentTeam(int teamId) {
         return AccountRepository.getRepository().getSelectedTeamId() == teamId;
+    }
+
+    public AnalyticsValue.Screen getScreen(int entityId) {
+        return isUser(entityId) ? AnalyticsValue.Screen.Message : AnalyticsValue.Screen.TopicChat;
     }
 }

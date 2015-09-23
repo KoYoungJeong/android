@@ -96,6 +96,9 @@ dependencies {
     // RxJava
     compile 'io.reactivex:rxandroid:1.0.+'
 
+    // facebook SDK
+    compile 'com.facebook.android:facebook-android-sdk:4.0.0'
+
     // Test : Robolectric, Junit4
     testCompile 'org.robolectric:robolectric:3.0'
     testCompile 'org.robolectric:shadows-httpclient:3.0'
@@ -128,7 +131,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 62
-        versionName '1.5.1'
+        versionName '1.5.2'
 
         // Enabling multidex support.
         multiDexEnabled true

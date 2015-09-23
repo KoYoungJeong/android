@@ -102,7 +102,7 @@ public class PureCommentViewHolder implements BodyViewHolder {
         }
 
         tvName.setOnClickListener(v ->
-                EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id)));
+                EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
     }
 
     @Override

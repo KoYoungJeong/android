@@ -25,12 +25,13 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -57,7 +58,7 @@ import retrofit.RetrofitError;
  * Created by justinygchoi on 2014. 8. 27..
  */
 @EActivity(R.layout.activity_profile)
-public class ModifyProfileActivity extends BaseAnalyticsActivity {
+public class ModifyProfileActivity extends BaseAppCompatActivity {
     public static final int REQUEST_CODE = 1000;
 
     @Bean
@@ -79,11 +80,11 @@ public class ModifyProfileActivity extends BaseAnalyticsActivity {
                         .property(PropertyKey.ScreenView, ScreenViewProperty.PROFILE)
                         .build());
 
-        GoogleAnalyticsUtil.sendScreenName("PROFILE");
-
         setupActionBar();
 
         getProfileInBackground();
+
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.EditProfile);
     }
 
     private void setupActionBar() {
@@ -112,7 +113,6 @@ public class ModifyProfileActivity extends BaseAnalyticsActivity {
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
-        trackGaProfile(getDistictId());
     }
 
     @Override
@@ -174,6 +174,8 @@ public class ModifyProfileActivity extends BaseAnalyticsActivity {
                     EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS,
                     ((TextView) view)
             );
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Status);
         }
     }
 
@@ -185,6 +187,7 @@ public class ModifyProfileActivity extends BaseAnalyticsActivity {
                     EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE,
                     ((TextView) view)
             );
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Mobile);
         }
     }
 
@@ -195,6 +198,7 @@ public class ModifyProfileActivity extends BaseAnalyticsActivity {
                     EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME,
                     ((TextView) view)
             );
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Name);
         }
     }
 
@@ -206,6 +210,7 @@ public class ModifyProfileActivity extends BaseAnalyticsActivity {
                     EditTextDialogFragment.ACTION_MODIFY_PROFILE_DIVISION,
                     ((TextView) view)
             );
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Division);
         }
     }
 
@@ -217,6 +222,7 @@ public class ModifyProfileActivity extends BaseAnalyticsActivity {
                     EditTextDialogFragment.ACTION_MODIFY_PROFILE_POSITION,
                     ((TextView) view)
             );
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Position);
         }
     }
 
@@ -226,6 +232,7 @@ public class ModifyProfileActivity extends BaseAnalyticsActivity {
             String[] accountEmails = modifyProfileModel.getAccountEmails();
             String email = memberProfileView.getEmail();
             memberProfileView.showEmailChooseDialog(accountEmails, email);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Email);
         }
     }
 
@@ -234,6 +241,7 @@ public class ModifyProfileActivity extends BaseAnalyticsActivity {
         // 프로필 사진
         filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, ModifyProfileActivity.this);
 
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.PhotoEdit);
     }
 
     public void onEvent(MemberEmailChangeEvent event) {
@@ -297,7 +305,6 @@ public class ModifyProfileActivity extends BaseAnalyticsActivity {
         try {
             ResLeftSideMenu.User me = modifyProfileModel.updateProfile(reqUpdateProfile);
             memberProfileView.updateProfileSucceed();
-            trackUpdateProfile(getDistictId(), me);
             memberProfileView.displayProfile(me);
         } catch (RetrofitError e) {
             e.printStackTrace();

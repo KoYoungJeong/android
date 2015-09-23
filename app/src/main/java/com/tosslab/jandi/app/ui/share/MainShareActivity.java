@@ -3,14 +3,16 @@ package com.tosslab.jandi.app.ui.share;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.share.model.MainShareModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -23,7 +25,7 @@ import org.androidannotations.annotations.OptionsMenu;
 
 @EActivity(R.layout.activity_main_share)
 @OptionsMenu(R.menu.share_menu)
-public class MainShareActivity extends AppCompatActivity {
+public class MainShareActivity extends BaseAppCompatActivity {
 
     public static final int MODE_SHARE_TEXT = 1;
     public static final int MODE_SHARE_FILE = 2;
@@ -77,6 +79,7 @@ public class MainShareActivity extends AppCompatActivity {
                 .add(R.id.vg_share_container, fragment, "detail")
                 .commit();
 
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SharetoJandi);
 
     }
 
@@ -94,6 +97,7 @@ public class MainShareActivity extends AppCompatActivity {
                 return true;
             case R.id.action_share:
                 fragment.startShare();
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.Send);
                 return true;
         }
 

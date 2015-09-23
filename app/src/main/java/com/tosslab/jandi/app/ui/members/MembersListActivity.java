@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.members;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +15,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
@@ -26,7 +26,8 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -36,6 +37,7 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
@@ -46,12 +48,14 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
+import rx.Observable;
+
 /**
  * Created by tee on 15. 6. 3..
  */
 
 @EActivity(R.layout.activity_topic_member)
-public class MembersListActivity extends AppCompatActivity implements MembersListPresenter.View {
+public class MembersListActivity extends BaseAppCompatActivity implements MembersListPresenter.View {
 
     public static final int TYPE_MEMBERS_LIST_TEAM = 1;
     public static final int TYPE_MEMBERS_LIST_TOPIC = 2;
@@ -84,11 +88,25 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
 
     @AfterInject
     void initObject() {
-        topicMembersAdapter = new MembersAdapter(getApplicationContext());
+        topicMembersAdapter = new MembersAdapter(getBaseContext());
         if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
-            topicMembersAdapter.setEnableCheckMode();
+            topicMembersAdapter.setCheckMode();
         }
         membersListPresenter.setView(this);
+    }
+
+    private AnalyticsValue.Screen getScreen() {
+
+        switch (type) {
+            case TYPE_MEMBERS_JOINABLE_TOPIC:
+                return AnalyticsValue.Screen.InviteTeamMembers;
+            default:
+            case TYPE_MEMBERS_LIST_TEAM:
+                return AnalyticsValue.Screen.TeamMembers;
+            case TYPE_MEMBERS_LIST_TOPIC:
+                return AnalyticsValue.Screen.Participants;
+        }
+
     }
 
     @AfterViews
@@ -101,7 +119,7 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
                         .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_MEMBER)
                         .build());
 
-        GoogleAnalyticsUtil.sendScreenName("TEAM_MEMBER");
+        AnalyticsUtil.sendScreenName(getScreen());
 
         setupActionbar();
 
@@ -138,6 +156,16 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     @TextChange(R.id.et_topic_member_search)
     void onSearchTextChange(CharSequence text) {
         membersListPresenter.onSearch(text);
+    }
+
+
+    @Click(R.id.et_topic_member_search)
+    void onSearchInputClick() {
+        if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
+            AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.SearchInviteMember);
+        } else {
+            AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.SearchInputField);
+        }
     }
 
     @Override
@@ -189,6 +217,9 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     List<Integer> selectedCdp = topicMembersAdapter.getSelectedUserIds();
+
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMembers, AnalyticsValue.Action.Invite);
+
                     if (selectedCdp != null && !selectedCdp.isEmpty()) {
                         membersListPresenter.inviteInBackground(selectedCdp, entityId);
                         finish();
@@ -244,6 +275,7 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     @OptionsItem(R.id.action_invitation)
     void onInviteOptionSelect() {
         if (type == TYPE_MEMBERS_LIST_TEAM) {
+            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_MEMBER);
             invitationDialogExecutor.execute();
         } else if (type == TYPE_MEMBERS_LIST_TOPIC) {
             membersListPresenter.inviteMemberToTopic(entityId);
@@ -253,7 +285,25 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     @UiThread
     @Override
     public void showListMembers(List<ChatChooseItem> members) {
+        final List<Integer> selectedUserIds = topicMembersAdapter.getSelectedUserIds();
+
         topicMembersAdapter.clear();
+
+        if (selectedUserIds != null && !selectedUserIds.isEmpty()) {
+            Observable.from(members)
+                    .filter(member -> {
+                        for (Integer ids : selectedUserIds) {
+                            boolean selected = ids == member.getEntityId();
+                            if (selected) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    })
+                    .subscribe(member -> {
+                        member.setIsChooseItem(true);
+                    });
+        }
         topicMembersAdapter.addAll(members);
         topicMembersAdapter.notifyDataSetChanged();
     }

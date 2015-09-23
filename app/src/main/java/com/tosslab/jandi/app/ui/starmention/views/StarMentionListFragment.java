@@ -28,6 +28,8 @@ import com.tosslab.jandi.app.ui.starmention.presentor.StarMentionListPresentor;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
@@ -130,8 +132,20 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
 
     public void setOnItemClickListener() {
         StarMentionListAdapter.OnItemClickListener onItemClickListener = (adapter, position) -> {
-            starMentionListPresentor.executeClickEvent(adapter.getItemsByPosition(position),
+            StarMentionVO starMentionVO = adapter.getItemsByPosition(position);
+            starMentionListPresentor.executeClickEvent(starMentionVO,
                     StarMentionListFragment.this);
+            if (!TextUtils.equals(listType, StarMentionListActivity.TYPE_MENTION_LIST)) {
+                if (starMentionVO.getContentType() == StarMentionVO.Type.Text.getValue()) {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.ChooseMsg);
+                } else if (starMentionVO.getContentType() == StarMentionVO.Type.File.getValue()) {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.ChooseFile);
+                } else if (starMentionVO.getContentType() == StarMentionVO.Type.Comment.getValue()) {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.ChooseComment);
+                }
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Mentions, AnalyticsValue.Action.ChooseMention);
+            }
         };
         starMentionListAdapter.setOnItemClickListener(onItemClickListener);
     }

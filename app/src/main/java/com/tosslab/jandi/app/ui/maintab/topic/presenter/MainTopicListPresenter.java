@@ -19,6 +19,8 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -133,6 +135,9 @@ public class MainTopicListPresenter {
         topicFolderData.setChildBadgeCnt(topicFolderData.getChildBadgeCnt() - itemsUnreadCount);
         item.setUnreadCount(0);
         adapter.notifyDataSetChanged();
+
+        AnalyticsValue.Action action = item.isPublic() ? AnalyticsValue.Action.ChoosePublicTopic : AnalyticsValue.Action.ChoosePrivateTopic;
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, action);
 
         mainTopicModel.resetBadge(item.getEntityId());
 

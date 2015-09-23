@@ -1,19 +1,20 @@
-package com.tosslab.jandi.app.events.profile;
+package com.tosslab.jandi.app.events;
 
 /**
  * Created by justinygchoi on 2014. 9. 4..
  */
-public class ShowProfileEvent {
+public class RequestUserInfoEvent {
     public int userId;
     public From from;
 
-    public ShowProfileEvent(int userId) {
-        this.userId = userId;
-    }
-
-    public ShowProfileEvent(int userId, From from) {
+    public RequestUserInfoEvent(int userId, From from) {
         this.userId = userId;
         this.from = from;
+    }
+
+    public RequestUserInfoEvent(int userId) {
+        this.userId = userId;
+
     }
 
     public enum From {

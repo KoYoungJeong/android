@@ -20,6 +20,8 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.EntityMenuDialogModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -63,7 +65,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initView();
-
     }
 
     void initView() {
@@ -103,7 +104,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
         }
 
         progressWheel = new ProgressWheel(getActivity());
-
     }
 
     public void setStarredButtonText(boolean isStarred) {
@@ -114,11 +114,9 @@ public class EntityMenuDialogFragment extends DialogFragment {
         }
     }
 
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         View view = LayoutInflater.from(getActivity()).inflate((R.layout.fragment_entity_popup), null);
 
         btnStarred = (TextView) view.findViewById(R.id.btn_entity_popup_starred);
@@ -138,10 +136,15 @@ public class EntityMenuDialogFragment extends DialogFragment {
                 .create();
     }
 
-
     void onStarredClick() {
         showProgressWheel();
         requestStarred();
+
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
+        AnalyticsValue.Screen category = entity.isUser() ? AnalyticsValue.Screen.MessageTab : AnalyticsValue.Screen.TopicsTab;
+        AnalyticsValue.Action action = entity.isStarred ? AnalyticsValue.Action.TopicSubMenu_Unstar : AnalyticsValue.Action.TopicSubMenu_Star;
+        AnalyticsUtil.sendEvent(category, action);
+
     }
 
     @Background
@@ -235,6 +238,11 @@ public class EntityMenuDialogFragment extends DialogFragment {
             }
             entityMenuDialogModel.refreshEntities();
 
+            if (entity.isUser()) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.TopicSubMenu_Leave);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicSubMenu_Leave);
+            }
             EventBus.getDefault().post(new RetrieveTopicListEvent());
         } catch (RetrofitError e) {
             showErrorToast(getString(R.string.err_entity_leave));
@@ -272,5 +280,8 @@ public class EntityMenuDialogFragment extends DialogFragment {
         topicFolderMoveCallEvent.setFolderId(folderId);
         EventBus.getDefault().post(topicFolderMoveCallEvent);
         dismiss();
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicSubMenu_Move);
+
     }
 }

@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.offline;
 
+import android.support.annotation.InterpolatorRes;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -9,6 +10,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 public class OfflineLayer {
+    @InterpolatorRes
+    private static final int DECELERATE_INTERPOLATOR = android.R.anim.decelerate_interpolator;
 
     private View vgOffline;
 
@@ -16,6 +19,7 @@ public class OfflineLayer {
         this.vgOffline = vgOffline;
     }
 
+    @InterpolatorRes
     public void dismissOfflineView() {
 
         if (vgOffline.getVisibility() != View.VISIBLE) {
@@ -34,7 +38,7 @@ public class OfflineLayer {
         animation.setDuration(JandiApplication.getContext().getResources().getInteger(android.R
                 .integer
                 .config_shortAnimTime));
-        animation.setInterpolator(JandiApplication.getContext(), android.R.anim.decelerate_interpolator);
+        animation.setInterpolator(JandiApplication.getContext(), DECELERATE_INTERPOLATOR);
         animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
         animation.setFillAfter(true);
 
@@ -68,7 +72,7 @@ public class OfflineLayer {
 
         animation.setDuration(JandiApplication.getContext().getResources().getInteger(android.R
                 .integer.config_shortAnimTime));
-        animation.setInterpolator(JandiApplication.getContext(), android.R.anim.decelerate_interpolator);
+        animation.setInterpolator(JandiApplication.getContext(), DECELERATE_INTERPOLATOR);
         animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
         animation.setFillAfter(true);
 

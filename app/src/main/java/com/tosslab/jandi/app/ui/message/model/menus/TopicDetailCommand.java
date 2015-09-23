@@ -3,8 +3,11 @@ package com.tosslab.jandi.app.ui.message.model.menus;
 import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity_;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 9..
@@ -27,5 +30,11 @@ public class TopicDetailCommand implements MenuCommand {
                 .entityId(entityId)
                 .teamId(teamId)
                 .startForResult(TopicDetailActivity.REQUEST_DETAIL);
+
+        if (EntityManager.getInstance().getEntityById(entityId).isUser()) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Message, AnalyticsValue.Action.Message_Decription);
+        } else {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.TopicChat_Decription);
+        }
     }
 }

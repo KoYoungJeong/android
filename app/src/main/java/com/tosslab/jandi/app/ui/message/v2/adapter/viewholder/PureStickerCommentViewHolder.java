@@ -77,7 +77,7 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
         StickerManager.getInstance().loadStickerNoOption(ivSticker, stickerMessage.content.groupId, stickerMessage.content.stickerId);
 
         nameTextView.setOnClickListener(v ->
-                EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id)));
+                EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
 
     }
 

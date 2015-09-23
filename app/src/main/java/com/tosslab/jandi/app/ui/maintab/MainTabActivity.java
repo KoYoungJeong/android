@@ -38,7 +38,8 @@ import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
+import com.tosslab.jandi.app.ui.MixpanelAnalytics;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
@@ -51,7 +52,8 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
@@ -81,7 +83,7 @@ import rx.Observable;
  * Created by justinygchoi on 2014. 8. 11..
  */
 @EActivity(R.layout.activity_main_tab)
-public class MainTabActivity extends BaseAnalyticsActivity {
+public class MainTabActivity extends BaseAppCompatActivity {
 
     public static final int CHAT_INDEX = 1;
     public static final int REQ_START_MESSAGE = 1211;
@@ -106,12 +108,11 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     @AfterViews
     void initView() {
-        LogUtil.d("시작은 여기");
-
         ParseUpdateUtil.addChannelOnServer();
 
         mContext = getApplicationContext();
         mEntityManager = EntityManager.getInstance();
+        new MixpanelAnalytics().trackSigningIn(mEntityManager);
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
@@ -151,7 +152,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             @Override
             public void onPageSelected(int position) {
                 LogUtil.d("onPageSelected at " + position);
-                trackGaTab(mEntityManager, position);
                 trackScreenView(position);
                 switch (position) {
                     case 1:
@@ -188,17 +188,24 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     }
 
     private void showInvitePopup() {
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.InviteTeamMember);
         AlertDialog.Builder builder = new AlertDialog.Builder(MainTabActivity.this);
         View view = LayoutInflater.from(MainTabActivity.this).inflate(R.layout.dialog_invite_popup, null);
 
+        builder.setOnDismissListener(dialog ->
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.CloseModal));
+
         final AlertDialog materialDialog = builder.setView(view)
                 .show();
-        //FIXME
+
         view.findViewById(R.id.btn_invitation_popup_invite).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 materialDialog.dismiss();
+                invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_POPUP);
                 invitationDialogExecutor.execute();
+
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.SendInvitations);
             }
         });
 
@@ -206,8 +213,10 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             @Override
             public void onClick(View v) {
                 materialDialog.dismiss();
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.Later);
             }
         });
+
 
     }
 
@@ -326,8 +335,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @UiThread
     public void getEntitiesSucceed(ResLeftSideMenu resLeftSideMenu) {
         mProgressWheel.dismiss();
-        mEntityManager = EntityManager.getInstance();
-        trackSigningIn(mEntityManager);
         getSupportActionBar().setTitle(mEntityManager.getTeamName());
         JandiPreference.setMyEntityId(this, mEntityManager.getMe().getId());
         postAllEvents();
@@ -348,7 +355,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     private void postAllEvents() {
         if (isFirst) {
             // 처음 TabActivity를 시도하면 0번째 탭이 자동 선택됨으로 이를 tracking
-            trackGaTab(mEntityManager, 0);
             isFirst = false;
         }
         postShowChattingListEvent();
@@ -364,6 +370,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
 
     public void onEvent(InvitationDisableCheckEvent event) {
+        invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_INVITE);
         invitationDialogExecutor.execute();
     }
 
@@ -429,27 +436,27 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     private void trackScreenView(int position) {
         int screenView = ScreenViewProperty.TOPIC_PANEL;
-        String screenViewForGA = "TOPIC_PANEL";
+        AnalyticsValue.Screen screen = AnalyticsValue.Screen.TopicsTab;
         switch (position) {
             case 0:
                 screenView = ScreenViewProperty.TOPIC_PANEL;
-                screenViewForGA = "TOPIC_PANEL";
+                screen = AnalyticsValue.Screen.TopicsTab;
                 break;
             case 1:
                 screenView = ScreenViewProperty.MESSAGE_PANEL;
-                screenViewForGA = "MESSAGE_PANEL";
+                screen = AnalyticsValue.Screen.TopicChat;
                 break;
             case 2:
                 screenView = ScreenViewProperty.FILE_PANEL;
-                screenViewForGA = "FILE_PANEL";
+                screen = AnalyticsValue.Screen.FilesTab;
                 break;
             case 3:
                 screenView = ScreenViewProperty.SETTING_PANEL;
-                screenViewForGA = "SETTING_PANEL";
+                screen = AnalyticsValue.Screen.MoreTab;
                 break;
         }
 
-        GoogleAnalyticsUtil.sendScreenName(screenViewForGA);
+        AnalyticsUtil.sendScreenName(screen);
 
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()

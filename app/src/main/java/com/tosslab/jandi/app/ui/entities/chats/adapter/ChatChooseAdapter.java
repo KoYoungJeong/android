@@ -177,7 +177,7 @@ public class ChatChooseAdapter extends BaseAdapter {
 
     private View.OnClickListener getProfileClickListener(int entityId) {
         return v -> {
-            EventBus.getDefault().post(new ShowProfileEvent(entityId));
+            EventBus.getDefault().post(new ShowProfileEvent(entityId, ShowProfileEvent.From.Image));
         };
     }
 

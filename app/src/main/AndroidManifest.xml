@@ -19,6 +19,11 @@
         <meta-data
             android:name="com.mixpanel.android.MPConfig.FlushInterval"
             android:value="1000" />
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
         <!-- temp comment for protect ANR (Play-Service-Base : 6.5.87 issue
         <meta-data
             android:name="com.google.android.gms.analytics.globalConfigResource"

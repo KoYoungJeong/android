@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +24,14 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.modify.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.profile.modify.ModifyProfileActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.transform.ion.IonBlurTransform;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleStrokeTransform;
 import com.tosslab.jandi.app.views.SwipeExitLayout;
@@ -49,11 +51,19 @@ import uk.co.senab.photoview.PhotoView;
  * Created by tonyjs on 15. 9. 8..
  */
 @EActivity(R.layout.activity_member_profile)
-public class MemberProfileActivity extends AppCompatActivity {
+public class MemberProfileActivity extends BaseAppCompatActivity {
+    public static final int EXTRA_FROM_FILE_DETAIL = 2;
+    public static final int EXTRA_FROM_MAIN_CHAT = 3;
+    public static final int EXTRA_FROM_TEAM_MEMBER = 4;
+    public static final int EXTRA_FROM_TOPIC_CHAT = 5;
+    public static final int EXTRA_FROM_MESSAGE = 6;
+    public static final int EXTRA_FROM_PARTICIPANT = 7;
     private static final String KEY_FULL_SIZE_IMAGE_SHOWING = "full_size_image_showing";
-
     @Extra
     int memberId;
+
+    @Extra
+    int from;
 
     @Bean
     EntityClientManager entityClientManager;
@@ -326,6 +336,8 @@ public class MemberProfileActivity extends AppCompatActivity {
                 .setDuration(300)
                 .alpha(1.0f)
                 .setListener(null);
+
+        AnalyticsUtil.sendEvent(getScreen(from), AnalyticsValue.Action.Profile_Photo);
     }
 
     void hideFullImage(final View v) {
@@ -416,6 +428,7 @@ public class MemberProfileActivity extends AppCompatActivity {
                         getButton(R.drawable.icon_profile_mobile,
                                 getString(R.string.jandi_member_profile_phone), (v) -> {
                                     call(userPhoneNumber);
+                                    AnalyticsUtil.sendEvent(getScreen(from), AnalyticsValue.Action.Profile_Cellphone);
                                 }));
             }
 
@@ -425,6 +438,7 @@ public class MemberProfileActivity extends AppCompatActivity {
                         getButton(R.drawable.icon_profile_mail,
                                 getString(R.string.jandi_member_profile_email), (v) -> {
                                     sendEmail(userEmail);
+                                    AnalyticsUtil.sendEvent(getScreen(from), AnalyticsValue.Action.Profile_Email);
                                 }));
             }
 
@@ -522,5 +536,23 @@ public class MemberProfileActivity extends AppCompatActivity {
 
     private boolean isLandscape() {
         return getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+    private AnalyticsValue.Screen getScreen(int from) {
+        switch (from) {
+            default:
+            case EXTRA_FROM_TOPIC_CHAT:
+                return AnalyticsValue.Screen.TopicChat;
+            case EXTRA_FROM_MESSAGE:
+                return AnalyticsValue.Screen.Message;
+            case EXTRA_FROM_PARTICIPANT:
+                return AnalyticsValue.Screen.Participants;
+            case EXTRA_FROM_TEAM_MEMBER:
+                return AnalyticsValue.Screen.TeamMembers;
+            case EXTRA_FROM_FILE_DETAIL:
+                return AnalyticsValue.Screen.FileDetail;
+            case EXTRA_FROM_MAIN_CHAT:
+                return AnalyticsValue.Screen.MessageTab;
+        }
     }
 }

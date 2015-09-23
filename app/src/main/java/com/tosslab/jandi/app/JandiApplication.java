@@ -7,6 +7,7 @@ import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
+import com.facebook.FacebookSdk;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
@@ -53,6 +54,7 @@ public class JandiApplication extends MultiDexApplication {
         Fabric.with(this, new Crashlytics());
 
         JandiApplication.setContext(this);
+        FacebookSdk.sdkInitialize(this);
 
         boolean oldParseFileCacheDeleted = JandiPreference.isOldParseFileCacheDeleted(this);
         if (!oldParseFileCacheDeleted) {
@@ -91,6 +93,7 @@ public class JandiApplication extends MultiDexApplication {
 
             Tracker tracker = analytics.newTracker(JandiConstantsForFlavors.GA_TRACK_ID);
             tracker.enableAdvertisingIdCollection(true);
+            tracker.enableExceptionReporting(true);
 
             mTrackers.put(trackerId, tracker);
 

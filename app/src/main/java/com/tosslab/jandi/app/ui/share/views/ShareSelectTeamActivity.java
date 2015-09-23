@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.share.views.adapter.ShareTeamsAdapter;
 import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
@@ -32,7 +32,7 @@ import de.greenrobot.event.EventBus;
  */
 
 @EActivity(R.layout.activity_select_team)
-public class ShareSelectTeamActivity extends BaseAnalyticsActivity implements ShareTeamsAdapter.OnItemClickListener {
+public class ShareSelectTeamActivity extends BaseAppCompatActivity implements ShareTeamsAdapter.OnItemClickListener {
 
     @ViewById(R.id.lv_select_team)
     RecyclerView lvSelectTeam;

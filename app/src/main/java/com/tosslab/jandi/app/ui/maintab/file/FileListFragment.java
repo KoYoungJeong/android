@@ -50,7 +50,8 @@ import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
@@ -157,7 +158,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
                             .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_SEARCH)
                             .build());
 
-            GoogleAnalyticsUtil.sendScreenName("FILE_SEARCH");
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FilesSearch);
         }
 
         setHasOptionsMenu(true);
@@ -175,6 +176,19 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             if (onSearchItemSelect != null) {
                 onSearchItemSelect.onSearchItemSelect();
             }
+
+            AnalyticsValue.Action action;
+            if (isDefault(mSearchQuery)) {
+                action = AnalyticsValue.Action.ChooseFile;
+            } else {
+                action = AnalyticsValue.Action.ChooseFilteredFile;
+            }
+
+            if (getActivity() instanceof SearchActivity) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, action);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, action);
+            }
         });
 
         resetFilterLayoutPosition();
@@ -185,6 +199,12 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         initSearchSubject.onNext(-1);
 
+    }
+
+    private boolean isDefault(SearchQuery mSearchQuery) {
+        return mSearchQuery.mSearchEntity == ReqSearchFile.ALL_ENTITIES
+                && mSearchQuery.mSearchFileType.equals("all")
+                && mSearchQuery.mSearchUser.equals("all");
     }
 
     @Override

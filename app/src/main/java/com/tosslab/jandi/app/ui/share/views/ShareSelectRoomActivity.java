@@ -14,7 +14,7 @@ import android.view.View;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.share.views.adapter.ShareRoomsAdapter;
 import com.tosslab.jandi.app.ui.share.views.domain.ExpandRoomData;
 import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
@@ -33,7 +33,7 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 
 @EActivity(R.layout.layout_room_selector)
-public class ShareSelectRoomActivity extends BaseAnalyticsActivity implements ShareRoomsAdapter.OnItemClickListener {
+public class ShareSelectRoomActivity extends BaseAppCompatActivity implements ShareRoomsAdapter.OnItemClickListener {
 
     @Extra
     int teamId;

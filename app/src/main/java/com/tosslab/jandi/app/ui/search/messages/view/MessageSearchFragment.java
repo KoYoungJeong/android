@@ -36,7 +36,8 @@ import com.tosslab.jandi.app.ui.selector.user.UserSelectorImpl;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -107,7 +108,6 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_SEARCH)
                         .build());
-        GoogleAnalyticsUtil.sendScreenName("MESSAGE_SEARCH");
 
         messageSearchPresenter.setView(this);
 
@@ -127,6 +127,8 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                     if (onSearchItemSelect != null) {
                         onSearchItemSelect.onSearchItemSelect();
                     }
+
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseSearchResult);
 
                 }
             }
@@ -163,6 +165,8 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         if (entityId > 0) {
             messageSearchPresenter.onInitEntityId(entityId);
         }
+
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MsgSearch);
 
     }
 
@@ -252,16 +256,28 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         roomSelector.setOnRoomSelectListener(item -> {
             if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
                 EventBus.getDefault().post(new SelectEntityEvent(-1, getString(R.string.jandi_file_category_everywhere)));
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
             } else {
                 EventBus.getDefault().post(new SelectEntityEvent(item.getEntityId(), item.getName()));
+                if (item.isUser()) {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
+                } else {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
+                }
             }
             roomSelector.dismiss();
         });
 
         roomSelector.setOnRoomDismissListener(
-                () -> setUpCategoryView(vgEntity, entityTextView, false));
+                () -> {
+                    setUpCategoryView(vgEntity, entityTextView, false);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.CloseTopicFilter);
+
+                });
 
         roomSelector.show(vgEntity);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter);
     }
 
     @Override
@@ -274,17 +290,25 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
             public void onUserSelect(FormattedEntity item) {
                 if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
                     EventBus.getDefault().post(new SelectMemberEvent(-1, getString(R.string.jandi_file_category_everyone)));
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
                 } else {
                     EventBus.getDefault().post(new SelectMemberEvent(item.getId(), item.getName()));
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
                 }
                 userSelector.dismiss();
             }
         });
 
         userSelector.setOnUserDismissListener(
-                () -> setUpCategoryView(vgMember, memberTextView, false));
+                () -> {
+                    setUpCategoryView(vgMember, memberTextView, false);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.CloseMemberFilter);
+                });
 
         userSelector.show(vgMember);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenMemberFilter);
+
     }
 
     private void setUpCategoryView(View backgroundView, TextView textView, boolean isFocused) {

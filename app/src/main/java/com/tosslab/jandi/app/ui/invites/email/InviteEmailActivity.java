@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.email.adapter.InviteEmailListAdapter;
 import com.tosslab.jandi.app.ui.invites.email.model.InviteEmailModel;
 import com.tosslab.jandi.app.ui.invites.email.model.bean.EmailVO;
@@ -39,7 +39,7 @@ import org.androidannotations.annotations.ViewById;
  * Created by Steve SeongUg Jung on 14. 12. 27..
  */
 @EActivity(R.layout.activity_invite)
-public class InviteEmailActivity extends BaseAnalyticsActivity
+public class InviteEmailActivity extends BaseAppCompatActivity
         implements InviteEmailPresenter.View {
 
     @Bean
@@ -92,7 +92,6 @@ public class InviteEmailActivity extends BaseAnalyticsActivity
     protected void onResume() {
         super.onResume();
         EntityManager entityManager = EntityManager.getInstance();
-        trackGaInviteMember(entityManager.getDistictId());
     }
 
     @OptionsItem(android.R.id.home)

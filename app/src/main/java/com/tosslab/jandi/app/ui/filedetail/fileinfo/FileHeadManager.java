@@ -21,9 +21,11 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.spannable.EntitySpannable;
 import com.tosslab.jandi.app.views.spannable.MessageSpannable;
 
@@ -165,9 +167,14 @@ public class FileHeadManager {
         String userName = writer.getName();
         textViewUserName.setText(userName);
 
-        final ShowProfileEvent event = new ShowProfileEvent(writer.getId());
-        imageViewUserProfile.setOnClickListener(v -> EventBus.getDefault().post(event));
-        textViewUserName.setOnClickListener(v -> EventBus.getDefault().post(event));
+        imageViewUserProfile.setOnClickListener(v -> {
+            EventBus.getDefault().post(new ShowProfileEvent(writer.getId(), ShowProfileEvent.From.Image));
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewProfile);
+        });
+        textViewUserName.setOnClickListener(v -> {
+            EventBus.getDefault().post(new ShowProfileEvent(writer.getId(), ShowProfileEvent.From.Name));
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewProfile);
+        });
 
         btnFileDetailStarred.setSelected(fileMessage.isStarred);
 

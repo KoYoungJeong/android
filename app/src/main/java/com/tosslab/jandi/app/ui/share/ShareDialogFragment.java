@@ -24,6 +24,8 @@ import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FileExtensionsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -246,6 +248,8 @@ public class ShareDialogFragment extends Fragment implements SharePresenter.View
         ShareSelectTeamActivity_
                 .intent(this)
                 .start();
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TeamSelect);
     }
 
     @Click(R.id.vg_room)
@@ -255,6 +259,12 @@ public class ShareDialogFragment extends Fragment implements SharePresenter.View
                 .intent(this)
                 .extra("teamId", sharePresenter.getTeamId())
                 .start();
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TopicSelect);
+    }
+
+    @Click(R.id.et_share_comment)
+    void clickComment() {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TapComment);
     }
 
     public void onEvent(ShareSelectTeamEvent event) {

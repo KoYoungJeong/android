@@ -19,8 +19,8 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
@@ -136,10 +136,8 @@ public class MessageViewHolder implements BodyViewHolder {
             tvMessage.setText(messageStringBuilder);
 
         }
-
-        final ShowProfileEvent event = new ShowProfileEvent(fromEntity.id);
-        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(event));
-        tvName.setOnClickListener(v -> EventBus.getDefault().post(event));
+        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
+        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
 
         linkPreviewViewModel.bindData(link);
     }

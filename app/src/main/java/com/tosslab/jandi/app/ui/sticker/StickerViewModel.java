@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.ViewPagerIndicator;
 
 import org.androidannotations.annotations.AfterViews;
@@ -28,6 +30,10 @@ public class StickerViewModel {
 
     public static final int STICKER_GROUP_RECENT = 0;
     public static final int STICKER_GROUP_MOZZI = 1;
+
+    public static final int TYPE_MESSAGE = 11;
+    public static final int TYPE_TOPIC = 12;
+    public static final int TYPE_FILE_DETAIL = 13;
     @ViewById(R.id.vg_message_sticker_selector)
     ViewGroup vgStickerSelector;
 
@@ -42,6 +48,7 @@ public class StickerViewModel {
     private ViewPagerIndicator viewPagerIndicator;
 
     private OnStickerClick onStickerClick;
+    private int type;
 
     @AfterViews
     void initViews() {
@@ -119,6 +126,30 @@ public class StickerViewModel {
             } else {
                 vgStickerGroups.getChildAt(idx).setSelected(true);
             }
+
+            AnalyticsValue.Screen screen;
+            AnalyticsValue.Action action;
+            screen = getScreen();
+
+            if (groupIdx == 0) {
+                action = AnalyticsValue.Action.Sticker_RecentTab;
+            } else {
+                action = AnalyticsValue.Action.Sticker_StickerTab;
+            }
+            AnalyticsUtil.sendEvent(screen.name(), action.name() + String.valueOf(groupIdx));
+        }
+    }
+
+    private AnalyticsValue.Screen getScreen() {
+        switch (type) {
+            case TYPE_FILE_DETAIL:
+                return AnalyticsValue.Screen.FileDetail;
+            case TYPE_MESSAGE:
+                return AnalyticsValue.Screen.Message;
+            default:
+            case TYPE_TOPIC:
+                return AnalyticsValue.Screen.TopicChat;
+
         }
     }
 
@@ -147,6 +178,10 @@ public class StickerViewModel {
 
     public boolean isShowStickerSelector() {
         return vgStickerSelector.getVisibility() == View.VISIBLE;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
 

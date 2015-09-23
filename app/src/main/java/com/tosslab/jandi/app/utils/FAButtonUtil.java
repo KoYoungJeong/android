@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.utils;
 
+import android.support.annotation.InterpolatorRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.Animation;
@@ -13,6 +14,8 @@ import com.tosslab.jandi.app.views.listeners.SimpleListViewScrollListener;
  * Created by Steve SeongUg Jung on 15. 2. 9..
  */
 public class FAButtonUtil {
+    @InterpolatorRes
+    private static final int ACCELERATE_INTERPOLATOR = android.R.anim.accelerate_interpolator;
 
     public static void setFAButtonController(AbsListView listview, View faButton) {
 
@@ -78,7 +81,7 @@ public class FAButtonUtil {
                 isAnimating = true;
 
                 TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 2f);
-                translateAnimation.setInterpolator(fab.getContext(), android.R.anim.accelerate_interpolator);
+                translateAnimation.setInterpolator(fab.getContext(), ACCELERATE_INTERPOLATOR);
                 translateAnimation.setDuration(fab.getContext().getResources().getInteger(android.R.integer.config_shortAnimTime));
                 translateAnimation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
 
@@ -116,7 +119,7 @@ public class FAButtonUtil {
                 fab.setVisibility(View.VISIBLE);
 
                 TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 2f, Animation.RELATIVE_TO_SELF, 0f);
-                translateAnimation.setInterpolator(fab.getContext(), android.R.anim.accelerate_interpolator);
+                translateAnimation.setInterpolator(fab.getContext(), ACCELERATE_INTERPOLATOR);
                 translateAnimation.setDuration(fab.getContext().getResources().getInteger(android.R.integer.config_shortAnimTime));
                 translateAnimation.setFillAfter(true);
                 translateAnimation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
@@ -186,7 +189,7 @@ public class FAButtonUtil {
                 isAnimating = true;
 
                 TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 2f);
-                translateAnimation.setInterpolator(fab.getContext(), android.R.anim.accelerate_interpolator);
+                translateAnimation.setInterpolator(fab.getContext(), ACCELERATE_INTERPOLATOR);
                 translateAnimation.setDuration(fab.getContext().getResources().getInteger(android.R.integer.config_shortAnimTime));
                 translateAnimation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
 
@@ -213,6 +216,7 @@ public class FAButtonUtil {
 
             }
 
+
             private void show(View fab) {
 
                 if (fab.getVisibility() == View.VISIBLE || isAnimating) {
@@ -224,7 +228,7 @@ public class FAButtonUtil {
                 fab.setVisibility(View.VISIBLE);
 
                 TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 2f, Animation.RELATIVE_TO_SELF, 0f);
-                translateAnimation.setInterpolator(fab.getContext(), android.R.anim.accelerate_interpolator);
+                translateAnimation.setInterpolator(fab.getContext(), ACCELERATE_INTERPOLATOR);
                 translateAnimation.setDuration(fab.getContext().getResources().getInteger(android.R.integer.config_shortAnimTime));
                 translateAnimation.setFillAfter(true);
                 translateAnimation.setStartTime(AnimationUtils.currentAnimationTimeMillis());

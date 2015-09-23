@@ -2,11 +2,11 @@ package com.tosslab.jandi.app.ui.intro;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.presenter.IntroActivityPresenter;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
@@ -28,7 +28,7 @@ import org.androidannotations.annotations.UiThread;
  */
 @Fullscreen
 @EActivity(R.layout.activity_intro)
-public class IntroActivity extends AppCompatActivity implements IntroActivityPresenter.View {
+public class IntroActivity extends BaseAppCompatActivity implements IntroActivityPresenter.View {
 
     @Extra
     boolean startForInvite = false;

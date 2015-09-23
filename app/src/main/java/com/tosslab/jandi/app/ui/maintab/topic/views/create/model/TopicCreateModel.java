@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -68,7 +67,6 @@ public class TopicCreateModel {
                         .property(PropertyKey.TopicId, topicId)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.TopicCreate.name(), "ResponseSuccess");
     }
 
     public void trackTopicCreateFail(int errorCode) {
@@ -81,6 +79,5 @@ public class TopicCreateModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.TopicCreate.name(), "ResponseFail");
     }
 }

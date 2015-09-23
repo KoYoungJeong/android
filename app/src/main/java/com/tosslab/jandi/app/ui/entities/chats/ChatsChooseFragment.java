@@ -26,6 +26,8 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -139,7 +141,12 @@ public class ChatsChooseFragment extends Fragment {
     public void onEventMainThread(ShowProfileEvent event) {
         MemberProfileActivity_.intent(getActivity())
                 .memberId(event.userId)
+                .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
                 .start();
+
+        AnalyticsValue.Action action = AnalyticsUtil.getProfileAction(event.userId, event.from);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamMembers, action);
     }
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
@@ -190,6 +197,7 @@ public class ChatsChooseFragment extends Fragment {
 
     @Click(R.id.layout_member_empty)
     public void invitationDialogExecution() {
+        invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_CHAT_CHOOSE);
         invitationDialogExecutor.execute();
     }
 

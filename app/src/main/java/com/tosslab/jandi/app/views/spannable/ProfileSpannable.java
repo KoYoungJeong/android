@@ -21,6 +21,6 @@ public class ProfileSpannable extends ClickableSpan {
 
     @Override
     public void onClick(View widget) {
-        EventBus.getDefault().post(new ShowProfileEvent(entityId));
+        EventBus.getDefault().post(new ShowProfileEvent(entityId, ShowProfileEvent.From.SystemMessage));
     }
 }

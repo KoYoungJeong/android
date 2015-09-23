@@ -14,6 +14,8 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 import java.util.ArrayList;
@@ -24,13 +26,13 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Steve SeongUg Jung on 15. 1. 14..
  */
-public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersViewHolder> {
+public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
 
     private List<ChatChooseItem> memberChooseItems;
 
-    private boolean checkMode = false;
+    private boolean isCheckMode = false;
 
     public MembersAdapter(Context context) {
         this.context = context;
@@ -46,86 +48,24 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
     }
 
     @Override
-    public MembersViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        MembersViewHolder membersViewHolder;
-        View convertView;
-        if (checkMode) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body_one_line, parent, false);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        if (isCheckMode) {
+            View itemView = inflater.inflate(R.layout.item_entity_body_one_line, parent, false);
+            return new MemberChoiceViewHolder(itemView);
         } else {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body_two_line, parent, false);
+            View itemView = inflater.inflate(R.layout.item_entity_body_two_line, parent, false);
+            return new MemberViewHolder(itemView);
         }
-
-        membersViewHolder = new MembersViewHolder(convertView);
-        membersViewHolder.textViewName = (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
-        membersViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_icon);
-        membersViewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.tv_entity_listitem_fav);
-        membersViewHolder.disableLineThrouthView = convertView.findViewById(R.id.iv_entity_listitem_line_through);
-        membersViewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
-
-        if (!checkMode) {
-            membersViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.tv_entity_listitem_additional);
-        } else {
-            membersViewHolder.chooseCheckBox = (CheckBox) convertView.findViewById(R.id.cb_user);
-        }
-
-        return membersViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(MembersViewHolder membersViewHolder, int position) {
-
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ChatChooseItem item = getItem(position);
-
-        membersViewHolder.textViewName.setText(item.getName());
-
-
-            if (!TextUtils.isEmpty(item.getEmail())) {
-                membersViewHolder.textViewAdditional.setVisibility(View.VISIBLE);
-            } else {
-                membersViewHolder.textViewAdditional.setVisibility(View.GONE);
-            }
-            membersViewHolder.textViewAdditional.setText(item.getEmail());
-
-        if (item.isStarred()) {
-            membersViewHolder.imageViewFavorite.setVisibility(View.VISIBLE);
+        if (isCheckMode) {
+            ((MemberChoiceViewHolder) holder).bindView(item);
         } else {
-            membersViewHolder.imageViewFavorite.setVisibility(View.GONE);
-        }
-
-        Ion.with(membersViewHolder.imageViewIcon)
-                .placeholder(R.drawable.profile_img)
-                .error(R.drawable.profile_img)
-                .transform(new IonCircleTransform())
-                .load(item.getPhotoUrl());
-
-        if (item.isEnabled()) {
-
-            membersViewHolder.disableLineThrouthView.setVisibility(View.GONE);
-            membersViewHolder.disableCoverView.setVisibility(View.GONE);
-
-        } else {
-
-            membersViewHolder.disableLineThrouthView.setVisibility(View.VISIBLE);
-            membersViewHolder.disableCoverView.setVisibility(View.VISIBLE);
-        }
-
-        if (checkMode) {
-            membersViewHolder.chooseCheckBox.setVisibility(View.VISIBLE);
-            membersViewHolder.imageViewIcon.setOnClickListener(v -> EventBus.getDefault().post(new
-                    ShowProfileEvent(item.getEntityId())));
-            membersViewHolder.chooseCheckBox.setChecked(item.isChooseItem());
-            membersViewHolder.chooseCheckBox.setTag(item);
-
-            membersViewHolder.chooseCheckBox.setOnClickListener(v -> {
-                CheckBox cb = (CheckBox) v;
-                ChatChooseItem selectedItem = (ChatChooseItem) cb.getTag();
-                selectedItem.setIsChooseItem(cb.isChecked());
-            });
-
-        } else {
-            membersViewHolder.itemView.setOnClickListener(v -> EventBus.getDefault().post(new
-                    ShowProfileEvent(item.getEntityId())));
+            ((MemberViewHolder) holder).bindView(item);
         }
     }
 
@@ -147,8 +87,8 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
         memberChooseItems.clear();
     }
 
-    public void setEnableCheckMode() {
-        checkMode = true;
+    public void setCheckMode() {
+        isCheckMode = true;
     }
 
     public List<Integer> getSelectedUserIds() {
@@ -161,19 +101,89 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersV
         return selectedUserIds;
     }
 
-    static class MembersViewHolder extends RecyclerView.ViewHolder {
-        public Context context;
-        public ImageView imageViewIcon;
-        public ImageView imageViewFavorite;
-        public TextView textViewName;
-        public TextView textViewAdditional;
-        public View disableLineThrouthView;
-        public View disableCoverView;
-        public CheckBox chooseCheckBox;
+    static class MemberChoiceViewHolder extends RecyclerView.ViewHolder {
+        private ImageView ivIcon;
+        private ImageView ivFavorite;
+        private TextView tvName;
+        private View vDisableLineThrough;
+        private View vDisableCover;
+        private CheckBox cbChoose;
 
-        public MembersViewHolder(View itemView) {
+        public MemberChoiceViewHolder(View itemView) {
             super(itemView);
+            tvName = (TextView) itemView.findViewById(R.id.tv_entity_listitem_name);
+            ivIcon = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_icon);
+            ivFavorite = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_fav);
+            vDisableLineThrough = itemView.findViewById(R.id.iv_entity_listitem_line_through);
+            vDisableCover = itemView.findViewById(R.id.v_entity_listitem_warning);
+            cbChoose = (CheckBox) itemView.findViewById(R.id.cb_user);
+        }
+
+        public void bindView(final ChatChooseItem item) {
+            tvName.setText(item.getName());
+
+            ivFavorite.setVisibility(item.isStarred() ? View.VISIBLE : View.GONE);
+
+            vDisableLineThrough.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
+            vDisableCover.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
+
+            Ion.with(ivIcon)
+                    .placeholder(R.drawable.profile_img)
+                    .error(R.drawable.profile_img)
+                    .transform(new IonCircleTransform())
+                    .load(item.getPhotoUrl());
+
+            cbChoose.setChecked(item.isChooseItem());
+            itemView.setOnClickListener(v -> {
+                boolean isChecked = cbChoose.isChecked();
+                cbChoose.setChecked(!isChecked);
+                item.setIsChooseItem(!isChecked);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.SelectMember);
+            });
+
+            ivIcon.setOnClickListener(v ->
+                    EventBus.getDefault().post(new ShowProfileEvent(item.getEntityId())));
+
         }
     }
 
+    static class MemberViewHolder extends RecyclerView.ViewHolder {
+        private ImageView ivIcon;
+        private ImageView ivFavorite;
+        private TextView tvName;
+        private TextView tvAdditional;
+        private View vDisableLineThrough;
+        private View vDisableCover;
+
+        public MemberViewHolder(View itemView) {
+            super(itemView);
+            tvName = (TextView) itemView.findViewById(R.id.tv_entity_listitem_name);
+            tvAdditional = (TextView) itemView.findViewById(R.id.tv_entity_listitem_user_count);
+            ivIcon = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_icon);
+            ivFavorite = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_fav);
+            vDisableLineThrough = itemView.findViewById(R.id.iv_entity_listitem_line_through);
+            vDisableCover = itemView.findViewById(R.id.v_entity_listitem_warning);
+        }
+
+        public void bindView(ChatChooseItem item) {
+            tvName.setText(item.getName());
+
+            tvAdditional.setVisibility(!TextUtils.isEmpty(item.getEmail()) ? View.VISIBLE : View.GONE);
+            tvAdditional.setText(item.getEmail());
+
+            ivFavorite.setVisibility(item.isStarred() ? View.VISIBLE : View.GONE);
+
+            vDisableLineThrough.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
+            vDisableCover.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
+
+            Ion.with(ivIcon)
+                    .placeholder(R.drawable.profile_img)
+                    .error(R.drawable.profile_img)
+                    .transform(new IonCircleTransform())
+                    .load(item.getPhotoUrl());
+
+            itemView.setOnClickListener(v ->
+                    EventBus.getDefault().post(new ShowProfileEvent(item.getEntityId())));
+        }
+    }
 }

@@ -25,7 +25,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
-import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
@@ -56,6 +55,7 @@ import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
@@ -101,6 +101,7 @@ import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.UpdateMessageQueue;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
@@ -120,7 +121,8 @@ import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -332,9 +334,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                         .property(PropertyKey.ScreenView, screenView)
                         .build());
 
-        GoogleAnalyticsUtil.sendScreenName(screenView == ScreenViewProperty.PRIVATE_TOPIC ?
-                "PRIVATE_TOPIC" : "PUBLIC_TOPIC");
-
         setUpActionbar();
         setHasOptionsMenu(true);
 
@@ -372,6 +371,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
 
+        AnalyticsUtil.sendScreenName(messageListModel.getScreen(entityId));
     }
 
     private void initKeyboardEvent() {
@@ -422,8 +422,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 stickerInfo.setStickerId(stickerId);
                 showStickerPreview(oldSticker, stickerInfo);
                 messageListPresenter.setEnableSendButton(true);
+                AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_Select);
             }
         });
+
+        stickerViewModel.setType(messageListModel.isUser(entityId) ? StickerViewModel.TYPE_MESSAGE : StickerViewModel.TYPE_TOPIC);
     }
 
     private void initMessageList() {
@@ -433,6 +436,24 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             } catch (Exception e) {
                 messageListPresenter.justRefresh();
             }
+
+            int itemViewType = adapter.getItemViewType(position);
+
+            BodyViewHolder.Type type = BodyViewHolder.Type.values()[itemViewType];
+            switch (type) {
+                case File:
+                    AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.FileView_ByFile);
+                    break;
+                case FileComment:
+                case FileStickerComment:
+                    break;
+                case CollapseStickerComment:
+                case CollapseComment:
+                case PureComment:
+                case PureStickerComment:
+                    AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.FileView_ByComment);
+                    break;
+            }
         });
 
         messageListPresenter.setOnItemLongClickListener((adapter, position) -> {
@@ -441,6 +462,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             } catch (Exception e) {
                 messageListPresenter.justRefresh();
             }
+            AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MsgLongTap);
+
             return true;
         });
 
@@ -522,7 +545,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             }
 
         }
-        messageListModel.trackGetOldMessage(entityType);
     }
 
     private void loadNewMessage(MessageQueue messageQueue) {
@@ -591,6 +613,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.dismissStickerPreview();
         messageListPresenter.setEnableSendButton(false);
 
+        AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_cancel);
     }
 
     @Click(R.id.vg_message_offline)
@@ -777,6 +800,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (selected) {
             stickerViewModel.dismissStickerSelector();
+
+            AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker);
         } else {
             int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity());
             if (keyboardHeight > 0) {
@@ -789,6 +814,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                         }
                     });
                 }
+                AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker);
             } else {
                 initKeyboardHeight();
             }
@@ -824,6 +850,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Click(R.id.btn_upload_file)
     void onUploadClick() {
         filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
+        AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Upload);
     }
 
     @Click(R.id.btn_send_message)
@@ -858,6 +885,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
             StickerRepository.getRepository().upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo), mentions)));
+
+            AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_Send);
         } else {
             if (TextUtils.isEmpty(message)) {
                 return;
@@ -888,6 +917,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.setEnableSendButton(false);
         messageListPresenter.setSendEditText("");
 
+        AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Send);
+
+
     }
 
     public void onEvent(TopicInviteEvent event) {
@@ -902,6 +934,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         int teamMemberCountWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe().size();
 
         if (teamMemberCountWithoutMe <= 0) {
+            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_TOPIC_CHAT);
             invitationDialogExecutor.execute();
         } else {
             InvitationViewModel invitationViewModel = InvitationViewModel_.getInstance_(getActivity());
@@ -976,6 +1009,23 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
         filePickerViewModel.selectFileSelector(event.type, MessageListFragment.this, entityId);
+
+        AnalyticsValue.Action action;
+        switch (event.type) {
+            default:
+            case FilePickerViewModel.TYPE_UPLOAD_GALLERY:
+                action = AnalyticsValue.Action.Upload_Photo;
+                break;
+            case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
+                action = AnalyticsValue.Action.Upload_Camera;
+                break;
+            case FilePickerViewModel.TYPE_UPLOAD_EXPLORER:
+                action = AnalyticsValue.Action.Upload_File;
+                break;
+        }
+
+        AnalyticsValue.Screen screen = messageListModel.getScreen(entityId);
+        AnalyticsUtil.sendEvent(screen, action);
     }
 
     public void onEvent(NetworkConnectEvent event) {
@@ -1046,6 +1096,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     }
 
+    @Click(R.id.et_message)
+    void onMessageInputClick() {
+        AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MessageInputField);
+    }
+
     void onMessageItemClick(ResMessages.Link link, int entityId) {
         if (link instanceof DummyMessageLink) {
             DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
@@ -1058,13 +1113,21 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (messageListModel.isFileType(link.message)) {
             messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.messageId,
                     roomId, link.messageId);
+            if (((ResMessages.FileMessage) link.message).content.type.startsWith("image")) {
+                AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.FileView_ByPhoto);
+            } else {
+                AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.FileView_ByFile);
+            }
         } else if (messageListModel.isCommentType(link.message)) {
             messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message
                     .feedbackId, roomId, link.messageId);
+            AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.FileView_ByComment);
         } else if (messageListModel.isStickerCommentType(link.message)) {
             messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message
                     .feedbackId, roomId, link.messageId);
+            AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.FileView_ByComment);
         }
+
     }
 
     @OnActivityResult(TopicDetailActivity.REQUEST_DETAIL)
@@ -1164,6 +1227,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         deleteMessage(event.messageType, event.messageId);
 
+        AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MsgLongTap_Delete);
+
     }
 
     public void onEvent(ConfirmCopyMessageEvent event) {
@@ -1171,6 +1236,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
         messageListPresenter.copyToClipboard(event.contentString);
+        AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MsgLongTap_Copy);
     }
 
     public void onEvent(ConfirmFileUploadEvent event) {
@@ -1397,7 +1463,16 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         MemberProfileActivity_.intent(getActivity())
                 .memberId(event.userId)
+                .from(messageListModel.getScreen(entityId) == AnalyticsValue.Screen.Message ?
+                        MemberProfileActivity.EXTRA_FROM_MESSAGE : MemberProfileActivity.EXTRA_FROM_TOPIC_CHAT)
                 .start();
+
+        if (event.from != null) {
+
+            AnalyticsValue.Screen screen = messageListModel.getScreen(entityId);
+            AnalyticsUtil.sendEvent(screen, AnalyticsUtil.getProfileAction(event.userId, event.from));
+        }
+
     }
 
     public void onEventMainThread(ChatCloseEvent event) {
@@ -1496,19 +1571,22 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             announcementViewModel.openAnnouncement(false);
             announcementModel.setActionFromUser(true);
             announcementModel.updateAnnouncementStatus(teamId, roomId, false);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Minimize);
         });
         announcementViewModel.setOnAnnouncementOpenListener(() -> {
             announcementViewModel.openAnnouncement(true);
             announcementModel.setActionFromUser(true);
             announcementModel.updateAnnouncementStatus(teamId, roomId, true);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Announcement_ExpandFromMinimize);
         });
     }
 
     public void onEvent(SocketAnnouncementEvent event) {
         SocketAnnouncementEvent.Type eventType = event.getEventType();
         switch (eventType) {
-            case CREATED:
             case DELETED:
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Delete);
+            case CREATED:
                 if (!isForeground) {
                     messageListModel.updateMarkerInfo(teamId, roomId);
                     return;
@@ -1537,6 +1615,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         switch (event.getAction()) {
             case CREATE:
                 checkAnnouncementExistsAndCreate(event.getMessageId());
+                AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MsgLongTap_Announce);
                 break;
             case DELETE:
                 deleteAnnouncement();
@@ -1563,6 +1642,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                     e.printStackTrace();
                 }
 
+                AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MsgLongTap_Star);
                 break;
             case UNSTARRED:
                 try {
@@ -1573,6 +1653,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 } catch (RetrofitError e) {
                     e.printStackTrace();
                 }
+                AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MsgLongTap_Unstar);
                 break;
         }
     }
