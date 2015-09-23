@@ -11,6 +11,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class SocketLinkPreviewMessageEvent {
+    private int teamId;
     private String event;
     private String messageType;
 
@@ -25,6 +26,14 @@ public class SocketLinkPreviewMessageEvent {
 
     public void setRoom(MessageRoom room) {
         this.room = room;
+    }
+
+    public int getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
     }
 
     public String getEvent() {
@@ -62,7 +71,8 @@ public class SocketLinkPreviewMessageEvent {
     @Override
     public String toString() {
         return "SocketLinkPreviewMessageEvent{" +
-                "event='" + event + '\'' +
+                "teamId='" + teamId + '\'' +
+                ", event='" + event + '\'' +
                 ", messageType='" + messageType + '\'' +
                 ", room=" + room +
                 ", writer=" + writer +

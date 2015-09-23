@@ -3,25 +3,16 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.manager.LinkPreviewManager;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 18..
@@ -39,11 +30,8 @@ public class LinkPreviewViewModel {
     private Context context;
     private ViewGroup vgLinkPreview;
 
-    private Map<String, Boolean> errorThumbnailMap;
-
     public LinkPreviewViewModel(Context context) {
         this.context = context;
-        errorThumbnailMap = new HashMap<>();
     }
 
     public void initView(View rootView) {
@@ -80,69 +68,28 @@ public class LinkPreviewViewModel {
 
         onLinkPreviewClickListener.setLinkUrl(linkPreview.linkUrl);
 
+        boolean useThumbnail = linkPreview.useThumbnail;
+
+        if (!useThumbnail) {
+            ivThumb.setImageDrawable(null);
+            vgThumb.setVisibility(View.GONE);
+            return;
+        }
+
         final String imageUrl = linkPreview.imageUrl;
         if (TextUtils.isEmpty(imageUrl)) {
-            LogUtil.e(TAG, "imageUrl is null");
-            vgThumb.setVisibility(View.GONE);
-            ivThumb.setImageDrawable(null);
-        } else {
-            LogUtil.i(TAG, "imageUrl =" + imageUrl);
-            if (errorThumbnailMap.containsKey(imageUrl)) {
-                LogUtil.e(TAG, "imageUrl(" + imageUrl + ") has error.");
-                vgThumb.setVisibility(View.GONE);
-                ivThumb.setImageDrawable(null);
-                return;
-            }
-
-            vgThumb.setVisibility(View.VISIBLE);
-
-            if (!isThumbnail(imageUrl)) {
-                if (!LinkPreviewManager.getInstance().isError(link.id)) {
-                    ivThumb.setImageResource(R.drawable.link_preview);
-                    LinkPreviewManager.getInstance().setWait(link.id, linkId ->
-                            isThumbnail(((ResMessages.TextMessage) link.message).linkPreview.imageUrl));
-                } else {
-                    vgThumb.setVisibility(View.GONE);
-                    ivThumb.setImageDrawable(null);
-                }
-            } else {
-                LinkPreviewManager.getInstance().setComplete(link.id);
-                Glide.with(context)
-                        .load(imageUrl)
-                        .asBitmap()
-                        .centerCrop()
-                        .placeholder(R.drawable.link_preview)
-                        .listener(new RequestListener<String, Bitmap>() {
-                            @Override
-                            public boolean onException(Exception e,
-                                                       String model, Target<Bitmap> target,
-                                                       boolean isFirstResource) {
-                                LogUtil.e(TAG, "error - " + model);
-                                LogUtil.e(TAG, Log.getStackTraceString(e));
-
-                                if (imageUrl.equals(model)) {
-                                    errorThumbnailMap.put(model, true);
-                                    vgThumb.setVisibility(View.GONE);
-                                }
-                                return true;
-                            }
-
-                            @Override
-                            public boolean onResourceReady(Bitmap resource,
-                                                           String model, Target<Bitmap> target,
-                                                           boolean isFromMemoryCache,
-                                                           boolean isFirstResource) {
-
-                                return false;
-                            }
-                        })
-                        .into(ivThumb);
-            }
-
+            return;
         }
-    }
 
-    private boolean isThumbnail(String imageUrl) {return imageUrl.contains("jandi-box.com/linkpreview-thumb");}
+        vgThumb.setVisibility(View.VISIBLE);
+
+        Glide.with(context)
+                .load(imageUrl)
+                .asBitmap()
+                .centerCrop()
+                .placeholder(R.drawable.link_preview)
+                .into(ivThumb);
+    }
 
     private static class OnLinkPreviewClickListener implements View.OnClickListener {
         private final Context context;

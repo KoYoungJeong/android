@@ -793,6 +793,8 @@ public class ResMessages {
         public String imageUrl;
         @DatabaseField
         public String domain;
+        @DatabaseField
+        public boolean useThumbnail = false;
 
         public boolean isEmpty() {
             return TextUtils.isEmpty(linkUrl);
@@ -806,6 +808,7 @@ public class ResMessages {
                     ", title='" + title + '\'' +
                     ", imageUrl='" + imageUrl + '\'' +
                     ", domain='" + domain + '\'' +
+                    ", useThumbnail='" + useThumbnail + '\'' +
                     '}';
         }
     }

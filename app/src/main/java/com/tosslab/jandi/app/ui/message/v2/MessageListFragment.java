@@ -43,6 +43,7 @@ import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.DummyDeleteEvent;
 import com.tosslab.jandi.app.events.messages.DummyRetryEvent;
+import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
@@ -74,8 +75,6 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
@@ -94,17 +93,14 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.ui.message.to.UpdateMessage;
 import com.tosslab.jandi.app.ui.message.to.queue.CheckAnnouncementQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
-import com.tosslab.jandi.app.ui.message.to.queue.UpdateLinkPreviewQueue;
-import com.tosslab.jandi.app.ui.message.to.queue.UpdateMessageQueue;
+import com.tosslab.jandi.app.ui.message.to.queue.UpdateLinkPreviewMessageQueue;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.manager.LinkPreviewManager;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
@@ -122,6 +118,7 @@ import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -265,9 +262,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                             break;
                         case CheckAnnouncement:
                             getAnnouncement();
-                            break;
-                        case Update:
-                            updateMessage(messageQueue);
                             break;
                         case UpdateLinkPreview:
                             updateLinkPreview(messageQueue);
@@ -594,25 +588,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         announcementViewModel.setAnnouncement(announcement, announcementModel.isAnnouncementOpened(entityId));
     }
 
-    private void updateMessage(MessageQueue messageQueue) {
-        UpdateMessage updateMessage = (UpdateMessage) messageQueue.getData();
-        ResMessages.OriginalMessage message =
-                messageListModel.getMessage(teamId, updateMessage.getMessageId());
-        if (message != null && message instanceof ResMessages.TextMessage) {
-            MessageRepository.getRepository().upsertTextMessage((ResMessages.TextMessage) message);
-        }
-
-        messageListPresenter.updateMessage(message);
-    }
-
     private void updateLinkPreview(MessageQueue messageQueue) {
-        SocketLinkPreviewThumbnailEvent event = (SocketLinkPreviewThumbnailEvent) messageQueue.getData();
-        if (!messageListModel.upsertLinkPreviewThumbnail(event)) {
-            return;
-        }
-        SocketLinkPreviewThumbnailEvent.Data data = event.getData();
+        int messageId = (Integer) messageQueue.getData();
 
-        messageListPresenter.updateLinkPreviewMessage(data.getMessageId(), data.getLinkPreview());
+        ResMessages.TextMessage textMessage = MessageRepository.getRepository().getTextMessage(messageId);
+
+        messageListPresenter.updateLinkPreviewMessage(textMessage);
+
         if (isForeground) {
             messageListPresenter.justRefresh();
         }
@@ -1439,21 +1421,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         mentionControlViewModel.refreshMembers(Arrays.asList(roomId));
     }
 
-    public void onEvent(SocketLinkPreviewMessageEvent event) {
-        SocketLinkPreviewMessageEvent.Message message = event.getMessage();
-        if (message == null || message.isEmpty()) {
+    public void onEvent(LinkPreviewUpdateEvent event) {
+        int messageId = event.getMessageId();
+        if (messageId <= 0) {
             return;
         }
 
-        sendMessagePublisherEvent(new UpdateMessageQueue(teamId, message.getId()));
-
-    }
-
-    public void onEvent(SocketLinkPreviewThumbnailEvent event) {
-        String imageUrl = event.getData() != null ? event.getData().getLinkPreview() != null ?
-                event.getData().getLinkPreview().imageUrl : "null" : "null";
-
-        sendMessagePublisherEvent(new UpdateLinkPreviewQueue(event));
+        sendMessagePublisherEvent(new UpdateLinkPreviewMessageQueue(messageId));
     }
 
     void updateRoomInfo() {
