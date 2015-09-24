@@ -516,5 +516,6 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_no_topic_to_join">No topics to join</string>
     <string name="jandi_1_1_message">1:1 Message</string>
     <string name="jandi_no_long_team_member">"%s is no longer a team member."</string>
+    <string name="jandi_your_access_disabled">Your access to %s has been disabled.</string>
 
 </resources>
