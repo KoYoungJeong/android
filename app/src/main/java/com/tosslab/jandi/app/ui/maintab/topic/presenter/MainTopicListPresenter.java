@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.topic.presenter;
 
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -30,6 +31,8 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.Observable;
+import rx.Subscriber;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by tee on 15. 8. 26..
@@ -43,41 +46,81 @@ public class MainTopicListPresenter {
 
     View view;
 
+    private List<ResFolder> topicFolders;
+    private List<ResFolderItem> topicFolderItems;
+
     public void setView(View view) {
         this.view = view;
     }
 
     public void onLoadList() {
         TopicFolderRepository repository = TopicFolderRepository.getRepository();
-        List<ResFolderItem> topicFolderItems = repository.getFolderItems();
-        List<ResFolder> topicFolders = repository.getFolders();
-        List<FolderExpand> folderExpands = repository.getFolderExpands();
-        view.showList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems), folderExpands);
+        topicFolders = repository.getFolders();
+        topicFolderItems = repository.getFolderItems();
+        onRefreshList(topicFolders, topicFolderItems, false);
+        view.showList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
     }
 
     @Background
-    public void onInitList() {
-        try {
-            List<ResFolder> topicFolders = mainTopicModel.getTopicFolders();
-            List<ResFolderItem> topicFolderItems = mainTopicModel.getTopicFolderItems();
-            mainTopicModel.saveFolderDataInDB(topicFolders, topicFolderItems);
-            view.refreshList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
+    public void onRefreshList(List<ResFolder> inMemTopicFolders, List<ResFolderItem> inMemTopicFolderItems, boolean onlyInMemory) {
+
+        if (onlyInMemory) {
+            refreshListView(mainTopicModel.getDataProvider(inMemTopicFolders, inMemTopicFolderItems));
+            return;
         }
+
+        Observable.combineLatest(
+                Observable.create(new Observable.OnSubscribe<List<ResFolder>>() {
+                    @Override
+                    public void call(Subscriber<? super List<ResFolder>> subscriber) {
+                        try {
+                            List<ResFolder> topicFolders = mainTopicModel.getTopicFolders();
+                            subscriber.onNext(topicFolders);
+                            subscriber.onCompleted();
+                        } catch (RetrofitError retrofitError) {
+                            subscriber.onError(retrofitError);
+                        }
+                    }
+                }), Observable.create(new Observable.OnSubscribe<List<ResFolderItem>>() {
+                    @Override
+                    public void call(Subscriber<? super List<ResFolderItem>> subscriber) {
+                        try {
+                            List<ResFolderItem> topicFolderItems = mainTopicModel.getTopicFolderItems();
+                            subscriber.onNext(topicFolderItems);
+                            subscriber.onCompleted();
+                        } catch (RetrofitError retrofitError) {
+                            subscriber.onError(retrofitError);
+                        }
+                    }
+                }), (resFolders, resFolderItems) -> {
+                    if (((inMemTopicFolders == null) && (inMemTopicFolderItems == null))
+                            || !(mainTopicModel.isFolderSame(resFolders, inMemTopicFolders)
+                            && mainTopicModel.isFolderItemSame(resFolderItems, inMemTopicFolderItems))) {
+                        mainTopicModel.saveFolderDataInDB(resFolders, resFolderItems);
+                        this.topicFolders = resFolders;
+                        this.topicFolderItems = resFolderItems;
+                        Pair<Boolean, TopicFolderListDataProvider> dataProviderPair =
+                                new Pair<>(true, mainTopicModel.getDataProvider(resFolders, resFolderItems));
+                        return dataProviderPair;
+                    } else {
+                        return Pair.create(false, null);
+                    }
+
+                }).subscribeOn(Schedulers.io())
+                .subscribe(data -> {
+                    boolean isExecute = data.first;
+                    if (isExecute) {
+                        TopicFolderListDataProvider provider = (TopicFolderListDataProvider) data.second;
+                        refreshListView(provider);
+                        view.setFolderExpansion();
+                    }
+                    //view.startAnimationSelectedItem();
+                }, Throwable::printStackTrace);
+
     }
 
-    @Background
-    public void onRefreshList() {
-        try {
-            List<ResFolder> topicFolders = mainTopicModel.getTopicFolders();
-            List<ResFolderItem> topicFolderItems = mainTopicModel.getTopicFolderItems();
-            mainTopicModel.saveFolderDataInDB(topicFolders, topicFolderItems);
-            view.refreshList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
-        }
-        view.startAnimationSelectedItem();
+    public void refreshListView(TopicFolderListDataProvider provider) {
+        view.refreshList(provider);
     }
 
     public void onChildItemClick(RecyclerView.Adapter adapter, int groupPosition, int childPosition) {
@@ -158,9 +201,21 @@ public class MainTopicListPresenter {
                 .upsertFolderExpands(topicFolderData.getFolderId(), false);
     }
 
+    public List<ResFolder> onGetTopicFolders() {
+        return topicFolders;
+    }
+
+    public List<ResFolderItem> onGetTopicFolderItems() {
+        return topicFolderItems;
+    }
+
+    public List<FolderExpand> onGetFolderExpands() {
+        TopicFolderRepository repository = TopicFolderRepository.getRepository();
+        return repository.getFolderExpands();
+    }
 
     public interface View {
-        void showList(TopicFolderListDataProvider topicFolderListDataProvider, List<FolderExpand> folderExpands);
+        void showList(TopicFolderListDataProvider topicFolderListDataProvider);
 
         void refreshList(TopicFolderListDataProvider topicFolderListDataProvider);
 
@@ -181,6 +236,8 @@ public class MainTopicListPresenter {
         void setSelectedItem(int selectedEntity);
 
         void startAnimationSelectedItem();
+
+        void setFolderExpansion();
     }
 
 }
