@@ -1,8 +1,11 @@
 package com.tosslab.jandi.app.services.socket;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -46,7 +49,9 @@ import com.tosslab.jandi.app.services.socket.to.SocketTeamLeaveEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
+import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -58,7 +63,9 @@ import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
+import rx.Observable;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.PublishSubject;
 
 /**
@@ -449,7 +456,25 @@ public class JandiSocketServiceModel {
         try {
             SocketTeamLeaveEvent socketTeamLeaveEvent = objectMapper.readValue(object.toString(), SocketTeamLeaveEvent.class);
             TeamLeaveEvent teamLeaveEvent = new TeamLeaveEvent(socketTeamLeaveEvent.getTeam().getId(), socketTeamLeaveEvent.getMember().getId());
-            refreshEntity(teamLeaveEvent, false);
+
+            int leaveMemberId = socketTeamLeaveEvent.getMember().getId();
+            int myId = EntityManager.getInstance().getMe().getId();
+
+            if (leaveMemberId != myId) {
+                refreshEntity(teamLeaveEvent, false);
+            } else {
+                Observable.just(socketTeamLeaveEvent)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(leaveEvent -> {
+                            String teamName = JandiApplication.getContext().getString(R.string.jandi_your_access_disabled, leaveEvent.getTeam().getName());
+                            ColoredToast.showError(JandiApplication.getContext(), teamName);
+                        });
+                AccountRepository.getRepository().removeSelectedTeamInfo();
+                AccountHomeActivity_.intent(JandiApplication.getContext())
+                        .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .start();
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }

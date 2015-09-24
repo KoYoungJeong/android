@@ -35,8 +35,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ORIGIN = 1;
     private static final int DATABASE_VERSION_FOLDER = 2;
     private static final int DATABASE_VERSION_BADGE = 3;
-    private static final int DATABASE_VERSION_STICKER_SENDING = 4;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_STICKER_SENDING;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_BADGE;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -118,27 +117,33 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         if (oldVersion < newVersion) {
             try {
+
                 if (oldVersion == DATABASE_VERSION_ORIGIN) {
                     createTable(connectionSource, UploadedFileInfo.class);
                     createTable(connectionSource, ResFolder.class);
                     createTable(connectionSource, ResFolderItem.class);
                 }
 
-                createTable(connectionSource, BadgeCount.class);
+                if (oldVersion == DATABASE_VERSION_FOLDER) {
+                    createTable(connectionSource, BadgeCount.class);
+                    dropTable(connectionSource, ResFolderItem.class);
+                    createTable(connectionSource, ResFolderItem.class);
+
+                    try {
+                        Dao<SendMessage, ?> dao = DaoManager.createDao(connectionSource, SendMessage.class);
+                        dao.executeRawNoArgs("ALTER TABLE `message_send` ADD COLUMN stickerGroupId INTEGER;");
+                        dao.executeRawNoArgs("ALTER TABLE `message_send` ADD COLUMN stickerId VARCHAR;");
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return;
+
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
 
-            if (newVersion == DATABASE_VERSION_STICKER_SENDING) {
-                try {
-                    Dao<SendMessage, ?> dao = DaoManager.createDao(connectionSource, SendMessage.class);
-                    dao.executeRawNoArgs("ALTER TABLE `message_send` ADD COLUMN stickerGroupId INTEGER;");
-                    dao.executeRawNoArgs("ALTER TABLE `message_send` ADD COLUMN stickerId VARCHAR;");
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            return;
         }
 
         try {
