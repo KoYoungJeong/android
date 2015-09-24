@@ -57,6 +57,7 @@ import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
+import com.tosslab.jandi.app.network.models.ReqMember;
 import com.tosslab.jandi.app.network.models.ReqModifyComment;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
@@ -626,5 +627,10 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     @Override
     public ResCommon deleteFolderItemByTeamApi(int teamId, int folderId, int itemId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().deleteFolderItem(teamId, folderId, itemId);
+    }
+
+    @Override
+    public ResCommon kickUserFromTopic(int teamId, int topicId, ReqMember member) {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().kickUserFromTopic(teamId, topicId, member);
     }
 }
