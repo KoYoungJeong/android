@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.tosslab.jandi.app.local.orm.domain.BadgeCount;
@@ -33,7 +35,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ORIGIN = 1;
     private static final int DATABASE_VERSION_FOLDER = 2;
     private static final int DATABASE_VERSION_BADGE = 3;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_BADGE;
+    private static final int DATABASE_VERSION_STICKER_SENDING = 4;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_STICKER_SENDING;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -124,6 +127,16 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                 createTable(connectionSource, BadgeCount.class);
             } catch (SQLException e) {
                 e.printStackTrace();
+            }
+
+            if (newVersion == DATABASE_VERSION_STICKER_SENDING) {
+                try {
+                    Dao<SendMessage, ?> dao = DaoManager.createDao(connectionSource, SendMessage.class);
+                    dao.executeRawNoArgs("ALTER TABLE `message_send` ADD COLUMN stickerGroupId INTEGER;");
+                    dao.executeRawNoArgs("ALTER TABLE `message_send` ADD COLUMN stickerId VARCHAR;");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
             return;
         }
