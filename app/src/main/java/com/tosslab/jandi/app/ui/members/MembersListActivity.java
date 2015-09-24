@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -127,6 +128,9 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
         memberListView.setLayoutManager(new LinearLayoutManager(MembersListActivity.this,
                 RecyclerView.VERTICAL, false));
+        if (type != TYPE_MEMBERS_JOINABLE_TOPIC) {
+            memberListView.addItemDecoration(new SimpleDividerItemDecoration(MembersListActivity.this));
+        }
         memberListView.setAdapter(topicMembersAdapter);
         initProgressWheel();
 

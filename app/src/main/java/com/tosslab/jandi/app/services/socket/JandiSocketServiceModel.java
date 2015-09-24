@@ -312,7 +312,7 @@ public class JandiSocketServiceModel {
 
     public void startMarkerObserver() {
         markerPublishSubject = PublishSubject.create();
-        markerSubscribe = markerPublishSubject.throttleWithTimeout(1000 * 10, TimeUnit.MILLISECONDS)
+        markerSubscribe = markerPublishSubject.throttleWithTimeout(500, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
                 .subscribe(o -> {
                     EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);

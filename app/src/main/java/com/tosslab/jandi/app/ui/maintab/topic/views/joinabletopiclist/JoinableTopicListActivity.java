@@ -203,7 +203,7 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle("Join topic");
+        actionBar.setTitle(getString(R.string.jandi_browse_other_topics));
     }
 
     @Override
