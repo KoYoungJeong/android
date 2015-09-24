@@ -116,15 +116,22 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         if (oldVersion < newVersion) {
             try {
+
                 if (oldVersion == DATABASE_VERSION_ORIGIN) {
                     createTable(connectionSource, UploadedFileInfo.class);
                     createTable(connectionSource, ResFolder.class);
                     createTable(connectionSource, ResFolderItem.class);
-                } else if (oldVersion == DATABASE_VERSION_FOLDER_MODIFY) {
+                }
+
+                if (oldVersion == DATABASE_VERSION_FOLDER) {
+                    createTable(connectionSource, BadgeCount.class);
+                }
+
+                if (oldVersion == DATABASE_VERSION_BADGE) {
                     dropTable(connectionSource, ResFolderItem.class);
                     createTable(connectionSource, ResFolderItem.class);
                 }
-                createTable(connectionSource, BadgeCount.class);
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
