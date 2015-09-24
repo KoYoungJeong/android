@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <com.tosslab.jandi.app.views.LongClickableRelativeLayout
         android:id="@+id/vg_message_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -154,7 +154,7 @@
                 android:src="@drawable/icon_comment_arrow" />
         </RelativeLayout>
 
-    </RelativeLayout>
+    </com.tosslab.jandi.app.views.LongClickableRelativeLayout>
 
     <include
         android:id="@+id/vg_message_last_read"
