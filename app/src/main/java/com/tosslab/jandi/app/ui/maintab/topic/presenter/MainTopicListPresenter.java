@@ -210,7 +210,7 @@ public class MainTopicListPresenter {
     }
 
     public List<FolderExpand> onGetFolderExpands() {
-        TopicFolderRepository repository = TopicFolderRepository.getRepository();
+        TopicFolderRepository repository = TopicFolderRepository.저 사양폰을 위한 시스템 구조 재 구성 및 개선();
         return repository.getFolderExpands();
     }
 
