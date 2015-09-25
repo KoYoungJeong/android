@@ -213,9 +213,7 @@ public class MessageListPresenter {
 //        setSendEditText(tempMessage);
 
         if (isDisabled) {
-            sendLayoutVisibleGone();
-            disabledUser.setVisibility(View.VISIBLE);
-            setPreviewVisibleGone();
+            setDisableUser();
         }
 
         if (sendLayoutVisible) {
@@ -1083,7 +1081,14 @@ public class MessageListPresenter {
         String name = EntityManager.getInstance().getEntityNameById(entityId);
         String msg = activity.getString(R.string.jandi_no_long_team_member, name);
 
-        AlertUtil.showConfirmDialog(activity, msg, (dialog, which) -> finish(), false);
+        AlertUtil.showConfirmDialog(activity, msg, null, false);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void setDisableUser() {
+        sendLayoutVisibleGone();
+        disabledUser.setVisibility(View.VISIBLE);
+        setPreviewVisibleGone();
     }
 }
 

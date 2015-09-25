@@ -249,7 +249,6 @@ public class ShareSelectModel {
 
     public ArrayList<ExpandRoomData> getUserRoomDatas() {
         ArrayList<ExpandRoomData> dmDatas = new ArrayList<>();
-
         getUsers().subscribe(entities -> {
             for (FormattedEntity entity : entities) {
                 ExpandRoomData userData = new ExpandRoomData();

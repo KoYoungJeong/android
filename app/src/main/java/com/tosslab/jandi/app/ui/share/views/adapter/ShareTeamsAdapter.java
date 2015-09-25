@@ -29,8 +29,7 @@ public class ShareTeamsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = null;
-        itemView = LayoutInflater.from(JandiApplication.getContext())
+        View itemView = LayoutInflater.from(JandiApplication.getContext())
                 .inflate(R.layout.item_share_team_list, parent, false);
 
         TeamViewHolder viewHolder = new TeamViewHolder(itemView);

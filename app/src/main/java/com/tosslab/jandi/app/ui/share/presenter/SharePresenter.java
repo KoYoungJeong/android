@@ -78,7 +78,6 @@ public class SharePresenter {
                 view.finishOnUiThread();
                 return;
             }
-
             if (imagePath.startsWith("https://") || imagePath.startsWith("http://")) {
                 String downloadDir = GoogleImagePickerUtil.getDownloadPath();
                 String downloadName = GoogleImagePickerUtil.getWebImageName();

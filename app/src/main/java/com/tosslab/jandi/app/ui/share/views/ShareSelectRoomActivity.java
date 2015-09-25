@@ -84,6 +84,8 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
             getDms();
             lvRoomSelect.getLayoutManager().scrollToPosition(0);
         });
+
+        selectableViews[0].setSelected(true);
     }
 
     @Override

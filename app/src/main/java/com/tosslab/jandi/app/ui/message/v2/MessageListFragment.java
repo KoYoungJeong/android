@@ -1366,6 +1366,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (event.getMemberId() == entityId) {
             messageListPresenter.showLeavedMemberDialog(entityId);
+            messageListPresenter.setDisableUser();
         }
     }
 
