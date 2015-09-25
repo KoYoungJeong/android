@@ -363,7 +363,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
         }
 
         String filePath = filePickerViewModel.getFilePath(getApplicationContext(), FilePickerViewModel.TYPE_UPLOAD_GALLERY, imageData).get(0);
-        if (!TextUtils.isEmpty(filePath)) {
+        if (!TextUtils.isEmpty(filePath) && isJpgOrPng(filePath)) {
             try {
                 Crop.of(Uri.fromFile(new File(filePath)),
                         Uri.fromFile(File.createTempFile("temp_", ".jpg",
@@ -373,8 +373,17 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            ColoredToast.showWarning(ModifyProfileActivity.this, "지원하지 않는 이미지 형식입니다. png, jpeg 를 선택해주세요.");
         }
 
+    }
+
+    private boolean isJpgOrPng(String filePath) {
+        String filePathLowerCase = filePath.toLowerCase();
+        return filePathLowerCase.endsWith("png") ||
+                filePathLowerCase.endsWith("jpg") ||
+                filePathLowerCase.endsWith("jpeg");
     }
 
     @OnActivityResult(Crop.REQUEST_CROP)
