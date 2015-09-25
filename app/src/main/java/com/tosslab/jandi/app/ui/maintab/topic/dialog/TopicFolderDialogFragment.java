@@ -89,6 +89,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
                 .from(getActivity()).inflate(R.layout.input_edit_text_view, null);
 
         EditText input = (EditText) vgInputEditText.findViewById(R.id.et_input);
+        ((TextView) vgInputEditText.findViewById(R.id.tv_input_title)).setText(R.string.jandi_folder_rename);
 
         input.setText(name);
         input.setSelection(name.length());
