@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.maintab.topic.views.create;
 
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -15,6 +14,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.views.create.model.TopicCreateModel;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -39,7 +39,7 @@ import retrofit.client.Response;
  */
 @EActivity(R.layout.activity_topic_create)
 @OptionsMenu(R.menu.add_topic_text)
-public class TopicCreateActivity extends AppCompatActivity {
+public class TopicCreateActivity extends BaseAppCompatActivity {
 
     @Bean
     TopicCreateModel topicCreateModel;

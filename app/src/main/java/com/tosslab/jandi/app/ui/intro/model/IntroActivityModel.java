@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.DatabaseConsts;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -20,7 +21,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -125,8 +125,9 @@ public class IntroActivityModel {
                     RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            JandiPreference.setBadgeCount(context.getApplicationContext(), totalUnreadCount);
-            BadgeUtils.setBadge(context.getApplicationContext(), totalUnreadCount);
+            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+            badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
+            BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
             EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitError e) {
@@ -179,8 +180,6 @@ public class IntroActivityModel {
         Sprinkler.with(JandiApplication.getContext())
                 .track(builder.build())
                 .flush();
-
-        GoogleAnalyticsUtil.sendEvent(Event.SignIn.name(), "ResponseSuccess");
     }
 
     public void trackSignInFailAndFlush(int errorCode) {
@@ -193,7 +192,5 @@ public class IntroActivityModel {
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build())
                 .flush();
-
-        GoogleAnalyticsUtil.sendEvent(Event.SignIn.name(), "ResponseFail");
     }
 }

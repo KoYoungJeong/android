@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.members;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +15,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
@@ -24,9 +24,11 @@ import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -37,6 +39,7 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
@@ -47,15 +50,18 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
+import rx.Observable;
+
 /**
  * Created by tee on 15. 6. 3..
  */
 
 @EActivity(R.layout.activity_topic_member)
-public class MembersListActivity extends AppCompatActivity implements MembersListPresenter.View {
+public class MembersListActivity extends BaseAppCompatActivity implements MembersListPresenter.View {
 
-    public static final int TYPE_MEMBERS_LIST_TEAM = 0x01;
-    public static final int TYPE_MEMBERS_LIST_TOPIC = 0x02;
+    public static final int TYPE_MEMBERS_LIST_TEAM = 1;
+    public static final int TYPE_MEMBERS_LIST_TOPIC = 2;
+    public static final int TYPE_MEMBERS_JOINABLE_TOPIC = 3;
 
     @Extra
     int entityId;
@@ -84,8 +90,25 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
 
     @AfterInject
     void initObject() {
-        topicMembersAdapter = new MembersAdapter(getApplicationContext());
+        topicMembersAdapter = new MembersAdapter(getBaseContext());
+        if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
+            topicMembersAdapter.setCheckMode();
+        }
         membersListPresenter.setView(this);
+    }
+
+    private AnalyticsValue.Screen getScreen() {
+
+        switch (type) {
+            case TYPE_MEMBERS_JOINABLE_TOPIC:
+                return AnalyticsValue.Screen.InviteTeamMembers;
+            default:
+            case TYPE_MEMBERS_LIST_TEAM:
+                return AnalyticsValue.Screen.TeamMembers;
+            case TYPE_MEMBERS_LIST_TOPIC:
+                return AnalyticsValue.Screen.Participants;
+        }
+
     }
 
     @AfterViews
@@ -98,13 +121,15 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
                         .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_MEMBER)
                         .build());
 
-        GoogleAnalyticsUtil.sendScreenName("TEAM_MEMBER");
+        AnalyticsUtil.sendScreenName(getScreen());
 
         setupActionbar();
 
         memberListView.setLayoutManager(new LinearLayoutManager(MembersListActivity.this,
                 RecyclerView.VERTICAL, false));
-        memberListView.addItemDecoration(new SimpleDividerItemDecoration(MembersListActivity.this));
+        if (type != TYPE_MEMBERS_JOINABLE_TOPIC) {
+            memberListView.addItemDecoration(new SimpleDividerItemDecoration(MembersListActivity.this));
+        }
         memberListView.setAdapter(topicMembersAdapter);
         initProgressWheel();
 
@@ -129,11 +154,23 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
                 }
             });
         }
+
+
     }
 
     @TextChange(R.id.et_topic_member_search)
     void onSearchTextChange(CharSequence text) {
         membersListPresenter.onSearch(text);
+    }
+
+
+    @Click(R.id.et_topic_member_search)
+    void onSearchInputClick() {
+        if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
+            AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.SearchInviteMember);
+        } else {
+            AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.SearchInputField);
+        }
     }
 
     @Override
@@ -159,10 +196,13 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+
         if (type == TYPE_MEMBERS_LIST_TEAM) {
             actionBar.setTitle(R.string.jandi_team_member);
-        } else {
+        } else if (type == TYPE_MEMBERS_LIST_TOPIC) {
             actionBar.setTitle(R.string.jandi_topic_paricipants);
+        } else if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
+            actionBar.setTitle(R.string.jandi_invite_member_to_topic);
         }
 
     }
@@ -174,7 +214,27 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
 
         if (type == TYPE_MEMBERS_LIST_TOPIC) {
             MenuItem menuItem = menu.findItem(R.id.action_invitation);
-            menuItem.setTitle(R.string.jandi_topic_invitation);
+            menuItem.setVisible(false);
+        } else if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
+            MenuItem menuItem = menu.findItem(R.id.action_invitation);
+            menuItem.setIcon(R.drawable.icon_actionbar_check);
+            menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    List<Integer> selectedCdp = topicMembersAdapter.getSelectedUserIds();
+
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMembers, AnalyticsValue.Action.Invite);
+
+                    if (selectedCdp != null && !selectedCdp.isEmpty()) {
+                        membersListPresenter.inviteInBackground(selectedCdp, entityId);
+                        finish();
+                        return true;
+                    } else {
+                        showInviteFailed(getString(R.string.title_cdp_invite));
+                        return false;
+                    }
+                }
+            });
         }
         return true;
     }
@@ -221,17 +281,36 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     @OptionsItem(R.id.action_invitation)
     void onInviteOptionSelect() {
         if (type == TYPE_MEMBERS_LIST_TEAM) {
+            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_MEMBER);
             invitationDialogExecutor.execute();
-        } else {
+        } else if (type == TYPE_MEMBERS_LIST_TOPIC) {
             membersListPresenter.inviteMemberToTopic(entityId);
         }
     }
 
     @UiThread
     @Override
-    public void showListMembers(List<ChatChooseItem> topicMembers) {
+    public void showListMembers(List<ChatChooseItem> members) {
+        final List<Integer> selectedUserIds = topicMembersAdapter.getSelectedUserIds();
+
         topicMembersAdapter.clear();
-        topicMembersAdapter.addAll(topicMembers);
+
+        if (selectedUserIds != null && !selectedUserIds.isEmpty()) {
+            Observable.from(members)
+                    .filter(member -> {
+                        for (Integer ids : selectedUserIds) {
+                            boolean selected = ids == member.getEntityId();
+                            if (selected) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    })
+                    .subscribe(member -> {
+                        member.setIsChooseItem(true);
+                    });
+        }
+        topicMembersAdapter.addAll(members);
         topicMembersAdapter.notifyDataSetChanged();
     }
 
@@ -263,4 +342,19 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     public String getSearchText() {
         return tvSearch.getText().toString();
     }
+
+    @Override
+    @UiThread
+    public void showInviteSucceed(int memberSize) {
+        String rawString = getString(R.string.jandi_message_invite_entity);
+        String formatString = String.format(rawString, memberSize);
+        ColoredToast.show(this, formatString);
+    }
+
+    @Override
+    @UiThread
+    public void showInviteFailed(String errMessage) {
+        ColoredToast.showError(this, errMessage);
+    }
+
 }

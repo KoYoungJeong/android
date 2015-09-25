@@ -1,8 +1,5 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -36,9 +33,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
-import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
-import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.events.entities.MoveSharedEntityEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.ConfirmDeleteFileEvent;
@@ -51,13 +46,15 @@ import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
+import com.tosslab.jandi.app.ui.MixpanelAnalytics;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
@@ -65,6 +62,8 @@ import com.tosslab.jandi.app.ui.filedetail.fileinfo.FileHeadManager;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
@@ -73,8 +72,9 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
@@ -91,7 +91,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ItemLongClick;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -113,9 +112,8 @@ import static org.androidannotations.annotations.UiThread.Propagation;
 /**
  * Created by justinygchoi on 2014. 7. 19..
  */
-@OptionsMenu(R.menu.file_detail_activity_menu)
 @EActivity(R.layout.activity_file_detail)
-public class FileDetailActivity extends BaseAnalyticsActivity implements FileDetailPresenter.View {
+public class FileDetailActivity extends BaseAppCompatActivity implements FileDetailPresenter.View {
 
     private static final StickerInfo NULL_STICKER = new StickerInfo();
     @Extra
@@ -166,9 +164,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     private ProgressWheel progressWheel;
     private ProgressDialog progressDialog;
     private StickerInfo stickerInfo = NULL_STICKER;
+    private MixpanelAnalytics mixpanelAnalytics;
 
     @AfterViews
     public void initForm() {
+        mixpanelAnalytics = new MixpanelAnalytics();
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.ScreenView)
@@ -176,8 +176,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_DETAIL)
                         .build());
-
-        GoogleAnalyticsUtil.sendScreenName("FILE_DETAIL");
 
         setUpActionBar();
 
@@ -205,8 +203,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                     loadSticker(stickerInfo);
                 }
                 setSendButtonSelected(true);
+
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Select);
             }
         });
+        stickerViewModel.setType(StickerViewModel.TYPE_FILE_DETAIL);
 
         if (NetworkCheckUtil.isConnected()) {
             fileDetailPresenter.getFileDetail(fileId, false, false, selectMessageId);
@@ -217,6 +218,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         JandiPreference.setKeyboardHeight(FileDetailActivity.this, 0);
         addStarredButtonExecution();
+
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FileDetail);
     }
 
     @Override
@@ -238,6 +241,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             boolean starred = v.isSelected();
             updateFileStarred(!starred);
             fileDetailPresenter.changeStarredFileMessageState(fileId, !starred);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, !starred ? AnalyticsValue.Action.TurnOnStar : AnalyticsValue.Action.TurnOffStar);
 
         });
 
@@ -263,6 +267,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @ItemLongClick(R.id.lv_file_detail_comments)
     void onCommentLongClick(ResMessages.OriginalMessage item) {
         fileDetailPresenter.onLongClickComment(item);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap);
     }
 
     @Click(R.id.iv_file_detail_preview_sticker_close)
@@ -270,6 +275,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         FileDetailActivity.this.stickerInfo = NULL_STICKER;
         dismissStickerPreview();
         setSendButtonSelected(false);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_cancel);
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {
@@ -278,6 +285,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         }
 
         fileDetailPresenter.deleteComment(fileId, event.messageType, event.messageId, event.feedbackId);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap_Delete);
 
     }
 
@@ -286,6 +294,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             return;
         }
         copyToClipboard(event.contentString);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap_Copy);
     }
 
     public void onEventMainThread(TopicDeleteEvent event) {
@@ -312,15 +321,22 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                 return true;
             case R.id.action_file_detail_download:
                 download();
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu_Download);
                 return true;
             case R.id.action_file_detail_share:
                 clickShareButton();
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu_Share);
                 return true;
             case R.id.action_file_detail_unshare:
                 clickUnShareButton();
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu_UnShare);
                 return true;
             case R.id.action_file_detail_delete:
                 showDeleteFileDialog(fileId);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu_Delete);
+                return true;
+            case R.id.menu_overflow:
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu);
                 return true;
 
         }
@@ -371,6 +387,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     void onCommentTextChange(Editable editable) {
         int inputLength = editable.length();
         setSendButtonSelected(inputLength > 0);
+    }
+
+    @Click(R.id.et_message)
+    void onMessageInputClick() {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.MessageInputField);
     }
 
     @UiThread(propagation = Propagation.REUSE)
@@ -497,7 +518,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @Override
     public void onShareMessageSucceed(int entityIdToBeShared, ResMessages.FileMessage fileMessage) {
         ColoredToast.show(this, getString(R.string.jandi_share_succeed, getSupportActionBar().getTitle()));
-        trackSharingFile(entityManager,
+        mixpanelAnalytics.trackSharingFile(entityManager,
                 entityManager.getEntityById(entityIdToBeShared).type,
                 fileMessage);
         clearAdapter();
@@ -543,7 +564,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @Override
     public void onUnShareMessageSucceed(int entityIdToBeUnshared, ResMessages.FileMessage fileMessage) {
         ColoredToast.show(this, getString(R.string.jandi_unshare_succeed, getSupportActionBar().getTitle()));
-        trackUnsharingFile(entityManager,
+        mixpanelAnalytics.trackUnsharingFile(entityManager,
                 entityManager.getEntityById(entityIdToBeUnshared).type,
                 fileMessage);
         clearAdapter();
@@ -626,6 +647,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         } else {
             moveToMessageListActivity(entityId, entityType, entityId, isStarred);
         }
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.TapSharedTopic);
     }
 
     @UiThread(propagation = Propagation.REUSE)
@@ -686,8 +709,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                     fileId, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(),
                     mentions.getMessage(), mentions.getMentions());
             stickerInfo = NULL_STICKER;
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Send);
         } else {
             fileDetailPresenter.sendComment(fileId, mentions.getMessage(), mentions.getMentions());
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Send);
         }
 
         etComment.setText("");
@@ -711,6 +737,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         if (selected) {
             stickerViewModel.dismissStickerSelector();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker);
         } else {
             int keyboardHeight =
                     JandiPreference.getKeyboardHeight(FileDetailActivity.this.getApplicationContext());
@@ -724,6 +751,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                         }
                     });
                 }
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker);
             } else {
                 initKeyboardHeight();
             }
@@ -822,7 +850,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @Override
     public void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage,
                                       boolean execute) {
-        trackDownloadingFile(entityManager, fileMessage);
+        mixpanelAnalytics.trackDownloadingFile(entityManager, fileMessage);
 
         try {
             if (execute) {
@@ -860,10 +888,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     /**
      * 사용자 프로필 보기
      */
-    public void onEvent(RequestUserInfoEvent event) {
+    public void onEvent(ShowProfileEvent event) {
         if (!isForeground) {
             return;
         }
+
         int userEntityId = event.userId;
         fileDetailPresenter.getProfile(userEntityId);
     }
@@ -890,15 +919,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @UiThread
     @Override
     public void showUserInfoDialog(FormattedEntity user) {
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        Fragment prev = fragmentManager.findFragmentByTag("dialog");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        UserInfoDialogFragment_.builder()
-                .entityId(user.getId()).build()
-                .show(getSupportFragmentManager(), "dialog");
+        MemberProfileActivity_.intent(this)
+                .memberId(user.getId())
+                .from(MemberProfileActivity.EXTRA_FROM_FILE_DETAIL)
+                .start();
     }
 
     public void copyToClipboard(String contentString) {
@@ -937,7 +961,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         isDeleted = TextUtils.equals(fileMessage.status, "archived");
 
-        isMyFile = fileMessage.writerId == EntityManager.getInstance().getMe().getId();
+        isMyFile = fileMessage.writerId == EntityManager.getInstance().getMe().getId() ||
+                fileDetailPresenter.isTeamOwner();
 
         invalidateOptionsMenu();
 
@@ -1039,9 +1064,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         switch (event.getAction()) {
             case STARRED:
                 fileDetailPresenter.registStarredComment(messageId);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap_Star);
                 break;
             case UNSTARRED:
                 fileDetailPresenter.unregistStarredComment(messageId);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap_Unstar);
                 break;
         }
     }

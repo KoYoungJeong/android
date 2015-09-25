@@ -3,12 +3,12 @@ package com.tosslab.jandi.app.ui.entities;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -20,7 +20,7 @@ import org.androidannotations.annotations.ViewById;
  * Created by Steve SeongUg Jung on 15. 1. 14..
  */
 @EActivity(R.layout.activity_entity_choose)
-public class EntityChooseActivity extends AppCompatActivity {
+public class EntityChooseActivity extends BaseAppCompatActivity {
 
     @Extra
     String type = Type.ALL.name();

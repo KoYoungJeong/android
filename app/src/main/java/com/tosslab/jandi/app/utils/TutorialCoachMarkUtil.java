@@ -12,6 +12,7 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 /**
  * Created by tee on 15. 7. 16..

@@ -7,13 +7,10 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import de.greenrobot.event.EventBus;
@@ -68,50 +65,45 @@ public class JandiPushIntentService extends IntentService {
 
         int teamId = pushTOInfo.getTeamId();
         int roomId = pushTOInfo.getRoomId();
-        int badgeCount = JandiPreference.getBadgeCount(context);
 
         boolean isShowingEntity = PushMonitor.getInstance().hasEntityId(roomId);
         boolean userWantsNotification = jandiPushReceiverModel.isPushOn();
 
-        // Badge count, Topic Push 등의 정보를 위해 LeftSideMenu 를 조회한다.
-        ResLeftSideMenu leftSideMenu = jandiPushReceiverModel.getTeamInfo(teamId);
+        int badgeCount = jandiPushReceiverModel.getBadgeCount(teamId);
+        jandiPushReceiverModel.updateBadgeCount(context, teamId, badgeCount + 1);
 
-        // LeftSideMenu 조회에 실패한 경우
-        if (leftSideMenu == null) {
-            badgeCount = badgeCount + 1;
-            if (!isShowingEntity && userWantsNotification) {
-                jandiPushReceiverModel.showNotification(context, pushTOInfo, false, badgeCount);
-            }
-
+        // 해댕 채팅방에 진입해 있거나 푸시 알림 설정 Off 였을 때
+        if (isShowingEntity || !userWantsNotification) {
             postEvent(roomId, pushTOInfo.getRoomType());
-            jandiPushReceiverModel.updateBadgeCount(context, badgeCount);
             return;
         }
 
-        if (jandiPushReceiverModel.isPushFromSelectedTeam(context, teamId)) {
-            badgeCount = BadgeUtils.getTotalUnreadCount(leftSideMenu);
-        } else {
-            badgeCount += 1;
+        ResLeftSideMenu leftSideMenu = jandiPushReceiverModel.getLeftSideMenu(teamId);
+
+        if (leftSideMenu == null) {
+            showNotification(context, pushTOInfo, false);
+            postEvent(roomId, pushTOInfo.getRoomType());
+            return;
         }
 
         // 멘션 메시지인 경우 토픽별 푸쉬 on/off 상태는 무시된다.
         boolean isMentionMessageToMe =
                 jandiPushReceiverModel.isMentionToMe(pushTOInfo.getMentions(), leftSideMenu);
-
         if (isMentionMessageToMe) {
-            if (!isShowingEntity && userWantsNotification) {
-                jandiPushReceiverModel.showNotification(context, pushTOInfo, true, badgeCount);
-            }
+            showNotification(context, pushTOInfo, true);
         } else {
             boolean isTopicPushOn = jandiPushReceiverModel.isTopicPushOn(leftSideMenu, roomId);
-
-            if (!isShowingEntity && userWantsNotification && isTopicPushOn) {
-                jandiPushReceiverModel.showNotification(context, pushTOInfo, false, badgeCount);
+            if (isTopicPushOn) {
+                showNotification(context, pushTOInfo, false);
             }
         }
 
         postEvent(roomId, pushTOInfo.getRoomType());
-        jandiPushReceiverModel.updateBadgeCount(context, badgeCount);
+    }
+
+    private void showNotification(Context context,
+                                  PushTO.PushInfo pushTOInfo, boolean isMentionMessage) {
+        jandiPushReceiverModel.showNotification(context, pushTOInfo, isMentionMessage);
     }
 
     private void postEvent(int roomId, String roomType) {

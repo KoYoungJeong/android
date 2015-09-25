@@ -64,6 +64,8 @@
     <string name="jandi_tab_more">"更多"</string>
     <string name="jandi_action_direct_message">"直接傳訊"</string>
     <string name="jandi_action_starred">"標記"</string>
+    <string name="jandi_notification_on">"開啟推播通知"</string>
+    <string name="jandi_notification_off">"關閉推播通知"</string>
 
     <!-- 튜토리얼 -->
     <string name="jandi_tutorial_welcome">"歡迎使用"</string>
@@ -113,6 +115,11 @@
     <string name="err_profile_photo_upload">"簡介照片無法更新"</string>
     <string name="err_email_exists">"此電子郵箱已被註冊"</string>
 
+    <string name="jandi_member_profile_edit">"編輯簡介"</string>
+    <string name="jandi_member_profile_mention">"我的提及列表"</string>
+    <string name="jandi_member_profile_email">"電子郵件"</string>
+    <string name="jandi_member_profile_phone">"連絡電話"</string>
+    <string name="jandi_member_profile_dm">"直接傳訊"</string>
     <!-- 회원 초대 -->
     <string name="jandi_team_info">"團隊"</string>
     <string name="jandi_invitation">"邀請"</string>
@@ -337,7 +344,7 @@
     <string name="jandi_go_to_main">"回到帳號首頁"</string>
     <string name="jandi_team_switch">"更換團隊"</string>
     <string name="jandi_sign_in_ids_explain">"請選擇一個電子郵件地址讓我們將全部與JANDI相關的電子郵件寄給您。增加其它電子郵件地址以指定給特定團隊。"</string>
-    <string name="jandi_disable_user_profile_explain">"此成員權限已被暫時關閉。欲知更多細節，請聯絡團隊管理員。"</string>
+    <string name="jandi_disable_user_profile_explain">"此成員權限已被暫時關閉。\n欲知更多細節，請聯絡團隊管理員。"</string>
     <string name="jandi_share_to_jandi">"分享到JANDI"</string>
     <string name="jandi_no_message_in_topic_dm">"輸入訊息以開始對話"</string>
     <string name="err_invalid_team_domain">"網域名稱無效"</string>
@@ -510,5 +517,8 @@
     <string name="jandi_screen_auto">"自動調整"</string>
     <string name="jandi_screen_horizontal">"畫面水平鎖定"</string>
     <string name="jandi_screen_vertical">"畫面垂直鎖定"</string>
+    <string name="jandi_no_long_team_member">"%s 不再是此團隊的成員"</string>
+    <string name="jandi_commented_on">"<![CDATA[<font color="#999999">留言於</font><font color="#000000"><b>%s</b></font><font color="#999999">的檔案</font"]]></string>
+    <string name="jandi_your_access_disabled">"你在 %s 的權限已被關閉"</string>
 </resources>
 

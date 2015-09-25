@@ -10,6 +10,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class SocketTopicEvent {
     private String event;
+    private int teamId;
     private TopicInfo topic;
 
     public String getEvent() {
@@ -26,6 +27,14 @@ public class SocketTopicEvent {
 
     public void setTopic(TopicInfo topic) {
         this.topic = topic;
+    }
+
+    public int getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

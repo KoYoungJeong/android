@@ -129,19 +129,6 @@ public class JandiPreference {
         editor.commit();
     }
 
-    // Badge Count
-    public static int getBadgeCount(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
-        return pref.getInt(PREF_BADGE_COUNT, 0);
-    }
-
-    public static void setBadgeCount(Context context, int badgeCount) {
-        SharedPreferences pref = getSharedPreferences(context);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt(PREF_BADGE_COUNT, badgeCount);
-        editor.commit();
-    }
-
     public static int getMyEntityId(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
         return pref.getInt(PREF_MY_ENTITY_ID, NOT_SET_YET);
@@ -254,8 +241,9 @@ public class JandiPreference {
 
     /**
      * 마지막 네트워크 접속 상태 값
+     *
      * @param context
-     * @param state 0 : disconnected, 1 : connected
+     * @param state   0 : disconnected, 1 : connected
      */
     public static void setLastNetworkConnect(Context context, int state) {
         getSharedPreferences(context).edit().putInt(PREF_LAST_NETWORK_CONNECT, state).commit();
@@ -263,6 +251,7 @@ public class JandiPreference {
 
     /**
      * 마지막 네트워크 접속 상태 값
+     *
      * @param context
      * @return 0 : disconnected, 1 : conntected, -1 : not setting
      */

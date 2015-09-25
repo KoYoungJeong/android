@@ -18,7 +18,7 @@ import rx.Observable;
  */
 public class BadgeUtils {
 
-    public static void setBadge(Context context, int count) {
+    public static synchronized void setBadge(Context context, int count) {
         setBadgeSamsung(context, count);
         setBadgeSony(context, count);
     }

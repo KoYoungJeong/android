@@ -1,8 +1,11 @@
 package com.tosslab.jandi.app.services.socket;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -14,9 +17,11 @@ import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
+import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -40,10 +45,13 @@ import com.tosslab.jandi.app.services.socket.to.SocketMemberProfileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamLeaveEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
+import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -55,7 +63,9 @@ import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
+import rx.Observable;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.PublishSubject;
 
 /**
@@ -111,12 +121,12 @@ public class JandiSocketServiceModel {
         refreshEntity(true, null, event, parseUpdate);
     }
 
-    public void refreshEntity(boolean postRetrieveEvent
-            , String socketMessageEventContent
-            , Object event, boolean parseUpdate) {
+    public void refreshEntity(boolean postRetrieveEvent, String socketMessageEventContent,
+                              Object event, boolean parseUpdate) {
 
-        entitySocketModel.refreshEntity(new EntitySocketModel.EntityRefreshEventWrapper
-                (postRetrieveEvent, parseUpdate, socketMessageEventContent, event));
+        entitySocketModel.refreshEntity(
+                new EntitySocketModel.EntityRefreshEventWrapper(
+                        postRetrieveEvent, parseUpdate, socketMessageEventContent, event));
     }
 
     public void refreshAccountInfo() {
@@ -137,7 +147,7 @@ public class JandiSocketServiceModel {
 
             MessageRepository.getRepository().updateStatus(socketFileEvent.getFile().getId(), "archived");
 
-            postEvent(new DeleteFileEvent(socketFileEvent.getFile().getId()));
+            postEvent(new DeleteFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -211,7 +221,7 @@ public class JandiSocketServiceModel {
             SocketTopicEvent socketTopicEvent =
                     objectMapper.readValue(object.toString(), SocketTopicEvent.class);
 
-            refreshEntity(new TopicDeleteEvent(socketTopicEvent.getTopic().getId()), true);
+            refreshEntity(new TopicDeleteEvent(socketTopicEvent.getTeamId(), socketTopicEvent.getTopic().getId()), true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -232,7 +242,7 @@ public class JandiSocketServiceModel {
             SocketFileEvent socketFileEvent =
                     objectMapper.readValue(object.toString(), SocketFileUnsharedEvent.class);
 
-            postEvent(new ShareFileEvent(socketFileEvent.getFile().getId()));
+            postEvent(new ShareFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -309,7 +319,7 @@ public class JandiSocketServiceModel {
 
     public void startMarkerObserver() {
         markerPublishSubject = PublishSubject.create();
-        markerSubscribe = markerPublishSubject.throttleWithTimeout(1000 * 10, TimeUnit.MILLISECONDS)
+        markerSubscribe = markerPublishSubject.throttleWithTimeout(500, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
                 .subscribe(o -> {
                     EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
@@ -317,8 +327,9 @@ public class JandiSocketServiceModel {
                         ResLeftSideMenu entitiesInfo = entityClientManager.getTotalEntitiesInfo();
                         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entitiesInfo);
                         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
-                        JandiPreference.setBadgeCount(context, totalUnreadCount);
-                        BadgeUtils.setBadge(context, totalUnreadCount);
+                        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+                        badgeCountRepository.upsertBadgeCount(entitiesInfo.team.id, totalUnreadCount);
+                        BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
 
                         EntityManager.getInstance().refreshEntity();
 
@@ -371,7 +382,7 @@ public class JandiSocketServiceModel {
         try {
             SocketFileEvent socketFileEvent =
                     objectMapper.readValue(object.toString(), SocketFileEvent.class);
-            postEvent(new CreateFileEvent(socketFileEvent.getFile().getId()));
+            postEvent(new CreateFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -435,6 +446,34 @@ public class JandiSocketServiceModel {
 //            } else if (socketTopicFolderEvent.getEvent().equals("folder_item_deleted")) {
 //
 //            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void refreshLeaveMember(Object object) {
+        try {
+            SocketTeamLeaveEvent socketTeamLeaveEvent = objectMapper.readValue(object.toString(), SocketTeamLeaveEvent.class);
+            TeamLeaveEvent teamLeaveEvent = new TeamLeaveEvent(socketTeamLeaveEvent.getTeam().getId(), socketTeamLeaveEvent.getMember().getId());
+
+            int leaveMemberId = socketTeamLeaveEvent.getMember().getId();
+            int myId = EntityManager.getInstance().getMe().getId();
+
+            if (leaveMemberId != myId) {
+                refreshEntity(teamLeaveEvent, false);
+            } else {
+                Observable.just(socketTeamLeaveEvent)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(leaveEvent -> {
+                            String teamName = JandiApplication.getContext().getString(R.string.jandi_your_access_disabled, leaveEvent.getTeam().getName());
+                            ColoredToast.showError(JandiApplication.getContext(), teamName);
+                        });
+                AccountRepository.getRepository().removeSelectedTeamInfo();
+                AccountHomeActivity_.intent(JandiApplication.getContext())
+                        .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .start();
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -64,6 +64,8 @@
     <string name="jandi_tab_more">"더보기"</string>
     <string name="jandi_action_direct_message">"1:1 대화"</string>
     <string name="jandi_action_starred">"즐겨찾기"</string>
+    <string name="jandi_notification_on">"알림 켜기"</string>
+    <string name="jandi_notification_off">"알림 끄기"</string>
 
     <!-- 튜토리얼 -->
     <string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
@@ -128,6 +130,12 @@
     <string name="jandi_profile_photo_upload_succeed">"사진이 수정되었습니다"</string>
     <string name="err_profile_photo_upload">"사진 업로드가 실패하였습니다"</string>
     <string name="err_email_exists">"이미 사용중인 이메일입니다"</string>
+
+    <string name="jandi_member_profile_edit">프로필 편집</string>
+    <string name="jandi_member_profile_mention">내 멘션</string>
+    <string name="jandi_member_profile_email">메일</string>
+    <string name="jandi_member_profile_phone">전화</string>
+    <string name="jandi_member_profile_dm">1:1 메세지</string>
 
     <!-- 회원 초대 -->
     <string name="jandi_team_info">"팀 정보"</string>
@@ -351,7 +359,7 @@
     <string name="jadi_account_home">"잔디 메인"</string>
     <string name="jandi_go_to_main">"잔디 메인으로"</string>
     <string name="jandi_team_switch">"팀 전환하기"</string>
-    <string name="jandi_disable_user_profile_explain">"차단된 멤버입니다. 궁금하신 사항은 팀 관리자에게 문의하세요."</string>
+    <string name="jandi_disable_user_profile_explain">"차단된 멤버입니다.\n궁금하신 사항은 팀 관리자에게 문의하세요."</string>
     <string name="jandi_share_to_jandi">"JANDI에 공유하기"</string>
     <string name="jandi_no_message_in_topic_dm">"아직 메세지가 없습니다.
 메세지를 입력하셔서 대화를 시작해보세요."</string>
@@ -525,6 +533,9 @@
     <string name="jandi_folder_rename">이름 변경</string>
     <string name="jandi_no_topic_to_join">참여 가능한 토픽이 없습니다</string>
     <string name="jandi_1_1_message">"1:1 메시지"</string>
+    <string name="jandi_no_long_team_member">"%s님은 더이상 팀 멤버가 아닙니다."</string>
+    <string name="jandi_commented_on">"<![CDATA[<font color="#000000"><b>%s</b></font><font color="#999999">님의 파일에 코멘트를 남겼습니다.</font>]]>"</string>
+    <string name="jandi_your_access_disabled">"%s에서 차단되었습니다."</string>
     <string name="jandi_screen_orientation">"화면 방향"</string>
     <string name="jandi_screen_auto">"자동"</string>
     <string name="jandi_screen_horizontal">"가로 고정"</string>

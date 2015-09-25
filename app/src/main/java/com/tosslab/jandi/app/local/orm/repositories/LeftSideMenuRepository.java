@@ -87,4 +87,26 @@ public class LeftSideMenuRepository {
         }
         return null;
     }
+
+    public ResLeftSideMenu findLeftSideMenuByTeamId(int teamId) {
+        lock.lock();
+        try {
+            Dao<LeftSideMenu, ?> leftSideMenuDao = helper.getDao(LeftSideMenu.class);
+            LeftSideMenu leftSideMenu = leftSideMenuDao.queryBuilder()
+                    .where()
+                    .eq("teamId", teamId)
+                    .queryForFirst();
+            if (leftSideMenu != null) {
+                return JacksonMapper.getInstance()
+                        .getObjectMapper()
+                        .readValue(leftSideMenu.getRawLeftSideMenu(), ResLeftSideMenu.class);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+        return null;
+    }
+
 }

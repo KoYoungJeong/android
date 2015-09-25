@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -44,21 +45,33 @@ public class MainTopicModel {
 
     // 폴더 정보 가져오기
     public List<ResFolder> getTopicFolders() throws RetrofitError {
+        if (!NetworkCheckUtil.isConnected()) {
+            return TopicFolderRepository.getRepository().getFolders();
+        }
+
         return RequestApiManager.getInstance()
                 .getFoldersByTeamApi(entityClientManager.getSelectedTeamId());
     }
 
     // 폴더 속 토픽 아이디 가져오기
     public List<ResFolderItem> getTopicFolderItems() throws RetrofitError {
-        return RequestApiManager.getInstance()
+        if (!NetworkCheckUtil.isConnected()) {
+            return TopicFolderRepository.getRepository().getFolderItems();
+        }
+        List<ResFolderItem> folderItems = RequestApiManager.getInstance()
                 .getFolderItemsByTeamApi(entityClientManager.getSelectedTeamId());
+
+        for (ResFolderItem resFolderItem : folderItems) {
+            resFolderItem.teamId = entityClientManager.getSelectedTeamId();
+        }
+
+        return folderItems;
     }
 
     // Join된 Topic에 관한 정보를 가져오기
     public LinkedHashMap<Integer, Topic> getJoinEntities() {
 
         EntityManager entityManager = EntityManager.getInstance();
-
         List<FormattedEntity> joinedChannels = entityManager.getJoinedChannels();
         List<FormattedEntity> groups = entityManager.getGroups();
         LinkedHashMap<Integer, Topic> topicHashMap = new LinkedHashMap<>();
@@ -102,6 +115,12 @@ public class MainTopicModel {
     // 리스트에 보여 줄 Data Provider 가져오기
     public TopicFolderListDataProvider getDataProvider(List<ResFolder> topicFolders, List<ResFolderItem> topicFolderItems) {
 
+        final List<ResFolder> orderedFolders = new ArrayList<>();
+
+        Observable.from(topicFolders)
+                .toSortedList((lhs, rhs) -> lhs.seq - rhs.seq)
+                .subscribe(orderedFolders::addAll);
+
         List<Pair<AbstractExpandableDataProvider.GroupData,
                 List<AbstractExpandableDataProvider.ChildData>>> datas = new LinkedList<>();
 
@@ -113,15 +132,13 @@ public class MainTopicModel {
         Map<Integer, TopicFolderData> folderMap = new LinkedHashMap<>();
         Map<Integer, Integer> badgeCountMap = new HashMap<>();
 
-        for (ResFolder topicFolder : topicFolders) {
+        for (ResFolder topicFolder : orderedFolders) {
             if (!topicItemMap.containsKey(topicFolder.id)) {
                 topicItemMap.put(new Integer(topicFolder.id), new ArrayList<>());
             }
-
             if (!badgeCountMap.containsKey(topicFolder.id)) {
                 badgeCountMap.put(new Integer(topicFolder.id), 0);
             }
-
             if (!folderMap.containsKey(new Integer(topicFolder.id))) {
                 TopicFolderData topicFolderData = new TopicFolderData(folderIndex, topicFolder.name, topicFolder.id, -1);
                 topicFolderData.setSeq(topicFolder.seq);
@@ -133,6 +150,7 @@ public class MainTopicModel {
         Observable.from(topicFolderItems)
                 .filter(topicFolderItem -> topicFolderItem.folderId > 0)
                 .subscribe(topicFolderItem -> {
+
                     Topic topic = joinTopics.remove(new Integer(topicFolderItem.roomId));
 
                     long itemIndex = folderMap.get(new Integer(topicFolderItem.folderId)).generateNewChildId();
@@ -149,6 +167,7 @@ public class MainTopicModel {
                     int badgeCount = badgeCountMap.get(new Integer(topicFolderItem.folderId));
                     badgeCountMap.put(new Integer(topicFolderItem.folderId), badgeCount + topicItemData
                             .getUnreadCount());
+
                 }, Throwable::printStackTrace);
 
         for (Integer folderId : folderMap.keySet()) {
@@ -175,17 +194,13 @@ public class MainTopicModel {
             topicFolderData.setChildBadgeCnt(badgeCountMap.get(folderId));
 
             datas.add(new Pair<>(topicFolderData, providerTopicItemDatas));
-
         }
 
         folderIndex = folderMap.size();
 
         // 폴더가 없는 토픽 데이터 셋팅
         TopicFolderData fakeFolder = getFakeFolder(folderIndex);
-//        Iterator<Integer> joinTopicKeySets = joinTopics.keySet().iterator();
-
         List<AbstractExpandableDataProvider.ChildData> noFolderTopicItemDatas = new ArrayList<>();
-
         Observable.from(joinTopics.keySet())
                 .map(topicId -> {
                     long itemIndex = fakeFolder.generateNewChildId();
@@ -200,19 +215,15 @@ public class MainTopicModel {
 
         // Topic join button을 위한 더미 인스턴스 추가
         noFolderTopicItemDatas.add(TopicItemData.getDummyInstance());
-
         datas.add(new Pair<>(fakeFolder, noFolderTopicItemDatas));
-
         return new TopicFolderListDataProvider(datas);
     }
 
     @Background
     public void saveFolderDataInDB(List<ResFolder> topicFolders, List<ResFolderItem> topicFolderItems) {
         TopicFolderRepository repository = TopicFolderRepository.getRepository();
-
         repository.removeAllFolders();
         repository.removeAllFolderItems();
-
         repository.insertFolders(topicFolders);
         repository.insertFolderItems(topicFolderItems);
     }
@@ -237,7 +248,6 @@ public class MainTopicModel {
         TopicItemData dummyInstance = TopicItemData.getDummyInstance();
         Observable.from(joinedTopics)
                 .filter(topicItemData -> {
-
                     if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
                         if (TextUtils.equals(event.getMessageType(), "topic_join")
                                 || TextUtils.equals(event.getMessageType(), "topic_invite")
@@ -263,6 +273,48 @@ public class MainTopicModel {
                 .doOnNext(topicItemData -> topicItemData.setUnreadCount(topicItemData.getUnreadCount() + 1))
                 .firstOrDefault(dummyInstance)
                 .subscribe();
-
     }
+
+    public boolean isFolderSame(List<ResFolder> folders1, List<ResFolder> folders2) {
+        if (folders1.size() != folders2.size()) {
+            return false;
+        } else {
+            Map<Integer, ResFolder> folderMap1 = new LinkedHashMap<>();
+            Map<Integer, ResFolder> folderMap2 = new HashMap<>();
+            for (int i = 0; i < folders1.size(); i++) {
+                folderMap1.put(Integer.valueOf(folders1.get(i).id), folders1.get(i));
+                folderMap2.put(Integer.valueOf(folders2.get(i).id), folders2.get(i));
+            }
+            for (Integer i : folderMap1.keySet()) {
+                ResFolder folder1 = folderMap1.get(i);
+                ResFolder folder2 = folderMap2.get(i);
+                if (!folder1.equals(folder2)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    public boolean isFolderItemSame(List<ResFolderItem> folderItems1, List<ResFolderItem> folderItems2) {
+        if (folderItems1.size() != folderItems2.size()) {
+            return false;
+        } else {
+            Map<Integer, ResFolderItem> folderItemMap1 = new LinkedHashMap<>();
+            Map<Integer, ResFolderItem> folderItemMap2 = new HashMap<>();
+            for (int i = 0; i < folderItems1.size(); i++) {
+                folderItemMap1.put(Integer.valueOf(folderItems1.get(i).roomId), folderItems1.get(i));
+                folderItemMap2.put(Integer.valueOf(folderItems2.get(i).roomId), folderItems2.get(i));
+            }
+            for (Integer i : folderItemMap1.keySet()) {
+                ResFolderItem folderItem1 = folderItemMap1.get(i);
+                ResFolderItem folderItem2 = folderItemMap2.get(i);
+                if (!folderItem1.equals(folderItem2)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
 }

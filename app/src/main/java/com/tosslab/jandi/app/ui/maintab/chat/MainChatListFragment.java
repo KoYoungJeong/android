@@ -10,11 +10,10 @@ import android.widget.ListView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
-import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -27,8 +26,12 @@ import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenterImpl
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -185,11 +188,13 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     }
 
 
-    public void onEventMainThread(ProfileDetailEvent event) {
+    public void onEventMainThread(ShowProfileEvent event) {
         if (foreground) {
-            UserInfoDialogFragment_.builder().entityId(event.getEntityId()).build()
-                    .show
-                            (getFragmentManager(), "dialog");
+            MemberProfileActivity_.intent(getActivity())
+                    .memberId(event.userId)
+                    .from(MemberProfileActivity.EXTRA_FROM_MAIN_CHAT)
+                    .start();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsUtil.getProfileAction(event.userId, event.from));
         }
     }
 
@@ -242,6 +247,8 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     void onSearchOptionSelect() {
         SearchActivity_.intent(getActivity())
                 .start();
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.Search);
+
     }
 
     public void onEvent(MainSelectTopicEvent event) {
@@ -253,6 +260,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     void onEntityItemClick(int position) {
 
         mainChatListPresenter.onEntityItemClick(getActivity(), position);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.ChooseDM);
     }
 
     @ItemLongClick(R.id.lv_main_chat_list)
@@ -264,11 +272,17 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     }
 
     @Click({R.id.btn_main_chat_fab, R.id.layout_main_chat_list_empty})
-    void onAddClick() {
+    void onAddClick(View view) {
         EntityChooseActivity_.intent(getActivity())
                 .type(EntityChooseActivity.Type.MESSAGES.name())
                 .start();
         getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
+
+        if (view.getId() == R.id.btn_main_chat_fab) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.SelectTeamMember);
+        } else {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.SelectTeamMember_EmptyData);
+        }
     }
 
 }

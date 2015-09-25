@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -21,14 +20,14 @@ import com.tosslab.jandi.app.views.spannable.NameSpannable;
 public class CollapseCommentViewHolder implements BodyViewHolder {
 
     private TextView tvMessage;
-    private View lastReadView;
+    private View vLastRead;
     private View contentView;
 
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_pure_comment_content);
-        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
+        vLastRead = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -49,8 +48,6 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
         }
 
         builder.append(" ");
-
-        Resources resources = context.getResources();
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 tvMessage, builder, commentMessage.mentions,
@@ -89,9 +86,9 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
     @Override
     public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
         if (currentLinkId == lastReadLinkId) {
-            lastReadView.setVisibility(View.VISIBLE);
+            vLastRead.setVisibility(View.VISIBLE);
         } else {
-            lastReadView.setVisibility(View.GONE);
+            vLastRead.setVisibility(View.GONE);
         }
     }
 

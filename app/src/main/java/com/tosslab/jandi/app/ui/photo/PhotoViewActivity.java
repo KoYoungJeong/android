@@ -3,13 +3,13 @@ package com.tosslab.jandi.app.ui.photo;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
@@ -22,7 +22,7 @@ import org.androidannotations.annotations.OptionsItem;
  * Created by Steve SeongUg Jung on 15. 7. 14..
  */
 @EActivity(R.layout.activity_photo_view)
-public class PhotoViewActivity extends AppCompatActivity {
+public class PhotoViewActivity extends BaseAppCompatActivity {
 
     @Extra
     String imageUrl;

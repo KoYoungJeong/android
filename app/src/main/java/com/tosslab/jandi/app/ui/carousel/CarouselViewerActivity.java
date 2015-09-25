@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
@@ -15,6 +14,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -40,7 +40,7 @@ import java.util.List;
  */
 @EActivity(R.layout.activity_carousel_viewer)
 @OptionsMenu(R.menu.carousel_menu)
-public class CarouselViewerActivity extends AppCompatActivity implements CarouselViewerPresenter.View {
+public class CarouselViewerActivity extends BaseAppCompatActivity implements CarouselViewerPresenter.View {
 
     @ViewById(R.id.vp_carousel)
     ViewPager viewPager;
@@ -238,7 +238,7 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
+        actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
@@ -293,12 +293,12 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
         ColoredToast.showError(this, message);
     }
 
-    public interface OnCarouselImageClickListener {
-        void onCarouselImageClick();
-    }
-
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
         return false;
+    }
+
+    public interface OnCarouselImageClickListener {
+        void onCarouselImageClick();
     }
 }

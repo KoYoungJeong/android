@@ -59,11 +59,12 @@ public class MentionMessageSpannable extends ReplacementSpan {
 
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+        // http://flavienlaurent.com/blog/2014/01/31/spans/ 참조할것
 
         canvas.save();
 
-        int padding = (bottom - top - textView.getBottom()) / 2;
-        canvas.translate(x, bottom - textView.getBottom() - padding);
+//        int padding = (bottom - top - textView.getBottom()) / 2;
+        canvas.translate(x, bottom - textView.getBottom());
         textView.draw(canvas);
 
         canvas.restore();

@@ -11,14 +11,14 @@
     android:paddingTop="16dp">
 
     <ImageView
-        android:id="@+id/img_team_list_icon"
+        android:id="@+id/iv_team_list_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:src="@drawable/jandi_team_selector_icon" />
 
     <TextView
-        android:id="@+id/txt_team_list_name"
+        android:id="@+id/tv_team_list_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -30,7 +30,7 @@
         android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/txt_team_list_badge"
+        android:id="@+id/tv_team_list_badge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

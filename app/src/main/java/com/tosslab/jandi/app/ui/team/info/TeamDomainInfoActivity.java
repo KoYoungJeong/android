@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.team.info;
 
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -13,11 +12,13 @@ import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -41,7 +42,7 @@ import retrofit.RetrofitError;
  */
 @EActivity(R.layout.activity_team_domain_info)
 @OptionsMenu(R.menu.teamdomain_info)
-public class TeamDomainInfoActivity extends AppCompatActivity {
+public class TeamDomainInfoActivity extends BaseAppCompatActivity {
 
     @Extra
     String token;
@@ -67,8 +68,6 @@ public class TeamDomainInfoActivity extends AppCompatActivity {
                         .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_CREATE)
                         .build());
 
-        GoogleAnalyticsUtil.sendScreenName("TEAM_CREATE");
-
         MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
                 .pageViewTeamCreate();
         teamDomainInfoPresenter.setTeamCreatable(true);
@@ -93,6 +92,7 @@ public class TeamDomainInfoActivity extends AppCompatActivity {
         initUserEmailInfo();
         initUserDefaultName();
 
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.CreateaTeam);
     }
 
     @Override

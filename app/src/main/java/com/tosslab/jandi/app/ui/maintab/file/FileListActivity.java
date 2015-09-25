@@ -3,12 +3,12 @@ package com.tosslab.jandi.app.ui.maintab.file;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -18,7 +18,7 @@ import org.androidannotations.annotations.Extra;
  * Created by justinygchoi on 2014. 10. 13..
  */
 @EActivity(R.layout.activity_file_list)
-public class FileListActivity extends AppCompatActivity {
+public class FileListActivity extends BaseAppCompatActivity {
 
     @Extra
     int entityId;

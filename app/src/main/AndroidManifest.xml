@@ -19,7 +19,12 @@
 
         <meta-data
             android:name="com.mixpanel.android.MPConfig.FlushInterval"
-            android:value="1000"/>
+            android:value="1000" />
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
         <!-- temp comment for protect ANR (Play-Service-Base : 6.5.87 issue
         <meta-data
             android:name="com.google.android.gms.analytics.globalConfigResource"
@@ -90,7 +95,7 @@
 
         <activity
             android:name=".ui.fileexplorer.FileExplorerActivity"
-            android:label="@string/jandi_title_activity_file_explorer"/>
+            android:label="@string/jandi_title_activity_file_explorer" />
 
         <activity
             android:name=".ui.settings.SettingsActivity_"
@@ -98,7 +103,7 @@
             />
 
         <activity
-            android:name=".ui.profile.member.MemberProfileActivity_"
+            android:name=".ui.profile.modify.ModifyProfileActivity_"
             android:label="@string/jandi_profile_actionb"
             />
 
@@ -186,7 +191,12 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.parse.PushService"/>
+        <activity
+            android:name=".ui.profile.member.MemberProfileActivity_"
+            android:screenOrientation="fullUser"
+            android:theme="@style/Jandi.Transparent"/>
+
+        <service android:name="com.parse.PushService" />
 
         <receiver android:name="com.parse.ParseBroadcastReceiver">
             <intent-filter>
@@ -242,16 +252,14 @@
             />
 
         <activity
-            android:name=".ui.share.MainShareActivity"
+            android:name=".ui.share.MainShareActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-
             android:theme="@style/Jandi.Transparent">
             <intent-filter>
-                <action android:name="android.intent.action.SEND"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-
-                <data android:mimeType="*/*"/>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
             </intent-filter>
 
         </activity>
@@ -283,6 +291,29 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_browse_other_topics">
 
+            <intent-filter>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.share.views.ShareSelectRoomActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_share_to_jandi"
+            android:screenOrientation="portrait">
+
+            <intent-filter>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.share.views.ShareSelectTeamActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_share_to_jandi"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW"/>
                 <action android:name="android.intent.category.DEFAULT"/>

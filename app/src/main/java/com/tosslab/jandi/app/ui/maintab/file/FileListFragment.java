@@ -23,12 +23,12 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
-import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.events.files.CreateFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
@@ -50,7 +50,8 @@ import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
@@ -157,7 +158,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
                             .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_SEARCH)
                             .build());
 
-            GoogleAnalyticsUtil.sendScreenName("FILE_SEARCH");
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FilesSearch);
         }
 
         setHasOptionsMenu(true);
@@ -175,6 +176,19 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             if (onSearchItemSelect != null) {
                 onSearchItemSelect.onSearchItemSelect();
             }
+
+            AnalyticsValue.Action action;
+            if (isDefault(mSearchQuery)) {
+                action = AnalyticsValue.Action.ChooseFile;
+            } else {
+                action = AnalyticsValue.Action.ChooseFilteredFile;
+            }
+
+            if (getActivity() instanceof SearchActivity) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, action);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, action);
+            }
         });
 
         resetFilterLayoutPosition();
@@ -185,6 +199,12 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         initSearchSubject.onNext(-1);
 
+    }
+
+    private boolean isDefault(SearchQuery mSearchQuery) {
+        return mSearchQuery.mSearchEntity == ReqSearchFile.ALL_ENTITIES
+                && mSearchQuery.mSearchFileType.equals("all")
+                && mSearchQuery.mSearchUser.equals("all");
     }
 
     @Override
@@ -251,6 +271,10 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     public void onEventMainThread(ShareFileEvent event) {
 
         if (isInSearchActivity()) {
+            return;
+        }
+
+        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
 
@@ -399,6 +423,10 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             return;
         }
 
+        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
+            return;
+        }
+
         int fileId = event.getId();
         int positionByFileId = searchedFileItemListAdapter.findPositionByFileId(fileId);
         if (positionByFileId >= 0) {
@@ -411,21 +439,28 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             return;
         }
 
+        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
+            return;
+        }
         // 토픽이 삭제되거나 나간 경우 해당 토픽의 파일 접근 여부를 알 수 없으므로
         // 리로드하도록 처리함
         int itemCount = searchedFileItemListAdapter.getItemCount();
         initSearchSubject.onNext(itemCount);
     }
 
-    public void onEvent(RetrieveTopicListEvent event) {
+    public void onEvent(CreateFileEvent event) {
         if (isInSearchActivity()) {
+            return;
+        }
+
+        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
         int itemCount = searchedFileItemListAdapter.getItemCount();
         initSearchSubject.onNext(itemCount);
     }
 
-    public void onEVent(NetworkConnectEvent event) {
+    public void onEvent(NetworkConnectEvent event) {
         if (isInSearchActivity()) {
             return;
         }

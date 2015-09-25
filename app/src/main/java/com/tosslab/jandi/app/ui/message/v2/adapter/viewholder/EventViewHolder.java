@@ -27,18 +27,15 @@ import java.util.Iterator;
  */
 public class EventViewHolder implements BodyViewHolder {
 
-    public static final String KEY_PARSING_DATA = "parsing_data";
-    private TextView eventContentView;
+    private TextView tvEvent;
     private Context context;
-    private View lastReadView;
-    private View contentView;
+    private View vLastRead;
 
     @Override
     public void initView(View rootView) {
-        contentView = rootView.findViewById(R.id.vg_message_item);
-        eventContentView = ((TextView) rootView.findViewById(R.id.txt_message_event_title));
+        tvEvent = ((TextView) rootView.findViewById(R.id.tv_message_event_title));
         context = rootView.getContext();
-        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
+        vLastRead = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -96,8 +93,8 @@ public class EventViewHolder implements BodyViewHolder {
                 new DateViewSpannable(context, DateTransformator.getTimeStringForSimple(link.time));
         builder.setSpan(spannable, startIndex, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        eventContentView.setText(builder);
-        eventContentView.setMovementMethod(LinkMovementMethod.getInstance());
+        tvEvent.setText(builder);
+        tvEvent.setMovementMethod(LinkMovementMethod.getInstance());
 
 
     }
@@ -105,9 +102,9 @@ public class EventViewHolder implements BodyViewHolder {
     @Override
     public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
         if (currentLinkId == lastReadLinkId) {
-            lastReadView.setVisibility(View.VISIBLE);
+            vLastRead.setVisibility(View.VISIBLE);
         } else {
-            lastReadView.setVisibility(View.GONE);
+            vLastRead.setVisibility(View.GONE);
         }
     }
 

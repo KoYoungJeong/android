@@ -9,14 +9,13 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.text.TextUtils;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -28,8 +27,9 @@ import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
+import com.tosslab.jandi.app.utils.SignOutUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -71,7 +71,7 @@ public class SettingsFragment extends PreferenceFragment {
                         .property(PropertyKey.ScreenView, ScreenViewProperty.SETTING)
                         .build());
 
-        GoogleAnalyticsUtil.sendScreenName("SETTING");
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.Setting);
 
         addPreferencesFromResource(R.xml.pref_setting);
 
@@ -125,6 +125,8 @@ public class SettingsFragment extends PreferenceFragment {
                 isEnabled = false;
             }
 
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, isEnabled ? AnalyticsValue.Action.TurnOnNotifications : AnalyticsValue.Action.TurnOffNotifications);
+
             setPushSubState(isEnabled);
         } else if (TextUtils.equals(preference.getKey(), "setting_tos")) {
 
@@ -133,11 +135,13 @@ public class SettingsFragment extends PreferenceFragment {
                     .termMode(TermActivity.Mode.Agreement.name())
                     .start();
 
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.TermsOfService);
         } else if (TextUtils.equals(preference.getKey(), "setting_pp")) {
             TermActivity_
                     .intent(getActivity())
                     .termMode(TermActivity.Mode.Privacy.name())
                     .start();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.PrivacyPolicy);
         } else if (preference.getKey().equals("setting_logout")) {
 
             if (NetworkCheckUtil.isConnected()) {
@@ -145,7 +149,17 @@ public class SettingsFragment extends PreferenceFragment {
             } else {
                 settingFragmentViewModel.showCheckNetworkDialog(getActivity());
             }
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.SignOut);
 
+        } else if (preference.getKey().equals("setting_push_alarm_sound")) {
+            CheckBoxPreference pref = (CheckBoxPreference) preference;
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, pref.isChecked() ? AnalyticsValue.Action.SoundsOn : AnalyticsValue.Action.SoundsOff);
+        } else if (preference.getKey().equals("setting_push_alarm_vibration")) {
+            CheckBoxPreference pref = (CheckBoxPreference) preference;
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, pref.isChecked() ? AnalyticsValue.Action.VibrateOn : AnalyticsValue.Action.VibrateOff);
+        } else if (preference.getKey().equals("setting_push_alarm_led")) {
+            CheckBoxPreference pref = (CheckBoxPreference) preference;
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, pref.isChecked() ? AnalyticsValue.Action.PhoneLedOn : AnalyticsValue.Action.PhoneLedOff);
         }
         return false;
     }
@@ -165,7 +179,7 @@ public class SettingsFragment extends PreferenceFragment {
         settingFragmentViewModel.showProgressDialog();
         try {
 
-            removeSignData();
+            SignOutUtil.removeSignData();
 
             Activity activity = getActivity();
 
@@ -184,10 +198,13 @@ public class SettingsFragment extends PreferenceFragment {
                     .flush()
                     .clear();
 
-            JandiSocketService.stopService(getActivity());
+            JandiSocketService.stopService(activity);
 
-            BadgeUtils.setBadge(getActivity(), 0);
-            ColoredToast.show(getActivity(), getString(R.string.jandi_message_logout));
+            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+            badgeCountRepository.deleteAll();
+            BadgeUtils.setBadge(activity, 0);
+
+            ColoredToast.show(activity, getString(R.string.jandi_message_logout));
 
         } catch (Exception e) {
         } finally {
@@ -206,18 +223,6 @@ public class SettingsFragment extends PreferenceFragment {
                         .build())
                 .flush();
 
-        GoogleAnalyticsUtil.sendEvent(Event.SignOut.name(), "ResponseSuccess");
-    }
-
-    private void removeSignData() {
-        JandiPreference.signOut(getActivity());
-
-        ParseUpdateUtil.deleteChannelOnServer();
-
-        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
-                .clearAllData();
-        
-        getPreferenceManager().getSharedPreferences().edit().clear().commit();
     }
 
     private void setPushSubState(boolean isEnabled) {

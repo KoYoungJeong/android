@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.speech.RecognizerIntent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment_;
 import com.tosslab.jandi.app.ui.search.main.adapter.SearchQueryAdapter;
@@ -29,6 +29,8 @@ import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment_;
 import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -49,7 +51,7 @@ import de.greenrobot.event.EventBus;
  * Created by Steve SeongUg Jung on 15. 3. 10..
  */
 @EActivity(R.layout.activity_search)
-public class SearchActivity extends AppCompatActivity implements SearchPresenter.View {
+public class SearchActivity extends BaseAppCompatActivity implements SearchPresenter.View {
 
     private static final int SPEECH_REQUEST_CODE = 201;
     @Bean(SearchPresenterImpl.class)
@@ -169,6 +171,8 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         fragmentTransaction.commit();
 
         if (searchSelectView != null) {
+            // 메세지 -> 파일 검색 선택
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.GoToMsgSearch);
             searchSelectView.setOnSearchItemSelect(null);
         }
         searchSelectView = messageSearchFragment;
@@ -182,6 +186,7 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         setSelectTab(messageTabView, filesTabView);
         setSearchText(searchQueries[0]);
         initSearchSelectView();
+
     }
 
     @Click(R.id.txt_search_category_files)
@@ -206,6 +211,8 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
 
         if (searchSelectView != null) {
             searchSelectView.setOnSearchItemSelect(null);
+            // 메세지 -> 파일 검색 선택
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.GoToFilesSearch);
         }
         searchSelectView = fileListFragment;
         searchSelectView.setOnSearchItemSelect(this::finish);
@@ -219,6 +226,7 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         setSelectTab(filesTabView, messageTabView);
         setSearchText(searchQueries[1]);
         initSearchSelectView();
+
     }
 
     @Override
@@ -267,6 +275,14 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
     @Click(R.id.img_search_mic)
     void onVoiceSearch() {
         searchPresenter.onSearchVoice();
+
+        if (TextUtils.isEmpty(getSearchText())) {
+            if (searchSelectView instanceof MessageSearchFragment) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.DeleteInputField);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.DeleteInputField);
+            }
+        }
     }
 
     @TextChange(R.id.txt_search_keyword)
@@ -324,6 +340,13 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         }
 
         searchSelectView.onNewQuery(searchText);
+
+        if (searchSelectView instanceof MessageSearchFragment) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.SearchInputField);
+        } else {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.SearchInputField);
+        }
+
     }
 
     @Override
@@ -376,6 +399,11 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
 
     }
 
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return false;
+    }
+
     public interface SearchSelectView {
         void onNewQuery(String query);
 
@@ -394,10 +422,5 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
 
     public interface OnSearchText {
         String getSearchText();
-    }
-
-    @Override
-    public boolean onMenuOpened(int featureId, Menu menu) {
-        return false;
     }
 }

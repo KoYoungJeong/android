@@ -33,12 +33,20 @@ import rx.Observable;
 @EBean
 public class InvitationDialogExecutor {
 
+    public static final int FROM_MAIN_INVITE = 1;
+    public static final int FROM_MAIN_MEMBER = 2;
+    public static final int FROM_TOPIC_CHAT = 3;
+    public static final int FROM_TOPIC_MEMBER = 4;
+    public static final int FROM_MAIN_POPUP = 5;
+    public static final int FROM_CHAT_CHOOSE = 6;
+
     @RootContext
     AppCompatActivity activity;
 
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
 
+    private int from;
     private ProgressWheel progressWheel;
     private EntityManager entityManager;
 
@@ -59,7 +67,7 @@ public class InvitationDialogExecutor {
             switch (availableState) {
                 case AVAIL:
                     InvitationDialogFragment invitationDialog =
-                            InvitationDialogFragment.newInstance(inviteTeam.getName(), inviteTeam.getInvitationUrl());
+                            InvitationDialogFragment.newInstance(inviteTeam.getName(), inviteTeam.getInvitationUrl(), from);
                     invitationDialog.show(activity.getSupportFragmentManager(), "invitationsDialog");
                     break;
                 case UNDEFINE:
@@ -139,6 +147,10 @@ public class InvitationDialogExecutor {
                 .toBlocking()
                 .first();
         return owner.getUser().name;
+    }
+
+    public void setFrom(int from) {
+        this.from = from;
     }
 
     private enum AvailableState {

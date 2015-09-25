@@ -1,7 +1,8 @@
 package com.tosslab.jandi.app.push;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.os.PersistableBundle;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -10,11 +11,14 @@ import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -31,7 +35,7 @@ import retrofit.RetrofitError;
  * Created by Steve SeongUg Jung on 15. 1. 15..
  */
 @EActivity(R.layout.activity_intro)
-public class PushInterfaceActivity extends AppCompatActivity {
+public class PushInterfaceActivity extends BaseAppCompatActivity {
     public static final String TAG = "JANDI.PushInterfaceActivity";
 
     public static final String EXTRA_USED = "used";
@@ -47,6 +51,12 @@ public class PushInterfaceActivity extends AppCompatActivity {
     int teamId;
     @Bean
     JandiInterfaceModel jandiInterfaceModel;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
+        super.onCreate(savedInstanceState, persistentState);
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.PushNotification);
+    }
 
     @AfterInject
     void initObject() {
@@ -153,8 +163,7 @@ public class PushInterfaceActivity extends AppCompatActivity {
     @UiThread
     void moveIntroActivity() {
         IntroActivity_.intent(PushInterfaceActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .start();
         finish();
     }
@@ -177,4 +186,5 @@ public class PushInterfaceActivity extends AppCompatActivity {
 
         finish();
     }
+
 }

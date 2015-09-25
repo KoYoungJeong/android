@@ -21,6 +21,8 @@ import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.TopicDetailModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -58,6 +60,9 @@ public class ChatDetailFragment extends Fragment {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         boolean isStarred = entity.isStarred;
         setStarred(isStarred);
+
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MessageDescription);
+
     }
 
     private void setUpActionbar() {
@@ -116,9 +121,11 @@ public class ChatDetailFragment extends Fragment {
                 entityClientManager.disableFavorite(entityId);
 
                 topicDetailModel.trackTopicUnStarSuccess(entityId);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.TurnOnStar);
 
             } else {
                 entityClientManager.enableFavorite(entityId);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.TurnOnStar);
 
                 topicDetailModel.trackTopicStarSuccess(entityId);
                 showSuccessToast(getString(R.string.jandi_message_starred));
@@ -152,6 +159,7 @@ public class ChatDetailFragment extends Fragment {
     void onChatLeaveClick() {
         leaveViewModel.initData(getActivity(), entityId);
         leaveViewModel.leave();
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.Leave);
     }
 
 }

@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.FileDetailRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
@@ -28,9 +29,7 @@ import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
-import com.tosslab.jandi.app.utils.analytics.GoogleAnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -209,8 +208,9 @@ public class FileDetailModel {
             ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            JandiPreference.setBadgeCount(context, totalUnreadCount);
-            BadgeUtils.setBadge(context, totalUnreadCount);
+            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+            badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
+            BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
             EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitError e) {
@@ -245,8 +245,6 @@ public class FileDetailModel {
                         .property(PropertyKey.FileId, fileId)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.FileDownload.name(), "ResponseSuccess");
-
     }
 
     public void trackFileShareSuccess(int topicId, int fileId) {
@@ -261,8 +259,6 @@ public class FileDetailModel {
                         .property(PropertyKey.FileId, fileId)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.FileShare.name(), "ResponseSuccess");
-
     }
 
     public void trackFileShareFail(int errorCode) {
@@ -274,8 +270,6 @@ public class FileDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-
-        GoogleAnalyticsUtil.sendEvent(Event.FileShare.name(), "ResponseFail");
 
     }
 
@@ -291,8 +285,6 @@ public class FileDetailModel {
                         .property(PropertyKey.FileId, fileId)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.FileUnShare.name(), "ResponseSuccess");
-
     }
 
     public void trackFileUnShareFail(int errorCode) {
@@ -304,8 +296,6 @@ public class FileDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-
-        GoogleAnalyticsUtil.sendEvent(Event.FileUnShare.name(), "ResponseFail");
 
     }
 
@@ -321,8 +311,6 @@ public class FileDetailModel {
                         .property(PropertyKey.FileId, fileId)
                         .build());
 
-        GoogleAnalyticsUtil.sendEvent(Event.FileDelete.name(), "ResponseSuccess");
-
     }
 
     public void trackFileDeleteFail(int errorCode) {
@@ -334,8 +322,6 @@ public class FileDetailModel {
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
-
-        GoogleAnalyticsUtil.sendEvent(Event.FileDelete.name(), "ResponseFail");
 
     }
 
@@ -425,5 +411,9 @@ public class FileDetailModel {
     public ResMessages.FileMessage getFileMessage(int fileId) {
 
         return MessageRepository.getRepository().getFileMessage(fileId);
+    }
+
+    public boolean isTeamOwner() {
+        return TextUtils.equals(EntityManager.getInstance().getMe().getUser().u_authority, "owner");
     }
 }

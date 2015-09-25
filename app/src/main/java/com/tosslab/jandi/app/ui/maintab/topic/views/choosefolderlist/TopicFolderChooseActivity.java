@@ -14,10 +14,12 @@ import android.widget.LinearLayout;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResFolder;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.adapter.TopicFolderChooseAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.presenter.TopicFolderChoosePresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterInject;
@@ -36,7 +38,7 @@ import java.util.List;
  */
 @EActivity(R.layout.activity_folder_choose)
 @OptionsMenu(R.menu.choose_folder_menu)
-public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements TopicFolderChoosePresenter.View {
+public class TopicFolderChooseActivity extends BaseAppCompatActivity implements TopicFolderChoosePresenter.View {
 
     @Extra
     int topicId;
@@ -76,6 +78,8 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
         adapter.setOnRecyclerItemClickListener((view, adapter, position, type) -> {
             topicFolderChoosePresentor.onItemClick(adapter, position, type, folderId, topicId);
         });
+
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MoveToaFolder);
     }
 
     @Override
@@ -147,6 +151,7 @@ public class TopicFolderChooseActivity extends BaseAnalyticsActivity implements 
         builder.setView(vgInputEditText)
                 .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
                     createNewFolder(input.getText().toString());
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolder);
                 })
                 .setNegativeButton(R.string.jandi_cancel, (dialog, which) -> {
                     dialog.cancel();

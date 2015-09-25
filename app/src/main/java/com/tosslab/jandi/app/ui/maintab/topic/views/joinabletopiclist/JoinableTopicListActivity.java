@@ -11,7 +11,7 @@ import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.adapter.TopicRecyclerAdapter;
@@ -21,6 +21,8 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
@@ -38,7 +40,7 @@ import rx.Observable;
  */
 
 @EActivity(R.layout.activity_unjoined_topic_list)
-public class JoinableTopicListActivity extends BaseAnalyticsActivity
+public class JoinableTopicListActivity extends BaseAppCompatActivity
         implements JoinableTopicListPresenter.View {
 
     @ViewById(R.id.rv_unjoined_topic)
@@ -107,6 +109,7 @@ public class JoinableTopicListActivity extends BaseAnalyticsActivity
 
         mainTopicListPresenter.onInitUnjoinedTopics();
 
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.BrowseOtherTopics);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -144,8 +147,12 @@ public class JoinableTopicListActivity extends BaseAnalyticsActivity
 
         UnjoinTopicDialog dialog = UnjoinTopicDialog.instantiate(item);
         dialog.setOnJoinClickListener(
-                (dialog1, which) -> mainTopicListPresenter.onJoinTopic(getApplicationContext(), item));
+                (dialog1, which) -> {
+                    mainTopicListPresenter.onJoinTopic(getApplicationContext(), item);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.BrowseOtherTopics, AnalyticsValue.Action.JoinTopic);
+                });
         dialog.show(getSupportFragmentManager(), "dialog");
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.BrowseOtherTopics, AnalyticsValue.Action.ViewTopicInfo);
 
     }
 
@@ -198,7 +205,7 @@ public class JoinableTopicListActivity extends BaseAnalyticsActivity
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle("Join topic");
+        actionBar.setTitle(getString(R.string.jandi_browse_other_topics));
     }
 
     @Override
