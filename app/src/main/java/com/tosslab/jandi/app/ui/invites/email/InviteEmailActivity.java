@@ -17,7 +17,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.email.adapter.InviteEmailListAdapter;
 import com.tosslab.jandi.app.ui.invites.email.model.InviteEmailModel;
@@ -92,8 +91,6 @@ public class InviteEmailActivity extends BaseAppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        EntityManager entityManager = EntityManager.getInstance();
-        trackGaInviteMember(entityManager.getDistictId());
         ActivityHelper.setOrientation(this);
     }
 

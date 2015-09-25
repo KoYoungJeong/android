@@ -24,17 +24,10 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.models.ReqProfileName;
-import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.modify.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.profile.modify.ModifyProfileActivity_;
-import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
-import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
@@ -43,13 +36,6 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.transform.ion.IonBlurTransform;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.SwipeExitLayout;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -60,6 +46,7 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.ViewById;
 
+import de.greenrobot.event.EventBus;
 import uk.co.senab.photoview.PhotoView;
 
 /**
@@ -146,10 +133,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
-        trackGaProfile(getDistictId());
         ActivityHelper.setOrientation(this);
     }
-     
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

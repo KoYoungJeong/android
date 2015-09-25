@@ -72,9 +72,9 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
@@ -354,7 +354,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public void onResume() {
         super.onResume();
         isForeground = true;
-        trackGaFileDetail(entityManager);
         ActivityHelper.setOrientation(this);
     }
 
