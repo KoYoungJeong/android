@@ -5,10 +5,11 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <LinearLayout
+    <View
+        android:id="@+id/view_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#e5e5e5"></LinearLayout>
+        android:background="#e5e5e5"></View>
 
     <LinearLayout
         android:layout_width="match_parent"
