@@ -129,8 +129,10 @@ public class ImageFilePath {
         else if ("content".equalsIgnoreCase(uri.getScheme())) {
 
             // Return the remote address
-            if (isGooglePhotosUri(uri)) {
+            if (isGoogleOldPhotosUri(uri)) {
                 return uri.getLastPathSegment();
+            } else if (isGoogleNewPhotosUri(uri)) {
+                return copyFile(context, uri);
             } else if (isPicasaPhotoUri(uri)) {
                 return copyFile(context, uri);
             }
@@ -257,7 +259,11 @@ public class ImageFilePath {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is Google Photos.
      */
-    public static boolean isGooglePhotosUri(Uri uri) {
+    public static boolean isGoogleOldPhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
+    }
+
+    public static boolean isGoogleNewPhotosUri(Uri uri) {
+        return "com.google.android.apps.photos.contentprovider".equals(uri.getAuthority());
     }
 }
