@@ -515,5 +515,6 @@
     <string name="jandi_1_1_message">"直接傳訊"</string>
     <string name="jandi_no_long_team_member">"%s 不再是此團隊的成員"</string>
     <string name="jandi_commented_on">"<![CDATA[<font color="#999999">留言於</font><font color="#000000"><b>%s</b></font><font color="#999999">的檔案</font"]]></string>
+    <string name="jandi_your_access_disabled">"你在 %s 的權限已被關閉"</string>
 </resources>
 
