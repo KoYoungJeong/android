@@ -72,7 +72,7 @@ public class JandiPushIntentService extends IntentService {
         int badgeCount = jandiPushReceiverModel.getBadgeCount(teamId);
         jandiPushReceiverModel.updateBadgeCount(context, teamId, badgeCount + 1);
 
-        // 해댕 채팅방에 진입해 있거나 푸시 알림 설정 Off 였을 때
+        // 해당 채팅방에 진입해 있거나 푸시 알림 설정 Off 였을 때
         if (isShowingEntity || !userWantsNotification) {
             postEvent(roomId, pushTOInfo.getRoomType());
             return;
