@@ -140,7 +140,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
     @Override
     public void onTopicDelete(int entityId) {
-        if (!topicDetailModel.isOwner(entityId)) {
+        if (!(topicDetailModel.isOwner(entityId) || topicDetailModel.isTeamOwner())) {
             return;
         }
 
@@ -156,15 +156,16 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             topicDetailModel.deleteTopic(entityId, entityType);
             topicDetailModel.trackDeletingEntity(context, entityType);
             topicDetailModel.trackTopicDeleteSuccess(entityId);
+            view.dismissProgressWheel();
             view.leaveTopic();
         } catch (RetrofitError e) {
             int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
             topicDetailModel.trackTopicDeleteFail(errorCode);
             e.printStackTrace();
+            view.dismissProgressWheel();
         } catch (Exception e) {
             topicDetailModel.trackTopicDeleteFail(-1);
             e.printStackTrace();
-        } finally {
             view.dismissProgressWheel();
         }
     }

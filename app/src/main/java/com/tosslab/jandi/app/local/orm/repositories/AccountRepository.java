@@ -148,6 +148,22 @@ public class AccountRepository {
         }
     }
 
+    public int removeSelectedTeamInfo() {
+        lock.lock();
+        try {
+            Dao<SelectedTeam, Long> dao = helper.getDao(SelectedTeam.class);
+
+            return dao.deleteBuilder().delete();
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        } finally {
+            lock.unlock();
+        }
+    }
+
     public int getSelectedTeamId() {
         lock.lock();
         try {
