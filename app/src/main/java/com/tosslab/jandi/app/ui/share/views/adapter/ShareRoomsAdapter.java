@@ -63,6 +63,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     .inflate(R.layout.item_room_select_folder, parent, false);
             FolderViewHolder viewHolder = new FolderViewHolder(itemView);
             viewHolder.tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
+            viewHolder.viewLine = itemView.findViewById(R.id.view_line);
 
             return viewHolder;
         }
@@ -82,6 +83,11 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             FolderViewHolder folderViewHolder = (FolderViewHolder) holder;
             folderViewHolder.tvName.setText(item.getName().toString());
             folderViewHolder.itemView.setClickable(false);
+            if (position == 0) {
+                folderViewHolder.viewLine.setVisibility(View.INVISIBLE);
+            } else {
+                folderViewHolder.viewLine.setVisibility(View.VISIBLE);
+            }
             return;
         }
 
@@ -185,6 +191,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     class FolderViewHolder extends RecyclerView.ViewHolder {
 
         private TextView tvName;
+        private View viewLine;
 
         public FolderViewHolder(View itemView) {
             super(itemView);

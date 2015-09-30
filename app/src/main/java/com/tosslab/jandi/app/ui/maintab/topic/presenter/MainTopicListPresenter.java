@@ -114,7 +114,6 @@ public class MainTopicListPresenter {
                         refreshListView(provider);
                         view.setFolderExpansion();
                     }
-                    //view.startAnimationSelectedItem();
                 }, Throwable::printStackTrace);
 
     }

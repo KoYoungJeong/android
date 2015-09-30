@@ -140,7 +140,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
     @Override
     public void onTopicDelete(int entityId) {
-        if (!topicDetailModel.isOwner(entityId)) {
+        if (!(topicDetailModel.isOwner(entityId) || topicDetailModel.isTeamOwner())) {
             return;
         }
 
