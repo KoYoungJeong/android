@@ -53,6 +53,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -279,6 +280,10 @@ public class JandiSocketServiceModel {
                     objectMapper.readValue(object.toString(), SocketLinkPreviewMessageEvent.class);
 
             int teamId = socketLinkPreviewMessageEvent.getTeamId();
+            if (AccountRepository.getRepository().getSelectedTeamId() != teamId) {
+                return;
+            }
+
             int messageId = socketLinkPreviewMessageEvent.getMessage().getId();
 
             if (updateLinkPreview(teamId, messageId)) {
@@ -300,7 +305,10 @@ public class JandiSocketServiceModel {
 
             SocketLinkPreviewThumbnailEvent.Data data = socketLinkPreviewMessageEvent.getData();
             ResMessages.LinkPreview linkPreview = data.getLinkPreview();
-            linkPreview.useThumbnail = true;
+
+            if (AccountRepository.getRepository().getSelectedTeamId() != data.getTeamId()) {
+                return;
+            }
 
             int messageId = data.getMessageId();
 
@@ -323,7 +331,6 @@ public class JandiSocketServiceModel {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) message;
             ResMessages.LinkPreview linkPreview = textMessage.linkPreview;
             if (linkPreview != null) {
-                linkPreview.useThumbnail = false;
                 MessageRepository.getRepository().upsertTextMessage(textMessage);
                 return true;
             }

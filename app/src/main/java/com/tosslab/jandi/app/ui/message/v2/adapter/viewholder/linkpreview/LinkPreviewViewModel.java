@@ -68,7 +68,7 @@ public class LinkPreviewViewModel {
 
         onLinkPreviewClickListener.setLinkUrl(linkPreview.linkUrl);
 
-        boolean useThumbnail = linkPreview.useThumbnail;
+        boolean useThumbnail = useThumbnail(linkPreview.imageUrl);
 
         if (!useThumbnail) {
             ivThumb.setImageDrawable(null);
@@ -76,19 +76,19 @@ public class LinkPreviewViewModel {
             return;
         }
 
-        final String imageUrl = linkPreview.imageUrl;
-        if (TextUtils.isEmpty(imageUrl)) {
-            return;
-        }
-
         vgThumb.setVisibility(View.VISIBLE);
 
+        String imageUrl = linkPreview.imageUrl;
         Glide.with(context)
                 .load(imageUrl)
                 .asBitmap()
                 .centerCrop()
                 .placeholder(R.drawable.link_preview)
                 .into(ivThumb);
+    }
+
+    private boolean useThumbnail(String imagUrl) {
+        return !TextUtils.isEmpty(imagUrl) && imagUrl.contains("linkpreview-thumb");
     }
 
     private static class OnLinkPreviewClickListener implements View.OnClickListener {

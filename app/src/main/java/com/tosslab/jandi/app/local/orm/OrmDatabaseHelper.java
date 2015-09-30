@@ -4,8 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.tosslab.jandi.app.local.orm.domain.BadgeCount;
@@ -36,8 +34,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_FOLDER = 2;
     private static final int DATABASE_VERSION_BADGE = 3;
     private static final int DATABASE_VERSION_FOLDER_MODIFY = 4;
-    private static final int DATABASE_VERSION_ALTER_LINKPREVIEW = 5;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_ALTER_LINKPREVIEW;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_FOLDER_MODIFY;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -134,9 +131,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     createTable(connectionSource, ResFolderItem.class);
                 }
 
-                if (oldVersion < DATABASE_VERSION_ALTER_LINKPREVIEW) {
-                    alterTableLinkPreview();
-                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -211,14 +205,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private void createTable(ConnectionSource connectionSource, Class<?> dataClass) throws SQLException {
         TableUtils.createTableIfNotExists(connectionSource, dataClass);
-    }
-
-    private void alterTableLinkPreview() throws SQLException {
-        Dao<ResMessages.LinkPreview, ?> dao = getDao(ResMessages.LinkPreview.class);
-        dao.executeRaw("ALTER TABLE 'message_text_linkpreview' ADD COLUMN useThumbnail BOOLEAN DEFAULT 0;");
-        UpdateBuilder<ResMessages.LinkPreview, ?> updateBuilder = dao.updateBuilder();
-        updateBuilder.updateColumnValue("useThumbnail", true);
-        updateBuilder.update();
     }
 
     private void dropTable(ConnectionSource connectionSource, Class<?> dataClass) throws SQLException {

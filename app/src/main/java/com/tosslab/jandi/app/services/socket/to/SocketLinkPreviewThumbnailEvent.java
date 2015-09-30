@@ -52,6 +52,7 @@ public class SocketLinkPreviewThumbnailEvent {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
         private Size size;
+        private int teamId;
         private int messageId;
         private ResMessages.LinkPreview linkPreview;
 
@@ -61,6 +62,14 @@ public class SocketLinkPreviewThumbnailEvent {
 
         public void setSize(Size size) {
             this.size = size;
+        }
+
+        public int getTeamId() {
+            return teamId;
+        }
+
+        public void setTeamId(int teamId) {
+            this.teamId = teamId;
         }
 
         public int getMessageId() {
