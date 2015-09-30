@@ -7,6 +7,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.TopicFolderDialogMode
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -89,6 +91,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
                 .from(getActivity()).inflate(R.layout.input_edit_text_view, null);
 
         EditText input = (EditText) vgInputEditText.findViewById(R.id.et_input);
+        ((TextView) vgInputEditText.findViewById(R.id.tv_input_title)).setText(R.string.jandi_folder_rename);
 
         input.setText(name);
         input.setSelection(name.length());
@@ -102,7 +105,20 @@ public class TopicFolderDialogFragment extends DialogFragment {
                     TopicFolderDialogFragment.this.dismiss();
                 })
                 .setOnCancelListener(dialog -> TopicFolderDialogFragment.this.dismiss());
-        builder.show();
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertDialog.show();
+
+        input.addTextChangedListener(new SimpleTextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() <= 0) {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                } else {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }
+            }
+        });
     }
 
     private void showDeleteFolderDialog(int folderId) {
