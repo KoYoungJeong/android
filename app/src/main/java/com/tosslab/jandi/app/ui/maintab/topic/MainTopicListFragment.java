@@ -92,6 +92,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     private RecyclerViewExpandableItemManager expandableItemManager;
     private boolean isFirstForRetrieve = true;
     private ProgressWheel progressWheel;
+    private boolean hasOnResumed = false;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -183,6 +184,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
         setSelectedItem(selectedEntity);
+        scrollAndAnimateForSelectedItem();
 
         setFolderExpansion();
     }
@@ -201,19 +203,11 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         super.onResume();
         btnFA.setAnimation(null);
         btnFA.setVisibility(View.VISIBLE);
-        scrollAndAnimateForSelectedItem();
+        if (adapter != null && hasOnResumed) {
+            scrollAndAnimateForSelectedItem();
+        }
+        hasOnResumed = true;
     }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
