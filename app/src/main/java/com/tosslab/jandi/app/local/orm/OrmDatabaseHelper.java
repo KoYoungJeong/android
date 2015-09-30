@@ -33,7 +33,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ORIGIN = 1;
     private static final int DATABASE_VERSION_FOLDER = 2;
     private static final int DATABASE_VERSION_BADGE = 3;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_BADGE;
+    private static final int DATABASE_VERSION_FOLDER_MODIFY = 4;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_FOLDER_MODIFY;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -105,7 +106,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, UploadedFileInfo.class);
 
             createTable(connectionSource, BadgeCount.class);
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -115,13 +115,22 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         if (oldVersion < newVersion) {
             try {
-                if (oldVersion == DATABASE_VERSION_ORIGIN) {
+
+                if (oldVersion < DATABASE_VERSION_FOLDER) {
                     createTable(connectionSource, UploadedFileInfo.class);
                     createTable(connectionSource, ResFolder.class);
                     createTable(connectionSource, ResFolderItem.class);
                 }
 
-                createTable(connectionSource, BadgeCount.class);
+                if (oldVersion < DATABASE_VERSION_BADGE) {
+                    createTable(connectionSource, BadgeCount.class);
+                }
+
+                if (oldVersion < DATABASE_VERSION_FOLDER_MODIFY) {
+                    dropTable(connectionSource, ResFolderItem.class);
+                    createTable(connectionSource, ResFolderItem.class);
+                }
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }

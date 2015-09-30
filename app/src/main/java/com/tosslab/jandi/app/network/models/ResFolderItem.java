@@ -20,16 +20,40 @@ public class ResFolderItem {
     @JsonIgnore
     @DatabaseField(generatedId = true)
     public int _id;
+
+    @JsonIgnore
+    @DatabaseField
+    public int teamId;
+
     @DatabaseField
     public int folderId;
+
     @DatabaseField
     public int roomId;
 
     @Override
     public String toString() {
         return "ResFolderItem{" +
-                "folderId=" + folderId +
+                "_id=" + _id +
+                ", teamId=" + teamId +
+                ", folderId=" + folderId +
                 ", roomId=" + roomId +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ResFolderItem that = (ResFolderItem) o;
+        if (folderId != that.folderId) return false;
+        return roomId == that.roomId;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = folderId;
+        result = 31 * result + roomId;
+        return result;
     }
 }

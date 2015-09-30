@@ -44,4 +44,27 @@ public class ResFolder {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ResFolder resFolder = (ResFolder) o;
+
+        if (id != resFolder.id) return false;
+        if (seq != resFolder.seq) return false;
+        if (memberId != resFolder.memberId) return false;
+        if (teamId != resFolder.teamId) return false;
+        return name.equals(resFolder.name);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + seq;
+        result = 31 * result + memberId;
+        result = 31 * result + teamId;
+        return result;
+    }
 }

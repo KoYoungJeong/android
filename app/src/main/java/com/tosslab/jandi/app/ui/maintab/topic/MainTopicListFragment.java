@@ -21,6 +21,8 @@ import com.tosslab.jandi.app.lists.libs.advancerecyclerview.animator.GeneralItem
 import com.tosslab.jandi.app.lists.libs.advancerecyclerview.animator.RefactoredDefaultItemAnimator;
 import com.tosslab.jandi.app.lists.libs.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
+import com.tosslab.jandi.app.network.models.ResFolder;
+import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
@@ -42,6 +44,7 @@ import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -58,6 +61,7 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.HashMap;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -73,7 +77,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
 
     @FragmentArg
-    int selectedEntity = -1;
+    int selectedEntity = -2;
     @Bean(MainTopicListPresenter.class)
     MainTopicListPresenter mainTopicListPresenter;
     @ViewById(R.id.btn_main_topic_fab)
@@ -85,8 +89,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     private ExpandableTopicAdapter adapter;
     private RecyclerView.Adapter wrappedAdapter;
     private RecyclerViewExpandableItemManager expandableItemManager;
-    private boolean isFirst = true;
-
+    private boolean isFirstForRetrieve = true;
     private ProgressWheel progressWheel;
 
     @Override
@@ -114,7 +117,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     void initViews() {
         mainTopicListPresenter.setView(this);
         mainTopicListPresenter.onLoadList();
-        mainTopicListPresenter.onInitList();
         FAButtonUtil.setFAButtonController(lvMainTopic, btnFA);
         hasOptionsMenu();
     }
@@ -129,7 +131,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
     @Override
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void showList(TopicFolderListDataProvider topicFolderListDataProvider, List<FolderExpand> folderExpands) {
+    public void showList(TopicFolderListDataProvider topicFolderListDataProvider) {
 
         adapter = new ExpandableTopicAdapter(topicFolderListDataProvider);
 
@@ -148,24 +150,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
         // 어떤 폴더에도 속하지 않는 토픽들을 expand된 상태에서 보여주기 위하여
         expandableItemManager.expandGroup(adapter.getGroupCount() - 1);
-
-        if (adapter.getGroupCount() > 1 && folderExpands != null && !folderExpands.isEmpty()) {
-            int groupCount = adapter.getGroupCount();
-            boolean expand;
-            int seledtedGruopId = adapter.findGroupIdOfChildEntity(selectedEntity);
-            for (int idx = 0; idx < groupCount; idx++) {
-                TopicFolderData topicFolderData = adapter.getTopicFolderData(idx);
-                expand = Observable.from(folderExpands)
-                        .filter(folderExpand -> topicFolderData.getFolderId() == folderExpand.getFolderId()
-                                || topicFolderData.getFolderId() == seledtedGruopId)
-                        .map(FolderExpand::isExpand)
-                        .firstOrDefault(false)
-                        .toBlocking().first();
-                if (expand) {
-                    expandableItemManager.expandGroup(idx);
-                }
-            }
-        }
 
         expandableItemManager.setOnGroupCollapseListener((groupPosition, fromUser) -> {
             TopicFolderData topicFolderData = adapter.getTopicFolderData(groupPosition);
@@ -199,6 +183,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
         setSelectedItem(selectedEntity);
         adapter.startAnimation();
+
+        setFolderExpansion();
     }
 
     public void showGroupSettingPopupView(View view, int folderId, String folderName, int seq) {
@@ -215,11 +201,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         super.onResume();
         btnFA.setAnimation(null);
         btnFA.setVisibility(View.VISIBLE);
-        if (!isFirst) {
-            mainTopicListPresenter.onRefreshList();
-        } else {
-            isFirst = false;
-        }
     }
 
     @Override
@@ -243,30 +224,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
-    }
-
-    public void onEvent(JoinableTopicCallEvent event) {
-        JoinableTopicListActivity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .start();
-
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.BrowseOtherTopics);
-    }
-
-    public void onEvent(TopicFolderMoveCallEvent event) {
-        TopicFolderChooseActivity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .extra("topicId", event.getTopicId())
-                .extra("folderId", event.getFolderId())
-                .start();
-    }
-
-    public void onEvent(RetrieveTopicListEvent event) {
-        mainTopicListPresenter.onRefreshList();
-    }
-
-    public void onEvent(SocketTopicFolderEvent event) {
-        mainTopicListPresenter.onRefreshList();
     }
 
     @Override
@@ -309,23 +266,38 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     public void refreshList(TopicFolderListDataProvider topicFolderListDataProvider) {
         adapter.setProvider(topicFolderListDataProvider);
         notifyDatasetChanged();
-
         int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void setFolderExpansion() {
+        List<FolderExpand> folderExpands = mainTopicListPresenter.onGetFolderExpands();
+        LogUtil.e(folderExpands.size() + "");
+        if (adapter.getGroupCount() > 1 && folderExpands != null && !folderExpands.isEmpty()) {
+            int groupCount = adapter.getGroupCount();
+            HashMap<Integer, Boolean> folderExpandMap = new HashMap<>();
 
-    public void onEvent(SocketMessageEvent event) {
-        if (TextUtils.equals(event.getMessageType(), "chat")) {
-            return;
+            for (FolderExpand folderExpand : folderExpands) {
+                folderExpandMap.put(Integer.valueOf(folderExpand.getFolderId()), folderExpand.isExpand());
+            }
+
+            for (int idx = 0; idx < groupCount; idx++) {
+                TopicFolderData topicFolderData = adapter.getTopicFolderData(idx);
+                int folderId = Integer.valueOf(topicFolderData.getFolderId());
+                if (folderExpandMap.get(folderId) != null) {
+                    if (folderExpandMap.get(folderId)) {
+                        if (!expandableItemManager.isGroupExpanded(idx)) {
+                            expandableItemManager.expandGroup(idx);
+                        }
+                    } else {
+                        if (expandableItemManager.isGroupExpanded(idx)) {
+                            expandableItemManager.collapseGroup(idx);
+                        }
+                    }
+                }
+            }
         }
-        // 내부적으로 메세지만 갱신시키도록 변경
-        mainTopicListPresenter.onNewMessage(event);
-
-    }
-
-    public void onEvent(SocketTopicPushEvent event) {
-        mainTopicListPresenter.onRefreshList();
     }
 
     @Override
@@ -357,6 +329,49 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
+    }
+
+    public void onEvent(JoinableTopicCallEvent event) {
+        JoinableTopicListActivity_.intent(getActivity())
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .start();
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.BrowseOtherTopics);
+    }
+
+    public void onEvent(TopicFolderMoveCallEvent event) {
+        TopicFolderChooseActivity_.intent(getActivity())
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .extra("topicId", event.getTopicId())
+                .extra("folderId", event.getFolderId())
+                .start();
+    }
+
+    public void onEvent(RetrieveTopicListEvent event) {
+        if (!isFirstForRetrieve) {
+            List<ResFolder> topicFolders = mainTopicListPresenter.onGetTopicFolders();
+            List<ResFolderItem> topicFolderItems = mainTopicListPresenter.onGetTopicFolderItems();
+            mainTopicListPresenter.onRefreshList(topicFolders, topicFolderItems, true);
+        } else {
+            isFirstForRetrieve = false;
+        }
+    }
+
+    public void onEvent(SocketTopicFolderEvent event) {
+        mainTopicListPresenter.onRefreshList(null, null, false);
+    }
+
+    public void onEvent(SocketTopicPushEvent event) {
+        List<ResFolder> topicFolders = mainTopicListPresenter.onGetTopicFolders();
+        List<ResFolderItem> topicFolderItems = mainTopicListPresenter.onGetTopicFolderItems();
+        mainTopicListPresenter.onRefreshList(topicFolders, topicFolderItems, true);
+    }
+
+    public void onEvent(SocketMessageEvent event) {
+        if (TextUtils.equals(event.getMessageType(), "chat")) {
+            return;
+        }
+        // 내부적으로 메세지만 갱신시키도록 변경
+        mainTopicListPresenter.onNewMessage(event);
     }
 
     public void onEvent(MainSelectTopicEvent event) {
