@@ -175,15 +175,15 @@ public class FileDetailPresenter {
             String errorMessage;
             if (e.getResponse() != null
                     && e.getResponse().getStatus() == 403) {
-                errorMessage = activity.getResources().getString(R.string.jandi_unshared_message);
+                view.showUnsharedFileToast();
             } else {
                 if (e.getCause() instanceof ConnectionNotFoundException) {
                     errorMessage = activity.getResources().getString(R.string.err_network);
                 } else {
                     errorMessage = activity.getResources().getString(R.string.err_file_detail);
                 }
+                view.showToast(errorMessage);
             }
-            view.showToast(errorMessage);
             view.finishOnMainThread();
         } catch (Exception e) {
             view.dismissProgress();
@@ -685,5 +685,7 @@ public class FileDetailPresenter {
         void modifyStarredInfo(int messageId, boolean isStarred);
 
         void updateFileStarred(boolean starred);
+
+        void showUnsharedFileToast();
     }
 }

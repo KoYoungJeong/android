@@ -524,6 +524,7 @@
     <string name="jandi_no_long_team_member">"%sさんはもうこのチームのメンバーではありません"</string>
     <string name="jandi_commented_on">"<![CDATA[<font color="#000000"><b>%s</b></font><font color="#999999">さんのファイルにコメントしました</font>]]>"</string>
     <string name="jandi_your_access_disabled">"%sへのアクセスが無効化されました"</string>
+    <string name="jandi_unshared_file_in_dm">"このファイルは非共有化されました"</string>
 
 
 </resources>

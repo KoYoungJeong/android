@@ -536,4 +536,5 @@
     <string name="jandi_no_long_team_member">"%s님은 더이상 팀 멤버가 아닙니다."</string>
     <string name="jandi_commented_on">"<![CDATA[<font color="#000000"><b>%s</b></font><font color="#999999">님의 파일에 코멘트를 남겼습니다.</font>]]>"</string>
     <string name="jandi_your_access_disabled">"%s에서 차단되었습니다."</string>
+    <string name="jandi_unshared_file_in_dm">"이 파일은 이 대화에서 공유 해제되어 더 이상 즐겨찾기를 하실 수 없습니다."</string>
 </resources>
