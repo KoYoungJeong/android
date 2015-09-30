@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -85,7 +86,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     @ViewById(R.id.rv_main_topic)
     RecyclerView lvMainTopic;
 
-    private RecyclerView.LayoutManager layoutManager;
+    private LinearLayoutManager layoutManager;
     private ExpandableTopicAdapter adapter;
     private RecyclerView.Adapter wrappedAdapter;
     private RecyclerViewExpandableItemManager expandableItemManager;
@@ -182,7 +183,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
         setSelectedItem(selectedEntity);
-        adapter.startAnimation();
 
         setFolderExpansion();
     }
@@ -201,6 +201,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         super.onResume();
         btnFA.setAnimation(null);
         btnFA.setVisibility(View.VISIBLE);
+        scrollAndAnimateForSelectedItem();
     }
 
     @Override
@@ -387,9 +388,76 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void startAnimationSelectedItem() {
-        adapter.startAnimation();
-        adapter.notifyDataSetChanged();
+    public void scrollAndAnimateForSelectedItem() {
+        int selectedEntity = adapter.getSelectedEntity();
+        if (selectedEntity <= 0) {
+            return;
+        }
+
+        LogUtil.d("TopicList", "selectedEntity = " + selectedEntity);
+
+        int groupPosition = -1;
+        int childPosition = 0;
+        TopicFolderListDataProvider provider = adapter.getProvider();
+
+        int groupCount = provider.getGroupCount();
+        if (groupCount > 0) {
+            for (int i = 0; i < groupCount; i++) {
+                int childCount = provider.getChildCount(i);
+                for (int j = 0; j < childCount; j++) {
+                    TopicItemData childItem = (TopicItemData) provider.getChildItem(i, j);
+                    if (childItem.getEntityId() == selectedEntity) {
+                        groupPosition = i;
+                        childPosition = j;
+                        break;
+                    }
+                }
+            }
+        } else {
+            groupPosition = 0;
+            for (int i = 0; i < provider.getChildCount(0); i++) {
+                TopicItemData childItem = (TopicItemData) provider.getChildItem(0, i);
+                if (childItem.getEntityId() == selectedEntity) {
+                    childPosition = i;
+                    break;
+                }
+            }
+        }
+
+        LogUtil.e("TopicList", "groupPosition = " + groupPosition + " childPosition = " + childPosition);
+
+        if (groupPosition == -1) {
+            adapter.startAnimation();
+            adapter.notifyDataSetChanged();
+            return;
+        }
+
+        if (!expandableItemManager.isGroupExpanded(groupPosition)) {
+            expandableItemManager.expandGroup(groupPosition);
+        }
+
+        long packedPositionForChild =
+                RecyclerViewExpandableItemManager.getPackedPositionForChild(groupPosition, childPosition);
+
+        LogUtil.d("TopicList", "packedPositionForChild = " + packedPositionForChild);
+
+        int flatPosition = expandableItemManager.getFlatPosition(packedPositionForChild);
+
+        LogUtil.i("TopicList", "flatPosition = " + flatPosition);
+
+        int offset = lvMainTopic.getMeasuredHeight() / 2;
+        if (offset <= 0) {
+            offset = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    100f,
+                    JandiApplication.getContext().getResources().getDisplayMetrics());
+        }
+
+        layoutManager.scrollToPositionWithOffset(flatPosition, offset);
+
+        lvMainTopic.postDelayed(() -> {
+            adapter.startAnimation();
+            adapter.notifyDataSetChanged();
+        }, 300);
     }
 
 }
