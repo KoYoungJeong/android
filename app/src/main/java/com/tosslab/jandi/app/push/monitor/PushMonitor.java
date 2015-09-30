@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.push.monitor;
 
+import android.support.v4.app.NotificationCompat;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -12,6 +14,7 @@ public class PushMonitor {
     private ConcurrentHashMap<Integer, PushEntity> pushMap;
 
     private String lastNotifiedCreatedAt;
+    private NotificationCompat.Builder lastNotificationBuilder;
 
     private PushMonitor() {
         this.pushMap = new ConcurrentHashMap<Integer, PushEntity>();
@@ -43,5 +46,14 @@ public class PushMonitor {
 
     public void setLastNotifiedCreatedAt(String lastNotifiedCreatedAt) {
         this.lastNotifiedCreatedAt = lastNotifiedCreatedAt;
+    }
+
+    public void setLastNotificationBuilder(NotificationCompat.Builder notificationBuilder) {
+
+        this.lastNotificationBuilder = notificationBuilder;
+    }
+
+    public NotificationCompat.Builder getLastNotificationBuilder() {
+        return lastNotificationBuilder;
     }
 }

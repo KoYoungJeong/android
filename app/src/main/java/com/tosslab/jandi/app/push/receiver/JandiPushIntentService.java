@@ -6,21 +6,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
+
 import de.greenrobot.event.EventBus;
+import rx.subjects.PublishSubject;
 
 /**
  * Created by tonyjs on 15. 7. 14..
  */
 public class JandiPushIntentService extends IntentService {
     public static final String TAG = "JANDI.JandiPushIntentService";
-
+    private PublishSubject<PushTO> pushSubject;
     private JandiPushReceiverModel jandiPushReceiverModel;
 
     public JandiPushIntentService() {
@@ -31,6 +37,26 @@ public class JandiPushIntentService extends IntentService {
     public void onCreate() {
         super.onCreate();
         jandiPushReceiverModel = JandiPushReceiverModel_.getInstance_(getApplicationContext());
+        pushSubject = PublishSubject.create();
+        pushSubject
+                .onBackpressureBuffer()
+                .buffer(300, TimeUnit.MILLISECONDS)
+                .filter(pushTOs -> pushTOs != null && !pushTOs.isEmpty())
+                .subscribe(pushTOs -> {
+                    Collections.sort(pushTOs, (lhs, rhs) ->
+                            ((int) (DateTransformator.getTimeFromISO(lhs.getInfo().getCreatedAt())
+                                    - DateTransformator.getTimeFromISO(rhs.getInfo().getCreatedAt()))));
+
+                    PushTO pushTO = pushTOs.get(pushTOs.size() - 1);
+                    notifyPush(JandiApplication.getContext(), pushTO);
+
+                }, Throwable::printStackTrace);
+    }
+
+    @Override
+    public void onDestroy() {
+        pushSubject.onCompleted();
+        super.onDestroy();
     }
 
     @Override
@@ -78,11 +104,17 @@ public class JandiPushIntentService extends IntentService {
             return;
         }
 
-        ResLeftSideMenu leftSideMenu = jandiPushReceiverModel.getLeftSideMenu(teamId);
+        pushSubject.onNext(pushTO);
+    }
+
+    private void notifyPush(Context context, PushTO pushTO) {
+        PushTO.PushInfo pushTOInfo;
+        pushTOInfo = pushTO.getInfo();
+        ResLeftSideMenu leftSideMenu = jandiPushReceiverModel.getLeftSideMenu(pushTOInfo.getTeamId());
 
         if (leftSideMenu == null) {
             showNotification(context, pushTOInfo, false);
-            postEvent(roomId, pushTOInfo.getRoomType());
+            postEvent(pushTOInfo.getRoomId(), pushTOInfo.getRoomType());
             return;
         }
 
@@ -92,13 +124,13 @@ public class JandiPushIntentService extends IntentService {
         if (isMentionMessageToMe) {
             showNotification(context, pushTOInfo, true);
         } else {
-            boolean isTopicPushOn = jandiPushReceiverModel.isTopicPushOn(leftSideMenu, roomId);
+            boolean isTopicPushOn = jandiPushReceiverModel.isTopicPushOn(leftSideMenu, pushTOInfo.getRoomId());
             if (isTopicPushOn) {
                 showNotification(context, pushTOInfo, false);
             }
         }
 
-        postEvent(roomId, pushTOInfo.getRoomType());
+        postEvent(pushTOInfo.getRoomId(), pushTOInfo.getRoomType());
     }
 
     private void showNotification(Context context,
