@@ -377,6 +377,7 @@ public class JandiPushReceiverModel {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (notification != null) {
+            nm.cancel(JandiConstants.NOTIFICATION_ID);
             nm.notify(JandiConstants.NOTIFICATION_ID, notification);
         }
     }
