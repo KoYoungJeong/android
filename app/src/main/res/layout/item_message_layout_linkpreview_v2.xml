@@ -5,15 +5,16 @@
 
     <FrameLayout
         android:id="@+id/vg_linkpreview_thumb"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/jandi_messages_link_preview_thumb_max_width"
+        android:layout_height="120dp"
         android:background="@drawable/bg_rect_gray"
         android:padding="1dp">
 
-        <com.tosslab.jandi.app.views.AutoScaleImageView
+        <ImageView
             android:id="@+id/iv_linkpreview_thumb"
             android:layout_width="match_parent"
-            android:layout_height="115dp"/>
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
     </FrameLayout>
 
     <View
@@ -67,6 +68,4 @@
             android:textSize="13dp"/>
 
     </LinearLayout>
-
-
 </merge>

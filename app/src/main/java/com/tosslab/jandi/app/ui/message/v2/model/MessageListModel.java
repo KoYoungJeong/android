@@ -42,6 +42,7 @@ import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
+import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
@@ -390,6 +391,25 @@ public class MessageListModel {
 
     public ResMessages getAfterMarkerMessage(int linkId) throws RetrofitError {
         return messageManipulator.getAfterMarkerMessage(linkId);
+    }
+
+    public boolean upsertLinkPreviewThumbnail(SocketLinkPreviewThumbnailEvent event) {
+        SocketLinkPreviewThumbnailEvent.Data data = event.getData();
+        if (data == null) {
+            return false;
+        }
+
+        ResMessages.TextMessage textMessage =
+                MessageRepository.getRepository().getTextMessage(data.getMessageId());
+        if (textMessage == null) {
+            return false;
+        }
+
+        textMessage.linkPreview = data.getLinkPreview();
+
+        MessageRepository.getRepository().upsertTextMessage(textMessage);
+
+        return true;
     }
 
     @Background

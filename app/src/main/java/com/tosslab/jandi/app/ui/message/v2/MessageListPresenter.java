@@ -469,28 +469,9 @@ public class MessageListPresenter {
 
     }
 
-    @UiThread
-    public void updateMessage(ResMessages.OriginalMessage message) {
-        if (message == null) {
-            Log.e("INFO", "updateMessage is null");
-            return;
-        }
-
-        Log.i("INFO", "updateMessage - " + message.toString());
-
-        if (message instanceof ResMessages.TextMessage) {
-            ResMessages.TextMessage textMessage = (ResMessages.TextMessage) message;
-            ResMessages.LinkPreview linkPreview = textMessage.linkPreview;
-            if (linkPreview != null && !linkPreview.isEmpty()) {
-                updateLinkPreviewMessage(message);
-            }
-        }
-    }
-
-    private void updateLinkPreviewMessage(ResMessages.OriginalMessage message) {
+    public void updateLinkPreviewMessage(ResMessages.TextMessage message) {
         int messageId = message.id;
         int index = messageListAdapter.indexByMessageId(messageId);
-        Log.i("INFO", "updateLinkPreviewMessage index = " + index);
         if (index < 0) {
             return;
         }
@@ -500,8 +481,6 @@ public class MessageListPresenter {
             return;
         }
         link.message = message;
-
-        messageListAdapter.notifyDataSetChanged();
     }
 
     public void updateMessageIdAtSendingMessage(long localId, int messageId) {
