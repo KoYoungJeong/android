@@ -59,7 +59,6 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
@@ -881,13 +880,16 @@ public class MessageListPresenter {
 
         int position = messageListAdapter.indexOfLinkId(lastReadLinkId);
 
-        int offSet = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45f, activity
-                .getResources().getDisplayMetrics());
-
         if (position > 0) {
-            LogUtil.d("Scroll Position : " + position);
-            ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset
-                    (position, offSet);
+            int measuredHeight = messageListView.getMeasuredHeight() / 2;
+            if (measuredHeight <= 0) {
+                measuredHeight = (int) TypedValue
+                        .applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                                100f,
+                                activity.getResources().getDisplayMetrics());
+            }
+            ((LinearLayoutManager) messageListView.getLayoutManager())
+                    .scrollToPositionWithOffset(position + 1, measuredHeight);
         }
 
     }
