@@ -1,0 +1,3 @@
+task stringResourceRefresh(type: Exec) {
+    commandLine 'python', 'scripts/string-resource.py', './src/main/res'
+}

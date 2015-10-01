@@ -71,7 +71,7 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
         }
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.jandI_select_gallery);
+        actionBar.setTitle(R.string.jandi_select_gallery);
 
     }
 
