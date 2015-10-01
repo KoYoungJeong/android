@@ -122,6 +122,9 @@ public class LinkifyUtil {
 
     public static void setOnLinkClick(TextView textView) {
         textView.setOnTouchListener(new View.OnTouchListener() {
+
+            private ClickableSpannable clickableSpannable;
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 TextView widget = (TextView) v;
@@ -134,8 +137,7 @@ public class LinkifyUtil {
                 Spanned buffer = ((Spanned) text);
                 int action = event.getAction();
 
-                if (action == MotionEvent.ACTION_UP ||
-                        action == MotionEvent.ACTION_DOWN) {
+                if (action == MotionEvent.ACTION_DOWN) {
                     int x = (int) event.getX();
                     int y = (int) event.getY();
 
@@ -155,18 +157,22 @@ public class LinkifyUtil {
                         ClickableSpannable[] clickableSpan = (ClickableSpannable[]) buffer.getSpans
                                 (off, off, clickableSpannables[idx]);
                         if (clickableSpan != null && clickableSpan.length > 0) {
-                            if (action == MotionEvent.ACTION_UP) {
-                                clickableSpan[0].onClick();
-                            }
-
+                            clickableSpannable = clickableSpan[0];
                             return true;
                         }
                     }
+                    return false;
+                }
 
+                if (action == MotionEvent.ACTION_UP) {
+                    if (clickableSpannable != null) {
+                        clickableSpannable.onClick();
+                        clickableSpannable = null;
+                        return true;
+                    }
                 }
 
                 return false;
-
             }
         });
 
