@@ -374,7 +374,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
                 e.printStackTrace();
             }
         } else {
-            ColoredToast.showWarning(ModifyProfileActivity.this, "지원하지 않는 이미지 형식입니다. png, jpeg 를 선택해주세요.");
+            ColoredToast.showWarning(ModifyProfileActivity.this, getString(R.string.jandi_unsupported_type_picture));
         }
 
     }
