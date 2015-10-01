@@ -40,14 +40,12 @@ import org.androidannotations.annotations.RootContext;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
-import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -199,57 +197,6 @@ public class FileDetailPresenter {
         }
         boolean isMine = fileDetailModel.isMyComment(item.writerId) || fileDetailModel.isTeamOwner();
         view.showManipulateMessageDialogFragment(item, isMine);
-    }
-
-    public void onClickShare(int fileId) {
-        ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage(fileId);
-        final List<FormattedEntity> unSharedEntities
-                = fileDetailModel.getUnsharedEntities(fileMessage);
-
-        int myId = fileDetailModel.getMyId();
-
-        List<FormattedEntity> unSharedEntityWithoutMe = new ArrayList<>();
-
-        Observable.from(unSharedEntities)
-                .filter(entity -> entity.getId() != myId)
-                .collect(() -> unSharedEntityWithoutMe, List::add)
-                .subscribe();
-
-        if (!unSharedEntityWithoutMe.isEmpty()) {
-            view.initShareListDialog(unSharedEntityWithoutMe);
-        } else {
-            view.showErrorToast(activity.getString(R.string.err_file_already_shared_all_topics));
-        }
-    }
-
-    public void onClickUnShare(int fileId) {
-        final Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities =
-                fileDetailModel.getFileMessage(fileId).shareEntities;
-
-        int myId = fileDetailModel.getMyId();
-
-        List<Integer> sharedEntityWithoutMe = new ArrayList<>();
-
-        Observable.from(shareEntities)
-                .filter(integerWrapper -> integerWrapper.getShareEntity() != myId)
-                .collect(() -> sharedEntityWithoutMe,
-                        (integers, integerWrapper1) -> integers.add(integerWrapper1.getShareEntity()))
-                .subscribe();
-
-        EntityManager entityManager = EntityManager.getInstance();
-        final List<FormattedEntity> sharedEntities = entityManager.retrieveGivenEntities(sharedEntityWithoutMe);
-        List<FormattedEntity> unjoinedChannels = entityManager.getUnjoinedChannels();
-        for (FormattedEntity unjoinedEntity : unjoinedChannels) {
-            if (unjoinedEntity.hasGivenIds(sharedEntityWithoutMe)) {
-                sharedEntities.add(unjoinedEntity);
-            }
-        }
-
-        if (!sharedEntities.isEmpty()) {
-            view.initUnShareListDialog(sharedEntities);
-        } else {
-            view.showErrorToast(activity.getString(R.string.err_file_has_not_been_shared));
-        }
     }
 
     @Background
@@ -634,10 +581,6 @@ public class FileDetailPresenter {
         void showMoveDialog(int entityIdToBeShared);
 
         void showManipulateMessageDialogFragment(ResMessages.OriginalMessage item, boolean isMine);
-
-        void initShareListDialog(List<FormattedEntity> unSharedEntities);
-
-        void initUnShareListDialog(List<FormattedEntity> sharedEntities);
 
         void onShareMessageSucceed(int entityIdToBeShared, ResMessages.FileMessage fileMessage);
 

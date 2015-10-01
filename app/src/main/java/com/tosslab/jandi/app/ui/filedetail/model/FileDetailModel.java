@@ -146,6 +146,7 @@ public class FileDetailModel {
     }
 
     public List<FormattedEntity> getUnsharedEntities(ResMessages.FileMessage fileMessage) {
+
         if (fileMessage == null) {
             return Collections.emptyList();
         }
@@ -156,19 +157,11 @@ public class FileDetailModel {
 
         List<Integer> list = new ArrayList<>();
 
-        boolean include = false;
-        int myEntityId = entityManager.getMe().getId();
         Iterator<ResMessages.OriginalMessage.IntegerWrapper> iterator = shareEntities.iterator();
+
         while (iterator.hasNext()) {
             int shareEntity = iterator.next().getShareEntity();
             list.add(shareEntity);
-            if (shareEntity == myEntityId) {
-                include = true;
-            }
-        }
-
-        if (!include) {
-            list.add(myEntityId);
         }
 
         List<FormattedEntity> entities = entityManager.retrieveExclusivedEntities(list);

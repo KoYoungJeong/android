@@ -1,10 +1,12 @@
 package com.tosslab.jandi.app.ui.share;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -45,7 +47,7 @@ import de.greenrobot.event.EventBus;
  * Created by Steve SeongUg Jung on 15. 2. 13..
  */
 @EFragment(R.layout.fragment_share_image)
-public class ShareDialogFragment extends Fragment implements SharePresenter.View {
+public class MainShareFragment extends Fragment implements SharePresenter.View {
 
     @FragmentArg
     String uriString;
@@ -102,6 +104,8 @@ public class ShareDialogFragment extends Fragment implements SharePresenter.View
 
     @AfterViews
     void initViews() {
+
+
         if (mode == MainShareActivity.MODE_SHARE_TEXT) {
             vgViewer.setVisibility(View.GONE);
             tvTitle.setVisibility(View.GONE);
@@ -115,7 +119,17 @@ public class ShareDialogFragment extends Fragment implements SharePresenter.View
             }
 
             etComment.setText(text);
+        } else {
+            etComment.setInputType(0);
+            etComment.setFocusable(true);
+            etComment.setOnClickListener(v -> {
+                etComment.setInputType(1);
+                InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                mgr.showSoftInput(etComment, InputMethodManager.SHOW_IMPLICIT);
+            });
+
         }
+
     }
 
     @UiThread
