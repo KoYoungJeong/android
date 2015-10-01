@@ -29,7 +29,6 @@ import rx.Observable;
 
 public class UserSelectorImpl implements UserSelector {
 
-
     private PopupWindow popupWindow;
     private OnUserSelectListener onRoomSelectListener;
     private OnUserDismissListener onUserDismissListener;
@@ -62,12 +61,9 @@ public class UserSelectorImpl implements UserSelector {
         recyclerView.setAdapter(adapter);
 
         popupWindow.setAnimationStyle(R.style.PopupAnimation);
-        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                if (onUserDismissListener != null) {
-                    onUserDismissListener.onUserDismiss();
-                }
+        popupWindow.setOnDismissListener(() -> {
+            if (onUserDismissListener != null) {
+                onUserDismissListener.onUserDismiss();
             }
         });
         PopupWindowCompat.showAsDropDown(popupWindow, roomView, 0, 0, Gravity.TOP | Gravity.START);

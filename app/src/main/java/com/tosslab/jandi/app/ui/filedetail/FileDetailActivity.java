@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -48,7 +47,6 @@ import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
@@ -59,6 +57,8 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.filedetail.fileinfo.FileHeadManager;
+import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
+import com.tosslab.jandi.app.ui.filedetail.views.FileUnshareActivity_;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -76,7 +76,6 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -95,16 +94,9 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import rx.Observable;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func0;
-import rx.subjects.PublishSubject;
 
 import static org.androidannotations.annotations.UiThread.Propagation;
 
@@ -114,7 +106,11 @@ import static org.androidannotations.annotations.UiThread.Propagation;
 @EActivity(R.layout.activity_file_detail)
 public class FileDetailActivity extends BaseAppCompatActivity implements FileDetailPresenter.View {
 
+    public static final int INTENT_RETURN_TYPE_SHARE = 0;
+    public static final int INTENT_RETURN_TYPE_UNSHARE = 1;
     private static final StickerInfo NULL_STICKER = new StickerInfo();
+    public static
+
     @Extra
     int fileId;
 
@@ -159,7 +155,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     private boolean isDeleted = true;
     private boolean isForeground;
     private boolean isFromDeleteAction = false;
-
     private ProgressWheel progressWheel;
     private ProgressDialog progressDialog;
     private StickerInfo stickerInfo = NULL_STICKER;
@@ -188,23 +183,20 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         fileDetailPresenter.setView(this);
 
-        stickerViewModel.setOnStickerClick(new StickerViewModel.OnStickerClick() {
-            @Override
-            public void onStickerClick(int groupId, String stickerId) {
-                StickerInfo oldSticker = stickerInfo;
-                stickerInfo = new StickerInfo();
-                stickerInfo.setStickerGroupId(groupId);
-                stickerInfo.setStickerId(stickerId);
-                showStickerPreview();
+        stickerViewModel.setOnStickerClick((groupId, stickerId) -> {
+            StickerInfo oldSticker = stickerInfo;
+            stickerInfo = new StickerInfo();
+            stickerInfo.setStickerGroupId(groupId);
+            stickerInfo.setStickerId(stickerId);
+            showStickerPreview();
 
-                if (oldSticker.getStickerGroupId() != stickerInfo.getStickerGroupId()
-                        || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
-                    loadSticker(stickerInfo);
-                }
-                setSendButtonSelected(true);
-
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Select);
+            if (oldSticker.getStickerGroupId() != stickerInfo.getStickerGroupId()
+                    || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
+                loadSticker(stickerInfo);
             }
+            setSendButtonSelected(true);
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Select);
         });
 
         stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
@@ -435,63 +427,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
      * **********************************************************
      */
     void clickShareButton() {
-        fileDetailPresenter.onClickShare(fileId);
-    }
-
-    @Override
-    public void initShareListDialog(List<FormattedEntity> unSharedEntities) {
-        /**
-         * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
-         */
-        View view = getLayoutInflater().inflate(R.layout.dialog_invite_to_topic, null);
-
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(R.string.jandi_title_cdp_to_be_shared);
-        dialog.setView(view);
-        final AlertDialog cdpSelectDialog = dialog.show();
-
-        ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-        EditText et = (EditText) view.findViewById(R.id.et_cdp_search);
-
-        final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, unSharedEntities);
-
-        PublishSubject<String> publishSubject = PublishSubject.create();
-        Subscription subscribe = publishSubject.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
-                .flatMap(s -> {
-                    String searchText = s.toLowerCase();
-
-                    return Observable.from(unSharedEntities)
-                            .filter(formattedEntity -> formattedEntity.getName().toLowerCase()
-                                    .contains(searchText))
-                            .collect((Func0<ArrayList<FormattedEntity>>) ArrayList::new, ArrayList::add);
-
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(adapter::setEntities);
-
-        cdpSelectDialog.setOnDismissListener(dialog1 -> subscribe.unsubscribe());
-
-        publishSubject.onNext("");
-
-        et.addTextChangedListener(new SimpleTextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                publishSubject.onNext(s.toString());
-            }
-        });
-
-        // 현재 이 파일을 share 하지 않는 entity를 추출
-        lv.setAdapter(adapter);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long id) {
-                if (cdpSelectDialog != null) {
-                    cdpSelectDialog.dismiss();
-                }
-
-                fileDetailPresenter.shareMessage(fileId, adapter.getItem(i).getEntity().id);
-            }
-        });
+        FileShareActivity_.intent(this)
+                .extra("fileId", fileId)
+                .startForResult(INTENT_RETURN_TYPE_SHARE);
     }
 
     @UiThread
@@ -531,33 +469,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
      * **********************************************************
      */
     void clickUnShareButton() {
-        fileDetailPresenter.onClickUnShare(fileId);
-    }
-
-    @Override
-    public void initUnShareListDialog(List<FormattedEntity> sharedEntities) {
-        /**
-         * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
-         */
-        View view = getLayoutInflater().inflate(R.layout.dialog_select_cdp, null);
-
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(R.string.jandi_title_cdp_to_be_unshared);
-        dialog.setView(view);
-        final AlertDialog entitySelectDialog = dialog.show();
-
-        ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-        final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, sharedEntities);
-        lv.setAdapter(adapter);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (entitySelectDialog != null) {
-                    entitySelectDialog.dismiss();
-                }
-                fileDetailPresenter.unShareMessage(fileId, sharedEntities.get(i).getEntity().id);
-            }
-        });
+        FileUnshareActivity_.intent(this)
+                .extra("fileId", fileId)
+                .startForResult(INTENT_RETURN_TYPE_UNSHARE);
     }
 
     @UiThread
@@ -634,7 +548,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 : entity.isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC
                 : JandiConstants.TYPE_DIRECT_MESSAGE;
 
-        int teamId = entityManager.getTeamId();
         boolean isStarred = entity.isStarred;
         if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
             if (entity.isPublicTopic() && entity.isJoined
@@ -851,7 +764,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage,
                                       boolean execute) {
         mixpanelAnalytics.trackDownloadingFile(entityManager, fileMessage);
-
         try {
             if (execute) {
                 Intent intent = new Intent();
@@ -909,7 +821,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         if (!isForeground) {
             return;
         }
-
         EntityManager entityManager = EntityManager.getInstance();
         moveToMessageListActivity(
                 event.userId, JandiConstants.TYPE_DIRECT_MESSAGE, -1,
@@ -950,7 +861,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void drawFileDetail(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages,
                                boolean isSendAction) {
-
         fileHeadManager.setFileInfo(fileMessage);
 
         if (TextUtils.equals(fileMessage.status, "archived")) {
@@ -1054,7 +964,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     public void onEvent(MessageStarredEvent event) {
-
         if (!isForeground) {
             return;
         }
@@ -1098,4 +1007,16 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            int entityId = data.getIntExtra("EntityId", -1);
+            if (requestCode == INTENT_RETURN_TYPE_SHARE) {
+                fileDetailPresenter.shareMessage(fileId, entityId);
+            } else if (requestCode == INTENT_RETURN_TYPE_UNSHARE) {
+                fileDetailPresenter.unShareMessage(fileId, entityId);
+            }
+        }
+    }
 }
