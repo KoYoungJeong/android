@@ -98,7 +98,7 @@ public class FileShareActivity extends BaseAppCompatActivity {
             }
         }
 
-        if (!users.isEmpty() || !users.isEmpty()) {
+        if (!topics.isEmpty() || !users.isEmpty()) {
             RoomSelector roomSelector = new RoomSelectorImpl(topics, users);
             roomSelector.setOnRoomSelectListener(item -> {
                 Intent returnIntent = new Intent();

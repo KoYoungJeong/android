@@ -995,17 +995,13 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == INTENT_RETURN_TYPE_SHARE) {
-            if (resultCode == RESULT_OK) {
-                int entityId = data.getIntExtra("EntityId", -1);
+        if (resultCode == RESULT_OK) {
+            int entityId = data.getIntExtra("EntityId", -1);
+            if (requestCode == INTENT_RETURN_TYPE_SHARE) {
                 fileDetailPresenter.shareMessage(fileId, entityId);
-            }
-        } else if (requestCode == INTENT_RETURN_TYPE_UNSHARE) {
-            if (resultCode == RESULT_OK) {
-                int entityId = data.getIntExtra("EntityId", -1);
+            } else if (requestCode == INTENT_RETURN_TYPE_UNSHARE) {
                 fileDetailPresenter.unShareMessage(fileId, entityId);
             }
         }
     }
-
 }
