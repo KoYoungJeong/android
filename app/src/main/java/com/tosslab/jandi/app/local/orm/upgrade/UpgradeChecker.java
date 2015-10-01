@@ -21,7 +21,7 @@ public class UpgradeChecker {
             return;
         }
 
-        if (oldVersion <= minimumVersion.getMinimumVersion()) {
+        if (oldVersion < minimumVersion.getMinimumVersion()) {
             try {
                 upgrade.onUpgrade();
             } catch (SQLException e) {
