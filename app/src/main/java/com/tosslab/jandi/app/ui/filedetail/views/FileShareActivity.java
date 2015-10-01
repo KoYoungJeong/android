@@ -93,9 +93,8 @@ public class FileShareActivity extends BaseAppCompatActivity {
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("EntityId", item.getEntityId());
                 setResult(RESULT_OK, returnIntent);
-                roomSelector.dismiss();
+                finish();
             });
-            roomSelector.setOnRoomDismissListener(() -> finish());
             roomSelector.setType(RoomSelectorImpl.TYPE_VIEW);
             roomSelector.show(container);
         } else {
