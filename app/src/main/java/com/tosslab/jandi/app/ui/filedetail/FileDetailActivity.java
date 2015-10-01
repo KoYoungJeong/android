@@ -206,6 +206,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Select);
             }
         });
+
+        stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
+
         stickerViewModel.setType(StickerViewModel.TYPE_FILE_DETAIL);
 
         if (NetworkCheckUtil.isConnected()) {

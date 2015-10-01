@@ -426,6 +426,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             }
         });
 
+        stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> onSendClick());
+
         stickerViewModel.setType(messageListModel.isUser(entityId) ? StickerViewModel.TYPE_MESSAGE : StickerViewModel.TYPE_TOPIC);
     }
 
@@ -567,7 +569,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         int linkId;
         List mentions = data.getMentions();
         if (data.getStickerInfo() != null) {
-            linkId = messageListModel.sendStickerMessage(teamId, entityId, data.getStickerInfo(), data.getMessage(), mentions);
+            linkId = messageListModel.sendStickerMessage(teamId, entityId, data.getStickerInfo(), data.getLocalId());
         } else {
             linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage(), mentions);
         }
@@ -884,32 +886,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
             StickerRepository.getRepository().upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
-            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo), mentions)));
 
-            AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_Send);
+            sendSticker();
+            if (!TextUtils.isEmpty(message)) {
+                sendTextMessage(message, mentions, reqSendMessage);
+            }
+
         } else {
             if (TextUtils.isEmpty(message)) {
                 return;
             }
-
-            // TODO 데이터 베이스에 삽입해야함.
-            long localId;
-            if (messageListModel.isUser(entityId)) {
-                if (roomId > 0) {
-                    localId = messageListModel.insertSendingMessage(roomId, message, mentions);
-                } else {
-                    // roomId 를 할당받지 못하면 메세지를 보내지 않음
-                    return;
-                }
-            } else {
-                localId = messageListModel.insertSendingMessage(entityId, message, mentions);
-            }
-            FormattedEntity me = EntityManager.getInstance().getMe();
-            // insert to ui
-            messageListPresenter.insertSendingMessage(localId, message, me.getName(),
-                    me.getUserLargeProfileUrl(), mentions);
-            // networking...
-            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, reqSendMessage)));
+            sendTextMessage(message, mentions, reqSendMessage);
         }
 
         messageListPresenter.dismissStickerPreview();
@@ -920,6 +907,30 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Send);
 
 
+    }
+
+    private void sendSticker() {
+        long localId = messageListModel.insertSendingMessageIfCan(entityId, roomId, stickerInfo);
+        if (localId > 0) {
+            FormattedEntity me = EntityManager.getInstance().getMe();
+            messageListPresenter.insertSendingMessage(localId, me.getName(), me.getUserLargeProfileUrl(), stickerInfo);
+
+            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, "", new StickerInfo(stickerInfo), new ArrayList<>())));
+            AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_Send);
+        }
+    }
+
+    private void sendTextMessage(String message, List<MentionObject> mentions, ReqSendMessageV3 reqSendMessage) {
+        long localId = messageListModel.insertSendingMessageIfCan(entityId, roomId, message, mentions);
+
+        if (localId > 0) {
+            FormattedEntity me = EntityManager.getInstance().getMe();
+            // insert to ui
+            messageListPresenter.insertSendingMessage(localId, message, me.getName(), me.getUserLargeProfileUrl(), mentions);
+            // networking...
+            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, reqSendMessage)));
+
+        }
     }
 
     public void onEvent(TopicInviteEvent event) {

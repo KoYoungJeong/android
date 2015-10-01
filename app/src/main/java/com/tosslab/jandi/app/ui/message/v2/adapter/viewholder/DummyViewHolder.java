@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
@@ -27,6 +28,8 @@ public class DummyViewHolder implements BodyViewHolder {
     private TextView tvName;
     private TextView tvMessage;
     private View contentView;
+    private ImageView ivSticker;
+    private ImageView ivStickerStatus;
 
     @Override
     public void initView(View rootView) {
@@ -34,6 +37,8 @@ public class DummyViewHolder implements BodyViewHolder {
         ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
+        ivSticker = ((ImageView) rootView.findViewById(R.id.iv_message_sticker));
+        ivStickerStatus = (ImageView) rootView.findViewById(R.id.iv_message_send_status);
     }
 
     @Override
@@ -60,8 +65,48 @@ public class DummyViewHolder implements BodyViewHolder {
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
             builder.append(textMessage.content.body);
+            ivSticker.setVisibility(View.GONE);
+            ivStickerStatus.setVisibility(View.GONE);
+            tvMessage.setVisibility(View.VISIBLE);
+
+            setTextSendingStatus(dummyMessageLink, builder);
+
+            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                    tvMessage, builder, ((DummyMessageLink) link).getMentions(),
+                    EntityManager.getInstance().getMe().getId());
+            builder = generateMentionMessageUtil.generate(false);
+
+            tvMessage.setText(builder);
+        } else if (link.message instanceof ResMessages.StickerMessage) {
+            ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) link.message;
+            ivSticker.setVisibility(View.VISIBLE);
+            ivStickerStatus.setVisibility(View.VISIBLE);
+            tvMessage.setVisibility(View.GONE);
+
+            ResMessages.StickerContent content = stickerMessage.content;
+
+            setStickerSendingStatus(dummyMessageLink);
+
+            StickerManager.getInstance().loadStickerDefaultOption(ivSticker, content.groupId, content.stickerId);
         }
 
+    }
+
+    private void setStickerSendingStatus(DummyMessageLink dummyMessageLink) {
+        SendMessage.Status status = SendMessage.Status.valueOf(dummyMessageLink.getStatus());
+        switch (status) {
+
+            case COMPLETE:
+            case SENDING:
+                ivStickerStatus.setImageResource(R.drawable.icon_message_sending);
+                break;
+            case FAIL:
+                ivStickerStatus.setImageResource(R.drawable.icon_message_failure);
+                break;
+        }
+    }
+
+    private void setTextSendingStatus(DummyMessageLink dummyMessageLink, SpannableStringBuilder builder) {
         SendMessage.Status status = SendMessage.Status.valueOf(dummyMessageLink.getStatus());
         int textColor = tvName.getContext().getResources().getColor(R.color.jandi_messages_name);
         switch (status) {
@@ -81,6 +126,7 @@ public class DummyViewHolder implements BodyViewHolder {
                 tvMessage.setTextColor(textColor);
                 break;
             }
+            case COMPLETE:
             case SENDING: {
                 builder.append("  ");
                 int beforLenghth = builder.length();
@@ -98,20 +144,7 @@ public class DummyViewHolder implements BodyViewHolder {
                 tvMessage.setTextColor(textColor);
                 break;
             }
-            case COMPLETE:
-                builder.append(" ");
-                tvName.setTextColor(textColor);
-                tvMessage.setTextColor(textColor);
-                break;
         }
-
-        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                tvMessage, builder, ((DummyMessageLink) link).getMentions(),
-                EntityManager.getInstance().getMe().getId());
-        builder = generateMentionMessageUtil.generate(false);
-
-        tvMessage.setText(builder);
-
     }
 
     @Override

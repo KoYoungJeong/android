@@ -1110,6 +1110,19 @@ public class MessageListPresenter {
         disabledUser.setVisibility(View.VISIBLE);
         setPreviewVisibleGone();
     }
+
+    public void insertSendingMessage(long localId, String name, String userLargeProfileUrl, StickerInfo stickerInfo) {
+        DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, SendMessage
+                .Status.SENDING.name(), stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+        dummyMessageLink.message.writerId = EntityManager.getInstance().getMe().getId();
+        dummyMessageLink.message.createTime = new Date();
+        dummyMessageLink.message.updateTime = new Date();
+
+        messageListAdapter.addDummyMessage(dummyMessageLink);
+        messageListAdapter.notifyDataSetChanged();
+
+        messageListView.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
+    }
 }
 
 
