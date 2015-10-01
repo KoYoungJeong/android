@@ -24,7 +24,15 @@ public interface MembersListPresenter {
 
     void inviteInBackground(List<Integer> invitedUsers, int entityId);
 
+    void initKickableMode(int entityId);
+
+    void onKickUser(int topicId, int userEntityId);
+
     interface View {
+        void showProgressWheel();
+
+        void dismissProgressWheel();
+
         void showListMembers(List<ChatChooseItem> topicMembers);
 
         int getEntityId();
@@ -38,6 +46,12 @@ public interface MembersListPresenter {
         void showInviteSucceed(int memberSize);
 
         void showInviteFailed(String errMessage);
+
+        void setKickMode(boolean owner);
+
+        void removeUser(int userEntityId);
+
+        void refreshMemberList();
     }
 
 }
