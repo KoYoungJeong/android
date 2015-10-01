@@ -128,11 +128,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, ResFolder.class);
                         createTable(connectionSource, ResFolderItem.class);
                     }),
-                    UpgradeChecker.create(() -> DATABASE_VERSION_FOLDER, () -> {
-                        createTable(connectionSource, UploadedFileInfo.class);
-                        createTable(connectionSource, ResFolder.class);
-                        createTable(connectionSource, ResFolderItem.class);
-                    }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_BADGE, () -> {
                         createTable(connectionSource, BadgeCount.class);
                     }),
