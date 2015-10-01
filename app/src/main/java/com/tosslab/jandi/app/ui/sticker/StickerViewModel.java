@@ -114,15 +114,17 @@ public class StickerViewModel {
                     onStickerClick.onStickerClick(groupId, stickerId);
                 }
 
-                if (lastClickedStickerInfo == null) {
-                    lastClickedStickerInfo = Pair.create(groupId, stickerId);
-                } else {
+                if (lastClickedStickerInfo != null) {
                     if (isSameSticker(groupId, stickerId)
                             && isDoubleTap()
                             && onStickerDoubleTapListener != null) {
                         onStickerDoubleTapListener.onStickerDoubleTap(groupId, stickerId);
                         lastClickedStickerInfo = null;
+                    } else {
+                        lastClickedStickerInfo = Pair.create(groupId, stickerId);
                     }
+                } else {
+                    lastClickedStickerInfo = Pair.create(groupId, stickerId);
                 }
 
                 lastClickedTime = System.currentTimeMillis();
