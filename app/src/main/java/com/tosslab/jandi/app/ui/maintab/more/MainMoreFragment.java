@@ -147,7 +147,7 @@ public class MainMoreFragment extends Fragment {
             String packageName = getActivity().getPackageName();
             String versionName = getActivity().getPackageManager().getPackageInfo(packageName, 0).versionName;
             textViewJandiVersion.setText("(v." + versionName + ")");
-            configVersionButton()
+            configVersionButton();
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
