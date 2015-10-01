@@ -25,10 +25,6 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by tee on 15. 9. 30..
@@ -49,14 +45,7 @@ public class FileShareActivity extends BaseAppCompatActivity {
     @AfterViews
     void initViews() {
         setupActionbar();
-
-        // 프레임워크 내부 프로세스 상 딜레이가 없으면 실행이 안됨
-        Observable.just(1)
-                .delay(100, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(Integer -> {
-                    showList();
-                });
+        showList();
     }
 
     void setupActionbar() {
@@ -107,7 +96,8 @@ public class FileShareActivity extends BaseAppCompatActivity {
                 roomSelector.dismiss();
             });
             roomSelector.setOnRoomDismissListener(() -> finish());
-            roomSelector.show(container, false);
+            roomSelector.setType(RoomSelectorImpl.TYPE_VIEW);
+            roomSelector.show(container);
         } else {
             showErrorToast(getString(R.string.err_file_already_shared_all_topics));
             finish();

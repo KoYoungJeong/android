@@ -314,7 +314,7 @@ public class FileListPresenter {
             }
         });
 
-        roomSelector.show(((View) textViewFileListWhere.getParent().getParent()), true);
+        roomSelector.show(((View) textViewFileListWhere.getParent().getParent()));
         if (context instanceof SearchActivity) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter);
         } else {

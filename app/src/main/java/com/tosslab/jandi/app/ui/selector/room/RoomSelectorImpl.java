@@ -31,12 +31,16 @@ import rx.Observable;
 
 public class RoomSelectorImpl implements RoomSelector {
 
+    public static final int TYPE_POPUP = 0;
+    public static final int TYPE_VIEW = 1;
+
     private OnRoomSelectListener onRoomSelectListener;
     private PopupWindow popupWindow;
     private OnRoomDismissListener onRoomDismissListener;
     private boolean isIncludeAllMember;
     private List<FormattedEntity> users;
     private List<FormattedEntity> topics;
+    private int type = TYPE_POPUP;
 
     public RoomSelectorImpl(List<FormattedEntity> topics, List<FormattedEntity> users) {
         this.users = users;
@@ -44,20 +48,16 @@ public class RoomSelectorImpl implements RoomSelector {
     }
 
     @Override
-    public void show(View roomView, boolean isIncludeAllMember) {
-        this.isIncludeAllMember = isIncludeAllMember;
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    @Override
+    public void show(View roomView) {
         dismiss();
 
         Context context = roomView.getContext();
         View rootView = LayoutInflater.from(context).inflate(R.layout.layout_room_selector, null);
-
-        popupWindow = new PopupWindow(rootView);
-        popupWindow.setWindowLayoutMode(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        popupWindow.setTouchable(true);
-        popupWindow.setFocusable(true);
-        popupWindow.setOutsideTouchable(true);
-        popupWindow.setBackgroundDrawable(new BitmapDrawable());
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_room_selector);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -91,20 +91,38 @@ public class RoomSelectorImpl implements RoomSelector {
             recyclerView.getLayoutManager().scrollToPosition(0);
         });
 
-        popupWindow.setOnDismissListener(() -> {
-            if (onRoomDismissListener != null) {
-                onRoomDismissListener.onRoomDismiss();
-            }
-        });
-
         topicView.performClick();
 
-        // set search_file for animation;
-        if (isIncludeAllMember) {
+        if (type == TYPE_POPUP) {
+            this.isIncludeAllMember = true;
+            popupWindow = new PopupWindow(rootView);
+            popupWindow.setWindowLayoutMode(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            popupWindow.setTouchable(true);
+            popupWindow.setFocusable(true);
+            popupWindow.setOutsideTouchable(true);
+            popupWindow.setBackgroundDrawable(new BitmapDrawable());
+            popupWindow.setOnDismissListener(() -> {
+                if (onRoomDismissListener != null) {
+                    onRoomDismissListener.onRoomDismiss();
+                }
+            });
             popupWindow.setAnimationStyle(R.style.PopupAnimation);
+            PopupWindowCompat.showAsDropDown(popupWindow,
+                    roomView, 0, 0, Gravity.TOP | Gravity.START);
+        } else if (type == TYPE_VIEW) {
+            if (roomView instanceof ViewGroup) {
+                ViewGroup rootViewGroup = (ViewGroup) roomView;
+                this.isIncludeAllMember = false;
+                ViewGroup.LayoutParams params =
+                        new ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT);
+                rootViewGroup.addView(rootView, params);
+            } else {
+                throw new IllegalArgumentException("viewgroup needed");
+            }
         }
-
-        PopupWindowCompat.showAsDropDown(popupWindow, roomView, 0, 0, Gravity.TOP | Gravity.START);
     }
 
     public List<FormattedEntity> getTopics() {

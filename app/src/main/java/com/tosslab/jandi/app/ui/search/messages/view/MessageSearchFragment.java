@@ -281,7 +281,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
                 });
 
-        roomSelector.show(vgEntity, true);
+        roomSelector.show(vgEntity);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter);
     }
