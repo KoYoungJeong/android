@@ -42,9 +42,11 @@ import com.tosslab.jandi.app.views.IconWithTextView;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
@@ -145,14 +147,24 @@ public class MainMoreFragment extends Fragment {
             String packageName = getActivity().getPackageName();
             String versionName = getActivity().getPackageManager().getPackageInfo(packageName, 0).versionName;
             textViewJandiVersion.setText("(v." + versionName + ")");
-            if (getInstalledAppVersion() < getConfigInfo().lastestVersion.android) {
-                btUpdateVersion.setVisibility(View.VISIBLE);
-            } else {
-                btUpdateVersion.setVisibility(View.GONE);
-            }
+            configVersionButton()
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    @Background
+    private void configVersionButton() {
+        if (getInstalledAppVersion() < getConfigInfo().lastestVersion.android) {
+            setVersionButtonVisibility(View.VISIBLE);
+        } else {
+            setVersionButtonVisibility(View.GONE);
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    private void setVersionButtonVisibility(int visibility) {
+        btUpdateVersion.setVisibility(visibility);
     }
 
     @Click(R.id.ly_more_profile)

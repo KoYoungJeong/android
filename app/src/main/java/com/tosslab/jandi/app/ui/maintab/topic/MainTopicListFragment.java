@@ -1,12 +1,10 @@
 package com.tosslab.jandi.app.ui.maintab.topic;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -118,7 +116,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     @AfterViews
     void initViews() {
         mainTopicListPresenter.setView(this);
-        mainTopicListPresenter.showDialogIfNotLastestVersion();
         mainTopicListPresenter.onLoadList();
         FAButtonUtil.setFAButtonController(lvMainTopic, btnFA);
         hasOptionsMenu();
@@ -393,31 +390,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     public void startAnimationSelectedItem() {
         adapter.startAnimation();
         adapter.notifyDataSetChanged();
-    }
-
-    @UiThread
-    @Override
-    public void showUpdateVersionDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(getActivity().getString(R.string.jandi_update_title))
-                .setMessage(getActivity().getString(R.string.jandi_update_message))
-                .setPositiveButton(getActivity().getString(R.string.jandi_confirm), (dialog, which) -> {
-                    final String appPackageName = JandiApplication.getContext().getPackageName();
-                    try {
-                        startActivity(new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("market://details?id=" + appPackageName)));
-                    } catch (android.content.ActivityNotFoundException anfe) {
-                        startActivity(new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
-                    } finally {
-                        getActivity().finish();   // 업데이트 안내를 확인하면 앱을 종료한다.
-                    }
-                })
-                .setNegativeButton(getActivity().getString(R.string.jandi_cancel)
-                        , (dialog, which) -> {
-                })
-                .setCancelable(true);
-        builder.create().show();
     }
 
 }

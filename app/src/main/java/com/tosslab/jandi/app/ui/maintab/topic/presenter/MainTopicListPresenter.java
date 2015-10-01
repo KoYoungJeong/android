@@ -214,16 +214,6 @@ public class MainTopicListPresenter {
         return repository.getFolderExpands();
     }
 
-    public void showDialogIfNotLastestVersion() {
-        if (!NetworkCheckUtil.isConnected())
-            return;
-
-        if (mainTopicModel.getInstalledAppVersion()
-                < mainTopicModel.getConfigInfo().lastestVersion.android) {
-            view.showUpdateVersionDialog();
-        }
-    }
-
     public interface View {
         void showList(TopicFolderListDataProvider topicFolderListDataProvider);
 
@@ -248,8 +238,6 @@ public class MainTopicListPresenter {
         void startAnimationSelectedItem();
 
         void setFolderExpansion();
-
-        void showUpdateVersionDialog();
     }
 
 }

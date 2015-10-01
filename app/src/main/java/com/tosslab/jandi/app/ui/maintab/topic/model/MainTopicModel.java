@@ -322,21 +322,4 @@ public class MainTopicModel {
         }
     }
 
-    public ResConfig getConfigInfo() throws RetrofitError {
-        return RequestApiManager.getInstance().getConfigByMainRest();
-    }
-
-    public int getInstalledAppVersion() {
-        try {
-            Context context = JandiApplication.getContext();
-            PackageManager packageManager = context.getPackageManager();
-            String packageName = context.getPackageName();
-            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-            return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            return 0;
-        }
-    }
-
 }
