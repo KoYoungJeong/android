@@ -6,6 +6,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -61,12 +62,12 @@ public class ExpandableTopicAdapter
         setHasStableIds(true);
     }
 
-    public void setProvider(TopicFolderListDataProvider dataProvider) {
-        this.provider = dataProvider;
-    }
-
     public TopicFolderListDataProvider getProvider() {
         return provider;
+    }
+
+    public void setProvider(TopicFolderListDataProvider dataProvider) {
+        this.provider = dataProvider;
     }
 
     @Override
@@ -285,7 +286,7 @@ public class ExpandableTopicAdapter
 
         boolean isSelectedEntity = item.getEntityId() == selectedEntity;
         if (isSelectedEntity && animStatus == AnimStatus.READY) {
-            animateForSelectedEntity(holder.container, groupPosition);
+            animateForSelectedEntity(holder.vAnimator);
         }
     }
 
@@ -296,27 +297,22 @@ public class ExpandableTopicAdapter
         }
     }
 
-    private void animateForSelectedEntity(final View targetView, int groupPosition) {
+    private void animateForSelectedEntity(final View targetView) {
         Context context = targetView.getContext();
 
         animStatus = AnimStatus.IN_ANIM;
-        final Integer colorFrom;
-        if (getGroupItemViewType(groupPosition) != TYPE_NO_GROUP) {
-            colorFrom = context.getResources().getColor(R.color.jandi_list_item_background_inner_folder);
-        } else {
-            colorFrom = context.getResources().getColor(R.color.white);
-        }
+        Integer colorFrom = Color.TRANSPARENT;
+        Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);
 
-        final Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);
         colorAnimator = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimator.setDuration(500);
-        colorAnimator.setRepeatCount(1);
+        colorAnimator.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
         colorAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        colorAnimator.setRepeatCount(1);
         colorAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 animStatus = AnimStatus.FINISH;
-                targetView.setBackgroundColor(colorFrom);
+                targetView.setBackgroundColor(Color.TRANSPARENT);
                 colorAnimator.removeAllListeners();
             }
         });
@@ -375,13 +371,13 @@ public class ExpandableTopicAdapter
         }
     }
 
+    public int getSelectedEntity() {
+        return selectedEntity;
+    }
+
     public void setSelectedEntity(int selectedEntity) {
         this.selectedEntity = selectedEntity;
         animStatus = AnimStatus.IDLE;
-    }
-
-    public int getSelectedEntity() {
-        return selectedEntity;
     }
 
     public void startAnimation() {
