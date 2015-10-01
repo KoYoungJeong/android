@@ -27,7 +27,6 @@ import de.greenrobot.event.EventBus;
  * Created by Steve SeongUg Jung on 15. 1. 14..
  */
 public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
     private Context context;
 
     private List<ChatChooseItem> memberChooseItems;

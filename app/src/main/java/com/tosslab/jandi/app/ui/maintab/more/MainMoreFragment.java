@@ -2,19 +2,26 @@ package com.tosslab.jandi.app.ui.maintab.more;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
@@ -41,6 +48,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -66,8 +74,11 @@ public class MainMoreFragment extends Fragment {
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
 
-    @ViewById(R.id.txt_more_jandi_version)
+    @ViewById(R.id.tv_more_jandi_version)
     TextView textViewJandiVersion;
+
+    @ViewById(R.id.bt_update_version)
+    Button btUpdateVersion;
 
     private EntityManager mEntityManager;
 
@@ -81,7 +92,6 @@ public class MainMoreFragment extends Fragment {
     @AfterViews
     void initView() {
         LogUtil.d("initView MainMoreFragment");
-
         showJandiVersion();
         showOtherTeamMessageCount();
     }
@@ -134,7 +144,12 @@ public class MainMoreFragment extends Fragment {
         try {
             String packageName = getActivity().getPackageName();
             String versionName = getActivity().getPackageManager().getPackageInfo(packageName, 0).versionName;
-            textViewJandiVersion.setText("v." + versionName);
+            textViewJandiVersion.setText("(v." + versionName + ")");
+            if (getInstalledAppVersion() < getConfigInfo().lastestVersion.android) {
+                btUpdateVersion.setVisibility(View.VISIBLE);
+            } else {
+                btUpdateVersion.setVisibility(View.GONE);
+            }
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -224,4 +239,36 @@ public class MainMoreFragment extends Fragment {
         }
         return supportUrl;
     }
+
+    public ResConfig getConfigInfo() throws RetrofitError {
+        return RequestApiManager.getInstance().getConfigByMainRest();
+    }
+
+    public int getInstalledAppVersion() {
+        try {
+            Context context = JandiApplication.getContext();
+            PackageManager packageManager = context.getPackageManager();
+            String packageName = context.getPackageName();
+            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // should never happen
+            return 0;
+        }
+    }
+
+    @Click(R.id.bt_update_version)
+    void onClickUpdateVersion() {
+        final String appPackageName = JandiApplication.getContext().getPackageName();
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
+        } finally {
+            getActivity().finish();   // 업데이트 안내를 확인하면 앱을 종료한다.
+        }
+    }
+
 }

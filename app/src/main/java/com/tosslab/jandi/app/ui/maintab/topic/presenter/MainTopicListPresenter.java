@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -213,6 +214,16 @@ public class MainTopicListPresenter {
         return repository.getFolderExpands();
     }
 
+    public void showDialogIfNotLastestVersion() {
+        if (!NetworkCheckUtil.isConnected())
+            return;
+
+        if (mainTopicModel.getInstalledAppVersion()
+                < mainTopicModel.getConfigInfo().lastestVersion.android) {
+            view.showUpdateVersionDialog();
+        }
+    }
+
     public interface View {
         void showList(TopicFolderListDataProvider topicFolderListDataProvider);
 
@@ -237,6 +248,8 @@ public class MainTopicListPresenter {
         void startAnimationSelectedItem();
 
         void setFolderExpansion();
+
+        void showUpdateVersionDialog();
     }
 
 }
