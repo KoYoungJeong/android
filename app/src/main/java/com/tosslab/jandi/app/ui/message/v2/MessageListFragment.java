@@ -880,7 +880,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 mentionControlViewModel.clear();
                 reqSendMessage = new ReqSendMessageV3(message, mentions);
             } else {
-                reqSendMessage = new ReqSendMessageV3(message, null);
+                reqSendMessage = new ReqSendMessageV3(message, new ArrayList<>());
             }
         }
 
