@@ -33,7 +33,7 @@ public class BadgeCountRepositoryTest {
 
     @Test
     public void testFindBadgeCountByTeamId() throws Exception {
-        int badgeCount = BadgeCountRepository.getRepository().findBadgeCountByTeamId(1);
+        int badgeCount = BadgeCountRepository.getRepository().findBadgeCountByTeamId(5);
 
         System.out.println("badgeCount = " + badgeCount);
 
