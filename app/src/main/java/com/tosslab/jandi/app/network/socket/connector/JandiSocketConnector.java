@@ -43,6 +43,7 @@ public class JandiSocketConnector implements SocketConnector {
                 options.multiplex = false;
                 options.forceNew = false;
                 options.timeout = 1000 * 10;
+                options.upgrade = false;
                 try {
                     options.sslContext = getSSLContext();
                 } catch (Exception e) {
