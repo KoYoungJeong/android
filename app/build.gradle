@@ -80,7 +80,9 @@ dependencies {
     compile 'org.androidannotations:androidannotations-api:3.3.2'
     // Network
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.+'
-    compile 'com.github.nkzawa:socket.io-client:0.6.0' // 소켓 이슈 수정을 위함
+    compile('com.github.nkzawa:socket.io-client:0.6.0'){
+        exclude group:'org.json', module:'json'
+    }
 
     // Cache
     compile 'com.github.bumptech.glide:glide:3.6.1' // EXIF orientation 이슈 해결 된 것으로 보임.
@@ -97,7 +99,7 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.0.+'
 
     // facebook SDK
-    compile 'com.facebook.android:facebook-android-sdk:4.0.0'
+    compile 'com.facebook.android:facebook-android-sdk:4.5.+'
 
     // Test : Robolectric, Junit4
     testCompile 'org.robolectric:robolectric:3.0'
@@ -115,10 +117,6 @@ dependencies {
 
     //Retrofit
     compile 'com.squareup.retrofit:retrofit:1.9.0'
-
-    //OKHTTP
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.4.0'
-    compile 'com.squareup.okhttp:okhttp:2.4.0'
 
 }
 
