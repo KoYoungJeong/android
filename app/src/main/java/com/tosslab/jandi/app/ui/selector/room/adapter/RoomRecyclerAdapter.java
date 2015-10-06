@@ -64,7 +64,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ExpandRoomData item = getItem(position);
         if (getItemViewType(position) == TYPE_FOLDER) {
             FolderViewHolder folderViewHolder = (FolderViewHolder) holder;
-            folderViewHolder.tvName.setText(item.getName().toString());
+            folderViewHolder.tvName.setText(item.getName());
             folderViewHolder.itemView.setClickable(false);
             // 폴더 가장 위에는 divider line이 없도록 한다.
             if (position == 0) {
@@ -82,6 +82,10 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             roomholder.vgLine.setVisibility(View.VISIBLE);
         } else {
             roomholder.vgLine.setVisibility(View.GONE);
+        }
+
+        if (!item.isUser()) {
+            roomholder.ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         }
 
         if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
