@@ -30,3 +30,9 @@ inhouse_version=2
 ```
 find . -path '*src/main/res/*' -name '*.png' -exec exiftool -overwrite_original -all= {} \;
 ```
+
+### String Resource Crawler
+
+1. install Python
+2. install pip
+3. install openpyxl

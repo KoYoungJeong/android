@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.network.socket.connector;
 
-import android.util.Log;
-
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -9,6 +7,15 @@ import com.tosslab.jandi.app.network.socket.events.EventListener;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 1..
@@ -36,6 +43,12 @@ public class JandiSocketConnector implements SocketConnector {
                 options.multiplex = false;
                 options.forceNew = false;
                 options.timeout = 1000 * 10;
+                options.upgrade = false;
+                try {
+                    options.sslContext = getSSLContext();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 socket = IO.socket(url, options);
             } catch (URISyntaxException e) {
                 e.printStackTrace();
@@ -111,5 +124,22 @@ public class JandiSocketConnector implements SocketConnector {
         }
         boolean alreadyConnect = socket != null && socket.connected();
         return alreadyConnect || status == Status.CONNECTING || status == Status.CONNECTED;
+    }
+
+    private SSLContext getSSLContext() throws KeyManagementException, NoSuchAlgorithmException {
+        SSLContext context = SSLContext.getInstance("SSL");
+        context.init(null, new TrustManager[]{new X509TrustManager() {
+            public void checkClientTrusted(X509Certificate[] x509Certificates, String authType) throws CertificateException {
+            }
+
+            public void checkServerTrusted(X509Certificate[] x509Certificates, String authType) throws CertificateException {
+            }
+
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        }
+        }, new SecureRandom());
+        return context;
     }
 }

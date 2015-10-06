@@ -107,6 +107,7 @@ public class JandiSocketService extends Service {
 
         jandiSocketServiceModel.startMarkerObserver();
         jandiSocketServiceModel.startMessageObserver();
+        jandiSocketServiceModel.startLinkPreviewObserver();
 
         initEventMapper();
 
@@ -233,6 +234,9 @@ public class JandiSocketService extends Service {
         EventListener linkPreviewMessageUpdateListener =
                 objects -> jandiSocketServiceModel.updateLinkPreviewMessage(objects[0]);
         eventHashMap.put("link_preview_created", linkPreviewMessageUpdateListener);
+        EventListener linkPreviewThumbnailUpdateListener =
+                objects -> jandiSocketServiceModel.updateLinkPreviewThumbnail(objects[0]);
+        eventHashMap.put("link_preview_image", linkPreviewThumbnailUpdateListener);
 
         EventListener topicTopicPushSubscribeUpdateListener =
                 objects -> jandiSocketServiceModel.updateTopicPushSubscribe(objects[0]);
@@ -267,9 +271,8 @@ public class JandiSocketService extends Service {
             unregisterReceiver(connectReceiver);
         } catch (IllegalArgumentException e) {
             LogUtil.e("unregister receiver fail. - " + e.getMessage());
-            Crashlytics.log(Log.WARN
-                    , "Socket Service"
-                    , "Socket Connect Receiver was unregisted : " + e.getMessage());
+            Crashlytics.log(Log.WARN,
+                    "Socket Service", "Socket Connect Receiver was unregisted : " + e.getMessage());
         }
         super.onDestroy();
         if (!isStopForcibly) {
@@ -288,6 +291,7 @@ public class JandiSocketService extends Service {
         jandiSocketManager.release();
         jandiSocketServiceModel.stopMarkerObserver();
         jandiSocketServiceModel.stopMessageObserver();
+        jandiSocketServiceModel.stopLinkPreviewObserver();
         jandiSocketServiceModel.stopRefreshEntityObserver();
     }
 

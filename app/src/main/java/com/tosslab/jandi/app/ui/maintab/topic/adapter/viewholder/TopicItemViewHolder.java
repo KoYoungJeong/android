@@ -27,6 +27,7 @@ public class TopicItemViewHolder extends AbstractExpandableItemViewHolder {
     public ImageView ivFolderItemUnderline;
     public ImageView ivShadowUnderline;
     public RelativeLayout vgTopicBadge;
+    public View vAnimator;
 
     public TopicItemViewHolder(View itemView) {
         super(itemView);
@@ -43,6 +44,7 @@ public class TopicItemViewHolder extends AbstractExpandableItemViewHolder {
         ivDefaultUnderline = (ImageView) itemView.findViewById(R.id.iv_default_underline);
         ivFolderItemUnderline = (ImageView) itemView.findViewById(R.id.iv_folder_item_underline);
         ivShadowUnderline = (ImageView) itemView.findViewById(R.id.iv_shadow_underline);
+        vAnimator = itemView.findViewById(R.id.v_topic_item_animator);
     }
 
 }

@@ -1,11 +1,14 @@
 package com.tosslab.jandi.app.ui.maintab.topic.adapter;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.TransitionDrawable;
-import android.os.Handler;
-import android.os.Message;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,12 +53,17 @@ public class ExpandableTopicAdapter
 
     private int selectedEntity;
     private AnimStatus animStatus = AnimStatus.READY;
+    private ValueAnimator colorAnimator;
 
     public ExpandableTopicAdapter(TopicFolderListDataProvider dataProvider) {
         this.provider = dataProvider;
         // ExpandableItemAdapter requires stable ID, and also
         // have to implement the getGroupItemId()/getChildItemId() methods appropriately.
         setHasStableIds(true);
+    }
+
+    public TopicFolderListDataProvider getProvider() {
+        return provider;
     }
 
     public void setProvider(TopicFolderListDataProvider dataProvider) {
@@ -159,17 +167,18 @@ public class ExpandableTopicAdapter
         }
 
         final int expandState = holder.getExpandStateFlags();
+        Resources resources = holder.container.getContext().getResources();
 
         if ((item.getItemCount() > 0) && (expandState & RecyclerViewExpandableItemManager.STATE_FLAG_IS_EXPANDED) != 0) {
             holder.tvTopicCnt.setBackgroundResource(R.drawable.topiclist_icon_folder_open);
-            holder.tvTopicCnt.setTextColor(0xff154a67);
-            holder.tvTitle.setTextColor(0xff154a67);
+            holder.tvTopicCnt.setTextColor(resources.getColor(R.color.jandi_topic_folder_expand));
+            holder.tvTitle.setTextColor(resources.getColor(R.color.jandi_topic_folder_expand));
             holder.ivDefaultUnderline.setVisibility(View.GONE);
             holder.vgChildBadgeCnt.setVisibility(View.GONE);
         } else {
             holder.tvTopicCnt.setBackgroundResource(R.drawable.topiclist_icon_folder);
-            holder.tvTopicCnt.setTextColor(0xffa6a6a6);
-            holder.tvTitle.setTextColor(0xffa6a6a6);
+            holder.tvTopicCnt.setTextColor(resources.getColor(R.color.jandi_topic_folder_collapse));
+            holder.tvTitle.setTextColor(resources.getColor(R.color.jandi_topic_folder_collapse));
             holder.ivDefaultUnderline.setVisibility(View.VISIBLE);
             if (item.getChildBadgeCnt() > 0) {
                 holder.vgChildBadgeCnt.setVisibility(View.VISIBLE);
@@ -177,7 +186,6 @@ public class ExpandableTopicAdapter
             } else {
                 holder.vgChildBadgeCnt.setVisibility(View.GONE);
             }
-
         }
 
         holder.vgFolderSetting.setClickable(true);
@@ -187,8 +195,6 @@ public class ExpandableTopicAdapter
                         ExpandableTopicAdapter.this, groupPosition);
             }
         });
-
-
     }
 
     @Override
@@ -278,39 +284,41 @@ public class ExpandableTopicAdapter
             return false;
         });
 
-        if (item.getEntityId() == selectedEntity && animStatus == AnimStatus.READY) {
-
-            Context context = holder.itemView.getContext();
-            animStatus = AnimStatus.IN_ANIM;
-            Integer colorFrom;
-
-            if (getGroupItemViewType(groupPosition) != TYPE_NO_GROUP) {
-                colorFrom = context.getResources().getColor(R.color.jandi_list_item_background_inner_folder);
-            } else {
-                colorFrom = context.getResources().getColor(R.color.white);
-            }
-
-            Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);
-
-            ColorDrawable[] color = {new ColorDrawable(colorFrom), new ColorDrawable(colorTo)};
-            TransitionDrawable trans = new TransitionDrawable(color);
-            holder.container.setBackgroundDrawable(trans);
-            trans.setCrossFadeEnabled(true);
-            trans.startTransition(500);
-
-            Handler handler = new Handler(context.getMainLooper()) {
-                @Override
-                public void handleMessage(Message msg) {
-                    if (trans != null) {
-                        trans.reverseTransition(500);
-                        animStatus = AnimStatus.FINISH;
-                    }
-                }
-            };
-
-            handler.sendEmptyMessageDelayed(0, 500);
-
+        boolean isSelectedEntity = item.getEntityId() == selectedEntity;
+        if (isSelectedEntity && animStatus == AnimStatus.READY) {
+            animateForSelectedEntity(holder.vAnimator);
         }
+    }
+
+    @Override
+    public void onViewRecycled(RecyclerView.ViewHolder holder) {
+        if (colorAnimator != null) {
+            colorAnimator.cancel();
+        }
+    }
+
+    private void animateForSelectedEntity(final View targetView) {
+        Context context = targetView.getContext();
+
+        animStatus = AnimStatus.IN_ANIM;
+        Integer colorFrom = Color.TRANSPARENT;
+        Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);
+
+        colorAnimator = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimator.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
+        colorAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        colorAnimator.setRepeatCount(1);
+        colorAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                animStatus = AnimStatus.FINISH;
+                targetView.setBackgroundColor(Color.TRANSPARENT);
+                colorAnimator.removeAllListeners();
+            }
+        });
+        colorAnimator.addUpdateListener(animation ->
+                targetView.setBackgroundColor((Integer) animation.getAnimatedValue()));
+        colorAnimator.start();
     }
 
     @Override
@@ -361,6 +369,10 @@ public class ExpandableTopicAdapter
             }
             getTopicFolderData(groupIdx).setChildBadgeCnt(badgeCount);
         }
+    }
+
+    public int getSelectedEntity() {
+        return selectedEntity;
     }
 
     public void setSelectedEntity(int selectedEntity) {

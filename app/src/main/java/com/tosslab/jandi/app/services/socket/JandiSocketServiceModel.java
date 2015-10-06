@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.events.files.CreateFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
+import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
@@ -31,6 +32,7 @@ import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
@@ -40,6 +42,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberProfileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -50,6 +53,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -65,6 +69,7 @@ import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscription;
+import rx.schedulers.Schedulers;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.PublishSubject;
 
@@ -76,19 +81,21 @@ public class JandiSocketServiceModel {
 
     private final Context context;
     private final ObjectMapper objectMapper;
+    private EntitySocketModel entitySocketModel;
+
     private PublishSubject<SocketRoomMarkerEvent> markerPublishSubject;
     private PublishSubject<SocketMessageEvent> messagePublishSubject;
+    private PublishSubject<Runnable> linkPreviewSubject;
+
     private Subscription markerSubscribe;
-    private EntitySocketModel entitySocketModel;
     private Subscription messageSubscribe;
+    private Subscription linkPreviewSubscribe;
 
     public JandiSocketServiceModel(Context context) {
-
         this.context = context;
         this.objectMapper = JacksonMapper.getInstance().getObjectMapper();
         entitySocketModel = new EntitySocketModel(context);
     }
-
 
     public ConnectTeam getConnectTeam() {
         ResAccountInfo.UserTeam selectedTeamInfo =
@@ -263,15 +270,72 @@ public class JandiSocketServiceModel {
         }
     }
 
-    public void updateLinkPreviewMessage(Object object) {
+    public void updateLinkPreviewMessage(final Object object) {
+        linkPreviewSubject.onNext(() -> retrieveAndUpdateLinkPreview(object));
+    }
+
+    private void retrieveAndUpdateLinkPreview(Object object) {
         try {
             SocketLinkPreviewMessageEvent socketLinkPreviewMessageEvent =
                     objectMapper.readValue(object.toString(), SocketLinkPreviewMessageEvent.class);
 
-            postEvent(socketLinkPreviewMessageEvent);
+            int teamId = socketLinkPreviewMessageEvent.getTeamId();
+            if (AccountRepository.getRepository().getSelectedTeamId() != teamId) {
+                return;
+            }
+
+            int messageId = socketLinkPreviewMessageEvent.getMessage().getId();
+
+            if (updateLinkPreview(teamId, messageId)) {
+                postEvent(new LinkPreviewUpdateEvent(messageId));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void updateLinkPreviewThumbnail(final Object object) {
+        linkPreviewSubject.onNext(() -> updateLinkPreview(object));
+    }
+
+    private void updateLinkPreview(Object object) {
+        try {
+            SocketLinkPreviewThumbnailEvent socketLinkPreviewMessageEvent =
+                    objectMapper.readValue(object.toString(), SocketLinkPreviewThumbnailEvent.class);
+
+            SocketLinkPreviewThumbnailEvent.Data data = socketLinkPreviewMessageEvent.getData();
+            ResMessages.LinkPreview linkPreview = data.getLinkPreview();
+
+            if (AccountRepository.getRepository().getSelectedTeamId() != data.getTeamId()) {
+                return;
+            }
+
+            int messageId = data.getMessageId();
+
+            ResMessages.TextMessage textMessage =
+                    MessageRepository.getRepository().getTextMessage(messageId);
+            textMessage.linkPreview = linkPreview;
+            MessageRepository.getRepository().upsertTextMessage(textMessage);
+
+            postEvent(new LinkPreviewUpdateEvent(messageId));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean updateLinkPreview(int teamId, int messageId) {
+        ResMessages.OriginalMessage message =
+                RequestApiManager.getInstance().getMessage(teamId, messageId);
+
+        if (message instanceof ResMessages.TextMessage) {
+            ResMessages.TextMessage textMessage = (ResMessages.TextMessage) message;
+            ResMessages.LinkPreview linkPreview = textMessage.linkPreview;
+            if (linkPreview != null) {
+                MessageRepository.getRepository().upsertTextMessage(textMessage);
+                return true;
+            }
+        }
+        return false;
     }
 
     public void refreshAnnouncement(Object object) {
@@ -364,6 +428,20 @@ public class JandiSocketServiceModel {
     public void stopMessageObserver() {
         if (messageSubscribe != null && !messageSubscribe.isUnsubscribed()) {
             messageSubscribe.unsubscribe();
+        }
+    }
+
+    public void startLinkPreviewObserver() {
+        linkPreviewSubject = PublishSubject.create();
+        linkPreviewSubscribe = linkPreviewSubject
+                .onBackpressureBuffer()
+                .observeOn(Schedulers.io())
+                .subscribe(Runnable::run);
+    }
+
+    public void stopLinkPreviewObserver() {
+        if (linkPreviewSubscribe != null && !linkPreviewSubscribe.isUnsubscribed()) {
+            linkPreviewSubscribe.unsubscribe();
         }
     }
 

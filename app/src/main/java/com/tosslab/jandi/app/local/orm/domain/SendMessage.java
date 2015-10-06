@@ -25,6 +25,10 @@ public class SendMessage {
     private String message;
     @DatabaseField
     private String status;
+    @DatabaseField
+    private int stickerGroupId;
+    @DatabaseField
+    private String stickerId;
 
     @ForeignCollectionField
     private Collection<MentionObject> mentionObjects;
@@ -75,6 +79,22 @@ public class SendMessage {
 
     public void setMentionObjects(Collection<MentionObject> mentionObjects) {
         this.mentionObjects = mentionObjects;
+    }
+
+    public int getStickerGroupId() {
+        return stickerGroupId;
+    }
+
+    public void setStickerGroupId(int stickerGroupId) {
+        this.stickerGroupId = stickerGroupId;
+    }
+
+    public String getStickerId() {
+        return stickerId;
+    }
+
+    public void setStickerId(String stickerId) {
+        this.stickerId = stickerId;
     }
 
     public enum Status {

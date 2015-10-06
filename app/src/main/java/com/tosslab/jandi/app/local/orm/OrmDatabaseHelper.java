@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.tosslab.jandi.app.local.orm.domain.BadgeCount;
@@ -15,6 +17,7 @@ import com.tosslab.jandi.app.local.orm.domain.RecentSticker;
 import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.domain.UploadedFileInfo;
+import com.tosslab.jandi.app.local.orm.upgrade.UpgradeChecker;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResChat;
@@ -25,6 +28,10 @@ import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
+
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 20..
@@ -34,7 +41,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_FOLDER = 2;
     private static final int DATABASE_VERSION_BADGE = 3;
     private static final int DATABASE_VERSION_FOLDER_MODIFY = 4;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_FOLDER_MODIFY;
+    private static final int DATABASE_VERSION_STICKER_SEND_STATUS = 5;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_STICKER_SEND_STATUS;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -114,26 +122,28 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         if (oldVersion < newVersion) {
-            try {
+            List<UpgradeChecker> upgradeCheckers = Arrays.asList(
+                    UpgradeChecker.create(() -> DATABASE_VERSION_FOLDER, () -> {
+                        createTable(connectionSource, UploadedFileInfo.class);
+                        createTable(connectionSource, ResFolder.class);
+                        createTable(connectionSource, ResFolderItem.class);
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_BADGE, () -> {
+                        createTable(connectionSource, BadgeCount.class);
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_FOLDER_MODIFY, () -> {
+                        dropTable(connectionSource, ResFolderItem.class);
+                        createTable(connectionSource, ResFolderItem.class);
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_STICKER_SEND_STATUS, () -> {
+                        Dao<SendMessage, ?> dao = DaoManager.createDao(connectionSource, SendMessage.class);
+                        dao.executeRawNoArgs("ALTER TABLE `message_send` ADD COLUMN stickerGroupId INTEGER;");
+                        dao.executeRawNoArgs("ALTER TABLE `message_send` ADD COLUMN stickerId VARCHAR;");
+                    }));
 
-                if (oldVersion < DATABASE_VERSION_FOLDER) {
-                    createTable(connectionSource, UploadedFileInfo.class);
-                    createTable(connectionSource, ResFolder.class);
-                    createTable(connectionSource, ResFolderItem.class);
-                }
+            Observable.from(upgradeCheckers)
+                    .subscribe(upgradeChecker -> upgradeChecker.run(oldVersion));
 
-                if (oldVersion < DATABASE_VERSION_BADGE) {
-                    createTable(connectionSource, BadgeCount.class);
-                }
-
-                if (oldVersion < DATABASE_VERSION_FOLDER_MODIFY) {
-                    dropTable(connectionSource, ResFolderItem.class);
-                    createTable(connectionSource, ResFolderItem.class);
-                }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
             return;
         }
 

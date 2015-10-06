@@ -42,6 +42,7 @@ import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
+import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
@@ -187,29 +188,30 @@ public class MessageListModel {
             EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
             return resCommon.id;
         } catch (RetrofitError e) {
-            e.printStackTrace();
             SendMessageRepository.getRepository().updateSendMessageStatus(
                     sendingMessage.getLocalId(), SendMessage.Status.FAIL);
+            EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
+
             int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
             trackMessagePostFail(errorCode);
-            SendMessageRepository.getRepository().updateSendMessageStatus(
-                    sendingMessage.getLocalId(), SendMessage.Status.FAIL);
-            EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
             return -1;
         } catch (Exception e) {
+
             SendMessageRepository.getRepository().updateSendMessageStatus(
                     sendingMessage.getLocalId(), SendMessage.Status.FAIL);
-            trackMessagePostFail(-1);
-            SendMessageRepository.getRepository().updateSendMessageStatus(sendingMessage.getLocalId(), SendMessage.Status.FAIL);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
+
+            trackMessagePostFail(-1);
             return -1;
         }
     }
 
-    public long insertSendingMessage(int roomId, String message, List<MentionObject> mentions) {
+    public long insertSendingMessage(int roomId, String message, List<MentionObject> mentions, int stickerGroupId, String stickerId) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setRoomId(roomId);
         sendMessage.setMessage(message);
+        sendMessage.setStickerGroupId(stickerGroupId);
+        sendMessage.setStickerId(stickerId);
         if (mentions != null) {
             for (MentionObject mention : mentions) {
                 mention.setSendMessageOf(sendMessage);
@@ -329,11 +331,20 @@ public class MessageListModel {
                 }
             }
 
-            DummyMessageLink dummyMessageLink = new DummyMessageLink(link.getId(), link.getMessage(),
-                    link.getStatus(), mentionObjects);
-            dummyMessageLink.message.writerId = id;
-            dummyMessageLink.message.createTime = new Date();
-            links.add(dummyMessageLink);
+            if (link.getStickerGroupId() > 0 && !TextUtils.isEmpty(link.getStickerId())) {
+
+                DummyMessageLink dummyMessageLink = new DummyMessageLink(link.getId(), link.getStatus(),
+                        link.getStickerGroupId(), link.getStickerId());
+                dummyMessageLink.message.writerId = id;
+                dummyMessageLink.message.createTime = new Date();
+                links.add(dummyMessageLink);
+            } else {
+                DummyMessageLink dummyMessageLink = new DummyMessageLink(link.getId(), link.getMessage(),
+                        link.getStatus(), mentionObjects);
+                dummyMessageLink.message.writerId = id;
+                dummyMessageLink.message.createTime = new Date();
+                links.add(dummyMessageLink);
+            }
         }
         return links;
     }
@@ -382,6 +393,25 @@ public class MessageListModel {
         return messageManipulator.getAfterMarkerMessage(linkId);
     }
 
+    public boolean upsertLinkPreviewThumbnail(SocketLinkPreviewThumbnailEvent event) {
+        SocketLinkPreviewThumbnailEvent.Data data = event.getData();
+        if (data == null) {
+            return false;
+        }
+
+        ResMessages.TextMessage textMessage =
+                MessageRepository.getRepository().getTextMessage(data.getMessageId());
+        if (textMessage == null) {
+            return false;
+        }
+
+        textMessage.linkPreview = data.getLinkPreview();
+
+        MessageRepository.getRepository().upsertTextMessage(textMessage);
+
+        return true;
+    }
+
     @Background
     public void updateMarkerInfo(int teamId, int roomId) {
 
@@ -427,24 +457,27 @@ public class MessageListModel {
         MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, myId, lastLinkId);
     }
 
-    public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, String message, List<MentionObject> mentions) {
+    public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, long localId) {
 
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         String type = null;
-        if (!TextUtils.isEmpty(message)) {
-            type = entity.isPublicTopic() ? JandiConstants.RoomType.TYPE_PUBLIC : entity.isPrivateGroup() ? JandiConstants.RoomType.TYPE_PRIVATE : JandiConstants.RoomType.TYPE_USER;
-        }
 
-        ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), teamId, entityId, type, message, mentions);
+        ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), teamId, entityId, type, "", new ArrayList<>());
 
         try {
-            RequestApiManager.getInstance().sendStickerByStickerApi(reqSendSticker);
+            ResCommon resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(reqSendSticker);
+            SendMessageRepository.getRepository().deleteSendMessage(localId);
 
             trackMessagePostSuccess();
+            EventBus.getDefault().post(new SendCompleteEvent(localId, resCommon.id));
 
             return 1;
         } catch (RetrofitError e) {
             e.printStackTrace();
+
+            SendMessageRepository.getRepository()
+                    .updateSendMessageStatus(localId, SendMessage.Status.FAIL);
+            EventBus.getDefault().post(new SendFailEvent(localId));
+
             int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
             trackMessagePostFail(errorCode);
             return -1;
@@ -588,5 +621,37 @@ public class MessageListModel {
 
     public AnalyticsValue.Screen getScreen(int entityId) {
         return isUser(entityId) ? AnalyticsValue.Screen.Message : AnalyticsValue.Screen.TopicChat;
+    }
+
+    public long insertSendingMessageIfCan(int entityId, int roomId, String message, List<MentionObject> mentions) {
+        long localId;
+        if (isUser(entityId)) {
+            if (roomId > 0) {
+                localId = insertSendingMessage(roomId, message, mentions, -1, "");
+            } else {
+                // roomId 를 할당받지 못하면 메세지를 보내지 않음
+                localId = -1;
+            }
+        } else {
+            localId = insertSendingMessage(entityId, message, mentions, -1, "");
+        }
+        return localId;
+    }
+
+    public long insertSendingMessageIfCan(int entityId, int roomId, StickerInfo stickerInfo) {
+
+        long localId;
+        if (isUser(entityId)) {
+            if (roomId > 0) {
+                localId = insertSendingMessage(roomId, "", new ArrayList<>(), stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+            } else {
+                // roomId 를 할당받지 못하면 메세지를 보내지 않음
+                localId = -1;
+            }
+        } else {
+            localId = insertSendingMessage(entityId, "", new ArrayList<>(), stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+        }
+
+        return localId;
     }
 }

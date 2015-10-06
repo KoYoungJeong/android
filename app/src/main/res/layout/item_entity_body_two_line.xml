@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginRight="56dp"
+        android:layout_toLeftOf="@+id/iv_entity_listitem_user_kick"
         android:layout_toRightOf="@+id/iv_entity_listitem_icon"
         android:orientation="vertical">
 
@@ -56,7 +56,7 @@
                 android:layout_alignLeft="@+id/tv_entity_listitem_name"
                 android:layout_alignRight="@+id/tv_entity_listitem_name"
                 android:layout_alignTop="@+id/tv_entity_listitem_name"
-                android:src="@drawable/line_black"/>
+                android:src="@drawable/line_black" />
 
         </RelativeLayout>
 
@@ -78,10 +78,25 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/iv_entity_listitem_user_kick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/kick_member" />
+
     <View
         android:id="@+id/v_entity_listitem_warning"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/jandi_entity_item_height"
+        android:layout_height="match_parent"
         android:background="#66ffffff"
         android:visibility="gone" />
 

@@ -228,7 +228,6 @@ public class MainTopicModel {
         repository.insertFolderItems(topicFolderItems);
     }
 
-
     // 그룹이 없는 Topic 들을 담아낼 더미 그룹 생성
     public TopicFolderData getFakeFolder(long lastFolderIndex) {
         TopicFolderData topicFolderData = new TopicFolderData(lastFolderIndex, "fakeFolder", -1, -1);

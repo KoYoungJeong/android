@@ -59,7 +59,8 @@ public class BadgeCountRepository {
                     .where()
                     .eq("teamId", teamId)
                     .queryForFirst();
-            return badgeCount.getBadgeCount();
+
+            return badgeCount != null ? badgeCount.getBadgeCount() : 0;
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

@@ -234,7 +234,7 @@ public class MainTopicListPresenter {
 
         void setSelectedItem(int selectedEntity);
 
-        void startAnimationSelectedItem();
+        void scrollAndAnimateForSelectedItem();
 
         void setFolderExpansion();
     }
