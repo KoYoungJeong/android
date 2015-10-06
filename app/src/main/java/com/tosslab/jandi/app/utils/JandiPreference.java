@@ -32,7 +32,7 @@ public class JandiPreference {
     private static final String PREF_COACH_MARK_FILE_LIST = "coach_mark_file_list";
     private static final String PREF_COACH_MARK_DIRECT_MESSAGE_LIST = "coach_mark_direct_messege_list";
     private static final String PREF_LAST_NETWORK_CONNECT = "last_network_connect_state";
-
+    private static final String PREF_PASSCODE = "passcode";
     // PARSE
     private static final String PREF_OLD_PARSE_CHANNEL_DELETED = "old_parse_channel_deleted";
     private static final String PREF_OLD_PARSE_FILE_CACHE_DELETED = "old_parse_file_cache_deleted";
@@ -235,6 +235,10 @@ public class JandiPreference {
 
     public static int getKeyboardHeight(Context context) {
         return getSharedPreferences(context).getInt(PREF_KEYBOARD_HEIGHT, 0);
+    }
+
+    public static String getPassCode(Context context) {
+        return getSharedPreferences(context).getString(PREF_PASSCODE, "");
     }
 
     /**
