@@ -249,6 +249,7 @@ public class JandiPushReceiverModel {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setSubText(roomName)
                 .setNumber(badgeCount)
                 .setStyle(getBigTextStyle(notificationTitle, message, roomName));
 
