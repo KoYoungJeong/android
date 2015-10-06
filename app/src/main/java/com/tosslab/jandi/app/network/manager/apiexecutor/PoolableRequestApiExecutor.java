@@ -148,7 +148,6 @@ public class PoolableRequestApiExecutor {
                 }
             }
         }
-        LogUtil.e(accessToken.toString());
         return accessToken;
     }
 }
