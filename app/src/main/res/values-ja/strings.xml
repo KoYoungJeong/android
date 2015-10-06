@@ -433,7 +433,7 @@
 	<string name="jandi_folder_no_have">"フォルダがありません"</string>
 	<string name="jandi_deleted_file">"削除されたファイル"</string>
 	<string name="jandi_invitation_succeed">"招待しました"</string>
-	<string name="jandi_unsupported_type_picture">"NEW KEY"</string>
+	<string name="jandi_unsupported_type_picture">"サポートされていないファイル形式です。他の画像を選択してください。"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jadi_account_home">"ホームに戻る"</string>
 	<string name="jandi_file_category_everywhere">"<b>全トピック</b>"</string>

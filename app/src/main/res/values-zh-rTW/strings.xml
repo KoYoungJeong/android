@@ -430,7 +430,7 @@
 	<string name="jandi_folder_no_have">"尚無資料夾"</string>
 	<string name="jandi_deleted_file">"已刪除檔案"</string>
 	<string name="jandi_invitation_succeed">"邀請成功"</string>
-	<string name="jandi_unsupported_type_picture">"NEW KEY"</string>
+	<string name="jandi_unsupported_type_picture">"無法支援此類型圖檔，請選擇其他圖檔"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jadi_account_home">"帳號首頁"</string>
 	<string name="jandi_file_category_everywhere">"<b>所有討論</b>"</string>

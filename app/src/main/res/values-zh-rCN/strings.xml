@@ -430,7 +430,7 @@
 	<string name="jandi_folder_no_have">"尚无文件夹"</string>
 	<string name="jandi_deleted_file">"已删除文件"</string>
 	<string name="jandi_invitation_succeed">"邀请成功"</string>
-	<string name="jandi_unsupported_type_picture">"NEW KEY"</string>
+	<string name="jandi_unsupported_type_picture">"无法支持此类型图档，请选择其他图档"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jadi_account_home">"账号首页"</string>
 	<string name="jandi_file_category_everywhere">"<b>所有讨论</b>"</string>
