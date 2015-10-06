@@ -89,7 +89,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-            roomholder.ivIcon.setImageResource(R.drawable.icon_search_all);
+            roomholder.ivIcon.setImageResource(R.drawable.icon_search_all_rooms);
             roomholder.tvName.setText(R.string.jandi_file_category_everywhere);
         } else if (item.isUser()) {
             Ion.with(roomholder.ivIcon)
