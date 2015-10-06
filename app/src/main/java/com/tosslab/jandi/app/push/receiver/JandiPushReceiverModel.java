@@ -243,13 +243,14 @@ public class JandiPushReceiverModel {
             roomName = context.getString(R.string.jandi_tab_direct_message);
         }
 
-        builder.setStyle(getBigTextStyle(notificationTitle, message, roomName));
 
-        builder.setDefaults(getNotificationDefaults(context));
-        builder.setSmallIcon(R.drawable.icon_push_notification);
-        builder.setPriority(NotificationCompat.PRIORITY_HIGH);
-        builder.setAutoCancel(true);
-        builder.setNumber(badgeCount);
+        builder.setDefaults(getNotificationDefaults(context))
+                .setSmallIcon(R.drawable.icon_push_notification)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setNumber(badgeCount)
+                .setStyle(getBigTextStyle(notificationTitle, message, roomName));
 
         // 노티를 터치할 경우엔 자동 삭제되나, 노티를 삭제하지 않고 앱으로 진입했을 때,
         // 해당 채팅 방에 들어갈 때만 이 노티가 삭제되도록...
@@ -292,9 +293,9 @@ public class JandiPushReceiverModel {
 
     private NotificationCompat.BigTextStyle getBigTextStyle(String title, String message, String summary) {
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
-        bigTextStyle.setBigContentTitle(title);
-        bigTextStyle.bigText(message);
-        bigTextStyle.setSummaryText(summary);
+        bigTextStyle.setBigContentTitle(title)
+                .bigText(message)
+                .setSummaryText(summary);
         return bigTextStyle;
     }
 
