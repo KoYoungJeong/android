@@ -80,7 +80,7 @@
 	<string name="err_profile_update">"简介无法更新"</string>
 	<string name="jandi_signup_verify_title">"验证码认证"</string>
 	<string name="jandi_entity_create_entity_name">"名字"</string>
-	<string name="jandi_title_name_required">"名字*"</string>
+	<string name="menu_a_file">"从文件目录上传"</string>
 	<string name="menu_camera">"从相机上传"</string>
 	<string name="jandi_user_id">"电子邮件"</string>
 	<string name="jandi_announcement_create_question">"此信息将会取代公告，你确定要继续吗?"</string>
@@ -144,9 +144,9 @@
 	<string name="jandi_password_strength_too_short">"必须至少八个字符"</string>
 	<string name="jandi_select_gallery">"选择照片"</string>
 	<string name="jandi_already_linked_email">"这电子邮件已经连结到您的帐号"</string>
-	<string name="jandi_profile_phone_number">"手机号码"</string>
+	<string name="err_entity_create">"建立不成功"</string>
 	<string name="jandi_file_category_audio">"音频"</string>
-	<string name="jandi_folder_new_folder">"建立新的文件夹"</string>
+	<string name="jandi_topic_delete">"删除议题"</string>
 	<string name="err_login_invalid_passwd">"密码不正确"</string>
 	<string name="jandi_go_to_latest">"回到账号首页"</string>
 	<string name="jandi_coach_mark_topic_setting">"其他议题设置\n(邀请、离开\n、重新命名)"</string>
@@ -194,7 +194,7 @@
 	<string name="jandi_team_select_create_a_team">"建立新的团队"</string>
 	<string name="sent_auth_email_short">"电子邮件已经成功寄出。 请查看您的邮箱"</string>
 	<string name="jandi_invite_succes_send">"邀请信发送至："</string>
-	<string name="err_entity_create">"建立不成功"</string>
+	<string name="jandi_profile_phone_number">"手机号码"</string>
 	<string name="jandi_select_direct_messages">"选择直接传讯。"</string>
 	<string name="jandi_signup_resend_email">"<![CDATA[尚未收到电子邮件? <font color=#00a4e6><u>重新传送</u></font>]]>"</string>
 	<string name="menu_entity_edit">"重新命名"</string>
@@ -258,6 +258,7 @@
 	<string name="err_profile_unmodified">"未施加变更"</string>
 	<string name="jandi_device_storage">"行动装置"</string>
 	<string name="jandi_action_direct_message">"直接传信"</string>
+	<string name="jandi_title_name_required">"名字*"</string>
 	<string name="jandi_open_browser">"开启一个浏览器"</string>
 	<string name="jandi_profile_phone_number_hint">"电话号码"</string>
 	<string name="jandi_empty">"""</string>
@@ -324,7 +325,7 @@
 	<string name="jandi_topic_paricipants">"议题参与成员"</string>
 	<string name="jandi_about">"有关"</string>
 	<string name="jandi_sdcard_storage">"记忆卡"</string>
-	<string name="jandi_topic_delete">"删除议题"</string>
+	<string name="jandi_folder_new_folder">"建立新的文件夹"</string>
 	<string name="err_login_invalid_info">"密码与账号不符"</string>
 	<string name="jandi_file_category_all">"<b>所有文件</b>"</string>
 	<string name="jandi_tutorial_welcome">"欢迎使用"</string>
@@ -387,7 +388,7 @@
 	<string name="jandi_coach_mark_more_members">"浏览成员列表"</string>
 	<string name="jandi_team_member">"团队成员"</string>
 	<string name="jandi_starred_stars">"已标示"</string>
-	<string name="jandi_setting_push">"通知偏好"</string>
+	<string name="jandi_disabled_team">"你已被剔除%1$s。 进一步协助，请联络团队管理员。"</string>
 	<string name="jandi_folder_has_been_move_to">"议题已被移至 %s"</string>
 	<string name="jandi_profile_email">"电子邮件"</string>
 	<string name="err_login">"登录期限失效，请重新登录。"</string>
@@ -408,7 +409,7 @@
 	<string name="jandi_tutorial_welcome_message">"JANDI让工作变简单、愉快。 我们将你对通讯软件的要求与云端存储的需求结合，并放在你的手掌上。"</string>
 	<string name="jandi_team_join_fail">"处理过程中产生错误。请再试一次。"</string>
 	<string name="file_upload_comment">"留言（非必要）"</string>
-	<string name="jandi_disabled_team">"你已被剔除%1$s。 进一步协助，请联络团队管理员。"</string>
+	<string name="jandi_setting_push">"通知偏好"</string>
 	<string name="jandi_created_this_topic">"%s建立了这议题"</string>
 	<string name="jandi_invitation_succeed">"邀请成功"</string>
 	<string name="jandi_invite_email">"透过电子邮件邀请"</string>
@@ -420,7 +421,6 @@
 	<string name="jandi_profile_actionb">"简介"</string>
 	<string name="jandi_member_profile_edit">"编辑简介"</string>
 	<string name="jandi_account_home_help">"无限扩大你的联络网一组账号可同时连接数个电子邮箱并随意切换登入的电子邮箱确保与其他团队成员的联系不断线可针对每个团队各别指定一个电子邮箱"</string>
-	<string name="menu_a_file">"从文件目录上传"</string>
 	<string name="jandi_profile_position">"职位"</string>
 	<string name="jandi_password_strength_weak">"必须含有至少一个数字、 大写字母或特殊字符。"</string>
 	<string name="jandi_explain_topic_description">"描述 (选项)"</string>

@@ -80,7 +80,7 @@
 	<string name="err_profile_update">"プロフィールは更新されませんでした"</string>
 	<string name="jandi_signup_verify_title">"コードの認証"</string>
 	<string name="jandi_entity_create_entity_name">"名前"</string>
-	<string name="jandi_title_name_required">"名前*"</string>
+	<string name="menu_a_file">"ファイル・ディレクトリからアップロード"</string>
 	<string name="menu_camera">"カメラからアップロード"</string>
 	<string name="jandi_user_id">"メールアドレス"</string>
 	<string name="jandi_announcement_create_question">"登録されている告知をこのメッセージに変更します。変更しますか？"</string>
@@ -144,9 +144,9 @@
 	<string name="jandi_password_strength_too_short">"8文字以上入力してください"</string>
 	<string name="jandi_select_gallery">"写真を選択"</string>
 	<string name="jandi_already_linked_email">"このメールアドレスは既にアカウントに登録されています"</string>
-	<string name="jandi_profile_phone_number">"携帯番号"</string>
+	<string name="err_entity_create">"作成できませんでした"</string>
 	<string name="jandi_file_category_audio">"音声"</string>
-	<string name="jandi_folder_new_folder">"新規フォルダを作成する"</string>
+	<string name="jandi_topic_delete">"このトピックを削除"</string>
 	<string name="err_login_invalid_passwd">"パスワードが正しくありません"</string>
 	<string name="jandi_go_to_latest">"最新のメッセージに移動"</string>
 	<string name="jandi_coach_mark_topic_setting">"トピックに招\n待、トピック\n退出などの\n管理メニュー"</string>
@@ -194,7 +194,7 @@
 	<string name="jandi_team_select_create_a_team">"チームを作成する"</string>
 	<string name="sent_auth_email_short">"メールが送信されました。 メールを確認してください"</string>
 	<string name="jandi_invite_succes_send">"招待メールが以下のアドレスに正常に送信されました"</string>
-	<string name="err_entity_create">"作成できませんでした"</string>
+	<string name="jandi_profile_phone_number">"携帯番号"</string>
 	<string name="jandi_select_direct_messages">"送信相手を選択"</string>
 	<string name="jandi_signup_resend_email">"<![CDATA[認証コードが届いていない場合 <font color=#00a4e6><u>再送信</u></font>]]>"</string>
 	<string name="menu_entity_edit">"変更する"</string>
@@ -259,6 +259,7 @@
 	<string name="err_profile_unmodified">"変更箇所はありません"</string>
 	<string name="jandi_device_storage">"デバイス"</string>
 	<string name="jandi_action_direct_message">"ダイレクトメッセージ"</string>
+	<string name="jandi_title_name_required">"名前*"</string>
 	<string name="jandi_open_browser">"ブラウザで開く"</string>
 	<string name="jandi_profile_phone_number_hint">"電話番号"</string>
 	<string name="jandi_empty">"None"</string>
@@ -325,7 +326,7 @@
 	<string name="jandi_topic_paricipants">"メンバー一覧"</string>
 	<string name="jandi_about">"JANDIについて"</string>
 	<string name="jandi_sdcard_storage">"SDカード"</string>
-	<string name="jandi_topic_delete">"このトピックを削除"</string>
+	<string name="jandi_folder_new_folder">"新規フォルダを作成する"</string>
 	<string name="err_login_invalid_info">"メールアドレスまたはパスワードが正しくありません"</string>
 	<string name="jandi_file_category_all">"<b>全ての種類</b>"</string>
 	<string name="jandi_tutorial_welcome">"JANDIへようこそ"</string>
@@ -388,7 +389,7 @@
 	<string name="jandi_coach_mark_more_members">"チームメンバー\n一覧"</string>
 	<string name="jandi_team_member">"チームメンバー"</string>
 	<string name="jandi_starred_stars">"スター付き"</string>
-	<string name="jandi_setting_push">"プッシュ"</string>
+	<string name="jandi_disabled_team">"%1$sから無効化されました。チーム管理者にお問い合わせ下さい"</string>
 	<string name="jandi_folder_has_been_move_to">"トピックを%sフォルダに移動しました"</string>
 	<string name="jandi_profile_email">"メールアドレス"</string>
 	<string name="err_login">"ログインに失敗しました"</string>
@@ -411,7 +412,7 @@
 私達は、メッセージアプリやクラウドストレージの強力で優れた機能を融合し、一つのコミュニケーションツールとして提供しています。"</string>
 	<string name="jandi_team_join_fail">"チーム参加の際にエラーが発生しました。もう一度お試しください"</string>
 	<string name="file_upload_comment">"コメント(任意)"</string>
-	<string name="jandi_disabled_team">"%1$sから無効化されました。チーム管理者にお問い合わせ下さい"</string>
+	<string name="jandi_setting_push">"プッシュ"</string>
 	<string name="jandi_created_this_topic">"%sさんがこのトピックを作成しました"</string>
 	<string name="jandi_invitation_succeed">"招待しました"</string>
 	<string name="jandi_invite_email">"メール"</string>
@@ -423,7 +424,6 @@
 	<string name="jandi_profile_actionb">"プロフィール"</string>
 	<string name="jandi_member_profile_edit">"プロフィール編集"</string>
 	<string name="jandi_account_home_help">"1つのアカウントで複数のチームを利用できます1つのアカウントで複数のメールアドレスを登録することができますチームごとに自分のメールアドレスを1つ選んでください。プロファイルに表示されます"</string>
-	<string name="menu_a_file">"ファイル・ディレクトリからアップロード"</string>
 	<string name="jandi_profile_position">"役職"</string>
 	<string name="jandi_password_strength_weak">"最低1文字の数字または大文字または記号を含めてください"</string>
 	<string name="jandi_explain_topic_description">"トピックの説明（選択）"</string>

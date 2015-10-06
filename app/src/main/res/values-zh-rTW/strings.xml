@@ -80,7 +80,7 @@
 	<string name="err_profile_update">"簡介無法更新"</string>
 	<string name="jandi_signup_verify_title">"驗證碼認證"</string>
 	<string name="jandi_entity_create_entity_name">"名字"</string>
-	<string name="jandi_title_name_required">"名字*"</string>
+	<string name="menu_a_file">"從檔案目錄上傳"</string>
 	<string name="menu_camera">"從相機上傳"</string>
 	<string name="jandi_user_id">"電子郵件"</string>
 	<string name="jandi_announcement_create_question">"此訊息將會取代公告，你確定要繼續嗎?"</string>
@@ -144,9 +144,9 @@
 	<string name="jandi_password_strength_too_short">"必須至少八個字符"</string>
 	<string name="jandi_select_gallery">"選擇照片"</string>
 	<string name="jandi_already_linked_email">"這電子郵件已經連結到您的帳號"</string>
-	<string name="jandi_profile_phone_number">"手機號碼"</string>
+	<string name="err_entity_create">"建立不成功"</string>
 	<string name="jandi_file_category_audio">"音頻"</string>
-	<string name="jandi_folder_new_folder">"建立新的資料夾"</string>
+	<string name="jandi_topic_delete">"刪除議題"</string>
 	<string name="err_login_invalid_passwd">"密碼不正確"</string>
 	<string name="jandi_go_to_latest">"去到最近的訊息"</string>
 	<string name="jandi_coach_mark_topic_setting">"其他議題設定\n(邀請、離開\n、重新命名)"</string>
@@ -194,7 +194,7 @@
 	<string name="jandi_team_select_create_a_team">"建立新的團隊"</string>
 	<string name="sent_auth_email_short">"電子郵件已經成功寄出。 請查看您的郵箱"</string>
 	<string name="jandi_invite_succes_send">"邀請信發送至："</string>
-	<string name="err_entity_create">"建立不成功"</string>
+	<string name="jandi_profile_phone_number">"手機號碼"</string>
 	<string name="jandi_select_direct_messages">"選擇直接傳訊。"</string>
 	<string name="jandi_signup_resend_email">"<![CDATA[尚未收到電子郵件? <font color=#00a4e6><u>重新傳送</u></font>]]>"</string>
 	<string name="menu_entity_edit">"重新命名"</string>
@@ -258,6 +258,7 @@
 	<string name="err_profile_unmodified">"未施加變更"</string>
 	<string name="jandi_device_storage">"行動裝置"</string>
 	<string name="jandi_action_direct_message">"直接傳訊"</string>
+	<string name="jandi_title_name_required">"名字*"</string>
 	<string name="jandi_open_browser">"開啓一個瀏覽器"</string>
 	<string name="jandi_profile_phone_number_hint">"電話號碼"</string>
 	<string name="jandi_empty">"None"</string>
@@ -324,7 +325,7 @@
 	<string name="jandi_topic_paricipants">"議題參與成員"</string>
 	<string name="jandi_about">"有關"</string>
 	<string name="jandi_sdcard_storage">"記憶卡"</string>
-	<string name="jandi_topic_delete">"刪除議題"</string>
+	<string name="jandi_folder_new_folder">"建立新的資料夾"</string>
 	<string name="err_login_invalid_info">"密碼與帳號不符"</string>
 	<string name="jandi_file_category_all">"<b>所有檔案</b>"</string>
 	<string name="jandi_tutorial_welcome">"歡迎使用"</string>
@@ -387,7 +388,7 @@
 	<string name="jandi_coach_mark_more_members">"瀏覽成員列表"</string>
 	<string name="jandi_team_member">"團隊成員"</string>
 	<string name="jandi_starred_stars">"已標示"</string>
-	<string name="jandi_setting_push">"通知偏好"</string>
+	<string name="jandi_disabled_team">"你已被剔除%1$s。進一步訊息，請聯絡團隊管理員。"</string>
 	<string name="jandi_folder_has_been_move_to">"議題已被移至%s"</string>
 	<string name="jandi_profile_email">"電子郵件"</string>
 	<string name="err_login">"登入失敗"</string>
@@ -408,7 +409,7 @@
 	<string name="jandi_tutorial_welcome_message">"JANDI讓工作變簡單、愉快。我們將你對通訊軟體的要求與雲端存儲的需求結合，並放在你的手掌上。"</string>
 	<string name="jandi_team_join_fail">"處理過程中發生錯誤。請再試一次。"</string>
 	<string name="file_upload_comment">"留言（非必要）"</string>
-	<string name="jandi_disabled_team">"你已被剔除%1$s。進一步訊息，請聯絡團隊管理員。"</string>
+	<string name="jandi_setting_push">"通知偏好"</string>
 	<string name="jandi_created_this_topic">"%s建立了這議題"</string>
 	<string name="jandi_invitation_succeed">"邀請成功"</string>
 	<string name="jandi_invite_email">"透過電子郵件邀請"</string>
@@ -420,7 +421,6 @@
 	<string name="jandi_profile_actionb">"簡介"</string>
 	<string name="jandi_member_profile_edit">"編輯簡介"</string>
 	<string name="jandi_account_home_help">"無限擴大你的聯絡網一組帳號可同時連接數個電子郵箱並隨意切換登入的電子郵箱確保與其他團隊成員的聯繫不斷線可針對每個團隊各別指定一個電子郵箱"</string>
-	<string name="menu_a_file">"從檔案目錄上傳"</string>
 	<string name="jandi_profile_position">"職位"</string>
 	<string name="jandi_password_strength_weak">"必須含有至少一個數字、 大寫字母或特殊字符。"</string>
 	<string name="jandi_explain_topic_description">"說明 (選項)"</string>
@@ -442,7 +442,7 @@
 	<string name="jandi_file_category_pdf">"PDF"</string>
 	<string name="jandi_settings">"設定"</string>
 	<string name="jandi_team_switch">"更換團隊"</string>
-	<string name="jandi_unshared_message">"你已不在此標記的議題內"</string>
+	<string name="jandi_unshared_message">"此信息/文件已被标示"</string>
 	<string name="jandi_switch_team">"更換團隊"</string>
 	<string name="jandi_coach_mark_topic_file_search">"檔案庫和搜尋"</string>
 	<string name="jandi_setting_sign_out">"登出"</string>

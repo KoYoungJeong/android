@@ -80,7 +80,7 @@
 	<string name="err_profile_update">"프로필 수정에 실패하였습니다"</string>
 	<string name="jandi_signup_verify_title">"인증번호 확인"</string>
 	<string name="jandi_entity_create_entity_name">"사용자 성함"</string>
-	<string name="jandi_title_name_required">"이름*"</string>
+	<string name="menu_a_file">"파일 탐색기에서 올리기"</string>
 	<string name="menu_camera">"카메라에서 올리기"</string>
 	<string name="jandi_user_id">"이메일 주소"</string>
 	<string name="jandi_announcement_create_question">"등록되어 있는 공지를 지금 이 메시지로 변경합니다. 계속할까요?"</string>
@@ -144,9 +144,9 @@
 	<string name="jandi_password_strength_too_short">"8자 이상 입력해주세요"</string>
 	<string name="jandi_select_gallery">"사진 선택"</string>
 	<string name="jandi_already_linked_email">"이미 계정과 연동되어있는 이메일입니다"</string>
-	<string name="jandi_profile_phone_number">"전화번호"</string>
+	<string name="err_entity_create">"생성에 실패하였습니다"</string>
 	<string name="jandi_file_category_audio">"음악"</string>
-	<string name="jandi_folder_new_folder">"새 폴더 만들기"</string>
+	<string name="jandi_topic_delete">"토픽 삭제하기"</string>
 	<string name="err_login_invalid_passwd">"정확한 비밀번호를 입력해주세요"</string>
 	<string name="jandi_go_to_latest">"최신 메시지로 가기"</string>
 	<string name="jandi_coach_mark_topic_setting">"토픽 초대,\n토픽 나가기등의\n관리 메뉴"</string>
@@ -194,7 +194,7 @@
 	<string name="jandi_team_select_create_a_team">"팀 생성"</string>
 	<string name="sent_auth_email_short">"이메일이 성공적으로 발송되었습니다. 지금 메일함을 확인해주세요."</string>
 	<string name="jandi_invite_succes_send">"아래 주소들로 초대장이 성공적으로 전송되었습니다."</string>
-	<string name="err_entity_create">"생성에 실패하였습니다"</string>
+	<string name="jandi_profile_phone_number">"전화번호"</string>
 	<string name="jandi_select_direct_messages">"대화 시작하기"</string>
 	<string name="jandi_signup_resend_email">"<![CDATA[이메일을 받지 못하셨나요? <font color=#00a4e6><u>재전송</u></font>]]>"</string>
 	<string name="menu_entity_edit">"이름 수정"</string>
@@ -259,6 +259,7 @@
 	<string name="err_profile_unmodified">"수정 사항이 없습니다"</string>
 	<string name="jandi_device_storage">"장치"</string>
 	<string name="jandi_action_direct_message">"1:1 대화"</string>
+	<string name="jandi_title_name_required">"이름*"</string>
 	<string name="jandi_open_browser">"브라우저에서 열기"</string>
 	<string name="jandi_profile_phone_number_hint">"전화번호"</string>
 	<string name="jandi_empty">"None"</string>
@@ -325,7 +326,7 @@
 	<string name="jandi_topic_paricipants">"참여 멤버"</string>
 	<string name="jandi_about">"About"</string>
 	<string name="jandi_sdcard_storage">"SD 카드"</string>
-	<string name="jandi_topic_delete">"토픽 삭제하기"</string>
+	<string name="jandi_folder_new_folder">"새 폴더 만들기"</string>
 	<string name="err_login_invalid_info">"ID, 비밀번호가 일치하지 않습니다"</string>
 	<string name="jandi_file_category_all">"<b>모든 타입</b>"</string>
 	<string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
@@ -388,7 +389,7 @@
 	<string name="jandi_coach_mark_more_members">"팀 전체\n멤버 보기"</string>
 	<string name="jandi_team_member">"팀 멤버"</string>
 	<string name="jandi_starred_stars">"즐겨찾기"</string>
-	<string name="jandi_setting_push">"알림 설정"</string>
+	<string name="jandi_disabled_team">"%1$s에서 차단된 멤버입니다. 팀 관리자에게 문의하세요."</string>
 	<string name="jandi_folder_has_been_move_to">"토픽을 %s 폴더로 이동했습니다."</string>
 	<string name="jandi_profile_email">"이메일"</string>
 	<string name="err_login">"로그인이 실패하였습니다"</string>
@@ -413,7 +414,7 @@
 완전히 새로운 업무용 메신저입니다."</string>
 	<string name="jandi_team_join_fail">"팀 가입에 실패하였습니다."</string>
 	<string name="file_upload_comment">"댓글 (선택 사항)"</string>
-	<string name="jandi_disabled_team">"%1$s에서 차단된 멤버입니다. 팀 관리자에게 문의하세요."</string>
+	<string name="jandi_setting_push">"알림 설정"</string>
 	<string name="jandi_created_this_topic">"%s님이 토픽을 생성하였습니다"</string>
 	<string name="jandi_invitation_succeed">"팀원으로 초대했습니다."</string>
 	<string name="jandi_invite_email">"이메일로 초대"</string>
@@ -425,7 +426,6 @@
 	<string name="jandi_profile_actionb">"프로필"</string>
 	<string name="jandi_member_profile_edit">"프로필 편집"</string>
 	<string name="jandi_account_home_help">"하나의 메일 주소로 여러 개의 팀을 생성하거나 참여할 수 있습니다.여러 개의 메일 주소를 추가하여 업무 용도와 개인 용도의 팀을 분리해서 사용할 수 있습니다.특정 팀과 연동된 메일 주소는 언제든 바꿀 수 있습니다."</string>
-	<string name="menu_a_file">"파일 탐색기에서 올리기"</string>
 	<string name="jandi_profile_position">"직책"</string>
 	<string name="jandi_password_strength_weak">"숫자, 특수문자, 또는 영어 대문자 중 최소한 1자 이상이 포함되어야 합니다"</string>
 	<string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
@@ -447,7 +447,7 @@
 	<string name="jandi_file_category_pdf">"PDFs"</string>
 	<string name="jandi_settings">"설정"</string>
 	<string name="jandi_team_switch">"팀 전환하기"</string>
-	<string name="jandi_unshared_message">"이미 나갔거나 삭제된 토픽이므로 원본을 확인할 수 없습니다."</string>
+	<string name="jandi_unshared_message">"원본에 대한 접근 권한이 없습니다."</string>
 	<string name="jandi_switch_team">"팀 이동하기"</string>
 	<string name="jandi_coach_mark_topic_file_search">"파일 검색"</string>
 	<string name="jandi_setting_sign_out">"로그아웃"</string>
