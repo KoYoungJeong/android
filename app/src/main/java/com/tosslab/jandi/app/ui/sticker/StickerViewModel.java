@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
@@ -116,7 +117,7 @@ public class StickerViewModel {
 
                 if (lastClickedStickerInfo != null) {
                     if (isSameSticker(groupId, stickerId)
-                            && isDoubleTap()
+                            && isDoubleTap(lastClickedTime)
                             && onStickerDoubleTapListener != null) {
                         onStickerDoubleTapListener.onStickerDoubleTap(groupId, stickerId);
                         lastClickedStickerInfo = null;
@@ -146,8 +147,8 @@ public class StickerViewModel {
 
     }
 
-    public boolean isDoubleTap() {
-        return System.currentTimeMillis() - lastClickedTime < 300;
+    public boolean isDoubleTap(long lastClickedTime) {
+        return System.currentTimeMillis() - lastClickedTime <= ViewConfiguration.getJumpTapTimeout();
     }
 
     public boolean isSameSticker(int groupId, String stickerId) {
