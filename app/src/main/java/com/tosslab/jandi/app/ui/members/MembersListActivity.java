@@ -20,6 +20,8 @@ import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.members.adapter.MembersAdapter;
+import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment;
+import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment_;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -28,7 +30,6 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -159,15 +160,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         if (type == TYPE_MEMBERS_LIST_TOPIC) {
             membersListPresenter.initKickableMode(entityId);
         }
-
-        topicMembersAdapter.setOnKickClickListener((adapter, viewHolder, position) -> {
-            ChatChooseItem item = ((MembersAdapter) adapter).getItem(position);
-            int userEntityId = item.getEntityId();
-
-            if (NetworkCheckUtil.isConnected()) {
-                membersListPresenter.onKickUser(entityId, userEntityId);
-            }
-        });
 
 
     }
@@ -385,8 +377,34 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @Override
     public void setKickMode(boolean owner) {
         topicMembersAdapter.setKickMode(owner);
+
+        if (owner) {
+            topicMembersAdapter.setOnKickClickListener((adapter, viewHolder, position) -> {
+                ChatChooseItem item = ((MembersAdapter) adapter).getItem(position);
+
+                showKickFromTopicDialog(item);
+
+            });
+        }
+
         topicMembersAdapter.notifyDataSetChanged();
 
+
+    }
+
+    private void showKickFromTopicDialog(ChatChooseItem item) {
+
+        KickDialogFragment dialogFragment = KickDialogFragment_.builder()
+                .profileUrl(item.getPhotoUrl())
+                .userName(item.getName())
+                .build();
+
+        dialogFragment.setOnKickConfirmClickListener((dialog, which) -> {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Participants, AnalyticsValue.Action.KickMember);
+            membersListPresenter.onKickUser(entityId, item.getEntityId());
+        });
+
+        dialogFragment.show(getSupportFragmentManager(), "dialog");
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -405,6 +423,18 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @Override
     public void refreshMemberList() {
         membersListPresenter.onSearch(tvSearch.getText());
+    }
+
+    @UiThread
+    @Override
+    public void showKickSuccessToast() {
+        ColoredToast.show(MembersListActivity.this, getString(R.string.jandi_success_kick_user_from_topic));
+    }
+
+    @UiThread
+    @Override
+    public void showKickFailToast() {
+        ColoredToast.show(MembersListActivity.this, getString(R.string.jandi_err_unexpected));
     }
 
 }

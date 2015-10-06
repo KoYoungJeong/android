@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -241,6 +242,13 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     @Background
     @Override
     public void onKickUser(int topicId, int userEntityId) {
+
+
+        if (!NetworkCheckUtil.isConnected()) {
+            view.showKickFailToast();
+            return;
+        }
+
         int teamId = EntityManager.getInstance().getTeamId();
         view.showProgressWheel();
         try {
@@ -248,10 +256,12 @@ public class MembersListPresenterImpl implements MembersListPresenter {
             // UI 갱신은 요청 전 성공
             // 나머지 정보는 소켓에 의해 자동 갱신 될 것으로 예상
             view.removeUser(userEntityId);
+            view.showKickSuccessToast();
         } catch (RetrofitError retrofitError) {
             retrofitError.printStackTrace();
             // 실패시 화면 다시 갱신토록 변경
             view.refreshMemberList();
+            view.showKickFailToast();
         }
 
         view.dismissProgressWheel();

@@ -52,6 +52,10 @@ public interface MembersListPresenter {
         void removeUser(int userEntityId);
 
         void refreshMemberList();
+
+        void showKickSuccessToast();
+
+        void showKickFailToast();
     }
 
 }
