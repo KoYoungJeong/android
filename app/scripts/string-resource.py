@@ -1,5 +1,6 @@
 import os
 import urllib2
+import collections
 from openpyxl import load_workbook
 import sys
 
@@ -64,6 +65,10 @@ def parsing(filePath):
                 dic["zh-rCN"][key] = value
             elif cellInfo[1].startswith("E"):  # jp
                 dic["ja"][key] = value
+
+    for langKey in dic:
+        dic[langKey] = collections.OrderedDict(sorted(dic[langKey].items()))
+
     return dic
 
 
