@@ -36,16 +36,8 @@ public class SignUpVerifyPresenter {
         view = signUpVerifyView;
     }
 
-    public void validateVerificationCode(String verificationCode) {
-        boolean verified = model.isValidVerificationCode(verificationCode);
-        view.setVerifyButtonEnabled(verified);
-    }
-
     @Background
     public void verifyCode(String email, String verificationCode) {
-        view.setValidateTextColor();
-        view.hideInvalidVerificationCode();
-
         view.showProgress();
 
         try {
@@ -67,7 +59,6 @@ public class SignUpVerifyPresenter {
             model.trackSignUpFailAndFlush(errCode);
             switch (errCode) {
                 case EXPIRED_VERIFICATION_CODE:
-                    view.hideResend();
 
                     view.showExpiredVerificationCode();
                     break;
@@ -77,7 +68,6 @@ public class SignUpVerifyPresenter {
                         view.showErrorToast(context.getResources().getString(R.string.err_network));
                         return;
                     }
-                    view.setInvalidateTextColor();
                     view.showInvalidVerificationCode(tryCount);
                     break;
                 default:
@@ -90,19 +80,17 @@ public class SignUpVerifyPresenter {
 
     @Background
     public void requestNewVerificationCode(String email) {
-        view.hideInvalidVerificationCode();
-        view.clearVerificationCode();
-
         view.showProgress();
 
         try {
             model.requestNewVerificationCode(email);
             view.hideProgress();
-            view.showResend();
 
             String successEmailText = context.getResources()
                     .getString(R.string.jandi_signup_send_new_verification_code, email);
             view.showToast(successEmailText);
+            view.changeExplainText();
+            view.clearVerifyCode();
         } catch (RetrofitError e) {
             e.printStackTrace();
             view.hideProgress();

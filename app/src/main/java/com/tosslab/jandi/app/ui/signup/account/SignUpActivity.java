@@ -166,6 +166,8 @@ public class SignUpActivity extends BaseAppCompatActivity {
         signUpViewModel.activateSignUpButton(allValid);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.AcceptAll);
+
+        signUpViewModel.hideSoftInput();
     }
 
     @Click(R.id.btn_signup_confirm)
