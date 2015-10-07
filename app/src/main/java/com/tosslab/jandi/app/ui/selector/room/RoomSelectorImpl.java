@@ -91,8 +91,6 @@ public class RoomSelectorImpl implements RoomSelector {
             recyclerView.getLayoutManager().scrollToPosition(0);
         });
 
-        topicView.performClick();
-
         if (type == TYPE_POPUP) {
             this.isIncludeAllMember = true;
             popupWindow = new PopupWindow(rootView);
@@ -123,6 +121,9 @@ public class RoomSelectorImpl implements RoomSelector {
                 throw new IllegalArgumentException("viewgroup needed");
             }
         }
+
+        topicView.performClick();
+
     }
 
     public List<FormattedEntity> getTopics() {
