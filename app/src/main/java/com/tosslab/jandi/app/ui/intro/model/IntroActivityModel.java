@@ -11,10 +11,12 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.DatabaseConsts;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
+import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -79,12 +81,12 @@ public class IntroActivityModel {
         return resConfig.versions.android;
     }
 
-    public boolean isNeedLogin(Context context) {
-        String refreshToken = JandiPreference.getRefreshToken(context);
-        return TextUtils.isEmpty(refreshToken);
+    public boolean isNeedLogin() {
+        ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
+        return TextUtils.isEmpty(accessToken.getRefreshToken());
     }
 
-    public void refreshAccountInfo(Context context) throws RetrofitError {
+    public void refreshAccountInfo() throws RetrofitError {
 
         ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);

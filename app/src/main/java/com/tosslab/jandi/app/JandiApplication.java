@@ -12,6 +12,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
+import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
@@ -156,7 +157,10 @@ public class JandiApplication extends MultiDexApplication {
         }
 
         private void updatePlatformStatus(final boolean active) {
-            String accessToken = JandiPreference.getAccessToken(JandiApplication.getContext());
+            String accessToken = AccessTokenRepository
+                    .getRepository()
+                    .getAccessToken()
+                    .getAccessToken();
             if (TextUtils.isEmpty(accessToken)) {
                 LogUtil.i(TAG, "Don't request(has not accessToken).");
                 return;

@@ -42,7 +42,7 @@ public class IntroActivityPresenter {
 
         if (!NetworkCheckUtil.isConnected()) {
             // 네트워크 연결 상태 아니면 로그인 여부만 확인하고 넘어감
-            if (!model.isNeedLogin(context)) {
+            if (!model.isNeedLogin()) {
 
                 if (model.hasMigration()) {
                     moveNextActivity(context, initTime, startForInvite);
@@ -75,7 +75,7 @@ public class IntroActivityPresenter {
                     model.removeOldToken(context);
                 }
 
-                if (!model.isNeedLogin(context)) {
+                if (!model.isNeedLogin()) {
                     if (model.hasMigration()) {
                         try {
                             refreshAccountInfo(context);
@@ -126,7 +126,7 @@ public class IntroActivityPresenter {
     private void migrationAccountInfos(Context context, long initTime, final boolean startForInvite) throws RetrofitError {
         // v1.0.7 이전 설치자가 넘어온 경우
 
-        model.refreshAccountInfo(context);
+        model.refreshAccountInfo();
         int selectedTeamId = model.getSelectedTeamInfoByOldData(context);
 
         if (selectedTeamId > 0) {
@@ -142,7 +142,7 @@ public class IntroActivityPresenter {
     }
 
     void refreshAccountInfo(Context context) throws RetrofitError {
-        model.refreshAccountInfo(context);
+        model.refreshAccountInfo();
     }
 
     void moveNextActivity(Context context, long initTime, final boolean startForInvite) {

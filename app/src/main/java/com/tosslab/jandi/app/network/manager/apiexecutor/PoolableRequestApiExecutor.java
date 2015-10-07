@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
@@ -16,7 +17,6 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -40,7 +40,12 @@ public class PoolableRequestApiExecutor {
     static {
         introPublishSubject = PublishSubject.create();
         introPublishSubject
-                .filter(integer -> !TextUtils.isEmpty(JandiPreference.getRefreshToken(JandiApplication.getContext())))
+                .filter(integer -> {
+                    ResAccessToken accessToken = AccessTokenRepository
+                            .getRepository()
+                            .getAccessToken();
+                    return !TextUtils.isEmpty(accessToken.getRefreshToken());
+                })
                 .doOnNext(integer -> SignOutUtil.removeSignData())
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -137,9 +142,15 @@ public class PoolableRequestApiExecutor {
             ++loginRetryCount;
             try {
                 //Request Access token, and save token
+                String refreshToken = AccessTokenRepository
+                        .getRepository()
+                        .getAccessToken()
+                        .getRefreshToken();
+
                 ReqAccessToken refreshReqToken = ReqAccessToken
-                        .createRefreshReqToken(JandiPreference.getRefreshToken(JandiApplication.getContext()));
-                accessToken = new JacksonConvertedSimpleRestApiClient().getAccessTokenByMainRest(refreshReqToken);
+                        .createRefreshReqToken(refreshToken);
+                accessToken = new JacksonConvertedSimpleRestApiClient()
+                        .getAccessTokenByMainRest(refreshReqToken);
                 TokenUtil.saveTokenInfoByRefresh(accessToken);
             } catch (RetrofitError e) {
                 LogUtil.e("Refresh Token Fail", e);
