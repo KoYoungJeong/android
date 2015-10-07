@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.signup.verify;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -11,6 +13,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -62,6 +65,9 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     @ViewById(R.id.btn_verify)
     Button btnVerify;
 
+    @ViewById(R.id.iv_signup_verify_code_cursor)
+    ImageView ivFakeCursor;
+
     @ViewById(R.id.tv_resend_email)
     TextView tvResendEmail;
 
@@ -87,6 +93,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     @SystemService
     InputMethodManager inputMethodManager;
     private ProgressWheel progressWheel;
+    private Blink blink;
 
     @AfterViews
     void init() {
@@ -107,6 +114,14 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.CodeVerification);
 
+        blink = new Blink(ivFakeCursor);
+        startBlink();
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopBlink();
+        super.onDestroy();
     }
 
     @Override
@@ -254,7 +269,8 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
 
     @TextChange(R.id.tv_signup_verify_code)
     void onVerifyCodeTextInput(TextView tv) {
-        boolean enabled = tv.length() == MAX_VERIFY_CODE;
+        int length = tv.length();
+        boolean enabled = length == MAX_VERIFY_CODE;
         btnVerify.setEnabled(enabled);
 
         if (!enabled) {
@@ -262,6 +278,23 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
             tvVerifyCode.setTextColor(getResources().getColor(R.color.jandi_text));
         }
 
+        if (length > 0) {
+            ivFakeCursor.setVisibility(View.GONE);
+            stopBlink();
+        } else {
+            ivFakeCursor.setVisibility(View.VISIBLE);
+            startBlink();
+        }
+
+    }
+
+    private void stopBlink() {
+        blink.cancel();
+    }
+
+    private void startBlink() {
+        blink.uncancel();
+        blink.postAtTime(blink, SystemClock.uptimeMillis() + 500);
     }
 
     @Click(R.id.iv_signup_verify_input_del)
@@ -283,6 +316,43 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     @OptionsItem(android.R.id.home)
     void onHomeOptionSelected() {
         finish();
+    }
+
+    private static class Blink extends Handler implements Runnable {
+        private final View blinkView;
+        private boolean mCancelled;
+
+        Blink(View blinkView) {
+            super();
+            this.blinkView = blinkView;
+        }
+
+        public void run() {
+            if (mCancelled) {
+                return;
+            }
+
+            removeCallbacks(Blink.this);
+
+            if (blinkView.getVisibility() == View.VISIBLE) {
+                blinkView.setVisibility(View.GONE);
+            } else {
+                blinkView.setVisibility(View.VISIBLE);
+            }
+
+            postAtTime(this, SystemClock.uptimeMillis() + 500);
+        }
+
+        void cancel() {
+            if (!mCancelled) {
+                removeCallbacks(Blink.this);
+                mCancelled = true;
+            }
+        }
+
+        void uncancel() {
+            mCancelled = false;
+        }
     }
 
 }
