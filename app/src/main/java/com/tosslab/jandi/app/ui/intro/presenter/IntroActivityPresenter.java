@@ -156,6 +156,11 @@ public class IntroActivityPresenter {
         if (selectedTeamInfo != null && !startForInvite) {
             ParseUpdateUtil.addChannelOnServer();
 
+            if (!model.hasLeftSideMenu() && NetworkCheckUtil.isConnected()) {
+                // LeftSideMenu 가 없는 경우 대비
+                model.refreshEntityInfo(context);
+            }
+
             // Track Auto Sign In (with flush)
             model.trackAutoSignInSuccessAndFlush(true);
 
