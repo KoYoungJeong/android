@@ -65,36 +65,37 @@
 
         <TextView
             android:id="@+id/tv_share_image_title"
+            style="@style/JandiMainShare.Content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/vg_viwer"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="12dp"
+            android:ellipsize="end"
             android:gravity="center_vertical"
             android:hint="@string/jandi_topic_title_hint"
-            android:paddingLeft="16dp"
-            android:text="[android]share_sorting_01.png"
-            android:textColor="#999999"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="@color/jandi_text_light"
             android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tv_team_title"
+            style="@style/JandiMainShare.Content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/tv_share_image_title"
             android:layout_marginTop="16dp"
-            android:paddingLeft="16dp"
             android:text="Team"
-            android:textColor="#999999"
+            android:textColor="@color/jandi_text_light"
             android:textSize="12sp" />
 
         <RelativeLayout
             android:id="@+id/vg_team"
+            style="@style/JandiMainShare.Content"
             android:layout_width="match_parent"
             android:layout_height="36dp"
             android:layout_below="@id/tv_team_title"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
             android:clickable="true"
             android:orientation="horizontal">
 
@@ -125,22 +126,21 @@
 
         <TextView
             android:id="@+id/tv_room_title"
+            style="@style/JandiMainShare.Content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/vg_team"
             android:layout_marginTop="16dp"
-            android:paddingLeft="16dp"
             android:text="Topic or message"
-            android:textColor="#999999"
+            android:textColor="@color/jandi_text_light"
             android:textSize="12sp" />
 
         <RelativeLayout
             android:id="@+id/vg_room"
+            style="@style/JandiMainShare.Content"
             android:layout_width="match_parent"
             android:layout_height="36dp"
             android:layout_below="@id/tv_room_title"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
             android:clickable="true"
             android:orientation="horizontal">
 
@@ -172,23 +172,24 @@
 
         <EditText
             android:id="@+id/et_share_comment"
+            style="@style/JandiMainShare.Content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/vg_room"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
             android:layout_marginTop="23dp"
             android:background="@null"
+            android:gravity="start"
             android:hint="@string/file_upload_comment"
             android:inputType="textMultiLine"
+            android:maxLines="3"
+            android:scrollbars="vertical"
             android:textSize="16sp" />
 
         <View
+            style="@style/JandiMainShare.Content"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@id/et_share_comment"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
             android:layout_marginTop="4dp"
             android:background="#dadada" />
 

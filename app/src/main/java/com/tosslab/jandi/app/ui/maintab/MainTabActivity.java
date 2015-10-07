@@ -4,6 +4,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -52,6 +53,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -86,7 +88,6 @@ import rx.Observable;
 public class MainTabActivity extends BaseAppCompatActivity {
 
     public static final int CHAT_INDEX = 1;
-    public static final int REQ_START_MESSAGE = 1211;
     @Bean
     EntityClientManager entityClientManager;
     @Bean
@@ -254,8 +255,15 @@ public class MainTabActivity extends BaseAppCompatActivity {
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        LogUtil.e("tony", "onCreate");
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        LogUtil.e("tony", "onResume");
         LogUtil.d("MainTabAcitivity.onResume");
 
         // Entity의 리스트를 획득하여 저장한다.
@@ -271,6 +279,8 @@ public class MainTabActivity extends BaseAppCompatActivity {
         } else {
             offlineLayer.showOfflineView();
         }
+
+        UnLockPassCodeManager.getInstance().unLockPassCodeIfNeed(this);
     }
 
 
@@ -283,11 +293,13 @@ public class MainTabActivity extends BaseAppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
+        LogUtil.e("tony", "onPause");
         EventBus.getDefault().unregister(this);
     }
 
     @Override
     protected void onDestroy() {
+        LogUtil.e("tony", "onDestroy");
         JandiSocketService.stopService(this);
         super.onDestroy();
     }

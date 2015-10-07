@@ -231,7 +231,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
                 .roomId(entityId)
                 .lastMarker(markerLinkId)
                 .isFavorite(starred)
-                .startForResult(MainTabActivity.REQ_START_MESSAGE);
+                .start();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

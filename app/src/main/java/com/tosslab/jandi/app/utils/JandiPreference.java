@@ -241,6 +241,11 @@ public class JandiPreference {
         return getSharedPreferences(context).getString(PREF_PASSCODE, "");
     }
 
+    public static void setPassCode(Context context, String passCode) {
+        SharedPreferences pref = getSharedPreferences(context);
+        pref.edit().putString(PREF_PASSCODE, passCode).commit();
+    }
+
     /**
      * 마지막 네트워크 접속 상태 값
      *

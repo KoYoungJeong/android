@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EActivity;
@@ -84,6 +85,12 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
         if (messageListFragment instanceof OnKeyPressListener) {
             onKeyPressListener = ((OnKeyPressListener) messageListFragment);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UnLockPassCodeManager.getInstance().unLockPassCodeIfNeed(this);
     }
 
     @Override

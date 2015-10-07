@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Scheduler;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 /**
@@ -110,7 +112,12 @@ public class JandiPushIntentService extends IntentService {
     private void notifyPush(Context context, PushTO pushTO) {
         PushTO.PushInfo pushTOInfo;
         pushTOInfo = pushTO.getInfo();
-        ResLeftSideMenu leftSideMenu = jandiPushReceiverModel.getLeftSideMenu(pushTOInfo.getTeamId());
+        ResLeftSideMenu leftSideMenu = null;
+        try {
+            leftSideMenu = jandiPushReceiverModel.getLeftSideMenu(pushTOInfo.getTeamId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (leftSideMenu == null) {
             showNotification(context, pushTOInfo, false);

@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
+import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -168,14 +169,16 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
 
-        MessageListV2Activity_.intent(PushInterfaceActivity.this)
+        Intent intent = MessageListV2Activity_.intent(PushInterfaceActivity.this)
                 .teamId(teamId)
                 .roomId(roomId)
                 .entityId(targetEntityId)
                 .entityType(entityType)
                 .isFromPush(true)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .startForResult(MainTabActivity_.REQ_START_MESSAGE);
+                .get();
+
+        UnLockPassCodeManager.getInstance().unLockPassCodeFirstIfNeed(this, intent);
 
         finish();
     }

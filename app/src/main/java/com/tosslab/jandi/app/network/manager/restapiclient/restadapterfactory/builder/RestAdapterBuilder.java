@@ -38,7 +38,7 @@ public class RestAdapterBuilder<CLIENT> {
                 .setEndpoint(JandiConstantsForFlavors.SERVICE_INNER_API_URL);
 
         if (BuildConfig.DEBUG) {
-            builder.setLogLevel(RestAdapter.LogLevel.BASIC);
+            builder.setLogLevel(RestAdapter.LogLevel.FULL);
         }
 
         for (RestAdapterDecor restAdapterDecor : restAdapterDecors) {

@@ -998,13 +998,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread(propagation = Propagation.REUSE)
     @Override
     public void showUnsharedFileToast() {
-        if (EntityManager.getInstance().getEntityById(roomId) != EntityManager.UNKNOWN_USER_ENTITY) {
-            // Topic 의 EntityId
-            ColoredToast.showError(FileDetailActivity.this, getString(R.string.jandi_unshared_message));
-        } else {
-            // DM 의 RoomId
-            ColoredToast.showError(FileDetailActivity.this, getString(R.string.jandi_unshared_file_in_dm));
-        }
+        ColoredToast.showError(FileDetailActivity.this, getString(R.string.jandi_unshared_message));
     }
 
     @Override

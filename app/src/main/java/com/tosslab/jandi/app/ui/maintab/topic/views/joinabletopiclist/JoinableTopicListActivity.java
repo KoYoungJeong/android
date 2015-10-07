@@ -20,9 +20,10 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.presenter.
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
+import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -136,7 +137,8 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
                 .roomId(entityId)
                 .lastMarker(markerLinkId)
                 .isFavorite(starred)
-                .startForResult(MainTabActivity.REQ_START_MESSAGE);
+                .start();
+
         finish();
     }
 

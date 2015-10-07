@@ -19,6 +19,8 @@ import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.ApplicationActivateDetector;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -84,6 +86,8 @@ public class JandiApplication extends MultiDexApplication {
             JandiPreference.setOldParseChannelDeleted(this, true);
         }
 
+        JandiPreference.setPassCode(this, "Helloo");
+
         registerActivityLifecycleCallbacks();
     }
 
@@ -91,9 +95,10 @@ public class JandiApplication extends MultiDexApplication {
         registerActivityLifecycleCallbacks(new ApplicationActivateDetector()
                 .addActiveListener(() -> updatePlatformStatus(true))
                 .addDeactiveListener(() -> updatePlatformStatus(false))
-                .addActiveListener(() -> {
-
-                }));
+                .addActiveListener(() ->
+                        UnLockPassCodeManager.getInstance().setApplicationActivate(true))
+                .addDeactiveListener(() ->
+                        UnLockPassCodeManager.getInstance().setApplicationActivate(false)));
     }
 
     public synchronized Tracker getTracker(TrackerName trackerId) {
@@ -119,6 +124,11 @@ public class JandiApplication extends MultiDexApplication {
 
     private void updatePlatformStatus(boolean active) {
         LogUtil.i("PlatformApi", "updatePlatformStatus - " + active);
+
+        String accessToken = JandiPreference.getAccessToken(JandiApplication.getContext());
+        if (TextUtils.isEmpty(accessToken)) {
+            return;
+        }
 
         SimpleApiRequester.request(() -> {
             ReqUpdatePlatformStatus req = new ReqUpdatePlatformStatus(active);
