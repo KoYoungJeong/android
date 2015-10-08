@@ -130,8 +130,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
                 tvFileOwner.setVisibility(View.VISIBLE);
 
-                String fileType = content.type;
-                if (fileType.startsWith("image/")) {
+                String fileType = content.icon;
+                if (TextUtils.equals(fileType, "image")) {
                     if (BitmapUtil.hasImageUrl(content)) {
                         String thumbnailUrl = BitmapUtil.getThumbnailUrlOrOriginal(
                                 content, BitmapUtil.Thumbnails.SMALL);
