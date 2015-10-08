@@ -49,8 +49,7 @@ public class TokenRequestManager {
         }
 
         try {
-            ReqAccessToken refreshReqToken = ReqAccessToken
-                    .createRefreshReqToken(refreshToken);
+            ReqAccessToken refreshReqToken = ReqAccessToken.createRefreshReqToken(refreshToken);
             accessToken = new JacksonConvertedSimpleRestApiClient()
                     .getAccessTokenByMainRest(refreshReqToken);
 
