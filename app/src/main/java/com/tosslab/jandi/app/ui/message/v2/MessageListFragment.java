@@ -1209,17 +1209,29 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         DummyMessageLink dummyMessage = messageListPresenter.getDummyMessage(event.getLocalId());
         dummyMessage.setStatus(SendMessage.Status.SENDING.name());
         messageListPresenter.justRefresh();
-        ResMessages.TextMessage dummyMessageContent = (ResMessages.TextMessage) dummyMessage.message;
+        if (dummyMessage.message instanceof ResMessages.TextMessage) {
 
-        List<MentionObject> mentionObjects = new ArrayList<>();
+            ResMessages.TextMessage dummyMessageContent = (ResMessages.TextMessage) dummyMessage.message;
+            List<MentionObject> mentionObjects = new ArrayList<>();
 
-        if (dummyMessageContent.mentions != null) {
-            Observable.from(dummyMessageContent.mentions)
-                    .subscribe(mentionObjects::add);
+            if (dummyMessageContent.mentions != null) {
+                Observable.from(dummyMessageContent.mentions)
+                        .subscribe(mentionObjects::add);
+            }
+
+            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(event.getLocalId(),
+                    new ReqSendMessageV3((dummyMessageContent.content.body), mentionObjects))));
+        } else if (dummyMessage.message instanceof ResMessages.StickerMessage) {
+            ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) dummyMessage.message;
+
+            StickerInfo stickerInfo = new StickerInfo();
+            stickerInfo.setStickerGroupId(stickerMessage.content.groupId);
+            stickerInfo.setStickerId(stickerMessage.content.stickerId);
+
+            SendingMessage sendingMessage = new SendingMessage(event.getLocalId(), "", stickerInfo, new ArrayList<>());
+            sendMessagePublisherEvent(new SendingMessageQueue(sendingMessage));
         }
 
-        sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(event.getLocalId(),
-                new ReqSendMessageV3((dummyMessageContent.content.body), mentionObjects))));
     }
 
     public void onEvent(DummyDeleteEvent event) {
