@@ -342,13 +342,9 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     }
 
     public void onEvent(RetrieveTopicListEvent event) {
-        if (!isFirstForRetrieve) {
-            List<ResFolder> topicFolders = mainTopicListPresenter.onGetTopicFolders();
-            List<ResFolderItem> topicFolderItems = mainTopicListPresenter.onGetTopicFolderItems();
-            mainTopicListPresenter.onRefreshList(topicFolders, topicFolderItems, true);
-        } else {
-            isFirstForRetrieve = false;
-        }
+        List<ResFolder> topicFolders = mainTopicListPresenter.onGetTopicFolders();
+        List<ResFolderItem> topicFolderItems = mainTopicListPresenter.onGetTopicFolderItems();
+        mainTopicListPresenter.onRefreshList(topicFolders, topicFolderItems, true);
     }
 
     public void onEvent(SocketTopicFolderEvent event) {
