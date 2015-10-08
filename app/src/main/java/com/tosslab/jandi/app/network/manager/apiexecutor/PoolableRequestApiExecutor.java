@@ -11,14 +11,12 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
-import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
-import com.tosslab.jandi.app.network.models.ReqAccessToken;
+import com.tosslab.jandi.app.network.manager.token.TokenRequestManager;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.SignOutUtil;
-import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -140,24 +138,11 @@ public class PoolableRequestApiExecutor {
         int loginRetryCount = 0;
         while (accessToken == null && loginRetryCount <= 3) {
             ++loginRetryCount;
-            try {
-                //Request Access token, and save token
-                String refreshToken = AccessTokenRepository
-                        .getRepository()
-                        .getAccessToken()
-                        .getRefreshToken();
-
-                ReqAccessToken refreshReqToken = ReqAccessToken
-                        .createRefreshReqToken(refreshToken);
-                accessToken = new JacksonConvertedSimpleRestApiClient()
-                        .getAccessTokenByMainRest(refreshReqToken);
-                TokenUtil.saveTokenInfoByRefresh(accessToken);
-            } catch (RetrofitError e) {
-                LogUtil.e("Refresh Token Fail", e);
-                if (e.getKind() == RetrofitError.Kind.HTTP) {
-                    return null;
-                }
-            }
+            String refreshToken = AccessTokenRepository
+                    .getRepository()
+                    .getAccessToken()
+                    .getRefreshToken();
+            accessToken = TokenRequestManager.getInstance().get(refreshToken);
         }
         return accessToken;
     }

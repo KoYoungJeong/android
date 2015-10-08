@@ -29,7 +29,6 @@ public class TokenRequestManagerTest {
     @After
     public void tearDown() throws Exception {
         BaseInitUtil.releaseDatabase();
-
     }
 
     @Test
