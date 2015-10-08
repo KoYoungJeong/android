@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/img_icon_with_text"
         android:layout_width="33dp"
         android:layout_height="33dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="3dp"/>
+        android:layout_marginTop="3dp" />
 
     <TextView
         android:id="@+id/tv_icon_with_text"
@@ -19,7 +19,8 @@
         android:layout_marginBottom="3dp"
         android:layout_marginTop="8dp"
         android:gravity="center"
-        android:textColor="@color/jandi_text_medium"/>
+        android:lineSpacingExtra="3dp"
+        android:textColor="@color/jandi_text_medium" />
 
     <TextView
         android:id="@+id/tv_icon_with_text_badge"
@@ -35,6 +36,6 @@
         android:text="123897"
         android:textColor="@color/jandi_text_white"
         android:textSize="11sp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </RelativeLayout>

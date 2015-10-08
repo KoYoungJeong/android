@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
 
-    <LinearLayout
+    <View
         android:id="@+id/ll_line_use_for_first_no_folder_item"
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -15,6 +15,7 @@
         android:visibility="gone" />
 
     <LinearLayout
+        android:id="@+id/vg_room_selector_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
@@ -35,7 +36,9 @@
             android:layout_marginRight="16dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="abcdefgfewqfewqfweqfewqfweqfweqfweqfweqfewq" />
+            android:text="abcdefgfewqfewqfweqfewqfweqfweqfweqfweqfewq"
+            android:textColor="@color/jandi_text_selector"
+            android:textSize="@dimen/jandi_text_size_large" />
 
     </LinearLayout>
 

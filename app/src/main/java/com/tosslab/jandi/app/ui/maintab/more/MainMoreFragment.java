@@ -63,6 +63,9 @@ public class MainMoreFragment extends Fragment {
     @ViewById(R.id.ly_more_go_to_main)
     IconWithTextView switchTeamIconView;
 
+    @ViewById(R.id.ly_more_team_member)
+    IconWithTextView vTeamMember;
+
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
 
@@ -84,6 +87,14 @@ public class MainMoreFragment extends Fragment {
 
         showJandiVersion();
         showOtherTeamMessageCount();
+        showTeamMember();
+    }
+
+    private void showTeamMember() {
+        String teamMember = getString(R.string.jandi_team_member);
+        int teamMemberCount = EntityManager.getInstance().getFormattedUsers().size();
+        String fullTeamMemberText = String.format("%s\n(%d)", teamMember, teamMemberCount);
+        vTeamMember.setIconText(fullTeamMemberText);
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.selector.room.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
@@ -46,7 +49,8 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             RoomViewHolder viewHolder = new RoomViewHolder(itemView);
             viewHolder.tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
             viewHolder.ivIcon = (ImageView) itemView.findViewById(R.id.iv_room_selector_item_icon);
-            viewHolder.vgLine = (LinearLayout) itemView.findViewById(R.id.ll_line_use_for_first_no_folder_item);
+            viewHolder.vgLine = itemView.findViewById(R.id.ll_line_use_for_first_no_folder_item);
+            viewHolder.vgContent = (LinearLayout) itemView.findViewById(R.id.vg_room_selector_content);
             return viewHolder;
         } else if (viewType == TYPE_FOLDER) {
             itemView = LayoutInflater.from(context)
@@ -91,6 +95,20 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
             roomholder.ivIcon.setImageResource(R.drawable.icon_search_all_rooms);
             roomholder.tvName.setText(R.string.jandi_file_category_everywhere);
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) roomholder.vgContent.getLayoutParams();
+            DisplayMetrics displayMetrics = JandiApplication
+                    .getContext()
+                    .getResources()
+                    .getDisplayMetrics();
+            int allRoomMargin = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    8f,
+                    displayMetrics);
+            layoutParams.topMargin = allRoomMargin;
+            layoutParams.bottomMargin = allRoomMargin;
+
+            roomholder.vgContent.setLayoutParams(layoutParams);
+
         } else if (item.isUser()) {
             Ion.with(roomholder.ivIcon)
                     .placeholder(R.drawable.profile_img_comment)
@@ -156,7 +174,8 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static class RoomViewHolder extends RecyclerView.ViewHolder {
         private TextView tvName;
         private ImageView ivIcon;
-        private LinearLayout vgLine;
+        private View vgLine;
+        private LinearLayout vgContent;
 
         public RoomViewHolder(View itemView) {
             super(itemView);

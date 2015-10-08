@@ -25,6 +25,7 @@
 
     <color name="jandi_black_25">#25000000</color>
     <color name="jandi_black_89">#89000000</color>
+    <color name="jandi_black_bf">#BF000000</color>
     <color name="jandi_black_b2">#B2000000</color>
     <color name="jandi_black_de">#de000000</color>
 
@@ -45,6 +46,7 @@
 
     <color name="jandi_border_gray_light">#939393</color>
     <color name="jandi_text_hint">#FFBDBDBD</color>
+    <color name="jandi_text_selector">#FF121212</color>
 
     <!-- Actionbar menu -->
     <color name="jandi_dropdown_menu_text">@color/jandi_primary_color</color>

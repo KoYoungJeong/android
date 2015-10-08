@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.utils.mimetype.filter.IconFilterUtil;
  */
 public class FileStarMentionViewHolder extends CommonStarMentionViewHolder {
 
+    private final View vFileRound;
     private TextView tvName;
     private ImageView ivFile;
 
@@ -24,13 +25,7 @@ public class FileStarMentionViewHolder extends CommonStarMentionViewHolder {
         super(itemView);
         tvName = (TextView) itemView.findViewById(R.id.tv_star_mention_file_name);
         ivFile = (ImageView) itemView.findViewById(R.id.iv_star_file);
-    }
-
-    @Override
-    public String toString() {
-        return "FileStarMentionViewHolder{" +
-                ", starMentionFileName=" + tvName +
-                '}';
+        vFileRound = itemView.findViewById(R.id.v_star_file_round);
     }
 
     @Override
@@ -51,16 +46,25 @@ public class FileStarMentionViewHolder extends CommonStarMentionViewHolder {
                     ? content.largeThumbnailUrl
                     : content.fileUrl;
             if (!TextUtils.isEmpty(thumbnailUrl)) {
-                BitmapUtil.loadImageByGlideOrIonWhenGif(
+                BitmapUtil.loadCropImageByGlideOrIonWhenGif(
                         ivFile, thumbnailUrl,
                         R.drawable.file_icon_img, R.drawable.file_icon_img);
+                vFileRound.setVisibility(View.VISIBLE);
             } else {
                 ivFile.setImageResource(R.drawable.file_icon_img);
+                vFileRound.setVisibility(View.GONE);
             }
         } else {
             // 파일 타입에 해당하는 아이콘 연결
             int mimeTypeResource = MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, icon);
             ivFile.setImageResource(mimeTypeResource);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "FileStarMentionViewHolder{" +
+                ", starMentionFileName=" + tvName +
+                '}';
     }
 }

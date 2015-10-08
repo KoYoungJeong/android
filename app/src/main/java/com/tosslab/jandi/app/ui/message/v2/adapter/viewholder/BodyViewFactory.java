@@ -104,10 +104,10 @@ public class BodyViewFactory {
         } else if (currentMessage instanceof ResMessages.CommentMessage || currentMessage instanceof ResMessages.CommentStickerMessage) {
             int messageFeedbackId = message.feedbackId;
 
-            boolean isFeedbackMessage = false;
+            boolean isFeedbackOrFile = false;
 
             if (beforeMessage != null) {
-                isFeedbackMessage = messageFeedbackId == beforeMessage.messageId
+                isFeedbackOrFile = messageFeedbackId == beforeMessage.messageId
                         || messageFeedbackId == beforeMessage.feedbackId;
             }
 
@@ -124,7 +124,7 @@ public class BodyViewFactory {
             boolean isStickerMessage = currentMessage instanceof ResMessages.CommentStickerMessage;
 
             if (beforeMessage != null
-                    && isFeedbackMessage
+                    && isFeedbackOrFile
                     && isSameDay(message, beforeMessage)) {
 
                 ResMessages.OriginalMessage beforeOriginalMessage = beforeMessage.message;
@@ -138,8 +138,7 @@ public class BodyViewFactory {
 
 
                 if (DateComparatorUtil.isSince5min(currentMessage.createTime, beforeOriginalMessage.createTime)
-                        && currentMessage.writerId == beforeOriginalMessage.writerId
-                        && messageFeedbackId != beforeMessage.messageId) {
+                        && currentMessage.writerId == beforeOriginalMessage.writerId) {
                     return isStickerMessage ? BodyViewHolder.Type.CollapseStickerComment : BodyViewHolder.Type.CollapseComment;
                 } else {
                     return isStickerMessage ? BodyViewHolder.Type.PureStickerComment : BodyViewHolder.Type.PureComment;

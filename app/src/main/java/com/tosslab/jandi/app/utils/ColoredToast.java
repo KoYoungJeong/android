@@ -23,7 +23,7 @@ public class ColoredToast {
         SuperToast superToast = new SuperToast(JandiApplication.getContext());
         superToast.setText(message);
         superToast.setDuration(SuperToast.Duration.VERY_SHORT);
-        superToast.setBackground(SuperToast.Background.GRAY);
+        superToast.setBackground(SuperToast.Background.BLACK);
         superToast.setTextColor(Color.WHITE);
         superToast.show();
     }

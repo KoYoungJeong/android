@@ -98,7 +98,7 @@
                 android:id="@+id/iv_message_photo"
                 android:layout_width="match_parent"
                 android:layout_height="115dp"
-                android:layout_marginBottom="14dp"
+                android:layout_marginBottom="11dp"
                 android:layout_marginRight="25dp"
                 android:scaleType="centerCrop"/>
 
@@ -129,6 +129,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
+                        android:layout_marginBottom="4dp"
                         android:singleLine="true"
                         android:text="Shared Andrew's file"
                         android:textColor="#999999"
@@ -140,7 +141,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:text="image file name"
+                        android:text="IMAGE"
                         android:textColor="@color/jandi_messages_file_name"
                         android:textSize="@dimen/jandi_messages_file_name"
                         android:textStyle="bold"/>
@@ -149,7 +150,7 @@
                         android:id="@+id/tv_img_file_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="4dp"
                         android:ellipsize="end"
                         android:singleLine="true"
                         android:text="file type"
@@ -177,7 +178,7 @@
             android:layout_height="1dp"
             android:layout_alignLeft="@+id/vg_message_image_file"
             android:layout_below="@+id/vg_message_image_file"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="11dp"
             android:background="@color/jandi_message_indicator"/>
 
     </RelativeLayout>
