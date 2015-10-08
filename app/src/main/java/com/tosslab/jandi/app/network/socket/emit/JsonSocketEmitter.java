@@ -1,9 +1,7 @@
 package com.tosslab.jandi.app.network.socket.emit;
 
 import com.github.nkzawa.emitter.Emitter;
-import com.tosslab.jandi.app.network.spring.JacksonMapper;
-
-import org.codehaus.jackson.map.ObjectMapper;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 
 import java.io.IOException;
 

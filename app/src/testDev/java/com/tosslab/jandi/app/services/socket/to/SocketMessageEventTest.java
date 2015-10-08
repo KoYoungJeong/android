@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.services.socket.to;
 
-import com.tosslab.jandi.app.network.spring.JacksonMapper;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;

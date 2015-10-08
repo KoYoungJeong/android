@@ -4,8 +4,8 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.spring.JacksonMapper;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.After;
