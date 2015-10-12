@@ -133,9 +133,14 @@ public class JandiPushIntentService extends IntentService {
         if (isMentionMessageToMe) {
             showNotification(context, pushTOInfo, true);
         } else {
-            boolean isTopicPushOn = jandiPushReceiverModel.isTopicPushOn(leftSideMenu, pushTOInfo.getRoomId());
-            if (isTopicPushOn) {
+            if (PushTO.RoomType.CHAT.getName().equals(pushTOInfo.getRoomType())) {
+                LogUtil.e("tony", "roomType == CHAT");
                 showNotification(context, pushTOInfo, false);
+            } else {
+                boolean isTopicPushOn = jandiPushReceiverModel.isTopicPushOn(leftSideMenu, pushTOInfo.getRoomId());
+                if (isTopicPushOn) {
+                    showNotification(context, pushTOInfo, false);
+                }
             }
         }
 
