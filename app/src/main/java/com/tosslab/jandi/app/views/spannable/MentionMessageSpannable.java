@@ -26,6 +26,8 @@ public class MentionMessageSpannable extends ReplacementSpan {
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, pxSize);
         textView.setBackgroundColor(backgroundColor);
         textView.setTextColor(textColor);
+        textView.setPadding(0, 0, 0, 0);
+
         prepareView();
 
     }
@@ -42,19 +44,18 @@ public class MentionMessageSpannable extends ReplacementSpan {
 
         textView.measure(widthSpec, heightSpec);
 
-        if (maxWidth != -1 && textView.getMeasuredWidth() > maxWidth) {
-            textView.layout(0, 0, maxWidth, textView.getMeasuredHeight());
-            textView.setMaxLines(1);
-            textView.setEllipsize(TextUtils.TruncateAt.END);
-        } else {
-            textView.layout(0, 0, textView.getMeasuredWidth(), textView.getMeasuredHeight());
+        if (maxWidth > 0) {
+            textView.setMaxWidth(maxWidth);
         }
+
+        textView.setMaxLines(1);
+        textView.setEllipsize(TextUtils.TruncateAt.END);
 
     }
 
     @Override
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
-        return textView.getWidth();
+        return textView.getMeasuredWidth();
     }
 
     @Override
@@ -63,8 +64,7 @@ public class MentionMessageSpannable extends ReplacementSpan {
 
         canvas.save();
 
-//        int padding = (bottom - top - textView.getBottom()) / 2;
-        canvas.translate(x, bottom - textView.getBottom());
+        canvas.translate(x, bottom - textView.getMeasuredHeight());
         textView.draw(canvas);
 
         canvas.restore();
