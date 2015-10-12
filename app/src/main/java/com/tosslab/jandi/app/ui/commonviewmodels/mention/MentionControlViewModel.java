@@ -378,7 +378,6 @@ public class MentionControlViewModel {
         SpannableStringBuilder ssb = new SpannableStringBuilder(etMessage.getEditableText());
 
         MentionMessageSpannable spannable = new MentionMessageSpannable(
-                etMessage.getContext(),
                 searchedItemVO.getName(),
                 etMessage.getTextSize(),
                 0xFFfefefe,

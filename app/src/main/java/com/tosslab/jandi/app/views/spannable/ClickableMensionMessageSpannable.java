@@ -17,7 +17,7 @@ public class ClickableMensionMessageSpannable extends MentionMessageSpannable im
 
     public ClickableMensionMessageSpannable(Context context, String name, int entityId, float pxSize,
                                             int textColor, int backgroundColor) {
-        super(context, name, pxSize, textColor, backgroundColor);
+        super(name, pxSize, textColor, backgroundColor);
         this.entityId = entityId;
     }
 

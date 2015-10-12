@@ -1,61 +1,50 @@
 package com.tosslab.jandi.app.views.spannable;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.text.TextUtils;
+import android.graphics.Path;
+import android.graphics.Rect;
 import android.text.style.ReplacementSpan;
-import android.util.TypedValue;
-import android.view.View;
-import android.widget.TextView;
 
 /**
  * Created by tee on 15. 8. 6..
  */
 public class MentionMessageSpannable extends ReplacementSpan {
 
-    protected TextView textView;
+    private final String name;
+    private final float textSize;
+    private final int textColor;
+    private final int backgroundColor;
 
     private int maxWidth = -1;
 
-    public MentionMessageSpannable(Context context, String name, float pxSize,
+    public MentionMessageSpannable(String name, float pxSize,
                                    int textColor, int backgroundColor) {
-
-        textView = new TextView(context);
-        textView.setText(name);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, pxSize);
-        textView.setBackgroundColor(backgroundColor);
-        textView.setTextColor(textColor);
-        textView.setPadding(0, 0, 0, 0);
-
-        prepareView();
-
+        this.name = name;
+        this.textSize = pxSize;
+        this.textColor = textColor;
+        this.backgroundColor = backgroundColor;
     }
 
     public void setViewMaxWidthSize(int px) {
         maxWidth = px;
-        prepareView();
     }
 
-    private void prepareView() {
-
-        int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-
-        textView.measure(widthSpec, heightSpec);
-
-        if (maxWidth > 0) {
-            textView.setMaxWidth(maxWidth);
-        }
-
-        textView.setMaxLines(1);
-        textView.setEllipsize(TextUtils.TruncateAt.END);
-
-    }
 
     @Override
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
-        return textView.getMeasuredWidth();
+
+        return getTextWidth(paint).width();
+    }
+
+    private Rect getTextWidth(Paint paint) {
+        paint.setTextSize(textSize);
+        Rect textRect = new Rect();
+        paint.getTextBounds(name, 0, name.length(), textRect);
+        if (textRect.width() > maxWidth) {
+            textRect.right = maxWidth - textRect.left;
+        }
+        return textRect;
     }
 
     @Override
@@ -64,8 +53,17 @@ public class MentionMessageSpannable extends ReplacementSpan {
 
         canvas.save();
 
-        canvas.translate(x, bottom - textView.getMeasuredHeight());
-        textView.draw(canvas);
+        Rect textRect = getTextWidth(paint);
+
+        paint.setColor(backgroundColor);
+        canvas.drawRect(x, top, x + textRect.width(), bottom, paint);
+
+        paint.setTextSize(textSize);
+        paint.setColor(textColor);
+        Path path = new Path();
+        path.moveTo(x, y);
+        path.lineTo(x + textRect.width(), y);
+        canvas.drawTextOnPath(name, path, 0, 0, paint);
 
         canvas.restore();
 
