@@ -43,8 +43,13 @@ public class LeftSideMenuRepository {
 
     public boolean upsertLeftSideMenu(ResLeftSideMenu leftSideMenu) {
         lock.lock();
+
+        if (leftSideMenu == null) {
+            return false;
+        }
+
         try {
-            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            int selectedTeamId = leftSideMenu.team.id;
 
             LeftSideMenu rawLeftSideMenu = new LeftSideMenu();
             String rawString = JacksonMapper.getInstance().getObjectMapper().writeValueAsString(leftSideMenu);
