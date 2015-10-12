@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -87,11 +87,11 @@ public class TopicFolderDialogFragment extends DialogFragment {
     private void showRenameFolderDialog(int folderId, String name, int seq) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        LinearLayout vgInputEditText = (LinearLayout) LayoutInflater
-                .from(getActivity()).inflate(R.layout.input_edit_text_view, null);
+        RelativeLayout vgInputEditText = (RelativeLayout) LayoutInflater
+                .from(getActivity()).inflate(R.layout.dialog_fragment_input_text, null);
 
-        EditText input = (EditText) vgInputEditText.findViewById(R.id.et_input);
-        ((TextView) vgInputEditText.findViewById(R.id.tv_input_title)).setText(R.string.jandi_folder_rename);
+        EditText input = (EditText) vgInputEditText.findViewById(R.id.et_dialog_input_text);
+        ((TextView) vgInputEditText.findViewById(R.id.tv_popup_title)).setText(R.string.jandi_folder_rename);
 
         input.setText(name);
         input.setSelection(name.length());

@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/tv_message_user_name"
             android:layout_marginLeft="6dp"
-            android:layout_toRightOf="@+id/iv_entity_listitem_line_through"
+            android:layout_toRightOf="@+id/tv_message_user_name"
             android:gravity="bottom"
             android:text="AM ??:??"
             android:textColor="@color/jandi_messages_date"
@@ -158,6 +158,8 @@
 
 
     </RelativeLayout>
+
+    <include layout="@layout/item_message_divider" />
 
     <include
         android:id="@+id/vg_message_last_read"

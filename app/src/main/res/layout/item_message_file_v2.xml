@@ -12,7 +12,7 @@
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
-        android:paddingBottom="14dp"
+        android:paddingBottom="10dp"
         android:paddingLeft="@dimen/jandi_messages_padding_left"
         android:paddingTop="8dp"
         android:visibility="visible">
@@ -160,14 +160,9 @@
                 android:src="@drawable/icon_comment_arrow" />
         </RelativeLayout>
 
-        <View
-            android:id="@+id/vg_divider_messages_image_bottom"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignLeft="@+id/vg_message_common_file"
-            android:layout_below="@+id/vg_message_common_file"
-            android:background="@color/jandi_message_indicator" />
     </RelativeLayout>
+
+    <include layout="@layout/item_message_divider" />
 
     <include
         android:id="@+id/vg_message_last_read"

@@ -446,7 +446,7 @@ public class BitmapUtil {
     }
 
     public static void loadCropImageByGlideOrIonWhenGif(ImageView imageView,
-                                                    String url, int placeHolder, int error) {
+                                                        String url, int placeHolder, int error) {
         if (url.toLowerCase().endsWith("gif")) {
             Ion.with(imageView)
                     .centerCrop()
@@ -462,13 +462,7 @@ public class BitmapUtil {
                 .centerCrop()
                 .placeholder(placeHolder)
                 .error(error)
-                .animate(view -> {
-                    view.setAlpha(0.0f);
-                    view.animate()
-                            .alpha(1.0f)
-                            .setDuration(300);
-                })  // Avoid doesn't working 'fitCenter with crossfade'
-                .fitCenter()
+                .crossFade()
                 .into(imageView);
     }
 

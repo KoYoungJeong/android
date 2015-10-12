@@ -58,6 +58,7 @@ public class FileStarMentionViewHolder extends CommonStarMentionViewHolder {
             // 파일 타입에 해당하는 아이콘 연결
             int mimeTypeResource = MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, icon);
             ivFile.setImageResource(mimeTypeResource);
+            vFileRound.setVisibility(View.GONE);
         }
     }
 

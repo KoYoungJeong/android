@@ -47,6 +47,7 @@
     <color name="jandi_border_gray_light">#939393</color>
     <color name="jandi_text_hint">#FFBDBDBD</color>
     <color name="jandi_text_selector">#FF121212</color>
+    <color name="jandi_text_popup_input">#FFBBBBBB</color>
 
     <!-- Actionbar menu -->
     <color name="jandi_dropdown_menu_text">@color/jandi_primary_color</color>

@@ -48,7 +48,8 @@
             android:layout_alignLeft="@+id/tv_message_user_name"
             android:layout_alignRight="@+id/tv_message_user_name"
             android:layout_alignTop="@+id/tv_message_user_name"
-            android:src="@drawable/line_gray" />
+            android:src="@drawable/line_gray"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_message_create_date"
@@ -56,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/tv_message_user_name"
             android:layout_marginLeft="6dp"
-            android:layout_toRightOf="@+id/iv_entity_listitem_line_through"
+            android:layout_toRightOf="@+id/tv_message_user_name"
             android:gravity="bottom"
             android:text="AM ??:??"
             android:textColor="@color/jandi_messages_date"
@@ -162,6 +163,7 @@
         </RelativeLayout>
 
     </com.tosslab.jandi.app.views.LongClickableRelativeLayout>
+    <include layout="@layout/item_message_divider" />
 
     <include
         android:id="@+id/vg_message_last_read"

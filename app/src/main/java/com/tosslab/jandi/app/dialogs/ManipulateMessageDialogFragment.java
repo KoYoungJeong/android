@@ -4,8 +4,12 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -180,6 +184,8 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         final boolean canShowAnnouncement = isTextMessage && !isDirectMessage;
         actionSetAnnouncement.setVisibility(canShowAnnouncement ? View.VISIBLE : View.GONE);
 
+        initMargin(mainView);
+
         // Delete 메뉴 클릭시.
         actionDel.setOnClickListener((view) -> {
             EventBus.getDefault().post(new RequestDeleteMessageEvent(messageType, messageId, feedbackId));
@@ -218,6 +224,37 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         builder.setView(mainView);
 
         return builder.create();
+    }
+
+    private void initMargin(View mainView) {
+        ViewGroup rootView = (ViewGroup) mainView;
+        int childCount = rootView.getChildCount();
+        View firstVisibleChild = null;
+        View lastVisibleChild = null;
+        for (int idx = 0; idx < childCount; idx++) {
+            View child = rootView.getChildAt(idx);
+            if (child.getVisibility() == View.VISIBLE) {
+                lastVisibleChild = child;
+                if (firstVisibleChild == null) {
+                    firstVisibleChild = child;
+                }
+            }
+        }
+
+        DisplayMetrics displayMetrics = mainView.getResources().getDisplayMetrics();
+        int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, displayMetrics);
+
+        if (firstVisibleChild != null) {
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) firstVisibleChild.getLayoutParams();
+            layoutParams.topMargin = margin;
+            firstVisibleChild.setLayoutParams(layoutParams);
+        }
+
+        if (lastVisibleChild != null) {
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) lastVisibleChild.getLayoutParams();
+            layoutParams.bottomMargin = margin;
+            lastVisibleChild.setLayoutParams(layoutParams);
+        }
     }
 
 }

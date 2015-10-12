@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="8dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="8dp">
 
     <TextView
         android:id="@+id/tv_popup_title"
@@ -17,8 +17,7 @@
         android:paddingTop="24dp"
         android:text="title"
         android:textColor="@color/message_controller_popup_text_color"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textSize="@dimen/jandi_text_size_larger_3" />
 
     <TextView
         android:id="@+id/btn_entity_popup_move_folder"
@@ -31,7 +30,7 @@
         android:paddingRight="24dp"
         android:text="@string/jandi_folder_move_to"
         android:textColor="@color/message_controller_popup_text_color"
-        android:textSize="16sp" />
+        android:textSize="@dimen/jandi_text_size_large" />
 
     <TextView
         android:id="@+id/btn_entity_popup_notification"
@@ -44,7 +43,7 @@
         android:paddingRight="24dp"
         android:text="@string/jandi_notification_off"
         android:textColor="@color/message_controller_popup_text_color"
-        android:textSize="16sp" />
+        android:textSize="@dimen/jandi_text_size_large" />
 
     <TextView
         android:id="@+id/btn_entity_popup_starred"
@@ -57,7 +56,7 @@
         android:paddingRight="24dp"
         android:text="starred"
         android:textColor="@color/message_controller_popup_text_color"
-        android:textSize="16sp" />
+        android:textSize="@dimen/jandi_text_size_large" />
 
     <TextView
         android:id="@+id/btn_entity_popup_leave"
@@ -70,7 +69,7 @@
         android:paddingRight="24dp"
         android:text="@string/jandi_action_leave"
         android:textColor="@color/message_controller_popup_text_color"
-        android:textSize="16sp" />
+        android:textSize="@dimen/jandi_text_size_large" />
 
     <TextView
         android:id="@+id/btn_entity_popup_cancel"
@@ -83,6 +82,6 @@
         android:paddingRight="24dp"
         android:text="@string/jandi_cancel"
         android:textColor="@color/message_controller_popup_text_color"
-        android:textSize="16sp" />
+        android:textSize="@dimen/jandi_text_size_large" />
 
 </LinearLayout>
