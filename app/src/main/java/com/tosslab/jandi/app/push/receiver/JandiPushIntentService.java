@@ -110,7 +110,16 @@ public class JandiPushIntentService extends IntentService {
     private void notifyPush(Context context, PushTO pushTO) {
         PushTO.PushInfo pushTOInfo;
         pushTOInfo = pushTO.getInfo();
-        ResLeftSideMenu leftSideMenu = jandiPushReceiverModel.getLeftSideMenu(pushTOInfo.getTeamId());
+        int teamId = pushTOInfo.getTeamId();
+
+        // LeftSideMenu 를 DB를 통해 불러오고 없다면 서버에서 받고 디비에 저장한다.
+        ResLeftSideMenu leftSideMenu = jandiPushReceiverModel.getLeftSideMenuFromDB(teamId);
+        if (leftSideMenu == null) {
+            leftSideMenu = jandiPushReceiverModel.getLeftSideMenuFromServer(teamId);
+            if (leftSideMenu != null) {
+                jandiPushReceiverModel.upsertLeftSideMenu(leftSideMenu);
+            }
+        }
 
         if (leftSideMenu == null) {
             showNotification(context, pushTOInfo, false);
