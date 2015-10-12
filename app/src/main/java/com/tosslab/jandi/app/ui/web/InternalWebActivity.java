@@ -130,10 +130,10 @@ public class InternalWebActivity extends BaseAppCompatActivity {
 
         String urlLowerCase = url.toLowerCase();
         if (!urlLowerCase.startsWith("http")) {
-            urlLowerCase = "http://" + urlLowerCase;
+            url = "http://" + url;
         }
 
-        internalWebPresenter.setUrl(urlLowerCase);
+        internalWebPresenter.setUrl(url);
     }
 
     @AfterViews
