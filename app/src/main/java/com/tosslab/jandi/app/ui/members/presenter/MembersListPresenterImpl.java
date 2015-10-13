@@ -128,7 +128,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                                     public void call(List<ChatChooseItem> collection) {
                                         chatChooseItems.addAll(collection);
                                     }
-                                });
+                                }, Throwable::printStackTrace);
                         return chatChooseItems;
                     }
                 })

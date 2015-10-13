@@ -38,6 +38,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 
+import retrofit.RetrofitError;
+
 /**
  * Created by Steve SeongUg Jung on 15. 4. 10..
  */
@@ -149,7 +151,11 @@ public class JandiPushReceiverModel {
         ResLeftSideMenu leftSideMenu =
                 LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
         if (leftSideMenu == null) {
-            leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
+            try {
+                leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
+            } catch (RetrofitError retrofitError) {
+                retrofitError.printStackTrace();
+            }
             if (leftSideMenu != null) {
                 LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
             }
