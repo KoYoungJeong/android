@@ -220,6 +220,7 @@ public class AnalyticsValue {
         None,
         TermsOfService,
         PrivacyPolicy,
-        SignOut
+        SignOut,
+        KickMember
     }
 }

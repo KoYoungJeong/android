@@ -40,6 +40,7 @@ import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
+import com.tosslab.jandi.app.network.models.ReqMember;
 import com.tosslab.jandi.app.network.models.ReqModifyComment;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
@@ -693,5 +694,10 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     @Override
     public IExecutor<ResCommon> loadDeleteFolderItemByTeamApi(int teamId, int folderId, int itemId) {
         return () -> authRestApiClient.deleteFolderItemByTeamApi(teamId, folderId, itemId);
+    }
+
+    @Override
+    public IExecutor<ResCommon> loadKickUserFromTopic(int teamId, int topicId, ReqMember member) {
+        return () -> authRestApiClient.kickUserFromTopic(teamId, topicId, member);
     }
 }

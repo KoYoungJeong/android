@@ -1,24 +1,21 @@
 package com.tosslab.jandi.app.ui.members.model;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ReqMember;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -28,15 +25,13 @@ import rx.Observable;
 @EBean
 public class MembersModel {
 
-    @RootContext
-    Context context;
-
     public List<ChatChooseItem> getTopicMembers(int entityId) {
         Collection<Integer> members = EntityManager.getInstance().getEntityById(entityId)
                 .getMembers();
         List<FormattedEntity> formattedUsers = EntityManager.getInstance().getFormattedUsers();
+        List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
 
-        Iterator<ChatChooseItem> iterator = Observable.from(members)
+        Observable.from(members)
                 .map(memberEntityId -> Observable.from(formattedUsers)
                         .filter(entity -> entity.getId() == memberEntityId)
                         .map(entity -> {
@@ -53,32 +48,8 @@ public class MembersModel {
                         .toBlocking()
                         .firstOrDefault(new ChatChooseItem().entityId(-1)))
                 .filter(chatChooseItem -> chatChooseItem.getEntityId() != -1)
-                .toBlocking()
-                .getIterator();
+                .subscribe(chatChooseItems::add);
 
-        List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
-        while (iterator.hasNext()) {
-            chatChooseItems.add(iterator.next());
-        }
-
-        Collections.sort(chatChooseItems, new Comparator<ChatChooseItem>() {
-            @Override
-            public int compare(ChatChooseItem lhs, ChatChooseItem rhs) {
-                if (lhs.isEnabled()) {
-                    if (rhs.isEnabled()) {
-                        return 0;
-                    } else {
-                        return -1;
-                    }
-                } else {
-                    if (rhs.isEnabled()) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                }
-            }
-        });
         return chatChooseItems;
     }
 
@@ -97,23 +68,8 @@ public class MembersModel {
                             .enabled(TextUtils.equals(entity.getUser().status, "enabled"))
                             .name(entity.getName());
                 })
-                .filter(chatChooseItem -> chatChooseItem.isEnabled())
-                .toSortedList((lhs, rhs) -> {
-                    if (lhs.isStarred()) {
-                        if (rhs.isStarred()) {
-                            return lhs.getName().compareToIgnoreCase(rhs.getName());
-                        } else {
-                            return -1;
-                        }
-                    } else {
-                        if (rhs.isEnabled()) {
-                            return 1;
-                        } else {
-                            return lhs.getName().compareToIgnoreCase(rhs.getName());
-                        }
-                    }
-                })
-                .subscribe(chatChooseItems::addAll, Throwable::printStackTrace);
+                .filter(ChatChooseItem::isEnabled)
+                .subscribe(chatChooseItems::add, Throwable::printStackTrace);
 
 
         return chatChooseItems;
@@ -130,9 +86,6 @@ public class MembersModel {
 
         List<FormattedEntity> unjoinedMembersOfEntity = entityManager.getUnjoinedMembersOfEntity(entityId, entityType);
 
-
-        LogUtil.e("members", unjoinedMembersOfEntity.size() + " ");
-
         List<ChatChooseItem> chatChooseItems = new ArrayList<>();
 
         Observable.from(unjoinedMembersOfEntity)
@@ -145,25 +98,14 @@ public class MembersModel {
                             .enabled(TextUtils.equals(unjoinedEntity.getUser().status, "enabled"))
                             .name(unjoinedEntity.getName());
                 })
-                .filter(chatChooseItem -> chatChooseItem.isEnabled())
-                .toSortedList((lhs, rhs) -> {
-                    if (lhs.isStarred()) {
-                        if (rhs.isStarred()) {
-                            return lhs.getName().compareToIgnoreCase(rhs.getName());
-                        } else {
-                            return -1;
-                        }
-                    } else {
-                        if (rhs.isEnabled()) {
-                            return 1;
-                        } else {
-                            return lhs.getName().compareToIgnoreCase(rhs.getName());
-                        }
-                    }
-                })
-                .subscribe(chatChooseItems::addAll, Throwable::printStackTrace);
+                .filter(ChatChooseItem::isEnabled)
+                .subscribe(chatChooseItems::add, Throwable::printStackTrace);
 
         return chatChooseItems;
 
+    }
+
+    public void kickUser(int teamId, int topicId, int userEntityId) throws RetrofitError {
+        RequestApiManager.getInstance().kickUserFromTopic(teamId, topicId, new ReqMember(userEntityId));
     }
 }

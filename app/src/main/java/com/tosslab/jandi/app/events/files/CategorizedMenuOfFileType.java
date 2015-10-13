@@ -18,7 +18,7 @@ public class CategorizedMenuOfFileType {
             R.string.jandi_file_category_audio
     };
     public static final int[] drawableResourceList = {      // 위에랑 hash map으로 합칠까...
-            R.drawable.file_icon_etc,
+            R.drawable.icon_search_all_files,
             R.drawable.jandi_fl_icon_set_googledocs,
             R.drawable.file_icon_txt,
             R.drawable.file_icon_ppt,

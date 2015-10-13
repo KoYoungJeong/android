@@ -20,6 +20,8 @@ import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.members.adapter.MembersAdapter;
+import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment;
+import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment_;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -94,6 +96,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
             topicMembersAdapter.setCheckMode();
         }
+
         membersListPresenter.setView(this);
     }
 
@@ -153,6 +156,10 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
                     }
                 }
             });
+        }
+
+        if (type == TYPE_MEMBERS_LIST_TOPIC) {
+            membersListPresenter.initKickableMode(entityId);
         }
 
 
@@ -262,14 +269,25 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         mProgressWheel = new ProgressWheel(MembersListActivity.this);
     }
 
-    @UiThread
-    void showProgressWheel() {
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showProgressWheel() {
+        dismissProgressWheel();
+
         if (mProgressWheel == null) {
             mProgressWheel = new ProgressWheel(MembersListActivity.this);
         }
 
         if (!mProgressWheel.isShowing()) {
             mProgressWheel.show();
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void dismissProgressWheel() {
+        if (mProgressWheel != null && mProgressWheel.isShowing()) {
+            mProgressWheel.dismiss();
         }
     }
 
@@ -355,6 +373,70 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @UiThread
     public void showInviteFailed(String errMessage) {
         ColoredToast.showError(this, errMessage);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void setKickMode(boolean owner) {
+        topicMembersAdapter.setKickMode(owner);
+
+        if (owner) {
+            topicMembersAdapter.setOnKickClickListener((adapter, viewHolder, position) -> {
+                ChatChooseItem item = ((MembersAdapter) adapter).getItem(position);
+
+                showKickFromTopicDialog(item);
+
+            });
+        }
+
+        topicMembersAdapter.notifyDataSetChanged();
+
+
+    }
+
+    private void showKickFromTopicDialog(ChatChooseItem item) {
+
+        KickDialogFragment dialogFragment = KickDialogFragment_.builder()
+                .profileUrl(item.getPhotoUrl())
+                .userName(item.getName())
+                .build();
+
+        dialogFragment.setOnKickConfirmClickListener((dialog, which) -> {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Participants, AnalyticsValue.Action.KickMember);
+            membersListPresenter.onKickUser(entityId, item.getEntityId());
+        });
+
+        dialogFragment.show(getSupportFragmentManager(), "dialog");
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void removeUser(int userEntityId) {
+        for (int idx = 0, size = topicMembersAdapter.getCount(); idx < size; idx++) {
+            if (topicMembersAdapter.getItem(idx).getEntityId() == userEntityId) {
+                topicMembersAdapter.remove(idx);
+                topicMembersAdapter.notifyDataSetChanged();
+                return;
+            }
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void refreshMemberList() {
+        membersListPresenter.onSearch(tvSearch.getText());
+    }
+
+    @UiThread
+    @Override
+    public void showKickSuccessToast() {
+        ColoredToast.show(MembersListActivity.this, getString(R.string.jandi_success_kick_user_from_topic));
+    }
+
+    @UiThread
+    @Override
+    public void showKickFailToast() {
+        ColoredToast.show(MembersListActivity.this, getString(R.string.jandi_err_unexpected));
     }
 
 }

@@ -202,7 +202,7 @@ public class SettingsFragment extends PreferenceFragment {
 
             BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
             badgeCountRepository.deleteAll();
-            BadgeUtils.setBadge(activity, 0);
+            BadgeUtils.clearBadge(activity);
 
             ColoredToast.show(activity, getString(R.string.jandi_message_logout));
 

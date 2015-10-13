@@ -6,7 +6,6 @@ import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
@@ -58,20 +57,23 @@ public class AnnouncementViewModel {
     View btnAnnouncementOpen;
     @ViewById(R.id.btn_announcement_close)
     View btnAnnouncementClose;
+
     @RootContext
     Activity activity;
     private ResAnnouncement announcement;
+
     private boolean isOpened;
     private boolean isAfterViews;
+
     private OnAnnouncementOpenListener onAnnouncementOpenListener;
     private OnAnnouncementCloseListener onAnnouncementCloseListener;
     private TextLineDetermineRunnable textLineDetermineRunnable;
 
     @AfterViews
     void init() {
-        textLineDetermineRunnable = new TextLineDetermineRunnable(tvAnnouncementMessage);
-
         isAfterViews = true;
+
+        textLineDetermineRunnable = new TextLineDetermineRunnable(tvAnnouncementMessage);
 
         if (announcement != null) {
             initAnnouncement(announcement, isOpened);
@@ -135,6 +137,9 @@ public class AnnouncementViewModel {
         }
         tvAnnouncementMessage.setText(messageStringBuilder);
 
+        boolean isFullShowing = vgAnnouncementAction.getVisibility() == View.VISIBLE;
+        scaleAnnouncementTextArea(isFullShowing);
+
         if (onAnnouncementOpenListener != null) {
             btnAnnouncementOpen.setOnClickListener((view) -> onAnnouncementOpenListener.onOpen());
         }
@@ -145,6 +150,7 @@ public class AnnouncementViewModel {
         openAnnouncement(isOpened);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void openAnnouncement(boolean isOpened) {
         btnAnnouncementOpen.setVisibility(isOpened ? View.GONE : View.VISIBLE);
         vgAnnouncementInfo.setVisibility(isOpened ? View.VISIBLE : View.GONE);
@@ -166,17 +172,26 @@ public class AnnouncementViewModel {
     void showAndHideAnnouncementAction() {
         int visibility = vgAnnouncementAction.getVisibility();
         vgAnnouncementAction.setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
-        if (vgAnnouncementAction.getVisibility() == View.VISIBLE) {
+
+        boolean isFullShowing = vgAnnouncementAction.getVisibility() == View.VISIBLE;
+
+        scaleAnnouncementTextArea(isFullShowing);
+
+        AnalyticsValue.Action action = isFullShowing
+                ? AnalyticsValue.Action.Announcement_Expand : AnalyticsValue.Action.Accouncement_Restore;
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, action);
+    }
+
+    private void scaleAnnouncementTextArea(boolean isFullShowing) {
+        if (isFullShowing) {
             tvAnnouncementMessage.setSingleLine(false);
-            tvAnnouncementMessage.setMaxLines(7);
             tvAnnouncementMessage.post(textLineDetermineRunnable);
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Announcement_Expand);
         } else {
             tvAnnouncementMessage.setSingleLine();
             tvAnnouncementMessage.setVerticalScrollBarEnabled(false);
             tvAnnouncementMessage.setMovementMethod(null);
-            tvAnnouncementMessage.setText(tvAnnouncementMessage.getText());
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Restore);
+            tvAnnouncementMessage.postInvalidate();
         }
     }
 
@@ -228,38 +243,24 @@ public class AnnouncementViewModel {
 
         @Override
         public void run() {
-            int width = tvAnnouncementMessage.getWidth()
-                    - tvAnnouncementMessage.getPaddingLeft()
-                    - tvAnnouncementMessage.getPaddingRight();
-            String text = tvAnnouncementMessage.getText().toString();
-            TextPaint paint = tvAnnouncementMessage.getPaint();
+            int lineCount = tvAnnouncementMessage.getLineCount();
 
-            int textLength = text.length();
-            int breakPosition = paint.breakText(text, true, width, null);
-            if (breakPosition >= textLength) {
-                tvAnnouncementMessage.setText(tvAnnouncementMessage.getText());
-                return;
+            // 7줄 이상인 경우 maxLine 선언
+            boolean exceedMaxLine = lineCount >= 7;
+            if (exceedMaxLine) {
+                tvAnnouncementMessage.setMaxLines(7);
             }
 
-            String extraText = text.substring(breakPosition, text.length());
-            int line = 0;
-            while (true) {
-                int extraTextLength = extraText.length();
-                breakPosition = paint.breakText(extraText, true, width, null);
-                if (breakPosition >= extraTextLength) {
-                    break;
-                }
+            tvAnnouncementMessage.setVerticalScrollBarEnabled(exceedMaxLine);
+            tvAnnouncementMessage.setMovementMethod(exceedMaxLine ? new ScrollingMovementMethod() : null);
 
-                extraText = extraText.substring(breakPosition, extraText.length());
-                line++;
-            }
+            tvAnnouncementMessage.invalidate();
 
-            if (line >= 6) {
-                tvAnnouncementMessage.setVerticalScrollBarEnabled(true);
-                tvAnnouncementMessage.setMovementMethod(new ScrollingMovementMethod());
-            }
+            // 스크롤 되어 있는 상태에서 7줄 이하의 글이 공지로 등록될 경우 대비
+            tvAnnouncementMessage.scrollTo(0, 0);
 
-            tvAnnouncementMessage.setText(tvAnnouncementMessage.getText());
+            // 가끔 상위 레이아웃이 제대로 펼쳐지지 못해 강제로 호출
+            ((ViewGroup) tvAnnouncementMessage.getParent()).postInvalidate();
         }
     }
 }

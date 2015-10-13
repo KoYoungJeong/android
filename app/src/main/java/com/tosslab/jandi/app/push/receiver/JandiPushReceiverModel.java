@@ -46,6 +46,7 @@ public class JandiPushReceiverModel {
     public static final String TAG = JandiPushReceiverModel.class.getSimpleName();
     private static final String JSON_KEY_DATA = "com.parse.Data";
     private static final String JSON_KEY_CHANNEL = "com.parse.Channel";
+    private static final int PENDING_INTENT_REQUEST_CODE = 20140626;
     @SystemService
     AudioManager audioManager;
 
@@ -62,7 +63,13 @@ public class JandiPushReceiverModel {
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // 노티피케이션은 해제 됐지만 PendingIntent 가 살아있는 경우가 있어 cancel 을 호출해줌.
+        PendingIntent.getActivity(context,
+                PENDING_INTENT_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                .cancel();
+
+        return PendingIntent.getActivity(context,
+                PENDING_INTENT_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public int getEntityType(String roomType) {
@@ -221,11 +228,11 @@ public class JandiPushReceiverModel {
 
     }
 
-    private Notification getNotification(Context context,
-                                         String notificationTitle,
-                                         int teamId, int roomId, String roomType, String roomName,
-                                         String message, Bitmap writerProfile,
-                                         int badgeCount) {
+    private NotificationCompat.Builder getNotification(Context context,
+                                                       String notificationTitle,
+                                                       int teamId, int roomId, String roomType, String roomName,
+                                                       String message, Bitmap writerProfile,
+                                                       int badgeCount) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle(notificationTitle);
@@ -236,8 +243,32 @@ public class JandiPushReceiverModel {
             roomName = context.getString(R.string.jandi_tab_direct_message);
         }
 
-        builder.setStyle(getBigTextStyle(notificationTitle, message, roomName));
 
+        builder.setDefaults(getNotificationDefaults(context))
+                .setSmallIcon(R.drawable.icon_push_notification)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setSubText(roomName)
+                .setNumber(badgeCount)
+                .setStyle(getBigTextStyle(notificationTitle, message, roomName));
+
+        // 노티를 터치할 경우엔 자동 삭제되나, 노티를 삭제하지 않고 앱으로 진입했을 때,
+        // 해당 채팅 방에 들어갈 때만 이 노티가 삭제되도록...
+        JandiPreference.setChatIdFromPush(context, roomId);
+
+        // 노티를 터치할 경우 실행 intent 설정
+        PendingIntent pendingIntent = generatePendingIntent(context, roomId, roomTypeInt, teamId);
+        builder.setContentIntent(pendingIntent);
+
+        if (writerProfile != null) {    // 작성자의 프로필 사진
+            builder.setLargeIcon(writerProfile);
+        }
+
+        return builder;
+    }
+
+    private int getNotificationDefaults(Context context) {
         int led = 0;
 
         if (JandiPreference.isAlarmLED(context)) {
@@ -258,38 +289,29 @@ public class JandiPushReceiverModel {
             vibrate = Notification.DEFAULT_VIBRATE;
         }
 
-        builder.setDefaults(led | sound | vibrate);
-        builder.setSmallIcon(R.drawable.icon_push_notification);
-        builder.setPriority(Notification.PRIORITY_HIGH);
-        builder.setAutoCancel(true);
-        builder.setNumber(badgeCount);
-
-        // 노티를 터치할 경우엔 자동 삭제되나, 노티를 삭제하지 않고 앱으로 진입했을 때,
-        // 해당 채팅 방에 들어갈 때만 이 노티가 삭제되도록...
-        JandiPreference.setChatIdFromPush(context, roomId);
-
-        // 노티를 터치할 경우 실행 intent 설정
-        PendingIntent pendingIntent = generatePendingIntent(context, roomId, roomTypeInt, teamId);
-        builder.setContentIntent(pendingIntent);
-
-        if (writerProfile != null) {    // 작성자의 프로필 사진
-            builder.setLargeIcon(writerProfile);
-        }
-
-        return builder.build();
+        return led | sound | vibrate;
     }
 
     private NotificationCompat.BigTextStyle getBigTextStyle(String title, String message, String summary) {
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
-        bigTextStyle.setBigContentTitle(title);
-        bigTextStyle.bigText(message);
-        bigTextStyle.setSummaryText(summary);
+        bigTextStyle.setBigContentTitle(title)
+                .bigText(message)
+                .setSummaryText(summary);
         return bigTextStyle;
     }
 
     public void showNotification(Context context, PushTO.PushInfo pushInfo, boolean isMentionMessage) {
         String createdAt = pushInfo.getCreatedAt();
         if (isPreviousMessage(createdAt)) {
+
+            NotificationCompat.Builder lastNotificationBuilder = PushMonitor.getInstance().getLastNotificationBuilder();
+            if (lastNotificationBuilder != null) {
+                int badgeCount = BadgeCountRepository.getRepository().getTotalBadgeCount();
+                lastNotificationBuilder.setDefaults(0);
+                lastNotificationBuilder.setNumber(badgeCount);
+                sendNotification(context, lastNotificationBuilder.build());
+            }
+
             return;
         }
 
@@ -322,13 +344,14 @@ public class JandiPushReceiverModel {
 
         int badgeCount = BadgeCountRepository.getRepository().getTotalBadgeCount();
 
-        Notification notification =
+        NotificationCompat.Builder notificationBuilder =
                 getNotification(context, notificationTitle,
                         teamId, roomId, roomType, roomName,
                         message, profileImage,
                         badgeCount);
+        PushMonitor.getInstance().setLastNotificationBuilder(notificationBuilder);
 
-        sendNotification(context, notification);
+        sendNotification(context, notificationBuilder.build());
     }
 
     private boolean isPreviousMessage(String createdAt) {

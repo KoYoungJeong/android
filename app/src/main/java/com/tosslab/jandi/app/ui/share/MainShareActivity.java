@@ -33,7 +33,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
     @Bean
     MainShareModel mainShareModel;
 
-    private ShareDialogFragment fragment;
+    private MainShareFragment fragment;
 
     @AfterViews
     void initViews() {
@@ -59,7 +59,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
 
         switch (intentType) {
             case Text:
-                fragment = ShareDialogFragment_
+                fragment = MainShareFragment_
                         .builder()
                         .subject(mainShareModel.handleSendSubject(intent))
                         .text(mainShareModel.handleSendText(intent))
@@ -67,7 +67,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
                         .build();
                 break;
             default:
-                fragment = ShareDialogFragment_
+                fragment = MainShareFragment_
                         .builder()
                         .mode(MODE_SHARE_FILE)
                         .uriString(mainShareModel.handleSendImage(intent).toString())

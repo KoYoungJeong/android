@@ -45,7 +45,7 @@ import de.greenrobot.event.EventBus;
  * Created by Steve SeongUg Jung on 15. 2. 13..
  */
 @EFragment(R.layout.fragment_share_image)
-public class ShareDialogFragment extends Fragment implements SharePresenter.View {
+public class MainShareFragment extends Fragment implements SharePresenter.View {
 
     @FragmentArg
     String uriString;
@@ -102,6 +102,8 @@ public class ShareDialogFragment extends Fragment implements SharePresenter.View
 
     @AfterViews
     void initViews() {
+
+
         if (mode == MainShareActivity.MODE_SHARE_TEXT) {
             vgViewer.setVisibility(View.GONE);
             tvTitle.setVisibility(View.GONE);
@@ -114,8 +116,11 @@ public class ShareDialogFragment extends Fragment implements SharePresenter.View
                 buffer.append(text);
             }
 
-            etComment.setText(text);
+            etComment.setText(buffer.toString());
+            etComment.setSelection(etComment.getText().length());
+            etComment.setMaxLines(Integer.MAX_VALUE);
         }
+
     }
 
     @UiThread

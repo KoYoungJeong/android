@@ -98,7 +98,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
 
         builder.setView(vgInputEditText)
                 .setPositiveButton(getActivity().getString(R.string.jandi_confirm), (dialog, which) -> {
-                    renameFolder(folderId, input.getText().toString(), seq);
+                    renameFolder(folderId, input.getText().toString().trim(), seq);
                 })
                 .setNegativeButton(getActivity().getString(R.string.jandi_cancel), (dialog, which) -> {
                     dialog.cancel();
@@ -112,7 +112,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
         input.addTextChangedListener(new SimpleTextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() <= 0) {
+                if (s.toString().trim().length() <= 0) {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);

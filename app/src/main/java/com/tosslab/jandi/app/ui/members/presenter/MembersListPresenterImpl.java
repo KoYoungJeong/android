@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -47,6 +48,7 @@ import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.subjects.PublishSubject;
 
 /**
@@ -69,7 +71,9 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     private View view;
     private PublishSubject<String> objectPublishSubject;
+    private PublishSubject<Integer> entityRefreshPublishSubject;
     private Subscription subscribe;
+    private Subscription entityRefreshSubscriber;
 
     @AfterInject
     void initObject() {
@@ -83,26 +87,42 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                         int type = view.getType();
 
                         List<ChatChooseItem> members;
-                        members = memberModel.getTeamMembers();
                         if (type == MembersListActivity.TYPE_MEMBERS_LIST_TEAM) {
                             members = memberModel.getTeamMembers();
                         } else if (type == MembersListActivity.TYPE_MEMBERS_LIST_TOPIC) {
                             members = memberModel.getTopicMembers(entityId);
                         } else if (type == MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC) {
                             members = memberModel.getUnjoinedTopicMembers(entityId);
+                        } else {
+                            members = memberModel.getTeamMembers();
                         }
 
-                        List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
+                        List<ChatChooseItem> chatChooseItems = new ArrayList<>();
                         Observable.from(members)
-                                .filter(chatChooseItem -> {
-                                    if (TextUtils.isEmpty(s)) {
-                                        return true;
-                                    } else
-                                        return chatChooseItem.getName().toLowerCase().contains(s.toLowerCase());
+                                .filter(new Func1<ChatChooseItem, Boolean>() {
+                                    @Override
+                                    public Boolean call(ChatChooseItem chatChooseItem) {
+                                        if (TextUtils.isEmpty(s)) {
+                                            return true;
+                                        } else
+                                            return chatChooseItem.getName().toLowerCase().contains(s.toLowerCase());
+                                    }
                                 })
-                                .toSortedList((chatChooseItem, chatChooseItem2) ->
-                                        chatChooseItem.getName().toLowerCase()
-                                                .compareTo(chatChooseItem2.getName().toLowerCase()))
+                                .toSortedList(new Func2<ChatChooseItem, ChatChooseItem, Integer>() {
+                                    @Override
+                                    public Integer call(ChatChooseItem chatChooseItem, ChatChooseItem chatChooseItem2) {
+
+                                        int myId = EntityManager.getInstance().getMe().getId();
+                                        if (chatChooseItem.getEntityId() == myId) {
+                                            return -1;
+                                        } else if (chatChooseItem2.getEntityId() == myId) {
+                                            return 1;
+                                        } else {
+                                            return chatChooseItem.getName().toLowerCase()
+                                                    .compareTo(chatChooseItem2.getName().toLowerCase());
+                                        }
+                                    }
+                                })
                                 .subscribe(new Action1<List<ChatChooseItem>>() {
                                     @Override
                                     public void call(List<ChatChooseItem> collection) {
@@ -117,12 +137,11 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                     public void call(List<ChatChooseItem> topicMembers) {
                         view.showListMembers(topicMembers);
                     }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });
+                }, Throwable::printStackTrace);
+
+        entityRefreshPublishSubject = PublishSubject.create();
+        entityRefreshSubscriber = entityRefreshPublishSubject.throttleWithTimeout(500, TimeUnit.MILLISECONDS)
+                .subscribe(integer -> initObject(), Throwable::printStackTrace);
     }
 
     @AfterViews
@@ -150,11 +169,17 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         if (!subscribe.isUnsubscribed()) {
             objectPublishSubject.onNext(text.toString());
         }
+
     }
 
     @Override
     public void onDestory() {
-        subscribe.unsubscribe();
+        if (!subscribe.isUnsubscribed()) {
+            subscribe.unsubscribe();
+        }
+        if (!entityRefreshSubscriber.isUnsubscribed()) {
+            entityRefreshSubscriber.unsubscribe();
+        }
     }
 
     @Override
@@ -207,6 +232,41 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         }
     }
 
+    @Override
+    public void initKickableMode(int entityId) {
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
+        int myId = EntityManager.getInstance().getMe().getId();
+        view.setKickMode(entity.isMine(myId));
+    }
+
+    @Background
+    @Override
+    public void onKickUser(int topicId, int userEntityId) {
+
+
+        if (!NetworkCheckUtil.isConnected()) {
+            view.showKickFailToast();
+            return;
+        }
+
+        int teamId = EntityManager.getInstance().getTeamId();
+        view.showProgressWheel();
+        try {
+            memberModel.kickUser(teamId, topicId, userEntityId);
+            // UI 갱신은 요청 전 성공
+            // 나머지 정보는 소켓에 의해 자동 갱신 될 것으로 예상
+            view.removeUser(userEntityId);
+            view.showKickSuccessToast();
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+            // 실패시 화면 다시 갱신토록 변경
+            view.refreshMemberList();
+            view.showKickFailToast();
+        }
+
+        view.dismissProgressWheel();
+    }
+
     private void trackTopicMemberInviteSuccess(int memberCount, int entityId) {
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
@@ -233,7 +293,9 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     }
 
     public void onEvent(RetrieveTopicListEvent event) {
-        initMemberList();
+        if (!entityRefreshSubscriber.isUnsubscribed()) {
+            entityRefreshPublishSubject.onNext(1);
+        }
     }
 
     public void setView(View view) {

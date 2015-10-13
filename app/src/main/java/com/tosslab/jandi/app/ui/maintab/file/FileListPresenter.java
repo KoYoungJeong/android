@@ -42,7 +42,11 @@ import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 8..
@@ -254,46 +258,50 @@ public class FileListPresenter {
     }
 
     public void showEntityDialog() {
-
         setUpTypeTextView(textViewFileListWhere, true);
 
-        RoomSelector roomSelector = new RoomSelectorImpl();
-        roomSelector.setOnRoomSelectListener(new RoomSelector.OnRoomSelectListener() {
-            @Override
-            public void onRoomSelect(RoomSelectorImpl.ExpandRoomData item) {
+        EntityManager entityManager = EntityManager.getInstance();
+        List<FormattedEntity> joinedChannels = entityManager.getJoinedChannels();
+        List<FormattedEntity> groups = entityManager.getGroups();
+        List<FormattedEntity> allTopics = new ArrayList<>();
+        Observable.merge(Observable.from(joinedChannels), Observable.from(groups))
+                .subscribe(entity -> {
+                            allTopics.add(entity);
+                        }
+                );
+        List<FormattedEntity> users = EntityManager.getInstance().getFormattedUsersWithoutMe();
 
-                int sharedEntityId = CategorizingAsEntity.EVERYWHERE;
+        RoomSelector roomSelector = new RoomSelectorImpl(allTopics, users);
+        roomSelector.setOnRoomSelectListener(item -> {
+            int sharedEntityId = CategorizingAsEntity.EVERYWHERE;
+            if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+                // 첫번째는 "Everywhere"인 더미 entity
+                mCurrentEntityCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everywhere);
+            } else {
+                sharedEntityId = item.getEntityId();
+                mCurrentEntityCategorizingAccodingBy = item.getName();
+            }
+            textViewFileListWhere.setText(mCurrentEntityCategorizingAccodingBy);
+            textViewFileListWhere.invalidate();
+            EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
+            roomSelector.dismiss();
 
+            if (context instanceof SearchActivity) {
                 if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-                    // 첫번째는 "Everywhere"인 더미 entity
-                    mCurrentEntityCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everywhere);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
+                } else if (item.isUser()) {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
                 } else {
-                    sharedEntityId = item.getEntityId();
-                    mCurrentEntityCategorizingAccodingBy = item.getName();
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
                 }
-                textViewFileListWhere.setText(mCurrentEntityCategorizingAccodingBy);
-                textViewFileListWhere.invalidate();
-                EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
-                roomSelector.dismiss();
-
-                if (context instanceof SearchActivity) {
-                    if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
-                    } else if (item.isUser()) {
-                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
-                    } else {
-                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
-                    }
+            } else {
+                if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
+                } else if (item.isUser()) {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
                 } else {
-                    if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
-                    } else if (item.isUser()) {
-                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
-                    } else {
-                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
-                    }
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
                 }
-
             }
         });
 
@@ -305,19 +313,17 @@ public class FileListPresenter {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseTopicFilter);
             }
         });
-        roomSelector.show(((View) textViewFileListWhere.getParent().getParent()));
 
+        roomSelector.show(((View) textViewFileListWhere.getParent().getParent()));
         if (context instanceof SearchActivity) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter);
         } else {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter);
         }
 
-
     }
 
     private void setUpTypeTextView(TextView textVew, boolean isFocused) {
-
         Drawable rightDrawable;
         if (isFocused) {
             if (context instanceof SearchActivity) {

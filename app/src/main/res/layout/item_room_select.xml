@@ -22,10 +22,11 @@
 
         <ImageView
             android:id="@+id/iv_room_selector_item_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="32dp" />
+            android:layout_marginRight="26dp"
+            android:scaleType="centerInside" />
 
         <TextView
             android:id="@+id/tv_room_selector_item_name"

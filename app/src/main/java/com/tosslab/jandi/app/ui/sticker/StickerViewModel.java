@@ -2,8 +2,11 @@ package com.tosslab.jandi.app.ui.sticker;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
@@ -48,7 +51,11 @@ public class StickerViewModel {
     private ViewPagerIndicator viewPagerIndicator;
 
     private OnStickerClick onStickerClick;
+    private OnStickerDoubleTapListener onStickerDoubleTapListener;
     private int type;
+
+    private Pair<Integer, String> lastClickedStickerInfo;
+    private long lastClickedTime;
 
     @AfterViews
     void initViews() {
@@ -101,7 +108,29 @@ public class StickerViewModel {
             viewPagerIndicator.setVisibility(View.VISIBLE);
         }
 
-        StickerViewPagerAdapter adapter = new StickerViewPagerAdapter(context, stickers, onStickerClick);
+        StickerViewPagerAdapter adapter = new StickerViewPagerAdapter(context, stickers, new OnStickerClick() {
+            @Override
+            public void onStickerClick(int groupId, String stickerId) {
+                if (onStickerClick != null) {
+                    onStickerClick.onStickerClick(groupId, stickerId);
+                }
+
+                if (lastClickedStickerInfo != null) {
+                    if (isSameSticker(groupId, stickerId)
+                            && isDoubleTap(lastClickedTime)
+                            && onStickerDoubleTapListener != null) {
+                        onStickerDoubleTapListener.onStickerDoubleTap(groupId, stickerId);
+                        lastClickedStickerInfo = null;
+                    } else {
+                        lastClickedStickerInfo = Pair.create(groupId, stickerId);
+                    }
+                } else {
+                    lastClickedStickerInfo = Pair.create(groupId, stickerId);
+                }
+
+                lastClickedTime = System.currentTimeMillis();
+            }
+        });
         vgStickerItems.setAdapter(adapter);
         viewPagerIndicator.setCurrentPosition(0);
         viewPagerIndicator.setIndicatorCount(adapter.getCount());
@@ -116,6 +145,15 @@ public class StickerViewModel {
             }
         });
 
+    }
+
+    public boolean isDoubleTap(long lastClickedTime) {
+        return System.currentTimeMillis() - lastClickedTime <= ViewConfiguration.getJumpTapTimeout();
+    }
+
+    public boolean isSameSticker(int groupId, String stickerId) {
+        return lastClickedStickerInfo.first == groupId
+                && TextUtils.equals(lastClickedStickerInfo.second, stickerId);
     }
 
 
@@ -184,8 +222,16 @@ public class StickerViewModel {
         this.type = type;
     }
 
+    public void setOnStickerDoubleTapListener(OnStickerDoubleTapListener onStickerDoubleTapListener) {
+        this.onStickerDoubleTapListener = onStickerDoubleTapListener;
+    }
+
 
     public interface OnStickerClick {
         void onStickerClick(int groupId, String stickerId);
+    }
+
+    public interface OnStickerDoubleTapListener {
+        void onStickerDoubleTap(int groupId, String stickerId);
     }
 }
