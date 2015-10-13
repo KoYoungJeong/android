@@ -720,10 +720,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageSubscription.unsubscribe();
         EventBus.getDefault().unregister(this);
 
-        // u must release listener for mentioned copy
-        if (mentionControlViewModel != null) {
-            mentionControlViewModel.removeClipboardListener();
-        }
     }
 
     @Override
@@ -777,6 +773,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListModel.saveTempMessage(roomId, messageListPresenter.getSendEditText());
         }
         PushMonitor.getInstance().unregister(roomId);
+
+        // u must release listener for mentioned copy
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.removeClipboardListener();
+        }
 
         super.onPause();
     }
