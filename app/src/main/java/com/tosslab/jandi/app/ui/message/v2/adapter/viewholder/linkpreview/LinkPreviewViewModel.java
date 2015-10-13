@@ -6,25 +6,25 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.views.AutoScaleImageView;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 18..
  */
 public class LinkPreviewViewModel {
 
+    public static final String TAG = "LinkPreviewViewModel";
     private TextView tvTitle;
     private TextView tvDomain;
     private TextView tvDescription;
     private View vgThumb;
-    private AutoScaleImageView ivThumb;
+    private ImageView ivThumb;
     private OnLinkPreviewClickListener onLinkPreviewClickListener;
 
     private Context context;
@@ -43,8 +43,7 @@ public class LinkPreviewViewModel {
         tvDomain = (TextView) rootView.findViewById(R.id.tv_linkpreview_domain);
         tvDescription = (TextView) rootView.findViewById(R.id.tv_linkpreview_description);
         vgThumb = rootView.findViewById(R.id.vg_linkpreview_thumb);
-        ivThumb = (AutoScaleImageView) rootView.findViewById(R.id.iv_linkpreview_thumb);
-        ivThumb.setRatio(274, 115);
+        ivThumb = (ImageView) rootView.findViewById(R.id.iv_linkpreview_thumb);
     }
 
     public void bindData(ResMessages.Link link) {
@@ -69,18 +68,27 @@ public class LinkPreviewViewModel {
 
         onLinkPreviewClickListener.setLinkUrl(linkPreview.linkUrl);
 
-        String imageUrl = linkPreview.imageUrl;
-        if (TextUtils.isEmpty(imageUrl)) {
-            vgThumb.setVisibility(View.GONE);
+        boolean useThumbnail = useThumbnail(linkPreview.imageUrl);
+
+        if (!useThumbnail) {
             ivThumb.setImageDrawable(null);
-        } else {
-            vgThumb.setVisibility(View.VISIBLE);
-            Glide.with(context)
-                    .load(imageUrl)
-                    .asBitmap()
-                    .centerCrop()
-                    .into(ivThumb);
+            vgThumb.setVisibility(View.GONE);
+            return;
         }
+
+        vgThumb.setVisibility(View.VISIBLE);
+
+        String imageUrl = linkPreview.imageUrl;
+        Glide.with(context)
+                .load(imageUrl)
+                .asBitmap()
+                .centerCrop()
+                .placeholder(R.drawable.link_preview)
+                .into(ivThumb);
+    }
+
+    private boolean useThumbnail(String imagUrl) {
+        return !TextUtils.isEmpty(imagUrl) && imagUrl.contains("linkpreview-thumb");
     }
 
     private static class OnLinkPreviewClickListener implements View.OnClickListener {

@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqCreateFolder;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
+import com.tosslab.jandi.app.network.models.ReqMember;
 import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ReqRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
@@ -131,5 +132,8 @@ public interface TeamApiV2Client {
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon deleteFolderItem(@Path("teamId") int teamId, @Path("folderId") int folderId,
                                @Path("itemId") int itemId);
+
+    @PUT("/teams/{teamId}/topics/{topicId}/kickout")
+    ResCommon kickUserFromTopic(@Path("teamId") int teamId, @Path("topicId") int topicId, @Body ReqMember member);
 
 }

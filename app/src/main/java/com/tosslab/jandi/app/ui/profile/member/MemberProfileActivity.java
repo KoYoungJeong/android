@@ -421,7 +421,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             if (!TextUtils.isEmpty(userPhoneNumber)) {
                 vgProfileTeamButtons.addView(
                         getButton(R.drawable.icon_profile_mobile,
-                                getString(R.string.jandi_member_profile_phone), (v) -> {
+                                getString(R.string.jandi_member_profile_call), (v) -> {
                                     call(userPhoneNumber);
                                     AnalyticsUtil.sendEvent(getScreen(from), AnalyticsValue.Action.Profile_Cellphone);
                                 }));

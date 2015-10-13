@@ -290,4 +290,22 @@ public class MessageRepository {
         }
         return null;
     }
+
+    public ResMessages.TextMessage getTextMessage(int messageId) {
+        lock.lock();
+        try {
+            Dao<ResMessages.TextMessage, ?> dao = helper.getDao(ResMessages.TextMessage.class);
+
+            return dao.queryBuilder()
+                    .where()
+                    .eq("id", messageId)
+                    .queryForFirst();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+        return null;
+    }
 }

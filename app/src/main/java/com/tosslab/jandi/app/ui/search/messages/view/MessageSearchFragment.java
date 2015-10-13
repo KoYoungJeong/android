@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.events.search.MoreSearchRequestEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.events.search.SelectEntityEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.messages.adapter.MessageSearchResultAdapter;
@@ -38,7 +39,6 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -54,9 +54,11 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 10..
@@ -116,21 +118,14 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         linearLayoutManager.setSmoothScrollbarEnabled(true);
         searchListView.setLayoutManager(linearLayoutManager);
         messageSearchResultAdapter = new MessageSearchResultAdapter(parentActivity);
-        messageSearchResultAdapter.setOnRecyclerItemClickListener(new OnRecyclerItemClickListener() {
-            @Override
-            public void onItemClick(View view, RecyclerView.Adapter adapter, int position) {
-                if (position > 0) {
-
-                    SearchResult searchRecord = ((MessageSearchResultAdapter) adapter).getItem(position);
-                    messageSearchPresenter.onRecordClick(searchRecord);
-
-                    if (onSearchItemSelect != null) {
-                        onSearchItemSelect.onSearchItemSelect();
-                    }
-
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseSearchResult);
-
+        messageSearchResultAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
+            if (position > 0) {
+                SearchResult searchRecord = ((MessageSearchResultAdapter) adapter).getItem(position);
+                messageSearchPresenter.onRecordClick(searchRecord);
+                if (onSearchItemSelect != null) {
+                    onSearchItemSelect.onSearchItemSelect();
                 }
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseSearchResult);
             }
         });
 
@@ -251,7 +246,18 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
         setUpCategoryView(vgEntity, entityTextView, true);
 
-        RoomSelector roomSelector = new RoomSelectorImpl();
+        EntityManager entityManager = EntityManager.getInstance();
+        List<FormattedEntity> joinedChannels = entityManager.getJoinedChannels();
+        List<FormattedEntity> groups = entityManager.getGroups();
+        List<FormattedEntity> allTopics = new ArrayList<>();
+        Observable.merge(Observable.from(joinedChannels), Observable.from(groups))
+                .subscribe(entity -> {
+                            allTopics.add(entity);
+                        }
+                );
+        List<FormattedEntity> users = EntityManager.getInstance().getFormattedUsersWithoutMe();
+
+        RoomSelector roomSelector = new RoomSelectorImpl(allTopics, users);
 
         roomSelector.setOnRoomSelectListener(item -> {
             if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
@@ -385,7 +391,6 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     @UiThread
     @Override
     public void dismissMoreLoadingProgressBar() {
-
         Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_out_bottom);
         progressBar.setAnimation(animation);
         animation.setAnimationListener(new SimpleEndAnimationListener() {
@@ -442,4 +447,5 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     public void setOnSearchText(SearchActivity.OnSearchText onSearchText) {
         this.onSearchText = onSearchText;
     }
+
 }

@@ -50,10 +50,8 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
 
     ShareRoomsAdapter adapter;
 
-
     @AfterInject
     void initObject() {
-
         adapter = new ShareRoomsAdapter(this);
         adapter.setOnItemClickListener(this);
     }
@@ -146,7 +144,6 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
         actionBar.setTitle(R.string.jandi_share_to_jandi);
-
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.to;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +30,23 @@ public class DummyMessageLink extends ResMessages.Link {
         this.message = textMessage;
         this.status = status;
         this.mentions = mentions;
+    }
+
+    public DummyMessageLink(long localId, String status, int stickerGroupId, String stickerId) {
+        this.localId = localId;
+
+        ResMessages.StickerMessage textMessage = new ResMessages.StickerMessage();
+        textMessage.content = new ResMessages.StickerContent();
+        textMessage.createTime = new Date(System.currentTimeMillis());
+        textMessage.updateTime = new Date(System.currentTimeMillis());
+
+        textMessage.content.groupId = stickerGroupId;
+        textMessage.content.stickerId = stickerId;
+
+        this.time = new Date(System.currentTimeMillis());
+        this.message = textMessage;
+        this.status = status;
+        this.mentions = new ArrayList<>();
     }
 
     public long getLocalId() {

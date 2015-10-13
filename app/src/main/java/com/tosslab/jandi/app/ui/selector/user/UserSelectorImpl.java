@@ -29,7 +29,6 @@ import rx.Observable;
 
 public class UserSelectorImpl implements UserSelector {
 
-
     private PopupWindow popupWindow;
     private OnUserSelectListener onRoomSelectListener;
     private OnUserDismissListener onUserDismissListener;
@@ -62,12 +61,9 @@ public class UserSelectorImpl implements UserSelector {
         recyclerView.setAdapter(adapter);
 
         popupWindow.setAnimationStyle(R.style.PopupAnimation);
-        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                if (onUserDismissListener != null) {
-                    onUserDismissListener.onUserDismiss();
-                }
+        popupWindow.setOnDismissListener(() -> {
+            if (onUserDismissListener != null) {
+                onUserDismissListener.onUserDismiss();
             }
         });
         PopupWindowCompat.showAsDropDown(popupWindow, roomView, 0, 0, Gravity.TOP | Gravity.START);
@@ -144,7 +140,7 @@ public class UserSelectorImpl implements UserSelector {
 
             if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
                 holder.tvName.setText(R.string.jandi_file_category_everyone);
-                holder.ivIcon.setImageResource(R.drawable.icon_search_all);
+                holder.ivIcon.setImageResource(R.drawable.icon_search_all_members);
             } else {
                 Ion.with(holder.ivIcon)
                         .placeholder(R.drawable.profile_img_comment)

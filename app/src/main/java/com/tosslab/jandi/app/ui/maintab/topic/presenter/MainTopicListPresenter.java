@@ -61,7 +61,7 @@ public class MainTopicListPresenter {
         view.showList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
     }
 
-    @Background
+    @Background(serial = "refresh_topic_list")
     public void onRefreshList(List<ResFolder> inMemTopicFolders, List<ResFolderItem> inMemTopicFolderItems, boolean onlyInMemory) {
 
         if (onlyInMemory) {
@@ -234,7 +234,7 @@ public class MainTopicListPresenter {
 
         void setSelectedItem(int selectedEntity);
 
-        void startAnimationSelectedItem();
+        void scrollAndAnimateForSelectedItem();
 
         void setFolderExpansion();
     }

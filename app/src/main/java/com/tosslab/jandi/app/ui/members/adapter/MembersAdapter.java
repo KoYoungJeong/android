@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -33,6 +34,9 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private List<ChatChooseItem> memberChooseItems;
 
     private boolean isCheckMode = false;
+    private boolean kickMode;
+
+    private OnKickClickListener onKickClickListener;
 
     public MembersAdapter(Context context) {
         this.context = context;
@@ -65,7 +69,12 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (isCheckMode) {
             ((MemberChoiceViewHolder) holder).bindView(item);
         } else {
-            ((MemberViewHolder) holder).bindView(item);
+            int myId = EntityManager.getInstance().getMe().getId();
+            ((MemberViewHolder) holder).bindView(item, kickMode, myId, v -> {
+                if (onKickClickListener != null) {
+                    onKickClickListener.onKickClick(MembersAdapter.this, holder, position);
+                }
+            });
         }
     }
 
@@ -99,6 +108,22 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         }
         return selectedUserIds;
+    }
+
+    public void setKickMode(boolean kickMode) {
+        this.kickMode = kickMode;
+    }
+
+    public void setOnKickClickListener(OnKickClickListener onKickClickListener) {
+        this.onKickClickListener = onKickClickListener;
+    }
+
+    public void remove(int position) {
+        memberChooseItems.remove(position);
+    }
+
+    public interface OnKickClickListener {
+        void onKickClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder viewHolder, int position);
     }
 
     static class MemberChoiceViewHolder extends RecyclerView.ViewHolder {
@@ -154,6 +179,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private TextView tvAdditional;
         private View vDisableLineThrough;
         private View vDisableCover;
+        private View ivKick;
 
         public MemberViewHolder(View itemView) {
             super(itemView);
@@ -163,9 +189,10 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ivFavorite = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_fav);
             vDisableLineThrough = itemView.findViewById(R.id.iv_entity_listitem_line_through);
             vDisableCover = itemView.findViewById(R.id.v_entity_listitem_warning);
+            ivKick = itemView.findViewById(R.id.iv_entity_listitem_user_kick);
         }
 
-        public void bindView(ChatChooseItem item) {
+        public void bindView(ChatChooseItem item, boolean kickMode, int myId, View.OnClickListener onKickClickListener) {
             tvName.setText(item.getName());
 
             tvAdditional.setVisibility(!TextUtils.isEmpty(item.getEmail()) ? View.VISIBLE : View.GONE);
@@ -175,6 +202,14 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             vDisableLineThrough.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
             vDisableCover.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
+
+            if (kickMode && item.getEntityId() != myId) {
+                ivKick.setVisibility(View.VISIBLE);
+                ivKick.setOnClickListener(onKickClickListener);
+            } else {
+                ivKick.setVisibility(View.GONE);
+                ivKick.setOnClickListener(null);
+            }
 
             Ion.with(ivIcon)
                     .placeholder(R.drawable.profile_img)

@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.network.socket;
 
 import android.support.annotation.NonNull;
 
-import com.github.nkzawa.emitter.Emitter;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.socket.connector.JandiSocketConnector;
 import com.tosslab.jandi.app.network.socket.connector.SocketConnector;
@@ -12,6 +11,8 @@ import com.tosslab.jandi.app.network.socket.emit.SocketEmitter;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 import com.tosslab.jandi.app.network.socket.events.register.EventRegister;
 import com.tosslab.jandi.app.network.socket.events.register.JandiEventRegister;
+
+import io.socket.emitter.Emitter;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 30..

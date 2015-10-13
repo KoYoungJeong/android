@@ -50,7 +50,7 @@ public class ImageAlbumPresenterImpl implements ImageAlbumPresenter {
     public void onSetupActionbar(int buckerId) {
 
 
-        String title = context.getString(R.string.jandI_select_gallery);
+        String title = context.getString(R.string.jandi_select_gallery);
         int selectedCount = imageAlbumModel.getSelectedImages();
 
         setupActionbarTitle(selectedCount, title);

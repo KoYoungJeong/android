@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/vg_linkpreview_thumb"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_rect_gray"
+        android:layout_width="@dimen/jandi_messages_link_preview_thumb_max_width"
+        android:layout_height="120dp"
         android:padding="1dp">
 
-        <com.tosslab.jandi.app.views.AutoScaleImageView
+        <ImageView
             android:id="@+id/iv_linkpreview_thumb"
             android:layout_width="match_parent"
-            android:layout_height="115dp"/>
-    </FrameLayout>
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/iv_linkpreview_thumb"
+            android:layout_alignLeft="@+id/iv_linkpreview_thumb"
+            android:layout_alignRight="@+id/iv_linkpreview_thumb"
+            android:layout_alignTop="@+id/iv_linkpreview_thumb"
+            android:background="@drawable/bg_rect_gray" />
+    </RelativeLayout>
 
     <View
         android:id="@+id/v_snippet_line"
@@ -23,7 +32,7 @@
         android:layout_alignBottom="@+id/vg_snippet_summary"
         android:layout_alignTop="@+id/vg_snippet_summary"
         android:layout_below="@id/vg_linkpreview_thumb"
-        android:background="@color/jandi_linkpreview_divider"/>
+        android:background="@color/jandi_linkpreview_divider" />
 
     <LinearLayout
         android:id="@+id/vg_snippet_summary"
@@ -44,7 +53,7 @@
             android:text="Rock Formation Image, Galapagos Islands - National bla blaa bla bla bla blab albalblablblbla"
             android:textColor="@android:color/black"
             android:textSize="17dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_linkpreview_domain"
@@ -54,7 +63,7 @@
             android:singleLine="true"
             android:text="National Geographic"
             android:textColor="@color/jandi_text_light"
-            android:textSize="11dp"/>
+            android:textSize="11dp" />
 
         <TextView
             android:id="@+id/tv_linkpreview_description"
@@ -64,9 +73,7 @@
             android:singleLine="true"
             android:text="Sunlight paints a rock formation in the world"
             android:textColor="@android:color/black"
-            android:textSize="13dp"/>
+            android:textSize="13dp" />
 
     </LinearLayout>
-
-
-</merge>
+</RelativeLayout>

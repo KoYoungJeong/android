@@ -91,7 +91,7 @@ public class BodyViewFactory {
             }
 
         } else if (currentMessage instanceof ResMessages.FileMessage) {
-            String fileType = ((ResMessages.FileMessage) currentMessage).content.type;
+            String fileType = ((ResMessages.FileMessage) currentMessage).content.icon;
             if (TextUtils.isEmpty(fileType) || fileType.equals("null")) {
                 return BodyViewHolder.Type.File;
             }

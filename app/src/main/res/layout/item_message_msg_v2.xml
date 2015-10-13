@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <RelativeLayout
+    <com.tosslab.jandi.app.views.LongClickableRelativeLayout
         android:id="@+id/vg_message_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,7 +24,6 @@
             android:layout_height="@dimen/jandi_messages_profile_size"
             android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"/>
         <!-- 기본 표시 레이어 -->
-
 
         <TextView
             android:id="@+id/tv_message_user_name"
@@ -87,7 +86,7 @@
 
             <include layout="@layout/item_message_layout_linkpreview_v2"/>
         </RelativeLayout>
-    </RelativeLayout>
+    </com.tosslab.jandi.app.views.LongClickableRelativeLayout>
 
     <include
         android:id="@+id/vg_message_last_read"
