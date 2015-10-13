@@ -485,7 +485,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
             return;
 
         if (getInstalledAppVersion()
-                < getConfigInfo().lastestVersion.android) {
+                < getConfigInfo().latestVersions.android) {
             showUpdateVersionDialog();
         }
     }

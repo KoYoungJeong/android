@@ -201,6 +201,11 @@
 
             </RelativeLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#FFf1f4f8" />
+
             <RelativeLayout
                 android:id="@+id/vg_more_version"
                 android:layout_width="match_parent"
@@ -276,10 +281,8 @@
                         android:textColor="@color/jandi_text_light" />
 
                 </LinearLayout>
+
             </FrameLayout>
-
-
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>

@@ -154,8 +154,10 @@ public class MainMoreFragment extends Fragment {
     }
 
     @Background
-    private void configVersionButton() {
-        if (getInstalledAppVersion() < getConfigInfo().lastestVersion.android) {
+    void configVersionButton() {
+        int currentVersion = getInstalledAppVersion();
+        int latestVersion = getConfigInfo().latestVersions.android;
+        if (currentVersion < latestVersion) {
             setVersionButtonVisibility(View.VISIBLE);
         } else {
             setVersionButtonVisibility(View.GONE);
@@ -163,7 +165,7 @@ public class MainMoreFragment extends Fragment {
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    private void setVersionButtonVisibility(int visibility) {
+    void setVersionButtonVisibility(int visibility) {
         btUpdateVersion.setVisibility(visibility);
     }
 
