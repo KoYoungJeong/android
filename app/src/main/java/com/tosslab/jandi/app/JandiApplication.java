@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
@@ -16,10 +14,8 @@ import com.tosslab.jandi.app.network.SimpleApiRequester;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
-import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.ApplicationActivateDetector;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
@@ -31,10 +27,6 @@ import java.util.HashMap;
 import java.util.concurrent.Executors;
 
 import io.fabric.sdk.android.Fabric;
-import retrofit.RetrofitError;
-import rx.Observable;
-import rx.Observer;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by justinygchoi on 2014. 6. 19..
@@ -85,8 +77,6 @@ public class JandiApplication extends MultiDexApplication {
             ParseUpdateUtil.refreshChannelOnServer();
             JandiPreference.setOldParseChannelDeleted(this, true);
         }
-
-        JandiPreference.setPassCode(this, "Helloo");
 
         registerActivityLifecycleCallbacks();
     }

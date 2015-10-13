@@ -53,7 +53,6 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
-import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -71,6 +70,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -88,6 +88,9 @@ import rx.Observable;
 public class MainTabActivity extends BaseAppCompatActivity {
 
     public static final int CHAT_INDEX = 1;
+    @Extra
+    boolean fromPush = false;
+
     @Bean
     EntityClientManager entityClientManager;
     @Bean
@@ -257,7 +260,9 @@ public class MainTabActivity extends BaseAppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogUtil.e("tony", "onCreate");
+        if (fromPush) {
+            setNeedUnLockPassCode(false);
+        }
     }
 
     @Override
@@ -280,7 +285,8 @@ public class MainTabActivity extends BaseAppCompatActivity {
             offlineLayer.showOfflineView();
         }
 
-        UnLockPassCodeManager.getInstance().unLockPassCodeIfNeed(this);
+        fromPush = false;
+        setNeedUnLockPassCode(true);
     }
 
 

@@ -7,11 +7,8 @@ import android.content.Intent;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.ui.passcode.UnLockPassCodeActivity;
-import com.tosslab.jandi.app.ui.passcode.UnLockPassCodeActivity_;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
-
-import java.util.HashMap;
+import com.tosslab.jandi.app.ui.passcode.PassCodeActivity;
+import com.tosslab.jandi.app.ui.passcode.PassCodeActivity_;
 
 /**
  * Created by tonyjs on 15. 10. 12..
@@ -45,10 +42,10 @@ public class UnLockPassCodeManager {
             return;
         }
 
-        LogUtil.e("tony", activity.getClass().getSimpleName());
+        Intent intent = PassCodeActivity_.intent(activity)
+                .mode(PassCodeActivity.MODE_TO_UNLOCK)
+                .get();
 
-        // TODO
-        Intent intent = new Intent(activity, UnLockPassCodeActivity_.class);
         activity.overridePendingTransition(0, 0);
         activity.startActivity(intent);
     }
@@ -73,11 +70,10 @@ public class UnLockPassCodeManager {
 
         ComponentName componentName = intent.getComponent();
 
-        LogUtil.d("tony", componentName.toString());
-
-        intent.setClass(context, UnLockPassCodeActivity_.class);
+        intent.setClass(context, PassCodeActivity_.class);
+        intent.putExtra(PassCodeActivity_.MODE_EXTRA, PassCodeActivity.MODE_TO_UNLOCK);
         if (context instanceof Activity) {
-            intent.putExtra(UnLockPassCodeActivity.KEY_CALLING_COMPONENT_NAME, componentName);
+            intent.putExtra(PassCodeActivity.KEY_CALLING_COMPONENT_NAME, componentName);
 
             ((Activity) context).overridePendingTransition(0, 0);
         }

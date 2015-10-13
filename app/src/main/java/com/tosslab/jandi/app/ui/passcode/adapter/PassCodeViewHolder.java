@@ -10,8 +10,7 @@ import com.tosslab.jandi.app.R;
 /**
  * Created by tonyjs on 15. 10. 7..
  */
-public class PassCodeViewHolder  extends RecyclerView.ViewHolder {
-
+public class PassCodeViewHolder extends RecyclerView.ViewHolder {
     public TextView tvCancel;
     public ImageView ivNumber;
 

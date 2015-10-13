@@ -193,4 +193,8 @@ public class IntroActivityModel {
                         .build())
                 .flush();
     }
+
+    public boolean hasLeftSideMenu() {
+        return LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu() != null;
+    }
 }

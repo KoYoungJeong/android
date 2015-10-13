@@ -78,9 +78,7 @@ public class LeftSideMenuRepository {
             return JacksonMapper.getInstance()
                     .getObjectMapper()
                     .readValue(leftSideMenu.getRawLeftSideMenu(), ResLeftSideMenu.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             lock.unlock();

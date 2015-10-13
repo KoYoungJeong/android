@@ -39,6 +39,15 @@
 
 
     <PreferenceCategory
+        android:key="setting_privacy_protection"
+        android:title="@string/jandi_privacy_protection">
+        <Preference
+            android:defaultValue="true"
+            android:key="setting_set_passcode"
+            android:title="@string/jandi_set_passcode"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:key="setting_tos_pp"
         android:title="@string/jandi_tos_and_pp">
         <Preference

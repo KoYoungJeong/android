@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.signup.account;
 
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -44,6 +45,12 @@ public class SignUpActivity extends BaseAppCompatActivity {
 
     @Extra
     String email;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setNeedUnLockPassCode(false);
+    }
 
     @AfterViews
     void init() {
@@ -166,6 +173,8 @@ public class SignUpActivity extends BaseAppCompatActivity {
         signUpViewModel.activateSignUpButton(allValid);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.AcceptAll);
+
+        signUpViewModel.hideSoftInput();
     }
 
     @Click(R.id.btn_signup_confirm)

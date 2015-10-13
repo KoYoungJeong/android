@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.invites.email;
 
 import android.database.DataSetObserver;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -67,6 +68,12 @@ public class InviteEmailActivity extends BaseAppCompatActivity
     TextView displaySendEmailSuccesText;
 
     private InviteEmailListAdapter adapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setNeedUnLockPassCode(false);
+    }
 
     @AfterViews
     void initView() {

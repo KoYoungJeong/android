@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.intro;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
@@ -35,6 +36,12 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     @Bean
     IntroActivityPresenter presenter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setNeedUnLockPassCode(false);
+    }
 
     @AfterViews
     void startOn() {

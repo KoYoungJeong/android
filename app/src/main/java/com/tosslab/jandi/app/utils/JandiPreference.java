@@ -246,6 +246,11 @@ public class JandiPreference {
         pref.edit().putString(PREF_PASSCODE, passCode).commit();
     }
 
+    public static void removePassCode(Context context) {
+        SharedPreferences pref = getSharedPreferences(context);
+        pref.edit().remove(PREF_PASSCODE).commit();
+    }
+
     /**
      * 마지막 네트워크 접속 상태 값
      *

@@ -92,6 +92,7 @@
 	<string name="jandi_cannot_find_search_result_1">"您的文件夹是空的。"</string>
 	<string name="jandi_cannot_find_search_result_2">"直接上传及分享文件到任何对话当中"</string>
 	<string name="jandi_cannot_find_search_result_old">"找不到符合条件的内容"</string>
+	<string name="jandi_change_passcode">"更改密码"</string>
 	<string name="jandi_chat_detail">"聊天设置"</string>
 	<string name="jandi_choose_email">"选择一个电子邮件"</string>
 	<string name="jandi_coach_mark_create_new_topics">"建立新议题"</string>
@@ -122,6 +123,8 @@
 	<string name="jandi_coach_mark_upload_file">"上传文件"</string>
 	<string name="jandi_commented_on">"<![CDATA[<font color="#999999">留言于</font><font color="#000000"><b>%s</b></font><font color="#999999">的文件</font>]]>"</string>
 	<string name="jandi_confirm">"确定"</string>
+	<string name="jandi_confirm_new_passcode">"确认新密码"</string>
+	<string name="jandi_confirm_passcode">"确认密码"</string>
 	<string name="jandi_copy_link">"复制链接"</string>
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"建立"</string>
@@ -140,6 +143,8 @@
 	<string name="jandi_disabled_user">"此成员权限已被暂时关闭"</string>
 	<string name="jandi_duplicate_email">"这电子邮件已被注冊"</string>
 	<string name="jandi_empty">"""</string>
+	<string name="jandi_enter_new_passcode">"输入新密码"</string>
+	<string name="jandi_enter_passcode">"输入您的密码"</string>
 	<string name="jandi_entity_create_entity_name">"名字"</string>
 	<string name="jandi_entity_joined_topic">"我的议题"</string>
 	<string name="jandi_entity_unjoined_topic">"其他议题"</string>
@@ -193,6 +198,7 @@
 	<string name="jandi_has_joined">"%s已加入"</string>
 	<string name="jandi_have_an_account_already">"已经有团队注册了吗?"</string>
 	<string name="jandi_help">"说明"</string>
+	<string name="jandi_incorrect_passcode">"密码不吻合"</string>
 	<string name="jandi_input_password">"请为选择的团队输入您的密码"</string>
 	<string name="jandi_input_search_keyword">"按照关键词搜索您的信息"</string>
 	<string name="jandi_input_topic_name">"请输入议题群组名称"</string>
@@ -283,6 +289,7 @@
 	<string name="jandi_phone_led">"锁屏通知"</string>
 	<string name="jandi_plz_input_topic_description">"描述 (选项)"</string>
 	<string name="jandi_privacy_policy">"隐私权条款"</string>
+	<string name="jandi_privacy_protection">"隐私"</string>
 	<string name="jandi_private_topic_tip_1">"私人议题不开放给未受邀成员"</string>
 	<string name="jandi_private_topic_tip_2">"私人议题里的文件仅开放给其受邀成员"</string>
 	<string name="jandi_private_topic_tip_3">"已设定为公开或私人的议题群组在建立之后不能被转换成另一个"</string>
@@ -322,6 +329,8 @@
 	<string name="jandi_send_invitation">"现在邀请"</string>
 	<string name="jandi_sent_password_reset_mail">"密码重设指示已经成功寄送到您的电子邮箱"</string>
 	<string name="jandi_service_maintenance">"JANDI现在基于定期维护而无法使用。我们预计几个小时内就可以恢复运作。感谢您的耐心等候。"</string>
+	<string name="jandi_set_passcode">"设定密码"</string>
+	<string name="jandi_set_passcode_detail">"如果你忘记密码，将无法解锁。 请重新安装JANDI，再重新登入。"</string>
 	<string name="jandi_setting_general">"一般"</string>
 	<string name="jandi_setting_push">"通知偏好"</string>
 	<string name="jandi_setting_push_subscription">"推播通知"</string>
@@ -419,7 +428,7 @@
 	<string name="jandi_unread_messages_below">"以下为未读信息"</string>
 	<string name="jandi_unshare_succeed">"%s已被取消分享"</string>
 	<string name="jandi_unshared_file_in_dm">"此文件已经从这个对话中取消分享"</string>
-	<string name="jandi_unshared_message">"你已不在此标记的议题内"</string>
+	<string name="jandi_unshared_message">"无法存取该文件/信息"</string>
 	<string name="jandi_unstarred">"取消标记"</string>
 	<string name="jandi_unsupported_type_picture">"无法支持此类型图档，请选择其他图档"</string>
 	<string name="jandi_update_message">"现有新版的JANDI可用。"</string>

@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
+import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity_;
 import com.tosslab.jandi.app.ui.settings.viewmodel.SettingFragmentViewModel;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
@@ -122,6 +123,11 @@ public class SettingsFragment extends PreferenceFragment {
                     .termMode(TermActivity.Mode.Privacy.name())
                     .start();
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.PrivacyPolicy);
+        } else if(TextUtils.equals(preference.getKey(), "setting_set_passcode")) {
+
+            SettingPrivacyActivity_.intent(getActivity())
+                    .start();
+
         } else if (preference.getKey().equals("setting_logout")) {
 
             if (NetworkCheckUtil.isConnected()) {

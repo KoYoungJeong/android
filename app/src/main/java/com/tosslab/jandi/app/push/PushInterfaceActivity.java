@@ -53,9 +53,10 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
     JandiInterfaceModel jandiInterfaceModel;
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.PushNotification);
+        setNeedUnLockPassCode(false);
     }
 
     @AfterInject
@@ -167,6 +168,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
 
         MainTabActivity_.intent(PushInterfaceActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .fromPush(true)
                 .start();
 
         Intent intent = MessageListV2Activity_.intent(PushInterfaceActivity.this)

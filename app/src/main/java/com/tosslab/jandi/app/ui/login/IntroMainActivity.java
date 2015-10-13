@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.login;
 
 import android.app.Fragment;
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
@@ -42,6 +43,12 @@ public class IntroMainActivity extends BaseAppCompatActivity {
     LinearLayout tutorialFooterLayout;
 
     private KeyboardHandler keyboardHandler;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setNeedUnLockPassCode(false);
+    }
 
     @AfterViews
     void init() {
