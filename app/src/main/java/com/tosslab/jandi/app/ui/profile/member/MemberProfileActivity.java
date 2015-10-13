@@ -46,7 +46,6 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.ViewById;
 
-import de.greenrobot.event.EventBus;
 import uk.co.senab.photoview.PhotoView;
 
 /**
@@ -132,7 +131,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
         ActivityHelper.setOrientation(this);
     }
 
