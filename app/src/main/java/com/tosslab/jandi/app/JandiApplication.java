@@ -12,6 +12,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
+import com.squareup.leakcanary.LeakCanary;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
@@ -83,6 +84,9 @@ public class JandiApplication extends MultiDexApplication {
             ParseUpdateUtil.refreshChannelOnServer();
             JandiPreference.setOldParseChannelDeleted(this, true);
         }
+
+        //for LeakCanary
+        LeakCanary.install(this);
     }
 
     synchronized public Tracker getTracker(TrackerName trackerId) {
