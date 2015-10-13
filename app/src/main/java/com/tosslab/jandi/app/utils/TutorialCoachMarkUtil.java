@@ -81,33 +81,23 @@ public class TutorialCoachMarkUtil {
     }
 
     public static void showCoachMarkTopicListIfNotShown(Context context) {
-        if (!JandiPreference.isAleadyShowCoachMarkTopicList(context.getApplicationContext())) {
-            showCoachMarkDialog(context, COACH_MARK_TOPIC_LIST);
-        }
+        showCoachMarkDialog(context, COACH_MARK_TOPIC_LIST);
     }
 
     public static void showCoachMarkDirectMessageListIfNotShown(Context context) {
-        if (!JandiPreference.isAleadyShowCoachMarkDirectMessageList(context.getApplicationContext())) {
-            showCoachMarkDialog(context, COACH_MARK_DIRECT_MESSAGE_LIST);
-        }
+        showCoachMarkDialog(context, COACH_MARK_DIRECT_MESSAGE_LIST);
     }
 
     public static void showCoachMarkFileListIfNotShown(Context context) {
-        if (!JandiPreference.isAleadyShowCoachMarkFileList(context.getApplicationContext())) {
-            showCoachMarkDialog(context, COACH_MARK_FILE_LIST);
-        }
+        showCoachMarkDialog(context, COACH_MARK_FILE_LIST);
     }
 
     public static void showCoachMarkMoreIfNotShown(Context context) {
-        if (!JandiPreference.isAleadyShowCoachMarkMore(context.getApplicationContext())) {
-            showCoachMarkDialog(context, COACH_MARK_MORE);
-        }
+        showCoachMarkDialog(context, COACH_MARK_MORE);
     }
 
     public static void showCoachMarkTopicIfNotShown(Context context) {
-        if (!JandiPreference.isAleadyShowCoachMarkTopic(context.getApplicationContext())) {
-            showCoachMarkDialog(context, COACH_MARK_TOPIC);
-        }
+        showCoachMarkDialog(context, COACH_MARK_TOPIC);
     }
 
 }

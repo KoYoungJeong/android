@@ -12,8 +12,8 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/layout_search_bar"
-            style="@style/Jandi.Default.ActionBar"
             android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
             android:visibility="visible" />
 
 
@@ -24,8 +24,8 @@
         <EditText
             android:id="@+id/et_team_detail_info_team_name"
             style="@style/JandiTeam.EditText"
-            android:maxLength="20"
-            android:hint="@string/jandi_new_team_name" />
+            android:hint="@string/jandi_new_team_name"
+            android:maxLength="20" />
 
         <LinearLayout
             android:layout_width="match_parent"

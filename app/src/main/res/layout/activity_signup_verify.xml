@@ -7,8 +7,8 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/layout_search_bar"
-        style="@style/Jandi.Default.ActionBar"
-        android:layout_width="match_parent"/>
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -25,7 +25,7 @@
                 android:layout_height="103dp"
                 android:layout_marginTop="46dp"
                 android:scaleType="fitXY"
-                android:src="@drawable/img_signin"/>
+                android:src="@drawable/img_signin" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -35,14 +35,14 @@
                 android:lineSpacingExtra="8dp"
                 android:text="@string/jandi_signup_verification_code"
                 android:textColor="#404040"
-                android:textSize="16dp"/>
+                android:textSize="16dp" />
 
             <com.tosslab.jandi.app.ui.signup.verify.widget.VerificationCodeView
                 android:id="@+id/vg_verification_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="35dp"/>
+                android:layout_marginTop="35dp" />
 
             <Button
                 android:id="@+id/btn_verify"
@@ -55,13 +55,13 @@
                 android:minHeight="36dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
-                android:text="@string/jandi_launch"/>
+                android:text="@string/jandi_launch" />
 
             <FrameLayout
                 android:id="@+id/vg_invalidate_code"
-                android:layout_marginTop="27dp"
                 android:layout_width="match_parent"
                 android:layout_height="66dp"
+                android:layout_marginTop="27dp"
                 android:alpha="0.0"
                 android:background="@color/bg_message_input_panel">
 
@@ -74,7 +74,7 @@
                     <View
                         android:layout_width="15dp"
                         android:layout_height="15dp"
-                        android:background="@drawable/signin_icon_error"/>
+                        android:background="@drawable/signin_icon_error" />
 
                     <TextView
                         android:id="@+id/tv_invalidate_code"
@@ -84,7 +84,7 @@
                         android:gravity="center"
                         android:text="@string/jandi_signup_invalidate_code"
                         android:textColor="#fe5555"
-                        android:textSize="14dp"/>
+                        android:textSize="14dp" />
 
                 </LinearLayout>
 
@@ -93,13 +93,14 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="53dp">
+
                 <TextView
                     android:id="@+id/tv_resend_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:textColor="@android:color/black"
-                    android:textSize="14dp"/>
+                    android:textSize="14dp" />
             </FrameLayout>
         </LinearLayout>
 
