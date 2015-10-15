@@ -35,6 +35,7 @@
 
     <color name="jandi_text">#FF333333</color>
     <color name="jandi_text_medium">#666666</color>
+    <color name="jandi_text_medium_dark">#FF555555</color>
     <color name="jandi_text_light">#999999</color>
     <color name="jandi_text_light_gray">#FFC6C6C6</color>
     <color name="jandi_text_white">#FFFFFF</color>

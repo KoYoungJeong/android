@@ -40,8 +40,11 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.concurrent.TimeUnit;
+
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by justinygchoi on 2014. 10. 11..
@@ -61,8 +64,10 @@ public class MainMoreFragment extends Fragment {
     IconWithTextView profileIconView;
 
     @ViewById(R.id.ly_more_go_to_main)
-    IconWithTextView switchTeamIconView;
+    IconWithTextView vSwitchTeam;
 
+    @ViewById(R.id.ly_more_invite)
+    IconWithTextView vInvite;
     @ViewById(R.id.ly_more_team_member)
     IconWithTextView vTeamMember;
 
@@ -88,6 +93,35 @@ public class MainMoreFragment extends Fragment {
         showJandiVersion();
         showOtherTeamMessageCount();
         showTeamMember();
+        Observable.just(1)
+                .delay(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(integer -> initTextLine());
+    }
+
+    private void initTextLine() {
+
+        int maxTextLine = Integer.MIN_VALUE;
+
+        IconWithTextView[] views = {vTeamMember, vSwitchTeam, vInvite};
+        int size = views.length;
+
+
+        for (int idx = 0; idx < size; idx++) {
+            maxTextLine = Math.max(views[idx].getTextLine(), maxTextLine);
+        }
+
+        for (int idx = 0; idx < size; idx++) {
+            int textLine = views[idx].getTextLine();
+            final int finalIdx = idx;
+            Observable.range(0, maxTextLine - textLine)
+                    .map(integer -> "\n")
+                    .subscribe(s -> {
+                        views[finalIdx].setIconText(views[finalIdx].getText() + s);
+                    });
+        }
+
+
     }
 
     private void showTeamMember() {
@@ -138,7 +172,7 @@ public class MainMoreFragment extends Fragment {
                 });
 
         BadgeUtils.setBadge(getActivity(), BadgeCountRepository.getRepository().getTotalBadgeCount());
-        switchTeamIconView.setBadgeCount(badgeCount[0]);
+        vSwitchTeam.setBadgeCount(badgeCount[0]);
     }
 
     private void showJandiVersion() {

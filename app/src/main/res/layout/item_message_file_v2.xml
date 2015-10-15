@@ -106,24 +106,28 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_below="@+id/tv_img_file_uploader"
-            android:layout_marginBottom="14dp"
             android:layout_marginRight="@dimen/jandi_messages_padding_right"
             android:layout_toRightOf="@+id/iv_message_user_profile">
             <!-- 일반 파일일 경우 -->
-            <ImageView
-                android:id="@+id/iv_message_common_file"
+            <RelativeLayout
+                android:id="@+id/vg_message_common_file"
                 android:layout_width="@dimen/jandi_messages_image_size"
                 android:layout_height="@dimen/jandi_messages_image_size"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="8dp"
-                android:padding="15dp" />
+                android:padding="7.5dp">
+
+                <ImageView
+                    android:id="@+id/iv_message_common_file"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="14dp"
-                android:layout_toRightOf="@id/iv_message_common_file"
+                android:layout_toRightOf="@id/vg_message_common_file"
                 android:orientation="vertical">
 
 

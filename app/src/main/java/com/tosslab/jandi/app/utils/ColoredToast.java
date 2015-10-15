@@ -5,6 +5,7 @@ import android.graphics.Color;
 
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.R;
 
 /**
  * Created by justinygchoi on 2014. 7. 8..
@@ -23,7 +24,7 @@ public class ColoredToast {
         SuperToast superToast = new SuperToast(JandiApplication.getContext());
         superToast.setText(message);
         superToast.setDuration(SuperToast.Duration.VERY_SHORT);
-        superToast.setBackground(SuperToast.Background.BLACK);
+        superToast.setBackground(R.drawable.bg_color_toast_gray);
         superToast.setTextColor(Color.WHITE);
         superToast.show();
     }

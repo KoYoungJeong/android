@@ -115,6 +115,14 @@ public class IconWithTextView extends RelativeLayout {
         }
     }
 
+    public int getTextLine() {
+        return tvTitle.getLayout().getLineCount();
+    }
+
+    public CharSequence getText() {
+        return tvTitle.getText();
+    }
+
     public void setIconText(int textRes) {
         tvTitle.setText(textRes);
     }

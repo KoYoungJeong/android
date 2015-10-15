@@ -71,6 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/tv_star_mention_topic_name"
             android:layout_alignParentRight="true"
+            android:layout_marginLeft="18dp"
             android:layout_marginRight="3dp"
             android:textColor="@color/jandi_star_mention_item_date_text"
             android:textSize="13sp" />
