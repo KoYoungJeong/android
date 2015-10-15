@@ -193,11 +193,8 @@ public class PassCodeActivity extends BaseAppCompatActivity implements PassCodeP
 
         if (mode == MODE_TO_SAVE_PASSCODE || mode == MODE_TO_MODIFY_PASSCODE) {
             tvTitle.setText(getString(R.string.jandi_enter_passcode));
-            // TODO
-            tvSubTitle.setText("초기화 됨(l10N필요)");
-        } else {
-            tvSubTitle.setText(getString(R.string.jandi_incorrect_passcode));
         }
+        tvSubTitle.setText(getString(R.string.jandi_incorrect_passcode));
     }
 
     @Override
