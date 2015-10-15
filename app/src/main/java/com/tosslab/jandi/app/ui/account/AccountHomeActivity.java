@@ -317,7 +317,8 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
     public void showHelloDialog() {
 
         View customView = LayoutInflater.from(AccountHomeActivity.this).inflate(R.layout.dialog_account_home_help, null);
-        AlertDialog alertDialog = new AlertDialog.Builder(AccountHomeActivity.this)
+        AlertDialog alertDialog = new AlertDialog.Builder(AccountHomeActivity.this,
+                R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setView(customView)
                 .setPositiveButton(R.string.jandi_confirm, null)
                 .create();
@@ -336,7 +337,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
     @Override
     @UiThread
     public void showTextAlertDialog(String msg, DialogInterface.OnClickListener clickListener) {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setMessage(msg)
                 .setCancelable(false)
                 .setPositiveButton(getResources().getString(R.string.jandi_confirm),

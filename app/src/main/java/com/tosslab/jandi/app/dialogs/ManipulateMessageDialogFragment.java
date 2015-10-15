@@ -220,7 +220,8 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
             dismiss();
         });
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_280);
         builder.setView(mainView);
 
         return builder.create();

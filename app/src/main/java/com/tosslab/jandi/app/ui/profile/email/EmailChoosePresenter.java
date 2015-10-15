@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.ui.profile.email;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.ListView;
 
@@ -129,10 +129,9 @@ public class EmailChoosePresenter {
 
     @Deprecated
     public void showRetryEmailDialog(final String email) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder
-//                .setMessage(R.string.jandi_retry_auth_email)
-                .setNegativeButton(R.string.jandi_cancel, null)
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
+        builder.setNegativeButton(R.string.jandi_cancel, null)
                 .setPositiveButton(R.string.jandi_confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -156,7 +155,8 @@ public class EmailChoosePresenter {
     }
 
     public void showDeleteEmail(final String email) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(R.string.jandi_action_delete)
                 .setMessage(R.string.jandi_message_ask_about_deleting)
                 .setNegativeButton(R.string.jandi_cancel, null)

@@ -260,7 +260,8 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     @Override
     public void onShowDialog(int teamId, int messageId, int position) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setMessage(R.string.jandi_starred_unstar_from_item);
         LogUtil.e("messageId", messageId + "");
 

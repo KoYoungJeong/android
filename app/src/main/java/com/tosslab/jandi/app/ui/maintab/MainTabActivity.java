@@ -189,7 +189,8 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     private void showInvitePopup() {
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.InviteTeamMember);
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainTabActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainTabActivity.this,
+                R.style.JandiTheme_AlertDialog_FixWidth_280);
         View view = LayoutInflater.from(MainTabActivity.this).inflate(R.layout.dialog_invite_popup, null);
 
         builder.setOnDismissListener(dialog ->
@@ -372,16 +373,6 @@ public class MainTabActivity extends BaseAppCompatActivity {
     public void onEvent(InvitationDisableCheckEvent event) {
         invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_INVITE);
         invitationDialogExecutor.execute();
-    }
-
-    @UiThread
-    public void showTextDialog(String alertText) {
-        new AlertDialog.Builder(this)
-                .setMessage(alertText)
-                .setCancelable(false)
-                .setPositiveButton(getResources().getString(R.string.jandi_confirm),
-                        (dialog, id) -> dialog.dismiss())
-                .create().show();
     }
 
     public void onEvent(MessagePushEvent event) {

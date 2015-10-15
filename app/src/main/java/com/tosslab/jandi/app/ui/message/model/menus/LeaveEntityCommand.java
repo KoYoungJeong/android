@@ -48,7 +48,8 @@ class LeaveEntityCommand implements MenuCommand {
     }
 
     private void showPrivateTopicLeaveDialog(final int entityId, String entityName) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(entityName)
                 .setMessage(R.string.jandi_message_leave_private_topic)
                 .setNegativeButton(R.string.jandi_cancel, null)

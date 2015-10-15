@@ -107,7 +107,7 @@ public class InvitationDialogExecutor {
 
     @UiThread
     public void showTextDialog(String alertText) {
-        new AlertDialog.Builder(activity)
+        new AlertDialog.Builder(activity, R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setMessage(alertText)
                 .setCancelable(false)
                 .setPositiveButton(activity.getResources().getString(R.string.jandi_confirm),

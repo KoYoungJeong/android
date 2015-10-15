@@ -67,7 +67,8 @@ public class AlertUtil {
             return;
         }
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         if (!TextUtils.isEmpty(title)) {
             builder.setTitle(title);
         }
@@ -99,7 +100,8 @@ public class AlertUtil {
             return;
         }
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         if (titleResId != NONE_RES_ID) {
             builder.setTitle(activity.getString(titleResId));
         }

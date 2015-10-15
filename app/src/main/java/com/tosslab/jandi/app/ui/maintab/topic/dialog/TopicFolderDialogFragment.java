@@ -61,7 +61,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
             clickFolderDelete();
         });
 
-        return new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_280)
                 .setView(view)
                 .create();
     }
@@ -85,7 +85,8 @@ public class TopicFolderDialogFragment extends DialogFragment {
     }
 
     private void showRenameFolderDialog(int folderId, String name, int seq) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
 
         RelativeLayout vgInputEditText = (RelativeLayout) LayoutInflater
                 .from(getActivity()).inflate(R.layout.dialog_fragment_input_text, null);
@@ -122,7 +123,8 @@ public class TopicFolderDialogFragment extends DialogFragment {
     }
 
     private void showDeleteFolderDialog(int folderId) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
 
         builder.setMessage(R.string.jandi_folder_ask_delete)
                 .setPositiveButton(getActivity().getString(R.string.jandi_confirm), (dialog, which) -> {

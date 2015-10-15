@@ -131,7 +131,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
         view.findViewById(R.id.btn_entity_popup_cancel).setOnClickListener(v -> dismiss());
 
-        return new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_280)
                 .setView(view)
                 .create();
     }
@@ -209,7 +209,8 @@ public class EntityMenuDialogFragment extends DialogFragment {
     }
 
     private void showPrivateTopicLeaveDialog(final int entityId, String entityName) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(entityName)
                 .setMessage(R.string.jandi_message_leave_private_topic)
                 .setNegativeButton(R.string.jandi_cancel, null)

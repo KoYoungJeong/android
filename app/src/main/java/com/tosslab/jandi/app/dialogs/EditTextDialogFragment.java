@@ -152,7 +152,7 @@ public class EditTextDialogFragment extends DialogFragment {
         editTextInput.setText(currentMessage);
         editTextInput.setSelection(currentMessage.length());
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300);
         // creating the fullscreen dialog
         builder.setCancelable(true)
                 .setView(mainView)

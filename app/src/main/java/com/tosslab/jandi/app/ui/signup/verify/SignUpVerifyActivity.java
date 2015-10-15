@@ -192,7 +192,8 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     @UiThread
     @Override
     public void showExpiredVerificationCode() {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(SignUpVerifyActivity.this,
+                R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setMessage(getString(R.string.jandi_signup_expired_verification_code))
                 .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
                     presenter.requestNewVerificationCode(email);

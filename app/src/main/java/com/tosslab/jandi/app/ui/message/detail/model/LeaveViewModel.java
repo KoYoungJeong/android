@@ -57,7 +57,8 @@ public class LeaveViewModel {
     }
 
     private void showPrivateTopicLeaveDialog(FormattedEntity entity) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(entity.getName())
                 .setMessage(R.string.jandi_message_leave_private_topic)
                 .setNegativeButton(R.string.jandi_cancel, null)

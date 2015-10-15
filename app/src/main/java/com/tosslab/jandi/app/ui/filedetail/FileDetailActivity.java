@@ -435,7 +435,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread
     @Override
     public void showMoveDialog(int entityIdToBeShared) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(FileDetailActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(FileDetailActivity.this,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setMessage(getString(R.string.jandi_move_entity_after_share))
                 .setNegativeButton(R.string.jandi_cancel, null)
                 .setPositiveButton(R.string.jandi_confirm, new DialogInterface.OnClickListener() {
@@ -842,7 +843,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     public void showDeleteFileDialog(int fileId) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(R.string.jandi_action_delete)
                 .setMessage(getString(R.string.jandi_file_delete_message))
                 .setNegativeButton(R.string.jandi_cancel, null)
