@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.socket.emit;
 
-import com.tosslab.jandi.app.network.spring.JacksonMapper;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 
 import java.io.IOException;
 
