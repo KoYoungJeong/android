@@ -1,9 +1,7 @@
 package com.tosslab.jandi.app.network.socket.events.register;
 
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.github.nkzawa.emitter.Emitter;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -11,6 +9,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import io.socket.emitter.Emitter;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 2..
