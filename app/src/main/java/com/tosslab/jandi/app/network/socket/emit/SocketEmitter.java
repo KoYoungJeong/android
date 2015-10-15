@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.network.socket.emit;
 
-import com.github.nkzawa.emitter.Emitter;
+
+import io.socket.emitter.Emitter;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 2..
