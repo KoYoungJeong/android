@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.ui.login.adapter.IntroMainPagerAdapter;
 import com.tosslab.jandi.app.ui.login.tutorial.IntroTutorialFragment;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -64,6 +65,12 @@ public class IntroMainActivity extends BaseAppCompatActivity {
 
         BadgeUtils.clearBadge(IntroMainActivity.this);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     private void setUpView() {

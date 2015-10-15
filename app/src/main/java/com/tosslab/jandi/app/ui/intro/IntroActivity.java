@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -47,6 +48,12 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     void startOn() {
         presenter.setView(this);
         presenter.checkNewVersion(getApplicationContext(), startForInvite);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     @UiThread

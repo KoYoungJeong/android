@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -36,6 +37,7 @@ public class JandiPreference {
     // PARSE
     private static final String PREF_OLD_PARSE_CHANNEL_DELETED = "old_parse_channel_deleted";
     private static final String PREF_OLD_PARSE_FILE_CACHE_DELETED = "old_parse_file_cache_deleted";
+    public static final String PREF_SETTING_ORIENTATION = "setting_orientation";
 
     public static boolean isOldParseFileCacheDeleted(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
@@ -269,5 +271,10 @@ public class JandiPreference {
      */
     public static int getLastNetworkConnect(Context context) {
         return getSharedPreferences(context).getInt(PREF_LAST_NETWORK_CONNECT, -1);
+    }
+
+    public static String getOrientation(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString
+                (PREF_SETTING_ORIENTATION, "0");
     }
 }

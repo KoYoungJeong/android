@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
@@ -64,6 +65,7 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
     public void onResume() {
         super.onResume();
         isForeground = true;
+        ActivityHelper.setOrientation(this);
     }
 
     @Override

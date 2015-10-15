@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
 import org.androidannotations.annotations.AfterViews;
@@ -65,6 +66,12 @@ public class TopicDescriptionEditActivity extends BaseAppCompatActivity {
         etDescpription.setText(description);
         etDescpription.setSelection(etDescpription.length());
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     private String getTopicDescription(FormattedEntity entity) {

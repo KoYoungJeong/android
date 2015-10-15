@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.views.create.model.TopicCreateModel;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -54,6 +55,12 @@ public class TopicCreateActivity extends BaseAppCompatActivity {
         setupActionBar();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
+    }
+
     private void setupActionBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
@@ -75,8 +82,13 @@ public class TopicCreateActivity extends BaseAppCompatActivity {
 
     @TextChange(R.id.et_topic_create_title)
     void onTitleTextChange(TextView textView) {
+        // NullPointer 가 될 수 있음...?
+        if (menuCreatTopic == null) {
+            return;
+        }
 
-        if (TextUtils.isEmpty(textView.getText())) {
+        CharSequence text = textView.getText();
+        if (TextUtils.isEmpty(text) || TextUtils.getTrimmedLength(text) <= 0) {
             menuCreatTopic.setEnabled(false);
         } else {
             menuCreatTopic.setEnabled(true);
@@ -101,7 +113,7 @@ public class TopicCreateActivity extends BaseAppCompatActivity {
             return;
         }
 
-        if (topicCreateModel.validTitle(topicTitle)) {
+        if (topicCreateModel.invalideTitle(topicTitle)) {
             return;
         }
 

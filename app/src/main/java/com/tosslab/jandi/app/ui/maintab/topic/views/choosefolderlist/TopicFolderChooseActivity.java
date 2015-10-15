@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.presenter.T
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import org.androidannotations.annotations.AfterInject;
@@ -81,6 +82,12 @@ public class TopicFolderChooseActivity extends BaseAppCompatActivity implements 
         });
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MoveToaFolder);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     @UiThread
@@ -145,7 +152,7 @@ public class TopicFolderChooseActivity extends BaseAppCompatActivity implements 
 
         builder.setView(vgInputEditText)
                 .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
-                    createNewFolder(input.getText().toString());
+                    createNewFolder(input.getText().toString().trim());
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolder);
                 })
                 .setNegativeButton(R.string.jandi_cancel, (dialog, which) -> {
@@ -159,7 +166,7 @@ public class TopicFolderChooseActivity extends BaseAppCompatActivity implements 
         input.addTextChangedListener(new SimpleTextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() <= 0) {
+                if (s.toString().trim().length() <= 0) {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);

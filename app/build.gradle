@@ -83,7 +83,7 @@ dependencies {
     compile 'org.androidannotations:androidannotations-api:3.3.2'
     // Network
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.+'
-    compile('com.github.nkzawa:socket.io-client:0.6.0'){
+    compile('io.socket:socket.io-client:0.6.2'){
         exclude group:'org.json', module:'json'
     }
 
@@ -166,10 +166,23 @@ android {
             }
         }
 
+        landscapeDev {
+            applicationId('com.tosslab.jandi.app.landscapeDev')
+            versionName(defaultConfig.versionName + ".landscapeDev")
+        }
+
+        landscape {
+            applicationId('com.tosslab.jandi.app.landscape')
+            versionName(defaultConfig.versionName + ".landscape")
+        }
     }
 
     sourceSets {
         inhouse {
+            java.srcDirs = ['src/full/java']
+        }
+
+        landscae {
             java.srcDirs = ['src/full/java']
         }
     }

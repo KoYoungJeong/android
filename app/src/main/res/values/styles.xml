@@ -335,9 +335,13 @@
 
     <style name="Jandi.Default.ActionBar" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">?attr/colorPrimary</item>
-        <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
-        <!--<item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>-->
+        <item name="titleTextAppearance">@style/ToolbarText</item>
+    </style>
+
+    <style name="ToolbarText" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">20dp</item>
     </style>
 
     <style name="JandiSticker" />
@@ -353,6 +357,7 @@
 
     <style name="ImageCarousel.Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="titleTextAppearance">@style/ToolbarText</item>
     </style>
 
     <style name="ImageCarousel.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
@@ -376,7 +381,8 @@
     </style>
 
     <style name="JandiMainShare" />
-    <style name="JandiMainShare.Content" >
+
+    <style name="JandiMainShare.Content">
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:layout_marginRight">16dp</item>
     </style>

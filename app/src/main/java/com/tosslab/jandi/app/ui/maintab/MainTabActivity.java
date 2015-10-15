@@ -53,6 +53,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -268,8 +269,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        LogUtil.d("MainTabAcitivity.onResume");
-
+        ActivityHelper.setOrientation(this);
         // Entity의 리스트를 획득하여 저장한다.
         EventBus.getDefault().register(this);
 

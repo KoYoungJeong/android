@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.email.model.EmailChooseModel;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -60,6 +61,12 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
         getAccountEmailFromServer();
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.ChooseAnEmail);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     @OptionsItem(R.id.action_confirm)

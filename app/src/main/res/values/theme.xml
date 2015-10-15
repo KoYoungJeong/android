@@ -13,11 +13,14 @@
         <item name="alertDialogTheme">@style/JandiTheme.AlertDialog</item>
         <item name="dialogTheme">@style/JandiTheme.AlertDialog</item>
 
+        <item name="toolbarStyle">@style/Jandi.Default.ActionBar</item>
+        <item name="actionBarStyle">@style/Jandi.Default.ActionBar</item>
+
         <item name="android:textViewStyle">@style/JandiTheme.Widget.TextView</item>
 
     </style>
 
-    <style name="JandiTheme.Widget"/>
+    <style name="JandiTheme.Widget" />
 
     <style name="JandiTheme.Widget.TextView" parent="android:Widget.TextView"></style>
 
@@ -71,6 +74,9 @@
 
         <item name="colorPrimary">@color/backgournd_photo_actionbar</item>
         <item name="colorPrimaryDark">@color/backgournd_photo_actionbar</item>
+
+        <item name="actionBarStyle">@style/ImageCarousel.Toolbar</item>
+        <item name="toolbarStyle">@style/ImageCarousel.Toolbar</item>
     </style>
 
 </resources>

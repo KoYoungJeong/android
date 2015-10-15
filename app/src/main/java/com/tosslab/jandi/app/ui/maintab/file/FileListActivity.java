@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
 import org.androidannotations.annotations.AfterViews;
@@ -44,6 +45,12 @@ public class FileListActivity extends BaseAppCompatActivity {
                             FileListFragment.class.getName())
                     .commit();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     private void setUpActionBar() {

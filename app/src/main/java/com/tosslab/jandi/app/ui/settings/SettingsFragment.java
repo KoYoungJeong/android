@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.settings;
 import android.app.Activity;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
@@ -20,6 +21,7 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity_;
+import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.settings.viewmodel.SettingFragmentViewModel;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
@@ -76,6 +78,24 @@ public class SettingsFragment extends PreferenceFragment {
 
         boolean isPush = ((CheckBoxPreference) getPreferenceManager().findPreference("setting_push_auto_alarm")).isChecked();
         setPushSubState(isPush);
+
+        ListPreference settingOrientation = ((ListPreference) getPreferenceManager().findPreference
+                ("setting_orientation"));
+        String value = settingOrientation.getValue();
+
+        settingOrientation.setSummary(SettingsModel.getOrientationSummary(value));
+
+        settingOrientation.setOnPreferenceChangeListener((preference, newValue) -> {
+
+            String value1 = newValue.toString();
+
+            int orientation = SettingsModel.getOrientationValue(value1);
+            getActivity().setRequestedOrientation(orientation);
+
+            preference.setSummary(SettingsModel.getOrientationSummary(value1));
+            return true;
+        });
+
     }
 
     @Override

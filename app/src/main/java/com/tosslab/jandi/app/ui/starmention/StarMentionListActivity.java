@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.starmention.views.StarMentionListFragment;
 import com.tosslab.jandi.app.ui.starmention.views.StarMentionListFragment_;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -57,6 +58,12 @@ public class StarMentionListActivity extends BaseAppCompatActivity {
         } else {
             AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.Mentions);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     private void setupActionBar() {

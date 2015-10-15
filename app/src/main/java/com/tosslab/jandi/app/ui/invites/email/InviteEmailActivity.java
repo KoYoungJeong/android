@@ -18,7 +18,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.email.adapter.InviteEmailListAdapter;
 import com.tosslab.jandi.app.ui.invites.email.model.InviteEmailModel;
@@ -26,6 +25,7 @@ import com.tosslab.jandi.app.ui.invites.email.model.bean.EmailVO;
 import com.tosslab.jandi.app.ui.invites.email.presenter.InviteEmailPresenter;
 import com.tosslab.jandi.app.ui.invites.email.presenter.InviteEmailPresenterImpl;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -98,7 +98,7 @@ public class InviteEmailActivity extends BaseAppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        EntityManager entityManager = EntityManager.getInstance();
+        ActivityHelper.setOrientation(this);
     }
 
     @OptionsItem(android.R.id.home)
