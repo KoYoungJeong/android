@@ -268,7 +268,6 @@ public class MainTabActivity extends BaseAppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        LogUtil.e("tony", "onResume");
         LogUtil.d("MainTabAcitivity.onResume");
 
         // Entity의 리스트를 획득하여 저장한다.
@@ -299,13 +298,11 @@ public class MainTabActivity extends BaseAppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        LogUtil.e("tony", "onPause");
         EventBus.getDefault().unregister(this);
     }
 
     @Override
     protected void onDestroy() {
-        LogUtil.e("tony", "onDestroy");
         JandiSocketService.stopService(this);
         super.onDestroy();
     }

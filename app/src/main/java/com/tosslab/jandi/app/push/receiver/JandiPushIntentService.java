@@ -112,12 +112,7 @@ public class JandiPushIntentService extends IntentService {
     private void notifyPush(Context context, PushTO pushTO) {
         PushTO.PushInfo pushTOInfo;
         pushTOInfo = pushTO.getInfo();
-        ResLeftSideMenu leftSideMenu = null;
-        try {
-            leftSideMenu = jandiPushReceiverModel.getLeftSideMenu(pushTOInfo.getTeamId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ResLeftSideMenu leftSideMenu = jandiPushReceiverModel.getLeftSideMenu(pushTOInfo.getTeamId());
 
         if (leftSideMenu == null) {
             showNotification(context, pushTOInfo, false);
