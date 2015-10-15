@@ -352,10 +352,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @Override
     public void showTopicNameChangeDialog(int entityId, String entityName, int entityType) {
         android.app.DialogFragment newFragment = EditTextDialogFragment.newInstance(
-                EditTextDialogFragment.ACTION_MODIFY_TOPIC
-                , entityType
-                , entityId
-                , entityName);
+                EditTextDialogFragment.ACTION_MODIFY_TOPIC, entityType, entityId, entityName);
         newFragment.show(getActivity().getFragmentManager(), "dialog");
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TopicName);

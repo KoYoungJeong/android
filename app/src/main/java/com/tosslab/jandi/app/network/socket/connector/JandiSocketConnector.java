@@ -1,8 +1,5 @@
 package com.tosslab.jandi.app.network.socket.connector;
 
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -17,14 +14,14 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+
 /**
  * Created by Steve SeongUg Jung on 15. 4. 1..
  */
 public class JandiSocketConnector implements SocketConnector {
-    enum Status {
-        READY, CONNECTING, CONNECTED, DISCONNECTING
-    }
-
     public static final String TAG = "SocketConnector";
     private Socket socket;
     private Status status = Status.READY;
@@ -43,7 +40,7 @@ public class JandiSocketConnector implements SocketConnector {
                 options.multiplex = false;
                 options.forceNew = false;
                 options.timeout = 1000 * 10;
-                options.upgrade = false;
+                options.rememberUpgrade = true;
                 try {
                     options.sslContext = getSSLContext();
                 } catch (Exception e) {
@@ -141,5 +138,9 @@ public class JandiSocketConnector implements SocketConnector {
         }
         }, new SecureRandom());
         return context;
+    }
+
+    enum Status {
+        READY, CONNECTING, CONNECTED, DISCONNECTING
     }
 }

@@ -75,8 +75,13 @@ public class TopicCreateActivity extends BaseAppCompatActivity {
 
     @TextChange(R.id.et_topic_create_title)
     void onTitleTextChange(TextView textView) {
+        // NullPointer 가 될 수 있음...?
+        if (menuCreatTopic == null) {
+            return;
+        }
 
-        if (TextUtils.isEmpty(textView.getText())) {
+        CharSequence text = textView.getText();
+        if (TextUtils.isEmpty(text) || TextUtils.getTrimmedLength(text) <= 0) {
             menuCreatTopic.setEnabled(false);
         } else {
             menuCreatTopic.setEnabled(true);
@@ -101,7 +106,7 @@ public class TopicCreateActivity extends BaseAppCompatActivity {
             return;
         }
 
-        if (topicCreateModel.validTitle(topicTitle)) {
+        if (topicCreateModel.invalideTitle(topicTitle)) {
             return;
         }
 
