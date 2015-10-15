@@ -48,6 +48,16 @@ public class JandiApplication extends MultiDexApplication {
         JandiApplication.context = context;
     }
 
+    static boolean isApplicationActive = false;
+
+    public static boolean isApplicationActive() {
+        return isApplicationActive;
+    }
+
+    public static void setIsApplicationActive(boolean isApplicationActive) {
+        JandiApplication.isApplicationActive = isApplicationActive;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -124,6 +134,7 @@ public class JandiApplication extends MultiDexApplication {
             if (resumed == stopped) {
                 LogUtil.e(TAG, "resumed == stopped > Active");
                 updatePlatformStatus(true);
+                setIsApplicationActive(true);
             }
 
             resumed++;
@@ -144,6 +155,7 @@ public class JandiApplication extends MultiDexApplication {
             if (resumed == stopped) {
                 LogUtil.e(TAG, "resumed == stopped > Deactive");
                 updatePlatformStatus(false);
+                setIsApplicationActive(false);
             }
         }
 

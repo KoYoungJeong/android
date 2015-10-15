@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -21,6 +22,10 @@ public class SocketServiceStarter extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if (!JandiApplication.isApplicationActive()) {
+            return;
+        }
+
         String action = intent.getAction();
         switch (action) {
             case START_SOCKET_SERVICE:
