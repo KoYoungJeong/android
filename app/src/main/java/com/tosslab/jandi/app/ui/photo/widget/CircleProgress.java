@@ -74,6 +74,7 @@ public class CircleProgress extends View {
         canvas.drawCircle(halfOfWidth, halfOfHeight, (halfOfWidth - (bgStrokeWidth / 2)), bgPaint);
 
         if (max <= 0) {
+            canvas.save();
             return;
         }
 
