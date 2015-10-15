@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.network.socket.events.register;
 
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.Socket;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
+
+import io.socket.emitter.Emitter;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 2..
