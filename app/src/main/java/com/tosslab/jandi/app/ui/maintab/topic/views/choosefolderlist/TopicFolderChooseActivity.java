@@ -152,7 +152,7 @@ public class TopicFolderChooseActivity extends BaseAppCompatActivity implements 
 
         builder.setView(vgInputEditText)
                 .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
-                    createNewFolder(input.getText().toString());
+                    createNewFolder(input.getText().toString().trim());
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolder);
                 })
                 .setNegativeButton(R.string.jandi_cancel, (dialog, which) -> {
@@ -166,7 +166,7 @@ public class TopicFolderChooseActivity extends BaseAppCompatActivity implements 
         input.addTextChangedListener(new SimpleTextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() <= 0) {
+                if (s.toString().trim().length() <= 0) {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
