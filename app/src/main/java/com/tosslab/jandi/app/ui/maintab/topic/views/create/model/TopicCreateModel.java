@@ -53,8 +53,8 @@ public class TopicCreateModel {
         BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
     }
 
-    public boolean validTitle(String topicTitle) {
-        return TextUtils.isEmpty(topicTitle);
+    public boolean invalideTitle(String topicTitle) {
+        return TextUtils.isEmpty(topicTitle) || TextUtils.getTrimmedLength(topicTitle) <= 0;
     }
 
     public void trackTopicCreateSuccess(int topicId) {

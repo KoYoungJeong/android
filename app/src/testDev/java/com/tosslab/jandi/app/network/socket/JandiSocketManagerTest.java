@@ -1,8 +1,5 @@
 package com.tosslab.jandi.app.network.socket;
 
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
@@ -23,6 +20,10 @@ import org.robolectric.RuntimeEnvironment;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 import static junit.framework.Assert.fail;
 

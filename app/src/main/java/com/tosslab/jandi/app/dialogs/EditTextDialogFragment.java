@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -290,6 +291,7 @@ public class EditTextDialogFragment extends DialogFragment {
             case ACTION_CREATE_TOPIC:
             case ACTION_MODIFY_TOPIC:
                 confirm.setEnabled((inputLength > 0)
+                        && TextUtils.getTrimmedLength(editable) > 0
                         && (inputLength < MAX_LENGTH_OF_TOPIC_NAME)
                         && !editable.equals(currentMessage));
                 break;
