@@ -106,12 +106,13 @@ public class PassCodeActivity extends BaseAppCompatActivity implements PassCodeP
 
     @AfterViews
     void initViews() {
-        final boolean isModifyMode = mode == MODE_TO_MODIFY_PASSCODE;
+        final boolean isPassCodeSettingMode = (mode == MODE_TO_MODIFY_PASSCODE)
+                || (mode == MODE_TO_SAVE_PASSCODE);
 
         Context baseContext = getBaseContext();
         adapter = new PassCodeAdapter(baseContext, position -> {
             if (position == PassCodeAdapter.CANCEL) {
-                if (isModifyMode) {
+                if (isPassCodeSettingMode) {
                     onBackPressed();
                 }
             } else if (position == PassCodeAdapter.DELETE) {
@@ -121,7 +122,7 @@ public class PassCodeActivity extends BaseAppCompatActivity implements PassCodeP
             }
         });
 
-        adapter.showCancel(isModifyMode);
+        adapter.showCancel(isPassCodeSettingMode);
 
         GridLayoutManager layoutManager = new GridLayoutManager(baseContext, 3);
 
@@ -130,7 +131,7 @@ public class PassCodeActivity extends BaseAppCompatActivity implements PassCodeP
         float dividerSize = baseContext.getResources().getDisplayMetrics().density * 10;
         gvPassCode.addItemDecoration(new GridRecyclerViewDivider(dividerSize));
 
-        if (isModifyMode) {
+        if (mode == MODE_TO_MODIFY_PASSCODE) {
             tvSubTitle.setText(getString(R.string.jandi_enter_new_passcode));
         }
 
