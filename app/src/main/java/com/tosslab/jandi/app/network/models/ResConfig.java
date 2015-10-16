@@ -9,8 +9,9 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResConfig {
-    public Version versions;
+    public Versions versions;
     public Maintenance maintenance;
+    public LatestVersions latestVersions;
 
     @Override
     public String toString() {
@@ -21,15 +22,21 @@ public class ResConfig {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class Version {
+    public static class Versions {
         public String ios;
         public int android;
+        public String osx;
+        public String web;
+        public String windows;
 
         @Override
         public String toString() {
-            return "Version{" +
+            return "Versions{" +
                     "ios='" + ios + '\'' +
                     ", android=" + android +
+                    ", osx='" + osx + '\'' +
+                    ", web='" + web + '\'' +
+                    ", windows='" + windows + '\'' +
                     '}';
         }
     }
@@ -48,4 +55,26 @@ public class ResConfig {
                     '}';
         }
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class LatestVersions {
+        public String ios;
+        public int android;
+        public String osx;
+        public String web;
+        public String windows;
+
+        @Override
+        public String toString() {
+            return "LatestVersions{" +
+                    "ios='" + ios + '\'' +
+                    ", android=" + android +
+                    ", osx='" + osx + '\'' +
+                    ", web='" + web + '\'' +
+                    ", windows='" + windows + '\'' +
+                    '}';
+        }
+    }
+
 }

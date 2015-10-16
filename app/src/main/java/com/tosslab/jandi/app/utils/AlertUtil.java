@@ -57,7 +57,7 @@ public class AlertUtil {
                 cancelable);
     }
 
-    static void showDialog(Activity activity,
+    public static void showDialog(Activity activity,
                            String title, String message,
                            int positiveResId, DialogInterface.OnClickListener positiveListener,
                            int neutralResId, DialogInterface.OnClickListener neutralListener,
@@ -89,7 +89,7 @@ public class AlertUtil {
     }
 
 
-    static void showDialog(Activity activity,
+    public static void showDialog(Activity activity,
                            int titleResId, int messageResId,
                            int positiveResId, DialogInterface.OnClickListener positiveListener,
                            int neutralResId, DialogInterface.OnClickListener neutralListener,
