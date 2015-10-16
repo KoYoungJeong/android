@@ -9,11 +9,14 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.passcode.PassCodeActivity;
 import com.tosslab.jandi.app.ui.passcode.PassCodeActivity_;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by tonyjs on 15. 10. 12..
  */
 public class UnLockPassCodeManager {
+
+    public static final String TAG = UnLockPassCodeManager.class.getSimpleName();
 
     private static UnLockPassCodeManager sInstance;
 
@@ -23,6 +26,7 @@ public class UnLockPassCodeManager {
 
     public static UnLockPassCodeManager getInstance() {
         if (sInstance == null) {
+            LogUtil.i(TAG, "newInstance");
             sInstance = new UnLockPassCodeManager();
         }
         return sInstance;
@@ -31,15 +35,20 @@ public class UnLockPassCodeManager {
     public void unLockPassCodeIfNeed(Activity activity) {
         String passCode = JandiPreference.getPassCode(JandiApplication.getContext());
         if (TextUtils.isEmpty(passCode)) {
+            LogUtil.e(TAG, "TextUtils.isEmpty(passCode)");
             return;
         }
 
         if (!isApplicationActivate) {
+            LogUtil.e(TAG, "!isApplicationActivate");
             return;
         }
 
         if (hasUnLocked) {
+            LogUtil.e(TAG, "hasUnLocked");
             return;
+        } else {
+            LogUtil.d(TAG, "!hasUnLocked");
         }
 
         Intent intent = PassCodeActivity_.intent(activity)
