@@ -7,8 +7,8 @@ import android.text.TextUtils;
 import android.webkit.WebView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;

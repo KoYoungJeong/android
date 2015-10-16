@@ -2,8 +2,6 @@ package com.tosslab.jandi.app.ui.signup.account;
 
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
