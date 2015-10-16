@@ -52,7 +52,6 @@ public class StarMentionListActivity extends BaseAppCompatActivity {
             setupTabButton();
             onTabClick(allTabView);
         }
-
         if (type == TYPE_STAR_LIST) {
             AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.Stars);
         } else {
@@ -67,7 +66,6 @@ public class StarMentionListActivity extends BaseAppCompatActivity {
     }
 
     private void setupActionBar() {
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -150,7 +148,6 @@ public class StarMentionListActivity extends BaseAppCompatActivity {
             }
 
         }
-
         fragmentTransaction.commit();
     }
 

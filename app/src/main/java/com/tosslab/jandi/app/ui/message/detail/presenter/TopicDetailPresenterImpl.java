@@ -38,9 +38,6 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     @Bean
     LeaveViewModel leaveViewModel;
 
-//    @Bean
-//    InvitationViewModel invitationViewModel;
-
     @Bean
     EntityClientManager entityClientManager;
 
@@ -48,7 +45,6 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
     @Override
     public void setView(View view) {
-
         this.view = view;
     }
 
@@ -87,7 +83,6 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                 .entityId(entityId)
                 .type(MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC)
                 .start();
-//        invitationViewModel.inviteMembersToEntity(activity, entityId);
     }
 
     @Override

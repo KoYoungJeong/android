@@ -90,7 +90,6 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     @Override
     public void onJoinedTeamSelect(int teamId, boolean firstJoin) {
         view.showProgressWheel();
-
         try {
             accountHomeModel.updateSelectTeam(teamId);
             ResLeftSideMenu entityInfo = accountHomeModel.getEntityInfo(teamId);
@@ -156,7 +155,6 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Override
     public void onTeamCreateAcceptResult() {
-
         ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo();
         onJoinedTeamSelect(selectedTeamInfo.getTeamId(), true);
     }
@@ -260,7 +258,6 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Background
     void getTeamInfo() {
-
         refreshAccountInfo();
 
         try {

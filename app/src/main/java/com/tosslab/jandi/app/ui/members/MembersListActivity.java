@@ -100,7 +100,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     }
 
     private AnalyticsValue.Screen getScreen() {
-
         switch (type) {
             case TYPE_MEMBERS_JOINABLE_TOPIC:
                 return AnalyticsValue.Screen.InviteTeamMembers;
@@ -110,7 +109,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
             case TYPE_MEMBERS_LIST_TOPIC:
                 return AnalyticsValue.Screen.Participants;
         }
-
     }
 
     @AfterViews
