@@ -36,6 +36,7 @@
         <activity
             android:name=".ui.signup.verify.SignUpVerifyActivity_"
             android:label="@string/jandi_signup_verify_title"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
 
         <activity
