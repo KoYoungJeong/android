@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.adapter.TopicRecyclerAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.model.UnjoinTopicDialog;
@@ -20,7 +19,6 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.presenter.
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
