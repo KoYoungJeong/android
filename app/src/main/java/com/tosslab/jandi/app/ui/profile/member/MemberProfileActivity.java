@@ -144,13 +144,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
         final String profileImageUrlLarge = member.getUserLargeProfileUrl();
 
-        // 기본 프로필 이미지 인 경우 디폴트 컬러를 보여준다.
-        if (!(hasChangedProfileImage = hasChangedProfileImage(profileImageUrlLarge))) {
-            int color = getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
-            vProfileImageLargeOverlay.setBackgroundColor(color);
-        }
+        hasChangedProfileImage = hasChangedProfileImage(profileImageUrlLarge);
 
-        initSwipeLayout();
+        initSwipeLayout(hasChangedProfileImage);
 
         initLargeImageSize(profileImageUrlLarge);
 
@@ -229,9 +225,11 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         addButtons(member);
     }
 
-    private void initSwipeLayout() {
+    private void initSwipeLayout(boolean setViewToAlpha) {
         swipeExitLayout.setOnExitListener(this::finish);
-        swipeExitLayout.sevBackgroundDimView(vProfileImageLargeOverlay);
+        if (setViewToAlpha) {
+            swipeExitLayout.setViewToAlpha(vProfileImageLargeOverlay);
+        }
         swipeExitLayout.setStatusListener(new SwipeExitLayout.StatusListener() {
             private float lastDistance;
 
@@ -310,8 +308,12 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     private void loadLargeImage(String profileImageUrlLarge) {
-        Drawable placeHolder = new ColorDrawable(
-                getResources().getColor(R.color.jandi_member_profile_img_overlay_default));
+        int defaultColor = getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
+        if (!hasChangedProfileImage) {
+            vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
+            return;
+        }
+        Drawable placeHolder = new ColorDrawable(defaultColor);
         Ion.with(ivProfileImageLarge)
                 .placeholder(placeHolder)
                 .error(placeHolder)
@@ -383,8 +385,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(0, R.anim.slide_out_bottom_with_alpha);
-//        overridePendingTransition(0, 0);
+        overridePendingTransition(0, R.anim.alpha_on_exit);
     }
 
     @Click(R.id.btn_member_profile_star)

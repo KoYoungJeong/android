@@ -99,7 +99,7 @@ public class SwipeExitLayout extends FrameLayout {
         statusListenerList.add(statusListener);
     }
 
-    public void sevBackgroundDimView(View dimView) {
+    public void setViewToAlpha(View dimView) {
         vBackgroundDim = dimView;
     }
 

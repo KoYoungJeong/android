@@ -18,21 +18,6 @@
             android:background="@color/jandi_member_profile_img_overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/vg_member_profile_img_large_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignBottom="@id/vg_member_profile_img_large">
-
-        <ImageView
-            android:id="@+id/btn_member_profile_close"
-            android:layout_width="@dimen/jandi_member_profile_btn_close_width"
-            android:layout_height="@dimen/jandi_member_profile_btn_close_height"
-            android:layout_marginTop="@dimen/jandi_member_profile_margin_top"
-            android:scaleType="center"
-            android:src="@drawable/actionbar_icon_remove"/>
 
         <LinearLayout
             android:layout_gravity="center"
@@ -63,7 +48,6 @@
                 android:textColor="@color/white"
                 android:textSize="15sp"/>
         </LinearLayout>
-
     </FrameLayout>
 
     <com.tosslab.jandi.app.views.SwipeExitLayout
@@ -194,6 +178,14 @@
         </RelativeLayout>
 
     </com.tosslab.jandi.app.views.SwipeExitLayout>
+
+    <ImageView
+        android:id="@+id/btn_member_profile_close"
+        android:layout_width="@dimen/jandi_member_profile_btn_close_width"
+        android:layout_height="@dimen/jandi_member_profile_btn_close_height"
+        android:layout_marginTop="@dimen/jandi_member_profile_margin_top"
+        android:scaleType="center"
+        android:src="@drawable/actionbar_icon_remove"/>
 
     <uk.co.senab.photoview.PhotoView
         android:id="@+id/iv_member_profile_img_full"
