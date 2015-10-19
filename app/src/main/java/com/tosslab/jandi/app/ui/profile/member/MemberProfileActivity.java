@@ -420,7 +420,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
             vgProfileTeamButtons.addView(
                     getButton(R.drawable.icon_profile_mention,
-                            getString(R.string.jandi_member_profile_mention), (v) -> {
+                            getString(R.string.jandi_mention_mentions), (v) -> {
                                 startStarMentionListActivity();
                             }));
         } else {
