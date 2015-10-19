@@ -131,6 +131,7 @@ public class ChatChooseAdapter extends BaseAdapter {
             chatCHooseViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.tv_entity_listitem_user_count);
             chatCHooseViewHolder.disableLineThrouthView = convertView.findViewById(R.id.iv_entity_listitem_line_through);
             chatCHooseViewHolder.disableCoverView = convertView.findViewById(R.id.v_entity_listitem_warning);
+            chatCHooseViewHolder.ivKick = convertView.findViewById(R.id.iv_entity_listitem_user_kick);
 
 
             convertView.setTag(R.id.chatchoose_item, chatCHooseViewHolder);
@@ -142,6 +143,7 @@ public class ChatChooseAdapter extends BaseAdapter {
         ChatChooseItem item = getItem(position);
 
         chatCHooseViewHolder.textViewName.setText(item.getName());
+        chatCHooseViewHolder.ivKick.setVisibility(View.GONE);
 
         if (!TextUtils.isEmpty(item.getEmail())) {
             chatCHooseViewHolder.textViewAdditional.setVisibility(View.VISIBLE);
@@ -215,6 +217,7 @@ public class ChatChooseAdapter extends BaseAdapter {
         public TextView textViewAdditional;
         public View disableLineThrouthView;
         public View disableCoverView;
+        public View ivKick;
     }
 
     static class DisableFoldingViewHolder {
