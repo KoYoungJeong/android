@@ -153,7 +153,8 @@ public class JandiInterfaceModel {
     public int getEntityId(int teamId, int roomId, String roomType) {
 
         if (!isChatType(roomType)) {
-            if (hasRoom(roomId)) {
+            // Room Type 은 RoomId = EntityId
+            if (hasEntity(roomId)) {
                 return roomId;
             } else {
                 getEntityInfo();
@@ -161,11 +162,16 @@ public class JandiInterfaceModel {
             }
         } else {
             EntityManager entityManager = EntityManager.getInstance();
-            return getChatMemberId(teamId, roomId, entityManager);
+            int chatMemberId = getChatMemberId(teamId, roomId, entityManager);
+
+            if (!hasEntity(chatMemberId)) {
+                getEntityInfo();
+            }
+            return chatMemberId;
         }
     }
 
-    private boolean hasRoom(int roomId) {
+    private boolean hasEntity(int roomId) {
         return EntityManager.getInstance().getEntityById(roomId) != EntityManager.UNKNOWN_USER_ENTITY;
     }
 
