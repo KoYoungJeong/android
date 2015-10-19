@@ -117,7 +117,6 @@ public class PureCommentViewHolder implements BodyViewHolder {
     @Override
     public int getLayoutId() {
         return R.layout.item_message_cmt_without_file_v2;
-
     }
 
     @Override

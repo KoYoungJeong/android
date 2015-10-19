@@ -444,6 +444,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
             BodyViewHolder.Type type = BodyViewHolder.Type.values()[itemViewType];
             switch (type) {
+                case FileWithoutDivider:
                 case File:
                     AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.FileView_ByFile);
                     break;

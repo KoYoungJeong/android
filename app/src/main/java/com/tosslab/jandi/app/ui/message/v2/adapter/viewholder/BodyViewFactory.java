@@ -19,17 +19,65 @@ public class BodyViewFactory {
 
         switch (type) {
             case CollapseComment:
-                return new CollapseCommentViewHolder();
+                return new Divider.Builder()
+                        .divider(true)
+                        .bodyViewHolder(new CollapseCommentViewHolder())
+                        .build();
             case PureComment:
-                return new PureCommentViewHolder();
+                return new Divider.Builder()
+                        .divider(true)
+                        .bodyViewHolder(new PureCommentViewHolder())
+                        .build();
             case FileComment:
-                return new FileCommentViewHolder();
+                return new Divider.Builder()
+                        .divider(true)
+                        .bodyViewHolder(new FileCommentViewHolder())
+                        .build();
             case CollapseStickerComment:
-                return new CollapseStickerCommentViewHolder();
+                return new Divider.Builder()
+                        .divider(true)
+                        .bodyViewHolder(new CollapseStickerCommentViewHolder())
+                        .build();
             case PureStickerComment:
-                return new PureStickerCommentViewHolder();
+                return new Divider.Builder()
+                        .divider(true)
+                        .bodyViewHolder(new PureStickerCommentViewHolder())
+                        .build();
             case FileStickerComment:
-                return new FileStickerCommentViewHolder();
+                return new Divider.Builder()
+                        .divider(false)
+                        .bodyViewHolder(new FileStickerCommentViewHolder())
+                        .build();
+            case CollapseCommentWioutDivider:
+                return new Divider.Builder()
+                        .divider(false)
+                        .bodyViewHolder(new CollapseCommentViewHolder())
+                        .build();
+            case PureCommentWioutDivider:
+                return new Divider.Builder()
+                        .divider(false)
+                        .bodyViewHolder(new PureCommentViewHolder())
+                        .build();
+            case FileCommentWioutDivider:
+                return new Divider.Builder()
+                        .divider(false)
+                        .bodyViewHolder(new FileCommentViewHolder())
+                        .build();
+            case CollapseStickerCommentWioutDivider:
+                return new Divider.Builder()
+                        .divider(false)
+                        .bodyViewHolder(new CollapseStickerCommentViewHolder())
+                        .build();
+            case PureStickerCommentWioutDivider:
+                return new Divider.Builder()
+                        .divider(false)
+                        .bodyViewHolder(new PureStickerCommentViewHolder())
+                        .build();
+            case FileStickerCommentWioutDivider:
+                return new Divider.Builder()
+                        .divider(false)
+                        .bodyViewHolder(new FileStickerCommentViewHolder())
+                        .build();
             case PureMessage:
                 return new PureMessageViewHolder();
             case Sticker:
@@ -37,9 +85,25 @@ public class BodyViewFactory {
             case PureSticker:
                 return new PureStickerViewHolder();
             case File:
-                return FileViewHolder.createFileViewHolder();
+                return new Divider.Builder()
+                        .divider(true)
+                        .bodyViewHolder(new FileViewHolder())
+                        .build();
             case Image:
-                return new ImageViewHolder();
+                return new Divider.Builder()
+                        .divider(true)
+                        .bodyViewHolder(new ImageViewHolder())
+                        .build();
+            case FileWithoutDivider:
+                return new Divider.Builder()
+                        .divider(false)
+                        .bodyViewHolder(new FileViewHolder())
+                        .build();
+            case ImageWithoutDivider:
+                return new Divider.Builder()
+                        .divider(false)
+                        .bodyViewHolder(new ImageViewHolder())
+                        .build();
             case Dummy:
                 return new DummyViewHolder();
             case DummyPure:
@@ -54,36 +118,36 @@ public class BodyViewFactory {
         }
     }
 
-    public static BodyViewHolder.Type getContentType(ResMessages.Link message,
-                                                     ResMessages.Link beforeMessage) {
-        ResMessages.OriginalMessage currentMessage = message.message;
+    public static BodyViewHolder.Type getContentType(ResMessages.Link previousLink, ResMessages.Link currentLink,
+                                                     ResMessages.Link nextLink) {
+        ResMessages.OriginalMessage currentMessage = currentLink.message;
 
-        if (TextUtils.equals(message.status, "event")) {
+        if (TextUtils.equals(currentLink.status, "event")) {
             return BodyViewHolder.Type.Event;
         }
 
         if (currentMessage instanceof ResMessages.TextMessage || currentMessage instanceof ResMessages.StickerMessage) {
 
-            if (beforeMessage != null
+            if (previousLink != null
                     &&
-                    (beforeMessage.message instanceof ResMessages.TextMessage
-                            || beforeMessage.message instanceof ResMessages.StickerMessage)
-                    && currentMessage.writerId == beforeMessage.message.writerId
-                    && DateComparatorUtil.isSince5min(currentMessage.createTime, beforeMessage.message.createTime)
-                    && isSameDay(message, beforeMessage)) {
-                if (message instanceof DummyMessageLink) {
+                    (previousLink.message instanceof ResMessages.TextMessage
+                            || previousLink.message instanceof ResMessages.StickerMessage)
+                    && currentMessage.writerId == previousLink.message.writerId
+                    && DateComparatorUtil.isSince5min(currentMessage.createTime, previousLink.message.createTime)
+                    && isSameDay(currentLink, previousLink)) {
+                if (currentLink instanceof DummyMessageLink) {
                     return BodyViewHolder.Type.DummyPure;
                 } else {
                     if (!(currentMessage instanceof ResMessages.TextMessage)) {
                         return BodyViewHolder.Type.PureSticker;
                     }
 
-                    boolean hasLinkPreviewBoth = message.hasLinkPreview() && beforeMessage.hasLinkPreview();
+                    boolean hasLinkPreviewBoth = currentLink.hasLinkPreview() && previousLink.hasLinkPreview();
 
                     return hasLinkPreviewBoth ? BodyViewHolder.Type.PureLinkPreviewMessage : BodyViewHolder.Type.PureMessage;
                 }
             } else {
-                if (message instanceof DummyMessageLink) {
+                if (currentLink instanceof DummyMessageLink) {
                     return BodyViewHolder.Type.Dummy;
                 } else {
                     return currentMessage instanceof ResMessages.TextMessage ? BodyViewHolder.Type.Message : BodyViewHolder.Type.Sticker;
@@ -92,23 +156,45 @@ public class BodyViewFactory {
 
         } else if (currentMessage instanceof ResMessages.FileMessage) {
             String fileType = ((ResMessages.FileMessage) currentMessage).content.icon;
-            if (TextUtils.isEmpty(fileType) || fileType.equals("null")) {
-                return BodyViewHolder.Type.File;
-            }
-            if (fileType.startsWith("image")
-                    && !TextUtils.equals(currentMessage.status, "archived")) {
-                return BodyViewHolder.Type.Image;
+
+            boolean isImage = !TextUtils.isEmpty(fileType)
+                    && fileType.startsWith("image")
+                    && !TextUtils.equals(currentMessage.status, "archived");
+
+
+            BodyViewHolder.Type defaultType;
+            if (isImage) {
+                defaultType = BodyViewHolder.Type.Image;
             } else {
-                return BodyViewHolder.Type.File;
+                defaultType = BodyViewHolder.Type.File;
+            }
+
+            boolean notNeedDivider = nextLink != null
+                    && isCommentToNext(nextLink)
+                    && nextLink.feedbackId == currentMessage.id
+                    && currentMessage.writerId == nextLink.message.writerId
+                    && DateComparatorUtil.isSince5min(currentMessage.createTime, nextLink.message.createTime);
+
+            if (nextLink == null) {
+                notNeedDivider = true;
+            }
+            if (notNeedDivider) {
+                if (isImage) {
+                    return BodyViewHolder.Type.ImageWithoutDivider;
+                } else {
+                    return BodyViewHolder.Type.FileWithoutDivider;
+                }
+            } else {
+                return defaultType;
             }
         } else if (currentMessage instanceof ResMessages.CommentMessage || currentMessage instanceof ResMessages.CommentStickerMessage) {
-            int messageFeedbackId = message.feedbackId;
+            int messageFeedbackId = currentLink.feedbackId;
 
-            boolean isFeedbackMessage = false;
+            boolean isFeedbackOrFile = false;
 
-            if (beforeMessage != null) {
-                isFeedbackMessage = messageFeedbackId == beforeMessage.messageId
-                        || messageFeedbackId == beforeMessage.feedbackId;
+            if (previousLink != null) {
+                isFeedbackOrFile = messageFeedbackId == previousLink.messageId
+                        || messageFeedbackId == previousLink.feedbackId;
             }
 
             /*
@@ -123,11 +209,21 @@ public class BodyViewFactory {
              */
             boolean isStickerMessage = currentMessage instanceof ResMessages.CommentStickerMessage;
 
-            if (beforeMessage != null
-                    && isFeedbackMessage
-                    && isSameDay(message, beforeMessage)) {
+            boolean notNeedDivider = nextLink != null
+                    && isCommentToNext(nextLink)
+                    && nextLink.feedbackId == currentMessage.feedbackId
+                    && currentMessage.writerId == nextLink.message.writerId
+                    && DateComparatorUtil.isSince5min(currentMessage.createTime, nextLink.message.createTime);
 
-                ResMessages.OriginalMessage beforeOriginalMessage = beforeMessage.message;
+            if (nextLink == null) {
+                notNeedDivider = true;
+            }
+
+            if (previousLink != null
+                    && isFeedbackOrFile
+                    && isSameDay(currentLink, previousLink)) {
+
+                ResMessages.OriginalMessage beforeOriginalMessage = previousLink.message;
 
                 /*
                  * 1. 5분이내에 작성된 경우
@@ -138,17 +234,33 @@ public class BodyViewFactory {
 
 
                 if (DateComparatorUtil.isSince5min(currentMessage.createTime, beforeOriginalMessage.createTime)
-                        && currentMessage.writerId == beforeOriginalMessage.writerId
-                        && messageFeedbackId != beforeMessage.messageId) {
-                    return isStickerMessage ? BodyViewHolder.Type.CollapseStickerComment : BodyViewHolder.Type.CollapseComment;
+                        && currentMessage.writerId == beforeOriginalMessage.writerId) {
+                    if (notNeedDivider) {
+                        return isStickerMessage ? BodyViewHolder.Type.CollapseStickerCommentWioutDivider : BodyViewHolder.Type.CollapseCommentWioutDivider;
+                    } else {
+                        return isStickerMessage ? BodyViewHolder.Type.CollapseStickerComment : BodyViewHolder.Type.CollapseComment;
+                    }
                 } else {
-                    return isStickerMessage ? BodyViewHolder.Type.PureStickerComment : BodyViewHolder.Type.PureComment;
+                    if (notNeedDivider) {
+                        return isStickerMessage ? BodyViewHolder.Type.PureStickerCommentWioutDivider : BodyViewHolder.Type.PureCommentWioutDivider;
+                    } else {
+                        return isStickerMessage ? BodyViewHolder.Type.PureStickerComment : BodyViewHolder.Type.PureComment;
+                    }
                 }
             } else {
-                return isStickerMessage ? BodyViewHolder.Type.FileStickerComment : BodyViewHolder.Type.FileComment;
+                if (notNeedDivider) {
+                    return isStickerMessage ? BodyViewHolder.Type.FileStickerCommentWioutDivider : BodyViewHolder.Type.FileCommentWioutDivider;
+                } else {
+                    return isStickerMessage ? BodyViewHolder.Type.FileStickerComment : BodyViewHolder.Type.FileComment;
+                }
             }
         }
         return BodyViewHolder.Type.Message;
+    }
+
+    private static boolean isCommentToNext(ResMessages.Link nextLink) {
+        return nextLink.message instanceof ResMessages.CommentMessage
+                || nextLink.message instanceof ResMessages.CommentStickerMessage;
     }
 
     private static boolean isSameDay(ResMessages.Link message, ResMessages.Link beforeMessage) {

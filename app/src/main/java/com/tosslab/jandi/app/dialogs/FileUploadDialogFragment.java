@@ -136,7 +136,7 @@ public class FileUploadDialogFragment extends DialogFragment {
 
         // File 코멘트
         final EditText editTextFileComment = (EditText) mainView.findViewById(R.id.et_comment_with_file_upload);
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setView(mainView)
                 .setTitle(R.string.title_file_upload)
                 .setCancelable(true)

@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.Divider;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
@@ -78,16 +79,19 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         View convertView = LayoutInflater.from(context).inflate(viewHolder.getLayoutId(), parent, false);
         viewHolder.initView(convertView);
 
-        RecyclerBodyViewHolder recyclerBodyViewHolder = new RecyclerBodyViewHolder(convertView, viewHolder);
-
-        return recyclerBodyViewHolder;
+        return new RecyclerBodyViewHolder(convertView, viewHolder);
     }
 
     @Override
     public void onBindViewHolder(RecyclerBodyViewHolder viewHolder, int position) {
 
         ResMessages.Link item = getItem(position);
-        viewHolder.getViewHolder().bindData(item, teamId, roomId, entityId);
+        BodyViewHolder bodyViewHolder = viewHolder.getViewHolder();
+        bodyViewHolder.bindData(item, teamId, roomId, entityId);
+
+        if (bodyViewHolder instanceof Divider) {
+            ((Divider) bodyViewHolder).setUpDividerVisible();
+        }
 
         if (item.id == lastMarker) {
             if (markerAnimState == AnimState.Idle) {
@@ -112,9 +116,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         }
 
         if (position > 0 && position < getItemCount() - 1 - getDummyMessageCount()) {
-            viewHolder.getViewHolder().setLastReadViewVisible(item.id, lastReadLinkId);
+            bodyViewHolder.setLastReadViewVisible(item.id, lastReadLinkId);
         } else {
-            viewHolder.getViewHolder().setLastReadViewVisible(0, -1);
+            bodyViewHolder.setLastReadViewVisible(0, -1);
         }
 
         if (position == 0 && oldMoreState == MoreState.Idle) {
@@ -125,13 +129,13 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
             EventBus.getDefault().post(new RefreshNewMessageEvent());
         }
 
-        viewHolder.getViewHolder().setOnItemClickListener(v -> {
+        bodyViewHolder.setOnItemClickListener(v -> {
             if (onItemClickListener != null) {
                 onItemClickListener.onItemClick(MessageListAdapter.this, position);
             }
         });
 
-        viewHolder.getViewHolder().setOnItemLongClickListener(v -> {
+        bodyViewHolder.setOnItemLongClickListener(v -> {
             if (onItemLongClickListener != null) {
                 return onItemLongClickListener.onItemLongClick(MessageListAdapter.this, position);
             }
@@ -142,11 +146,20 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
 
     @Override
     public int getItemViewType(int position) {
+
+        ResMessages.Link currentLink = messageList.get(position);
+        ResMessages.Link previousLink = null;
+        ResMessages.Link nextLink = null;
         if (position > 0) {
-            return BodyViewFactory.getContentType(messageList.get(position), messageList.get(position - 1)).ordinal();
-        } else {
-            return BodyViewFactory.getContentType(messageList.get(position), null).ordinal();
+            previousLink = messageList.get(position - 1);
         }
+
+        if (position < getCount() - 1) {
+            nextLink = messageList.get(position + 1);
+        }
+
+
+        return BodyViewFactory.getContentType(previousLink, currentLink, nextLink).ordinal();
     }
 
     public ResMessages.Link getItem(int position) {

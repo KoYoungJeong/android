@@ -24,9 +24,14 @@ public interface BodyViewHolder {
     enum Type {
         Message, PureMessage, PureLinkPreviewMessage,
         Sticker, PureSticker,
-        File,
-        Image,
-        FileComment, PureComment, CollapseComment, FileStickerComment, PureStickerComment, CollapseStickerComment,
+        File, FileWithoutDivider,
+        Image, ImageWithoutDivider,
+        FileComment, FileCommentWioutDivider,
+        PureComment, PureCommentWioutDivider,
+        CollapseComment, CollapseCommentWioutDivider,
+        FileStickerComment, FileStickerCommentWioutDivider,
+        PureStickerComment, PureStickerCommentWioutDivider,
+        CollapseStickerComment, CollapseStickerCommentWioutDivider,
         Dummy, DummyPure,
         Event
     }

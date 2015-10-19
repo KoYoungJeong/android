@@ -1,10 +1,10 @@
 package com.tosslab.jandi.app.dialogs;
 
-import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
@@ -47,7 +47,7 @@ public class DeleteMessageDialogFragment extends DialogFragment {
             message = getString(R.string.jandi_message_ask_about_delete_comment);
         }
 
-        return new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setMessage(message)
                 .setPositiveButton(R.string.jandi_action_delete,
                         new DialogInterface.OnClickListener() {

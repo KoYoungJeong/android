@@ -29,7 +29,7 @@ public class FileUploadTypeDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(R.string.title_file_upload)
                 .setItems(R.array.types_file_upload, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

@@ -42,7 +42,7 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:text="ahahahaha"
-        android:textColor="@color/jandi_text_light"
+        android:textColor="@color/jandi_text_medium"
         android:textSize="@dimen/jandi_text_size_small" />
 
     <RelativeLayout
@@ -52,7 +52,7 @@
         android:layout_alignWithParentIfMissing="true"
         android:layout_marginBottom="3dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:layout_toLeftOf="@+id/tv_entity_listitem_badge"
         android:layout_toRightOf="@+id/iv_entity_listitem_icon">
 

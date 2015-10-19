@@ -28,12 +28,30 @@
     <style name="JandiTheme.AlertDialog" parent="@style/Theme.AppCompat.Light.Dialog">
         <item name="colorPrimary">@color/jandi_primary_color</item>
         <item name="colorPrimaryDark">@color/jandi_primary_dark_color</item>
-        <item name="colorAccent">@color/jandi_accent_color</item>
         <item name="android:windowBackground">@drawable/popup_bg</item>
+        <item name="colorAccent">@color/jandi_accent_color</item>
 
         <item name="windowMinWidthMinor">@dimen/jandi_dialog_min_width</item>
         <item name="windowMinWidthMajor">@dimen/jandi_dialog_min_width</item>
 
+        <!--<item name="buttonBarButtonStyle">@style/JandiButtonBarButtonStyle</item>-->
+
+    </style>
+
+    <style name="JandiButtonBarButtonStyle" parent="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textAppearance">@style/JandiDialogButton</item>
+    </style>
+
+    <style name="JandiDialogButton" parent="@style/TextAppearance.AppCompat.Button"></style>
+
+    <style name="JandiTheme.AlertDialog.FixWidth.300" parent="JandiTheme.AlertDialog">
+        <item name="windowFixedWidthMajor">@dimen/jandi_dialog_min_width_2</item>
+        <item name="windowFixedWidthMinor">@dimen/jandi_dialog_min_width_2</item>
+    </style>
+
+    <style name="JandiTheme.AlertDialog.FixWidth.280" parent="JandiTheme.AlertDialog">
+        <item name="windowFixedWidthMajor">@dimen/jandi_dialog_min_width</item>
+        <item name="windowFixedWidthMinor">@dimen/jandi_dialog_min_width</item>
     </style>
 
     <!-- Intro 화면은 어둡기 때문에 -->

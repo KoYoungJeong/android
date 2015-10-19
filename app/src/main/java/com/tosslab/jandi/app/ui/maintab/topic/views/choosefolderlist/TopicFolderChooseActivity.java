@@ -143,7 +143,8 @@ public class TopicFolderChooseActivity extends BaseAppCompatActivity implements 
     @Override
     public void showCreateNewFolderDialog() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(TopicFolderChooseActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(TopicFolderChooseActivity.this,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
 
         LinearLayout vgInputEditText = (LinearLayout) LayoutInflater
                 .from(TopicFolderChooseActivity.this).inflate(R.layout.input_edit_text_view, null);

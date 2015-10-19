@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="58dp"
+    android:layout_height="wrap_content"
     android:gravity="bottom"
-    android:minWidth="300dp"
     android:orientation="vertical">
 
     <TextView
@@ -15,8 +13,8 @@
         android:layout_marginRight="24dp"
         android:layout_marginTop="24dp"
         android:text="@string/jandi_folder_insert_name"
-        android:textColor="@color/black"
-        android:textSize="@dimen/jandi_text_size_larger_3"/>
+        android:textColor="@color/message_controller_popup_text_color"
+        android:textSize="@dimen/jandi_text_size_larger_3" />
 
     <EditText
         android:id="@+id/et_input"
@@ -28,6 +26,6 @@
         android:hint="@string/jandi_title_name"
         android:inputType="text"
         android:maxLines="1"
-        android:textSize="@dimen/jandi_text_size_large"/>
+        android:textSize="@dimen/jandi_text_size_large" />
 
 </LinearLayout>

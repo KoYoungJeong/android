@@ -3,10 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
-    android:minHeight="114dp"
-    android:paddingBottom="16dp"
-    android:paddingTop="16dp">
+    android:background="?android:attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/iv_star_mention_profile"
@@ -15,7 +12,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp" />
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp" />
 
     <RelativeLayout
         android:id="@+id/rv_star_mention_content"
@@ -23,8 +21,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
+        android:layout_marginBottom="11dp"
         android:layout_marginLeft="17dp"
         android:layout_marginRight="16dp"
+        android:layout_marginTop="11dp"
         android:layout_toRightOf="@id/iv_star_mention_profile">
 
         <TextView
@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_star_mention_name"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="6dp"
             android:ellipsize="end"
             android:lineSpacingExtra="2dip"
             android:maxLines="10"
@@ -58,8 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/tv_star_mention_content"
-            android:layout_marginBottom="13dp"
-            android:layout_marginTop="13dp"
+            android:layout_marginTop="6dp"
             android:layout_toLeftOf="@+id/tv_star_mention_date"
             android:ellipsize="end"
             android:maxLines="1"
@@ -72,6 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/tv_star_mention_topic_name"
             android:layout_alignParentRight="true"
+            android:layout_marginLeft="18dp"
             android:layout_marginRight="3dp"
             android:textColor="@color/jandi_star_mention_item_date_text"
             android:textSize="13sp" />

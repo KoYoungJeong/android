@@ -34,6 +34,8 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:text="@string/jandi_profile_actionb"
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
                     app:img="@drawable/profile_img" />
 
                 <com.tosslab.jandi.app.views.IconWithTextView
@@ -46,6 +48,8 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:text="@string/jandi_mention_mentions"
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
                     app:img="@drawable/more_icon_mentioned" />
 
                 <com.tosslab.jandi.app.views.IconWithTextView
@@ -58,6 +62,8 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:text="@string/jandi_starred_star"
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
                     app:img="@drawable/more_icon_stared" />
 
             </LinearLayout>
@@ -84,6 +90,8 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:text="@string/jandi_team_member"
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
                     app:img="@drawable/more_icon_team_member" />
 
                 <!-- invite -->
@@ -96,6 +104,8 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:text="@string/jandi_invitation"
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
                     app:img="@drawable/more_icon_invite_member" />
 
                 <!-- goto main -->
@@ -109,6 +119,8 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:text="@string/jandi_team_switch"
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
                     app:img="@drawable/more_icon_team_switch" />
 
             </LinearLayout>
@@ -279,6 +291,12 @@
                         android:layout_marginTop="3dp"
                         android:text="TOSS LAB, INC."
                         android:textColor="@color/jandi_text_light" />
+
+                    <TextView
+                        android:id="@+id/txt_more_jandi_version"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/jandi_text_medium" />
 
                 </LinearLayout>
 

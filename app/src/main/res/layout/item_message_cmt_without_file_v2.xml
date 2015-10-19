@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -14,7 +13,7 @@
         android:focusable="true"
         android:paddingBottom="10dp"
         android:paddingLeft="@dimen/jandi_messages_padding_left"
-        android:paddingTop="8dp">
+        android:paddingTop="15dp">
 
         <!-- 내부에 포함된 댓글일 경우 -->
         <RelativeLayout
@@ -33,7 +32,7 @@
                 android:text="User Name"
                 android:textColor="@color/jandi_messages_name"
                 android:textSize="@dimen/jandi_messages_comment_name"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/iv_entity_listitem_line_through"
@@ -43,7 +42,7 @@
                 android:layout_alignLeft="@+id/tv_message_nested_comment_user_name"
                 android:layout_alignRight="@+id/tv_message_nested_comment_user_name"
                 android:layout_alignTop="@+id/tv_message_nested_comment_user_name"
-                android:src="@drawable/line_gray"/>
+                android:src="@drawable/line_gray" />
 
             <TextView
                 android:id="@+id/tv_message_commented_create_date"
@@ -55,7 +54,7 @@
                 android:gravity="bottom"
                 android:text="AM ??:??"
                 android:textColor="@color/jandi_messages_date"
-                android:textSize="@dimen/jandi_messages_date"/>
+                android:textSize="@dimen/jandi_messages_date" />
 
 
             <TextView
@@ -68,7 +67,7 @@
                 android:text="99"
                 android:textColor="@color/jandi_accent_color"
                 android:textSize="@dimen/jandi_text_size_smaller"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
 
             <TextView
@@ -77,12 +76,12 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_message_nested_comment_user_name"
                 android:layout_marginRight="14dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="5dp"
                 android:layout_toLeftOf="@+id/iv_img_file_arrow"
                 android:focusable="false"
                 android:text="Nested comment"
                 android:textColor="@color/jandi_messages_file_content"
-                android:textSize="@dimen/jandi_messages_comment"/>
+                android:textSize="@dimen/jandi_messages_comment" />
 
             <ImageView
                 android:id="@+id/iv_img_file_arrow"
@@ -90,14 +89,16 @@
                 android:layout_height="@dimen/jandi_messages_arrow_right_height"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/icon_comment_arrow"/>
+                android:src="@drawable/icon_comment_arrow" />
         </RelativeLayout>
 
 
     </com.tosslab.jandi.app.views.LongClickableRelativeLayout>
 
+    <include layout="@layout/item_message_divider" />
+
     <include
         android:id="@+id/vg_message_last_read"
-        layout="@layout/item_message_last_read_v2"/>
+        layout="@layout/item_message_last_read_v2" />
 
 </LinearLayout>

@@ -71,7 +71,7 @@ public class InvitationDialogFragment extends DialogFragment {
     }
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300);
 
         final int from = getArguments().getInt(INVITATION_FROM, -1);
         final AnalyticsValue.Screen screen = getScreen(from);

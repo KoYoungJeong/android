@@ -445,6 +445,27 @@ public class BitmapUtil {
                 .into(imageView);
     }
 
+    public static void loadCropImageByGlideOrIonWhenGif(ImageView imageView,
+                                                        String url, int placeHolder, int error) {
+        if (url.toLowerCase().endsWith("gif")) {
+            Ion.with(imageView)
+                    .centerCrop()
+                    .placeholder(placeHolder)
+                    .error(error)
+                    .crossfade(true)
+                    .load(url);
+            return;
+        }
+
+        Glide.with(JandiApplication.getContext())
+                .load(url)
+                .centerCrop()
+                .placeholder(placeHolder)
+                .error(error)
+                .crossFade()
+                .into(imageView);
+    }
+
     public static String getLocalFilePath(int messageId) {
         String localPath = UploadedFileInfoRepository.getRepository()
                 .getUploadedFileInfo(messageId).getLocalPath();

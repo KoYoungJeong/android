@@ -48,7 +48,7 @@ public class KickDialogFragment extends DialogFragment {
 
         tvName.setText(userName);
 
-        return new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setView(view)
                 .setNegativeButton(R.string.jandi_cancel, null)
                 .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {

@@ -265,7 +265,8 @@ public class ModifyProfilePresenter {
             }
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(R.string.jandi_choose_email)
                 .setSingleChoiceItems(emails, checkedIdx, null)
                 .setNegativeButton(R.string.jandi_cancel, null)

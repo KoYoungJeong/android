@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,8 +25,6 @@ import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
-import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
-import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import de.greenrobot.event.EventBus;
 
@@ -48,12 +45,16 @@ public class FileCommentViewHolder implements BodyViewHolder {
     private View vLastRead;
     private View vFileImageRound;
     private View contentView;
+    private TextView tvDate;
+    private TextView tvUnread;
 
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
         ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
+        tvDate = (TextView) rootView.findViewById(R.id.tv_message_create_date);
+        tvUnread = ((TextView) rootView.findViewById(R.id.tv_entity_listitem_unread));
 
         tvFileOwner = (TextView) rootView.findViewById(R.id.tv_message_commented_owner);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_message_commented_file_name);
@@ -105,6 +106,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
         }
 
         tvName.setText(fromEntity.name);
+
+        tvDate.setText(DateTransformator.getTimeStringForSimple(link.time));
 
         if (link.feedback instanceof ResMessages.FileMessage) {
 
@@ -188,30 +191,10 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
             boolean hasLink = LinkifyUtil.addLinks(context, builder);
 
-            int startIndex = builder.length();
-            builder.append(DateTransformator.getTimeStringForSimple(link.message.createTime));
-            int endIndex = builder.length();
-
-            DateViewSpannable spannable =
-                    new DateViewSpannable(tvComment.getContext(),
-                            DateTransformator.getTimeStringForSimple(link.message.createTime));
-            builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
             int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
                     link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
 
-            if (unreadCount > 0) {
-                NameSpannable unreadCountSpannable =
-                        new NameSpannable(
-                                context.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_small)
-                                , context.getResources().getColor(R.color.jandi_accent_color));
-                builder.append(" ");
-                int beforeLength = builder.length();
-                builder.append(" ");
-                builder.append(String.valueOf(unreadCount))
-                        .setSpan(unreadCountSpannable, beforeLength, builder.length(),
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
+            tvUnread.setText(String.valueOf(unreadCount));
 
 
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
