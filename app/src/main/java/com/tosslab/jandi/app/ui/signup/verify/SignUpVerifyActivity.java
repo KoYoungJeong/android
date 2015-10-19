@@ -48,6 +48,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.ViewsById;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
@@ -332,20 +333,25 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     }
 
     private static class Blink extends Handler implements Runnable {
-        private final View blinkView;
-        private boolean mCancelled;
+        private final WeakReference<View> blinkViewRef;
+        private boolean cancelled;
 
         Blink(View blinkView) {
             super();
-            this.blinkView = blinkView;
+            blinkViewRef = new WeakReference<View>(blinkView);
         }
 
         public void run() {
-            if (mCancelled) {
+            if (cancelled) {
                 return;
             }
 
             removeCallbacks(Blink.this);
+
+            View blinkView = blinkViewRef.get();
+            if (blinkView == null) {
+                return;
+            }
 
             if (blinkView.getVisibility() == View.VISIBLE) {
                 blinkView.setVisibility(View.GONE);
@@ -357,14 +363,14 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         }
 
         void cancel() {
-            if (!mCancelled) {
+            if (!cancelled) {
                 removeCallbacks(Blink.this);
-                mCancelled = true;
+                cancelled = true;
             }
         }
 
         void uncancel() {
-            mCancelled = false;
+            cancelled = false;
         }
     }
 
