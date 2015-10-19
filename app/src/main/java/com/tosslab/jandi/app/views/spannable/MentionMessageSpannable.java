@@ -18,10 +18,10 @@ public class MentionMessageSpannable extends ReplacementSpan {
 
     private int maxWidth = -1;
 
-    public MentionMessageSpannable(String name, float pxSize,
+    public MentionMessageSpannable(String entityName, float textSize,
                                    int textColor, int backgroundColor) {
-        this.name = name;
-        this.textSize = pxSize;
+        this.name = entityName;
+        this.textSize = textSize;
         this.textColor = textColor;
         this.backgroundColor = backgroundColor;
     }

@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.views.spannable;
 
-import android.content.Context;
-
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -11,13 +9,13 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tee on 15. 7. 20..
  */
-public class ClickableMensionMessageSpannable extends MentionMessageSpannable implements ClickableSpannable{
+public class ClickableMentionMessageSpannable extends MentionMessageSpannable implements ClickableSpannable {
 
     private int entityId;
 
-    public ClickableMensionMessageSpannable(Context context, String name, int entityId, float pxSize,
-                                            int textColor, int backgroundColor) {
-        super(name, pxSize, textColor, backgroundColor);
+    protected ClickableMentionMessageSpannable(String entityName, int entityId, float textSize,
+                                               int textColor, int backgroundColor) {
+        super(entityName, textSize, textColor, backgroundColor);
         this.entityId = entityId;
     }
 
