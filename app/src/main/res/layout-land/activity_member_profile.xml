@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <View
-        android:id="@+id/v_background"
+    <FrameLayout
+        android:id="@+id/vg_member_profile_img_large"
+        android:background="@android:color/black"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="0.9"
-        android:background="@android:color/black"/>
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/iv_member_profile_img_large"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <View
+            android:id="@+id/v_member_profile_img_large_overlay"
+            android:background="@color/jandi_member_profile_img_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
 
     <com.tosslab.jandi.app.views.SwipeExitLayout
         android:id="@+id/vg_swipe_exit_layout"
@@ -17,21 +27,8 @@
         android:background="@android:color/transparent">
 
         <RelativeLayout
-            android:background="@color/black"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/iv_member_profile_img_large"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
-            <FrameLayout
-                android:id="@+id/vg_member_profile_img_large_overlay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/vg_member_profile_bottoms"
-                android:background="@color/jandi_member_profile_img_overlay"/>
 
             <RelativeLayout
                 android:id="@+id/vg_member_profile_detail"
@@ -39,14 +36,6 @@
                 android:layout_height="match_parent"
                 android:layout_above="@+id/vg_member_profile_bottoms"
                 android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/btn_member_profile_close"
-                    android:layout_width="@dimen/jandi_member_profile_btn_close_width"
-                    android:layout_height="@dimen/jandi_member_profile_btn_close_height"
-                    android:layout_marginTop="@dimen/jandi_member_profile_margin_top"
-                    android:scaleType="center"
-                    android:src="@drawable/actionbar_icon_remove"/>
 
                 <ImageView
                     android:id="@+id/iv_member_profile_img_small"
@@ -194,6 +183,14 @@
 
     </com.tosslab.jandi.app.views.SwipeExitLayout>
 
+    <ImageView
+        android:id="@+id/btn_member_profile_close"
+        android:layout_width="@dimen/jandi_member_profile_btn_close_width"
+        android:layout_height="@dimen/jandi_member_profile_btn_close_height"
+        android:layout_marginTop="@dimen/jandi_member_profile_margin_top"
+        android:scaleType="center"
+        android:src="@drawable/actionbar_icon_remove"/>
+
     <uk.co.senab.photoview.PhotoView
         android:id="@+id/iv_member_profile_img_full"
         android:layout_width="match_parent"
@@ -201,4 +198,4 @@
         android:background="@android:color/black"
         android:scaleType="fitCenter"
         android:visibility="gone"/>
-</FrameLayout>
+</RelativeLayout>
