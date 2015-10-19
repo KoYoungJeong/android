@@ -32,10 +32,11 @@ public class JandiPreference {
     private static final String PREF_COACH_MARK_FILE_LIST = "coach_mark_file_list";
     private static final String PREF_COACH_MARK_DIRECT_MESSAGE_LIST = "coach_mark_direct_messege_list";
     private static final String PREF_LAST_NETWORK_CONNECT = "last_network_connect_state";
-
+    private static final String PREF_PASSCODE = "passcode";
     // PARSE
     private static final String PREF_OLD_PARSE_CHANNEL_DELETED = "old_parse_channel_deleted";
     private static final String PREF_OLD_PARSE_FILE_CACHE_DELETED = "old_parse_file_cache_deleted";
+    public static final String PREF_SETTING_ORIENTATION = "setting_orientation";
 
     public static boolean isOldParseFileCacheDeleted(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
@@ -152,34 +153,22 @@ public class JandiPreference {
         editor.commit();
     }
 
+    @Deprecated
     public static String getAccessTokenType(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
         return pref.getString(PREF_ACCESS_TOKEN_TYPE, "");
     }
 
-    public static void setAccessTokenType(Context context, String accessTokenType) {
-        SharedPreferences pref = getSharedPreferences(context);
-        pref.edit().putString(PREF_ACCESS_TOKEN_TYPE, accessTokenType).commit();
-    }
-
+    @Deprecated
     public static String getAccessToken(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
         return pref.getString(PREF_ACCESS_TOKEN, "");
     }
 
-    public static void setAccessToken(Context context, String accessToken) {
-        SharedPreferences pref = getSharedPreferences(context);
-        pref.edit().putString(PREF_ACCESS_TOKEN, accessToken).commit();
-    }
-
+    @Deprecated
     public static String getRefreshToken(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
         return pref.getString(PREF_REFRESH_TOKEN, "");
-    }
-
-    public static void setRefreshToken(Context context, String refreshToken) {
-        SharedPreferences pref = getSharedPreferences(context);
-        pref.edit().putString(PREF_REFRESH_TOKEN, refreshToken).commit();
     }
 
     public static void signOut(Context context) {
@@ -237,6 +226,20 @@ public class JandiPreference {
         return getSharedPreferences(context).getInt(PREF_KEYBOARD_HEIGHT, 0);
     }
 
+    public static String getPassCode(Context context) {
+        return getSharedPreferences(context).getString(PREF_PASSCODE, "");
+    }
+
+    public static void setPassCode(Context context, String passCode) {
+        SharedPreferences pref = getSharedPreferences(context);
+        pref.edit().putString(PREF_PASSCODE, passCode).commit();
+    }
+
+    public static void removePassCode(Context context) {
+        SharedPreferences pref = getSharedPreferences(context);
+        pref.edit().remove(PREF_PASSCODE).commit();
+    }
+
     /**
      * 마지막 네트워크 접속 상태 값
      *
@@ -255,5 +258,10 @@ public class JandiPreference {
      */
     public static int getLastNetworkConnect(Context context) {
         return getSharedPreferences(context).getInt(PREF_LAST_NETWORK_CONNECT, -1);
+    }
+
+    public static String getOrientation(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString
+                (PREF_SETTING_ORIENTATION, "0");
     }
 }

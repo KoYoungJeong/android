@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.events.messages.ShareEntityEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.web.model.InternalWebModel;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -128,7 +129,8 @@ public class InternalWebActivity extends BaseAppCompatActivity {
         });
 
 
-        if (!url.startsWith("http")) {
+        String urlLowerCase = url.toLowerCase();
+        if (!urlLowerCase.startsWith("http")) {
             url = "http://" + url;
         }
 
@@ -147,6 +149,7 @@ public class InternalWebActivity extends BaseAppCompatActivity {
     protected void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
+        ActivityHelper.setOrientation(this);
     }
 
     @Override

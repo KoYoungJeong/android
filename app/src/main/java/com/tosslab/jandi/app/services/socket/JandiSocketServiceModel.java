@@ -21,12 +21,14 @@ import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
@@ -34,7 +36,6 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
-import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
@@ -53,10 +54,8 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -69,8 +68,8 @@ import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscription;
-import rx.schedulers.Schedulers;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 /**
@@ -112,7 +111,7 @@ public class JandiSocketServiceModel {
             return null;
         }
 
-        String token = JandiPreference.getAccessToken(context);
+        String token = AccessTokenRepository.getRepository().getAccessToken().getAccessToken();
         return new ConnectTeam(token,
                 UserAgentUtil.getDefaultUserAgent(context),
                 selectedTeamInfo.getTeamId(),
@@ -447,8 +446,11 @@ public class JandiSocketServiceModel {
 
     public boolean refreshToken() {
         try {
-            String jandiRefreshToken = JandiPreference.getRefreshToken(context);
-            ResAccessToken token = RequestApiManager.getInstance().getAccessTokenByMainRest(ReqAccessToken.createRefreshReqToken(jandiRefreshToken));
+            ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
+            String jandiRefreshToken = accessToken.getRefreshToken();
+            ReqAccessToken refreshReqToken = ReqAccessToken.createRefreshReqToken(jandiRefreshToken);
+            ResAccessToken token = RequestApiManager.getInstance()
+                    .getAccessTokenByMainRest(refreshReqToken);
             return token != null;
         } catch (Exception e) {
             LogUtil.e(TAG, e.getMessage());

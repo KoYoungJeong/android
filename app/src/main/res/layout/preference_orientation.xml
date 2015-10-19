@@ -27,8 +27,8 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@android:id/title"
         android:layout_below="@android:id/title"
+        android:textColor="@color/black"
         android:maxLines="1"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="@dimen/abc_text_size_small_material"/>
 
 </RelativeLayout>

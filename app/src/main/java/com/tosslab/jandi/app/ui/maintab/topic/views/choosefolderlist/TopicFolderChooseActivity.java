@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.adapter.TopicFolderChooseAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.presenter.TopicFolderChoosePresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
@@ -83,6 +84,12 @@ public class TopicFolderChooseActivity extends BaseAppCompatActivity implements 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MoveToaFolder);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
+    }
+
     @UiThread
     @Override
     public void showFolderList(List<ResFolder> folders, boolean hasFolder) {
@@ -136,7 +143,8 @@ public class TopicFolderChooseActivity extends BaseAppCompatActivity implements 
     @Override
     public void showCreateNewFolderDialog() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(TopicFolderChooseActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(TopicFolderChooseActivity.this,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
 
         LinearLayout vgInputEditText = (LinearLayout) LayoutInflater
                 .from(TopicFolderChooseActivity.this).inflate(R.layout.input_edit_text_view, null);
@@ -145,7 +153,7 @@ public class TopicFolderChooseActivity extends BaseAppCompatActivity implements 
 
         builder.setView(vgInputEditText)
                 .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
-                    createNewFolder(input.getText().toString());
+                    createNewFolder(input.getText().toString().trim());
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolder);
                 })
                 .setNegativeButton(R.string.jandi_cancel, (dialog, which) -> {
@@ -159,7 +167,7 @@ public class TopicFolderChooseActivity extends BaseAppCompatActivity implements 
         input.addTextChangedListener(new SimpleTextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() <= 0) {
+                if (s.toString().trim().length() <= 0) {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);

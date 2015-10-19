@@ -18,7 +18,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.members.adapter.MembersAdapter;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment_;
@@ -28,9 +27,10 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
+import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -100,7 +100,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     }
 
     private AnalyticsValue.Screen getScreen() {
-
         switch (type) {
             case TYPE_MEMBERS_JOINABLE_TOPIC:
                 return AnalyticsValue.Screen.InviteTeamMembers;
@@ -110,7 +109,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
             case TYPE_MEMBERS_LIST_TOPIC:
                 return AnalyticsValue.Screen.Participants;
         }
-
     }
 
     @AfterViews
@@ -254,6 +252,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     protected void onResume() {
         super.onResume();
         membersListPresenter.onEventBusRegister();
+        ActivityHelper.setOrientation(this);
     }
 
     @Override
@@ -351,7 +350,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
                 .entityId(userId)
                 .isFavorite(isStarred)
                 .isFromPush(false)
-                .startForResult(MainTabActivity.REQ_START_MESSAGE);
+                .start();
     }
 
     @Override

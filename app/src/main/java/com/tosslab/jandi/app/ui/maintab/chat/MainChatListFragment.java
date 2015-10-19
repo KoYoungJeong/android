@@ -19,7 +19,6 @@ import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenter;
 import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenterImpl;
@@ -80,7 +79,6 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         mainChatListAdapter = new MainChatListAdapter(getActivity());
         mainChatListPresenter.setView(this);
     }
-
 
     @AfterViews
     void initViews() {
@@ -168,7 +166,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
                 .isFavorite(isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .lastMarker(lastLinkId)
-                .startForResult(MainTabActivity.REQ_START_MESSAGE);
+                .start();
     }
 
 

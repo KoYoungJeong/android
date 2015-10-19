@@ -57,7 +57,7 @@ public class AlertUtil {
                 cancelable);
     }
 
-    static void showDialog(Activity activity,
+    public static void showDialog(Activity activity,
                            String title, String message,
                            int positiveResId, DialogInterface.OnClickListener positiveListener,
                            int neutralResId, DialogInterface.OnClickListener neutralListener,
@@ -67,7 +67,8 @@ public class AlertUtil {
             return;
         }
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         if (!TextUtils.isEmpty(title)) {
             builder.setTitle(title);
         }
@@ -89,7 +90,7 @@ public class AlertUtil {
     }
 
 
-    static void showDialog(Activity activity,
+    public static void showDialog(Activity activity,
                            int titleResId, int messageResId,
                            int positiveResId, DialogInterface.OnClickListener positiveListener,
                            int neutralResId, DialogInterface.OnClickListener neutralListener,
@@ -99,7 +100,8 @@ public class AlertUtil {
             return;
         }
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         if (titleResId != NONE_RES_ID) {
             builder.setTitle(activity.getString(titleResId));
         }

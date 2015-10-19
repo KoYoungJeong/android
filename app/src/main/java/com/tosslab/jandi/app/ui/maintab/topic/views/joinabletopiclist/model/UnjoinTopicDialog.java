@@ -72,7 +72,8 @@ public class UnjoinTopicDialog extends DialogFragment {
         }
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setView(rootView)
                 .setPositiveButton("Join", onJoinClickListener);
 

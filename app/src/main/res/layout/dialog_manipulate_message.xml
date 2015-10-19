@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -10,14 +9,13 @@
         android:id="@+id/tv_action_del_message"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginTop="8dp"
         android:background="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
         android:text="@string/jandi_action_delete"
         android:textColor="@color/message_controller_popup_text_color"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/tv_action_copy_message"
@@ -29,7 +27,7 @@
         android:paddingRight="24dp"
         android:text="@string/jandi_action_menu_message_copy"
         android:textColor="@color/message_controller_popup_text_color"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/tv_action_announce_message"
@@ -41,7 +39,7 @@
         android:paddingRight="24dp"
         android:text="@string/jandi_announcement_create"
         android:textColor="@color/message_controller_popup_text_color"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/tv_action_starred"
@@ -53,13 +51,12 @@
         android:paddingRight="24dp"
         android:text="@string/jandi_starred_star"
         android:textColor="@color/message_controller_popup_text_color"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/tv_action_unstarred"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginBottom="8dp"
         android:background="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:paddingLeft="24dp"
@@ -67,5 +64,5 @@
         android:text="@string/jandi_starred_unstar"
         android:textColor="@color/message_controller_popup_text_color"
         android:textSize="16sp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </LinearLayout>

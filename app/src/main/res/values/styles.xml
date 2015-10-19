@@ -335,9 +335,13 @@
 
     <style name="Jandi.Default.ActionBar" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">?attr/colorPrimary</item>
-        <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
-        <!--<item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>-->
+        <item name="titleTextAppearance">@style/ToolbarText</item>
+    </style>
+
+    <style name="ToolbarText" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">20dp</item>
     </style>
 
     <style name="JandiSticker" />
@@ -353,6 +357,7 @@
 
     <style name="ImageCarousel.Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="titleTextAppearance">@style/ToolbarText</item>
     </style>
 
     <style name="ImageCarousel.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
@@ -376,9 +381,49 @@
     </style>
 
     <style name="JandiMainShare" />
-    <style name="JandiMainShare.Content" >
+
+    <style name="JandiMainShare.Content">
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:layout_marginRight">16dp</item>
+    </style>
+
+    <style name="JandiSignUpVerify"/>
+    <style name="JandiSignUpVerify.Code"/>
+    <style name="JandiSignUpVerify.Code.Layout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:weightSum">3</item>
+    </style>
+    <style name="JandiSignUpVerify.Code.Input">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+    <style name="JandiSignUpVerify.Code.Text">
+        <item name="android:layout_width">121dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/jandi_text</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:letterSpacing">0.175</item>
+    </style>
+
+    <style name="JandiSettingPrivacy"/>
+    <style name="JandiSettingPrivacy.ViewGroup">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingLeft">25dp</item>
+        <item name="android:paddingRight">25dp</item>
+    </style>
+    <style name="JandiSettingPrivacy.Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/jandi_file_search_item_divider</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
     </style>
 
 </resources>

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.invites.email;
 
 import android.database.DataSetObserver;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -17,7 +18,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.email.adapter.InviteEmailListAdapter;
 import com.tosslab.jandi.app.ui.invites.email.model.InviteEmailModel;
@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.ui.invites.email.model.bean.EmailVO;
 import com.tosslab.jandi.app.ui.invites.email.presenter.InviteEmailPresenter;
 import com.tosslab.jandi.app.ui.invites.email.presenter.InviteEmailPresenterImpl;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -68,6 +69,12 @@ public class InviteEmailActivity extends BaseAppCompatActivity
 
     private InviteEmailListAdapter adapter;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setNeedUnLockPassCode(false);
+    }
+
     @AfterViews
     void initView() {
         setUpActionbar();
@@ -91,7 +98,7 @@ public class InviteEmailActivity extends BaseAppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        EntityManager entityManager = EntityManager.getInstance();
+        ActivityHelper.setOrientation(this);
     }
 
     @OptionsItem(android.R.id.home)

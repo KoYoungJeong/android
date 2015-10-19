@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -143,16 +145,17 @@ public class EditTextDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mainView = inflater.inflate(R.layout.dialog_fragment_input_text, null);
 
+        TextView tvTitle = (TextView) mainView.findViewById(R.id.tv_popup_title);
+        tvTitle.setText(titleStringId);
 
         final EditText editTextInput = (EditText) mainView.findViewById(R.id.et_dialog_input_text);
         editTextInput.setText(currentMessage);
         editTextInput.setSelection(currentMessage.length());
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300);
         // creating the fullscreen dialog
         builder.setCancelable(true)
                 .setView(mainView)
-                .setTitle(titleStringId)
                 .setNegativeButton(R.string.jandi_cancel, null)
                 .setPositiveButton(R.string.jandi_confirm, new DialogInterface.OnClickListener() {
                     @Override
@@ -290,6 +293,7 @@ public class EditTextDialogFragment extends DialogFragment {
             case ACTION_CREATE_TOPIC:
             case ACTION_MODIFY_TOPIC:
                 confirm.setEnabled((inputLength > 0)
+                        && TextUtils.getTrimmedLength(editable) > 0
                         && (inputLength < MAX_LENGTH_OF_TOPIC_NAME)
                         && !editable.equals(currentMessage));
                 break;

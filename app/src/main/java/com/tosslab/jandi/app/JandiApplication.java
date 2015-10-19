@@ -12,12 +12,15 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
-import com.squareup.leakcanary.LeakCanary;
+import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
+import com.tosslab.jandi.app.network.SimpleApiRequester;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.utils.ApplicationActivateDetector;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -77,19 +80,26 @@ public class JandiApplication extends MultiDexApplication {
 
         Sprinkler.initialize(this, BuildConfig.FLAVOR.contains("dev"), BuildConfig.DEBUG);
 
-        registerActivityLifecycleCallbacks(new JandiLifecycleCallbacks());
-
         boolean oldParseChannelDeleted = JandiPreference.isOldParseChannelDeleted(this);
         if (!oldParseChannelDeleted) {
             ParseUpdateUtil.refreshChannelOnServer();
             JandiPreference.setOldParseChannelDeleted(this, true);
         }
 
-        //for LeakCanary
-        LeakCanary.install(this);
+        registerActivityLifecycleCallbacks();
     }
 
-    synchronized public Tracker getTracker(TrackerName trackerId) {
+    private void registerActivityLifecycleCallbacks() {
+        registerActivityLifecycleCallbacks(new ApplicationActivateDetector()
+                .addActiveListener(() -> updatePlatformStatus(true))
+                .addDeactiveListener(() -> updatePlatformStatus(false))
+                .addActiveListener(() ->
+                        UnLockPassCodeManager.getInstance().setApplicationActivate(true))
+                .addDeactiveListener(() ->
+                        UnLockPassCodeManager.getInstance().setApplicationActivate(false)));
+    }
+
+    public synchronized Tracker getTracker(TrackerName trackerId) {
         if (!mTrackers.containsKey(trackerId)) {
 
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
@@ -103,6 +113,20 @@ public class JandiApplication extends MultiDexApplication {
 
         }
         return mTrackers.get(trackerId);
+    }
+
+    private void updatePlatformStatus(boolean active) {
+        LogUtil.i("PlatformApi", "updatePlatformStatus - " + active);
+
+        String accessToken = JandiPreference.getAccessToken(JandiApplication.getContext());
+        if (TextUtils.isEmpty(accessToken)) {
+            return;
+        }
+
+        SimpleApiRequester.request(() -> {
+            ReqUpdatePlatformStatus req = new ReqUpdatePlatformStatus(active);
+            RequestApiManager.getInstance().updatePlatformStatus(req);
+        }, () -> LogUtil.i("PlatformApi", "Success(updatePlatformStatus)"));
     }
 
     public enum TrackerName {
@@ -160,7 +184,10 @@ public class JandiApplication extends MultiDexApplication {
         }
 
         private void updatePlatformStatus(final boolean active) {
-            String accessToken = JandiPreference.getAccessToken(JandiApplication.getContext());
+            String accessToken = AccessTokenRepository
+                    .getRepository()
+                    .getAccessToken()
+                    .getAccessToken();
             if (TextUtils.isEmpty(accessToken)) {
                 LogUtil.i(TAG, "Don't request(has not accessToken).");
                 return;

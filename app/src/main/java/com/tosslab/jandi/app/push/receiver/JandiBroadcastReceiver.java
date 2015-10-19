@@ -5,7 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
 
 /**
  * Created by justinygchoi on 14. 12. 3..
@@ -13,7 +14,8 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 public class JandiBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (TextUtils.isEmpty(JandiPreference.getRefreshToken(context))) {
+        ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
+        if (TextUtils.isEmpty(accessToken.getRefreshToken())) {
             // 이전에 JANDI 를 설치하고 삭제한 경우, 해당 디바이스 ID 가 남아있어 push 가 전송될 수 있다.
             // 새로 설치하고 아직 sign-in 을 하지 않은 경우 이전 사용자에 대한 push 가 전송됨으로 이를 무시한다.
             return;

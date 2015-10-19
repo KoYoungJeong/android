@@ -3,9 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
-    android:paddingBottom="16dp"
-    android:paddingTop="16dp">
+    android:background="?android:attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/iv_star_mention_profile"
@@ -14,16 +12,18 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp" />
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp" />
 
     <RelativeLayout
         android:id="@+id/rv_star_mention_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerVertical="true"
+        android:layout_marginBottom="11dp"
         android:layout_marginLeft="17dp"
         android:layout_marginRight="16dp"
+        android:layout_marginTop="11dp"
         android:layout_toRightOf="@id/iv_star_mention_profile">
 
         <TextView
@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_star_mention_name"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="6dp"
             android:ellipsize="end"
             android:gravity="left"
             android:lineSpacingExtra="2dip"
@@ -69,8 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_star_mention_comment"
-            android:layout_marginBottom="13dp"
-            android:layout_marginTop="13dp"
+            android:layout_marginTop="6dp"
             android:layout_toLeftOf="@+id/tv_star_mention_date"
             android:layout_toRightOf="@id/iv_icon_message_file"
             android:ellipsize="middle"
@@ -87,6 +86,7 @@
             android:layout_alignBottom="@+id/tv_star_mention_file_name"
             android:layout_alignParentRight="true"
             android:layout_alignTop="@+id/tv_star_mention_file_name"
+            android:layout_marginLeft="18dp"
             android:layout_marginRight="3dp"
             android:text="07/23/2015, 01:20 AM"
             android:textColor="@color/jandi_star_mention_item_date_text"

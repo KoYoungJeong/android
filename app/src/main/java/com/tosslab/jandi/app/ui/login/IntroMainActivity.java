@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.login;
 
 import android.app.Fragment;
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +14,7 @@ import com.tosslab.jandi.app.ui.login.adapter.IntroMainPagerAdapter;
 import com.tosslab.jandi.app.ui.login.tutorial.IntroTutorialFragment;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -43,6 +45,12 @@ public class IntroMainActivity extends BaseAppCompatActivity {
 
     private KeyboardHandler keyboardHandler;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setNeedUnLockPassCode(false);
+    }
+
     @AfterViews
     void init() {
         setUpView();
@@ -57,6 +65,12 @@ public class IntroMainActivity extends BaseAppCompatActivity {
 
         BadgeUtils.clearBadge(IntroMainActivity.this);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     private void setUpView() {

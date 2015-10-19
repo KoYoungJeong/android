@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.utils.transform.ion;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.transform.TransformConfig;

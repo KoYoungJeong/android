@@ -45,13 +45,6 @@ public class FileViewHolder implements BodyViewHolder {
     private View vLastRead;
     private View contentView;
 
-    private FileViewHolder() {
-    }
-
-    public static FileViewHolder createFileViewHolder() {
-        return new FileViewHolder();
-    }
-
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
@@ -190,7 +183,6 @@ public class FileViewHolder implements BodyViewHolder {
     @Override
     public int getLayoutId() {
         return R.layout.item_message_file_v2;
-
     }
 
     @Override

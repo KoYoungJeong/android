@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.ui.profile.modify.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.profile.modify.ModifyProfileActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.transform.ion.IonBlurTransform;
@@ -125,6 +126,12 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         if (savedInstanceState != null) {
             isFullSizeImageShowing = savedInstanceState.getBoolean(KEY_FULL_SIZE_IMAGE_SHOWING);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     @Override
@@ -413,7 +420,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
             vgProfileTeamButtons.addView(
                     getButton(R.drawable.icon_profile_mention,
-                            getString(R.string.jandi_member_profile_mention), (v) -> {
+                            getString(R.string.jandi_mention_mentions), (v) -> {
                                 startStarMentionListActivity();
                             }));
         } else {

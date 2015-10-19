@@ -76,7 +76,7 @@ public class SearchedFileItemView extends RelativeLayout {
                 // 썸네일
                 String thumbnailUrl =
                         BitmapUtil.getThumbnailUrlOrOriginal(content, BitmapUtil.Thumbnails.MEDIUM);
-                BitmapUtil.loadImageByGlideOrIonWhenGif(
+                BitmapUtil.loadCropImageByGlideOrIonWhenGif(
                         imageViewSearchedFileType, thumbnailUrl,
                         R.drawable.file_icon_img, R.drawable.file_icon_img);
             } else {

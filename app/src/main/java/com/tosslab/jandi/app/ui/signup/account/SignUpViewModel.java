@@ -1,9 +1,11 @@
 package com.tosslab.jandi.app.ui.signup.account;
 
 import android.app.Activity;
+import android.content.Context;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -190,4 +192,8 @@ public class SignUpViewModel {
     }
 
 
+    public void hideSoftInput() {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editTextSignUpPassword.getWindowToken(), 0);
+    }
 }

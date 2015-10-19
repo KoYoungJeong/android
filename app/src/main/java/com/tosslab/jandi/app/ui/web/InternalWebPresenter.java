@@ -25,10 +25,8 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.views.listeners.WebLoadingBar;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
@@ -148,7 +146,8 @@ public class InternalWebPresenter {
         /**
          * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
          */
-        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(activity,
+                R.style.JandiTheme_AlertDialog_FixWidth_280);
 
         EntitySimpleListAdapter adapter =
                 new EntitySimpleListAdapter(activity.getApplicationContext(), entities);

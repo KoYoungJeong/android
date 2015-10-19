@@ -32,7 +32,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
+import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -260,7 +260,8 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     @Override
     public void onShowDialog(int teamId, int messageId, int position) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setMessage(R.string.jandi_starred_unstar_from_item);
         LogUtil.e("messageId", messageId + "");
 

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/white"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -34,7 +34,9 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:text="@string/jandi_profile_actionb"
-                    app:img="@drawable/profile_img"/>
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
+                    app:img="@drawable/profile_img" />
 
                 <com.tosslab.jandi.app.views.IconWithTextView
                     android:id="@+id/ly_more_mentioned"
@@ -46,7 +48,9 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:text="@string/jandi_mention_mentions"
-                    app:img="@drawable/more_icon_mentioned"/>
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
+                    app:img="@drawable/more_icon_mentioned" />
 
                 <com.tosslab.jandi.app.views.IconWithTextView
                     android:id="@+id/ly_more_starred"
@@ -58,14 +62,16 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:text="@string/jandi_starred_star"
-                    app:img="@drawable/more_icon_stared"/>
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
+                    app:img="@drawable/more_icon_stared" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#fff1f4f8"/>
+                android:background="#fff1f4f8" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -84,7 +90,9 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:text="@string/jandi_team_member"
-                    app:img="@drawable/more_icon_team_member"/>
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
+                    app:img="@drawable/more_icon_team_member" />
 
                 <!-- invite -->
                 <com.tosslab.jandi.app.views.IconWithTextView
@@ -96,7 +104,9 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:text="@string/jandi_invitation"
-                    app:img="@drawable/more_icon_invite_member"/>
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
+                    app:img="@drawable/more_icon_invite_member" />
 
                 <!-- goto main -->
                 <com.tosslab.jandi.app.views.IconWithTextView
@@ -109,7 +119,9 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:text="@string/jandi_team_switch"
-                    app:img="@drawable/more_icon_team_switch"/>
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
+                    app:img="@drawable/more_icon_team_switch" />
 
             </LinearLayout>
 
@@ -127,7 +139,7 @@
                     android:paddingBottom="10dp"
                     android:text="JANDI Setting"
                     android:textColor="@color/jandi_text_medium"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -142,7 +154,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="18dp"
-                    android:src="@drawable/more_icon_help"/>
+                    android:src="@drawable/more_icon_help" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -151,7 +163,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@id/iv_icon_help"
                     android:text="@string/jandi_help"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -159,14 +171,14 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="17dp"
-                    android:src="@drawable/more_icon_arrow_right"/>
+                    android:src="@drawable/more_icon_arrow_right" />
 
             </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#FFf1f4f8"/>
+                android:background="#FFf1f4f8" />
 
             <RelativeLayout
                 android:id="@+id/rl_more_setting"
@@ -180,7 +192,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="18dp"
-                    android:src="@drawable/more_icon_setting"/>
+                    android:src="@drawable/more_icon_setting" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -189,7 +201,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@id/iv_icon_setting"
                     android:text="@string/jandi_settings"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
                 <ImageView
                     android:layout_width="6dp"
@@ -197,7 +209,59 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="17dp"
-                    android:src="@drawable/more_icon_arrow_right"/>
+                    android:src="@drawable/more_icon_arrow_right" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#FFf1f4f8" />
+
+            <RelativeLayout
+                android:id="@+id/vg_more_version"
+                android:layout_width="match_parent"
+                android:layout_height="43dp">
+
+                <ImageView
+                    android:id="@+id/iv_icon_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="18dp"
+                    android:src="@drawable/more_icon_version" />
+
+                <TextView
+                    android:id="@+id/tv_version_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/iv_icon_version"
+                    android:text="Version"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tv_more_jandi_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/tv_version_title"
+                    android:text="(v1.5.0)"></TextView>
+
+                <Button
+                    android:id="@+id/bt_update_version"
+                    android:layout_width="51dp"
+                    android:layout_height="27dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="17dp"
+                    android:background="@drawable/more_btn_update"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="Update"
+                    android:textColor="#00a4e6"
+                    android:textSize="11sp" />
 
             </RelativeLayout>
 
@@ -218,7 +282,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="JANDI"
-                        android:textColor="@color/jandi_text_medium"/>
+                        android:textColor="@color/jandi_text_medium" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -226,19 +290,17 @@
                         android:layout_marginBottom="3dp"
                         android:layout_marginTop="3dp"
                         android:text="TOSS LAB, INC."
-                        android:textColor="@color/jandi_text_light"/>
+                        android:textColor="@color/jandi_text_light" />
 
                     <TextView
                         android:id="@+id/txt_more_jandi_version"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/jandi_text_medium"/>
+                        android:textColor="@color/jandi_text_medium" />
 
                 </LinearLayout>
+
             </FrameLayout>
-
-
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>

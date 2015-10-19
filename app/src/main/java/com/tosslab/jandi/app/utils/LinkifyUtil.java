@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.regex.Regex;
 import com.tosslab.jandi.app.utils.regex.TelRegex;
-import com.tosslab.jandi.app.views.spannable.ClickableMensionMessageSpannable;
+import com.tosslab.jandi.app.views.spannable.ClickableMentionMessageSpannable;
 import com.tosslab.jandi.app.views.spannable.ClickableSpannable;
 import com.tosslab.jandi.app.views.spannable.JandiEmailSpan;
 import com.tosslab.jandi.app.views.spannable.JandiTelSpan;
@@ -31,7 +31,7 @@ public class LinkifyUtil {
             JandiURLSpan.class,
             JandiTelSpan.class,
             JandiEmailSpan.class,
-            ClickableMensionMessageSpannable.class
+            ClickableMentionMessageSpannable.class
     };
 
     private LinkifyUtil() {}

@@ -21,7 +21,7 @@ public class DeleteTopicDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setMessage(R.string.jandi_topic_ask_about_deleting)
                 .setPositiveButton(R.string.jandi_action_delete,
                         (dialog, whichButton) -> EventBus.getDefault().post(new ConfirmDeleteTopicEvent()))

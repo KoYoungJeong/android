@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.intro;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
@@ -12,6 +13,7 @@ import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -36,10 +38,22 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     @Bean
     IntroActivityPresenter presenter;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setNeedUnLockPassCode(false);
+    }
+
     @AfterViews
     void startOn() {
         presenter.setView(this);
         presenter.checkNewVersion(getApplicationContext(), startForInvite);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     @UiThread

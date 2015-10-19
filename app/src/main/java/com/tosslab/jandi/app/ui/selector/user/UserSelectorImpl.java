@@ -20,7 +20,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
-import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
+import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;

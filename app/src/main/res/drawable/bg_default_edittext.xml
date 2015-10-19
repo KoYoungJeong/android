@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetBottom="@dimen/abc_edit_text_inset_bottom_material"
+    android:insetLeft="@dimen/abc_edit_text_inset_horizontal_material"
+    android:insetRight="@dimen/abc_edit_text_inset_horizontal_material"
+    android:insetTop="@dimen/abc_edit_text_inset_top_material">
+    <bitmap android:src="@drawable/bg_input" />
+</inset>

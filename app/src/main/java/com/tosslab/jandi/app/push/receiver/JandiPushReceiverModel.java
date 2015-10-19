@@ -10,6 +10,7 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.koushikdutta.ion.Ion;
 import com.parse.ParseInstallation;
@@ -18,10 +19,10 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
@@ -37,6 +38,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.util.List;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 10..
@@ -144,17 +147,22 @@ public class JandiPushReceiverModel {
         }
     }
 
-    // LeftSideMenu 를 DB를 통해 불러오고 없다면 서버에서 받고 디비에 저장한다.
-    public ResLeftSideMenu getLeftSideMenu(int teamId) {
-        ResLeftSideMenu leftSideMenu =
-                LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
-        if (leftSideMenu == null) {
+    public ResLeftSideMenu getLeftSideMenuFromDB(int teamId) {
+        return LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
+    }
+
+    public ResLeftSideMenu getLeftSideMenuFromServer(int teamId) {
+        ResLeftSideMenu leftSideMenu = null;
+        try {
             leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
-            if (leftSideMenu != null) {
-                LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
-            }
+        } catch (RetrofitError e) {
+            LogUtil.e(Log.getStackTraceString(e));
         }
         return leftSideMenu;
+    }
+
+    public void upsertLeftSideMenu(ResLeftSideMenu leftSideMenu) {
+        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
     }
 
     public boolean isMyEntityId(int writerId) {

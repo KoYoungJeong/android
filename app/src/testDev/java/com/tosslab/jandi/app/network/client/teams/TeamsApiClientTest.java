@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.network.client.teams;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
@@ -14,7 +13,6 @@ import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 
 import org.junit.After;
@@ -39,17 +37,12 @@ public class TeamsApiClientTest {
 
     @Before
     public void setUp() throws Exception {
-        JandiApplication.setContext(RuntimeEnvironment.application);
-        JandiPreference.setAccessTokenType(RuntimeEnvironment.application, "bearer");
-        JandiPreference.setAccessToken(RuntimeEnvironment.application, "86100b73-18f4-42bd-9f6f-d5535a7b8ce3");
-
         BaseInitUtil.initData(RuntimeEnvironment.application);
     }
 
     @After
     public void tearDown() throws Exception {
         BaseInitUtil.releaseDatabase();
-
     }
 
 

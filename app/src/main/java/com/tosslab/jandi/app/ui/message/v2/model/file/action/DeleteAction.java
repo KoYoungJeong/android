@@ -28,7 +28,8 @@ public class DeleteAction implements FileAction {
 
     @Override
     public void action(ResMessages.Link link) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(R.string.jandi_action_delete)
                 .setMessage(activity.getString(R.string.jandi_file_delete_message))
                 .setNegativeButton(R.string.jandi_cancel, null)

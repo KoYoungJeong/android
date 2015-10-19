@@ -8,6 +8,7 @@ import android.webkit.WebView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -38,6 +39,12 @@ public class TermActivity extends BaseAppCompatActivity {
         String url = getUrl(mode, langCode);
 
         webView.loadUrl(url);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     private void setActionbarSetting(Mode mode) {

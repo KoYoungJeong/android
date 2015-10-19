@@ -2,12 +2,14 @@ package com.tosslab.jandi.app.local.orm;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.domain.BadgeCount;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
@@ -18,6 +20,7 @@ import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.domain.UploadedFileInfo;
 import com.tosslab.jandi.app.local.orm.upgrade.UpgradeChecker;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResChat;
@@ -26,6 +29,7 @@ import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -42,7 +46,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_BADGE = 3;
     private static final int DATABASE_VERSION_FOLDER_MODIFY = 4;
     private static final int DATABASE_VERSION_STICKER_SEND_STATUS = 5;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_STICKER_SEND_STATUS;
+    private static final int DATABASE_VERSION_ADD_TOKEN_TABLE = 6;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_ADD_TOKEN_TABLE;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -114,6 +119,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, UploadedFileInfo.class);
 
             createTable(connectionSource, BadgeCount.class);
+
+            createTable(connectionSource, ResAccessToken.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -139,6 +146,29 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         Dao<SendMessage, ?> dao = DaoManager.createDao(connectionSource, SendMessage.class);
                         dao.executeRawNoArgs("ALTER TABLE `message_send` ADD COLUMN stickerGroupId INTEGER;");
                         dao.executeRawNoArgs("ALTER TABLE `message_send` ADD COLUMN stickerId VARCHAR;");
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_ADD_TOKEN_TABLE, () -> {
+
+                        createTable(connectionSource, ResAccessToken.class);
+
+                        Context context = JandiApplication.getContext();
+                        String accessToken = JandiPreference.getAccessToken(context);
+                        String accessTokenType = JandiPreference.getAccessTokenType(context);
+                        String refreshToken = JandiPreference.getRefreshToken(context);
+
+                        if (!TextUtils.isEmpty(accessToken)
+                                && !TextUtils.isEmpty(accessTokenType)
+                                && !TextUtils.isEmpty(refreshToken)) {
+                            ResAccessToken resAccessToken = new ResAccessToken();
+                            resAccessToken.setRefreshToken(refreshToken);
+                            resAccessToken.setAccessToken(accessToken);
+                            resAccessToken.setTokenType(accessTokenType);
+
+                            Dao<ResAccessToken, ?> dao = DaoManager.createDao(connectionSource, ResAccessToken.class);
+                            dao.create(resAccessToken);
+
+                        }
+
                     }));
 
             Observable.from(upgradeCheckers)
@@ -278,6 +308,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), FolderExpand.class);
 
         clearTable(getConnectionSource(), BadgeCount.class);
+        clearTable(getConnectionSource(), ResAccessToken.class);
     }
 
     private void clearTable(ConnectionSource connectionSource, Class<?> dataClass) {

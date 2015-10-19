@@ -7,8 +7,8 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_share"
-        style="@style/Jandi.Default.ActionBar"
-        android:layout_width="match_parent" />
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" />
 
     <FrameLayout
         android:id="@+id/vg_share_container"

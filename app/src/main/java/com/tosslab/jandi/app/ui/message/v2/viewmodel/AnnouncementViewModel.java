@@ -158,7 +158,7 @@ public class AnnouncementViewModel {
 
     @Click(R.id.btn_announcement_delete)
     void showDeleteAlertDialog() {
-        new AlertDialog.Builder(activity)
+        new AlertDialog.Builder(activity, R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setMessage(activity.getString(R.string.jandi_announcement_delete_question))
                 .setPositiveButton(activity.getString(R.string.jandi_confirm), (dialog, which) -> {
                     EventBus.getDefault().post(new AnnouncementEvent(AnnouncementEvent.Action.DELETE));
@@ -197,7 +197,7 @@ public class AnnouncementViewModel {
 
     @UiThread
     public void showCreateAlertDialog(DialogInterface.OnClickListener confirmListener) {
-        new AlertDialog.Builder(activity)
+        new AlertDialog.Builder(activity, R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setMessage(activity.getString(R.string.jandi_announcement_create_question))
                 .setPositiveButton(activity.getString(R.string.jandi_confirm), confirmListener)
                 .setNegativeButton(activity.getString(R.string.jandi_cancel), null)
