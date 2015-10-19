@@ -50,6 +50,8 @@ public class InvitationDialogFragment extends DialogFragment {
     private static final String INVITATION_FROM = "from";
 
     ClipboardManager clipboardManager;
+    private String teamName;
+    private String inviteUrl;
 
     public static InvitationDialogFragment newInstance(String inviteTeamName, String invitationUrl, int from) {
         InvitationDialogFragment fragment = new InvitationDialogFragment();
@@ -59,6 +61,14 @@ public class InvitationDialogFragment extends DialogFragment {
         args.putInt(INVITATION_FROM, from);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        teamName = getArguments().getString(INVITE_TEAM_NAME);
+        inviteUrl = getArguments().getString(INVITATION_URL);
     }
 
     @Override
@@ -162,7 +172,7 @@ public class InvitationDialogFragment extends DialogFragment {
 
     private Intent getInviteIntent(int eventType) {
 
-        String publicLink = getArguments().getString(INVITATION_URL);
+        String publicLink = inviteUrl;
         String packageName;
 
         switch (eventType) {
@@ -202,8 +212,7 @@ public class InvitationDialogFragment extends DialogFragment {
     }
 
     private void copyLink() {
-        ClipData clipData = ClipData.newPlainText("",
-                getInvitationContents() + "\n" + getArguments().getString(INVITATION_URL));
+        ClipData clipData = ClipData.newPlainText("", inviteUrl);
         clipboardManager.setPrimaryClip(clipData);
     }
 
@@ -218,8 +227,11 @@ public class InvitationDialogFragment extends DialogFragment {
     }
 
     public String getInvitationContents() {
-        return getArguments().getString(INVITE_TEAM_NAME) +
-                getActivity().getApplicationContext().getResources().getString(R.string.jandi_invite_contents);
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(teamName)
+                .append(" ")
+                .append(getActivity().getResources().getString(R.string.jandi_invite_contents));
+        return buffer.toString();
     }
 
 }
