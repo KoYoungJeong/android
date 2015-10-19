@@ -38,32 +38,41 @@ public class PassCodePresenter {
             return;
         }
 
-        if (mode == PassCodeActivity.MODE_TO_SAVE_PASSCODE
-                || mode == PassCodeActivity.MODE_TO_MODIFY_PASSCODE) {
-            String previousPassCode = model.getPreviousPassCode();
-            if (!TextUtils.isEmpty(previousPassCode)) {
-                boolean validate = model.validatePassCode(previousPassCode);
-                if (validate) {
-                    model.savePassCode();
-                    view.showSuccess();
-                } else {
-                    view.showFail();
-                }
-            } else {
-                model.setPreviousPassCode(model.getPassCode());
-                model.clearPassCode();
-                view.clearPassCodeCheckerWithDelay();
-                view.showNeedToValidateText();
-            }
-            return;
+        // 패스코드를 설정하거나 바꾸는 경우
+        if (model.isSetupMode(mode)) {
+            setupPassCode();
+        } else {
+            // 일반 잠금해제 수행중인 경우
+            validatePassCode();
         }
+    }
 
+    private void validatePassCode() {
         String savedPassCode = JandiPreference.getPassCode(JandiApplication.getContext());
         boolean validate = model.validatePassCode(savedPassCode);
         if (validate) {
             view.showSuccess();
         } else {
             view.showFail();
+        }
+    }
+
+    private void setupPassCode() {
+        String previousPassCode = model.getPreviousPassCode();
+        // 선 입력된 패스코드가 없는 경우(첫번째 입력중인 경우)
+        if (TextUtils.isEmpty(previousPassCode)) {
+            model.setPreviousPassCode(model.getPassCode());
+            model.clearPassCode();
+            view.clearPassCodeCheckerWithDelay();
+            view.showNeedToValidateText();
+        } else {
+            boolean validate = model.validatePassCode(previousPassCode);
+            if (validate) {
+                model.savePassCode();
+                view.showSuccess();
+            } else {
+                view.showFail();
+            }
         }
     }
 

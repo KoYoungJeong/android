@@ -17,6 +17,21 @@ public class PassCodeAdapter extends RecyclerView.Adapter<PassCodeViewHolder> {
         void onItemClick(int position);
     }
 
+    private static final int[] numberResIds = new int[]{
+            R.drawable.btn_numberpad_1,
+            R.drawable.btn_numberpad_2,
+            R.drawable.btn_numberpad_3,
+            R.drawable.btn_numberpad_4,
+            R.drawable.btn_numberpad_5,
+            R.drawable.btn_numberpad_6,
+            R.drawable.btn_numberpad_7,
+            R.drawable.btn_numberpad_8,
+            R.drawable.btn_numberpad_9,
+            0,
+            R.drawable.btn_numberpad_0,
+            R.drawable.btn_numberpad_del
+    };
+
     public static final int CANCEL = 9;
     public static final int DELETE = 11;
 
@@ -58,31 +73,7 @@ public class PassCodeAdapter extends RecyclerView.Adapter<PassCodeViewHolder> {
     }
 
     private int getNumberResId(int position) {
-        switch (position) {
-            case 0:
-                return R.drawable.btn_numberpad_1;
-            case 1:
-                return R.drawable.btn_numberpad_2;
-            case 2:
-                return R.drawable.btn_numberpad_3;
-            case 3:
-                return R.drawable.btn_numberpad_4;
-            case 4:
-                return R.drawable.btn_numberpad_5;
-            case 5:
-                return R.drawable.btn_numberpad_6;
-            case 6:
-                return R.drawable.btn_numberpad_7;
-            case 7:
-                return R.drawable.btn_numberpad_8;
-            case 8:
-                return R.drawable.btn_numberpad_9;
-            case 10:
-                return R.drawable.btn_numberpad_0;
-            case DELETE:
-                return R.drawable.btn_numberpad_del;
-        }
-        return 0;
+        return numberResIds[position];
     }
 
 }
