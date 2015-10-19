@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.transform.ion.IonBlurTransform;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.SwipeExitLayout;
@@ -52,6 +53,8 @@ import uk.co.senab.photoview.PhotoView;
  */
 @EActivity(R.layout.activity_member_profile)
 public class MemberProfileActivity extends BaseAppCompatActivity {
+    public static final String TAG = MemberProfileActivity.class.getSimpleName();
+
     public static final int EXTRA_FROM_FILE_DETAIL = 2;
     public static final int EXTRA_FROM_MAIN_CHAT = 3;
     public static final int EXTRA_FROM_TEAM_MEMBER = 4;
@@ -70,8 +73,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     @ViewById(R.id.vg_swipe_exit_layout)
     SwipeExitLayout swipeExitLayout;
-    @ViewById(R.id.v_background)
-    View vBackground;
+    @ViewById(R.id.v_member_profile_img_large_overlay)
+    View vProfileImageLargeOverlay;
 
     @ViewById(R.id.tv_member_profile_description)
     TextView tvProfileDescription;
@@ -86,12 +89,14 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @ViewById(R.id.tv_member_profile_email)
     TextView tvProfileEmail;
 
-    @ViewById(R.id.vg_member_profile_img_large_overlay)
-    ViewGroup vgProfileImageOverlay;
+    @ViewById(R.id.vg_member_profile_img_large)
+    ViewGroup vgProfileImageLarge;
     @ViewById(R.id.vg_member_profile_detail)
     ViewGroup vgProfileTeamDetail;
     @ViewById(R.id.vg_member_profile_team_info)
     ViewGroup vgProfileTeamInfo;
+    @ViewById(R.id.vg_member_profile_bottoms)
+    ViewGroup vgProfileTeamBottoms;
     @ViewById(R.id.vg_member_profile_buttons)
     ViewGroup vgProfileTeamButtons;
 
@@ -107,13 +112,12 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @ViewById(R.id.iv_member_profile_img_small)
     ImageView ivProfileImageSmall;
 
-    private int scrollEventMargin;
     private boolean isFullSizeImageShowing = false;
     private boolean hasChangedProfileImage = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        overridePendingTransition(R.anim.slide_in_bottom_with_allpha, 0);
+        overridePendingTransition(R.anim.slide_in_bottom_with_alpha, 0);
         super.onCreate(savedInstanceState);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -136,21 +140,13 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @OnActivityResult(ModifyProfileActivity.REQUEST_CODE)
     @AfterViews
     void initViews() {
-        // Scroll 시 추가 애니메이션을 위한 임의의 사이즈
-        //  #R.id.vg_member_profile_buttons 의 Height 만큼의 사이즈를 가진다.
-        scrollEventMargin = getResources().getDimensionPixelSize(R.dimen.jandi_member_profile_buttons_height);
-
         FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
 
         final String profileImageUrlLarge = member.getUserLargeProfileUrl();
 
-        // 기본 프로필 이미지 인 경우 디폴트 컬러를 보여준다.
-        if (!(hasChangedProfileImage = hasChangedProfileImage(profileImageUrlLarge))) {
-            int color = getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
-            vgProfileImageOverlay.setBackgroundColor(color);
-        }
+        hasChangedProfileImage = hasChangedProfileImage(profileImageUrlLarge);
 
-        initSwipeLayout();
+        initSwipeLayout(hasChangedProfileImage);
 
         initLargeImageSize(profileImageUrlLarge);
 
@@ -229,77 +225,95 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         addButtons(member);
     }
 
-    private void initSwipeLayout() {
+    private void initSwipeLayout(boolean setViewToAlpha) {
         swipeExitLayout.setOnExitListener(this::finish);
-        swipeExitLayout.sevBackgroundDimView(vBackground);
+        if (setViewToAlpha) {
+            swipeExitLayout.setViewToAlpha(vProfileImageLargeOverlay);
+        }
         swipeExitLayout.setStatusListener(new SwipeExitLayout.StatusListener() {
+            private float lastDistance;
+
+
             @Override
             public void onScroll(float distance) {
-                float translationY = ivProfileImageLarge.getTranslationY() - distance;
+                lastDistance += distance;
 
-                if (distance > 0) {
-                    translationY = Math.max(-scrollEventMargin, translationY);
-                } else {
-                    translationY = Math.min(0, translationY);
-                }
+                int measuredWidth = vgProfileImageLarge.getMeasuredWidth();
+                int measuredHeight = vgProfileImageLarge.getMeasuredHeight();
 
-                ivProfileImageLarge.setTranslationY(translationY);
+                float scaleX = (measuredWidth - (lastDistance * 2)) / measuredWidth;
+                LogUtil.e("jsp", "scaleX = " + scaleX);
+                scaleX = Math.max(1, scaleX);
+
+                float scaleY = (measuredHeight - (lastDistance * 2)) / measuredHeight;
+                LogUtil.e(TAG, "scaleY = " + scaleY);
+                scaleY = Math.max(1, scaleY);
+
+                vgProfileImageLarge.setScaleX(scaleX);
+                vgProfileImageLarge.setScaleY(scaleY);
             }
 
             @Override
             public void onIgnore(float spareDistance) {
-                float distance = spareDistance - scrollEventMargin;
-                int duration = Math.min(
-                        SwipeExitLayout.MIN_IGNORE_ANIM_DURATION, (int) Math.abs(distance));
+                lastDistance = 0;
 
-                ivProfileImageLarge.animate()
+                int measuredHeight = vgProfileImageLarge.getMeasuredHeight();
+                int scaledHeight = (int) (measuredHeight * vgProfileImageLarge.getScaleY());
+
+                int duration = Math.min(
+                        SwipeExitLayout.MIN_IGNORE_ANIM_DURATION, scaledHeight - measuredHeight);
+                vgProfileImageLarge.animate()
                         .setDuration(duration)
-                        .translationY(-scrollEventMargin);
+                        .scaleX(1)
+                        .scaleY(1);
             }
 
             @Override
             public void onExit(float spareDistance) {
-                float distance = spareDistance - scrollEventMargin;
-                int duration = Math.min(
-                        SwipeExitLayout.MIN_EXIT_ANIM_DURATION, (int) Math.abs(distance));
+                lastDistance = 0;
 
-                ivProfileImageLarge.animate()
+                int measuredHeight = vgProfileImageLarge.getMeasuredHeight();
+                int scaledHeight = (int) (measuredHeight * vgProfileImageLarge.getScaleY());
+
+                int duration = Math.min(
+                        SwipeExitLayout.MIN_IGNORE_ANIM_DURATION,
+                        Math.abs(getResources().getDisplayMetrics().heightPixels - scaledHeight));
+
+                float scaleY =
+                        getResources().getDisplayMetrics().heightPixels / (float) measuredHeight;
+
+                vgProfileImageLarge.animate()
                         .setDuration(duration)
-                        .translationY(0);
+                        .scaleX(scaleY * 2)
+                        .scaleY(scaleY * 2);
             }
         });
     }
 
     private void initLargeImageSize(final String profileImageUrlLarge) {
-        if (isLandscape()) {
-            ivProfileImageLarge.setTranslationY(-scrollEventMargin);
+        vgProfileTeamDetail.post(() -> {
+            int screenHeight = findViewById(android.R.id.content).getMeasuredHeight();
+            int vgProfileTeamDetailHeight = vgProfileTeamDetail.getMeasuredHeight();
+            if (isLandscape()) {
+                vgProfileTeamDetailHeight = vgProfileTeamBottoms.getMeasuredHeight();
+            }
+            int ivProfileImageLargeHeight = screenHeight - vgProfileTeamDetailHeight;
+
+            ViewGroup.LayoutParams layoutParams = vgProfileImageLarge.getLayoutParams();
+            layoutParams.height = ivProfileImageLargeHeight;
+            vgProfileImageLarge.setLayoutParams(layoutParams);
 
             loadLargeImage(profileImageUrlLarge);
-            return;
-        }
-
-        vgProfileTeamDetail.post(new Runnable() {
-            @Override
-            public void run() {
-                int screenHeight = findViewById(android.R.id.content).getMeasuredHeight();
-                int vgProfileTeamDetailHeight = vgProfileTeamDetail.getMeasuredHeight();
-                int ivProfileImageLargeHeight =
-                        screenHeight - vgProfileTeamDetailHeight + scrollEventMargin;
-
-                ViewGroup.LayoutParams layoutParams = ivProfileImageLarge.getLayoutParams();
-                layoutParams.height = ivProfileImageLargeHeight;
-                ivProfileImageLarge.setLayoutParams(layoutParams);
-
-                ivProfileImageLarge.setTranslationY(-scrollEventMargin);
-
-                loadLargeImage(profileImageUrlLarge);
-            }
         });
     }
 
     private void loadLargeImage(String profileImageUrlLarge) {
-        Drawable placeHolder = new ColorDrawable(
-                getResources().getColor(R.color.jandi_member_profile_img_overlay_default));
+        int defaultColor = getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
+        if (!hasChangedProfileImage) {
+            vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
+            return;
+        }
+        Drawable placeHolder = new ColorDrawable(defaultColor);
         Ion.with(ivProfileImageLarge)
                 .placeholder(placeHolder)
                 .error(placeHolder)
@@ -371,7 +385,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(0, 0);
+        overridePendingTransition(0, R.anim.alpha_on_exit);
     }
 
     @Click(R.id.btn_member_profile_star)

@@ -48,15 +48,10 @@
         <item name="colorAccent">@color/jandi_accent_color</item>
     </style>
 
-    <style name="Jandi.Transparent" parent="JandiTheme">
-        <item name="android:windowBackground">@android:color/transparent</item>
+    <style name="Jandi.NoTitle" parent="JandiTheme">
         <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:backgroundDimEnabled">true</item>
-        <item name="android:backgroundDimAmount">0.0</item>
     </style>
 
     <!-- Actionbar -->

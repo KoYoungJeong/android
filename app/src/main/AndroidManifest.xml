@@ -200,7 +200,7 @@
         <activity
             android:name=".ui.profile.member.MemberProfileActivity_"
             android:screenOrientation="fullUser"
-            android:theme="@style/Jandi.Transparent" />
+            android:theme="@style/Jandi.NoTitle" />
 
         <service android:name="com.parse.PushService" />
 
