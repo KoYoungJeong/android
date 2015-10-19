@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.views.spannable.ClickableMensionMessageSpannable;
+import com.tosslab.jandi.app.views.spannable.ClickableMentionMessageSpannable;
 import com.tosslab.jandi.app.views.spannable.MentionMessageSpannable;
 
 import java.util.Collection;
@@ -54,10 +54,10 @@ public class GenerateMentionMessageUtil {
                 continue;
             }
             if (mention.getId() == myId) {
-                spannable = new ClickableMensionMessageSpannable(context,
+                spannable = new ClickableMentionMessageSpannable(
                         name, mention.getId(), tvMessageView.getTextSize(), meTextColor, meBackgroundColor);
             } else {
-                spannable = new ClickableMensionMessageSpannable(context,
+                spannable = new ClickableMentionMessageSpannable(
                         name, mention.getId(), tvMessageView.getTextSize(), textColor, backgroundColor);
             }
 
