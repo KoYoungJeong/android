@@ -14,9 +14,6 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import de.greenrobot.event.EventBus;
-import rx.Scheduler;
-import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
 
 /**
  * Created by tonyjs on 15. 7. 14..
