@@ -73,7 +73,7 @@ public class Divider implements BodyViewHolder {
 
     public static class Builder {
         private BodyViewHolder originBodyViewHolder;
-        private boolean hasDivider;
+        private boolean divider;
 
         public Builder bodyViewHolder(BodyViewHolder originBodyViewHolder) {
             this.originBodyViewHolder = originBodyViewHolder;
@@ -81,12 +81,12 @@ public class Divider implements BodyViewHolder {
         }
 
         public Builder divider(boolean hasDivider) {
-            this.hasDivider = hasDivider;
+            this.divider = hasDivider;
             return this;
         }
 
         public Divider build() {
-            return new Divider(originBodyViewHolder, hasDivider);
+            return new Divider(originBodyViewHolder, divider);
         }
     }
 }
