@@ -4,11 +4,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.tosslab.jandi.app.JandiApplication;
+
 /**
  * Created by justinygchoi on 2014. 7. 8..
  */
 public class JandiPreference {
     public static final int NOT_SET_YET = -1;
+    public static final String PREF_SETTING_ORIENTATION = "setting_orientation";
     // SharedPreference Key 값
     private static final String PREF_NAME = "JandiPref";
     private static final String PREF_TOKEN = "token";
@@ -36,7 +39,7 @@ public class JandiPreference {
     // PARSE
     private static final String PREF_OLD_PARSE_CHANNEL_DELETED = "old_parse_channel_deleted";
     private static final String PREF_OLD_PARSE_FILE_CACHE_DELETED = "old_parse_file_cache_deleted";
-    public static final String PREF_SETTING_ORIENTATION = "setting_orientation";
+    private static final String PREF_VERSION_POPUP_LAST_TIME = "version_popup_last_time";
 
     public static boolean isOldParseFileCacheDeleted(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
@@ -264,4 +267,15 @@ public class JandiPreference {
         return PreferenceManager.getDefaultSharedPreferences(context).getString
                 (PREF_SETTING_ORIENTATION, "0");
     }
+
+    public static void setVersionPopupLastTimeToCurrentTime(long time) {
+        getSharedPreferences(JandiApplication.getContext()).
+                edit().putLong(PREF_VERSION_POPUP_LAST_TIME, time);
+    }
+
+    public static long getVersionPopupLastTime() {
+        return getSharedPreferences(JandiApplication.getContext())
+                .getLong(PREF_VERSION_POPUP_LAST_TIME, 0);
+    }
+
 }

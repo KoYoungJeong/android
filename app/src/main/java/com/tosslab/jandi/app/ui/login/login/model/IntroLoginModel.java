@@ -61,10 +61,7 @@ public class IntroLoginModel {
     @SupposeUiThread
     public boolean isValidEmailFormat(String email) {
         // ID 입력의 포멧 체크
-        if (FormatConverter.isInvalidEmailString(email)) {
-            return false;
-        }
-        return true;
+        return !FormatConverter.isInvalidEmailString(email);
     }
 
     public String getEmailHost(String signedEmail) {

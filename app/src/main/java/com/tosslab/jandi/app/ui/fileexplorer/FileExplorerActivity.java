@@ -124,7 +124,7 @@ public class FileExplorerActivity extends BaseAppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
         } else if (item.getItemId() == R.id.file_explorer_switch_item) {
-            ((Spinner) findViewById(R.id.file_explorer_spinner_button)).performClick();
+            findViewById(R.id.file_explorer_spinner_button).performClick();
         }
 
         return super.onOptionsItemSelected(item);

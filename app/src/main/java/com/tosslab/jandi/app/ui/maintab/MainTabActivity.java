@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -490,9 +490,13 @@ public class MainTabActivity extends BaseAppCompatActivity {
         if (!NetworkCheckUtil.isConnected())
             return;
 
-        if (getInstalledAppVersion()
-                < getConfigInfo().latestVersions.android) {
-            showUpdateVersionDialog();
+        if (getConfigInfo() != null &&
+                (getInstalledAppVersion() < getConfigInfo().latestVersions.android)) {
+            final long oneDayMillis = 1000 * 60 * 60 * 24;
+            long timeFromLastPopup = System.currentTimeMillis() - JandiPreference.getVersionPopupLastTime();
+            if (timeFromLastPopup > oneDayMillis) {
+                showUpdateVersionDialog();
+            }
         }
     }
 
@@ -515,13 +519,20 @@ public class MainTabActivity extends BaseAppCompatActivity {
                 })
                 .setNegativeButton(getString(R.string.jandi_cancel)
                         , (dialog, which) -> {
+                    JandiPreference.setVersionPopupLastTimeToCurrentTime(System.currentTimeMillis());
                 })
                 .setCancelable(true);
         builder.create().show();
     }
 
     public ResConfig getConfigInfo() throws RetrofitError {
-        return RequestApiManager.getInstance().getConfigByMainRest();
+        ResConfig resConfig = null;
+        try {
+            resConfig = RequestApiManager.getInstance().getConfigByMainRest();
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+        }
+        return resConfig;
     }
 
     public int getInstalledAppVersion() {

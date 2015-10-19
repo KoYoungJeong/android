@@ -497,10 +497,7 @@ public class MentionControlViewModel {
     }
 
     public boolean hasMentionMember() {
-        if (selectedMemberHashMap.size() > 0) {
-            return true;
-        }
-        return false;
+        return selectedMemberHashMap.size() > 0;
     }
 
     public void clear() {
