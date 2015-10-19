@@ -5,8 +5,8 @@ import com.j256.ormlite.dao.Dao;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.domain.LeftSideMenu;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.spring.JacksonMapper;
 
 import java.io.IOException;
 import java.sql.SQLException;

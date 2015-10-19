@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
-import com.tosslab.jandi.app.network.spring.JacksonMapper;
 
 import org.codehaus.jackson.map.ObjectMapper;
 

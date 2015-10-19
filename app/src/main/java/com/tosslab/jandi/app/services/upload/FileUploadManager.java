@@ -11,8 +11,8 @@ import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel_;
 import com.tosslab.jandi.app.local.orm.domain.UploadedFileInfo;
 import com.tosslab.jandi.app.local.orm.repositories.UploadedFileInfoRepository;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.models.ResUploadedFile;
-import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
 
 import java.io.IOException;

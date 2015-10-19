@@ -153,34 +153,22 @@ public class JandiPreference {
         editor.commit();
     }
 
+    @Deprecated
     public static String getAccessTokenType(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
         return pref.getString(PREF_ACCESS_TOKEN_TYPE, "");
     }
 
-    public static void setAccessTokenType(Context context, String accessTokenType) {
-        SharedPreferences pref = getSharedPreferences(context);
-        pref.edit().putString(PREF_ACCESS_TOKEN_TYPE, accessTokenType).commit();
-    }
-
+    @Deprecated
     public static String getAccessToken(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
         return pref.getString(PREF_ACCESS_TOKEN, "");
     }
 
-    public static void setAccessToken(Context context, String accessToken) {
-        SharedPreferences pref = getSharedPreferences(context);
-        pref.edit().putString(PREF_ACCESS_TOKEN, accessToken).commit();
-    }
-
+    @Deprecated
     public static String getRefreshToken(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
         return pref.getString(PREF_REFRESH_TOKEN, "");
-    }
-
-    public static void setRefreshToken(Context context, String refreshToken) {
-        SharedPreferences pref = getSharedPreferences(context);
-        pref.edit().putString(PREF_REFRESH_TOKEN, refreshToken).commit();
     }
 
     public static void signOut(Context context) {

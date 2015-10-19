@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.spring;
+package com.tosslab.jandi.app.network.json;
 
 import org.codehaus.jackson.map.ObjectMapper;
 

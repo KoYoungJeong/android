@@ -71,8 +71,7 @@ public class SignUpVerifyModel {
     public void setAccountInfo(ResAccountActivate accountActivate) {
         ResAccountInfo accountInfo = accountActivate.getAccount();
 
-        TokenUtil.saveTokenInfoByPassword(context, accountActivate.getAccessToken(),
-                accountActivate.getRefreshToken(), accountActivate.getTokenType());
+        TokenUtil.saveTokenInfoByPassword(accountActivate);
 
         AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
 

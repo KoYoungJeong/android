@@ -10,6 +10,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
+import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.SimpleApiRequester;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
@@ -124,5 +125,97 @@ public class JandiApplication extends MultiDexApplication {
             ReqUpdatePlatformStatus req = new ReqUpdatePlatformStatus(active);
             RequestApiManager.getInstance().updatePlatformStatus(req);
         }, () -> LogUtil.i("PlatformApi", "Success(updatePlatformStatus)"));
+    }
+
+        public static final class JandiLifecycleCallbacks implements ActivityLifecycleCallbacks {
+        public static final String TAG = "JANDI.LifecycleCallbacks";
+        private int resumed = 0;
+        private int stopped = 0;
+
+        @Override
+        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+        }
+
+        @Override
+        public void onActivityStarted(Activity activity) {
+        }
+
+        @Override
+        public void onActivityResumed(Activity activity) {
+            if (resumed == stopped) {
+                LogUtil.e(TAG, "resumed == stopped > Active");
+                updatePlatformStatus(true);
+            }
+
+            resumed++;
+
+            LogUtil.i(TAG, "resumed = " + resumed + " stopped = " + stopped);
+        }
+
+        @Override
+        public void onActivityPaused(Activity activity) {
+        }
+
+        @Override
+        public void onActivityStopped(Activity activity) {
+            stopped++;
+
+            LogUtil.d(TAG, "resumed = " + resumed + " stopped = " + stopped);
+
+            if (resumed == stopped) {
+                LogUtil.e(TAG, "resumed == stopped > Deactive");
+                updatePlatformStatus(false);
+            }
+        }
+
+        @Override
+        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+        }
+
+        @Override
+        public void onActivityDestroyed(Activity activity) {
+        }
+
+        private void updatePlatformStatus(final boolean active) {
+            String accessToken = AccessTokenRepository
+                    .getRepository()
+                    .getAccessToken()
+                    .getAccessToken();
+            if (TextUtils.isEmpty(accessToken)) {
+                LogUtil.i(TAG, "Don't request(has not accessToken).");
+                return;
+            }
+
+            Observable.OnSubscribe<ResCommon> updatePlatformStatusSubscribe =
+                    subscriber -> {
+                        LogUtil.i(TAG, "updatePlatformStatus");
+                        try {
+                            ReqUpdatePlatformStatus req = new ReqUpdatePlatformStatus(active);
+                            RequestApiManager.getInstance().updatePlatformStatus(req);
+                            subscriber.onCompleted();
+                        } catch (RetrofitError retrofitError) {
+                            subscriber.onError(retrofitError);
+                        }
+                    };
+
+            Observable.create(updatePlatformStatusSubscribe)
+                    .subscribeOn(Schedulers.newThread())
+                    .subscribe(new Observer<ResCommon>() {
+                        @Override
+                        public void onCompleted() {
+                            LogUtil.e(TAG, "Success(updatePlatformStatus)");
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            LogUtil.e(TAG, "Error(updatePlatformStatus) - " + e.getMessage());
+                        }
+
+                        @Override
+                        public void onNext(ResCommon resCommon) {
+
+                        }
+                    });
+        }
     }
 }

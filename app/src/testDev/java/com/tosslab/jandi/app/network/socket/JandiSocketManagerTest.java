@@ -2,10 +2,10 @@ package com.tosslab.jandi.app.network.socket;
 
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
-import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 
 import org.junit.After;
