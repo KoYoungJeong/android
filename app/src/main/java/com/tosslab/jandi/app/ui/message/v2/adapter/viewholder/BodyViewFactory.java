@@ -173,7 +173,8 @@ public class BodyViewFactory {
                     && isCommentToNext(nextLink)
                     && nextLink.feedbackId == currentMessage.id
                     && currentMessage.writerId == nextLink.message.writerId
-                    && DateComparatorUtil.isSince5min(currentMessage.createTime, nextLink.message.createTime);
+                    && DateComparatorUtil.isSince5min(currentMessage.createTime, nextLink.message.createTime)
+                    || !isSameDay(currentLink, nextLink);
 
             if (nextLink == null) {
                 notNeedDivider = true;
@@ -213,7 +214,8 @@ public class BodyViewFactory {
                     && isCommentToNext(nextLink)
                     && nextLink.feedbackId == currentMessage.feedbackId
                     && currentMessage.writerId == nextLink.message.writerId
-                    && DateComparatorUtil.isSince5min(currentMessage.createTime, nextLink.message.createTime);
+                    && DateComparatorUtil.isSince5min(currentMessage.createTime, nextLink.message.createTime)
+                    || !isSameDay(currentLink, nextLink);
 
             if (nextLink == null) {
                 notNeedDivider = true;
