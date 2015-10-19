@@ -129,7 +129,8 @@ public class InternalWebActivity extends BaseAppCompatActivity {
         });
 
 
-        if (!url.startsWith("http")) {
+        String urlLowerCase = url.toLowerCase();
+        if (!urlLowerCase.startsWith("http")) {
             url = "http://" + url;
         }
 
