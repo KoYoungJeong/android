@@ -270,18 +270,15 @@ public class BodyViewFactory {
             return false;
         }
 
-        ResMessages.OriginalMessage beforeOriginalMessage = beforeMessage.message;
-        ResMessages.OriginalMessage originalMessage = message.message;
-
-        if (originalMessage.createTime == null || beforeOriginalMessage.createTime == null) {
+        if (message.time == null || beforeMessage.time == null) {
             return false;
         }
 
         Calendar messageCalendar = Calendar.getInstance();
-        messageCalendar.setTime(originalMessage.createTime);
+        messageCalendar.setTime(message.time);
 
         Calendar beforeCalendar = Calendar.getInstance();
-        beforeCalendar.setTime(beforeOriginalMessage.createTime);
+        beforeCalendar.setTime(beforeMessage.time);
 
         int messageDay = messageCalendar.get(Calendar.DAY_OF_YEAR);
         int beforeMessageDay = beforeCalendar.get(Calendar.DAY_OF_YEAR);
