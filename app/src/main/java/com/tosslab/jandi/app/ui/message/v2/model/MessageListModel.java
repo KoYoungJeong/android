@@ -69,6 +69,7 @@ import org.json.JSONException;
 import java.io.File;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -653,5 +654,40 @@ public class MessageListModel {
         }
 
         return localId;
+    }
+
+    public boolean needToChangeToSearchMode(int entityId, int roomId) {
+
+        if (roomId <= 0) {
+            if (!EntityManager.getInstance().getEntityById(entityId).isUser()) {
+                roomId = entityId;
+            }
+        }
+
+        if (roomId <= 0) {
+            return false;
+        }
+
+        ResMessages.Link lastMessage = MessageRepository.getRepository().getLastMessage(roomId);
+
+        if (lastMessage == null || lastMessage.id < 0) {
+            return false;
+        }
+
+        Date messageCreatedTime = lastMessage.time;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -30);
+        Date before30days = calendar.getTime();
+
+        return messageCreatedTime.before(before30days);
+    }
+
+    public void clearMessageRepository(int teamId, int roomId) {
+
+        if (roomId > 0) {
+            MessageRepository.getRepository().clearMessages(teamId, roomId);
+        }
+
     }
 }

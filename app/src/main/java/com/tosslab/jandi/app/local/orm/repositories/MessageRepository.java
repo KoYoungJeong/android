@@ -308,4 +308,22 @@ public class MessageRepository {
         }
         return null;
     }
+
+    public int clearMessages(int teamId, int roomId) {
+        lock.lock();
+        try {
+            Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
+            DeleteBuilder<ResMessages.Link, ?> deleteBuilder = dao.deleteBuilder();
+            deleteBuilder.where()
+                    .eq("teamId", teamId)
+                    .and()
+                    .eq("roomId", roomId);
+            return deleteBuilder.delete();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        } finally {
+            lock.unlock();
+        }
+    }
 }
