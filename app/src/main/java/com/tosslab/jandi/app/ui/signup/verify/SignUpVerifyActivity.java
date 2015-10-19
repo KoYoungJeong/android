@@ -321,7 +321,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
 
     private static class Blink extends Handler implements Runnable {
         private final WeakReference<View> blinkViewRef;
-        private boolean mCancelled;
+        private boolean cancelled;
 
         Blink(View blinkView) {
             super();
@@ -329,7 +329,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         }
 
         public void run() {
-            if (mCancelled) {
+            if (cancelled) {
                 return;
             }
 
@@ -350,14 +350,14 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         }
 
         void cancel() {
-            if (!mCancelled) {
+            if (!cancelled) {
                 removeCallbacks(Blink.this);
-                mCancelled = true;
+                cancelled = true;
             }
         }
 
         void uncancel() {
-            mCancelled = false;
+            cancelled = false;
         }
     }
 
