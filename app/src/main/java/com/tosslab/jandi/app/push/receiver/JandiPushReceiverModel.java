@@ -53,18 +53,23 @@ public class JandiPushReceiverModel {
     @SystemService
     AudioManager audioManager;
 
-    public PendingIntent generatePendingIntent(Context context, int chatId, int chatType, int teamId) {
-        Intent intent = new Intent(context, PushInterfaceActivity_.class);
-        if (chatType >= 0 && chatId >= 0) {
-            intent.putExtra(JandiConstants.EXTRA_ENTITY_ID, chatId);
-            intent.putExtra(JandiConstants.EXTRA_ENTITY_TYPE, chatType);
-            intent.putExtra(JandiConstants.EXTRA_IS_FROM_PUSH, true);
-            intent.putExtra(JandiConstants.EXTRA_TEAM_ID, teamId);
-        }
+    public PendingIntent generatePendingIntent(Context context, int chatId, int chatType, int teamId, String roomType) {
 
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+        PushInterfaceActivity_.IntentBuilder_ intentBuilder = PushInterfaceActivity_.intent(context);
+        intentBuilder.flags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        if (chatType >= 0 && chatId >= 0) {
+            intentBuilder.entityId(chatId)
+                    .entityType(chatType)
+                    .isFromPush(true)
+                    .teamId(teamId)
+                    .roomType(roomType);
+        }
+
+        Intent intent = intentBuilder.get();
+
 
         // 노티피케이션은 해제 됐지만 PendingIntent 가 살아있는 경우가 있어 cancel 을 호출해줌.
         PendingIntent.getActivity(context,
@@ -266,7 +271,7 @@ public class JandiPushReceiverModel {
         JandiPreference.setChatIdFromPush(context, roomId);
 
         // 노티를 터치할 경우 실행 intent 설정
-        PendingIntent pendingIntent = generatePendingIntent(context, roomId, roomTypeInt, teamId);
+        PendingIntent pendingIntent = generatePendingIntent(context, roomId, roomTypeInt, teamId, roomType);
         builder.setContentIntent(pendingIntent);
 
         if (writerProfile != null) {    // 작성자의 프로필 사진

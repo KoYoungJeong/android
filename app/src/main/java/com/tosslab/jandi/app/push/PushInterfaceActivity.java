@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.push;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
@@ -38,17 +37,27 @@ import retrofit.RetrofitError;
 public class PushInterfaceActivity extends BaseAppCompatActivity {
     public static final String TAG = "JANDI.PushInterfaceActivity";
 
-    public static final String EXTRA_USED = "used";
+    public static final String EXTRA_ROOM_TYPE = "roomType";
+    public static final String EXTRA_ENTITY_ID = "entityId";
+    // Push로 부터 넘어온 MainActivity의 Extra
+    public static final String EXTRA_ENTITY_TYPE = "entityType";
+    public static final String EXTRA_IS_FROM_PUSH = "isFromPush";
+    public static final String EXTRA_TEAM_ID = "teamId";
     // Push -> 선택된 엔티티 설정이 안됨에 따라...
+
     public static int selectedEntityId;
-    @Extra(JandiConstants.EXTRA_ENTITY_ID)
+
+    @Extra(PushInterfaceActivity.EXTRA_ENTITY_ID)
     int entityId;
-    @Extra(JandiConstants.EXTRA_ENTITY_TYPE)
+    @Extra(PushInterfaceActivity.EXTRA_ENTITY_TYPE)
     int entityType;
-    @Extra(JandiConstants.EXTRA_IS_FROM_PUSH)
+    @Extra(PushInterfaceActivity.EXTRA_IS_FROM_PUSH)
     boolean isFromPush;
-    @Extra(JandiConstants.EXTRA_TEAM_ID)
+    @Extra(PushInterfaceActivity.EXTRA_TEAM_ID)
     int teamId;
+    @Extra(PushInterfaceActivity.EXTRA_ROOM_TYPE)
+    String roomType;
+
     @Bean
     JandiInterfaceModel jandiInterfaceModel;
 
@@ -144,7 +153,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
         if (jandiInterfaceModel.setupSelectedTeam(teamId)) {
 
             int roomId = entityId;
-            int targetEntityId = jandiInterfaceModel.getEntityId(teamId, entityId);
+            int targetEntityId = jandiInterfaceModel.getEntityId(teamId, entityId,roomType);
 
             if (targetEntityId > 0) {
 
