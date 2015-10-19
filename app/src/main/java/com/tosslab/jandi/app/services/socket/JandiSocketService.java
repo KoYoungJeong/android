@@ -198,6 +198,8 @@ public class JandiSocketService extends Service {
                 if (connectTeam != null) {
                     jandiSocketManager.sendByJson("connect_team", connectTeam);
                 } else {
+                    // 만료된 것으로 보고 소켓 서비스 강제 종료
+                    setStopForcibly(true);
                     stopSelf();
                 }
             } else {
