@@ -13,14 +13,11 @@ import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
 import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
-import com.tosslab.jandi.app.network.SimpleApiRequester;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.utils.ApplicationActivateDetector;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -41,7 +38,7 @@ import rx.schedulers.Schedulers;
  */
 public class JandiApplication extends MultiDexApplication {
     static Context context;
-
+    static boolean isApplicationActive = false;
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
 
     public static Context getContext() {
@@ -51,8 +48,6 @@ public class JandiApplication extends MultiDexApplication {
     public static void setContext(Context context) {
         JandiApplication.context = context;
     }
-
-    static boolean isApplicationActive = false;
 
     public static boolean isApplicationActive() {
         return isApplicationActive;
@@ -100,13 +95,7 @@ public class JandiApplication extends MultiDexApplication {
     }
 
     private void registerActivityLifecycleCallbacks() {
-        registerActivityLifecycleCallbacks(new ApplicationActivateDetector()
-                .addActiveListener(() -> updatePlatformStatus(true))
-                .addDeactiveListener(() -> updatePlatformStatus(false))
-                .addActiveListener(() ->
-                        UnLockPassCodeManager.getInstance().setApplicationActivate(true))
-                .addDeactiveListener(() ->
-                        UnLockPassCodeManager.getInstance().setApplicationActivate(false)));
+        registerActivityLifecycleCallbacks(new JandiLifecycleCallbacks());
     }
 
     public synchronized Tracker getTracker(TrackerName trackerId) {
@@ -123,20 +112,6 @@ public class JandiApplication extends MultiDexApplication {
 
         }
         return mTrackers.get(trackerId);
-    }
-
-    private void updatePlatformStatus(boolean active) {
-        LogUtil.i("PlatformApi", "updatePlatformStatus - " + active);
-
-        String accessToken = JandiPreference.getAccessToken(JandiApplication.getContext());
-        if (TextUtils.isEmpty(accessToken)) {
-            return;
-        }
-
-        SimpleApiRequester.request(() -> {
-            ReqUpdatePlatformStatus req = new ReqUpdatePlatformStatus(active);
-            RequestApiManager.getInstance().updatePlatformStatus(req);
-        }, () -> LogUtil.i("PlatformApi", "Success(updatePlatformStatus)"));
     }
 
     public enum TrackerName {
