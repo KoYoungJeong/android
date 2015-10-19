@@ -92,6 +92,11 @@ public class JandiSocketService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent == null) {
+            Crashlytics.getInstance().core.log("JandiSocketService.onStartCommand() intent is null, Flags : " + flags + ", startId : " + startId);
+            stopSelf();
+            return START_NOT_STICKY;
+        }
         boolean isStopForcibly = intent.getBooleanExtra(STOP_FORCIBLY, false);
         LogUtil.i(TAG, "onStartCommand isRunning ? " + isRunning + " & stopForce ? " + isStopForcibly);
 

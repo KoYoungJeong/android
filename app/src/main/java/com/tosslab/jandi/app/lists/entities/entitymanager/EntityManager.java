@@ -418,7 +418,7 @@ public class EntityManager {
                 .filter(formattedEntity -> !joinedMembers.contains(formattedEntity.getId()))
                 .collect(() -> ret, (formattedEntities
                         , formattedEntity1) -> formattedEntities.add(formattedEntity1))
-                .subscribe();
+                .subscribe(formattedEntities1 -> {}, Throwable::printStackTrace);
 
         return ret;
     }
