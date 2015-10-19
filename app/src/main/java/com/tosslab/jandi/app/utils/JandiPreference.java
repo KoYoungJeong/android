@@ -270,7 +270,7 @@ public class JandiPreference {
 
     public static void setVersionPopupLastTimeToCurrentTime(long time) {
         getSharedPreferences(JandiApplication.getContext()).
-                edit().putLong(PREF_VERSION_POPUP_LAST_TIME, time);
+                edit().putLong(PREF_VERSION_POPUP_LAST_TIME, time).commit();
     }
 
     public static long getVersionPopupLastTime() {
