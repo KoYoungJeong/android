@@ -76,6 +76,7 @@ public class MentionControlViewModel {
     // 멘션 선택된 멤버 리스트의 사본
     // 클립 보드에서 CUT(잘라내기) 시 해당 정보를 한꺼번에 잃기 때문에 사본을 저장할 필요성 있음.
     private LinkedHashMap<Integer, SearchedItemVO> cloneSelectedMemberHashMap;
+    private ClipboardManager clipBoard;
 
     public MentionControlViewModel(Activity activity,
                                    EditText editText,
@@ -83,6 +84,7 @@ public class MentionControlViewModel {
                                    List<Integer> roomIds,
                                    String mentionType) {
 
+        this.clipBoard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
         this.mentionType = mentionType;
         if (mentionType.equals(MENTION_TYPE_MESSAGE)) {
             this.lvMessage = (RecyclerView) lvMessage;
@@ -526,9 +528,6 @@ public class MentionControlViewModel {
 
     public void removeClipboardListener() {
         if (clipboardListener != null) {
-
-            ClipboardManager clipBoard = (ClipboardManager) etMessage.getContext()
-                    .getSystemService(Context.CLIPBOARD_SERVICE);
             clipBoard.removePrimaryClipChangedListener(clipboardListener);
         }
     }
@@ -536,8 +535,6 @@ public class MentionControlViewModel {
     public void registClipboardListener() {
         removeClipboardListener();
         clipboardListener = new ClipboardListener();
-        ClipboardManager clipBoard = (ClipboardManager) etMessage.getContext()
-                .getSystemService(Context.CLIPBOARD_SERVICE);
         clipBoard.addPrimaryClipChangedListener(clipboardListener);
     }
 
