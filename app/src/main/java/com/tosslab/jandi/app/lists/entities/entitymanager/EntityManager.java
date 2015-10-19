@@ -119,7 +119,6 @@ public class EntityManager {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
         if (selectedTeamInfo != null) {
-            int teamId = selectedTeamInfo.getTeamId();
             ResLeftSideMenu resLeftSideMenu = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu();
             init(resLeftSideMenu);
         }
