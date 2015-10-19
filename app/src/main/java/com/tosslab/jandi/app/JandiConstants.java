@@ -14,12 +14,6 @@ public class JandiConstants {
     public static final String HTTP_ACCEPT_HEADER_V4 = "application/vnd.tosslab.jandi-v4+json";
     public static final String HTTP_ACCEPT_HEADER_DEFAULT = HTTP_ACCEPT_HEADER_V2;
 
-    // Push로 부터 넘어온 MainActivity의 Extra
-    public static final String EXTRA_ENTITY_TYPE = "entityType";
-    public static final String EXTRA_ENTITY_ID = "entityId";
-    public static final String EXTRA_IS_FROM_PUSH = "isFromPush";
-    public static final String EXTRA_TEAM_ID = "teamId";
-
     public static final String EXTRA_MEMBERS_LIST_TYPE = "membersListType";
 
     public static final int TYPE_PUBLIC_TOPIC = 0x00;

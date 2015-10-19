@@ -4,8 +4,8 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.text.TextUtils;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
+import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 
 import org.androidannotations.annotations.EBean;
@@ -149,16 +150,26 @@ public class JandiInterfaceModel {
         }
     }
 
-    public int getEntityId(int teamId, int roomId) {
+    public int getEntityId(int teamId, int roomId, String roomType) {
 
-        // Topic 인지 확인
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity targetEntity = entityManager.getEntityById(roomId);
-        if (targetEntity != EntityManager.UNKNOWN_USER_ENTITY) {
-            return roomId;
+        if (!isChatType(roomType)) {
+            if (hasRoom(roomId)) {
+                return roomId;
+            } else {
+                getEntityInfo();
+                return roomId;
+            }
+        } else {
+            EntityManager entityManager = EntityManager.getInstance();
+            return getChatMemberId(teamId, roomId, entityManager);
         }
+    }
 
-        // DM 으로 간주
+    private boolean hasRoom(int roomId) {
+        return EntityManager.getInstance().getEntityById(roomId) != EntityManager.UNKNOWN_USER_ENTITY;
+    }
+
+    private int getChatMemberId(int teamId, int roomId, EntityManager entityManager) {
         ResChat chat = ChatRepository.getRepository().getChatByRoom(roomId);
 
         if (chat != null && chat.getEntityId() > 0) {
@@ -187,7 +198,10 @@ public class JandiInterfaceModel {
             }
         }
         return -1;
+    }
 
+    private boolean isChatType(String roomType) {
+        return TextUtils.equals(roomType, PushTO.RoomType.CHAT.getName());
     }
 
     public int getCachedLastLinkId(int roomId) {
