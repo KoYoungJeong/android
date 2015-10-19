@@ -61,7 +61,7 @@ public class CircleProgress extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        canvas.restore();
+        canvas.save();
 
         int halfOfWidth = viewWidth / 2;
         int halfOfHeight = viewHeight / 2;
@@ -74,6 +74,7 @@ public class CircleProgress extends View {
         canvas.drawCircle(halfOfWidth, halfOfHeight, (halfOfWidth - (bgStrokeWidth / 2)), bgPaint);
 
         if (max <= 0) {
+            canvas.restore();
             return;
         }
 
@@ -91,7 +92,7 @@ public class CircleProgress extends View {
         final float angle = (progress / (float) max) * 360;
         canvas.drawArc(rectF, -90, angle, false, progressPaint);
 
-        canvas.save();
+        canvas.restore();
     }
 
     @Override
