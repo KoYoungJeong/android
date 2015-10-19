@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
@@ -15,7 +14,6 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -23,7 +21,6 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.SupposeBackground;
 import org.androidannotations.annotations.SupposeUiThread;
 
 import retrofit.RetrofitError;
@@ -40,37 +37,25 @@ public class IntroLoginModel {
     private boolean isValidEmail;
     private boolean isValidPassword;
 
-
-    @SupposeBackground
-    public int startLogin(String myEmailId, String password) {
+    public ResAccessToken login(String myEmailId, String password) throws RetrofitError {
         // 팀이 아무것도 없는 사용자일 경우의 에러 메시지
 //        final int errStringResNotRegisteredId = R.string.err_login_unregistered_id;
 
-        try {
-            // Get Access Token
-            ReqAccessToken passwordReqToken = ReqAccessToken.createPasswordReqToken(myEmailId, password);
-            ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(passwordReqToken);
+        // Get Access Token
+        ReqAccessToken passwordReqToken = ReqAccessToken.createPasswordReqToken(myEmailId, password);
+        return RequestApiManager.getInstance().getAccessTokenByMainRest(passwordReqToken);
+    }
 
-            if (accessToken != null && !TextUtils.isEmpty(accessToken.getAccessToken()) && !TextUtils.isEmpty(accessToken.getRefreshToken())) {
-                // Save Token & Get TeamList
-                TokenUtil.saveTokenInfoByPassword(accessToken);
-                ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-                AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
-                return JandiConstants.NETWORK_SUCCESS;
-            } else {
-                // Login Fail
-                throw new Exception("Login Fail");
-            }
+    public void saveTokenInfo(ResAccessToken accessToken) {
+        TokenUtil.saveTokenInfoByPassword(accessToken);
+    }
 
-        } catch (RetrofitError e) {
-            if (e.getResponse() != null) {
-                return e.getResponse().getStatus();
-            }
-            return JandiConstants.NetworkError.BAD_REQUEST;
-        } catch (Exception e) {
-            LogUtil.e(e.toString(), e);
-            return JandiConstants.NetworkError.BAD_REQUEST;
-        }
+    public void saveAccountInfo(ResAccountInfo resAccountInfo) {
+        AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+    }
+
+    public ResAccountInfo getAccountInfo() {
+        return RequestApiManager.getInstance().getAccountInfoByMainRest();
     }
 
     @SupposeUiThread

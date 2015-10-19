@@ -57,12 +57,14 @@ public class IntroLoginViewModel {
         mProgressWheel = new ProgressWheel(activity);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showProgressDialog() {
         dissmissProgressDialog();
         mProgressWheel.show();
 
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void dissmissProgressDialog() {
         if (mProgressWheel.isShowing()) {
             mProgressWheel.dismiss();

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.commonviewmodels.mention;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -75,6 +76,7 @@ public class MentionControlViewModel {
     // 멘션 선택된 멤버 리스트의 사본
     // 클립 보드에서 CUT(잘라내기) 시 해당 정보를 한꺼번에 잃기 때문에 사본을 저장할 필요성 있음.
     private LinkedHashMap<Integer, SearchedItemVO> cloneSelectedMemberHashMap;
+    private ClipboardManager clipBoard;
 
     public MentionControlViewModel(Activity activity,
                                    EditText editText,
@@ -82,6 +84,7 @@ public class MentionControlViewModel {
                                    List<Integer> roomIds,
                                    String mentionType) {
 
+        this.clipBoard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
         this.mentionType = mentionType;
         if (mentionType.equals(MENTION_TYPE_MESSAGE)) {
             this.lvMessage = (RecyclerView) lvMessage;
@@ -514,7 +517,7 @@ public class MentionControlViewModel {
 
     public void setTextOnClip(String pasteData) {
         ClipboardManager clipBoard = (ClipboardManager) etMessage.getContext()
-                .getSystemService(etMessage.getContext().CLIPBOARD_SERVICE);
+                .getSystemService(Context.CLIPBOARD_SERVICE);
         clipBoard.removePrimaryClipChangedListener(clipboardListener);
         android.content.ClipData clip =
                 android.content.ClipData.newPlainText("Copied Text", pasteData);
@@ -523,15 +526,14 @@ public class MentionControlViewModel {
     }
 
     public void removeClipboardListener() {
-        ClipboardManager clipBoard = (ClipboardManager) etMessage.getContext()
-                .getSystemService(etMessage.getContext().CLIPBOARD_SERVICE);
-        clipBoard.removePrimaryClipChangedListener(clipboardListener);
+        if (clipboardListener != null) {
+            clipBoard.removePrimaryClipChangedListener(clipboardListener);
+        }
     }
 
     public void registClipboardListener() {
+        removeClipboardListener();
         clipboardListener = new ClipboardListener();
-        ClipboardManager clipBoard = (ClipboardManager) etMessage.getContext()
-                .getSystemService(etMessage.getContext().CLIPBOARD_SERVICE);
         clipBoard.addPrimaryClipChangedListener(clipboardListener);
     }
 
@@ -550,10 +552,15 @@ public class MentionControlViewModel {
                 et = beforeText;
                 isCut = true;
             } else {
-                et = etMessage.getText().toString();
+                Editable text = etMessage.getText();
+                if (!TextUtils.isEmpty(text)) {
+                    et = text.toString();
+                } else {
+                    et = "";
+                }
             }
             ClipboardManager clipBoard = (ClipboardManager) etMessage.getContext()
-                    .getSystemService(etMessage.getContext().CLIPBOARD_SERVICE);
+                    .getSystemService(Context.CLIPBOARD_SERVICE);
             CharSequence pasteData = "";
             ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
             pasteData = item.getText();

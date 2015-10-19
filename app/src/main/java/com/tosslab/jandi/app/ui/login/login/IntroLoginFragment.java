@@ -10,8 +10,9 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.profile.ForgotPasswordEvent;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.exception.ExceptionData;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity;
 import com.tosslab.jandi.app.ui.login.login.model.IntroLoginModel;
@@ -21,6 +22,7 @@ import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -35,6 +37,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by justinygchoi on 14. 11. 13..
@@ -64,27 +67,58 @@ public class IntroLoginFragment extends Fragment implements IntroMainActivity.Ke
     @Background
     void startLogin(String email, String password) {
 
-        int httpCode = introLoginModel.startLogin(email, password);
+        ResAccessToken accessToken = null;
+        try {
+            accessToken = introLoginModel.login(email, password);
+            introLoginModel.saveTokenInfo(accessToken);
 
+        } catch (RetrofitError error) {
+
+            introLoginViewModel.dissmissProgressDialog();
+            if (error.getKind() == RetrofitError.Kind.HTTP) {
+                try {
+                    ExceptionData exceptionData = (ExceptionData) error.getBodyAs(ExceptionData.class);
+                    switch (exceptionData.getCode()) {
+                        case 40000:
+                            introLoginViewModel.loginFail(R.string.err_login_invalid_id_or_password);
+                            break;
+                        case 40007:
+                            introLoginViewModel.loginFail(R.string.err_login_unregistered_id);
+                            break;
+                    }
+                    introLoginModel.trackSignInFail(JandiConstants.NetworkError.DATA_NOT_FOUND);
+                } catch (Exception e) {
+                    introLoginViewModel.loginFail(R.string.err_network);
+                    introLoginModel.trackSignInFail(JandiConstants.NetworkError.BAD_REQUEST);
+                }
+            } else {
+                introLoginViewModel.loginFail(R.string.err_network);
+                introLoginModel.trackSignInFail(JandiConstants.NetworkError.BAD_REQUEST);
+            }
+
+        }
+
+        if (accessToken != null) {
+            try {
+                ResAccountInfo accountInfo = introLoginModel.getAccountInfo();
+                introLoginModel.saveAccountInfo(accountInfo);
+
+                introLoginViewModel.loginSuccess(email);
+                JandiPreference.setFirstLogin(getActivity());
+
+                MixpanelAccountAnalyticsClient
+                        .getInstance(getActivity(), accountInfo.getId())
+                        .trackAccountSingingIn();
+
+                introLoginModel.trackSignInSuccess();
+            } catch (Exception e) {
+                e.printStackTrace();
+                introLoginViewModel.loginFail(R.string.err_network);
+            }
+
+        }
         introLoginViewModel.dissmissProgressDialog();
 
-        if (httpCode == JandiConstants.NETWORK_SUCCESS) {
-            introLoginViewModel.loginSuccess(email);
-            JandiPreference.setFirstLogin(getActivity());
-
-            ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
-            MixpanelAccountAnalyticsClient.getInstance(getActivity(), accountInfo.getId())
-                    .trackAccountSingingIn();
-
-            introLoginModel.trackSignInSuccess();
-
-        } else if (httpCode == JandiConstants.NetworkError.DATA_NOT_FOUND) {
-            introLoginModel.trackSignInFail(httpCode);
-            introLoginViewModel.loginFail(R.string.err_login_unregistered_id);
-        } else {
-            introLoginModel.trackSignInFail(httpCode);
-            introLoginViewModel.loginFail(R.string.err_login_invalid_id_or_password);
-        }
     }
 
     @AfterTextChange(R.id.et_intro_login_email)
@@ -142,7 +176,11 @@ public class IntroLoginFragment extends Fragment implements IntroMainActivity.Ke
 
         String emailText = introLoginViewModel.getEmailText();
         String passwordText = introLoginViewModel.getPasswordText();
-        startLogin(emailText, passwordText);
+        if (NetworkCheckUtil.isConnected()) {
+            startLogin(emailText, passwordText);
+        } else {
+            introLoginViewModel.loginFail(R.string.err_network);
+        }
 
     }
 

@@ -349,19 +349,20 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public void onResume() {
         super.onResume();
         isForeground = true;
+        fileDetailPresenter.registClipboardListenerforMention();
         ActivityHelper.setOrientation(this);
     }
 
     @Override
     protected void onPause() {
         isForeground = false;
+        fileDetailPresenter.removeClipboardListenerforMention();
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
-        fileDetailPresenter.removeClipboardListenerforMention();
         super.onDestroy();
     }
 
