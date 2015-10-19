@@ -176,8 +176,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:checked="true"
-                        android:clickable="false"
-                        android:src="@drawable/jandi_topic_starred_status"/>
+                        android:clickable="false"/>
                 </FrameLayout>
 
             </LinearLayout>

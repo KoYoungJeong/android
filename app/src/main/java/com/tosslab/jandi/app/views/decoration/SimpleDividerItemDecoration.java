@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.views;
+package com.tosslab.jandi.app.views.decoration;
 
 import android.content.Context;
 import android.graphics.Canvas;

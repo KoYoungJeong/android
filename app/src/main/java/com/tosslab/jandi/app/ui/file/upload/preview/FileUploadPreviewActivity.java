@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadPagerAdapt
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenter;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenterImpl;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
@@ -139,6 +140,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     protected void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
+        ActivityHelper.setOrientation(this);
     }
 
     @Override

@@ -8,100 +8,164 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/layout_search_bar"
         style="@style/Jandi.Default.ActionBar"
-        android:layout_width="match_parent"/>
-
-    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="?attr/actionBarSize"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="2">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
             android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="95dp"
-                android:layout_height="103dp"
-                android:layout_marginTop="46dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/img_signin"/>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_signup_verify_code"
+                    style="@style/JandiSignUpVerify.Code.Text" />
+
+                <ImageView
+                    android:id="@+id/iv_signup_verify_code_cursor"
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignBottom="@+id/tv_signup_verify_code"
+                    android:layout_alignLeft="@+id/tv_signup_verify_code"
+                    android:layout_alignTop="@+id/tv_signup_verify_code"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/black"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:gravity="center"
-                android:lineSpacingExtra="8dp"
-                android:text="@string/jandi_signup_verification_code"
-                android:textColor="#404040"
-                android:textSize="16dp"/>
-
-            <com.tosslab.jandi.app.ui.signup.verify.widget.VerificationCodeView
-                android:id="@+id/vg_verification_code"
+                android:id="@+id/tv_signup_verify_explain"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="35dp"/>
+                android:layout_marginTop="17dp"
+                android:gravity="center"
+                android:lineSpacingExtra="6dp"
+                android:text="@string/jandi_signup_verification_code"
+                android:textColor="@color/account_home_help_dialog_text"
+                android:textSize="@dimen/jandi_text_size_large" />
+
+            <TextView
+                android:id="@+id/tv_resend_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/jandi_text_size_medium" />
 
             <Button
                 android:id="@+id/btn_verify"
                 style="@style/JandiStyle.Button.Dynamic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="27dp"
-                android:background="@drawable/jandi_btn_dynamic_selector_v2"
+                android:layout_marginTop="26dp"
+                android:background="@drawable/btn_launch_jandi"
                 android:enabled="false"
                 android:minHeight="36dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
-                android:text="@string/jandi_launch"/>
+                android:text="@string/jandi_launch" />
 
-            <FrameLayout
-                android:id="@+id/vg_invalidate_code"
-                android:layout_marginTop="27dp"
-                android:layout_width="match_parent"
-                android:layout_height="66dp"
-                android:alpha="0.0"
-                android:background="@color/bg_message_input_panel">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:background="@drawable/signin_icon_error"/>
-
-                    <TextView
-                        android:id="@+id/tv_invalidate_code"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="6dp"
-                        android:gravity="center"
-                        android:text="@string/jandi_signup_invalidate_code"
-                        android:textColor="#fe5555"
-                        android:textSize="14dp"/>
-
-                </LinearLayout>
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="53dp">
-                <TextView
-                    android:id="@+id/tv_resend_email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textColor="@android:color/black"
-                    android:textSize="14dp"/>
-            </FrameLayout>
         </LinearLayout>
 
-    </ScrollView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:weightSum="4">
+
+            <LinearLayout style="@style/JandiSignUpVerify.Code.Layout">
+
+                <ImageView
+                    android:id="@+id/iv_signup_verify_input_1"
+                    style="@style/JandiSignUpVerify.Code.Input"
+                    android:src="@drawable/btn_numberpad_1" />
+
+                <ImageView
+                    android:id="@+id/iv_signup_verify_input_2"
+                    style="@style/JandiSignUpVerify.Code.Input"
+                    android:src="@drawable/btn_numberpad_2" />
+
+                <ImageView
+                    android:id="@+id/iv_signup_verify_input_3"
+                    style="@style/JandiSignUpVerify.Code.Input"
+                    android:src="@drawable/btn_numberpad_3" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/JandiSignUpVerify.Code.Layout">
+
+                <ImageView
+                    android:id="@+id/iv_signup_verify_input_4"
+                    style="@style/JandiSignUpVerify.Code.Input"
+                    android:src="@drawable/btn_numberpad_4" />
+
+                <ImageView
+                    android:id="@+id/iv_signup_verify_input_5"
+                    style="@style/JandiSignUpVerify.Code.Input"
+                    android:src="@drawable/btn_numberpad_5" />
+
+                <ImageView
+                    android:id="@+id/iv_signup_verify_input_6"
+                    style="@style/JandiSignUpVerify.Code.Input"
+                    android:src="@drawable/btn_numberpad_6" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/JandiSignUpVerify.Code.Layout">
+
+                <ImageView
+                    android:id="@+id/iv_signup_verify_input_7"
+                    style="@style/JandiSignUpVerify.Code.Input"
+                    android:src="@drawable/btn_numberpad_7" />
+
+                <ImageView
+                    android:id="@+id/iv_signup_verify_input_8"
+                    style="@style/JandiSignUpVerify.Code.Input"
+                    android:src="@drawable/btn_numberpad_8" />
+
+                <ImageView
+                    android:id="@+id/iv_signup_verify_input_9"
+                    style="@style/JandiSignUpVerify.Code.Input"
+                    android:src="@drawable/btn_numberpad_9" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/JandiSignUpVerify.Code.Layout">
+
+                <Space
+                    android:id="@+id/iv_signup_verify_input_space"
+                    style="@style/JandiSignUpVerify.Code.Input" />
+
+                <ImageView
+                    android:id="@+id/iv_signup_verify_input_0"
+                    style="@style/JandiSignUpVerify.Code.Input"
+                    android:src="@drawable/btn_numberpad_0" />
+
+                <ImageView
+                    android:id="@+id/iv_signup_verify_input_del"
+                    style="@style/JandiSignUpVerify.Code.Input"
+                    android:src="@drawable/btn_numberpad_del" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+
 </LinearLayout>

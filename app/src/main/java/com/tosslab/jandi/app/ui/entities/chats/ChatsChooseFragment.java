@@ -159,7 +159,7 @@ public class ChatsChooseFragment extends Fragment {
                 .roomId(-1)
                 .isFavorite(entityManager.getEntityById(event.userId).isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .startForResult(MainTabActivity.REQ_START_MESSAGE);
+                .start();
     }
 
     @ItemClick(R.id.list_chat_choose)

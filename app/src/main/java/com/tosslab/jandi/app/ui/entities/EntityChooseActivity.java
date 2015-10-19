@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -40,6 +41,12 @@ public class EntityChooseActivity extends BaseAppCompatActivity {
         viewPager.setOnPageChangeListener(getPageChangeListener(activityType));
 
         initActionBarTitle(activityType, 0);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     private ViewPager.OnPageChangeListener getPageChangeListener(Type type) {

@@ -35,7 +35,7 @@ public interface MainRestApiClient {
 
     // 클라이언트 Policy(+version) 정보
     @GET("/config")
-    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
     ResConfig getConfig();
 
     // 내 팀 정보 획득

@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -92,6 +93,12 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity {
         initUserDefaultName();
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.CreateaTeam);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     @Background

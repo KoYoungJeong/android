@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.interfaces;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.interfaces.actions.Action;
@@ -17,6 +18,12 @@ import org.androidannotations.annotations.EActivity;
  */
 @EActivity
 public class JandiInterfaceActivity extends BaseAppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setNeedUnLockPassCode(false);
+    }
 
     @AfterInject
     void initView() {

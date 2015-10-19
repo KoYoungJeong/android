@@ -3,7 +3,11 @@ package com.tosslab.jandi.app.ui.maintab;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.net.Uri;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -31,7 +35,9 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
 import com.tosslab.jandi.app.push.to.PushTO;
@@ -52,6 +58,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -69,6 +76,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -86,7 +94,9 @@ import rx.Observable;
 public class MainTabActivity extends BaseAppCompatActivity {
 
     public static final int CHAT_INDEX = 1;
-    public static final int REQ_START_MESSAGE = 1211;
+    @Extra
+    boolean fromPush = false;
+
     @Bean
     EntityClientManager entityClientManager;
     @Bean
@@ -108,6 +118,8 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     @AfterViews
     void initView() {
+
+        showDialogIfNotLastestVersion();
         ParseUpdateUtil.addChannelOnServer();
 
         mContext = getApplicationContext();
@@ -254,10 +266,17 @@ public class MainTabActivity extends BaseAppCompatActivity {
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (fromPush) {
+            setNeedUnLockPassCode(false);
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        LogUtil.d("MainTabAcitivity.onResume");
-
+        ActivityHelper.setOrientation(this);
         // Entity의 리스트를 획득하여 저장한다.
         EventBus.getDefault().register(this);
 
@@ -271,6 +290,9 @@ public class MainTabActivity extends BaseAppCompatActivity {
         } else {
             offlineLayer.showOfflineView();
         }
+
+        fromPush = false;
+        setNeedUnLockPassCode(true);
     }
 
 
@@ -471,4 +493,57 @@ public class MainTabActivity extends BaseAppCompatActivity {
     public boolean onMenuOpened(int featureId, Menu menu) {
         return false;
     }
+
+    @Background
+    public void showDialogIfNotLastestVersion() {
+        if (!NetworkCheckUtil.isConnected())
+            return;
+
+        if (getInstalledAppVersion()
+                < getConfigInfo().latestVersions.android) {
+            showUpdateVersionDialog();
+        }
+    }
+
+    @UiThread
+    public void showUpdateVersionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.jandi_update_title))
+                .setMessage(getString(R.string.jandi_update_message))
+                .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
+                    final String appPackageName = JandiApplication.getContext().getPackageName();
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("market://details?id=" + appPackageName)));
+                    } catch (android.content.ActivityNotFoundException anfe) {
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
+                    } finally {
+                        finish();   // 업데이트 안내를 확인하면 앱을 종료한다.
+                    }
+                })
+                .setNegativeButton(getString(R.string.jandi_cancel)
+                        , (dialog, which) -> {
+                })
+                .setCancelable(true);
+        builder.create().show();
+    }
+
+    public ResConfig getConfigInfo() throws RetrofitError {
+        return RequestApiManager.getInstance().getConfigByMainRest();
+    }
+
+    public int getInstalledAppVersion() {
+        try {
+            Context context = JandiApplication.getContext();
+            PackageManager packageManager = context.getPackageManager();
+            String packageName = context.getPackageName();
+            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // should never happen
+            return 0;
+        }
+    }
+
 }

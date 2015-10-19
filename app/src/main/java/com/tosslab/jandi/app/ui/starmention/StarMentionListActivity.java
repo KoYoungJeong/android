@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.starmention.views.StarMentionListFragment;
 import com.tosslab.jandi.app.ui.starmention.views.StarMentionListFragment_;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -51,7 +52,6 @@ public class StarMentionListActivity extends BaseAppCompatActivity {
             setupTabButton();
             onTabClick(allTabView);
         }
-
         if (type == TYPE_STAR_LIST) {
             AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.Stars);
         } else {
@@ -59,8 +59,13 @@ public class StarMentionListActivity extends BaseAppCompatActivity {
         }
     }
 
-    private void setupActionBar() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
+    }
 
+    private void setupActionBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -143,7 +148,6 @@ public class StarMentionListActivity extends BaseAppCompatActivity {
             }
 
         }
-
         fragmentTransaction.commit();
     }
 

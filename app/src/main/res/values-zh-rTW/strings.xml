@@ -92,6 +92,7 @@
 	<string name="jandi_cannot_find_search_result_1">"您的檔案庫是空的"</string>
 	<string name="jandi_cannot_find_search_result_2">"直接上傳及分享檔案到任何對話當中"</string>
 	<string name="jandi_cannot_find_search_result_old">"找不到符合條件的內容"</string>
+	<string name="jandi_change_passcode">"更改密碼"</string>
 	<string name="jandi_chat_detail">"聊天設定"</string>
 	<string name="jandi_choose_email">"選擇一個電子郵件"</string>
 	<string name="jandi_coach_mark_create_new_topics">"建立新議題"</string>
@@ -122,6 +123,8 @@
 	<string name="jandi_coach_mark_upload_file">"上傳檔案"</string>
 	<string name="jandi_commented_on">"<![CDATA[<font color="#999999">留言於</font><font color="#000000"><b>%s</b></font><font color="#999999">的檔案</font"]]>"</string>
 	<string name="jandi_confirm">"確定"</string>
+	<string name="jandi_confirm_new_passcode">"確認新密碼"</string>
+	<string name="jandi_confirm_passcode">"確認密碼"</string>
 	<string name="jandi_copy_link">"複製連結"</string>
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"建立"</string>
@@ -140,6 +143,8 @@
 	<string name="jandi_disabled_user">"此成員權限已被暫時關閉"</string>
 	<string name="jandi_duplicate_email">"這電子郵件已被註冊"</string>
 	<string name="jandi_empty">"None"</string>
+	<string name="jandi_enter_new_passcode">"輸入新密碼"</string>
+	<string name="jandi_enter_passcode">"輸入您的密碼"</string>
 	<string name="jandi_entity_create_entity_name">"名字"</string>
 	<string name="jandi_entity_joined_topic">"我的議題"</string>
 	<string name="jandi_entity_unjoined_topic">"其他議題"</string>
@@ -193,6 +198,7 @@
 	<string name="jandi_has_joined">"%s已加入"</string>
 	<string name="jandi_have_an_account_already">"已經有團隊註冊了嗎?"</string>
 	<string name="jandi_help">"説明"</string>
+	<string name="jandi_incorrect_passcode">"密碼不吻合"</string>
 	<string name="jandi_input_password">"請爲選擇的團隊輸入您的密碼"</string>
 	<string name="jandi_input_search_keyword">"按照關鍵字搜尋您的訊息"</string>
 	<string name="jandi_input_topic_name">"請輸入議題群組名稱"</string>
@@ -283,6 +289,7 @@
 	<string name="jandi_phone_led">"鎖屏通知"</string>
 	<string name="jandi_plz_input_topic_description">"說明 (選項)"</string>
 	<string name="jandi_privacy_policy">"隱私權條款"</string>
+	<string name="jandi_privacy_protection">"隱私"</string>
 	<string name="jandi_private_topic_tip_1">"私人議題不開放給未受邀成員"</string>
 	<string name="jandi_private_topic_tip_2">"私人議題裏的檔案僅開放給其受邀成員"</string>
 	<string name="jandi_private_topic_tip_3">"已設定爲公開或私人的議題在建立之後不能被轉換成另一個"</string>
@@ -322,6 +329,8 @@
 	<string name="jandi_send_invitation">"現在邀請"</string>
 	<string name="jandi_sent_password_reset_mail">"密碼重設指示已經成功寄送到您的電子郵箱"</string>
 	<string name="jandi_service_maintenance">"JANDI現在基於定期維護而無法使用。我們預計幾個小時内就可以恢復運作。感謝您的耐心等候。"</string>
+	<string name="jandi_set_passcode">"設定密碼"</string>
+	<string name="jandi_set_passcode_detail">"如果你忘記密碼，將無法解鎖。請重新安裝JANDI，再重新登入。"</string>
 	<string name="jandi_setting_general">"一般"</string>
 	<string name="jandi_setting_push">"通知偏好"</string>
 	<string name="jandi_setting_push_subscription">"推播通知"</string>

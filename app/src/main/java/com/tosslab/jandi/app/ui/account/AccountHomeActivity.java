@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
@@ -113,6 +114,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
     protected void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
+        ActivityHelper.setOrientation(this);
     }
 
     @Override

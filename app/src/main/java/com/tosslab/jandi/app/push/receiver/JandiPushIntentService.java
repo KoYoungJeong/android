@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Scheduler;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 /**

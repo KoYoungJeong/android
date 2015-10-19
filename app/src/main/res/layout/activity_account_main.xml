@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/white"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
-        style="@style/Jandi.Default.ActionBar"
         android:layout_width="match_parent"
-        android:visibility="visible"/>
+        android:layout_height="?attr/actionBarSize"
+        android:visibility="visible" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -34,7 +34,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/jandi_name_in_jandi"
-                    android:textColor="@color/white"/>
+                    android:textColor="@color/white" />
 
                 <TextView
                     android:id="@+id/txt_account_main_name"
@@ -49,7 +49,7 @@
                     android:maxLines="1"
                     android:singleLine="true"
                     android:textColor="@color/white"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp" />
 
                 <ImageView
                     android:id="@+id/img_account_main_edit"
@@ -60,7 +60,7 @@
                     android:layout_alignTop="@+id/txt_account_main_name"
                     android:layout_centerVertical="true"
                     android:scaleType="centerInside"
-                    android:src="@drawable/account_icon_edit"/>
+                    android:src="@drawable/account_icon_edit" />
 
             </RelativeLayout>
 
@@ -83,7 +83,7 @@
                     android:singleLine="true"
                     android:text="@string/jandi_user_default_email"
                     android:textColor="@color/white"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/txt_account_main_id_explain"
@@ -95,7 +95,7 @@
                     android:layout_marginTop="6dp"
                     android:text="@string/jandi_sign_in_ids_explain"
                     android:textColor="@color/white"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
                 <RelativeLayout
                     android:id="@+id/ll_account_main_email"
@@ -116,7 +116,7 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:textColor="@color/white"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp" />
 
 
                     <ImageView
@@ -125,7 +125,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/account_icon_arrow"/>
+                        android:src="@drawable/account_icon_arrow" />
 
                 </RelativeLayout>
 
@@ -140,7 +140,7 @@
                 android:layout_marginTop="28dp"
                 android:text="@string/jandi_select_team"
                 android:textColor="#FF9A9A9A"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:id="@+id/ll_account_main_team_choose"
@@ -152,7 +152,7 @@
                 <ProgressBar
                     android:layout_width="72dp"
                     android:layout_height="72dp"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center" />
 
             </LinearLayout>
 

@@ -28,15 +28,24 @@
             android:title="@string/jandi_phone_led"/>
     </PreferenceCategory>
 
-    <!--<ListPreference-->
-        <!--android:defaultValue="true"-->
-        <!--android:key="setting_orientation"-->
-        <!--android:summary="자동"-->
-        <!--android:title="화면 방향"-->
-        <!--android:entries="@array/jandi_pref_orientation"-->
-        <!--android:entryValues="@array/jandi_pref_orientation_values"-->
-        <!--android:widgetLayout="@layout/preference_orientation"/>-->
+    <ListPreference
+        android:defaultValue="true"
+        android:key="setting_orientation"
+        android:summary="@string/jandi_screen_auto"
+        android:title="@string/jandi_screen_orientation"
+        android:entries="@array/jandi_pref_orientation"
+        android:entryValues="@array/jandi_pref_orientation_values"
+        android:widgetLayout="@layout/preference_orientation"/>
 
+
+    <PreferenceCategory
+        android:key="setting_privacy_protection"
+        android:title="@string/jandi_privacy_protection">
+        <Preference
+            android:defaultValue="true"
+            android:key="setting_set_passcode"
+            android:title="@string/jandi_set_passcode"/>
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:key="setting_tos_pp"

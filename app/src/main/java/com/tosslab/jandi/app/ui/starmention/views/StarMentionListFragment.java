@@ -32,7 +32,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
+import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;

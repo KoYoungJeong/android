@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.push;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -17,6 +16,8 @@ import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
+import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -52,14 +53,21 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
     JandiInterfaceModel jandiInterfaceModel;
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.PushNotification);
+        setNeedUnLockPassCode(false);
     }
 
     @AfterInject
     void initObject() {
         checkNewVersion();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityHelper.setOrientation(this);
     }
 
     @Background(serial = "push_interface_activity_background")
@@ -166,16 +174,19 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
 
         MainTabActivity_.intent(PushInterfaceActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .fromPush(true)
                 .start();
 
-        MessageListV2Activity_.intent(PushInterfaceActivity.this)
+        Intent intent = MessageListV2Activity_.intent(PushInterfaceActivity.this)
                 .teamId(teamId)
                 .roomId(roomId)
                 .entityId(targetEntityId)
                 .entityType(entityType)
                 .isFromPush(true)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .startForResult(MainTabActivity_.REQ_START_MESSAGE);
+                .get();
+
+        UnLockPassCodeManager.getInstance().unLockPassCodeFirstIfNeed(this, intent);
 
         finish();
     }
