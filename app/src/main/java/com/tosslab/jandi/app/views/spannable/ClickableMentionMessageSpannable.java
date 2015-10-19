@@ -13,8 +13,8 @@ public class ClickableMentionMessageSpannable extends MentionMessageSpannable im
 
     private int entityId;
 
-    protected ClickableMentionMessageSpannable(String entityName, int entityId, float textSize,
-                                               int textColor, int backgroundColor) {
+    public ClickableMentionMessageSpannable(String entityName, int entityId, float textSize,
+                                            int textColor, int backgroundColor) {
         super(entityName, textSize, textColor, backgroundColor);
         this.entityId = entityId;
     }

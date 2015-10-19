@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.passcode.model;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.ui.passcode.PassCodeActivity;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.EBean;
@@ -76,5 +77,10 @@ public class PassCodeModel {
 
     public void setPreviousPassCode(String previousPassCode) {
         this.previousPassCode = previousPassCode;
+    }
+
+    public boolean isSetupMode(int mode) {
+        return mode == PassCodeActivity.MODE_TO_SAVE_PASSCODE
+                || mode == PassCodeActivity.MODE_TO_MODIFY_PASSCODE;
     }
 }
