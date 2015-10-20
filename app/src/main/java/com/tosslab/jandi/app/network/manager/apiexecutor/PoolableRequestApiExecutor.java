@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.SignOutUtil;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -143,6 +144,7 @@ public class PoolableRequestApiExecutor {
                     .getAccessToken()
                     .getRefreshToken();
             accessToken = TokenRequestManager.getInstance().get(refreshToken);
+            TokenUtil.saveTokenInfoByRefresh(accessToken);
         }
         return accessToken;
     }

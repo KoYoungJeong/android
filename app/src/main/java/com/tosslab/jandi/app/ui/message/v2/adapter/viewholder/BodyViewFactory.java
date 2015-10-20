@@ -173,7 +173,8 @@ public class BodyViewFactory {
                     && isCommentToNext(nextLink)
                     && nextLink.feedbackId == currentMessage.id
                     && currentMessage.writerId == nextLink.message.writerId
-                    && DateComparatorUtil.isSince5min(currentMessage.createTime, nextLink.message.createTime);
+                    && DateComparatorUtil.isSince5min(currentMessage.createTime, nextLink.message.createTime)
+                    || !isSameDay(currentLink, nextLink);
 
             if (nextLink == null) {
                 notNeedDivider = true;
@@ -213,7 +214,8 @@ public class BodyViewFactory {
                     && isCommentToNext(nextLink)
                     && nextLink.feedbackId == currentMessage.feedbackId
                     && currentMessage.writerId == nextLink.message.writerId
-                    && DateComparatorUtil.isSince5min(currentMessage.createTime, nextLink.message.createTime);
+                    && DateComparatorUtil.isSince5min(currentMessage.createTime, nextLink.message.createTime)
+                    || !isSameDay(currentLink, nextLink);
 
             if (nextLink == null) {
                 notNeedDivider = true;
@@ -268,18 +270,15 @@ public class BodyViewFactory {
             return false;
         }
 
-        ResMessages.OriginalMessage beforeOriginalMessage = beforeMessage.message;
-        ResMessages.OriginalMessage originalMessage = message.message;
-
-        if (originalMessage.createTime == null || beforeOriginalMessage.createTime == null) {
+        if (message.time == null || beforeMessage.time == null) {
             return false;
         }
 
         Calendar messageCalendar = Calendar.getInstance();
-        messageCalendar.setTime(originalMessage.createTime);
+        messageCalendar.setTime(message.time);
 
         Calendar beforeCalendar = Calendar.getInstance();
-        beforeCalendar.setTime(beforeOriginalMessage.createTime);
+        beforeCalendar.setTime(beforeMessage.time);
 
         int messageDay = messageCalendar.get(Calendar.DAY_OF_YEAR);
         int beforeMessageDay = beforeCalendar.get(Calendar.DAY_OF_YEAR);
