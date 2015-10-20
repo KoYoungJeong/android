@@ -33,6 +33,7 @@
             android:layout_marginTop="4dp"
             android:layout_toRightOf="@+id/iv_message_user_profile"
             android:ellipsize="end"
+            android:maxLines="1"
             android:maxWidth="200dp"
             android:singleLine="true"
             android:text="User name"
@@ -112,6 +113,7 @@
                 android:layout_alignLeft="@+id/iv_message_commented_photo"
                 android:layout_alignRight="@+id/iv_message_commented_photo"
                 android:layout_alignTop="@+id/iv_message_commented_photo"
+                android:layout_centerVertical="true"
                 android:background="@drawable/jandi_message_image_frame" />
 
             <LinearLayout
@@ -126,6 +128,8 @@
                     android:id="@+id/tv_message_commented_owner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:ellipsize="middle"
+                    android:maxLines="2"
                     android:text="justin"
                     android:textColor="@color/jandi_text_light"
                     android:textSize="@dimen/jandi_messages_comment" />
@@ -176,6 +180,7 @@
         </RelativeLayout>
 
     </com.tosslab.jandi.app.views.LongClickableRelativeLayout>
+
     <include layout="@layout/item_message_divider" />
 
     <include

@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResFolder;
@@ -146,14 +148,16 @@ public class TopicFolderChooseActivity extends BaseAppCompatActivity implements 
         AlertDialog.Builder builder = new AlertDialog.Builder(TopicFolderChooseActivity.this,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
 
-        LinearLayout vgInputEditText = (LinearLayout) LayoutInflater
-                .from(TopicFolderChooseActivity.this).inflate(R.layout.input_edit_text_view, null);
+        RelativeLayout rootView = (RelativeLayout) LayoutInflater
+                .from(TopicFolderChooseActivity.this).inflate(R.layout.dialog_fragment_input_text, null);
 
-        EditText input = (EditText) vgInputEditText.findViewById(R.id.et_input);
+        TextView tvTitle = (TextView) rootView.findViewById(R.id.tv_popup_title);
+        EditText etInput = (EditText) rootView.findViewById(R.id.et_dialog_input_text);
+        tvTitle.setText(R.string.jandi_folder_insert_name);
 
-        builder.setView(vgInputEditText)
+        builder.setView(rootView)
                 .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
-                    createNewFolder(input.getText().toString().trim());
+                    createNewFolder(etInput.getText().toString().trim());
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolder);
                 })
                 .setNegativeButton(R.string.jandi_cancel, (dialog, which) -> {
@@ -164,7 +168,7 @@ public class TopicFolderChooseActivity extends BaseAppCompatActivity implements 
         alertDialog.show();
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
-        input.addTextChangedListener(new SimpleTextWatcher() {
+        etInput.addTextChangedListener(new SimpleTextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.toString().trim().length() <= 0) {

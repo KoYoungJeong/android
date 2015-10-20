@@ -196,6 +196,12 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
             tvUnread.setText(String.valueOf(unreadCount));
 
+            if (unreadCount > 0) {
+                tvUnread.setVisibility(View.VISIBLE);
+            } else {
+                tvUnread.setVisibility(View.GONE);
+            }
+
 
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                     tvComment, builder, commentMessage.mentions, entityManager.getMe().getId())

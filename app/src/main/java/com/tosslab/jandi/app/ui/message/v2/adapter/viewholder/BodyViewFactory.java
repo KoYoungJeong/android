@@ -45,7 +45,7 @@ public class BodyViewFactory {
                         .build();
             case FileStickerComment:
                 return new Divider.Builder()
-                        .divider(false)
+                        .divider(true)
                         .bodyViewHolder(new FileStickerCommentViewHolder())
                         .build();
             case CollapseCommentWioutDivider:

@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
@@ -87,8 +86,8 @@ public class MainMoreFragment extends Fragment {
     @ViewById(R.id.tv_more_jandi_version)
     TextView textViewJandiVersion;
 
-    @ViewById(R.id.bt_update_version)
-    Button btUpdateVersion;
+    @ViewById(R.id.btn_update_version)
+    View btnUpdateVersion;
 
     private EntityManager mEntityManager;
 
@@ -211,7 +210,7 @@ public class MainMoreFragment extends Fragment {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void setVersionButtonVisibility(int visibility) {
-        btUpdateVersion.setVisibility(visibility);
+        btnUpdateVersion.setVisibility(visibility);
     }
 
     @Click(R.id.ly_more_profile)
@@ -316,7 +315,7 @@ public class MainMoreFragment extends Fragment {
         }
     }
 
-    @Click(R.id.bt_update_version)
+    @Click(R.id.btn_update_version)
     void onClickUpdateVersion() {
         final String appPackageName = JandiApplication.getContext().getPackageName();
         try {
