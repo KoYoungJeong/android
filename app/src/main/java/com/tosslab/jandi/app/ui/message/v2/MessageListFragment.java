@@ -523,15 +523,18 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
             ResMessages.Link lastMessage = MessageRepository.getRepository().getLastMessage(roomId);
 
-            if (lastMessage != null
-                    && lastMessage.id > 0
-                    && messageListModel.isBefore30Days(lastMessage.time)) {
+            // 1. 처음 접근 하는 토픽/DM 인 경우
+            // 2. 오랜만에 접근 하는 토픽/DM 인 경우
+            if (lastMessage == null
+                    || lastMessage.id < 0
+                    || (lastMessage.id > 0 && messageListModel.isBefore30Days(lastMessage.time))) {
                 MessageRepository.getRepository().clearLinks(teamId, roomId);
                 if (newsMessageLoader instanceof NormalNewMessageLoader) {
                     NormalNewMessageLoader newsMessageLoader = (NormalNewMessageLoader) this.newsMessageLoader;
                     newsMessageLoader.setHistoryLoad(false);
                 }
                 messageListPresenter.setMoreNewFromAdapter(true);
+                messageListPresenter.setNewLoadingComplete();
             }
         }
 
@@ -1014,6 +1017,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         normalNewMessageLoader.setMessageListModel(messageListModel);
         normalNewMessageLoader.setMessageState(messageState);
         normalNewMessageLoader.setMessageListPresenter(messageListPresenter);
+        normalNewMessageLoader.setCacheMode(false);
         newsMessageLoader = normalNewMessageLoader;
 
         NormalOldMessageLoader normalOldMessageLoader = NormalOldMessageLoader_.getInstance_(getActivity());
@@ -1021,6 +1025,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         normalOldMessageLoader.setMessageState(messageState);
         normalOldMessageLoader.setMessageListPresenter(messageListPresenter);
         normalOldMessageLoader.setTeamId(teamId);
+        normalOldMessageLoader.setCacheMode(false);
         oldMessageLoader = normalOldMessageLoader;
 
         int lastReadLinkId = messageListModel.getLastReadLinkId(roomId, entityId);

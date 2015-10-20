@@ -43,7 +43,7 @@ public class FileDetailCollapseStickerCommentView implements CommentViewHolder {
         Context context = selectedView.getContext();
 
         Integer colorFrom = context.getResources().getColor(R.color.transparent);
-        Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);
+        Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_1f);
         final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
         colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
         colorAnimation.setRepeatMode(ValueAnimator.REVERSE);

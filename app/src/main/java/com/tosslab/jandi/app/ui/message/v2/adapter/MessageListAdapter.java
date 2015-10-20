@@ -96,8 +96,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         if (item.id == lastMarker) {
             if (markerAnimState == AnimState.Idle) {
                 final View view = viewHolder.itemView;
-                Integer colorFrom = context.getResources().getColor(R.color.white);
-                Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);
+                Integer colorFrom = context.getResources().getColor(R.color.jandi_transparent_white_1f);
+                Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_1f);
                 final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
                 colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
                 colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
@@ -437,18 +437,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
 
     public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
-    }
-
-    public int getItemPositionByLinkId(int linkId) {
-        for (int idx = 0; idx < messageList.size(); idx++) {
-            ResMessages.Link link = messageList.get(idx);
-            if (link.id == linkId) {
-                return idx;
-            }
-        }
-
-        return -1;
-
     }
 
     public int getRoomId() {

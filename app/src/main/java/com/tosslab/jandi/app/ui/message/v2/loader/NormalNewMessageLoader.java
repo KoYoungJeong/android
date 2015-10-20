@@ -33,6 +33,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
     private MessageState messageState;
     private boolean firstLoad = true;
     private boolean historyLoad = true;
+    private boolean cacheMode = true;
 
     public void setMessageListModel(MessageListModel messageListModel) {
         this.messageListModel = messageListModel;
@@ -55,42 +56,19 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
 
         try {
             ResUpdateMessages newMessage;
+            boolean moveToLinkId = firstLoad;
+
             if (historyLoad) {
-                newMessage = messageListModel.getNewMessage(linkId);
+                try {
+                    newMessage = messageListModel.getNewMessage(linkId);
+                } catch (RetrofitError retrofitError) {
+                    retrofitError.printStackTrace();
+                    moveToLinkId = true;
+                    newMessage = getResUpdateMessages(linkId);
+                }
             } else {
-                newMessage = new ResUpdateMessages();
-                newMessage.updateInfo = new ResUpdateMessages.UpdateInfo();
-                newMessage.updateInfo.messages = new ArrayList<>();
-                newMessage.updateInfo.messageCount = 0;
-
-                Observable.create(new Observable.OnSubscribe<ResMessages>() {
-                    @Override
-                    public void call(Subscriber<? super ResMessages> subscriber) {
-                        boolean isEnd = false;
-                        while (!isEnd) {
-
-                            // 300 개씩 마지막까지 요청함
-                            ResMessages afterMarkerMessage = messageListModel.getAfterMarkerMessage(linkId, MessageManipulator.MAX_OF_MESSAGES);
-                            subscriber.onNext(afterMarkerMessage);
-
-                            if (afterMarkerMessage.records.size() < MessageManipulator.MAX_OF_MESSAGES) {
-                                isEnd = true;
-                            }
-
-                        }
-                        subscriber.onCompleted();
-                        messageListPresenter.setMoreNewFromAdapter(false);
-                    }
-                }).collect(() -> newMessage,
-                        (resUpdateMessages, o) -> newMessage.updateInfo.messages.addAll(o.records))
-                        .subscribe(resUpdateMessages -> {
-                            resUpdateMessages.updateInfo.messageCount = resUpdateMessages.updateInfo.messages.size();
-                            if (resUpdateMessages.updateInfo.messageCount > 0) {
-                                resUpdateMessages.lastLinkId = resUpdateMessages.updateInfo.messages.get(resUpdateMessages.updateInfo.messageCount - 1).id;
-                            } else {
-                                resUpdateMessages.lastLinkId = linkId;
-                            }
-                        });
+                moveToLinkId = true;
+                newMessage = getResUpdateMessages(linkId);
             }
 
 
@@ -103,7 +81,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), newMessage.lastLinkId);
                 updateMarker(roomId);
 
-                messageListPresenter.setUpNewMessage(messages, messageListModel.getMyId(), linkId, firstLoad);
+                messageListPresenter.setUpNewMessage(messages, messageListModel.getMyId(), linkId, moveToLinkId);
             } else {
                 if (firstLoad && messageListPresenter.isLastOfLastReadPosition()) {
                     messageListPresenter.setLastReadLinkId(-1);
@@ -118,7 +96,58 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         }
     }
 
+    private ResUpdateMessages getResUpdateMessages(final int linkId) {
+        ResUpdateMessages newMessage;
+        newMessage = new ResUpdateMessages();
+        newMessage.updateInfo = new ResUpdateMessages.UpdateInfo();
+        newMessage.updateInfo.messages = new ArrayList<>();
+        newMessage.updateInfo.messageCount = 0;
+        newMessage.lastLinkId = linkId;
+
+        Observable.create(new Observable.OnSubscribe<ResMessages>() {
+            @Override
+            public void call(Subscriber<? super ResMessages> subscriber) {
+
+                // 300 개씩 요청함
+                messageListPresenter.setMoreNewFromAdapter(false);
+
+                ResMessages afterMarkerMessage = null;
+                try {
+                    afterMarkerMessage = messageListModel.getAfterMarkerMessage(linkId, MessageManipulator.MAX_OF_MESSAGES);
+                    if (afterMarkerMessage.records.size() < MessageManipulator.MAX_OF_MESSAGES) {
+                        messageListPresenter.setNewNoMoreLoading();
+                        historyLoad = true;
+                    } else {
+                        messageListPresenter.setMoreNewFromAdapter(true);
+                        messageListPresenter.setNewLoadingComplete();
+                    }
+                } catch (RetrofitError retrofitError) {
+                    retrofitError.printStackTrace();
+                    messageListPresenter.setMoreNewFromAdapter(true);
+                    messageListPresenter.setNewLoadingComplete();
+                }
+
+                subscriber.onNext(afterMarkerMessage);
+                subscriber.onCompleted();
+            }
+        }).collect(() -> newMessage,
+                (resUpdateMessages, o) -> newMessage.updateInfo.messages.addAll(o.records))
+                .subscribe(resUpdateMessages -> {
+                    resUpdateMessages.updateInfo.messageCount = resUpdateMessages.updateInfo.messages.size();
+                    if (resUpdateMessages.updateInfo.messageCount > 0) {
+                        resUpdateMessages.lastLinkId = resUpdateMessages.updateInfo.messages.get(resUpdateMessages.updateInfo.messageCount - 1).id;
+                    } else {
+                        resUpdateMessages.lastLinkId = linkId;
+                    }
+                }, Throwable::printStackTrace);
+        return newMessage;
+    }
+
     private void saveToDatabase(int roomId, List<ResMessages.Link> messages) {
+
+        if (!cacheMode) {
+            return;
+        }
 
         Observable.from(messages)
                 .onBackpressureBuffer()
@@ -158,5 +187,9 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
 
     public void setHistoryLoad(boolean historyLoad) {
         this.historyLoad = historyLoad;
+    }
+
+    public void setCacheMode(boolean cacheMode) {
+        this.cacheMode = cacheMode;
     }
 }
