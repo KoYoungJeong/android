@@ -190,7 +190,7 @@ public class MainMoreFragment extends Fragment {
         try {
             String packageName = getActivity().getPackageName();
             String versionName = getActivity().getPackageManager().getPackageInfo(packageName, 0).versionName;
-            textViewJandiVersion.setText("(v." + versionName + ")");
+            textViewJandiVersion.setText(String.format("(v%s)", versionName));
             configVersionButton();
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
