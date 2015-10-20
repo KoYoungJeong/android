@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
@@ -12,11 +13,13 @@ import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 
 import org.androidannotations.annotations.EBean;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import retrofit.RetrofitError;
 import rx.Observable;
+import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
 /**
@@ -29,6 +32,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
     MessageListPresenter messageListPresenter;
     private MessageState messageState;
     private boolean firstLoad = true;
+    private boolean historyLoad = true;
 
     public void setMessageListModel(MessageListModel messageListModel) {
         this.messageListModel = messageListModel;
@@ -50,7 +54,45 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         }
 
         try {
-            ResUpdateMessages newMessage = messageListModel.getNewMessage(linkId);
+            ResUpdateMessages newMessage;
+            if (historyLoad) {
+                newMessage = messageListModel.getNewMessage(linkId);
+            } else {
+                newMessage = new ResUpdateMessages();
+                newMessage.updateInfo = new ResUpdateMessages.UpdateInfo();
+                newMessage.updateInfo.messages = new ArrayList<>();
+                newMessage.updateInfo.messageCount = 0;
+
+                Observable.create(new Observable.OnSubscribe<ResMessages>() {
+                    @Override
+                    public void call(Subscriber<? super ResMessages> subscriber) {
+                        boolean isEnd = false;
+                        while (!isEnd) {
+
+                            // 300 개씩 마지막까지 요청함
+                            ResMessages afterMarkerMessage = messageListModel.getAfterMarkerMessage(linkId, MessageManipulator.MAX_OF_MESSAGES);
+                            subscriber.onNext(afterMarkerMessage);
+
+                            if (afterMarkerMessage.records.size() < MessageManipulator.MAX_OF_MESSAGES) {
+                                isEnd = true;
+                            }
+
+                        }
+                        subscriber.onCompleted();
+                        messageListPresenter.setMoreNewFromAdapter(false);
+                    }
+                }).collect(() -> newMessage,
+                        (resUpdateMessages, o) -> newMessage.updateInfo.messages.addAll(o.records))
+                        .subscribe(resUpdateMessages -> {
+                            resUpdateMessages.updateInfo.messageCount = resUpdateMessages.updateInfo.messages.size();
+                            if (resUpdateMessages.updateInfo.messageCount > 0) {
+                                resUpdateMessages.lastLinkId = resUpdateMessages.updateInfo.messages.get(resUpdateMessages.updateInfo.messageCount - 1).id;
+                            } else {
+                                resUpdateMessages.lastLinkId = linkId;
+                            }
+                        });
+            }
+
 
             List<ResMessages.Link> messages = newMessage.updateInfo.messages;
             if (messages != null && !messages.isEmpty()) {
@@ -114,4 +156,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         }
     }
 
+    public void setHistoryLoad(boolean historyLoad) {
+        this.historyLoad = historyLoad;
+    }
 }

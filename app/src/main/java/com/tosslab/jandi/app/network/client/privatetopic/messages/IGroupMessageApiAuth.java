@@ -22,6 +22,11 @@ public interface IGroupMessageApiAuth {
     ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(int teamId, int groupId, int
             currentLinkId) throws RetrofitError;
 
+    ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(int teamId,
+                                                                  int groupId,
+                                                                  int currentLinkId,
+                                                                  int count) throws RetrofitError;
+
     ResMessages getGroupMarkerMessagesByGroupMessageApi(int teamId, int groupId, int currentLinkId) throws RetrofitError;
 
     ResCommon sendGroupMessageByGroupMessageApi(int privateGroupId, int teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError;

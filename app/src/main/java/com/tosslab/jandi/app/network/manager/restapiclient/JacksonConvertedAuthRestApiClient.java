@@ -242,6 +242,11 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
+    public ResMessages getPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(int teamId, int channelId, int currentLinkId, int count) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(ChannelMessageApiV2Client.class).create().getPublicTopicUpdatedMessagesForMarker(teamId, channelId, currentLinkId, count);
+    }
+
+    @Override
     public ResMessages getPublicTopicMarkerMessagesByChannelMessageApi(int teamId, int channelId, int currentLinkId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ChannelMessageApiV2Client.class).create().getPublicTopicMarkerMessages(teamId, channelId, currentLinkId);
     }
@@ -304,6 +309,11 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     @Override
     public ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int userId, int currentLinkId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(DirectMessageApiV2Client.class).create().getDirectMessagesUpdatedForMarker(teamId, userId, currentLinkId);
+    }
+
+    @Override
+    public ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int userId, int currentLinkId, int count) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(DirectMessageApiV2Client.class).create().getDirectMessagesUpdatedForMarker(teamId, userId, currentLinkId, count);
     }
 
     @Override
@@ -374,6 +384,11 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     @Override
     public ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(int teamId, int groupId, int currentLinkId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(GroupMessageApiV2Client.class).create().getGroupMessagesUpdatedForMarker(teamId, groupId, currentLinkId);
+    }
+
+    @Override
+    public ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(int teamId, int groupId, int currentLinkId, int count) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(GroupMessageApiV2Client.class).create().getGroupMessagesUpdatedForMarker(teamId, groupId, currentLinkId, count);
     }
 
     @Override

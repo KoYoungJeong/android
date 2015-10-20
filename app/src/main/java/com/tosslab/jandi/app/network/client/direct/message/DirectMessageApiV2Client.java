@@ -43,6 +43,11 @@ public interface DirectMessageApiV2Client {
     ResMessages getDirectMessagesUpdatedForMarker(@Query("teamId") int teamId, @Path("userId") int userId,
                                                   @Query("linkId") int currentLinkId);
 
+    @GET("/users/{userId}/messages?type=new")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    ResMessages getDirectMessagesUpdatedForMarker(@Query("teamId") int teamId, @Path("userId") int userId,
+                                                  @Query("linkId") int currentLinkId, @Query("count") int count);
+
     // Updated 된 Direct Message 리스트 정보 획득
     @GET("/users/{userId}/messages")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)

@@ -132,9 +132,10 @@ public class MessageRepository {
 
     public ResMessages.Link getLastMessage(int roomId) {
 
+        ResMessages.Link link = null;
         try {
             int teamId = AccountRepository.getRepository().getSelectedTeamId();
-            return helper.getDao(ResMessages.Link.class)
+            link = helper.getDao(ResMessages.Link.class)
                     .queryBuilder()
                     .orderBy("time", false)
                     .where()
@@ -146,8 +147,10 @@ public class MessageRepository {
             e.printStackTrace();
         }
 
-        ResMessages.Link link = new ResMessages.Link();
-        link.id = -1;
+        if (link == null) {
+            link = new ResMessages.Link();
+            link.id = -1;
+        }
         return link;
     }
 
@@ -309,7 +312,7 @@ public class MessageRepository {
         return null;
     }
 
-    public int clearMessages(int teamId, int roomId) {
+    public int clearLinks(int teamId, int roomId) {
         lock.lock();
         try {
             Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
@@ -321,9 +324,9 @@ public class MessageRepository {
             return deleteBuilder.delete();
         } catch (SQLException e) {
             e.printStackTrace();
-            return 0;
         } finally {
             lock.unlock();
         }
+        return 0;
     }
 }

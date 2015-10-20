@@ -45,6 +45,11 @@ public interface ChannelMessageApiV2Client {
     ResMessages getPublicTopicUpdatedMessagesForMarker(@Query("teamId") int teamId, @Path("channelId") int channelId,
                                                        @Query("linkId") int currentLinkId);
 
+    @GET("/channels/{channelId}/messages?type=new")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    ResMessages getPublicTopicUpdatedMessagesForMarker(@Query("teamId") int teamId, @Path("channelId") int channelId,
+                                                       @Query("linkId") int currentLinkId, @Query("count") int count);
+
 
     @GET("/channels/{channelId}/messages")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)

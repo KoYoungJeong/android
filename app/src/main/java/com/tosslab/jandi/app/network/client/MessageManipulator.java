@@ -188,6 +188,22 @@ public class MessageManipulator {
         }
     }
 
+    public ResMessages getAfterMarkerMessage(int linkId, int count) {
+        RequestApiManager apiManager = RequestApiManager.getInstance();
+        switch (entityType) {
+            case JandiConstants.TYPE_PUBLIC_TOPIC:
+                return apiManager.getPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(selectedTeamId, entityId, linkId, count);
+            case JandiConstants.TYPE_DIRECT_MESSAGE:
+                return apiManager.getDirectMessagesUpdatedForMarkerByDirectMessageApi(selectedTeamId, entityId, linkId, count);
+            case JandiConstants.TYPE_PRIVATE_TOPIC:
+                return apiManager.getGroupMessagesUpdatedForMarkerByGroupMessageApi(selectedTeamId, entityId, linkId, count);
+            default:
+                return null;
+
+        }
+
+    }
+
     public ResMessages.OriginalMessage getMessage(int teamId, int messageId) throws RetrofitError {
         return RequestApiManager.getInstance().getMessage(teamId, messageId);
     }

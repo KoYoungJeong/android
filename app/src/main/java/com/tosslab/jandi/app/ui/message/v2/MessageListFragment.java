@@ -274,6 +274,44 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
                 });
 
+        if (isFromSearch) {
+            MarkerNewMessageLoader newsMessageLoader = new MarkerNewMessageLoader(getActivity());
+            newsMessageLoader.setMessageListModel(messageListModel);
+            newsMessageLoader.setMessageListPresenter(messageListPresenter);
+            newsMessageLoader.setMessageState(messageState);
+
+            MarkerOldMessageLoader oldMessageLoader = new MarkerOldMessageLoader(getActivity());
+            oldMessageLoader.setMessageListModel(messageListModel);
+            oldMessageLoader.setMessageListPresenter(messageListPresenter);
+            oldMessageLoader.setMessageState(messageState);
+
+            this.newsMessageLoader = newsMessageLoader;
+            this.oldMessageLoader = oldMessageLoader;
+
+            messageListPresenter.setMarker(lastMarker);
+            messageListPresenter.setMoreNewFromAdapter(true);
+            messageListPresenter.setGotoLatestLayoutVisible();
+
+            messageState.setFirstItemId(lastMarker);
+
+        } else {
+            NormalNewMessageLoader newsMessageLoader = NormalNewMessageLoader_.getInstance_(getActivity());
+            newsMessageLoader.setMessageListModel(messageListModel);
+            newsMessageLoader.setMessageListPresenter(messageListPresenter);
+            newsMessageLoader.setMessageState(messageState);
+
+            NormalOldMessageLoader oldMessageLoader = NormalOldMessageLoader_.getInstance_(getActivity());
+            oldMessageLoader.setMessageListModel(messageListModel);
+            oldMessageLoader.setMessageListPresenter(messageListPresenter);
+            oldMessageLoader.setMessageState(messageState);
+            oldMessageLoader.setTeamId(teamId);
+
+            this.newsMessageLoader = newsMessageLoader;
+            this.oldMessageLoader = oldMessageLoader;
+
+            messageState.setFirstItemId(lastMarker);
+        }
+
         messageListPresenter.setEntityInfo(entityId);
         fileUploadStateViewModel.setEntityId(entityId);
 
@@ -335,46 +373,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
 
         AnalyticsUtil.sendScreenName(messageListModel.getScreen(entityId));
-    }
-
-    private void initMessageLoader() {
-        if (isFromSearch) {
-            MarkerNewMessageLoader newsMessageLoader = new MarkerNewMessageLoader(getActivity());
-            newsMessageLoader.setMessageListModel(messageListModel);
-            newsMessageLoader.setMessageListPresenter(messageListPresenter);
-            newsMessageLoader.setMessageState(messageState);
-
-            MarkerOldMessageLoader oldMessageLoader = new MarkerOldMessageLoader(getActivity());
-            oldMessageLoader.setMessageListModel(messageListModel);
-            oldMessageLoader.setMessageListPresenter(messageListPresenter);
-            oldMessageLoader.setMessageState(messageState);
-
-            this.newsMessageLoader = newsMessageLoader;
-            this.oldMessageLoader = oldMessageLoader;
-
-            messageListPresenter.setMarker(lastMarker);
-            messageListPresenter.setMoreNewFromAdapter(true);
-            messageListPresenter.setGotoLatestLayoutVisible();
-
-            messageState.setFirstItemId(lastMarker);
-
-        } else {
-            NormalNewMessageLoader newsMessageLoader = NormalNewMessageLoader_.getInstance_(getActivity());
-            newsMessageLoader.setMessageListModel(messageListModel);
-            newsMessageLoader.setMessageListPresenter(messageListPresenter);
-            newsMessageLoader.setMessageState(messageState);
-
-            NormalOldMessageLoader oldMessageLoader = NormalOldMessageLoader_.getInstance_(getActivity());
-            oldMessageLoader.setMessageListModel(messageListModel);
-            oldMessageLoader.setMessageListPresenter(messageListPresenter);
-            oldMessageLoader.setMessageState(messageState);
-            oldMessageLoader.setTeamId(teamId);
-
-            this.newsMessageLoader = newsMessageLoader;
-            this.oldMessageLoader = oldMessageLoader;
-
-            messageState.setFirstItemId(lastMarker);
-        }
     }
 
     private void initKeyboardEvent() {
@@ -518,17 +516,23 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             }
         }
 
-        if (!isFromSearch && messageListModel.needToChangeToSearchMode(entityId, roomId)) {
-            isFromSearch = true;
-            messageListModel.clearMessageRepository(teamId, roomId);
-        }
-
-        initMessageLoader();
-
         if (!isFromSearch) {
             int savedLastLinkId = MarkerRepository.getRepository()
                     .getMyMarker(roomId, messageListModel.getMyId()).getLastLinkId();
             messageState.setFirstItemId(Math.max(savedLastLinkId, lastMarker));
+
+            ResMessages.Link lastMessage = MessageRepository.getRepository().getLastMessage(roomId);
+
+            if (lastMessage != null
+                    && lastMessage.id > 0
+                    && messageListModel.isBefore30Days(lastMessage.time)) {
+                MessageRepository.getRepository().clearLinks(teamId, roomId);
+                if (newsMessageLoader instanceof NormalNewMessageLoader) {
+                    NormalNewMessageLoader newsMessageLoader = (NormalNewMessageLoader) this.newsMessageLoader;
+                    newsMessageLoader.setHistoryLoad(false);
+                }
+                messageListPresenter.setMoreNewFromAdapter(true);
+            }
         }
 
         messageListPresenter.setMarkerInfo(teamId, roomId);
