@@ -17,7 +17,8 @@ import java.util.List;
  */
 public class SwipeExitLayout extends FrameLayout {
 
-    public static final int MIN_CANCEL_ANIM_DURATION = 150;
+    public static final int MIN_CANCEL_ANIM_DURATION = 200;
+    public static final int MIN_EXIT_ANIM_DURATION = 500;
 
     public interface OnExitListener {
         void onExit();
@@ -27,17 +28,22 @@ public class SwipeExitLayout extends FrameLayout {
         void onTranslateY(float translateY);
 
         void onCancel(float spareDistance, int cancelAnimDuration);
+
+        void onExit(float spareDistance, int exitAnimDuration);
     }
 
     public static final String TAG = SwipeExitLayout.class.getSimpleName();
     private static final float CANCELABLE_PIXEL_AMOUNT = 80;
+    private static final float TOO_MANY_SCROLL_PIXEL_AMOUNT = 400;
+
     private static final float MIN_DIM_AMOUNT = 0.1f;
     private static final float MAX_DIM_AMOUNT = 0.9f;
     private static final int NEEDLESS_ALPHA_VALUE = -1;
 
     private SwipeGestureDetector gestureDetector;
 
-    private float ignorablePixelAmount;
+    private float cancelablePixelAmount;
+    private float tooManyScrollPixelAmount;
 
     private OnExitListener onExitListener;
     private StatusListener statusListener;
@@ -62,7 +68,8 @@ public class SwipeExitLayout extends FrameLayout {
 
     private void init(Context context) {
         gestureDetector = new SwipeGestureDetector(getContext(), new GestureListener());
-        ignorablePixelAmount = context.getResources().getDisplayMetrics().density * CANCELABLE_PIXEL_AMOUNT;
+        cancelablePixelAmount = context.getResources().getDisplayMetrics().density * CANCELABLE_PIXEL_AMOUNT;
+        tooManyScrollPixelAmount = context.getResources().getDisplayMetrics().density * TOO_MANY_SCROLL_PIXEL_AMOUNT;
     }
 
     public void setOnExitListener(OnExitListener onExitListener) {
@@ -94,6 +101,8 @@ public class SwipeExitLayout extends FrameLayout {
         setTranslationY(this, -distance);
 
         setBackgroundDim(distance);
+
+        exitIfTooManyScroll();
     }
 
     private void setTranslationY(ViewGroup viewGroup, float distance) {
@@ -139,6 +148,18 @@ public class SwipeExitLayout extends FrameLayout {
         }
     }
 
+    private void deliverExit(float spareDistance, int exitAnimDuration) {
+        if (statusListener != null) {
+            statusListener.onExit(spareDistance, exitAnimDuration);
+        }
+
+        if (statusListenerList != null && !statusListenerList.isEmpty()) {
+            for (StatusListener statusListener : statusListenerList) {
+                statusListener.onExit(spareDistance, exitAnimDuration);
+            }
+        }
+    }
+
     private void exitOrCancel() {
         int childCount = getChildCount();
         if (childCount <= 0) {
@@ -147,10 +168,23 @@ public class SwipeExitLayout extends FrameLayout {
 
         View firstChild = getChildAt(0);
         float translationY = firstChild.getTranslationY();
-        if (translationY > ignorablePixelAmount) {
+        if (translationY > cancelablePixelAmount) {
             exit();
         } else {
             cancel(childCount, (int) translationY);
+        }
+    }
+
+    private void exitIfTooManyScroll() {
+        int childCount = getChildCount();
+        if (childCount <= 0) {
+            return;
+        }
+
+        View firstChild = getChildAt(0);
+        float translationY = firstChild.getTranslationY();
+        if (translationY >= tooManyScrollPixelAmount) {
+            exit();
         }
     }
 
@@ -158,6 +192,27 @@ public class SwipeExitLayout extends FrameLayout {
         if (onExitListener != null) {
             onExitListener.onExit();
         }
+
+        int childCount = getChildCount();
+        if (childCount <= 0) {
+            return;
+        }
+
+        int measuredHeight = getMeasuredHeight();
+
+        View firstChild = getChildAt(0);
+
+        float distance = measuredHeight - firstChild.getTranslationY();
+        int duration = Math.min(MIN_EXIT_ANIM_DURATION, (int) distance);
+
+        for (int i = 0; i < childCount; i++) {
+            View child = getChildAt(i);
+            child.animate()
+                    .translationY(distance)
+                    .setDuration(duration);
+        }
+
+        deliverExit(distance, duration);
     }
 
     private void cancel(int childCount, int translationY) {

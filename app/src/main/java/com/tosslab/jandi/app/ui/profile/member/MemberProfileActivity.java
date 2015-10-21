@@ -32,7 +32,6 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.transform.ion.IonBlurTransform;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.SwipeExitLayout;
@@ -238,11 +237,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 int measuredHeight = vgProfileImageLarge.getMeasuredHeight();
 
                 float scaleX = (measuredWidth + (translateY * 2)) / measuredWidth;
-                LogUtil.e("jsp", "scaleX = " + scaleX);
                 scaleX = Math.max(1, scaleX);
 
                 float scaleY = (measuredHeight + (translateY * 2)) / measuredHeight;
-                LogUtil.e(TAG, "scaleY = " + scaleY);
                 scaleY = Math.max(1, scaleY);
 
                 vgProfileImageLarge.setScaleX(scaleX);
@@ -255,6 +252,23 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                         .setDuration(cancelAnimDuration)
                         .scaleX(1)
                         .scaleY(1);
+            }
+
+            @Override
+            public void onExit(float spareDistance, int exitAnimDuration) {
+                int measuredWidth = vgProfileImageLarge.getMeasuredWidth();
+                int measuredHeight = vgProfileImageLarge.getMeasuredHeight();
+
+                float ratio = (measuredWidth / (float) measuredHeight);
+
+                int spareBottom = swipeExitLayout.getMeasuredHeight() - measuredHeight;
+
+                float scaleY = (measuredHeight + spareBottom) / (float) measuredHeight;
+
+                vgProfileImageLarge.animate()
+                        .scaleX(scaleY * ratio)
+                        .scaleY(scaleY)
+                        .setDuration(exitAnimDuration);
             }
         });
     }
