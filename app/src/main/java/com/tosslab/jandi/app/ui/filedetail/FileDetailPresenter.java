@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +29,7 @@ import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
+import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.placeholder.PlaceholderUtil;
@@ -387,7 +389,6 @@ public class FileDetailPresenter {
         }
     }
 
-    @Background
     public void onClickDownload(ProgressDialog progressDialog, int fileId) {
         ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage(fileId);
         if (fileMessage == null) {
@@ -406,9 +407,6 @@ public class FileDetailPresenter {
                 return;
         }
 
-        String fileName = FileSizeUtil.getDownloadFileName(content.title, content.ext);
-
-        view.showDownloadProgressDialog(fileName);
 
         downloadFile(BitmapUtil.getFileUrl(content.fileUrl),
                 content.title,
@@ -420,6 +418,17 @@ public class FileDetailPresenter {
     @Background
     public void downloadFile(String url, String fileName, final String fileType, String ext,
                              ProgressDialog progressDialog, int fileId, boolean execute) {
+
+        if (!SdkUtils.hasPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            return;
+        }
+
+        String dialogText = FileSizeUtil.getDownloadFileName(fileName, ext);
+
+        view.showDownloadProgressDialog(dialogText);
+
         try {
             File result = fileDetailModel.download(url, fileName, ext, progressDialog);
 
@@ -630,5 +639,7 @@ public class FileDetailPresenter {
         void updateFileStarred(boolean starred);
 
         void showUnsharedFileToast();
+
+        void requestPermission(int requestCode, String... permission);
     }
 }

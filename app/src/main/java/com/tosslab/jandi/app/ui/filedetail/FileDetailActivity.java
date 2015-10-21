@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -110,6 +111,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public static final int INTENT_RETURN_TYPE_SHARE = 0;
     public static final int INTENT_RETURN_TYPE_UNSHARE = 1;
     private static final StickerInfo NULL_STICKER = new StickerInfo();
+    public static final int REQ_STORAGE_PERMISSION = 1021;
     public static
 
     @Extra
@@ -754,8 +756,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return;
         }
 
-        showDownloadProgressDialog(fileDownloadStartEvent.getFileName());
-
         fileDetailPresenter.downloadFile(fileDownloadStartEvent.getUrl(),
                 fileDownloadStartEvent.getFileName(),
                 fileDownloadStartEvent.getFileType(),
@@ -1004,6 +1004,20 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void showUnsharedFileToast() {
         ColoredToast.showError(FileDetailActivity.this, getString(R.string.jandi_unshared_message));
+    }
+
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
+    public void requestPermission(int requestCode, String... permissions) {
+        requestPermissions(permissions, requestCode);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQ_STORAGE_PERMISSION
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            download();
+        }
     }
 
     @Override
