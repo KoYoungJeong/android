@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.utils;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.os.Bundle;
 
 import com.tosslab.jandi.app.R;
 
@@ -14,6 +15,13 @@ public class ProgressWheel extends ProgressDialog {
     public ProgressWheel(Activity activity) {
         super(activity, R.style.Jandi_Transparent_Dialog);
         this.activity = activity;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.progress_wheel);
+
         setIndeterminate(true);
         setCancelable(true);
     }
@@ -24,7 +32,6 @@ public class ProgressWheel extends ProgressDialog {
             return;
         }
         super.show();
-        setContentView(R.layout.progress_wheel);
     }
 
     @Override
