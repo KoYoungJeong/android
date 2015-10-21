@@ -237,22 +237,18 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         if (setViewToAlpha) {
             swipeExitLayout.setViewToAlpha(vProfileImageLargeOverlay);
         }
+
         swipeExitLayout.setStatusListener(new SwipeExitLayout.StatusListener() {
-            private float lastDistance;
-
-
             @Override
-            public void onScroll(float distance) {
-                lastDistance += distance;
-
+            public void onTranslateY(float translateY) {
                 int measuredWidth = vgProfileImageLarge.getMeasuredWidth();
                 int measuredHeight = vgProfileImageLarge.getMeasuredHeight();
 
-                float scaleX = (measuredWidth - (lastDistance * 2)) / measuredWidth;
+                float scaleX = (measuredWidth + (translateY * 2)) / measuredWidth;
                 LogUtil.e("jsp", "scaleX = " + scaleX);
                 scaleX = Math.max(1, scaleX);
 
-                float scaleY = (measuredHeight - (lastDistance * 2)) / measuredHeight;
+                float scaleY = (measuredHeight + (translateY * 2)) / measuredHeight;
                 LogUtil.e(TAG, "scaleY = " + scaleY);
                 scaleY = Math.max(1, scaleY);
 
@@ -261,38 +257,11 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             }
 
             @Override
-            public void onIgnore(float spareDistance) {
-                lastDistance = 0;
-
-                int measuredHeight = vgProfileImageLarge.getMeasuredHeight();
-                int scaledHeight = (int) (measuredHeight * vgProfileImageLarge.getScaleY());
-
-                int duration = Math.min(
-                        SwipeExitLayout.MIN_IGNORE_ANIM_DURATION, scaledHeight - measuredHeight);
+            public void onCancel(float spareDistance, int cancelAnimDuration) {
                 vgProfileImageLarge.animate()
-                        .setDuration(duration)
+                        .setDuration(cancelAnimDuration)
                         .scaleX(1)
                         .scaleY(1);
-            }
-
-            @Override
-            public void onExit(float spareDistance) {
-                lastDistance = 0;
-
-                int measuredHeight = vgProfileImageLarge.getMeasuredHeight();
-                int scaledHeight = (int) (measuredHeight * vgProfileImageLarge.getScaleY());
-
-                int duration = Math.min(
-                        SwipeExitLayout.MIN_IGNORE_ANIM_DURATION,
-                        Math.abs(getResources().getDisplayMetrics().heightPixels - scaledHeight));
-
-                float scaleY =
-                        getResources().getDisplayMetrics().heightPixels / (float) measuredHeight;
-
-                vgProfileImageLarge.animate()
-                        .setDuration(duration)
-                        .scaleX(scaleY * 2)
-                        .scaleY(scaleY * 2);
             }
         });
     }
@@ -382,11 +351,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             return;
         }
 
-        if (swipeExitLayout != null) {
-            swipeExitLayout.exit();
-        } else {
-            super.onBackPressed();
-        }
+        super.onBackPressed();
     }
 
     @Override

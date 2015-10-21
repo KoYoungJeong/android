@@ -1,14 +1,11 @@
 package com.tosslab.jandi.app.views;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -20,30 +17,24 @@ import java.util.List;
  */
 public class SwipeExitLayout extends FrameLayout {
 
-    public static final int MIN_EXIT_ANIM_DURATION = 250;
-    public static final int MIN_IGNORE_ANIM_DURATION = 300;
+    public static final int MIN_CANCEL_ANIM_DURATION = 150;
 
     public interface OnExitListener {
         void onExit();
     }
 
     public interface StatusListener {
-        void onScroll(float distance);
+        void onTranslateY(float translateY);
 
-        void onIgnore(float spareDistance);
-
-        void onExit(float spareDistance);
+        void onCancel(float spareDistance, int cancelAnimDuration);
     }
 
     public static final String TAG = SwipeExitLayout.class.getSimpleName();
-    private static final float IGNORABLE_PIXEL_AMOUNT = 200;
+    private static final float CANCELABLE_PIXEL_AMOUNT = 80;
     private static final float MIN_DIM_AMOUNT = 0.1f;
     private static final float MAX_DIM_AMOUNT = 0.9f;
     private static final int NEEDLESS_ALPHA_VALUE = -1;
 
-    // For touch event.
-    private float lastInterceptX;
-    private float lastInterceptY;
     private SwipeGestureDetector gestureDetector;
 
     private float ignorablePixelAmount;
@@ -53,15 +44,6 @@ public class SwipeExitLayout extends FrameLayout {
     private List<StatusListener> statusListenerList;
 
     private View vBackgroundDim;
-
-    private AnimatorListenerAdapter exitListener = new AnimatorListenerAdapter() {
-        @Override
-        public void onAnimationEnd(Animator animation) {
-            if (onExitListener != null) {
-                onExitListener.onExit();
-            }
-        }
-    };
 
     public SwipeExitLayout(Context context) {
         super(context);
@@ -80,7 +62,7 @@ public class SwipeExitLayout extends FrameLayout {
 
     private void init(Context context) {
         gestureDetector = new SwipeGestureDetector(getContext(), new GestureListener());
-        ignorablePixelAmount = context.getResources().getDisplayMetrics().density * IGNORABLE_PIXEL_AMOUNT;
+        ignorablePixelAmount = context.getResources().getDisplayMetrics().density * CANCELABLE_PIXEL_AMOUNT;
     }
 
     public void setOnExitListener(OnExitListener onExitListener) {
@@ -104,41 +86,6 @@ public class SwipeExitLayout extends FrameLayout {
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (getChildCount() <= 0) {
-            return true;
-        }
-
-        int action = ev.getAction();
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                lastInterceptX = ev.getX();
-                lastInterceptY = ev.getY();
-                return false;
-            case MotionEvent.ACTION_MOVE:
-                float x = ev.getX();
-                float y = ev.getY();
-
-                float absDistanceY = Math.abs(y - lastInterceptY);
-                if (absDistanceY < ViewConfiguration.get(getContext()).getScaledTouchSlop()) {
-                    return false;
-                }
-
-                float absDistanceX = Math.abs(x - lastInterceptX);
-                if (absDistanceY > absDistanceX) {
-                    return true;
-                }
-                return false;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                lastInterceptX = 0;
-                lastInterceptY = 0;
-            default:
-                return false;
-        }
-    }
-
-    @Override
     public boolean onTouchEvent(MotionEvent event) {
         return gestureDetector.onTouchEvent(event);
     }
@@ -147,8 +94,6 @@ public class SwipeExitLayout extends FrameLayout {
         setTranslationY(this, -distance);
 
         setBackgroundDim(distance);
-
-        deliverScrollDistance(distance);
     }
 
     private void setTranslationY(ViewGroup viewGroup, float distance) {
@@ -166,45 +111,35 @@ public class SwipeExitLayout extends FrameLayout {
 
             child.setTranslationY(resultOfDistance);
         }
+
+        deliverScrollDistance(getChildAt(0).getTranslationY());
     }
 
-    private void deliverScrollDistance(float distance) {
+    private void deliverScrollDistance(float translateY) {
         if (statusListener != null) {
-            statusListener.onScroll(distance);
+            statusListener.onTranslateY(translateY);
         }
 
         if (statusListenerList != null && !statusListenerList.isEmpty()) {
             for (StatusListener statusListener : statusListenerList) {
-                statusListener.onScroll(distance);
+                statusListener.onTranslateY(translateY);
             }
         }
     }
 
-    private void deliverIgnore(float spareDistance) {
+    private void deliverCancel(float spareDistance, int cancelAnimDuration) {
         if (statusListener != null) {
-            statusListener.onIgnore(spareDistance);
+            statusListener.onCancel(spareDistance, cancelAnimDuration);
         }
 
         if (statusListenerList != null && !statusListenerList.isEmpty()) {
             for (StatusListener statusListener : statusListenerList) {
-                statusListener.onIgnore(spareDistance);
+                statusListener.onCancel(spareDistance, cancelAnimDuration);
             }
         }
     }
 
-    private void deliverExit(float spareDistance) {
-        if (statusListener != null) {
-            statusListener.onExit(spareDistance);
-        }
-
-        if (statusListenerList != null && !statusListenerList.isEmpty()) {
-            for (StatusListener statusListener : statusListenerList) {
-                statusListener.onExit(spareDistance);
-            }
-        }
-    }
-
-    private void exitOrIgnore() {
+    private void exitOrCancel() {
         int childCount = getChildCount();
         if (childCount <= 0) {
             return;
@@ -212,62 +147,33 @@ public class SwipeExitLayout extends FrameLayout {
 
         View firstChild = getChildAt(0);
         float translationY = firstChild.getTranslationY();
-        int distance;
-        int duration;
-        Animator.AnimatorListener listener = null;
-        float alpha = 0.9f;
-        boolean exit = false;
         if (translationY > ignorablePixelAmount) {
-            alpha = 0.1f;
-            distance = getMeasuredHeight();
-            duration = Math.min(MIN_EXIT_ANIM_DURATION, getMeasuredHeight() - (int) translationY);
-            listener = exitListener;
-            exit = true;
+            exit();
         } else {
-            distance = 0;
-            duration = Math.min(MIN_IGNORE_ANIM_DURATION, (int) translationY);
-        }
-
-        for (int i = 0; i < childCount; i++) {
-            View child = getChildAt(i);
-
-            child.animate()
-                    .setDuration(Math.abs(duration))
-                    .translationY(distance)
-                    .setListener(listener);
-        }
-
-        setBackgroundDimWithAlpha(NEEDLESS_ALPHA_VALUE, alpha, duration);
-
-        if (exit) {
-            deliverExit(distance);
-        } else {
-            deliverIgnore(distance);
+            cancel(childCount, (int) translationY);
         }
     }
 
-    public void exit() {
-        int childCount = getChildCount();
-        if (childCount <= 0) {
-            return;
+    private void exit() {
+        if (onExitListener != null) {
+            onExitListener.onExit();
         }
+    }
 
-        View firstChild = getChildAt(0);
-        float translationY = firstChild.getTranslationY();
-        int distance = getMeasuredHeight();
-        int duration = Math.min(250, getMeasuredHeight() - (int) translationY);
+    private void cancel(int childCount, int translationY) {
+        int duration = Math.min(MIN_CANCEL_ANIM_DURATION, translationY);
 
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
+
             child.animate()
                     .setDuration(Math.abs(duration))
-                    .translationY(distance)
-                    .setListener(exitListener);
+                    .translationY(0);
         }
 
-        setBackgroundDimWithAlpha(0.9f, 0.1f, duration);
+        setBackgroundDimWithDuration(NEEDLESS_ALPHA_VALUE, 0.9f, duration);
 
-        deliverExit(distance);
+        deliverCancel(0, duration);
     }
 
     private void setBackgroundDim(float distance) {
@@ -286,7 +192,7 @@ public class SwipeExitLayout extends FrameLayout {
         vBackgroundDim.setAlpha(resultDimAmount);
     }
 
-    private void setBackgroundDimWithAlpha(float fromAlpha, float toAlpha, int duration) {
+    private void setBackgroundDimWithDuration(float fromAlpha, float toAlpha, int duration) {
         if (vBackgroundDim == null) {
             return;
         }
@@ -332,7 +238,7 @@ public class SwipeExitLayout extends FrameLayout {
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
-            exitOrIgnore();
+            exitOrCancel();
             return true;
         }
 
