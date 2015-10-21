@@ -4,9 +4,9 @@
     android:layout_height="match_parent">
     <FrameLayout
         android:id="@+id/vg_member_profile_img_large"
-        android:background="@android:color/black"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@android:color/black">
 
         <ImageView
             android:id="@+id/iv_member_profile_img_large"
@@ -15,24 +15,30 @@
 
         <View
             android:id="@+id/v_member_profile_img_large_overlay"
-            android:background="@color/jandi_member_profile_img_overlay"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:background="@color/jandi_member_profile_img_overlay"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@id/vg_member_profile_img_large">
 
         <LinearLayout
-            android:layout_gravity="center"
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
 
             <View
                 android:id="@+id/v_member_profile_disable"
-                android:layout_marginBottom="20dp"
-                android:visibility="gone"
-                android:layout_gravity="center"
-                android:background="@drawable/alert_icon_warning"
                 android:layout_width="45dp"
-                android:layout_height="40dp"/>
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/alert_icon_warning"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/tv_member_profile_description"
