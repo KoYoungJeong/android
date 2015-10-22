@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.album;
 
+import android.Manifest;
 import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
+import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.album.fragment.ImageAlbumFragment_;
 import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
 import com.tosslab.jandi.app.ui.album.fragment.vo.SelectPictures;
@@ -38,6 +40,7 @@ import java.util.List;
 public class ImageAlbumActivity extends BaseAppCompatActivity {
 
     public static final String EXTRA_DATAS = "datas";
+    public static final int REQ_STORAGE_PERMISSION = 101;
 
     @Extra
     int entityId;
@@ -52,11 +55,30 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
 
         setupActionbar();
 
+        Permissions.getChecker()
+                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .hasPermission(this::initFragment)
+                .noPermission(() -> {
+                    Permissions.requestPermission(ImageAlbumActivity.this,
+                            REQ_STORAGE_PERMISSION,
+                            () -> Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                })
+                .check();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Permissions.getResult()
+                .addRequestCode(REQ_STORAGE_PERMISSION)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::initFragment, this::finish)
+                .resultPermission(Permissions.createPermissionResult(requestCode, permissions, grantResults));
+    }
+
+    private void initFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         Fragment fragment = ImageAlbumFragment_.builder().build();
         fragmentTransaction.replace(R.id.vg_image_album_content, fragment);
         fragmentTransaction.commit();
-
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.ui.profile.modify;
 
+import android.Manifest;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.v7.app.ActionBar;
@@ -30,6 +32,7 @@ import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -60,6 +63,7 @@ import retrofit.RetrofitError;
 @EActivity(R.layout.activity_profile)
 public class ModifyProfileActivity extends BaseAppCompatActivity {
     public static final int REQUEST_CODE = 1000;
+    public static final int REQ_STORAGE_PERMISSION = 101;
 
     @Bean
     ModifyProfileModel modifyProfileModel;
@@ -239,9 +243,21 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
     @Click(R.id.profile_photo)
     void getPicture() {
         // 프로필 사진
-        filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, ModifyProfileActivity.this);
+        if (SdkUtils.hasPermission(ModifyProfileActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.PhotoEdit);
+            filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, ModifyProfileActivity.this);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.PhotoEdit);
+        } else {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_STORAGE_PERMISSION);
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQ_STORAGE_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            getPicture();
+        }
     }
 
     public void onEvent(MemberEmailChangeEvent event) {
