@@ -130,6 +130,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         if (savedInstanceState != null) {
             isFullSizeImageShowing = savedInstanceState.getBoolean(KEY_FULL_SIZE_IMAGE_SHOWING);
         }
+        setNeedUnLockPassCode(false);
     }
 
     @Override

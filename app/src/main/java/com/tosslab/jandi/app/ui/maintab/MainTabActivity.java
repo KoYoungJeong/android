@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -109,12 +110,34 @@ public class MainTabActivity extends BaseAppCompatActivity {
     @ViewById(R.id.vg_main_offline)
     View vgOffline;
     int selectedEntity = -1;
+    int lastRotate = Configuration.ORIENTATION_UNDEFINED;
     private OfflineLayer offlineLayer;
     private ProgressWheel mProgressWheel;
     private Context mContext;
     private EntityManager mEntityManager;
     private MainTabPagerAdapter mMainTabPagerAdapter;
     private boolean isFirst = true;    // poor implementation
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        LogUtil.d("onCreate Rotate : " + lastRotate);
+
+        boolean isRotate;
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey("rotate")) {
+                lastRotate = savedInstanceState.getInt("rotate");
+            }
+        }
+
+        isRotate = lastRotate != Configuration.ORIENTATION_UNDEFINED
+                && lastRotate != getResources().getConfiguration().orientation;
+        if (isRotate || fromPush) {
+            setNeedUnLockPassCode(false);
+        }
+
+        lastRotate = getResources().getConfiguration().orientation;
+    }
 
     @AfterViews
     void initView() {
@@ -267,14 +290,6 @@ public class MainTabActivity extends BaseAppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (fromPush) {
-            setNeedUnLockPassCode(false);
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         ActivityHelper.setOrientation(this);
@@ -296,12 +311,17 @@ public class MainTabActivity extends BaseAppCompatActivity {
         setNeedUnLockPassCode(true);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
-    /**
-     * *********************************************************
-     * Entities List Update / Refresh
-     * **********************************************************
-     */
+        if (outState == null) {
+            outState = new Bundle();
+        }
+
+        outState.putInt("rotate", lastRotate);
+        LogUtil.d("onSaveInstanceState Rotate : " + lastRotate);
+    }
 
     @Override
     public void onPause() {

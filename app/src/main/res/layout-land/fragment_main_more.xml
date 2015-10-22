@@ -220,8 +220,7 @@
 
             <RelativeLayout
                 android:id="@+id/vg_more_version"
-                android:layout_width="match_parent"
-                android:layout_height="43dp">
+                style="@style/JandiMore.Setting">
 
                 <ImageView
                     android:id="@+id/iv_icon_version"
@@ -229,7 +228,6 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="18dp"
                     android:src="@drawable/more_icon_version" />
 
                 <TextView
@@ -240,7 +238,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@id/iv_icon_version"
                     android:text="Version"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/jandi_text_size_medium" />
 
                 <TextView
                     android:id="@+id/tv_more_jandi_version"
@@ -248,18 +246,17 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/tv_version_title"
-                    android:text="(v1.5.0)"></TextView>
+                    android:text="(v1.5.0)" />
 
-                <Button
-                    android:id="@+id/bt_update_version"
-                    android:layout_width="51dp"
-                    android:layout_height="27dp"
+                <TextView
+                    android:id="@+id/btn_update_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="17dp"
                     android:background="@drawable/more_btn_update"
                     android:gravity="center_horizontal|center_vertical"
-                    android:text="Update"
+                    android:text="@string/jandi_action_update"
                     android:textColor="#00a4e6"
                     android:textSize="11sp" />
 
