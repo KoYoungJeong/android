@@ -73,6 +73,7 @@ public class SearchedFileItemView extends RelativeLayout {
         MimeTypeUtil.FilterType filterType = IconFilterUtil.getMimeType(icon);
         if (filterType == MimeTypeUtil.FilterType.Image) {
             if (BitmapUtil.hasImageUrl(content)) {
+                imageViewSearchedFileType.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 // 썸네일
                 String thumbnailUrl =
                         BitmapUtil.getThumbnailUrlOrOriginal(content, BitmapUtil.Thumbnails.MEDIUM);
@@ -80,11 +81,13 @@ public class SearchedFileItemView extends RelativeLayout {
                         imageViewSearchedFileType, thumbnailUrl,
                         R.drawable.file_icon_img, R.drawable.file_icon_img);
             } else {
+                imageViewSearchedFileType.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViewSearchedFileType.setImageResource(R.drawable.file_icon_img);
             }
         } else {
             // 파일 타입에 해당하는 아이콘 연결
             int mimeTypeResource = MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, icon);
+            imageViewSearchedFileType.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             imageViewSearchedFileType.setImageResource(mimeTypeResource);
         }
 
