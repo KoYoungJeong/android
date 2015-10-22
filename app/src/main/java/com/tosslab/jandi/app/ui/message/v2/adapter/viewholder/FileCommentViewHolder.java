@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -24,7 +23,6 @@ import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 import de.greenrobot.event.EventBus;
 
@@ -80,12 +78,10 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        Ion.with(ivProfile)
-                .placeholder(R.drawable.profile_img)
-                .error(R.drawable.profile_img)
-                .transform(new IonCircleTransform())
-                .crossfade(true)
-                .load(profileUrl);
+        BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
+                profileUrl,
+                R.drawable.profile_img,
+                R.drawable.profile_img);
 
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
@@ -158,12 +154,10 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 break;
                             default:
                                 vFileImageRound.setVisibility(View.VISIBLE);
-                                Ion.with(ivFileImage)
-                                        .placeholder(R.drawable.file_icon_img)
-                                        .error(R.drawable.file_icon_img)
-                                        .crossfade(true)
-                                        .centerCrop()
-                                        .load(thumbnailUrl);
+                                BitmapUtil.loadCropBitmapByGlide(ivFileImage,
+                                        thumbnailUrl,
+                                        R.drawable.file_icon_img,
+                                        R.drawable.file_icon_img);
 
                                 break;
                         }

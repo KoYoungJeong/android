@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.local.orm.repositories.UploadedFileInfoRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.transform.glide.GlideCircleTransform;
 
 import java.io.File;
 
@@ -442,6 +443,29 @@ public class BitmapUtil {
                             .setDuration(300);
                 })  // Avoid doesn't working 'fitCenter with crossfade'
                 .fitCenter()
+                .into(imageView);
+    }
+
+    public static void loadCropBitmapByGlide(ImageView imageView,
+                                             String url, int placeHolder, int error) {
+        Glide.with(JandiApplication.getContext())
+                .load(url)
+                .asBitmap()
+                .placeholder(placeHolder)
+                .error(error)
+                .centerCrop()
+                .into(imageView);
+    }
+
+    public static void loadCropCircleImageByGlideBitmap(ImageView imageView,
+                                                  String url, int placeHolder, int error) {
+        Glide.with(JandiApplication.getContext())
+                .load(url)
+                .asBitmap()
+                .placeholder(placeHolder)
+                .error(error)
+                .centerCrop()
+                .transform(new GlideCircleTransform(JandiApplication.getContext()))
                 .into(imageView);
     }
 
