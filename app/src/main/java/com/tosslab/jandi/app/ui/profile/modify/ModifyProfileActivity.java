@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.profile.modify;
 import android.Manifest;
 import android.app.DialogFragment;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.v7.app.ActionBar;
@@ -27,12 +26,12 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
-import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -242,22 +241,30 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
 
     @Click(R.id.profile_photo)
     void getPicture() {
-        // 프로필 사진
-        if (SdkUtils.hasPermission(ModifyProfileActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
-            filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, ModifyProfileActivity.this);
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.PhotoEdit);
-        } else {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_STORAGE_PERMISSION);
-        }
+        Permissions.getChecker()
+                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .hasPermission(() -> {
+                    filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY,
+                            ModifyProfileActivity.this);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile,
+                            AnalyticsValue.Action.PhotoEdit);
+                })
+                .noPermission(() ->
+                        Permissions.requestPermission(ModifyProfileActivity.this,
+                                REQ_STORAGE_PERMISSION,
+                                () -> Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                .check();
+
 
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQ_STORAGE_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            getPicture();
-        }
+
+        Permissions.getResult()
+                .addRequestCode(REQ_STORAGE_PERMISSION)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::getPicture);
     }
 
     public void onEvent(MemberEmailChangeEvent event) {
