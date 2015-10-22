@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -98,11 +99,27 @@ public class StickerRepository {
 
     public List<ResMessages.StickerContent> getStickers(int groupId) {
         try {
-            return helper.getDao(ResMessages.StickerContent.class)
+            List<ResMessages.StickerContent> stickers = helper.getDao(ResMessages.StickerContent.class)
                     .queryBuilder()
                     .where()
                     .eq("groupId", groupId)
                     .query();
+
+            Collections.sort(stickers, (lhs, rhs) -> {
+                try {
+                    int lhsStickerId = Integer.parseInt(lhs.stickerId);
+                    int rhsStickerId = Integer.parseInt(rhs.stickerId);
+
+                    return lhsStickerId - rhsStickerId;
+
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    return 0;
+                }
+
+            });
+
+            return stickers;
         } catch (SQLException e) {
             e.printStackTrace();
         }

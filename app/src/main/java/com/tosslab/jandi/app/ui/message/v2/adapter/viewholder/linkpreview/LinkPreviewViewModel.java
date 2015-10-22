@@ -9,10 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
+import com.tosslab.jandi.app.utils.BitmapUtil;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 18..
@@ -79,12 +79,10 @@ public class LinkPreviewViewModel {
         vgThumb.setVisibility(View.VISIBLE);
 
         String imageUrl = linkPreview.imageUrl;
-        Glide.with(context)
-                .load(imageUrl)
-                .asBitmap()
-                .centerCrop()
-                .placeholder(R.drawable.link_preview)
-                .into(ivThumb);
+        BitmapUtil.loadCropBitmapByGlide(ivThumb,
+                imageUrl,
+                R.drawable.link_preview
+        );
     }
 
     private boolean useThumbnail(String imagUrl) {

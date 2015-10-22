@@ -18,6 +18,10 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 3..
@@ -67,7 +71,7 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
             // if connect Hard keyboard
 
             // 전체 화면의 3/5 만큼만 되도록 지정
-            int stickerHeight = resources.getDisplayMetrics().heightPixels / 2;
+            int stickerHeight = resources.getDisplayMetrics().heightPixels * 2 / 5;
             JandiPreference.setKeyboardHeight(activity, stickerHeight);
 
             if (onKeyboardHeightCapture != null) {
@@ -77,6 +81,19 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
         }
 
         this.onKeyboardHeightCapture = onKeyboardHeightCapture;
+
+        Observable.just(1)
+                .delay(1000, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter(integer1 -> KeyboardHeightModel.this.onKeyboardHeightCapture != null)
+                .subscribe(integer -> {
+                    int stickerHeight = resources.getDisplayMetrics().heightPixels * 2 / 5;
+                    JandiPreference.setKeyboardHeight(activity, stickerHeight);
+                    if (KeyboardHeightModel.this.onKeyboardHeightCapture != null) {
+                        KeyboardHeightModel.this.onKeyboardHeightCapture.onCapture();
+                    }
+                });
+
     }
 
     private int getNavigationHeight() {

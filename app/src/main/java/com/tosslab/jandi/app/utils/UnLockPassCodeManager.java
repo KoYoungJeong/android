@@ -44,7 +44,7 @@ public class UnLockPassCodeManager {
             return;
         }
 
-        if (hasUnLocked) {
+        if (isHasUnLocked()) {
             LogUtil.e(TAG, "hasUnLocked");
             return;
         } else {
@@ -69,7 +69,7 @@ public class UnLockPassCodeManager {
             return;
         }
 
-        if (hasUnLocked) {
+        if (isHasUnLocked()) {
             if (!(context instanceof Activity)) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             }
@@ -100,7 +100,12 @@ public class UnLockPassCodeManager {
         }
     }
 
-    public void setUnLocked(boolean hasUnLocked) {
+    synchronized public boolean isHasUnLocked() {
+        return hasUnLocked;
+    }
+
+    synchronized public void setUnLocked(boolean hasUnLocked) {
         this.hasUnLocked = hasUnLocked;
     }
+
 }

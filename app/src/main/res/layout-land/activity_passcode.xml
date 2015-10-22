@@ -17,7 +17,7 @@
             android:gravity="center"
             android:orientation="vertical">
 
-                <!--android:text="@string/jandi_enter_passcode"-->
+            <!--android:text="@string/jandi_enter_passcode"-->
             <TextView
                 android:id="@+id/tv_passcode_title"
                 android:layout_width="wrap_content"
@@ -25,7 +25,7 @@
                 android:text="@string/jandi_enter_passcode"
                 android:textColor="@color/jandi_primary_color"
                 android:textSize="24dp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_passcode_subtitle"
@@ -34,7 +34,7 @@
                 android:layout_marginTop="14dp"
                 android:lineSpacingExtra="3dp"
                 android:textColor="@color/activate_text_color"
-                android:textSize="13dp"/>
+                android:textSize="13dp" />
 
             <LinearLayout
                 android:id="@+id/vg_passcode_checker"
@@ -46,28 +46,28 @@
                     android:id="@+id/v_passcode_checker_1"
                     android:layout_width="19dp"
                     android:layout_height="19dp"
-                    android:background="@drawable/bg_passcode_checker"/>
+                    android:background="@drawable/bg_passcode_checker" />
 
                 <View
                     android:id="@+id/v_passcode_checker_2"
                     android:layout_width="19dp"
                     android:layout_height="19dp"
                     android:layout_marginLeft="44dp"
-                    android:background="@drawable/bg_passcode_checker"/>
+                    android:background="@drawable/bg_passcode_checker" />
 
                 <View
                     android:id="@+id/v_passcode_checker_3"
                     android:layout_width="19dp"
                     android:layout_height="19dp"
                     android:layout_marginLeft="44dp"
-                    android:background="@drawable/bg_passcode_checker"/>
+                    android:background="@drawable/bg_passcode_checker" />
 
                 <View
                     android:id="@+id/v_passcode_checker_4"
                     android:layout_width="19dp"
                     android:layout_height="19dp"
                     android:layout_marginLeft="44dp"
-                    android:background="@drawable/bg_passcode_checker"/>
+                    android:background="@drawable/bg_passcode_checker" />
 
             </LinearLayout>
 
@@ -75,19 +75,20 @@
 
     </FrameLayout>
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="312dp"
         android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/gv_passcode"
-            android:layout_gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="290dp"
+            android:layout_height="260dp"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
             android:clipToPadding="false"
             android:fadingEdge="none"
-            android:overScrollMode="never"/>
+            android:overScrollMode="never" />
 
-    </FrameLayout>
+    </RelativeLayout>
 
 </LinearLayout>

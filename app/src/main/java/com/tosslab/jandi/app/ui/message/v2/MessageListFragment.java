@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -139,6 +140,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EditorAction;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.TextChange;
@@ -622,6 +624,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
 
         AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_cancel);
+    }
+
+    @Click(R.id.vg_messages_preview_sticker)
+    void onNonAction() {
     }
 
     @Click(R.id.vg_message_offline)
@@ -1122,6 +1128,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Click(R.id.et_message)
     void onMessageInputClick() {
         AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MessageInputField);
+    }
+
+    @EditorAction(R.id.et_message)
+    boolean onMessageDoneClick(TextView tv, int actionId) {
+        LogUtil.d(tv.toString() + " ::: " + actionId);
+
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            messageListPresenter.hideKeyboard();
+        }
+
+        return false;
     }
 
     void onMessageItemClick(ResMessages.Link link, int entityId) {

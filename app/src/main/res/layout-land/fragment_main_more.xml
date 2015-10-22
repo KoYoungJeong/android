@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:clipToPadding="false"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:paddingBottom="1dp"
+                android:weightSum="3">
+
+                <com.tosslab.jandi.app.views.IconWithTextView
+                    android:id="@+id/ly_more_profile"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:text="@string/jandi_profile_actionb"
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
+                    app:img="@drawable/profile_img" />
+
+                <com.tosslab.jandi.app.views.IconWithTextView
+                    android:id="@+id/ly_more_mentioned"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:text="@string/jandi_mention_mentions"
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
+                    app:img="@drawable/more_icon_mentioned" />
+
+                <com.tosslab.jandi.app.views.IconWithTextView
+                    android:id="@+id/ly_more_starred"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:text="@string/jandi_starred_star"
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
+                    app:img="@drawable/more_icon_stared" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#fff1f4f8" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@color/jandi_background_default"
+                android:weightSum="3">
+
+                <!-- Team Member -->
+                <com.tosslab.jandi.app.views.IconWithTextView
+                    android:id="@+id/ly_more_team_member"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:text="@string/jandi_team_member"
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
+                    app:img="@drawable/more_icon_team_member" />
+
+                <!-- invite -->
+                <com.tosslab.jandi.app.views.IconWithTextView
+                    android:id="@+id/ly_more_invite"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:text="@string/jandi_invitation"
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
+                    app:img="@drawable/more_icon_invite_member" />
+
+                <!-- goto main -->
+                <com.tosslab.jandi.app.views.IconWithTextView
+                    android:id="@+id/ly_more_go_to_main"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:text="@string/jandi_team_switch"
+                    android:textColor="@color/jandi_text_medium_dark"
+                    android:textSize="@dimen/jandi_mention_star_list_item_font_size"
+                    app:img="@drawable/more_icon_team_switch" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:background="@color/jandi_background_default">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="17dp"
+                    android:paddingBottom="10dp"
+                    android:text="JANDI Setting"
+                    android:textColor="@color/jandi_text_medium"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_more_help"
+                android:layout_width="match_parent"
+                android:layout_height="43dp">
+
+                <ImageView
+                    android:id="@+id/iv_icon_help"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="18dp"
+                    android:src="@drawable/more_icon_help" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/iv_icon_help"
+                    android:text="@string/jandi_help"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="17dp"
+                    android:src="@drawable/more_icon_arrow_right" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#FFf1f4f8" />
+
+            <RelativeLayout
+                android:id="@+id/rl_more_setting"
+                android:layout_width="match_parent"
+                android:layout_height="43dp">
+
+                <ImageView
+                    android:id="@+id/iv_icon_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="18dp"
+                    android:src="@drawable/more_icon_setting" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/iv_icon_setting"
+                    android:text="@string/jandi_settings"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:layout_width="6dp"
+                    android:layout_height="9dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="17dp"
+                    android:src="@drawable/more_icon_arrow_right" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#FFf1f4f8" />
+
+            <RelativeLayout
+                android:id="@+id/vg_more_version"
+                style="@style/JandiMore.Setting">
+
+                <ImageView
+                    android:id="@+id/iv_icon_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/more_icon_version" />
+
+                <TextView
+                    android:id="@+id/tv_version_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/iv_icon_version"
+                    android:text="Version"
+                    android:textSize="@dimen/jandi_text_size_medium" />
+
+                <TextView
+                    android:id="@+id/tv_more_jandi_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/tv_version_title"
+                    android:text="(v1.5.0)" />
+
+                <TextView
+                    android:id="@+id/btn_update_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/more_btn_update"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="@string/jandi_action_update"
+                    android:textColor="#00a4e6"
+                    android:textSize="11sp" />
+
+            </RelativeLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/jandi_background_default">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="JANDI"
+                        android:textColor="@color/jandi_text_medium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginTop="3dp"
+                        android:text="TOSS LAB, INC."
+                        android:textColor="@color/jandi_text_light" />
+
+                    <TextView
+                        android:id="@+id/txt_more_jandi_version"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/jandi_text_medium" />
+
+                </LinearLayout>
+
+            </FrameLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
