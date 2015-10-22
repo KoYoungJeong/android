@@ -77,7 +77,8 @@ public class ImageViewHolder implements BodyViewHolder {
         BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
                 profileUrl,
                 R.drawable.profile_img,
-                R.drawable.profile_img);
+                R.drawable.profile_img
+        );
 
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
@@ -174,8 +175,8 @@ public class ImageViewHolder implements BodyViewHolder {
 
                         BitmapUtil.loadCropBitmapByGlide(ivFileImage,
                                 thumbPath,
-                                R.drawable.file_icon_img,
-                                R.drawable.file_icon_img);
+                                R.drawable.file_icon_img
+                        );
 
                         String fileSize = FileSizeUtil.fileSizeCalculation(fileContent.size);
                         tvFileType.setText(String.format("%s, %s", fileSize, fileContent.ext));

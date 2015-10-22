@@ -53,7 +53,8 @@ public class DummyViewHolder implements BodyViewHolder {
         BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
                 profileUrl,
                 R.drawable.profile_img,
-                R.drawable.profile_img);
+                R.drawable.profile_img
+        );
 
         tvName.setText(entity.getName());
 

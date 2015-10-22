@@ -80,7 +80,8 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
         BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
                 profileUrl,
                 R.drawable.profile_img,
-                R.drawable.profile_img);
+                R.drawable.profile_img
+        );
 
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
@@ -164,8 +165,8 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                                 vFileImageRound.setVisibility(View.VISIBLE);
                                 BitmapUtil.loadCropBitmapByGlide(ivFileImage,
                                         thumbnailUrl,
-                                        R.drawable.file_icon_img,
-                                        R.drawable.file_icon_img);
+                                        R.drawable.file_icon_img
+                                );
 
                                 break;
                         }

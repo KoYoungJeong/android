@@ -11,6 +11,8 @@ import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
@@ -447,18 +449,28 @@ public class BitmapUtil {
     }
 
     public static void loadCropBitmapByGlide(ImageView imageView,
-                                             String url, int placeHolder, int error) {
+                                             String url, int placeHolder) {
         Glide.with(JandiApplication.getContext())
                 .load(url)
                 .asBitmap()
                 .placeholder(placeHolder)
-                .error(error)
                 .centerCrop()
+                .listener(new RequestListener<String, Bitmap>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        return false;
+                    }
+                })
                 .into(imageView);
     }
 
     public static void loadCropCircleImageByGlideBitmap(ImageView imageView,
-                                                  String url, int placeHolder, int error) {
+                                                        String url, int placeHolder, int error) {
         Glide.with(JandiApplication.getContext())
                 .load(url)
                 .asBitmap()

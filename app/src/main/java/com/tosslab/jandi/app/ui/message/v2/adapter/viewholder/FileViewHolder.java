@@ -78,7 +78,8 @@ public class FileViewHolder implements BodyViewHolder {
         BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
                 profileUrl,
                 R.drawable.profile_img,
-                R.drawable.profile_img);
+                R.drawable.profile_img
+        );
 
         if (TextUtils.equals(fromEntity.status, "enabled")) {
             tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
