@@ -17,6 +17,7 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +30,7 @@ import rx.Observable;
 public class StickerManager {
 
     public static final int DEFAULT_GROUP_MOZZI = 100;
+    public static final int DEFAULT_GROUP_DAY = 101;
     private static final LoadOptions DEFAULT_OPTIONS = new LoadOptions();
     private static StickerManager stickerManager;
 
@@ -37,6 +39,7 @@ public class StickerManager {
     private StickerManager() {
         this.localStickerGroupIds = new HashSet<Integer>();
         localStickerGroupIds.add(DEFAULT_GROUP_MOZZI);
+        localStickerGroupIds.add(DEFAULT_GROUP_DAY);
     }
 
     public static StickerManager getInstance() {
@@ -119,10 +122,28 @@ public class StickerManager {
                 .toBlocking().first();
 
         if (stickerItem != defaultSticker) {
+            String filePathFormat = "file:///android_asset/stickers/default/%s/%s.png";
 
             String fileName = stickerItem.groupId + "_" + stickerItem.stickerId;
 
-            return "file:///android_asset/stickers/default/mozzi/" + fileName + ".png";
+            String group;
+            switch (stickerItem.groupId) {
+                case StickerRepository.DEFAULT_GROUP_ID_MOZZI :
+                    group = "mozzi";
+                    break;
+
+                case StickerRepository.DEFAULT_GROUP_ID_DAY :
+                    group = "day";
+                    break;
+
+                default:
+                    group = "mozzi";
+                    break;
+            }
+
+            String stickerFilePath = String.format(filePathFormat, group, fileName);
+            LogUtil.e(stickerFilePath);
+            return stickerFilePath;
         } else {
             return "";
         }
