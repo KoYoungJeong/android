@@ -59,6 +59,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -95,6 +96,8 @@ import rx.Observable;
 public class MainTabActivity extends BaseAppCompatActivity {
 
     public static final int CHAT_INDEX = 1;
+    public static final String EXTRA_UNLOCKED = "unlocked";
+    public static final String EXTRA_ROTATE = "rotate";
     @Extra
     boolean fromPush = false;
 
@@ -117,6 +120,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
     private EntityManager mEntityManager;
     private MainTabPagerAdapter mMainTabPagerAdapter;
     private boolean isFirst = true;    // poor implementation
+    private boolean hasUnLocked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,9 +128,14 @@ public class MainTabActivity extends BaseAppCompatActivity {
         LogUtil.d("onCreate Rotate : " + lastRotate);
 
         boolean isRotate;
+        boolean hasUnlocked = false;
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey("rotate")) {
-                lastRotate = savedInstanceState.getInt("rotate");
+            if (savedInstanceState.containsKey(EXTRA_ROTATE)) {
+                lastRotate = savedInstanceState.getInt(EXTRA_ROTATE);
+            }
+
+            if (savedInstanceState.containsKey(EXTRA_UNLOCKED)) {
+                hasUnlocked = savedInstanceState.getBoolean(EXTRA_UNLOCKED);
             }
         }
 
@@ -134,6 +143,9 @@ public class MainTabActivity extends BaseAppCompatActivity {
                 && lastRotate != getResources().getConfiguration().orientation;
         if (isRotate || fromPush) {
             setNeedUnLockPassCode(false);
+            if (hasUnlocked) {
+                UnLockPassCodeManager.getInstance().setUnLocked(true);
+            }
         }
 
         lastRotate = getResources().getConfiguration().orientation;
@@ -309,6 +321,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
         fromPush = false;
         setNeedUnLockPassCode(true);
+        hasUnLocked = UnLockPassCodeManager.getInstance().isHasUnLocked();
     }
 
     @Override
@@ -319,7 +332,8 @@ public class MainTabActivity extends BaseAppCompatActivity {
             outState = new Bundle();
         }
 
-        outState.putInt("rotate", lastRotate);
+        outState.putInt(EXTRA_ROTATE, lastRotate);
+        outState.putBoolean(EXTRA_UNLOCKED, hasUnLocked);
         LogUtil.d("onSaveInstanceState Rotate : " + lastRotate);
     }
 
