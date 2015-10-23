@@ -43,6 +43,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
@@ -582,6 +583,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         if (!isForeground) {
             return;
         }
+        ((BaseAppCompatActivity) getActivity()).setNeedUnLockPassCode(false);
         filePickerViewModel.selectFileSelector(event.type, FileListFragment.this, mSearchQuery.mSearchEntity);
     }
 

@@ -11,6 +11,7 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 /**
  * Created by tonyjs on 15. 7. 16..
  */
+@Deprecated
 class LifecycleChecker implements Application.ActivityLifecycleCallbacks {
     public static final String TAG = Logger.makeTag(LifecycleChecker.class);
 

@@ -123,6 +123,7 @@ import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
@@ -1042,6 +1043,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!isForeground) {
             return;
         }
+
         filePickerViewModel.selectFileSelector(event.type, MessageListFragment.this, entityId);
 
         AnalyticsValue.Action action;
@@ -1086,10 +1088,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        UnLockPassCodeManager.getInstance().setUnLocked(true);
+
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-
         switch (requestCode) {
             case FilePickerViewModel.TYPE_UPLOAD_GALLERY:
                 break;

@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.IdentifierKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.SprinklerService;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
@@ -53,15 +54,6 @@ public class Sprinkler {
         IS_DEBUG_MODE = debugMode;
         Log.i(TAG, "Sprinkler initialized. dev version ? " + IS_FOR_DEV);
         Log.i(TAG, "Sprinkler initialized. debug mode ? " + IS_DEBUG_MODE);
-        BroadcastReceiver screenOffReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Logger.i(TAG, "ScreenOff receive");
-                Sprinkler.with(context).stopAll();
-            }
-        };
-        application.registerReceiver(screenOffReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
-        application.registerActivityLifecycleCallbacks(new LifecycleChecker());
         return with(application.getApplicationContext());
     }
 
@@ -138,5 +130,22 @@ public class Sprinkler {
 
     public DefaultProperties getDefaultProperties() {
         return defaultProperties;
+    }
+
+    public FutureTrack getDefaultTrack() {
+        return new FutureTrack.Builder()
+                .event(Event.AppOpen)
+                .property(PropertyKey.AppVersion, defaultProperties.getAppVersion())
+                .property(PropertyKey.Brand, defaultProperties.getDeviceBrand())
+                .property(PropertyKey.Manufacturer, defaultProperties.getDeviceManufacturer())
+                .property(PropertyKey.Model, defaultProperties.getDeviceModel())
+                .property(PropertyKey.OS, defaultProperties.getOs())
+                .property(PropertyKey.OSVersion, defaultProperties.getOsVersion())
+                .property(PropertyKey.ScreenDPI, defaultProperties.getScreenDpi())
+                .property(PropertyKey.ScreenHeight, defaultProperties.getScreenHeight())
+                .property(PropertyKey.ScreenWidth, defaultProperties.getScreenWidth())
+                .property(PropertyKey.Carrier, defaultProperties.getDeviceCarrier())
+                .property(PropertyKey.Wifi, defaultProperties.isWifiEnabled())
+                .build();
     }
 }

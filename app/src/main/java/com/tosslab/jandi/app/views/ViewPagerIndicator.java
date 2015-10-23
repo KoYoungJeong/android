@@ -106,8 +106,8 @@ public class ViewPagerIndicator extends View {
             canvas.drawCircle(firstDrawX + (indicatorWidth + indicatorMargin + indicatorWidth / 2) * idx + indicatorWidth / 2, centerY, indicatorWidth / 2, paint);
         }
 
-
         canvas.restore();
+
     }
 
     @Override

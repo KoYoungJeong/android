@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -241,6 +242,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
 
     @Click(R.id.profile_photo)
     void getPicture() {
+        // 프로필 사진
+        filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, ModifyProfileActivity.this);
 
         Permissions.getChecker()
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -381,6 +384,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
 
     @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_GALLERY)
     public void onImagePickResult(int resultCode, Intent imageData) {
+        UnLockPassCodeManager.getInstance().setUnLocked(true);
+
         if (resultCode != RESULT_OK) {
             return;
         }
