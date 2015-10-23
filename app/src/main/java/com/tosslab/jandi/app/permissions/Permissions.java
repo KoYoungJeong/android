@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.permissions;
 
-import android.app.Activity;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 
 public class Permissions {
 
@@ -20,7 +20,7 @@ public class Permissions {
         return new OnRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    public static void requestPermission(Activity activity, int requestCode, Permission permission) {
+    public static void requestPermission(AppCompatActivity activity, int requestCode, Permission permission) {
 
         if (activity == null || permission == null || requestCode > MAX_8BIT) {
             return;
