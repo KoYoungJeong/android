@@ -78,7 +78,6 @@ import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
-import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
@@ -122,6 +121,7 @@ import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
@@ -1049,7 +1049,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!isForeground) {
             return;
         }
-        ((BaseAppCompatActivity) getActivity()).setNeedUnLockPassCode(false);
+
         filePickerViewModel.selectFileSelector(event.type, MessageListFragment.this, entityId);
 
         AnalyticsValue.Action action;
@@ -1094,6 +1094,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        UnLockPassCodeManager.getInstance().setUnLocked(true);
+
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
