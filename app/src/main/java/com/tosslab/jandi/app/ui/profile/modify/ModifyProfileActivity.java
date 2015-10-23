@@ -239,6 +239,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
     @Click(R.id.profile_photo)
     void getPicture() {
         // 프로필 사진
+        setNeedUnLockPassCode(false);
         filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, ModifyProfileActivity.this);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.PhotoEdit);
@@ -370,6 +371,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
                                 new File(GoogleImagePickerUtil.getDownloadPath()))))
                         .asSquare()
                         .start(ModifyProfileActivity.this);
+                setNeedUnLockPassCode(false);
             } catch (IOException e) {
                 e.printStackTrace();
             }

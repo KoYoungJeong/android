@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -104,6 +105,12 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     private PublishSubject<Object> scrollButtonPublishSubject;
     private Subscription subscribe;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setNeedUnLockPassCode(false);
+    }
+
     @AfterViews
     void initView() {
         setupActionbar();
@@ -141,6 +148,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         super.onResume();
         EventBus.getDefault().register(this);
         ActivityHelper.setOrientation(this);
+        setNeedUnLockPassCode(true);
     }
 
     @Override
