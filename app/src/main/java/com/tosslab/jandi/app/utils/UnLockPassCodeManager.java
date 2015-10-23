@@ -20,8 +20,6 @@ public class UnLockPassCodeManager {
 
     private static UnLockPassCodeManager sInstance;
 
-    private boolean isApplicationActivate = false;
-
     private boolean hasUnLocked = false;
 
     public static UnLockPassCodeManager getInstance() {
@@ -36,11 +34,6 @@ public class UnLockPassCodeManager {
         String passCode = JandiPreference.getPassCode(JandiApplication.getContext());
         if (TextUtils.isEmpty(passCode)) {
             LogUtil.e(TAG, "TextUtils.isEmpty(passCode)");
-            return;
-        }
-
-        if (!isApplicationActivate) {
-            LogUtil.e(TAG, "!isApplicationActivate");
             return;
         }
 
@@ -91,13 +84,6 @@ public class UnLockPassCodeManager {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
         context.startActivity(intent);
-    }
-
-    public void setApplicationActivate(boolean isApplicationActivate) {
-        this.isApplicationActivate = isApplicationActivate;
-        if (!isApplicationActivate) {
-            setUnLocked(false);
-        }
     }
 
     public synchronized boolean hasUnLocked() {
