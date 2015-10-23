@@ -87,9 +87,9 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
                 .observeOn(AndroidSchedulers.mainThread())
                 .filter(integer1 -> KeyboardHeightModel.this.onKeyboardHeightCapture != null)
                 .subscribe(integer -> {
-                    int stickerHeight = resources.getDisplayMetrics().heightPixels * 2 / 5;
-                    JandiPreference.setKeyboardHeight(activity, stickerHeight);
                     if (KeyboardHeightModel.this.onKeyboardHeightCapture != null) {
+                        int stickerHeight = resources.getDisplayMetrics().heightPixels * 2 / 5;
+                        JandiPreference.setKeyboardHeight(activity, stickerHeight);
                         KeyboardHeightModel.this.onKeyboardHeightCapture.onCapture();
                     }
                 });
