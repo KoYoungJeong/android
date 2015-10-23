@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.lib.sprinkler.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,74 +19,63 @@ public class ApplicationActivateDetector implements Application.ActivityLifecycl
         void onActive();
     }
 
-    public interface OnDeactvieListener {
-        void onDeactive();
-    }
-
-    public static final String TAG = "JANDI.LifecycleCallbacks";
-    private int resumed = 0;
-    private int stopped = 0;
+    public static final String TAG = JandiApplication.TAG_LIFECYCLE;
 
     private List<OnActiveListener> activeListenerList = new ArrayList<>();
-    private List<OnDeactvieListener> deactvieListeners = new ArrayList<>();
 
     public ApplicationActivateDetector addActiveListener(OnActiveListener listener) {
         activeListenerList.add(listener);
         return this;
     }
 
-    public ApplicationActivateDetector addDeactiveListener(OnDeactvieListener listener) {
-        deactvieListeners.add(listener);
-        return this;
-    }
-
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+        String activityName = activity.getClass().getName();
+        Logger.d(TAG, activityName + " - onActivityCreated");
     }
 
     @Override
     public void onActivityStarted(Activity activity) {
+        String activityName = activity.getClass().getName();
+        Logger.d(TAG, activityName + " - onActivityStarted");
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
-        if (resumed == stopped) {
-            LogUtil.e(TAG, "resumed == stopped > Active");
+        String activityName = activity.getClass().getName();
+        Logger.i(TAG, activityName + " - onActivityResumed");
 
+        if (JandiApplication.isApplicationDeactive()) {
+            LogUtil.i(TAG, "Active !!");
             for (OnActiveListener listener : activeListenerList) {
                 listener.onActive();
             }
         }
-
-        resumed++;
-
-        LogUtil.i(TAG, "resumed = " + resumed + " stopped = " + stopped);
+        JandiApplication.setIsApplicationDeactive(false);
     }
 
     @Override
     public void onActivityPaused(Activity activity) {
+        String activityName = activity.getClass().getName();
+        Logger.w(TAG, activityName + " - onActivityPaused");
     }
 
     @Override
     public void onActivityStopped(Activity activity) {
-        stopped++;
-
-        LogUtil.d(TAG, "resumed = " + resumed + " stopped = " + stopped);
-
-        if (resumed == stopped) {
-            LogUtil.e(TAG, "resumed == stopped > Deactive");
-            for (OnDeactvieListener listener : deactvieListeners) {
-                listener.onDeactive();
-            }
-        }
+        String activityName = activity.getClass().getName();
+        Logger.e(TAG, activityName + " - onActivityStopped");
     }
 
     @Override
     public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+        String activityName = activity.getClass().getName();
+        Logger.w(TAG, activityName + " - onActivitySaveInstanceState");
     }
 
     @Override
     public void onActivityDestroyed(Activity activity) {
+        String activityName = activity.getClass().getName();
+        Logger.e(TAG, activityName + " - onActivityDestroyed");
     }
 
 }

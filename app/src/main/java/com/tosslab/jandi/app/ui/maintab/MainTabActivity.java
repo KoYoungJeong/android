@@ -5,10 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -59,7 +57,6 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
-import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -96,8 +93,6 @@ import rx.Observable;
 public class MainTabActivity extends BaseAppCompatActivity {
 
     public static final int CHAT_INDEX = 1;
-    public static final String EXTRA_UNLOCKED = "unlocked";
-    public static final String EXTRA_ROTATE = "rotate";
     @Extra
     boolean fromPush = false;
 
@@ -113,43 +108,12 @@ public class MainTabActivity extends BaseAppCompatActivity {
     @ViewById(R.id.vg_main_offline)
     View vgOffline;
     int selectedEntity = -1;
-    int lastRotate = Configuration.ORIENTATION_UNDEFINED;
     private OfflineLayer offlineLayer;
     private ProgressWheel mProgressWheel;
     private Context mContext;
     private EntityManager mEntityManager;
     private MainTabPagerAdapter mMainTabPagerAdapter;
     private boolean isFirst = true;    // poor implementation
-    private boolean hasUnLocked;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        LogUtil.d("onCreate Rotate : " + lastRotate);
-
-        boolean isRotate;
-        boolean hasUnlocked = false;
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(EXTRA_ROTATE)) {
-                lastRotate = savedInstanceState.getInt(EXTRA_ROTATE);
-            }
-
-            if (savedInstanceState.containsKey(EXTRA_UNLOCKED)) {
-                hasUnlocked = savedInstanceState.getBoolean(EXTRA_UNLOCKED);
-            }
-        }
-
-        isRotate = lastRotate != Configuration.ORIENTATION_UNDEFINED
-                && lastRotate != getResources().getConfiguration().orientation;
-        if (isRotate || fromPush) {
-            setNeedUnLockPassCode(false);
-            if (hasUnlocked) {
-                UnLockPassCodeManager.getInstance().setUnLocked(true);
-            }
-        }
-
-        lastRotate = getResources().getConfiguration().orientation;
-    }
 
     @AfterViews
     void initView() {
@@ -320,21 +284,6 @@ public class MainTabActivity extends BaseAppCompatActivity {
         }
 
         fromPush = false;
-        setNeedUnLockPassCode(true);
-        hasUnLocked = UnLockPassCodeManager.getInstance().isHasUnLocked();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        if (outState == null) {
-            outState = new Bundle();
-        }
-
-        outState.putInt(EXTRA_ROTATE, lastRotate);
-        outState.putBoolean(EXTRA_UNLOCKED, hasUnLocked);
-        LogUtil.d("onSaveInstanceState Rotate : " + lastRotate);
     }
 
     @Override

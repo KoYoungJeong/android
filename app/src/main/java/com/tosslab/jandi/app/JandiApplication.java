@@ -1,6 +1,9 @@
 package com.tosslab.jandi.app;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
@@ -32,8 +35,11 @@ import io.fabric.sdk.android.Fabric;
  * Created by justinygchoi on 2014. 6. 19..
  */
 public class JandiApplication extends MultiDexApplication {
+    public static final String TAG_LIFECYCLE = "Jandi.Lifecycle";
+
     static Context context;
-    static boolean isApplicationActive = false;
+    static boolean isApplicationDeactive = true;
+
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
 
     public static Context getContext() {
@@ -44,12 +50,12 @@ public class JandiApplication extends MultiDexApplication {
         JandiApplication.context = context;
     }
 
-    public static boolean isApplicationActive() {
-        return isApplicationActive;
+    public static boolean isApplicationDeactive() {
+        return isApplicationDeactive;
     }
 
-    public static void setIsApplicationActive(boolean isApplicationActive) {
-        JandiApplication.isApplicationActive = isApplicationActive;
+    public static void setIsApplicationDeactive(boolean isapplicationactive) {
+        JandiApplication.isApplicationDeactive = isapplicationactive;
     }
 
     @Override
@@ -87,19 +93,46 @@ public class JandiApplication extends MultiDexApplication {
         }
 
         registerActivityLifecycleCallbacks();
+
+        registerScreenOffReceiver();
+    }
+
+    private void registerScreenOffReceiver() {
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (!JandiApplication.isApplicationDeactive()) {
+                    handleApplicationDeactive();
+                }
+            }
+        }, new IntentFilter(Intent.ACTION_SCREEN_OFF));
     }
 
     private void registerActivityLifecycleCallbacks() {
         registerActivityLifecycleCallbacks(new ApplicationActivateDetector()
                 .addActiveListener(() -> updatePlatformStatus(true))
-                .addDeactiveListener(() -> updatePlatformStatus(false))
-                .addActiveListener(() -> setIsApplicationActive(true))
-                .addDeactiveListener(() -> setIsApplicationActive(false))
-                .addActiveListener(() ->
-                        UnLockPassCodeManager.getInstance().setApplicationActivate(true))
-                .addDeactiveListener(() ->
-                        UnLockPassCodeManager.getInstance().setApplicationActivate(false)));
+                .addActiveListener(() -> setIsApplicationDeactive(false))
+                .addActiveListener(() -> trackApplicationActive()));
     }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        if (level == TRIM_MEMORY_UI_HIDDEN) {
+            handleApplicationDeactive();
+        }
+    }
+
+    private void handleApplicationDeactive() {
+        LogUtil.e(TAG_LIFECYCLE, "Deactvie !!");
+        setIsApplicationDeactive(true);
+
+        UnLockPassCodeManager.getInstance().setUnLocked(false);
+        updatePlatformStatus(false);
+
+        Sprinkler.with(this).stopAll();
+    }
+
 
     public synchronized Tracker getTracker(TrackerName trackerId) {
         if (!mTrackers.containsKey(trackerId)) {
@@ -129,6 +162,16 @@ public class JandiApplication extends MultiDexApplication {
             ReqUpdatePlatformStatus req = new ReqUpdatePlatformStatus(active);
             RequestApiManager.getInstance().updatePlatformStatus(req);
         }, () -> LogUtil.i("PlatformApi", "Success(updatePlatformStatus)"));
+    }
+
+    private void trackApplicationActive() {
+        Sprinkler sprinkler = Sprinkler.with(this);
+        if (sprinkler.isFlushRetrieverStopped()) {
+            sprinkler.track(sprinkler.getDefaultTrack());
+            sprinkler.flush();
+            sprinkler.startFlushRetriever();
+        }
+        sprinkler.setActive(true);
     }
 
     public enum TrackerName {
