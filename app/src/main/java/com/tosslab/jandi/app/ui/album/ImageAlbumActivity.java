@@ -59,9 +59,8 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .hasPermission(this::initFragment)
                 .noPermission(() -> {
-                    Permissions.requestPermission(ImageAlbumActivity.this,
-                            REQ_STORAGE_PERMISSION,
-                            () -> Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    requestPermissions(permissions, REQ_STORAGE_PERMISSION);
                 })
                 .check();
     }

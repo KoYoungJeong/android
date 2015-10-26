@@ -272,9 +272,8 @@ public class CarouselViewerActivity extends BaseAppCompatActivity implements Car
                             progressDialog);
                 })
                 .noPermission(() -> {
-                    Permissions.requestPermission(CarouselViewerActivity.this,
-                            REQ_STORAGE_PERMISSION,
-                            () -> Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            REQ_STORAGE_PERMISSION);
                 }).check();
     }
 

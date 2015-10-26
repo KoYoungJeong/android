@@ -253,10 +253,10 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile,
                             AnalyticsValue.Action.PhotoEdit);
                 })
-                .noPermission(() ->
-                        Permissions.requestPermission(ModifyProfileActivity.this,
-                                REQ_STORAGE_PERMISSION,
-                                () -> Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                .noPermission(() -> {
+                    String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    requestPermissions(permissions, REQ_STORAGE_PERMISSION);
+                })
                 .check();
 
 

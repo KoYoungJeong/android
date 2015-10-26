@@ -1010,7 +1010,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread(propagation = Propagation.REUSE)
     @Override
     public void requestPermission(int requestCode, String... permissions) {
-        Permissions.requestPermission(FileDetailActivity.this, requestCode, () -> permissions[0]);
+        requestPermissions(permissions, requestCode);
     }
 
     @Override

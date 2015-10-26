@@ -433,8 +433,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                                                 AnalyticsUtil.sendEvent(getScreen(from), AnalyticsValue.Action.Profile_Cellphone);
                                             })
                                             .noPermission(() -> {
-                                                Permissions.requestPermission(MemberProfileActivity.this
-                                                        , REQ_CALL_PERMISSION, () -> Manifest.permission.CALL_PHONE);
+                                                String[] permissions = {Manifest.permission.CALL_PHONE};
+                                                requestPermissions(permissions, REQ_CALL_PERMISSION);
                                             })
                                             .check();
                                 }));

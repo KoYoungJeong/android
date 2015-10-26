@@ -872,11 +872,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                     filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
                     AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Upload);
                 })
-                .noPermission(() ->
-                                Permissions.requestPermission(MessageListFragment.this,
-                                        REQ_STORAGE_PERMISSION,
-                                        () -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                ).check();
+                .noPermission(() -> {
+                    String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    MessageListFragment.this.requestPermissions(permissions,
+                            REQ_STORAGE_PERMISSION);
+                })
+                .check();
     }
 
     @Click(R.id.btn_send_message)
