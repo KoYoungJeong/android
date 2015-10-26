@@ -127,7 +127,7 @@ public class InvitationViewModel {
         });
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(activity,
-                R.style.JandiTheme_AlertDialog_FixWidth_280);
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         dialog.setTitle(R.string.title_cdp_invite);
         dialog.setView(view);
         dialog.setPositiveButton(R.string.menu_entity_invite, new DialogInterface.OnClickListener() {

@@ -346,7 +346,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         });
 
         Dialog dialog = new AlertDialog.Builder(FileUploadPreviewActivity.this,
-                R.style.JandiTheme_AlertDialog_FixWidth_280)
+                R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setTitle(R.string.jandi_title_cdp_to_be_shared)
                 .setView(view)
                 .create();
