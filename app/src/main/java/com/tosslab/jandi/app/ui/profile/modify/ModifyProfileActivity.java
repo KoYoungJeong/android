@@ -369,8 +369,10 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
         String filePath = filePickerViewModel.getFilePath(getApplicationContext(), FilePickerViewModel.TYPE_UPLOAD_GALLERY, imageData).get(0);
         if (!TextUtils.isEmpty(filePath) && isJpgOrPng(filePath)) {
             try {
+                // fileExt = .jpg or .png
+                String fileExt = filePath.substring(filePath.lastIndexOf("."), filePath.length());
                 Crop.of(Uri.fromFile(new File(filePath)),
-                        Uri.fromFile(File.createTempFile("temp_", ".jpg",
+                        Uri.fromFile(File.createTempFile("temp_", fileExt,
                                 new File(GoogleImagePickerUtil.getDownloadPath()))))
                         .asSquare()
                         .start(ModifyProfileActivity.this);
