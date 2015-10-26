@@ -11,18 +11,18 @@ public class JandiConstantsForFlavors {
     public static final String PARSE_APPLICATION_ID = "F61CAJEi4bXQ4S0me694noykr7ALCnFjEaR7yQcf";
     public static final String PARSE_CLIENT_KEY = "RP8MlBZfYVHRQiaZli0IEDzkpNSWulesgmSqmxke";
     // These constants are just for DEBUG mode
-    private static final String SERVICE_PROTOCOL = "http";
+    private static final String SERVICE_PROTOCOL = "https";
     private static final String SERVICE_DOMAIN = "i2.jandi.io";
     private static final String SERVICE_FILE_DOMAIN = "files.jandi.io";
-    private static final String SERVICE_PORT = "8888";
+    private static final String SERVICE_PORT = "443";
     public static final String SERVICE_ROOT_URL =
             SERVICE_PROTOCOL + "://" + SERVICE_DOMAIN + ":" + SERVICE_PORT + "/";
     public static final String SERVICE_INNER_API_URL = SERVICE_ROOT_URL + "inner-api";
     public static final String SERVICE_FILE_URL =
             SERVICE_PROTOCOL + "://" + SERVICE_FILE_DOMAIN + ":" + SERVICE_PORT + "/";
-    private static final String SOCKET_PROTOCOL = "http";
+    private static final String SOCKET_PROTOCOL = "https";
     private static final String SOCKET_DOMAIN = "ws.jandi.io";
-    private static final String SOCKET_PORT = "8888";
+    private static final String SOCKET_PORT = "443";
     public static final String SOCKET_ROOT_URL =
             SOCKET_PROTOCOL + "://" + SOCKET_DOMAIN + ":" + SOCKET_PORT + "/";
 
