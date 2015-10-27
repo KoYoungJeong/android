@@ -81,7 +81,8 @@ public class SearchMemberModel {
                         .setStarred(entity.isStarred))
                 .collect(() -> selectableMembersLinkedHashMap,
                         (selectableMembersLinkedHashMap, searchedItem) -> selectableMembersLinkedHashMap.put(searchedItem.getId(), searchedItem))
-                .subscribe(map -> {}, Throwable::printStackTrace);
+                .subscribe(map -> {
+                }, Throwable::printStackTrace);
 
         if (mentionType.equals(MentionControlViewModel.MENTION_TYPE_MESSAGE)) {
             SearchedItemVO searchedItemForAll = new SearchedItemVO();
@@ -102,9 +103,12 @@ public class SearchMemberModel {
 
     private Func2<SearchedItemVO, SearchedItemVO, Integer> getChatItemComparator() {
         return (lhs, rhs) -> {
-            if (TextUtils.equals(lhs.getName(), "room")) {
+            int lhsId = lhs.getId();
+            int rhsId = rhs.getId();
+            EntityManager entityManager = EntityManager.getInstance();
+            if (!entityManager.getEntityById(lhsId).isUser()) {
                 return -1;
-            } else if (TextUtils.equals(rhs.getName(), "room")) {
+            } else if (!entityManager.getEntityById(rhsId).isUser()) {
                 return 1;
             } else {
                 return lhs.getName().compareToIgnoreCase(rhs.getName());

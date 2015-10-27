@@ -2,8 +2,7 @@ package com.tosslab.jandi.app.ui.search.main.view;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.content.res.Resources;
 import android.speech.RecognizerIntent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -100,10 +99,13 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
 
         searchQueryAdapter = new SearchQueryAdapter(SearchActivity.this);
         searchEditText.setAdapter(searchQueryAdapter);
-        searchEditText.setDropDownBackgroundDrawable(new ColorDrawable(Color.WHITE));
-        searchEditText.setOnItemClickListener((parent, view, position, id) -> onSearchTextAction(searchEditText));
+        Resources resources = searchEditText.getResources();
+        searchEditText.setOnItemClickListener((parent, view, position, id) ->
+                onSearchTextAction(searchEditText));
 
-        searchMinY = -(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
+        searchMinY = -(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                64,
+                resources.getDisplayMetrics());
 
         searchQueries = new String[]{"", ""};
         addFragments();

@@ -499,7 +499,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(integer -> {
                     messageListPresenter.justRefresh();
+                    mentionControlViewModel.onConfigurationChanged();
                 });
+
     }
 
     @Background
@@ -773,7 +775,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
             if (mentionControlViewModel == null) {
                 mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(),
-                        messageEditText, rvListSearchMembers, messageListView,
+                        messageEditText,
                         roomIds,
                         MentionControlViewModel.MENTION_TYPE_MESSAGE);
 
@@ -1773,11 +1775,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (stickerViewModel.isShowStickerSelector()) {
             stickerViewModel.dismissStickerSelector();
-            return true;
-        }
-
-        if (mentionControlViewModel != null && mentionControlViewModel.isMentionListVisible()) {
-            mentionControlViewModel.dismissMentionList();
             return true;
         }
 
