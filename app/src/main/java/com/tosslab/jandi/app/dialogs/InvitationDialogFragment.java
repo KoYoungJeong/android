@@ -217,7 +217,7 @@ public class InvitationDialogFragment extends DialogFragment {
     }
 
     public void showTextDialog(String alertText) {
-        new android.app.AlertDialog.Builder(getActivity())
+        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setMessage(alertText)
                 .setCancelable(false)
                 .setPositiveButton(getActivity().getApplicationContext()

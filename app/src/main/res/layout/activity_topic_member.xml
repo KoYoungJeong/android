@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/layout_search_bar"
         android:clipToPadding="false"
-        android:paddingTop="64dp"
+        android:paddingTop="?attr/actionBarSize"
         android:scrollbars="vertical" />
 
     <RelativeLayout
