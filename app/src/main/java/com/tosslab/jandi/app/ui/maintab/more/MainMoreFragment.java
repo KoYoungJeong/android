@@ -36,6 +36,7 @@ import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.IconWithTextView;
 
@@ -199,12 +200,21 @@ public class MainMoreFragment extends Fragment {
 
     @Background
     void configVersionButton() {
+
+        if (!NetworkCheckUtil.isConnected()) {
+            return;
+        }
+
         int currentVersion = getInstalledAppVersion();
-        int latestVersion = getConfigInfo().latestVersions.android;
-        if (currentVersion < latestVersion) {
-            setVersionButtonVisibility(View.VISIBLE);
-        } else {
-            setVersionButtonVisibility(View.GONE);
+        try {
+            int latestVersion = getConfigInfo().latestVersions.android;
+            if (currentVersion < latestVersion) {
+                setVersionButtonVisibility(View.VISIBLE);
+            } else {
+                setVersionButtonVisibility(View.GONE);
+            }
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
         }
     }
 
