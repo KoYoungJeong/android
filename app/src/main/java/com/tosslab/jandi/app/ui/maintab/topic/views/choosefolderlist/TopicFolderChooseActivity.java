@@ -185,6 +185,7 @@ public class TopicFolderChooseActivity extends BaseAppCompatActivity implements 
         topicFolderChoosePresentor.onCreateFolers(title, folderId);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finishAcitivty() {
         this.finish();
