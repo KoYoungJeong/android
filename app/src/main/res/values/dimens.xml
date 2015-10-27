@@ -145,8 +145,8 @@
     <dimen name="jandi_star_tab_default_size">48dp</dimen>
     <dimen name="jandi_star_tab_text_size">14sp</dimen>
     <dimen name="jandi_network_disconnect_height">40dp</dimen>
-    <dimen name="jandi_dialog_min_width">280dp</dimen>
-    <dimen name="jandi_dialog_min_width_2">300dp</dimen>
+    <dimen name="jandi_dialog_min_width">326dp</dimen>
+    <dimen name="jandi_dialog_min_width_2">346dp</dimen>
     <dimen name="jandi_text_size_larger_3">20sp</dimen>
 
     <!-- Profile -->
