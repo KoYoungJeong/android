@@ -116,7 +116,7 @@
 	<string name="jandi_coach_mark_topic_file_search">"檔案庫和搜尋"</string>
 	<string name="jandi_coach_mark_topic_list_explain1">"可多元使用的議題功能幫助你區分群組"</string>
 	<string name="jandi_coach_mark_topic_list_explain2">"並將資訊有系統地歸類、儲存"</string>
-	<string name="jandi_coach_mark_topic_list_explain3">"None"</string>
+	<string name="jandi_coach_mark_topic_list_explain3">" "</string>
 	<string name="jandi_coach_mark_topic_list_welcome">"歡迎！"</string>
 	<string name="jandi_coach_mark_topic_message_search">"訊息搜尋"</string>
 	<string name="jandi_coach_mark_topic_setting">"其他議題設定\n(邀請、離開\n、重新命名)"</string>
