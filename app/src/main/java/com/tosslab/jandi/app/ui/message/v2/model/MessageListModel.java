@@ -24,8 +24,6 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ReadyMessageRepository;
@@ -42,7 +40,6 @@ import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
-import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
@@ -50,7 +47,7 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.DateComparatorUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
@@ -70,7 +67,6 @@ import java.io.File;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -112,12 +108,6 @@ public class MessageListModel {
         return message;
     }
 
-    public List<ResMessages.Link> sortById(List<ResMessages.Link> messages) {
-
-        Collections.sort(messages, (lhs, rhs) -> lhs.id - rhs.id);
-        return messages;
-    }
-
     public boolean isEmpty(CharSequence text) {
         return TextUtils.isEmpty(text);
     }
@@ -154,16 +144,8 @@ public class MessageListModel {
         return (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) ? true : false;
     }
 
-    public boolean isPrivateTopic(int entityType) {
-        return (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) ? true : false;
-    }
-
     public boolean isDirectMessage(int entityType) {
         return (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) ? true : false;
-    }
-
-    public boolean isMyTopic(int entityId) {
-        return EntityManager.getInstance().isMyTopic(entityId);
     }
 
     public MenuCommand getMenuCommand(Fragment fragmet, ChattingInfomations
@@ -262,10 +244,6 @@ public class MessageListModel {
         messageManipulator.setMarker(lastUpdateLinkId);
     }
 
-    public void saveMessages(List<ResMessages.Link> lastItems) {
-        MessageRepository.getRepository().upsertMessages(lastItems);
-    }
-
     public void saveTempMessage(int roomId, String sendEditText) {
         ReadyMessage readyMessage = new ReadyMessage();
         readyMessage.setRoomId(roomId);
@@ -311,10 +289,6 @@ public class MessageListModel {
         }
     }
 
-    public void deleteSendingMessage(long localId) {
-        SendMessageRepository.getRepository().deleteSendMessage(localId);
-    }
-
     public List<ResMessages.Link> getDummyMessages(int roomId) {
         List<SendMessage> sendMessage = SendMessageRepository.getRepository().getSendMessage
                 (roomId);
@@ -357,10 +331,6 @@ public class MessageListModel {
         SendMessageRepository.getRepository().deleteSendMessage(localId);
     }
 
-    public boolean isDefaultTopic(int entityId) {
-        return EntityManager.getInstance().getDefaultTopicId() == entityId;
-    }
-
     public void removeNotificationSameEntityId(int entityId) {
 
         int chatIdFromPush = JandiPreference.getChatIdFromPush(activity);
@@ -393,23 +363,8 @@ public class MessageListModel {
         return messageManipulator.getAfterMarkerMessage(linkId);
     }
 
-    public boolean upsertLinkPreviewThumbnail(SocketLinkPreviewThumbnailEvent event) {
-        SocketLinkPreviewThumbnailEvent.Data data = event.getData();
-        if (data == null) {
-            return false;
-        }
-
-        ResMessages.TextMessage textMessage =
-                MessageRepository.getRepository().getTextMessage(data.getMessageId());
-        if (textMessage == null) {
-            return false;
-        }
-
-        textMessage.linkPreview = data.getLinkPreview();
-
-        MessageRepository.getRepository().upsertTextMessage(textMessage);
-
-        return true;
+    public ResMessages getAfterMarkerMessage(int linkId, int count) throws RetrofitError {
+        return messageManipulator.getAfterMarkerMessage(linkId, count);
     }
 
     @Background
@@ -427,28 +382,6 @@ public class MessageListModel {
             e.printStackTrace();
         }
 
-    }
-
-    public void deleteMarker(int teamId, int roomId, int memberId) {
-        MarkerRepository.getRepository().deleteRoomMarker(roomId, memberId);
-    }
-
-    public void insertMarker(int teamId, int roomId, int memberId) {
-        MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, memberId, -1);
-    }
-
-    public void updateEntityInfo() {
-        try {
-            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            EntityManager.getInstance().refreshEntity();
-            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-            badgeCountRepository.upsertBadgeCount(EntityManager.getInstance().getTeamId(), totalUnreadCount);
-            BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-        }
     }
 
     public void upsertMyMarker(int roomId, int lastLinkId) {
@@ -653,5 +586,9 @@ public class MessageListModel {
         }
 
         return localId;
+    }
+
+    public boolean isBefore30Days(Date time) {
+        return DateComparatorUtil.isBefore30Days(time);
     }
 }

@@ -230,6 +230,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         btnProfileStar.setEnabled(!isMe());
 
         addButtons(member);
+
+        AnalyticsUtil.sendScreenName(getScreen());
     }
 
     private void initSwipeLayout(boolean setViewToAlpha) {
@@ -337,7 +339,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .alpha(1.0f)
                 .setListener(null);
 
-        AnalyticsUtil.sendEvent(getScreen(from), AnalyticsValue.Action.Profile_Photo);
+        AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.ShowProfilePicture);
     }
 
     void hideFullImage(final View v) {
@@ -383,6 +385,12 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         boolean futureSelected = !v.isSelected();
         v.setSelected(futureSelected);
         postStar(futureSelected);
+
+        if (futureSelected) {
+            AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.TurnOnStar);
+        } else {
+            AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.TurnOffStar);
+        }
     }
 
     @Background
@@ -410,12 +418,14 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                     getButton(R.drawable.icon_profile_edit,
                             getString(R.string.jandi_member_profile_edit), (v) -> {
                                 startModifyProfileActivity();
+                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.EditProfile);
                             }));
 
             vgProfileTeamButtons.addView(
                     getButton(R.drawable.icon_profile_mention,
                             getString(R.string.jandi_mention_mentions), (v) -> {
                                 startStarMentionListActivity();
+                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Mentions);
                             }));
         } else {
             final String userPhoneNumber = member.getUserPhoneNumber();
@@ -424,7 +434,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                         getButton(R.drawable.icon_profile_mobile,
                                 getString(R.string.jandi_member_profile_call), (v) -> {
                                     call(userPhoneNumber);
-                                    AnalyticsUtil.sendEvent(getScreen(from), AnalyticsValue.Action.Profile_Cellphone);
+                                    AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Call);
                                 }));
             }
 
@@ -434,7 +444,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                         getButton(R.drawable.icon_profile_mail,
                                 getString(R.string.jandi_member_profile_email), (v) -> {
                                     sendEmail(userEmail);
-                                    AnalyticsUtil.sendEvent(getScreen(from), AnalyticsValue.Action.Profile_Email);
+                                    AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Email);
                                 }));
             }
 
@@ -445,6 +455,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                                 int entityId = member.getId();
                                 boolean isStarred = member.isStarred;
                                 startMessageListActivity(teamId, entityId, isStarred);
+                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.DirectMessage);
                             }));
         }
     }
@@ -534,21 +545,11 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         return getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 
-    private AnalyticsValue.Screen getScreen(int from) {
-        switch (from) {
-            default:
-            case EXTRA_FROM_TOPIC_CHAT:
-                return AnalyticsValue.Screen.TopicChat;
-            case EXTRA_FROM_MESSAGE:
-                return AnalyticsValue.Screen.Message;
-            case EXTRA_FROM_PARTICIPANT:
-                return AnalyticsValue.Screen.Participants;
-            case EXTRA_FROM_TEAM_MEMBER:
-                return AnalyticsValue.Screen.TeamMembers;
-            case EXTRA_FROM_FILE_DETAIL:
-                return AnalyticsValue.Screen.FileDetail;
-            case EXTRA_FROM_MAIN_CHAT:
-                return AnalyticsValue.Screen.MessageTab;
+    private AnalyticsValue.Screen getScreen() {
+        if (isMe()) {
+            return AnalyticsValue.Screen.MyProfile;
+        } else {
+            return AnalyticsValue.Screen.UserProfile;
         }
     }
 }

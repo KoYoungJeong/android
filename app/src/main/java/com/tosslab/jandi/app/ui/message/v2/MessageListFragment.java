@@ -518,28 +518,44 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 }
             }
         }
+
+        int savedLastLinkId = messageListModel.getLastReadLinkId(roomId, messageListModel.getMyId());
+        int realLastLinkId = Math.max(savedLastLinkId, lastMarker);
         if (!isFromSearch) {
-            int savedLastLinkId = MarkerRepository.getRepository()
-                    .getMyMarker(roomId, messageListModel.getMyId()).getLastLinkId();
-            messageState.setFirstItemId(Math.max(savedLastLinkId, lastMarker));
+            messageState.setFirstItemId(realLastLinkId);
+
+            ResMessages.Link lastMessage = MessageRepository.getRepository().getLastMessage(roomId);
+
+            // 1. 처음 접근 하는 토픽/DM 인 경우
+            // 2. 오랜만에 접근 하는 토픽/DM 인 경우
+            if (lastMessage == null
+                    || lastMessage.id < 0
+                    || (lastMessage.id > 0 && messageListModel.isBefore30Days(lastMessage.time))) {
+                MessageRepository.getRepository().clearLinks(teamId, roomId);
+                if (newsMessageLoader instanceof NormalNewMessageLoader) {
+                    NormalNewMessageLoader newsMessageLoader = (NormalNewMessageLoader) this.newsMessageLoader;
+                    newsMessageLoader.setHistoryLoad(false);
+                }
+                messageListPresenter.setMoreNewFromAdapter(true);
+                messageListPresenter.setNewLoadingComplete();
+            }
         }
 
         messageListPresenter.setMarkerInfo(teamId, roomId);
         messageListModel.updateMarkerInfo(teamId, roomId);
         messageListModel.setRoomId(roomId);
 
-        int lastReadLinkId = messageListModel.getLastReadLinkId(roomId, entityId);
-        messageListPresenter.setLastReadLinkId(lastReadLinkId);
+        messageListPresenter.setLastReadLinkId(realLastLinkId);
 
         sendMessagePublisherEvent(new CheckAnnouncementQueue());
         sendMessagePublisherEvent(new OldMessageQueue(messageState));
 
-        isRoomInit = true;
 
         if (isForeground) {
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
 
+        isRoomInit = true;
     }
 
     int initRoomId() {
@@ -1001,34 +1017,16 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!isForeground) {
             return;
         }
-        isFromSearch = false;
-        messageListPresenter.setMarker(-1);
-        NormalNewMessageLoader normalNewMessageLoader = NormalNewMessageLoader_.getInstance_(getActivity());
-        normalNewMessageLoader.setMessageListModel(messageListModel);
-        normalNewMessageLoader.setMessageState(messageState);
-        normalNewMessageLoader.setMessageListPresenter(messageListPresenter);
-        newsMessageLoader = normalNewMessageLoader;
 
-        NormalOldMessageLoader normalOldMessageLoader = NormalOldMessageLoader_.getInstance_(getActivity());
-        normalOldMessageLoader.setMessageListModel(messageListModel);
-        normalOldMessageLoader.setMessageState(messageState);
-        normalOldMessageLoader.setMessageListPresenter(messageListPresenter);
-        normalOldMessageLoader.setTeamId(teamId);
-        oldMessageLoader = normalOldMessageLoader;
-
-        int lastReadLinkId = messageListModel.getLastReadLinkId(roomId, entityId);
-        messageListPresenter.setLastReadLinkId(lastReadLinkId);
-
-        messageListPresenter.setMoreNewFromAdapter(false);
-
-        getActivity().supportInvalidateOptionsMenu();
-
-        if (event.isClicked()) {
-            messageListPresenter.setGotoLatestLayoutShowProgress();
-            loadLastMessage();
-        } else {
-            messageListPresenter.setGotoLatestLayoutVisibleGone();
-        }
+        MessageListV2Activity_.intent(getActivity())
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .entityType(entityType)
+                .entityId(entityId)
+                .teamId(teamId)
+                .roomId(roomId)
+                .lastMarker(EntityManager.getInstance().getEntityById(entityId).lastLinkId)
+                .isFavorite(isFavorite)
+                .start();
     }
 
     public void onEvent(TeamInvitationsEvent event) {
@@ -1076,7 +1074,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 // roomId 설정 후...
                 sendInitMessage();
             } else {
-                sendMessagePublisherEvent(new NewMessageQueue(messageState));
+                if (isRoomInit) {
+                    sendMessagePublisherEvent(new NewMessageQueue(messageState));
+                }
             }
 
             messageListPresenter.dismissOfflineLayer();
@@ -1413,14 +1413,18 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListModel.updateMarkerInfo(teamId, roomId);
             return;
         }
-        sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        if (isRoomInit) {
+            sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        }
     }
 
     public void onEvent(RefreshNewMessageEvent event) {
         if (!isForeground) {
             return;
         }
-        sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        if (isRoomInit) {
+            sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        }
     }
 
     public void onEvent(TeamLeaveEvent event) {
@@ -1478,7 +1482,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 return;
             }
 
-            sendMessagePublisherEvent(new NewMessageQueue(messageState));
+            if (isRoomInit) {
+                sendMessagePublisherEvent(new NewMessageQueue(messageState));
+            }
         }
     }
 
@@ -1500,7 +1506,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListModel.updateMarkerInfo(teamId, roomId);
         insertEmptyMessage();
 
-        sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        if (isRoomInit) {
+            sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        }
     }
 
     public void onEvent(RoomMarkerEvent event) {
@@ -1658,8 +1666,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                     messageListModel.updateMarkerInfo(teamId, roomId);
                     return;
                 }
-                sendMessagePublisherEvent(new NewMessageQueue(messageState));
-                sendMessagePublisherEvent(new CheckAnnouncementQueue());
+                if (isRoomInit) {
+                    sendMessagePublisherEvent(new NewMessageQueue(messageState));
+                    sendMessagePublisherEvent(new CheckAnnouncementQueue());
+                }
                 break;
             case STATUS_UPDATED:
                 if (!isForeground) {

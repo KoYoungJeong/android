@@ -43,6 +43,11 @@ public interface GroupMessageApiV2Client {
     ResMessages getGroupMessagesUpdatedForMarker(@Query("teamId") int teamId, @Path("groupId") int groupId,
                                                  @Query("linkId") int currentLinkId);
 
+    @GET("/privateGroups/{groupId}/messages?type=new")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    ResMessages getGroupMessagesUpdatedForMarker(@Query("teamId") int teamId, @Path("groupId") int groupId,
+                                                 @Query("linkId") int currentLinkId, @Query("count") int count);
+
     // Updated 된 Private Group의 리스트 정보 획득
     @GET("/privateGroups/{groupId}/messages")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)

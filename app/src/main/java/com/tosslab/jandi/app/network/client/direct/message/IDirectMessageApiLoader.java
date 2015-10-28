@@ -20,6 +20,8 @@ public interface IDirectMessageApiLoader {
 
     IExecutor<ResMessages> loadGetDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int userId, int currentLinkId);
 
+    IExecutor<ResMessages> loadGetDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int userId, int currentLinkId, int count);
+
     IExecutor<ResMessages> loadGetDirectMarkerMessagesByDirectMessageApi(int teamId, int userId, int currentLinkId);
 
     IExecutor<ResCommon> loadSendDirectMessageByDirectMessageApi(int userId, int teamId,

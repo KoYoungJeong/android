@@ -21,6 +21,8 @@ public interface IDirectMessageApiAuth {
 
     ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int userId, int currentLinkId) throws RetrofitError;
 
+    ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int userId, int currentLinkId, int count) throws RetrofitError;
+
     ResMessages getDirectMarkerMessagesByDirectMessageApi(int teamId, int userId, int currentLinkId) throws RetrofitError;
 
     ResCommon sendDirectMessageByDirectMessageApi(int userId, int teamId,

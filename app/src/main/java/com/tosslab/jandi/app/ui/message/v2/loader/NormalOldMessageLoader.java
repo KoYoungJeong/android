@@ -27,6 +27,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
     MessageListPresenter messageListPresenter;
     private MessageState messageState;
     private int teamId;
+    private boolean cacheMode = true;
 
     public void setMessageListModel(MessageListModel messageListModel) {
         this.messageListModel = messageListModel;
@@ -101,7 +102,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                     }
 
                 }
-                messageListModel.upsertMessages(oldMessage);
+                upsertMessages(oldMessage);
             } else if (oldMessage.records.size() < itemCount) {
                 try {
                     // 캐시된 데이터가 부족한 경우
@@ -109,7 +110,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                     ResMessages addOldMessage =
                             messageListModel.getOldMessage(firstLink.id, itemCount);
 
-                    messageListModel.upsertMessages(addOldMessage);
+                    upsertMessages(addOldMessage);
 
                     addOldMessage.records.addAll(oldMessage.records);
 
@@ -164,6 +165,12 @@ public class NormalOldMessageLoader implements OldMessageLoader {
 
     }
 
+    private void upsertMessages(ResMessages oldMessage) {
+        if (cacheMode) {
+            messageListModel.upsertMessages(oldMessage);
+        }
+    }
+
     private boolean hasMessage(ResMessages oldMessage) {
         return oldMessage != null
                 && oldMessage.records != null
@@ -194,4 +201,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
         }
     }
 
+    public void setCacheMode(boolean cacheMode) {
+        this.cacheMode = cacheMode;
+    }
 }

@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.utils;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -24,5 +25,18 @@ public class DateComparatorUtil {
         }
 
         return false;
+    }
+
+    public static boolean isBefore30Days(Date time) {
+        if (time == null) {
+            return true;
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -30);
+        Date before30days = calendar.getTime();
+
+        return time.before(before30days);
+
     }
 }

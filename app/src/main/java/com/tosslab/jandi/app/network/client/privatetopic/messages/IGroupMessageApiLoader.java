@@ -20,6 +20,8 @@ public interface IGroupMessageApiLoader {
 
     IExecutor<ResMessages> loadGetGroupMessagesUpdatedForMarkerByGroupMessageApi(int teamId, int groupId, int currentLinkId);
 
+    IExecutor<ResMessages> loadGetGroupMessagesUpdatedForMarkerByGroupMessageApi(int teamId, int groupId, int currentLinkId, int count);
+
     IExecutor<ResMessages> loadGetGroupMarkerMessagesByGroupMessageApi(int teamId, int groupId, int currentLinkId);
 
     IExecutor<ResCommon> loadSendGroupMessageByGroupMessageApi(int privateGroupId, int teamId, ReqSendMessageV3 reqSendMessageV3);

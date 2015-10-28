@@ -4,6 +4,8 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.network.client.MessageManipulator;
+import com.tosslab.jandi.app.network.exception.ExceptionData;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
@@ -12,11 +14,13 @@ import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 
 import org.androidannotations.annotations.EBean;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import retrofit.RetrofitError;
 import rx.Observable;
+import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
 /**
@@ -29,6 +33,8 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
     MessageListPresenter messageListPresenter;
     private MessageState messageState;
     private boolean firstLoad = true;
+    private boolean historyLoad = true;
+    private boolean cacheMode = true;
 
     public void setMessageListModel(MessageListModel messageListModel) {
         this.messageListModel = messageListModel;
@@ -50,7 +56,39 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         }
 
         try {
-            ResUpdateMessages newMessage = messageListModel.getNewMessage(linkId);
+            ResUpdateMessages newMessage = null;
+            boolean moveToLinkId = firstLoad;
+
+            if (historyLoad) {
+                try {
+                    newMessage = messageListModel.getNewMessage(linkId);
+                } catch (RetrofitError retrofitError) {
+                    retrofitError.printStackTrace();
+
+                    if (retrofitError.getKind() == RetrofitError.Kind.HTTP) {
+
+                        try {
+                            ExceptionData exceptionData = (ExceptionData) retrofitError.getBodyAs(ExceptionData.class);
+                            if (exceptionData.getCode() == 40017 || exceptionData.getCode() == 40018) {
+                                moveToLinkId = true;
+                                newMessage = getResUpdateMessages(linkId);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                }
+            } else {
+                moveToLinkId = true;
+                newMessage = getResUpdateMessages(linkId);
+            }
+
+            if (newMessage == null || newMessage.updateInfo == null) {
+                // 메세지가 없다면 종료시킴
+                return;
+            }
 
             List<ResMessages.Link> messages = newMessage.updateInfo.messages;
             if (messages != null && !messages.isEmpty()) {
@@ -61,7 +99,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), newMessage.lastLinkId);
                 updateMarker(roomId);
 
-                messageListPresenter.setUpNewMessage(messages, messageListModel.getMyId(), linkId, firstLoad);
+                messageListPresenter.setUpNewMessage(messages, messageListModel.getMyId(), linkId, moveToLinkId);
             } else {
                 if (firstLoad && messageListPresenter.isLastOfLastReadPosition()) {
                     messageListPresenter.setLastReadLinkId(-1);
@@ -76,7 +114,58 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         }
     }
 
+    private ResUpdateMessages getResUpdateMessages(final int linkId) {
+        ResUpdateMessages newMessage;
+        newMessage = new ResUpdateMessages();
+        newMessage.updateInfo = new ResUpdateMessages.UpdateInfo();
+        newMessage.updateInfo.messages = new ArrayList<>();
+        newMessage.updateInfo.messageCount = 0;
+        newMessage.lastLinkId = linkId;
+
+        Observable.create(new Observable.OnSubscribe<ResMessages>() {
+            @Override
+            public void call(Subscriber<? super ResMessages> subscriber) {
+
+                // 300 개씩 요청함
+                messageListPresenter.setMoreNewFromAdapter(false);
+
+                ResMessages afterMarkerMessage = null;
+                try {
+                    afterMarkerMessage = messageListModel.getAfterMarkerMessage(linkId, MessageManipulator.MAX_OF_MESSAGES);
+                    if (afterMarkerMessage.records.size() < MessageManipulator.MAX_OF_MESSAGES) {
+                        messageListPresenter.setNewNoMoreLoading();
+                        historyLoad = true;
+                    } else {
+                        messageListPresenter.setMoreNewFromAdapter(true);
+                        messageListPresenter.setNewLoadingComplete();
+                    }
+                } catch (RetrofitError retrofitError) {
+                    retrofitError.printStackTrace();
+                    messageListPresenter.setMoreNewFromAdapter(true);
+                    messageListPresenter.setNewLoadingComplete();
+                }
+
+                subscriber.onNext(afterMarkerMessage);
+                subscriber.onCompleted();
+            }
+        }).collect(() -> newMessage,
+                (resUpdateMessages, o) -> newMessage.updateInfo.messages.addAll(o.records))
+                .subscribe(resUpdateMessages -> {
+                    resUpdateMessages.updateInfo.messageCount = resUpdateMessages.updateInfo.messages.size();
+                    if (resUpdateMessages.updateInfo.messageCount > 0) {
+                        resUpdateMessages.lastLinkId = resUpdateMessages.updateInfo.messages.get(resUpdateMessages.updateInfo.messageCount - 1).id;
+                    } else {
+                        resUpdateMessages.lastLinkId = linkId;
+                    }
+                }, Throwable::printStackTrace);
+        return newMessage;
+    }
+
     private void saveToDatabase(int roomId, List<ResMessages.Link> messages) {
+
+        if (!cacheMode) {
+            return;
+        }
 
         Observable.from(messages)
                 .onBackpressureBuffer()
@@ -114,4 +203,11 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         }
     }
 
+    public void setHistoryLoad(boolean historyLoad) {
+        this.historyLoad = historyLoad;
+    }
+
+    public void setCacheMode(boolean cacheMode) {
+        this.cacheMode = cacheMode;
+    }
 }

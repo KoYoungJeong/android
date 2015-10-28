@@ -33,7 +33,9 @@ public class AnalyticsValue {
         Invite,
         SwitchTeams,
         Help,
-        Setting
+        Setting,
+        UserProfile,
+        InputPasscode, WrongPasscode, SetPasscode, MyProfile
     }
 
     public enum Action {
@@ -221,6 +223,8 @@ public class AnalyticsValue {
         TermsOfService,
         PrivacyPolicy,
         SignOut,
-        KickMember
+        KickMember,
+        ShowProfilePicture,
+        DirectMessage, TurnOffPasscode, TurnOnPasscode, ChangePasscode, Call
     }
 }
