@@ -937,8 +937,6 @@ public class MessageListPresenter {
 
         addAll(lastItemPosition, linkList);
 
-        setUpLastReadLink(myId);
-
         int location = linkList.size() - 1;
         if (location < 0) {
             return;
@@ -953,6 +951,7 @@ public class MessageListPresenter {
         } else {
             int messageId = lastUpdatedMessage.messageId;
             if (firstLoad) {
+                setUpLastReadLink(myId);
                 moveLastReadLink();
 
                 justRefresh();
@@ -975,21 +974,16 @@ public class MessageListPresenter {
             return;
         }
 
-        for (int idx = indexOfLinkId, size = messageListAdapter.getCount(); idx < size; ++idx) {
-            ResMessages.Link item = messageListAdapter.getItem(idx);
 
-            if (TextUtils.equals(item.status, "event")) {
-                continue;
-            } else if (item.message.writerId == myId) {
-                messageListAdapter.setLastReadLinkId(item.id);
-                continue;
-            } else if (item instanceof DummyMessageLink) {
+        if (indexOfLinkId >= messageListAdapter.getCount() - 1) {
+            // 라스트 링크가 마지막 아이템인경우
+            messageListAdapter.setLastReadLinkId(-1);
+        } else {
+            ResMessages.Link item = messageListAdapter.getItem(indexOfLinkId + 1);
+            if (item instanceof DummyMessageLink) {
+                // 마지막 아이템은 아니지만 다음 아이템이 더미인경우 마지막 아이템으로 간주
                 messageListAdapter.setLastReadLinkId(-1);
-                break;
-            } else {
-                break;
             }
-
         }
 
     }
