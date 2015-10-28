@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
@@ -53,7 +52,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             viewHolder.tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
             viewHolder.ivIcon = (ImageView) itemView.findViewById(R.id.iv_room_selector_item_icon);
-            viewHolder.vgLine = (LinearLayout) itemView.findViewById(R.id.ll_line_use_for_first_no_folder_item);
+            viewHolder.vgLine = itemView.findViewById(R.id.ll_line_use_for_first_no_folder_item);
 
             return viewHolder;
 
@@ -177,18 +176,18 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         void onItemClick(int roomId, String roomName, int roomType);
     }
 
-    class RoomViewHolder extends RecyclerView.ViewHolder {
+    static class RoomViewHolder extends RecyclerView.ViewHolder {
 
         private TextView tvName;
         private ImageView ivIcon;
-        private LinearLayout vgLine;
+        private View vgLine;
 
         public RoomViewHolder(View itemView) {
             super(itemView);
         }
     }
 
-    class FolderViewHolder extends RecyclerView.ViewHolder {
+    static class FolderViewHolder extends RecyclerView.ViewHolder {
 
         private TextView tvName;
         private View viewLine;
