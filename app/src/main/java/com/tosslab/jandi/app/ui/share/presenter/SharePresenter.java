@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.ui.share.model.ShareModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -72,6 +73,12 @@ public class SharePresenter {
 
     @AfterViews
     void initView() {
+        if (!NetworkCheckUtil.isConnected()) {
+            view.showFailToast(JandiApplication.getContext().getResources().getString(R.string.err_network));
+            view.finishOnUiThread();
+            return;
+        }
+
         if (mode == MainShareActivity.MODE_SHARE_FILE) {
             String imagePath = shareModel.getImagePath(uriString);
             if (TextUtils.isEmpty(imagePath)) {
