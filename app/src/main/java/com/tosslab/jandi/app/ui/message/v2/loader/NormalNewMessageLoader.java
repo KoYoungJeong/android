@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
+import com.tosslab.jandi.app.network.exception.ExceptionData;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
@@ -55,7 +56,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         }
 
         try {
-            ResUpdateMessages newMessage;
+            ResUpdateMessages newMessage = null;
             boolean moveToLinkId = firstLoad;
 
             if (historyLoad) {
@@ -63,14 +64,31 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                     newMessage = messageListModel.getNewMessage(linkId);
                 } catch (RetrofitError retrofitError) {
                     retrofitError.printStackTrace();
-                    moveToLinkId = true;
-                    newMessage = getResUpdateMessages(linkId);
+
+                    if (retrofitError.getKind() == RetrofitError.Kind.HTTP) {
+
+                        try {
+                            ExceptionData exceptionData = (ExceptionData) retrofitError.getBodyAs(ExceptionData.class);
+                            if (exceptionData.getCode() == 40017 || exceptionData.getCode() == 40018) {
+                                moveToLinkId = true;
+                                newMessage = getResUpdateMessages(linkId);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
                 }
             } else {
                 moveToLinkId = true;
                 newMessage = getResUpdateMessages(linkId);
             }
 
+            if (newMessage == null || newMessage.updateInfo == null) {
+                // 메세지가 없다면 종료시킴
+                return;
+            }
 
             List<ResMessages.Link> messages = newMessage.updateInfo.messages;
             if (messages != null && !messages.isEmpty()) {
