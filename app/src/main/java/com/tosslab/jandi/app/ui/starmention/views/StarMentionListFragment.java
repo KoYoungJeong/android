@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldStarMentionedEvent;
@@ -221,6 +222,13 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
         }
     }
 
+    public void onEvent(TopicDeleteEvent event) {
+
+        if (TextUtils.equals(listType, StarMentionListActivity.TYPE_MENTION_LIST)) {
+            starMentionListPresentor.onTopicDeleteEvent(event.getTeamId(), event.getId());
+        }
+    }
+
     @OnActivityResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH)
     void onFileDetailResult(Intent data) {
         if (data != null && data.getBooleanExtra(MessageListFragment.EXTRA_FILE_DELETE, false)) {
@@ -296,6 +304,19 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     @Override
     public void showCheckNetworkDialog() {
         AlertUtil.showCheckNetworkDialog(getActivity(), (dialog, which) -> getActivity().finish());
+    }
+
+    @UiThread
+    @Override
+    public void deleteItemOfTopic(int topicId) {
+        int itemCount = starMentionListAdapter.getItemCount();
+        for (int idx = itemCount - 1; idx >= 0; --idx) {
+            if (starMentionListAdapter.getItem(idx).getRoomId() == topicId) {
+                starMentionListAdapter.remove(idx);
+            }
+        }
+
+        starMentionListAdapter.notifyDataSetChanged();
     }
 
 }
