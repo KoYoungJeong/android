@@ -1018,36 +1018,16 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!isForeground) {
             return;
         }
-        isFromSearch = false;
-        messageListPresenter.setMarker(-1);
-        NormalNewMessageLoader normalNewMessageLoader = NormalNewMessageLoader_.getInstance_(getActivity());
-        normalNewMessageLoader.setMessageListModel(messageListModel);
-        normalNewMessageLoader.setMessageState(messageState);
-        normalNewMessageLoader.setMessageListPresenter(messageListPresenter);
-        normalNewMessageLoader.setCacheMode(false);
-        newsMessageLoader = normalNewMessageLoader;
 
-        NormalOldMessageLoader normalOldMessageLoader = NormalOldMessageLoader_.getInstance_(getActivity());
-        normalOldMessageLoader.setMessageListModel(messageListModel);
-        normalOldMessageLoader.setMessageState(messageState);
-        normalOldMessageLoader.setMessageListPresenter(messageListPresenter);
-        normalOldMessageLoader.setTeamId(teamId);
-        normalOldMessageLoader.setCacheMode(false);
-        oldMessageLoader = normalOldMessageLoader;
-
-        int lastReadLinkId = messageListModel.getLastReadLinkId(roomId, entityId);
-        messageListPresenter.setLastReadLinkId(lastReadLinkId);
-
-        messageListPresenter.setMoreNewFromAdapter(false);
-
-        getActivity().supportInvalidateOptionsMenu();
-
-        if (event.isClicked()) {
-            messageListPresenter.setGotoLatestLayoutShowProgress();
-            loadLastMessage();
-        } else {
-            messageListPresenter.setGotoLatestLayoutVisibleGone();
-        }
+        MessageListV2Activity_.intent(getActivity())
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .entityType(entityType)
+                .entityId(entityId)
+                .teamId(teamId)
+                .roomId(roomId)
+                .lastMarker(EntityManager.getInstance().getEntityById(entityId).lastLinkId)
+                .isFavorite(isFavorite)
+                .start();
     }
 
     public void onEvent(TeamInvitationsEvent event) {
