@@ -10,18 +10,17 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import de.greenrobot.event.EventBus;
@@ -76,12 +75,11 @@ public class FileViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        Ion.with(ivProfile)
-                .placeholder(R.drawable.profile_img)
-                .error(R.drawable.profile_img)
-                .transform(new IonCircleTransform())
-                .crossfade(true)
-                .load(profileUrl);
+        BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
+                profileUrl,
+                R.drawable.profile_img,
+                R.drawable.profile_img
+        );
 
         if (TextUtils.equals(fromEntity.status, "enabled")) {
             tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
@@ -138,20 +136,25 @@ public class FileViewHolder implements BodyViewHolder {
 
             }
 
+            int fileNameTextSizePX;
             if (TextUtils.equals(link.message.status, "archived")) {
                 tvFileName.setText(R.string.jandi_deleted_file);
+                fileNameTextSizePX = tvFileName.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_medium);
                 ivFileImage.setImageResource(R.drawable.jandi_fl_icon_deleted);
                 tvFileType.setVisibility(View.GONE);
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
                         .jandi_text_light));
             } else {
+                fileNameTextSizePX = tvFileName.getResources().getDimensionPixelSize(R.dimen.jandi_entity_item_title_font);
+                tvFileName.setTextSize(tvFileName.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_medium));
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color.jandi_messages_file_name));
                 tvFileName.setText(fileMessage.content.title);
                 MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
                 switch (sourceType) {
                     case S3:
-                        tvFileType.setText(FileSizeUtil.fileSizeCalculation(fileMessage.content.size)
-                                + ", " + fileMessage.content.ext);
+                        String fileSize = FileSizeUtil.fileSizeCalculation(fileMessage.content.size);
+                        String fileType = String.format("%s, %s", fileSize, fileMessage.content.ext);
+                        tvFileType.setText(fileType);
                         break;
                     case Google:
                     case Dropbox:
@@ -165,6 +168,7 @@ public class FileViewHolder implements BodyViewHolder {
                 ivFileImage.setImageResource(mimeTypeIconImage);
                 tvFileType.setVisibility(View.VISIBLE);
             }
+            tvFileName.setTextSize(TypedValue.COMPLEX_UNIT_PX, fileNameTextSizePX);
         }
 
         ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));

@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Pair;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -132,7 +133,8 @@ public class ImageFilePath {
             if (isGoogleOldPhotosUri(uri)) {
                 return uri.getLastPathSegment();
             } else if (isGoogleNewPhotosUri(uri)) {
-                return copyFile(context, uri);
+                Pair<String, String> fileInfo = getGoogleFileInfo(context, uri);
+                return copyFileFromGoogleImage(context, uri, fileInfo);
             } else if (isPicasaPhotoUri(uri)) {
                 return copyFile(context, uri);
             }
@@ -147,6 +149,32 @@ public class ImageFilePath {
         return null;
     }
 
+    private static Pair<String, String> getGoogleFileInfo(Context context, Uri uri) {
+
+        Cursor cursor = null;
+        final String displayNameCol = "_display_name";
+        final String mimeTypeCol = "mime_type";
+        final String[] projection = {displayNameCol, mimeTypeCol};
+
+        try {
+            cursor = context.getContentResolver().query(uri, projection, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                String displayName = cursor.getString(0);
+                String mimeType = cursor.getString(1);
+                return new Pair<>(displayName, mimeType);
+            }
+
+        } catch (Exception e) {
+            return new Pair<>("", "");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return new Pair<>("", "");
+    }
+
     private static String copyFile(Context context, Uri uri) {
 
         String filePath;
@@ -156,7 +184,7 @@ public class ImageFilePath {
             inputStream = context.getContentResolver().openInputStream(uri);
 
             filePath = GoogleImagePickerUtil.getDownloadPath() + "/" + GoogleImagePickerUtil
-                    .getWebImageName() + ".jpg";
+                    .getWebImageName();
             outStream = new BufferedOutputStream(new FileOutputStream
                     (filePath));
 
@@ -167,6 +195,89 @@ public class ImageFilePath {
             }
 
         } catch (IOException e) {
+            e.printStackTrace();
+            filePath = "";
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (outStream != null) {
+                    outStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return filePath;
+    }
+
+    private static String copyFileFromGoogleImage(Context context, Uri uri, Pair<String, String> fileInfo) {
+
+        String fileName = null;
+        String fileExt = null;
+
+        if (fileInfo != null) {
+            String fileNameInfo = fileInfo.first;
+            if (!TextUtils.isEmpty(fileNameInfo)) {
+                int splitIndex = fileNameInfo.lastIndexOf(".");
+                if (splitIndex > 0) {
+                    fileName = fileNameInfo.substring(0, splitIndex);
+                    String tempFileExt = fileNameInfo.substring(splitIndex + 1, fileNameInfo.length());
+                    if (!TextUtils.isEmpty(tempFileExt)) {
+                        fileExt = tempFileExt;
+                    }
+                } else {
+                    fileName = fileNameInfo;
+                }
+            }
+
+            String fileExtInfo = fileInfo.second;
+            if (TextUtils.isEmpty(fileExt) && !TextUtils.isEmpty(fileExtInfo)) {
+                String[] split = fileExtInfo.split("/");
+                if (split.length == 2) {
+                    fileExt = split[1];
+                }
+            }
+        }
+
+        if (TextUtils.isEmpty(fileName)) {
+            fileName = GoogleImagePickerUtil.getWebImageNameOnly();
+        } else {
+            fileName = GoogleImagePickerUtil.getWebImageNameOnly() + "_" + fileName;
+        }
+
+        if (TextUtils.isEmpty(fileExt)) {
+            fileExt = "jpg";
+        }
+
+        StringBuilder filePathBuilder = new StringBuilder();
+        filePathBuilder.append(GoogleImagePickerUtil.getDownloadPath())
+                .append("/")
+                .append(fileName)
+                .append(".").append(fileExt);
+
+        String filePath;
+        InputStream inputStream = null;
+        BufferedOutputStream outStream = null;
+        try {
+            inputStream = context.getContentResolver().openInputStream(uri);
+
+            filePath = filePathBuilder.toString();
+            outStream = new BufferedOutputStream(new FileOutputStream(filePath));
+
+            byte[] buf = new byte[2048];
+            int len;
+            while ((len = inputStream.read(buf)) > 0) {
+                outStream.write(buf, 0, len);
+            }
+
+        } catch (Exception e) {
             e.printStackTrace();
             filePath = "";
         } finally {

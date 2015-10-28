@@ -109,25 +109,22 @@
             android:layout_marginRight="@dimen/jandi_messages_padding_right"
             android:layout_toRightOf="@+id/iv_message_user_profile">
             <!-- 일반 파일일 경우 -->
-            <RelativeLayout
-                android:id="@+id/vg_message_common_file"
+
+
+            <ImageView
+                android:id="@+id/iv_message_common_file"
                 android:layout_width="@dimen/jandi_messages_image_size"
                 android:layout_height="@dimen/jandi_messages_image_size"
-                android:padding="7.5dp">
+                android:layout_centerVertical="true" />
 
-                <ImageView
-                    android:id="@+id/iv_message_common_file"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerVertical="true" />
-            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp"
                 android:layout_marginRight="14dp"
-                android:layout_toRightOf="@id/vg_message_common_file"
+                android:layout_toRightOf="@+id/iv_message_common_file"
                 android:orientation="vertical">
 
 

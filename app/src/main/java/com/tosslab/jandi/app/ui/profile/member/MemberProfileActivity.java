@@ -33,7 +33,6 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.transform.ion.IonBlurTransform;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.SwipeExitLayout;
@@ -130,6 +129,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         if (savedInstanceState != null) {
             isFullSizeImageShowing = savedInstanceState.getBoolean(KEY_FULL_SIZE_IMAGE_SHOWING);
         }
+        setNeedUnLockPassCode(false);
     }
 
     @Override
@@ -237,23 +237,17 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         if (setViewToAlpha) {
             swipeExitLayout.setViewToAlpha(vProfileImageLargeOverlay);
         }
+
         swipeExitLayout.setStatusListener(new SwipeExitLayout.StatusListener() {
-            private float lastDistance;
-
-
             @Override
-            public void onScroll(float distance) {
-                lastDistance += distance;
-
+            public void onTranslateY(float translateY) {
                 int measuredWidth = vgProfileImageLarge.getMeasuredWidth();
                 int measuredHeight = vgProfileImageLarge.getMeasuredHeight();
 
-                float scaleX = (measuredWidth - (lastDistance * 2)) / measuredWidth;
-                LogUtil.e("jsp", "scaleX = " + scaleX);
+                float scaleX = (measuredWidth + (translateY * 2)) / measuredWidth;
                 scaleX = Math.max(1, scaleX);
 
-                float scaleY = (measuredHeight - (lastDistance * 2)) / measuredHeight;
-                LogUtil.e(TAG, "scaleY = " + scaleY);
+                float scaleY = (measuredHeight + (translateY * 2)) / measuredHeight;
                 scaleY = Math.max(1, scaleY);
 
                 vgProfileImageLarge.setScaleX(scaleX);
@@ -261,38 +255,28 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             }
 
             @Override
-            public void onIgnore(float spareDistance) {
-                lastDistance = 0;
-
-                int measuredHeight = vgProfileImageLarge.getMeasuredHeight();
-                int scaledHeight = (int) (measuredHeight * vgProfileImageLarge.getScaleY());
-
-                int duration = Math.min(
-                        SwipeExitLayout.MIN_IGNORE_ANIM_DURATION, scaledHeight - measuredHeight);
+            public void onCancel(float spareDistance, int cancelAnimDuration) {
                 vgProfileImageLarge.animate()
-                        .setDuration(duration)
+                        .setDuration(cancelAnimDuration)
                         .scaleX(1)
                         .scaleY(1);
             }
 
             @Override
-            public void onExit(float spareDistance) {
-                lastDistance = 0;
-
+            public void onExit(float spareDistance, int exitAnimDuration) {
+                int measuredWidth = vgProfileImageLarge.getMeasuredWidth();
                 int measuredHeight = vgProfileImageLarge.getMeasuredHeight();
-                int scaledHeight = (int) (measuredHeight * vgProfileImageLarge.getScaleY());
 
-                int duration = Math.min(
-                        SwipeExitLayout.MIN_IGNORE_ANIM_DURATION,
-                        Math.abs(getResources().getDisplayMetrics().heightPixels - scaledHeight));
+                float ratio = (measuredWidth / (float) measuredHeight);
 
-                float scaleY =
-                        getResources().getDisplayMetrics().heightPixels / (float) measuredHeight;
+                int spareBottom = swipeExitLayout.getMeasuredHeight() - measuredHeight;
+
+                float scaleY = (measuredHeight + spareBottom) / (float) measuredHeight;
 
                 vgProfileImageLarge.animate()
-                        .setDuration(duration)
-                        .scaleX(scaleY * 2)
-                        .scaleY(scaleY * 2);
+                        .scaleX(scaleY * ratio)
+                        .scaleY(scaleY)
+                        .setDuration(exitAnimDuration);
             }
         });
     }
@@ -382,11 +366,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             return;
         }
 
-        if (swipeExitLayout != null) {
-            swipeExitLayout.exit();
-        } else {
-            super.onBackPressed();
-        }
+        super.onBackPressed();
     }
 
     @Override

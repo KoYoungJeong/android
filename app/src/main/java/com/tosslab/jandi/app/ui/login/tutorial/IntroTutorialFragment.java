@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.login.tutorial;
 
 import android.app.Fragment;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -64,14 +63,5 @@ public class IntroTutorialFragment extends Fragment {
         textViewTutorialTitle.setText(resTitleText);
         textViewTutorialMessage.setText(resMessageText);
 
-        int rootHeight = ((View) topLayout.getParent().getParent()).getMeasuredHeight();
-
-        ViewGroup.LayoutParams topLayoutParams = topLayout.getLayoutParams();
-        topLayoutParams.height = rootHeight / 2;
-        topLayout.setLayoutParams(topLayoutParams);
-
-        ViewGroup.LayoutParams bottomLayoutParams = bottomLayout.getLayoutParams();
-        bottomLayoutParams.height = rootHeight / 2;
-        bottomLayout.setLayoutParams(bottomLayoutParams);
     }
 }

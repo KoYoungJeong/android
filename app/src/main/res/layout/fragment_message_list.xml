@@ -5,6 +5,11 @@
     android:background="@android:color/white"
     android:orientation="vertical">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/layout_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_messages"
         android:layout_width="match_parent"
@@ -218,7 +223,6 @@
             android:layout_toLeftOf="@+id/btn_send_message"
             android:layout_toRightOf="@+id/btn_upload_file"
             android:hint="@string/jandi_message_hint"
-            android:imeOptions="flagNoExtractUi"
             android:paddingRight="34dp"
             android:textCursorDrawable="@null" />
 
@@ -292,14 +296,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:visibility="gone">
-
-    </FrameLayout>
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/layout_search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" />
+        android:visibility="gone"></FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -310,7 +307,7 @@
             android:id="@+id/vg_message_offline"
             android:layout_width="match_parent"
             android:layout_height="@dimen/jandi_network_disconnect_height"
-            android:background="@color/jandi_black_89"
+            android:background="@color/jandi_black_bf"
             android:gravity="center_vertical"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"

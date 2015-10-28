@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
@@ -37,6 +36,7 @@ import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.IconWithTextView;
 
@@ -87,8 +87,8 @@ public class MainMoreFragment extends Fragment {
     @ViewById(R.id.tv_more_jandi_version)
     TextView textViewJandiVersion;
 
-    @ViewById(R.id.bt_update_version)
-    Button btUpdateVersion;
+    @ViewById(R.id.btn_update_version)
+    View btnUpdateVersion;
 
     private EntityManager mEntityManager;
 
@@ -191,7 +191,7 @@ public class MainMoreFragment extends Fragment {
         try {
             String packageName = getActivity().getPackageName();
             String versionName = getActivity().getPackageManager().getPackageInfo(packageName, 0).versionName;
-            textViewJandiVersion.setText("(v." + versionName + ")");
+            textViewJandiVersion.setText(String.format("(v%s)", versionName));
             configVersionButton();
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -200,18 +200,27 @@ public class MainMoreFragment extends Fragment {
 
     @Background
     void configVersionButton() {
+
+        if (!NetworkCheckUtil.isConnected()) {
+            return;
+        }
+
         int currentVersion = getInstalledAppVersion();
-        int latestVersion = getConfigInfo().latestVersions.android;
-        if (currentVersion < latestVersion) {
-            setVersionButtonVisibility(View.VISIBLE);
-        } else {
-            setVersionButtonVisibility(View.GONE);
+        try {
+            int latestVersion = getConfigInfo().latestVersions.android;
+            if (currentVersion < latestVersion) {
+                setVersionButtonVisibility(View.VISIBLE);
+            } else {
+                setVersionButtonVisibility(View.GONE);
+            }
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
         }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void setVersionButtonVisibility(int visibility) {
-        btUpdateVersion.setVisibility(visibility);
+        btnUpdateVersion.setVisibility(visibility);
     }
 
     @Click(R.id.ly_more_profile)
@@ -316,7 +325,7 @@ public class MainMoreFragment extends Fragment {
         }
     }
 
-    @Click(R.id.bt_update_version)
+    @Click(R.id.btn_update_version)
     void onClickUpdateVersion() {
         final String appPackageName = JandiApplication.getContext().getPackageName();
         try {

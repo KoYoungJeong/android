@@ -100,6 +100,7 @@
                 android:id="@+id/iv_message_commented_photo"
                 android:layout_width="@dimen/jandi_messages_image_size"
                 android:layout_height="@dimen/jandi_messages_image_size"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="12dp" />
 
             <View
@@ -110,50 +111,62 @@
                 android:layout_alignLeft="@+id/iv_message_commented_photo"
                 android:layout_alignRight="@+id/iv_message_commented_photo"
                 android:layout_alignTop="@+id/iv_message_commented_photo"
+                android:layout_centerVertical="true"
                 android:background="@drawable/jandi_message_image_frame" />
 
 
-            <TextView
-                android:id="@+id/tv_message_commented_owner"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/iv_message_commented_photo"
-                android:text="Commented on "
-                android:textColor="@color/jandi_text_light"
-                android:textSize="@dimen/jandi_messages_comment" />
-
-            <TextView
-                android:id="@+id/tv_message_commented_file_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/tv_message_commented_owner"
-                android:layout_below="@id/tv_message_commented_owner"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="2dp"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:text="File Name"
-                android:textColor="@color/jandi_messages_file_name"
-                android:textSize="@dimen/jandi_text_size_medium"
-                android:textStyle="bold" />
-
-            <!-- 실제 댓글 내용 -->
-            <ImageView
-                android:id="@+id/iv_sticker_message_commented_content"
-                android:layout_width="140dp"
-                android:layout_height="140dp"
-                android:layout_below="@+id/iv_message_commented_photo"
-                android:layout_marginTop="15dp" />
-
-            <ImageView
-                android:id="@+id/iv_img_file_arrow"
-                android:layout_width="@dimen/jandi_messages_arrow_right_width"
-                android:layout_height="@dimen/jandi_messages_arrow_right_height"
-                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/icon_comment_arrow" />
+                android:layout_toRightOf="@id/iv_message_commented_photo"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_message_commented_owner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="middle"
+                    android:maxLines="2"
+                    android:text="Commented on "
+                    android:textColor="@color/jandi_text_light"
+                    android:textSize="@dimen/jandi_messages_comment" />
+
+                <TextView
+                    android:id="@+id/tv_message_commented_file_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="File Name"
+                    android:textColor="@color/jandi_messages_file_name"
+                    android:textSize="@dimen/jandi_text_size_medium"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
         </RelativeLayout>
 
+        <!-- 실제 댓글 내용 -->
+        <ImageView
+            android:id="@+id/iv_sticker_message_commented_content"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_alignLeft="@+id/vg_message_commented"
+            android:layout_below="@+id/vg_message_commented"
+            android:layout_marginTop="15dp" />
+
+        <ImageView
+            android:id="@+id/iv_img_file_arrow"
+            android:layout_width="@dimen/jandi_messages_arrow_right_width"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/iv_sticker_message_commented_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/iv_sticker_message_commented_content"
+            android:scaleType="centerInside"
+            android:src="@drawable/icon_comment_arrow" />
 
     </RelativeLayout>
 

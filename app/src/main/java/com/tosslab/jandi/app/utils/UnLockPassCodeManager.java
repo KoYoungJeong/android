@@ -20,8 +20,6 @@ public class UnLockPassCodeManager {
 
     private static UnLockPassCodeManager sInstance;
 
-    private boolean isApplicationActivate = false;
-
     private boolean hasUnLocked = false;
 
     public static UnLockPassCodeManager getInstance() {
@@ -39,12 +37,7 @@ public class UnLockPassCodeManager {
             return;
         }
 
-        if (!isApplicationActivate) {
-            LogUtil.e(TAG, "!isApplicationActivate");
-            return;
-        }
-
-        if (hasUnLocked) {
+        if (hasUnLocked()) {
             LogUtil.e(TAG, "hasUnLocked");
             return;
         } else {
@@ -69,7 +62,7 @@ public class UnLockPassCodeManager {
             return;
         }
 
-        if (hasUnLocked) {
+        if (hasUnLocked()) {
             if (!(context instanceof Activity)) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             }
@@ -93,14 +86,12 @@ public class UnLockPassCodeManager {
         context.startActivity(intent);
     }
 
-    public void setApplicationActivate(boolean isApplicationActivate) {
-        this.isApplicationActivate = isApplicationActivate;
-        if (!isApplicationActivate) {
-            setUnLocked(false);
-        }
+    public synchronized boolean hasUnLocked() {
+        return hasUnLocked;
     }
 
-    public void setUnLocked(boolean hasUnLocked) {
+    public synchronized void setUnLocked(boolean hasUnLocked) {
         this.hasUnLocked = hasUnLocked;
     }
+
 }

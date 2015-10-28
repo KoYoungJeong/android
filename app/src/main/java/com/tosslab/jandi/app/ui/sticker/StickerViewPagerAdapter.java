@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.sticker;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.support.v4.view.PagerAdapter;
 import android.view.Gravity;
 import android.view.View;
@@ -18,15 +19,25 @@ import java.util.List;
  */
 class StickerViewPagerAdapter extends PagerAdapter {
 
-    public static final int STICKER_MAX_VIEW = 8;
+    public static final int STICKER_MAX_VIEW_PORTAIT = 8;
+    public static final int STICKER_MAX_VIEW_LANDSCAPE = 6;
     private final Context context;
     private final StickerViewModel.OnStickerClick onStickerClick;
     private List<ResMessages.StickerContent> stickers;
+    private int stickerMax;
 
     protected StickerViewPagerAdapter(Context context, List<ResMessages.StickerContent> stickers, StickerViewModel.OnStickerClick onStickerClick) {
         this.context = context;
         this.stickers = stickers;
         this.onStickerClick = onStickerClick;
+
+        int orientation = context.getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            stickerMax = STICKER_MAX_VIEW_PORTAIT;
+        } else {
+            stickerMax = STICKER_MAX_VIEW_LANDSCAPE;
+        }
+
     }
 
     @Override
@@ -34,7 +45,8 @@ class StickerViewPagerAdapter extends PagerAdapter {
         if (stickers == null) {
             return 0;
         }
-        return ((stickers.size() - 1) / STICKER_MAX_VIEW) + 1;
+
+        return ((stickers.size() - 1) / stickerMax) + 1;
     }
 
     @Override
@@ -45,7 +57,7 @@ class StickerViewPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
 
-        View view = getStickerItemLayout(position, Math.min(STICKER_MAX_VIEW, stickers.size() - (position * STICKER_MAX_VIEW)));
+        View view = getStickerItemLayout(position, Math.min(stickerMax, stickers.size() - (position * stickerMax)), stickerMax);
         container.addView(view);
         return view;
     }
@@ -57,7 +69,10 @@ class StickerViewPagerAdapter extends PagerAdapter {
         }
     }
 
-    private LinearLayout getStickerItemLayout(int page, int size) {
+    private LinearLayout getStickerItemLayout(int page, int size, int stickerMax) {
+
+        boolean isPortrait = stickerMax == STICKER_MAX_VIEW_PORTAIT;
+        int columnCount = isPortrait ? STICKER_MAX_VIEW_PORTAIT / 2 : STICKER_MAX_VIEW_LANDSCAPE;
 
         int padding = context.getResources().getDimensionPixelSize(R.dimen.jandi_sticker_view_pager_padding);
 
@@ -72,16 +87,21 @@ class StickerViewPagerAdapter extends PagerAdapter {
 
         LinearLayout childTop = new LinearLayout(context);
         childTop.setOrientation(LinearLayout.HORIZONTAL);
-        childTop.setWeightSum(4f);
+        childTop.setWeightSum(columnCount);
         childTop.setLayoutParams(params);
 
-        LinearLayout childBottom = new LinearLayout(context);
-        childBottom.setOrientation(LinearLayout.HORIZONTAL);
-        childBottom.setWeightSum(4f);
-        childBottom.setLayoutParams(params);
-
         linearLayout.addView(childTop);
-        linearLayout.addView(childBottom);
+
+        LinearLayout childBottom = null;
+        if (isPortrait) {
+
+            childBottom = new LinearLayout(context);
+            childBottom.setOrientation(LinearLayout.HORIZONTAL);
+            childBottom.setWeightSum(columnCount);
+            childBottom.setLayoutParams(params);
+            linearLayout.addView(childBottom);
+        }
+
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
         layoutParams.weight = 1;
@@ -90,19 +110,20 @@ class StickerViewPagerAdapter extends PagerAdapter {
 
         int maxWidth = context.getResources().getDimensionPixelSize(R.dimen.jandi_sticker_view_pager_items_max_width);
 
+
         for (int idx = 0; idx < size; idx++) {
             ImageView child = new ImageView(context);
             child.setLayoutParams(layoutParams);
             child.setMaxWidth(maxWidth);
             child.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
-            if (idx / 4 < 1) {
+            if (idx / columnCount < 1) {
                 childTop.addView(child);
-            } else {
+            } else if (childBottom != null) {
                 childBottom.addView(child);
             }
 
-            final ResMessages.StickerContent resSticker = stickers.get(idx + page * STICKER_MAX_VIEW);
+            final ResMessages.StickerContent resSticker = stickers.get(idx + page * stickerMax);
 
             child.setOnClickListener(v -> {
                 if (onStickerClick != null) {

@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -239,6 +240,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
     @Click(R.id.profile_photo)
     void getPicture() {
         // 프로필 사진
+
         filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, ModifyProfileActivity.this);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.PhotoEdit);
@@ -358,6 +360,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
 
     @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_GALLERY)
     public void onImagePickResult(int resultCode, Intent imageData) {
+        UnLockPassCodeManager.getInstance().setUnLocked(true);
+
         if (resultCode != RESULT_OK) {
             return;
         }
@@ -365,8 +369,10 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
         String filePath = filePickerViewModel.getFilePath(getApplicationContext(), FilePickerViewModel.TYPE_UPLOAD_GALLERY, imageData).get(0);
         if (!TextUtils.isEmpty(filePath) && isJpgOrPng(filePath)) {
             try {
+                // fileExt = .jpg or .png
+                String fileExt = filePath.substring(filePath.lastIndexOf("."), filePath.length());
                 Crop.of(Uri.fromFile(new File(filePath)),
-                        Uri.fromFile(File.createTempFile("temp_", ".jpg",
+                        Uri.fromFile(File.createTempFile("temp_", fileExt,
                                 new File(GoogleImagePickerUtil.getDownloadPath()))))
                         .asSquare()
                         .start(ModifyProfileActivity.this);

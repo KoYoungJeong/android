@@ -15,6 +15,7 @@
 
         <item name="toolbarStyle">@style/Jandi.Default.ActionBar</item>
         <item name="actionBarStyle">@style/Jandi.Default.ActionBar</item>
+        <item name="actionMenuTextColor">@color/abc_primary_text_disable_only_material_dark</item>
 
         <item name="android:textViewStyle">@style/JandiTheme.Widget.TextView</item>
 
@@ -45,11 +46,14 @@
     <style name="JandiDialogButton" parent="@style/TextAppearance.AppCompat.Button"></style>
 
     <style name="JandiTheme.AlertDialog.FixWidth.300" parent="JandiTheme.AlertDialog">
-        <item name="windowFixedWidthMajor">@dimen/jandi_dialog_min_width_2</item>
-        <item name="windowFixedWidthMinor">@dimen/jandi_dialog_min_width_2</item>
+        <item name="windowMinWidthMinor">@dimen/jandi_dialog_min_width_2</item>
+        <item name="windowMinWidthMajor">@dimen/jandi_dialog_min_width_2</item>
     </style>
 
     <style name="JandiTheme.AlertDialog.FixWidth.280" parent="JandiTheme.AlertDialog">
+        <item name="windowMinWidthMinor">@dimen/jandi_dialog_min_width</item>
+        <item name="windowMinWidthMajor">@dimen/jandi_dialog_min_width</item>
+
         <item name="windowFixedWidthMajor">@dimen/jandi_dialog_min_width</item>
         <item name="windowFixedWidthMinor">@dimen/jandi_dialog_min_width</item>
     </style>

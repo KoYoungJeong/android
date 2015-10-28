@@ -37,7 +37,7 @@ public class AccountHomeModel {
 
     public List<Team> getTeamInfos(Context context) throws RetrofitError {
 
-        ArrayList<Team> teams = new ArrayList<Team>();
+        List<Team> teams = new ArrayList<Team>();
 
         List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
 

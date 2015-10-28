@@ -17,7 +17,7 @@
             android:gravity="center"
             android:orientation="vertical">
 
-                <!--android:text="@string/jandi_enter_passcode"-->
+            <!--android:text="@string/jandi_enter_passcode"-->
             <TextView
                 android:id="@+id/tv_passcode_title"
                 android:layout_width="wrap_content"
@@ -75,19 +75,20 @@
 
     </FrameLayout>
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="312dp"
         android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/gv_passcode"
-            android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="290dp"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
             android:clipToPadding="false"
             android:fadingEdge="none"
             android:overScrollMode="never"/>
 
-    </FrameLayout>
+    </RelativeLayout>
 
 </LinearLayout>

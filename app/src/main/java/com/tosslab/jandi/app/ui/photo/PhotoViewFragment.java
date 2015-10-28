@@ -165,6 +165,7 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
         Glide.with(JandiApplication.getContext())
                 .load(target)
                 .fitCenter()
+                .sizeMultiplier(1f)
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .error(R.drawable.jandi_fl_icon_deleted)

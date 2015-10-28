@@ -45,6 +45,10 @@ public class GoogleImagePickerUtil {
         return String.format("%s_%s.jpg", String.valueOf(System.currentTimeMillis()), "web_image");
     }
 
+    public static String getWebImageNameOnly() {
+        return String.format("%s_%s", String.valueOf(System.currentTimeMillis()), "web_image");
+    }
+
     public static String getDownloadPath() {
         return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS + "/Jandi";
     }

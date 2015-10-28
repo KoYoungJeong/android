@@ -7,7 +7,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -202,7 +201,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
     private void showInvitePopup() {
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.InviteTeamMember);
         AlertDialog.Builder builder = new AlertDialog.Builder(MainTabActivity.this,
-                R.style.JandiTheme_AlertDialog_FixWidth_280);
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
         View view = LayoutInflater.from(MainTabActivity.this).inflate(R.layout.dialog_invite_popup, null);
 
         builder.setOnDismissListener(dialog ->
@@ -267,14 +266,6 @@ public class MainTabActivity extends BaseAppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (fromPush) {
-            setNeedUnLockPassCode(false);
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         ActivityHelper.setOrientation(this);
@@ -293,15 +284,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
         }
 
         fromPush = false;
-        setNeedUnLockPassCode(true);
     }
-
-
-    /**
-     * *********************************************************
-     * Entities List Update / Refresh
-     * **********************************************************
-     */
 
     @Override
     public void onPause() {

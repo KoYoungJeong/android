@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -23,7 +22,7 @@
             android:id="@+id/iv_message_user_profile"
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
-            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"/>
+            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
         <!-- 기본 표시 레이어 -->
 
 
@@ -35,12 +34,13 @@
             android:layout_marginTop="4dp"
             android:layout_toRightOf="@+id/iv_message_user_profile"
             android:ellipsize="end"
+            android:maxLines="1"
             android:maxWidth="200dp"
             android:singleLine="true"
             android:text="User name"
             android:textColor="@color/jandi_messages_name"
             android:textSize="@dimen/jandi_messages_user_name"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/iv_entity_listitem_line_through"
@@ -50,7 +50,7 @@
             android:layout_alignLeft="@+id/tv_message_user_name"
             android:layout_alignRight="@+id/tv_message_user_name"
             android:layout_alignTop="@+id/tv_message_user_name"
-            android:src="@drawable/line_gray"/>
+            android:src="@drawable/line_gray" />
 
         <View
             android:id="@+id/v_entity_listitem_warning"
@@ -61,7 +61,7 @@
             android:layout_alignRight="@+id/iv_message_user_profile"
             android:layout_alignTop="@+id/iv_message_user_profile"
             android:background="#99ffffff"
-            android:visibility="visible"/>
+            android:visibility="visible" />
 
         <!-- 실제 메시지 내용 -->
         <ImageView
@@ -70,7 +70,7 @@
             android:layout_height="140dp"
             android:layout_below="@+id/tv_message_user_name"
             android:layout_toRightOf="@+id/iv_message_user_profile"
-            android:focusable="false"/>
+            android:focusable="false" />
 
         <TextView
             android:id="@+id/tv_message_create_date"
@@ -81,7 +81,7 @@
             android:layout_toRightOf="@+id/iv_message_sticker"
             android:text="AM ??:??"
             android:textColor="@color/jandi_messages_date"
-            android:textSize="@dimen/jandi_messages_date"/>
+            android:textSize="@dimen/jandi_messages_date" />
 
         <TextView
             android:id="@+id/tv_entity_listitem_unread"
@@ -93,12 +93,12 @@
             android:text="10"
             android:textColor="@color/jandi_accent_color"
             android:textSize="@dimen/jandi_text_size_smaller"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
     <include
         android:id="@+id/vg_message_last_read"
-        layout="@layout/item_message_last_read_v2"/>
+        layout="@layout/item_message_last_read_v2" />
 
 </LinearLayout>

@@ -10,8 +10,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -23,7 +21,6 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import de.greenrobot.event.EventBus;
@@ -77,12 +74,11 @@ public class ImageViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        Ion.with(ivProfile)
-                .placeholder(R.drawable.profile_img)
-                .error(R.drawable.profile_img)
-                .transform(new IonCircleTransform())
-                .crossfade(true)
-                .load(profileUrl);
+        BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
+                profileUrl,
+                R.drawable.profile_img,
+                R.drawable.profile_img
+        );
 
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
@@ -177,15 +173,13 @@ public class ImageViewHolder implements BodyViewHolder {
                                     fileContent, BitmapUtil.Thumbnails.LARGE);
                         }
 
-                        Glide.with(ivFileImage.getContext())
-                                .load(thumbPath)
-                                .placeholder(R.drawable.file_icon_img)
-                                .error(R.drawable.file_icon_img)
-                                .crossFade()
-                                .centerCrop()
-                                .into(ivFileImage);
-                        tvFileType.setText(FileSizeUtil.fileSizeCalculation(fileContent.size) + ", "
-                                + fileContent.ext);
+                        BitmapUtil.loadCropBitmapByGlide(ivFileImage,
+                                thumbPath,
+                                R.drawable.file_icon_img
+                        );
+
+                        String fileSize = FileSizeUtil.fileSizeCalculation(fileContent.size);
+                        tvFileType.setText(String.format("%s, %s", fileSize, fileContent.ext));
                     }
                 } else {
                     ivFileImage.setImageResource(R.drawable.file_icon_img);

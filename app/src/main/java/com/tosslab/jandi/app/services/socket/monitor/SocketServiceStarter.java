@@ -3,9 +3,6 @@ package com.tosslab.jandi.app.services.socket.monitor;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
@@ -22,7 +19,7 @@ public class SocketServiceStarter extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (!JandiApplication.isApplicationActive()) {
+        if (JandiApplication.isApplicationDeactive()) {
             return;
         }
 

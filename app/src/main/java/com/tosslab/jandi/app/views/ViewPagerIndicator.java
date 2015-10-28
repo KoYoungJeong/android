@@ -89,7 +89,7 @@ public class ViewPagerIndicator extends View {
             return;
         }
 
-        canvas.restore();
+            canvas.save();
 
         int drawWidth = (indicatorMargin + indicatorWidth) * indicatorCount - indicatorMargin;
 
@@ -106,8 +106,8 @@ public class ViewPagerIndicator extends View {
             canvas.drawCircle(firstDrawX + (indicatorWidth + indicatorMargin + indicatorWidth / 2) * idx + indicatorWidth / 2, centerY, indicatorWidth / 2, paint);
         }
 
+        canvas.restore();
 
-        canvas.save();
     }
 
     @Override

@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -120,6 +121,7 @@ import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
@@ -137,6 +139,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EditorAction;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.TextChange;
@@ -657,6 +660,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_cancel);
     }
 
+    @Click(R.id.vg_messages_preview_sticker)
+    void onNonAction() {
+    }
+
     @Click(R.id.vg_message_offline)
     void onOfflineLayerClick() {
         messageListPresenter.dismissOfflineLayer();
@@ -1061,6 +1068,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!isForeground) {
             return;
         }
+
         filePickerViewModel.selectFileSelector(event.type, MessageListFragment.this, entityId);
 
         AnalyticsValue.Action action;
@@ -1105,10 +1113,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        UnLockPassCodeManager.getInstance().setUnLocked(true);
+
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-
         switch (requestCode) {
             case FilePickerViewModel.TYPE_UPLOAD_GALLERY:
                 break;
@@ -1152,6 +1161,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Click(R.id.et_message)
     void onMessageInputClick() {
         AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MessageInputField);
+    }
+
+    @EditorAction(R.id.et_message)
+    boolean onMessageDoneClick(TextView tv, int actionId) {
+        LogUtil.d(tv.toString() + " ::: " + actionId);
+
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            messageListPresenter.hideKeyboard();
+        }
+
+        return false;
     }
 
     void onMessageItemClick(ResMessages.Link link, int entityId) {

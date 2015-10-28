@@ -134,24 +134,25 @@ public class MainTopicModel {
 
         for (ResFolder topicFolder : orderedFolders) {
             if (!topicItemMap.containsKey(topicFolder.id)) {
-                topicItemMap.put(new Integer(topicFolder.id), new ArrayList<>());
+                topicItemMap.put(topicFolder.id, new ArrayList<>());
             }
             if (!badgeCountMap.containsKey(topicFolder.id)) {
-                badgeCountMap.put(new Integer(topicFolder.id), 0);
+                badgeCountMap.put(topicFolder.id, 0);
             }
-            if (!folderMap.containsKey(new Integer(topicFolder.id))) {
+            if (!folderMap.containsKey(topicFolder.id)) {
                 TopicFolderData topicFolderData = new TopicFolderData(folderIndex, topicFolder.name, topicFolder.id, -1);
                 topicFolderData.setSeq(topicFolder.seq);
-                folderMap.put(new Integer(topicFolder.id), topicFolderData);
+                folderMap.put(topicFolder.id, topicFolderData);
             }
             folderIndex++;
         }
 
         Observable.from(topicFolderItems)
                 .filter(topicFolderItem -> topicFolderItem.folderId > 0)
+                .filter(topicFolderItem -> joinTopics.containsKey(topicFolderItem.roomId))
                 .subscribe(topicFolderItem -> {
 
-                    Topic topic = joinTopics.remove(new Integer(topicFolderItem.roomId));
+                    Topic topic = joinTopics.remove(topicFolderItem.roomId);
 
                     long itemIndex = folderMap.get(new Integer(topicFolderItem.folderId)).generateNewChildId();
 
