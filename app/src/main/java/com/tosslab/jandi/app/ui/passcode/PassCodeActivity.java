@@ -18,6 +18,8 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.passcode.adapter.PassCodeAdapter;
 import com.tosslab.jandi.app.ui.passcode.presenter.PassCodePresenter;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.decoration.GridRecyclerViewDivider;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
@@ -140,10 +142,24 @@ public class PassCodeActivity extends BaseAppCompatActivity implements PassCodeP
             @Override
             public void onAnimationEnd(Animation animation) {
                 presenter.clearPassCode();
+                if (!isPassCodeSettingMode) {
+                    AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.InputPasscode);
+                }
+            }
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+                if (!isPassCodeSettingMode) {
+                    AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.WrongPasscode);
+                }
             }
         });
 
         presenter.setView(this);
+
+        if (!isPassCodeSettingMode) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.InputPasscode);
+        }
     }
 
     @Override
