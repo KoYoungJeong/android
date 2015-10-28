@@ -47,12 +47,11 @@ public class ShareSelectModel {
     private ResLeftSideMenu.Team currentTeam;
     private ResLeftSideMenu.User mMe;
 
+    public ResLeftSideMenu getLeftSideMenu(int teamId) throws RetrofitError {
+        return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
+    }
 
-    public void initFormattedEntities(int teamId) {
-
-        ResLeftSideMenu resLeftSideMenu = RequestApiManager.getInstance()
-                .getInfosForSideMenuByMainRest(teamId);
-
+    public void initFormattedEntities(ResLeftSideMenu resLeftSideMenu) {
         mJoinedTopics = new HashMap<>();
         mUnjoinedTopics = new HashMap<>();
         mUsers = new HashMap<>();
@@ -121,12 +120,22 @@ public class ShareSelectModel {
 
     // 폴더 정보 가져오기
     public List<ResFolder> getTopicFolders(int teamId) throws RetrofitError {
-        return RequestApiManager.getInstance().getFoldersByTeamApi(teamId);
+        try {
+            return RequestApiManager.getInstance().getFoldersByTeamApi(teamId);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
 
     // 폴더 속 토픽 아이디 가져오기
     public List<ResFolderItem> getTopicFolderItems(int teamId) throws RetrofitError {
-        return RequestApiManager.getInstance().getFolderItemsByTeamApi(teamId);
+        try {
+            return RequestApiManager.getInstance().getFolderItemsByTeamApi(teamId);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
 
     protected Observable<List<FormattedEntity>> getUsers() {
@@ -141,14 +150,20 @@ public class ShareSelectModel {
 
         List<ResFolder> topicFolders = getTopicFolders(teamId);
         List<ResFolderItem> topicFolderItems = getTopicFolderItems(teamId);
-        List<ExpandRoomData> topicDatas = new ArrayList<>();
         LinkedHashMap<Integer, FormattedEntity> joinTopics = getJoinEntities();
 
+        return getExpandRoomDatas(topicFolders, topicFolderItems, joinTopics);
+    }
+
+    public List<ExpandRoomData> getExpandRoomDatas(List<ResFolder> topicFolders,
+                                                   List<ResFolderItem> topicFolderItems,
+                                                   LinkedHashMap<Integer, FormattedEntity> joinTopics) {
+        List<ExpandRoomData> topicDatas = new ArrayList<>();
         LinkedHashMap<Integer, List<ExpandRoomData>> topicDataMap = new LinkedHashMap<>();
 
         for (ResFolder topicFolder : topicFolders) {
             if (!topicDataMap.containsKey(topicFolder.id)) {
-                topicDataMap.put(new Integer(topicFolder.id), new ArrayList<>());
+                topicDataMap.put(topicFolder.id, new ArrayList<>());
             }
         }
 
@@ -169,7 +184,7 @@ public class ShareSelectModel {
                 });
 
         for (ResFolder folder : topicFolders) {
-            Collections.sort(topicDataMap.get(new Integer(folder.id)), (lhs, rhs) -> {
+            Collections.sort(topicDataMap.get(folder.id), (lhs, rhs) -> {
                 if (lhs.isStarred() && rhs.isStarred()) {
                     return lhs.getName().compareToIgnoreCase(rhs.getName());
                 } else if (lhs.isStarred()) {
