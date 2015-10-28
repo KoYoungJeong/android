@@ -13,6 +13,8 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.passcode.PassCodeActivity;
 import com.tosslab.jandi.app.ui.passcode.PassCodeActivity_;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -45,6 +47,8 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
         initToolbar();
 
         initPassCodeSwitch();
+
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SetPasscode);
     }
 
     private void initToolbar() {
@@ -69,12 +73,15 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
         if (checked) {
             JandiPreference.removePassCode(getApplicationContext());
             initPassCodeSwitch();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SetPasscode, AnalyticsValue.Action.TurnOffPasscode);
             return;
         }
 
         PassCodeActivity_.intent(this)
                 .mode(PassCodeActivity.MODE_TO_SAVE_PASSCODE)
                 .startForResult(REQUEST_SET_PASSCODE);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SetPasscode, AnalyticsValue.Action.TurnOnPasscode);
     }
 
     @OnActivityResult(REQUEST_SET_PASSCODE)
@@ -99,5 +106,7 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
         PassCodeActivity_.intent(this)
                 .mode(PassCodeActivity.MODE_TO_MODIFY_PASSCODE)
                 .startForResult(REQUEST_SET_PASSCODE);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SetPasscode, AnalyticsValue.Action.ChangePasscode);
     }
 }
