@@ -70,7 +70,6 @@ import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -418,18 +417,16 @@ public class MessageListPresenter {
 
     }
 
-    public List<ResMessages.Link> getLastItemsWithoutDummy() {
+    public ResMessages.Link getLastItemWithoutDummy() {
         int count = messageListAdapter.getCount();
-        int lastIdx = Math.max(count - 20, 0);
-        List<ResMessages.Link> lastItems = new ArrayList<ResMessages.Link>();
-        for (int idx = count - 1; idx >= lastIdx; --idx) {
+        for (int idx = count - 1; idx >= 0; --idx) {
             if (messageListAdapter.getItem(idx) instanceof DummyMessageLink) {
                 continue;
             }
-            lastItems.add(messageListAdapter.getItem(idx));
+            return messageListAdapter.getItem(idx);
         }
 
-        return lastItems;
+        return null;
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

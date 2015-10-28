@@ -11,9 +11,11 @@ import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
+import com.tosslab.jandi.app.utils.DateComparatorUtil;
 
 import org.androidannotations.annotations.EBean;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,11 +63,13 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
 
             if (historyLoad) {
                 try {
+                    // FIXME SocketTimeoutExcpetion
                     newMessage = messageListModel.getNewMessage(linkId);
                 } catch (RetrofitError retrofitError) {
                     retrofitError.printStackTrace();
 
-                    if (retrofitError.getKind() == RetrofitError.Kind.HTTP) {
+                    if (retrofitError.getCause() instanceof SocketTimeoutException
+                            || retrofitError.getKind() == RetrofitError.Kind.HTTP) {
 
                         try {
                             ExceptionData exceptionData = (ExceptionData) retrofitError.getBodyAs(ExceptionData.class);
@@ -79,6 +83,8 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
 
                     }
 
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             } else {
                 moveToLinkId = true;
@@ -132,9 +138,29 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 ResMessages afterMarkerMessage = null;
                 try {
                     afterMarkerMessage = messageListModel.getAfterMarkerMessage(linkId, MessageManipulator.MAX_OF_MESSAGES);
-                    if (afterMarkerMessage.records.size() < MessageManipulator.MAX_OF_MESSAGES) {
+                    int messageCount = afterMarkerMessage.records.size();
+                    boolean isEndOfRequest = messageCount < MessageManipulator.MAX_OF_MESSAGES;
+                    if (isEndOfRequest) {
+                        ResMessages.Link lastItem;
+                        if (messageCount == 0) {
+                            // 기존 리스트에서 마지막 링크 정보 가져옴
+                            lastItem = messageListPresenter.getLastItemWithoutDummy();
+                        } else {
+                            lastItem = afterMarkerMessage.records.get(messageCount - 1);
+                            // 새로 불러온 정보에서 마지막 링크 정보 가져옴
+                        }
+                        if (lastItem != null) {
+                            if (DateComparatorUtil.isBefore30Days(lastItem.time)) {
+                                // 마지막 링크가 30일 이전이면 히스토리 로드 하지 않기
+                                historyLoad = false;
+                            } else {
+                                historyLoad = true;
+                            }
+                        } else {
+                            // 알 수 없는 경우에도 히스토리 로드 하지 않기
+                            historyLoad = false;
+                        }
                         messageListPresenter.setNewNoMoreLoading();
-                        historyLoad = true;
                     } else {
                         messageListPresenter.setMoreNewFromAdapter(true);
                         messageListPresenter.setNewLoadingComplete();
