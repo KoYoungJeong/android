@@ -551,12 +551,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         sendMessagePublisherEvent(new CheckAnnouncementQueue());
         sendMessagePublisherEvent(new OldMessageQueue(messageState));
 
-        isRoomInit = true;
 
         if (isForeground) {
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
 
+        isRoomInit = true;
     }
 
     int initRoomId() {
@@ -1095,7 +1095,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 // roomId 설정 후...
                 sendInitMessage();
             } else {
-                sendMessagePublisherEvent(new NewMessageQueue(messageState));
+                if (isRoomInit) {
+                    sendMessagePublisherEvent(new NewMessageQueue(messageState));
+                }
             }
 
             messageListPresenter.dismissOfflineLayer();
@@ -1432,14 +1434,18 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListModel.updateMarkerInfo(teamId, roomId);
             return;
         }
-        sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        if (isRoomInit) {
+            sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        }
     }
 
     public void onEvent(RefreshNewMessageEvent event) {
         if (!isForeground) {
             return;
         }
-        sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        if (isRoomInit) {
+            sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        }
     }
 
     public void onEvent(TeamLeaveEvent event) {
@@ -1497,7 +1503,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 return;
             }
 
-            sendMessagePublisherEvent(new NewMessageQueue(messageState));
+            if (isRoomInit) {
+                sendMessagePublisherEvent(new NewMessageQueue(messageState));
+            }
         }
     }
 
@@ -1519,7 +1527,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListModel.updateMarkerInfo(teamId, roomId);
         insertEmptyMessage();
 
-        sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        if (isRoomInit) {
+            sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        }
     }
 
     public void onEvent(RoomMarkerEvent event) {
@@ -1677,8 +1687,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                     messageListModel.updateMarkerInfo(teamId, roomId);
                     return;
                 }
-                sendMessagePublisherEvent(new NewMessageQueue(messageState));
-                sendMessagePublisherEvent(new CheckAnnouncementQueue());
+                if (isRoomInit) {
+                    sendMessagePublisherEvent(new NewMessageQueue(messageState));
+                    sendMessagePublisherEvent(new CheckAnnouncementQueue());
+                }
                 break;
             case STATUS_UPDATED:
                 if (!isForeground) {
