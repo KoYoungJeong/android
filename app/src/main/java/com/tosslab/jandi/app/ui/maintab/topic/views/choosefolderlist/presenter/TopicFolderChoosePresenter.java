@@ -78,13 +78,21 @@ public class TopicFolderChoosePresenter {
 
     @Background
     public void onDeleteItemFromFolder(int folderId, int topicId) {
-        topicFolderChooseModel.deleteItemFromFolder(folderId, topicId);
+        try {
+            topicFolderChooseModel.deleteItemFromFolder(folderId, topicId);
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
         view.finishAcitivty();
     }
 
     @Background
     public void onAddTopicIntoFolder(int folderId, int topicId) {
-        topicFolderChooseModel.addTopicIntoFolder(folderId, topicId);
+        try {
+            topicFolderChooseModel.addTopicIntoFolder(folderId, topicId);
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
         view.finishAcitivty();
     }
 
