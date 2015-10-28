@@ -62,12 +62,6 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
                 return oldMessage;
             }
 
-            if (!noFirstLoad) {
-                if (oldMessage.lastLinkId == oldMessage.records.get(oldMessage.records.size() - 1).id) {
-                    messageListPresenter.setGotoLatestLayoutVisibleGone();
-                }
-            }
-
             int firstLinkId = oldMessage.records.get(0).id;
             messageState.setFirstItemId(firstLinkId);
             boolean isFirstMessage = oldMessage.firstLinkId == firstLinkId;

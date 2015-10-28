@@ -1035,14 +1035,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
     }
 
-    @Background
-    void loadLastMessage() {
-        newsMessageLoader.load(roomId, messageState.getLastUpdateLinkId());
-        messageListPresenter.setGotoLatestLayoutVisibleGone();
-        messageListPresenter.moveLastPage();
-
-    }
-
     public void onEvent(RequestFileUploadEvent event) {
         if (!isForeground) {
             return;
