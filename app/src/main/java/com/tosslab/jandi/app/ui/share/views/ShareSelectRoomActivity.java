@@ -82,7 +82,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
 
         dmView.setOnClickListener(v -> {
             setSelectType(1, selectableViews);
-            getDms();
+            getDirectMessages();
             lvRoomSelect.getLayoutManager().scrollToPosition(0);
         });
 
@@ -135,11 +135,11 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
     }
 
     @Background
-    void getDms() {
+    void getDirectMessages() {
         showProgress();
 
         List<ExpandRoomData> userRoomDatas = shareSelectModel.getUserRoomDatas();
-        showDms(userRoomDatas);
+        showDirectMessages(userRoomDatas);
 
         hideProgress();
     }
@@ -151,7 +151,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    void showDms(List<ExpandRoomData> dms) {
+    void showDirectMessages(List<ExpandRoomData> dms) {
         adapter.addAll(dms);
         adapter.notifyDataSetChanged();
     }

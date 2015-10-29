@@ -114,10 +114,6 @@ public class ShareSelectModel {
         }
     }
 
-    public ResLeftSideMenu.Team getCurrentTeam() {
-        return currentTeam;
-    }
-
     // 폴더 정보 가져오기
     public List<ResFolder> getTopicFolders(int teamId) throws RetrofitError {
         try {
@@ -144,15 +140,6 @@ public class ShareSelectModel {
                 .toSortedList((lhs, rhs) -> {
                     return lhs.getName().compareToIgnoreCase(rhs.getName());
                 });
-    }
-
-    public List<ExpandRoomData> getTopicDatas(int teamId) {
-
-        List<ResFolder> topicFolders = getTopicFolders(teamId);
-        List<ResFolderItem> topicFolderItems = getTopicFolderItems(teamId);
-        LinkedHashMap<Integer, FormattedEntity> joinTopics = getJoinEntities();
-
-        return getExpandRoomDatas(topicFolders, topicFolderItems, joinTopics);
     }
 
     public List<ExpandRoomData> getExpandRoomDatas(List<ResFolder> topicFolders,
