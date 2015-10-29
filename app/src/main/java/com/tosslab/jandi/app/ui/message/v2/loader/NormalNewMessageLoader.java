@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.loader;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
@@ -12,10 +13,11 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
 
-import java.net.SocketTimeoutException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +33,7 @@ import rx.schedulers.Schedulers;
 @EBean
 public class NormalNewMessageLoader implements NewsMessageLoader {
 
+    public static final String TAG = NormalNewMessageLoader.class.getSimpleName();
     MessageListModel messageListModel;
     MessageListPresenter messageListPresenter;
     private MessageState messageState;
@@ -57,6 +60,8 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
             return;
         }
 
+        LogUtil.d(TAG, "historyLoad ? " + historyLoad);
+
         try {
             ResUpdateMessages newMessage = null;
             boolean moveToLinkId = firstLoad;
@@ -66,13 +71,18 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                     // FIXME SocketTimeoutExcpetion
                     newMessage = messageListModel.getNewMessage(linkId);
                 } catch (RetrofitError retrofitError) {
+                    LogUtil.w(TAG, "errorUrl - " + retrofitError.getUrl());
                     retrofitError.printStackTrace();
 
-                    if (retrofitError.getCause() instanceof SocketTimeoutException
-                            || retrofitError.getKind() == RetrofitError.Kind.HTTP) {
+                    if (retrofitError.getKind() == RetrofitError.Kind.NETWORK
+                            && retrofitError.getCause() instanceof IOException) {
 
+                        LogUtil.e(TAG, "IOException - " + Log.getStackTraceString(retrofitError.getCause()));
+
+                    } else if (retrofitError.getKind() == RetrofitError.Kind.HTTP) {
                         try {
                             ExceptionData exceptionData = (ExceptionData) retrofitError.getBodyAs(ExceptionData.class);
+                            LogUtil.e(TAG, "errorCode = " + exceptionData.getCode());
                             if (exceptionData.getCode() == 40017 || exceptionData.getCode() == 40018) {
                                 moveToLinkId = true;
                                 newMessage = getResUpdateMessages(linkId);
@@ -80,9 +90,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

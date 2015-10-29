@@ -45,9 +45,13 @@ public class LogUtil {
         i("JANDI", message);
     }
 
-    public static void w(String message) {
+    public static void w(String tag, String message) {
         if (BuildConfig.DEBUG) {
-            Log.w("JANDI", message);
+            Log.w(tag, message);
         }
+    }
+
+    public static void w(String message) {
+        w("JANDI", message);
     }
 }
