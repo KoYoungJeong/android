@@ -140,7 +140,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 68
-        versionName '1.5.7'
+        versionName '1.6.0'
 
         // Enabling multidex support.
         multiDexEnabled true
