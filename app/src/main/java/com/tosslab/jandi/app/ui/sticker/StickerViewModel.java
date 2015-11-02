@@ -53,10 +53,12 @@ public class StickerViewModel {
 
     private OnStickerClick onStickerClick;
     private OnStickerDoubleTapListener onStickerDoubleTapListener;
+    private OnStickerLayoutShowListener onStickerLayoutShowListener;
     private int type;
 
     private Pair<Integer, String> lastClickedStickerInfo;
     private long lastClickedTime;
+    private boolean isShow;
 
     @AfterViews
     void initViews() {
@@ -206,11 +208,25 @@ public class StickerViewModel {
 
         vgStickerSelector.setVisibility(View.VISIBLE);
         btnStickerShow.setSelected(true);
+
+        isShow = true;
+
+        if (onStickerLayoutShowListener != null) {
+            onStickerLayoutShowListener.onStickerLayoutShow(true);
+        }
+
     }
 
     public void dismissStickerSelector() {
         vgStickerSelector.setVisibility(View.GONE);
         btnStickerShow.setSelected(false);
+
+        isShow = false;
+
+        if (onStickerLayoutShowListener != null) {
+            onStickerLayoutShowListener.onStickerLayoutShow(false);
+        }
+
     }
 
     public void setOnStickerClick(OnStickerClick onStickerClick) {
@@ -229,6 +245,15 @@ public class StickerViewModel {
         this.onStickerDoubleTapListener = onStickerDoubleTapListener;
     }
 
+    public StickerViewModel setOnStickerLayoutShowListener(OnStickerLayoutShowListener onStickerLayoutShowListener) {
+        this.onStickerLayoutShowListener = onStickerLayoutShowListener;
+        return this;
+    }
+
+    public boolean isShow() {
+        return isShow;
+    }
+
 
     public interface OnStickerClick {
         void onStickerClick(int groupId, String stickerId);
@@ -236,5 +261,9 @@ public class StickerViewModel {
 
     public interface OnStickerDoubleTapListener {
         void onStickerDoubleTap(int groupId, String stickerId);
+    }
+
+    public interface OnStickerLayoutShowListener {
+        void onStickerLayoutShow(boolean isShow);
     }
 }

@@ -319,7 +319,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         fileUploadStateViewModel.setEntityId(entityId);
 
         keyboardHeightModel.addOnKeyboardShowListener((isShowing) -> {
-            announcementViewModel.setAnnouncementViewVisibility(!isShowing);
+            boolean visibility = keyboardHeightModel.isOpened() || stickerViewModel.isShow();
+            announcementViewModel.setAnnouncementViewVisibility(!visibility);
+        });
+
+        stickerViewModel.setOnStickerLayoutShowListener(isShow -> {
+            boolean visibility = keyboardHeightModel.isOpened() || stickerViewModel.isShow();
+            announcementViewModel.setAnnouncementViewVisibility(!visibility);
         });
 
         JandiPreference.setKeyboardHeight(getActivity(), 0);

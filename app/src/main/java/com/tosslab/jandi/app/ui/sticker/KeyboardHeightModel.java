@@ -38,8 +38,11 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
     private OnKeyboardCaptureListener onKeyboardHeightCapture;
     private OnKeyboardShowListener onKeyboardShowListener;
     private boolean isOpened;
-
     private ArrayList<OnKeyboardShowListener> onKeyboardShowListeners;
+
+    public boolean isOpened() {
+        return isOpened;
+    }
 
     @AfterViews
     void initViews() {
