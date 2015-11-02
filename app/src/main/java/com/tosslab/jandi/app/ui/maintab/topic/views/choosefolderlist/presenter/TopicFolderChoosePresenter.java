@@ -14,6 +14,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.RetrofitError;
@@ -40,7 +41,12 @@ public class TopicFolderChoosePresenter {
         List<ResFolder> folders = null;
         if (NetworkCheckUtil.isConnected()) {
             // 네트워크를 통해 가져오기
-            folders = topicFolderChooseModel.getFolders();
+            try {
+                folders = topicFolderChooseModel.getFolders();
+            } catch (RetrofitError retrofitError) {
+                retrofitError.printStackTrace();
+                folders = new ArrayList<>();
+            }
         } else {
             // 로컬에서 가져오기
             TopicFolderRepository repository = TopicFolderRepository.getRepository();
@@ -50,15 +56,6 @@ public class TopicFolderChoosePresenter {
         // 리턴하는 folder의 length=0이더라도 폴더가 1개이고 속해져있는 폴더인 케이스를 식별해야 한다.
         if (folders.size() > 0) {
             hasFolder = true;
-        }
-
-        // 속해져 있는 폴더는 목록에서 보여주지 않기 위해서
-        for (int i = folders.size() - 1; i >= 0; i--) {
-            if (folders.get(i).id == folderId) {
-                //현재 속한 폴더명을 저장하기 위해 (use for toast)
-                view.setCurrentTopicFolderName(folders.get(i).name);
-                folders.remove(i);
-            }
         }
 
         view.showFolderList(folders, hasFolder);
@@ -101,10 +98,14 @@ public class TopicFolderChoosePresenter {
         switch (type) {
             case TopicFolderChooseAdapter.TYPE_FOLDER_LIST:
                 int newfolderId = topicFolderChooseAdapter.getItemById(position).id;
-                onAddTopicIntoFolder(newfolderId, topicId);
-                String name = ((TopicFolderChooseAdapter) adapter).getFolders().get(position).name;
-                view.showMoveToFolderToast(name);
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.ChooseFolder);
+                if (newfolderId != folderId) {
+                    onAddTopicIntoFolder(newfolderId, topicId);
+                    String name = ((TopicFolderChooseAdapter) adapter).getFolders().get(position).name;
+                    view.showMoveToFolderToast(name);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.ChooseFolder);
+                } else {
+                    view.finishAcitivty();
+                }
                 break;
             case TopicFolderChooseAdapter.TYPE_REMOVE_FROM_FOLDER:
                 onDeleteItemFromFolder(folderId, topicId);
