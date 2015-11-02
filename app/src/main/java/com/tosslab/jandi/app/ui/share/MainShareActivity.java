@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.share;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -57,30 +58,28 @@ public class MainShareActivity extends BaseAppCompatActivity {
             return;
         }
 
-        switch (intentType) {
-            case Text:
-                fragment = MainShareFragment_
-                        .builder()
-                        .subject(mainShareModel.handleSendSubject(intent))
-                        .text(mainShareModel.handleSendText(intent))
-                        .mode(MODE_SHARE_TEXT)
-                        .build();
-                break;
-            default:
-                fragment = MainShareFragment_
-                        .builder()
-                        .mode(MODE_SHARE_FILE)
-                        .uriString(mainShareModel.handleSendImage(intent).toString())
-                        .build();
-                break;
+        MainShareFragment_.FragmentBuilder_ builder = MainShareFragment_.builder();
+        String fragmentTag = "share";
+
+        if (intentType == IntentType.Text) {
+            builder.subject(mainShareModel.handleSendSubject(intent));
+            builder.text(mainShareModel.handleSendText(intent));
+            builder.mode(MODE_SHARE_TEXT);
+            fragmentTag += "_text";
+        } else {
+            builder.mode(MODE_SHARE_FILE);
+            builder.uriString(mainShareModel.handleSendImage(intent).toString());
         }
 
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.vg_share_container, fragment, "detail")
-                .commit();
+        Fragment addedFragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
+        if (addedFragment == null) {
+            fragment = builder.build();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.vg_share_container, this.fragment, fragmentTag)
+                    .commit();
+        }
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SharetoJandi);
-
     }
 
     private void startIntro() {

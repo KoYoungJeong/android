@@ -102,8 +102,6 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
 
     @AfterViews
     void initViews() {
-
-
         if (mode == MainShareActivity.MODE_SHARE_TEXT) {
             vgViewer.setVisibility(View.GONE);
             tvTitle.setVisibility(View.GONE);
@@ -120,7 +118,6 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
             etComment.setSelection(etComment.getText().length());
             etComment.setMaxLines(Integer.MAX_VALUE);
         }
-
     }
 
     @UiThread
@@ -154,7 +151,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
         ColoredToast.show(getActivity().getApplicationContext(), message);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showFailToast(String message) {
         ColoredToast.showError(getActivity().getApplicationContext(), message);
@@ -193,7 +190,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
         EventBus.getDefault().unregister(this);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finishOnUiThread() {
         getActivity().finish();
