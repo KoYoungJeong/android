@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  */
 public class LinkifyUtil {
 
-    static final String REG_EX_EMAIL = "^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})$";
+    static final String REG_EX_EMAIL = "[_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(\\.[a-zA-Z]{2,4})";
 
     private static final Class[] clickableSpannables = {
             JandiURLSpan.class,
