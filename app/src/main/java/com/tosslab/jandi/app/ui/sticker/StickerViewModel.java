@@ -32,7 +32,8 @@ import java.util.List;
 public class StickerViewModel {
 
     public static final int STICKER_GROUP_RECENT = 0;
-    public static final int STICKER_GROUP_MOZZI = 1;
+    public static final int STICKER_GROUP_DAY = 1;
+    public static final int STICKER_GROUP_MOZZI = 2;
 
     public static final int TYPE_MESSAGE = 11;
     public static final int TYPE_TOPIC = 12;
@@ -80,13 +81,16 @@ public class StickerViewModel {
 
     private void updateStickerItems(int groupIdx, ViewPager vgStickerItems) {
         List<ResMessages.StickerContent> stickers;
+        StickerRepository stickerRepository = StickerRepository.getRepository();
         switch (groupIdx) {
             case STICKER_GROUP_RECENT:
-                stickers = StickerRepository.getRepository().getRecentStickers();
+                stickers = stickerRepository.getRecentStickers();
                 break;
             case STICKER_GROUP_MOZZI:
-                stickers = StickerRepository.getRepository().getStickers(StickerRepository
-                        .DEFAULT_GROUP_ID_MOZZI);
+                stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_MOZZI);
+                break;
+            case STICKER_GROUP_DAY:
+                stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_DAY);
                 break;
             default:
                 stickers = new ArrayList<>();
@@ -94,7 +98,6 @@ public class StickerViewModel {
         }
 
         addStickerView(stickers, vgStickerItems);
-
     }
 
     private void addStickerView(List<ResMessages.StickerContent> stickers, ViewPager vgStickerItems) {

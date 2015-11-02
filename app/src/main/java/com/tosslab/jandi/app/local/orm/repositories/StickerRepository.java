@@ -24,6 +24,7 @@ import rx.Observable;
 public class StickerRepository {
 
     public static final int DEFAULT_GROUP_ID_MOZZI = 100;
+    public static final int DEFAULT_GROUP_ID_DAY = 101;
     public static final int DEFAULT_MOZZI_COUNT = 26;
     private static StickerRepository repository;
     private final OrmDatabaseHelper helper;
@@ -51,36 +52,48 @@ public class StickerRepository {
         try {
             Dao<ResMessages.StickerContent, ?> dao = helper.getDao(ResMessages.StickerContent.class);
 
-
             AssetManager assetManager = JandiApplication.getContext().getAssets();
-            String[] list = assetManager.list("stickers/default/mozzi");
 
-            if (dao.queryBuilder().query().size() == list.length) {
-                return;
-            }
+            // mozzi
+            String[] mozziList = assetManager.list("stickers/default/mozzi");
+            addStickerConetentIfNeed(dao, mozziList, DEFAULT_GROUP_ID_MOZZI);
 
-            Observable.from(list)
-                    .map(file -> {
-                        ResMessages.StickerContent stickerContent = new ResMessages.StickerContent();
-
-                        String[] split = file.split("\\.")[0].split("_");
-                        stickerContent.groupId = Integer.parseInt(split[0]);
-                        stickerContent.stickerId = split[1];
-                        return stickerContent;
-                    })
-                    .subscribe(stickerContent1 -> {
-                        try {
-                            dao.createOrUpdate(stickerContent1);
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }, Throwable::printStackTrace);
+            // day
+            String[] dayList = assetManager.list("stickers/default/day");
+            addStickerConetentIfNeed(dao, dayList, DEFAULT_GROUP_ID_DAY);
 
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void addStickerConetentIfNeed(Dao<ResMessages.StickerContent, ?> dao, String[] stickerAssetList, int stickerGroupId)
+            throws SQLException {
+        List<ResMessages.StickerContent> savedStickerList = dao.queryBuilder()
+                .where()
+                .eq("groupId", stickerGroupId)
+                .query();
+        if (savedStickerList.size() == stickerAssetList.length) {
+            return;
+        }
+
+        Observable.from(stickerAssetList)
+                .map(file -> {
+                    ResMessages.StickerContent stickerContent = new ResMessages.StickerContent();
+                    String[] split = file.split("\\.")[0].split("_");
+                    stickerContent.groupId = Integer.parseInt(split[0]);
+                    stickerContent.stickerId = split[1];
+                    return stickerContent;
+                })
+                .subscribe(stickerContent1 -> {
+                    try {
+                        dao.createOrUpdate(stickerContent1);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }, Throwable::printStackTrace);
     }
 
     public List<ResMessages.StickerContent> getStickers() {

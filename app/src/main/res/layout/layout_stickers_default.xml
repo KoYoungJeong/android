@@ -89,6 +89,11 @@
                 android:src="@drawable/btn_sticker_group_recent" />
 
             <ImageView
+                android:id="@+id/btn_sticker_group_default_day"
+                style="@style/JandiSticker.Group"
+                android:src="@drawable/btn_sticker_group_day" />
+
+            <ImageView
                 android:id="@+id/btn_sticker_group_default_mozzi"
                 style="@style/JandiSticker.Group"
                 android:src="@drawable/btn_sticker_group_mozzi" />
