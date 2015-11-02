@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +22,7 @@ import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.filedetail.domain.FileStarredInfo;
@@ -387,7 +389,6 @@ public class FileDetailPresenter {
         }
     }
 
-    @Background
     public void onClickDownload(ProgressDialog progressDialog, int fileId) {
         ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage(fileId);
         if (fileMessage == null) {
@@ -406,9 +407,6 @@ public class FileDetailPresenter {
                 return;
         }
 
-        String fileName = FileSizeUtil.getDownloadFileName(content.title, content.ext);
-
-        view.showDownloadProgressDialog(fileName);
 
         downloadFile(BitmapUtil.getFileUrl(content.fileUrl),
                 content.title,
@@ -420,6 +418,24 @@ public class FileDetailPresenter {
     @Background
     public void downloadFile(String url, String fileName, final String fileType, String ext,
                              ProgressDialog progressDialog, int fileId, boolean execute) {
+
+        Permissions.getChecker()
+                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .noPermission(() -> {
+                    view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                })
+                .hasPermission(() -> {
+                    downloadFileImpl(url, fileName, fileType, ext, progressDialog, fileId, execute);
+                }).check();
+    }
+
+    private void downloadFileImpl(String url, String fileName, final String fileType, String ext,
+                                  ProgressDialog progressDialog, int fileId, boolean execute) {
+        String dialogText = FileSizeUtil.getDownloadFileName(fileName, ext);
+
+        view.showDownloadProgressDialog(dialogText);
+
         try {
             File result = fileDetailModel.download(url, fileName, ext, progressDialog);
 
@@ -630,5 +646,7 @@ public class FileDetailPresenter {
         void updateFileStarred(boolean starred);
 
         void showUnsharedFileToast();
+
+        void requestPermission(int requestCode, String... permission);
     }
 }

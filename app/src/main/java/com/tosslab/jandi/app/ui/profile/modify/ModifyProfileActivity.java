@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.profile.modify;
 
+import android.Manifest;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -25,6 +26,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -61,6 +63,7 @@ import retrofit.RetrofitError;
 @EActivity(R.layout.activity_profile)
 public class ModifyProfileActivity extends BaseAppCompatActivity {
     public static final int REQUEST_CODE = 1000;
+    public static final int REQ_STORAGE_PERMISSION = 101;
 
     @Bean
     ModifyProfileModel modifyProfileModel;
@@ -240,10 +243,31 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
     @Click(R.id.profile_photo)
     void getPicture() {
         // 프로필 사진
-
         filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, ModifyProfileActivity.this);
 
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.PhotoEdit);
+        Permissions.getChecker()
+                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .hasPermission(() -> {
+                    filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY,
+                            ModifyProfileActivity.this);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile,
+                            AnalyticsValue.Action.PhotoEdit);
+                })
+                .noPermission(() -> {
+                    String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    requestPermissions(permissions, REQ_STORAGE_PERMISSION);
+                })
+                .check();
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        Permissions.getResult()
+                .addRequestCode(REQ_STORAGE_PERMISSION)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::getPicture);
     }
 
     public void onEvent(MemberEmailChangeEvent event) {

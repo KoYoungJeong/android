@@ -228,7 +228,7 @@ public class RecyclerViewSwipeManager {
      * Constructor.
      */
     public RecyclerViewSwipeManager() {
-        mInternalUseOnItemTouchListener = new RecyclerView.OnItemTouchListener() {
+        mInternalUseOnItemTouchListener = new RecyclerView.SimpleOnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
                 return RecyclerViewSwipeManager.this.onInterceptTouchEvent(rv, e);

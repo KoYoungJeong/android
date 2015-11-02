@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -74,6 +75,7 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
+import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -170,9 +172,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public static final String EXTRA_FILE_DELETE = "file_delete";
     public static final String EXTRA_FILE_ID = "file_id";
     public static final String EXTRA_NEW_PHOTO_FILE = "new_photo_file";
-
+    public static final int REQ_STORAGE_PERMISSION = 101;
     private static final StickerInfo NULL_STICKER = new StickerInfo();
-
     @FragmentArg
     int entityType;
     @FragmentArg
@@ -189,50 +190,33 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     int lastMarker = -1;
     @FragmentArg
     int roomId;
-
     @ViewById(R.id.list_messages)
     RecyclerView messageListView;
-
     @ViewById(R.id.btn_send_message)
     Button sendButton;
-
     @ViewById(R.id.et_message)
     EditText messageEditText;
-
     @ViewById(R.id.rv_list_search_members)
     RecyclerView rvListSearchMembers;
-
-
     @Bean
     MessageListPresenter messageListPresenter;
-
     @Bean
     MessageListModel messageListModel;
-
     @Bean
     KeyboardHeightModel keyboardHeightModel;
-
     @Bean
     StickerViewModel stickerViewModel;
-
-
     @Bean(value = EntityFileUploadViewModelImpl.class)
     FilePickerViewModel filePickerViewModel;
-
     @Bean
     FileUploadStateViewModel fileUploadStateViewModel;
-
     @Bean
     AnnouncementModel announcementModel;
-
     @Bean
     AnnouncementViewModel announcementViewModel;
-
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
-
     MentionControlViewModel mentionControlViewModel;
-
     private OldMessageLoader oldMessageLoader;
     private NewsMessageLoader newsMessageLoader;
     private MessageState messageState;
@@ -875,7 +859,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
     }
 
-
     private void initKeyboardHeight() {
         EditText etMessage = messageListPresenter.getSendEditTextView();
         keyboardHeightModel.setOnKeyboardHeightCaptureListener(() -> {
@@ -901,10 +884,22 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.moveLastPage();
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Click(R.id.btn_upload_file)
     void onUploadClick() {
-        filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
-        AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Upload);
+
+        Permissions.getChecker()
+                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .hasPermission(() -> {
+                    filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
+                    AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Upload);
+                })
+                .noPermission(() -> {
+                    String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    MessageListFragment.this.requestPermissions(permissions,
+                            REQ_STORAGE_PERMISSION);
+                })
+                .check();
     }
 
     @Click(R.id.btn_send_message)

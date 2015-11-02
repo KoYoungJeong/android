@@ -137,7 +137,7 @@ public class RecyclerViewDragDropManager {
      * Constructor.
      */
     public RecyclerViewDragDropManager() {
-        mInternalUseOnItemTouchListener = new RecyclerView.OnItemTouchListener() {
+        mInternalUseOnItemTouchListener = new RecyclerView.SimpleOnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
                 return RecyclerViewDragDropManager.this.onInterceptTouchEvent(rv, e);

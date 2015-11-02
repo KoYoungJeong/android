@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -51,6 +52,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.MixpanelAnalytics;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
@@ -109,6 +111,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     public static final int INTENT_RETURN_TYPE_SHARE = 0;
     public static final int INTENT_RETURN_TYPE_UNSHARE = 1;
+    public static final int REQ_STORAGE_PERMISSION = 101;
     private static final StickerInfo NULL_STICKER = new StickerInfo();
     public static
 
@@ -754,8 +757,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return;
         }
 
-        showDownloadProgressDialog(fileDownloadStartEvent.getFileName());
-
         fileDetailPresenter.downloadFile(fileDownloadStartEvent.getUrl(),
                 fileDownloadStartEvent.getFileName(),
                 fileDownloadStartEvent.getFileType(),
@@ -1004,6 +1005,22 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void showUnsharedFileToast() {
         ColoredToast.showError(FileDetailActivity.this, getString(R.string.jandi_unshared_message));
+    }
+
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
+    public void requestPermission(int requestCode, String... permissions) {
+        requestPermissions(permissions, requestCode);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Permissions.getResult()
+                .addRequestCode(REQ_STORAGE_PERMISSION)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, () -> download())
+                .resultPermission(Permissions.createPermissionResult(requestCode,
+                        permissions,
+                        grantResults));
     }
 
     @Override
