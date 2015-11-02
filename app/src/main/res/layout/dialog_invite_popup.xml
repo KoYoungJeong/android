@@ -3,7 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:paddingBottom="10dp"
+    android:paddingLeft="26dp"
+    android:paddingRight="26dp"
+    android:paddingTop="49dp">
 
     <ImageView
         android:layout_width="match_parent"
@@ -14,7 +17,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="34dp"
         android:gravity="center"
         android:text="@string/jandi_member_invite_popup_1"
         android:textColor="@color/account_home_help_dialog_text"
@@ -35,7 +38,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="34dp"
+        android:layout_marginTop="24dp"
         android:orientation="vertical">
 
         <TextView
