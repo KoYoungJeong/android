@@ -75,20 +75,21 @@ public class SearchMemberModel {
                         .filter(entity -> !TextUtils.isEmpty(entity.getName()) && entity.getId() == memberId))
                 .map(entity -> new SearchedItemVO().setName(entity.getName())
                         .setId(entity.getId())
-                        .setType("member")
+                        .setType(SearchType.Member.name())
                         .setSmallProfileImageUrl(entity.getUserSmallProfileUrl())
                         .setEnabled(TextUtils.equals(entity.getUser().status, "enabled"))
                         .setStarred(entity.isStarred))
                 .collect(() -> selectableMembersLinkedHashMap,
                         (selectableMembersLinkedHashMap, searchedItem) -> selectableMembersLinkedHashMap.put(searchedItem.getId(), searchedItem))
-                .subscribe(map -> {}, Throwable::printStackTrace);
+                .subscribe(map -> {
+                }, Throwable::printStackTrace);
 
         if (mentionType.equals(MentionControlViewModel.MENTION_TYPE_MESSAGE)) {
             SearchedItemVO searchedItemForAll = new SearchedItemVO();
             searchedItemForAll
                     .setId(topicIds.get(0))
                     .setName("All")
-                    .setType("room");
+                    .setType(SearchType.Room.name());
             selectableMembersLinkedHashMap.put(searchedItemForAll.getId(), searchedItemForAll);
         }
 
@@ -102,13 +103,19 @@ public class SearchMemberModel {
 
     private Func2<SearchedItemVO, SearchedItemVO, Integer> getChatItemComparator() {
         return (lhs, rhs) -> {
-            if (TextUtils.equals(lhs.getName(), "room")) {
+
+            String roomType = SearchType.Room.name();
+            if (TextUtils.equals(lhs.getType(), roomType)) {
                 return -1;
-            } else if (TextUtils.equals(rhs.getName(), "room")) {
+            } else if (TextUtils.equals(rhs.getType(), roomType)) {
                 return 1;
             } else {
                 return lhs.getName().compareToIgnoreCase(rhs.getName());
             }
         };
+    }
+
+    private enum SearchType {
+        Room, Member
     }
 }
