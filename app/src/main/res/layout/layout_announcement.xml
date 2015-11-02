@@ -37,18 +37,32 @@
                 android:textColor="@color/jandi_text_light"
                 android:textSize="11sp"/>
 
-            <TextView
-                android:id="@+id/tv_announcement_message"
-                android:scrollbars="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <ScrollView
+                android:id="@+id/sv_announcement_message"
+                android:fillViewport="true"
                 android:layout_below="@id/tv_announcement_info"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="6dp"
                 android:layout_toRightOf="@id/iv_announcement_user"
-                android:singleLine="true"
-                android:textColor="@android:color/black"
-                android:textSize="14sp"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/vg_announcement_message"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tv_announcement_message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black"
+                        android:textSize="14dp"/>
+                </LinearLayout>
+
+            </ScrollView>
 
         </RelativeLayout>
 
