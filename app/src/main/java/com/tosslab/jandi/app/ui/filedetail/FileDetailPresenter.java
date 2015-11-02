@@ -477,7 +477,7 @@ public class FileDetailPresenter {
 
         if (mentionControlViewModel == null) {
             mentionControlViewModel = MentionControlViewModel.newInstance(activity,
-                    editText, searchMemberListView, fileCommentListView,
+                    editText,
                     sharedTopicIds,
                     MentionControlViewModel.MENTION_TYPE_FILE_COMMENT);
             registClipboardListenerforMention();
@@ -577,6 +577,10 @@ public class FileDetailPresenter {
 
     public boolean isTeamOwner() {
         return fileDetailModel.isTeamOwner();
+    }
+
+    public void onConfigurationChanged() {
+        mentionControlViewModel.onConfigurationChanged();
     }
 
     public interface View {

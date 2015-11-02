@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.tosslab.jandi.app">
 
@@ -103,9 +104,7 @@
             android:label="@string/jandi_settings"
             android:screenOrientation="portrait" />
 
-        <activity
-            android:name=".ui.settings.privacy.SettingPrivacyActivity_"
-            android:screenOrientation="portrait" />
+        <activity android:name=".ui.settings.privacy.SettingPrivacyActivity_" />
 
         <activity
             android:name=".ui.profile.modify.ModifyProfileActivity_"
@@ -126,13 +125,11 @@
         <activity
             android:name=".ui.carousel.CarouselViewerActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
             android:theme="@style/JandiTheme.ActionBarOverlay" />
 
         <activity
             android:name=".ui.photo.PhotoViewActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
             android:theme="@style/JandiTheme.ActionBarOverlay" />
 
         <activity
@@ -354,9 +351,7 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ui.passcode.PassCodeActivity_"
-            android:screenOrientation="portrait" />
+        <activity android:name=".ui.passcode.PassCodeActivity_" />
 
         <service android:name=".services.socket.JandiSocketService" />
 

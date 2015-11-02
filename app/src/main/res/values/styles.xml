@@ -339,6 +339,12 @@
         <item name="titleTextAppearance">@style/ToolbarText</item>
     </style>
 
+
+    <style name="Jandi.Default.AutoCompleteTextViewStyle" parent="@style/Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:popupBackground">@drawable/bg_popupwindow_default</item>
+    </style>
+
+
     <style name="ToolbarText" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">20dp</item>
@@ -387,19 +393,23 @@
         <item name="android:layout_marginRight">16dp</item>
     </style>
 
-    <style name="JandiSignUpVerify"/>
-    <style name="JandiSignUpVerify.Code"/>
+    <style name="JandiSignUpVerify" />
+
+    <style name="JandiSignUpVerify.Code" />
+
     <style name="JandiSignUpVerify.Code.Layout">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:weightSum">3</item>
     </style>
+
     <style name="JandiSignUpVerify.Code.Input">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
     </style>
+
     <style name="JandiSignUpVerify.Code.Text">
         <item name="android:layout_width">121dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -408,7 +418,8 @@
         <item name="android:letterSpacing">0.175</item>
     </style>
 
-    <style name="JandiSettingPrivacy"/>
+    <style name="JandiSettingPrivacy" />
+
     <style name="JandiSettingPrivacy.ViewGroup">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">56dp</item>
@@ -418,6 +429,7 @@
         <item name="android:paddingLeft">25dp</item>
         <item name="android:paddingRight">25dp</item>
     </style>
+
     <style name="JandiSettingPrivacy.Divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
@@ -426,7 +438,8 @@
         <item name="android:layout_marginRight">8dp</item>
     </style>
 
-    <style name="JandiMore"/>
+    <style name="JandiMore" />
+
     <style name="JandiMore.Setting">
         <item name="android:layout_height">43dp</item>
         <item name="android:layout_width">match_parent</item>
