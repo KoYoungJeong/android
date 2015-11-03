@@ -1,1 +1,1 @@
-include ':app', ':sprinkler-android', ':test'
+include ':app', ':sprinkler-android', 'ui-automator-test'
