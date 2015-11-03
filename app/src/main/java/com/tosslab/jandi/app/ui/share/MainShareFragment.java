@@ -196,6 +196,18 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     @Override
     public void onResume() {
         super.onResume();
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.registClipboardListener();
+        }
+    }
+
+
+    @Override
+    public void onPause() {
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.removeClipboardListener();
+        }
+        super.onPause();
     }
 
     @Override

@@ -156,10 +156,18 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         EventBus.getDefault().register(this);
         ActivityHelper.setOrientation(this);
         setNeedUnLockPassCode(true);
+
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.registClipboardListener();
+        }
+
     }
 
     @Override
     protected void onPause() {
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.removeClipboardListener();
+        }
         EventBus.getDefault().unregister(this);
         super.onPause();
     }
