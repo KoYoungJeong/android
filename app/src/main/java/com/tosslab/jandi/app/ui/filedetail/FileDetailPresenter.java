@@ -12,8 +12,10 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
+import com.tosslab.jandi.app.local.orm.domain.ReadyComment;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.ReadyCommentRepository;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
@@ -477,11 +479,15 @@ public class FileDetailPresenter {
                     editText,
                     sharedTopicIds,
                     MentionControlViewModel.MENTION_TYPE_FILE_COMMENT);
+
+            ReadyComment readyComment = ReadyCommentRepository.getRepository().getReadyComment(fileMessage.id);
+            mentionControlViewModel.setUpMention(readyComment.getText());
             registClipboardListenerforMention();
         }
     }
 
     public void registClipboardListenerforMention() {
+        removeClipboardListenerforMention();
         if (mentionControlViewModel != null) {
             mentionControlViewModel.registClipboardListener();
         }

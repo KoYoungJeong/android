@@ -51,6 +51,8 @@ import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
+import com.tosslab.jandi.app.local.orm.domain.ReadyComment;
+import com.tosslab.jandi.app.local.orm.repositories.ReadyCommentRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.permissions.Permissions;
@@ -364,6 +366,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     protected void onPause() {
         isForeground = false;
         fileDetailPresenter.removeClipboardListenerforMention();
+        ReadyCommentRepository.getRepository().upsertReadyComment(new ReadyComment(fileId, etComment.getText().toString() ));
         super.onPause();
     }
 

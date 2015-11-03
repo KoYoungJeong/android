@@ -784,12 +784,14 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                         messageEditText,
                         roomIds,
                         MentionControlViewModel.MENTION_TYPE_MESSAGE);
-
-                // copy txt from mentioned edittext message
-                mentionControlViewModel.registClipboardListener();
+                String readyMessage = messageListModel.getReadyMessage(roomId);
+                mentionControlViewModel.setUpMention(readyMessage);
             } else {
                 mentionControlViewModel.refreshSelectableMembers(teamId, roomIds);
             }
+
+            // copy txt from mentioned edittext message
+            mentionControlViewModel.registClipboardListener();
         }
 
         if (NetworkCheckUtil.isConnected()) {

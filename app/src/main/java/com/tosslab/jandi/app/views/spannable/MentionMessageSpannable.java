@@ -41,7 +41,7 @@ public class MentionMessageSpannable extends ReplacementSpan {
         paint.setTextSize(textSize);
         Rect textRect = new Rect();
         paint.getTextBounds(name, 0, name.length(), textRect);
-        if (textRect.width() > maxWidth) {
+        if (maxWidth > 0 && textRect.width() > maxWidth) {
             textRect.right = maxWidth - textRect.left;
         }
         return textRect;

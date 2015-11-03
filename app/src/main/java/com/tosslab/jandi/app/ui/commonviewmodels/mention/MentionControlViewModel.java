@@ -407,7 +407,7 @@ public class MentionControlViewModel {
             float maginDp = 50;
             float marginPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                     maginDp, etMessage.getContext().getResources().getDisplayMetrics());
-            spannable.setViewMaxWidthSize(etMessage.getWidth() - (int) marginPx);
+            spannable.setViewMaxWidthSize(etMessage.getMeasuredWidth() - (int) marginPx);
 
 
             spannableStringBuilder.setSpan(spannable, matcher.start(), matcher.end(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -415,6 +415,7 @@ public class MentionControlViewModel {
         }
 
         etMessage.setText(spannableStringBuilder);
+        etMessage.setSelection(etMessage.length());
     }
 
     // 현재까지의 editText에서 멘션 가공된 message와 mention object 리스트를 얻어오는 메서드
