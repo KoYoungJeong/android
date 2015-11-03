@@ -86,8 +86,8 @@ dependencies {
     compile 'org.androidannotations:androidannotations-api:3.3.2'
     // Network
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.+'
-    compile('io.socket:socket.io-client:0.6.2'){
-        exclude group:'org.json', module:'json'
+    compile('io.socket:socket.io-client:0.6.2') {
+        exclude group: 'org.json', module: 'json'
     }
 
     // Cache
@@ -114,6 +114,13 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-all:1.10.+'
     testCompile 'com.google.guava:guava:18.+'
+
+    // Force usage of support annotations in the test app, since it is internally used by the runner module.
+    androidTestCompile 'com.android.support.test:runner:0.4.1'
+    androidTestCompile 'com.android.support.test:rules:0.4.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
+
     compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
         transitive = true;
     }
@@ -139,10 +146,13 @@ android {
 
     defaultConfig {
         applicationId 'com.tosslab.jandi.app'
-        minSdkVersion 14
+        minSdkVersion 18
         targetSdkVersion 23
         versionCode 68
         versionName '1.6.0'
+
+        // for Ui Testing
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         // Enabling multidex support.
         multiDexEnabled true
@@ -201,6 +211,7 @@ android {
             'META-INF/DEPENDENCIES',
             'META-INF/LICENSE',
             'META-INF/LICENSE.txt',
+            'LICENSE.txt',
             'META-INF/license.txt',
             'META-INF/NOTICE',
             'META-INF/NOTICE.txt',
@@ -244,6 +255,12 @@ android {
 
     testOptions {
 
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            force 'com.android.support:support-annotations:23.0.1'
+        }
     }
 }
 
