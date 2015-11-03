@@ -440,7 +440,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                                             .permission(() -> Manifest.permission.CALL_PHONE)
                                             .hasPermission(() -> {
                                                 call(userPhoneNumber);
-                                                AnalyticsUtil.sendEvent(getScreen(from), AnalyticsValue.Action.Profile_Cellphone);
+                                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Profile_Cellphone);
                                             })
                                             .noPermission(() -> {
                                                 String[] permissions = {Manifest.permission.CALL_PHONE};
@@ -479,7 +479,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .addPermission(Manifest.permission.CALL_PHONE, () -> {
                     FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
                     call(member.getUserPhoneNumber());
-                    AnalyticsUtil.sendEvent(getScreen(from), AnalyticsValue.Action.Profile_Cellphone);
+                    AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Profile_Cellphone);
                 })
                 .resultPermission(Permissions.createPermissionResult(requestCode, permissions, grantResults));
     }

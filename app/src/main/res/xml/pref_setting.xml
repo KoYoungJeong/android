@@ -28,14 +28,14 @@
             android:title="@string/jandi_phone_led"/>
     </PreferenceCategory>
 
-    <!--<ListPreference-->
-        <!--android:defaultValue="true"-->
-        <!--android:key="setting_orientation"-->
-        <!--android:summary="@string/jandi_screen_auto"-->
-        <!--android:title="@string/jandi_screen_orientation"-->
-        <!--android:entries="@array/jandi_pref_orientation"-->
-        <!--android:entryValues="@array/jandi_pref_orientation_values"-->
-        <!--android:widgetLayout="@layout/preference_orientation"/>-->
+    <ListPreference
+        android:defaultValue="true"
+        android:key="setting_orientation"
+        android:summary="@string/jandi_screen_auto"
+        android:title="@string/jandi_screen_orientation"
+        android:entries="@array/jandi_pref_orientation"
+        android:entryValues="@array/jandi_pref_orientation_values"
+        android:widgetLayout="@layout/preference_orientation"/>
 
 
     <PreferenceCategory
