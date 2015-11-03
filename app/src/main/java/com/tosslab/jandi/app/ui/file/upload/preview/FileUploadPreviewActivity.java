@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -25,9 +26,12 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
+import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadPagerAdapter;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenter;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenterImpl;
@@ -50,6 +54,7 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.ViewsById;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -102,6 +107,8 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
     @ViewsById({R.id.iv_file_upload_preview_previous, R.id.iv_file_upload_preview_next})
     List<ImageView> scrollButtons;
+
+    private MentionControlViewModel mentionControlViewModel;
     private PublishSubject<Object> scrollButtonPublishSubject;
     private Subscription subscribe;
 
@@ -116,7 +123,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         setupActionbar();
 
         fileUploadPresenter.setView(this);
-        fileUploadPresenter.onInitEntity(selectedEntityIdToBeShared);
+        fileUploadPresenter.onInitEntity(FileUploadPreviewActivity.this, selectedEntityIdToBeShared);
         fileUploadPresenter.onInitViewPager(selectedEntityIdToBeShared, realFilePathList);
 
 
@@ -157,6 +164,15 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         super.onPause();
     }
 
+    public void onEvent(SelectedMemberInfoForMensionEvent event) {
+
+        SearchedItemVO searchedItemVO = new SearchedItemVO();
+        searchedItemVO.setId(event.getId());
+        searchedItemVO.setName(event.getName());
+        searchedItemVO.setType(event.getType());
+        mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
+    }
+
     public void onEventMainThread(FileUploadPreviewImageClickEvent event) {
 
         ActionBar actionBar = getSupportActionBar();
@@ -194,11 +210,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
     @OptionsItem(R.id.action_confirm)
     void onSendFile() {
-        if (singleUpload) {
-            fileUploadPresenter.onSingleFileUpload();
-            return;
-        }
-        fileUploadPresenter.onMultiFileUpload();
+        fileUploadPresenter.onMultiFileUpload(mentionControlViewModel);
     }
 
     private void setupActionbar() {
@@ -303,8 +315,14 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
     @Override
     public void setComment(String comment) {
-        etComment.setText(comment);
-        etComment.setSelection(etComment.getText().length());
+
+        if (mentionControlViewModel != null && !TextUtils.isEmpty(comment)) {
+            mentionControlViewModel.setUpMention(comment);
+        } else {
+            etComment.setText(comment);
+            etComment.setSelection(etComment.getText().length());
+        }
+
     }
 
     @Override
@@ -383,8 +401,15 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     }
 
     @Override
-    public void setShareEntity(int entityId) {
+    public void setShareEntity(int entityId, boolean isUser) {
         this.selectedEntityIdToBeShared = entityId;
+
+        if (!isUser) {
+            mentionControlViewModel = MentionControlViewModel.newInstance(FileUploadPreviewActivity.this,
+                    etComment,
+                    Arrays.asList(entityId),
+                    MentionControlViewModel.MENTION_TYPE_FILE_COMMENT);
+        }
     }
 
     @Override

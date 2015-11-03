@@ -422,7 +422,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
 
         // XXX what mean Mention VM?
-        fileDetailPresenter.refreshMentionVM(this, fileMessage, rvListSearchMembers, etComment, lvFileDetailComments);
+        fileDetailPresenter.refreshMentionVM(this, fileMessage, etComment);
     }
 
     @UiThread(propagation = Propagation.REUSE)
@@ -977,6 +977,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     public void onEvent(SelectedMemberInfoForMensionEvent event) {
+        if (!isForeground) {
+            return;
+        }
         SearchedItemVO searchedItemVO = new SearchedItemVO();
         searchedItemVO.setId(event.getId());
         searchedItemVO.setName(event.getName());

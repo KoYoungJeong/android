@@ -15,6 +15,7 @@ import android.view.View;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -110,6 +111,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
 
         try {
             ResLeftSideMenu leftSideMenu = shareSelectModel.getLeftSideMenu(teamId);
+            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
             shareSelectModel.initFormattedEntities(leftSideMenu);
             getTopics();
         } catch (RetrofitError e) {

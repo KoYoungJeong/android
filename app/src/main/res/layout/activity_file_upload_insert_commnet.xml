@@ -123,7 +123,7 @@
             android:layout_height="1dp"
             android:background="@color/jandi_file_upload_divider" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/et_file_upload_comment"
             android:layout_width="match_parent"
             android:layout_height="83dp"

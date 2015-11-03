@@ -170,7 +170,7 @@
         </RelativeLayout>
 
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/et_share_comment"
             style="@style/JandiMainShare.Content"
             android:layout_width="match_parent"

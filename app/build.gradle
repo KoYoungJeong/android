@@ -278,9 +278,7 @@ apt {
 }
 
 retrolambda {
-    jdk java8_home
-    oldJdk java6_home
-    javaVersion JavaVersion.VERSION_1_6
+    javaVersion JavaVersion.VERSION_1_7
 }
 
 // It references by http://chrisjenx.com/gradle-robolectric-jacoco-dagger

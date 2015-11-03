@@ -20,7 +20,9 @@ import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -37,6 +39,7 @@ import org.androidannotations.annotations.EBean;
 import org.json.JSONException;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
@@ -196,7 +199,12 @@ public class FilePickerModel {
 
     }
 
-    public JsonObject uploadFile(Context context, String realFilePath, boolean isPublicTopic, String title, int entityId, String comment, ProgressCallback progressCallback) throws ExecutionException, InterruptedException {
+    public JsonObject uploadFile(Context context,
+                                 String realFilePath,
+                                 boolean isPublicTopic,
+                                 String title, int entityId,
+                                 String comment, List<MentionObject> mentions,
+                                 ProgressCallback progressCallback) throws ExecutionException, InterruptedException {
         File uploadFile = new File(realFilePath);
         String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/v2/file";
         String permissionCode = (isPublicTopic) ? "744" : "740";
@@ -216,6 +224,11 @@ public class FilePickerModel {
         // Comment가 함께 등록될 경우 추가
         if (comment != null && !comment.isEmpty()) {
             ionBuilder.setMultipartParameter("comment", comment);
+            try {
+                ionBuilder.setMultipartParameter("mentions", JacksonMapper.getInstance().getObjectMapper().writeValueAsString(mentions));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         ResponseFuture<JsonObject> requestFuture = ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)

@@ -2,10 +2,13 @@ package com.tosslab.jandi.app.ui.commonviewmodels.mention.model;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
+import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel_;
 
 import org.androidannotations.annotations.EBean;
 
@@ -26,9 +29,7 @@ public class SearchMemberModel {
 
     LinkedHashMap<Integer, SearchedItemVO> selectableMembersLinkedHashMap;
 
-    public List<SearchedItemVO> getUserSearchByName(String subNameString,
-                                                    LinkedHashMap<Integer, SearchedItemVO>
-                                                            alreadySelectedMemberHashMap) {
+    public List<SearchedItemVO> getUserSearchByName(String subNameString) {
 
         LinkedHashMap<Integer, SearchedItemVO> searchedItemsHashMap;
         List<SearchedItemVO> searchedItems = new ArrayList<>();
@@ -41,8 +42,6 @@ public class SearchMemberModel {
                 (LinkedHashMap<Integer, SearchedItemVO>) selectableMembersLinkedHashMap.clone();
 
         Observable.from(searchedItemsHashMap.keySet())
-                .filter(integer -> alreadySelectedMemberHashMap != null &&
-                        !alreadySelectedMemberHashMap.containsKey(integer))
                 .filter(integer ->
                         selectableMembersLinkedHashMap.get(integer).getName().toLowerCase()
                                 .contains(subNameString.toLowerCase()))
@@ -54,17 +53,27 @@ public class SearchMemberModel {
 
     }
 
-    public LinkedHashMap<Integer, SearchedItemVO> refreshSelectableMembers
-            (List<Integer> topicIds, String mentionType) {
+    public LinkedHashMap<Integer, SearchedItemVO> refreshSelectableMembers(int teamId,
+                                                                           List<Integer> topicIds,
+                                                                           String mentionType) {
 
-        selectableMembersLinkedHashMap = new LinkedHashMap<Integer, SearchedItemVO>();
+        selectableMembersLinkedHashMap = new LinkedHashMap<>();
 
-        List<FormattedEntity> usersWithoutMe = EntityManager.getInstance()
-                .getFormattedUsersWithoutMe();
+        ShareSelectModel_ shareSelectModel = ShareSelectModel_
+                .getInstance_(JandiApplication.getContext());
+
+        ResLeftSideMenu leftSideMenu = LeftSideMenuRepository.getRepository()
+                .findLeftSideMenuByTeamId(teamId);
+
+        if (leftSideMenu == null) {
+            leftSideMenu = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu();
+        }
+        shareSelectModel.initFormattedEntities(leftSideMenu);
+
+        List<FormattedEntity> usersWithoutMe = shareSelectModel.getFormattedUsersWithoutMe();
 
         Observable.from(topicIds)
-                .flatMap(topicId -> Observable.from(EntityManager.getInstance()
-                        .getEntityById(topicId).getMembers()))
+                .flatMap(topicId -> Observable.from(shareSelectModel.getEntityById(topicId).getMembers()))
                 .collect((Func0<ArrayList<Integer>>) ArrayList::new, (members, memberId) -> {
                     if (!members.contains(memberId)) {
                         members.add(memberId);
@@ -75,7 +84,7 @@ public class SearchMemberModel {
                         .filter(entity -> !TextUtils.isEmpty(entity.getName()) && entity.getId() == memberId))
                 .map(entity -> new SearchedItemVO().setName(entity.getName())
                         .setId(entity.getId())
-                        .setType(SearchType.Member.name())
+                        .setType(SearchType.member.name())
                         .setSmallProfileImageUrl(entity.getUserSmallProfileUrl())
                         .setEnabled(TextUtils.equals(entity.getUser().status, "enabled"))
                         .setStarred(entity.isStarred))
@@ -84,12 +93,12 @@ public class SearchMemberModel {
                 .subscribe(map -> {
                 }, Throwable::printStackTrace);
 
-        if (mentionType.equals(MentionControlViewModel.MENTION_TYPE_MESSAGE)) {
+        if (TextUtils.equals(mentionType, MentionControlViewModel.MENTION_TYPE_MESSAGE)) {
             SearchedItemVO searchedItemForAll = new SearchedItemVO();
             searchedItemForAll
                     .setId(topicIds.get(0))
                     .setName("All")
-                    .setType(SearchType.Room.name());
+                    .setType(SearchType.room.name());
             selectableMembersLinkedHashMap.put(searchedItemForAll.getId(), searchedItemForAll);
         }
 
@@ -101,10 +110,14 @@ public class SearchMemberModel {
         return selectableMembersLinkedHashMap;
     }
 
+    public void clear() {
+        selectableMembersLinkedHashMap = new LinkedHashMap<>();
+    }
+
     private Func2<SearchedItemVO, SearchedItemVO, Integer> getChatItemComparator() {
         return (lhs, rhs) -> {
 
-            String roomType = SearchType.Room.name();
+            String roomType = SearchType.room.name();
             if (TextUtils.equals(lhs.getType(), roomType)) {
                 return -1;
             } else if (TextUtils.equals(rhs.getType(), roomType)) {
@@ -116,6 +129,6 @@ public class SearchMemberModel {
     }
 
     private enum SearchType {
-        Room, Member
+        room, member
     }
 }

@@ -3,9 +3,7 @@ package com.tosslab.jandi.app.ui.filedetail;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.support.v7.widget.RecyclerView;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -470,8 +468,7 @@ public class FileDetailPresenter {
     }
 
     public void refreshMentionVM(Activity activity, ResMessages.OriginalMessage fileMessage,
-                                 RecyclerView searchMemberListView,
-                                 EditText editText, ListView fileCommentListView) {
+                                 EditText editText) {
 
         List<Integer> sharedTopicIds = getSharedTopicIds(fileMessage);
 
@@ -482,7 +479,6 @@ public class FileDetailPresenter {
                     MentionControlViewModel.MENTION_TYPE_FILE_COMMENT);
             registClipboardListenerforMention();
         }
-        mentionControlViewModel.clear();
     }
 
     public void registClipboardListenerforMention() {
