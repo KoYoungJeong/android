@@ -29,7 +29,7 @@ public class DummyMessageDialog extends DialogFragment {
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
-                R.style.JandiTheme_AlertDialog_FixWidth_300);
+                R.style.JandiTheme_AlertDialog_FixWidth_280);
 
         String[] items = {getString(R.string.jandi_try_again), getString(R.string.menu_entity_delete)};
         builder.setItems(items, new DialogInterface.OnClickListener() {
