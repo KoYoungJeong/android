@@ -46,7 +46,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.Fullscreen;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.SystemService;
@@ -70,7 +69,6 @@ import rx.subjects.PublishSubject;
  */
 @EActivity(R.layout.activity_file_upload_insert_commnet)
 @OptionsMenu(R.menu.file_insert_comment_menu)
-@Fullscreen
 public class FileUploadPreviewActivity extends BaseAppCompatActivity implements FileUploadPresenter.View {
 
     public static final int REQUEST_CODE = 17863;
@@ -160,7 +158,13 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         if (mentionControlViewModel != null) {
             mentionControlViewModel.registClipboardListener();
         }
+        setupFullScreen();
+    }
 
+    private void setupFullScreen() {
+        int systemUiFlagFullscreen = View.SYSTEM_UI_FLAG_FULLSCREEN;
+
+        getWindow().getDecorView().setSystemUiVisibility(systemUiFlagFullscreen);
     }
 
     @Override
@@ -201,6 +205,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
             inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
         }
+        setupFullScreen();
     }
 
     @Override
