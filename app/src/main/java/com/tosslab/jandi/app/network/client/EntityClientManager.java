@@ -42,6 +42,9 @@ public class EntityClientManager {
     @AfterInject
     void initAuthentication() {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
+        if (selectedTeamInfo == null) {
+            return;
+        }
         selectedTeamId = selectedTeamInfo.getTeamId();
     }
 

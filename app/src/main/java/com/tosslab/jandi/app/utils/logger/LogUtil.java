@@ -9,6 +9,8 @@ import com.tosslab.jandi.app.BuildConfig;
  */
 public class LogUtil {
 
+    public static final String TAG = "JANDI";
+
     public static void d(String tag, String message) {
         if (BuildConfig.DEBUG) {
             Log.d(tag, message);
@@ -16,7 +18,7 @@ public class LogUtil {
     }
 
     public static void d(String message) {
-        d("JANDI", message);
+        d(TAG, message);
     }
 
     public static void e(String tag, String message) {
@@ -26,12 +28,12 @@ public class LogUtil {
     }
 
     public static void e(String message) {
-        e("JANDI", message);
+        e(TAG, message);
     }
 
     public static void e(String message, Throwable t) {
         if (BuildConfig.DEBUG) {
-            Log.e("JANDI", message, t);
+            Log.e(TAG, message, t);
         }
     }
 
@@ -42,7 +44,7 @@ public class LogUtil {
     }
 
     public static void i(String message) {
-        i("JANDI", message);
+        i(TAG, message);
     }
 
     public static void w(String tag, String message) {
@@ -52,6 +54,6 @@ public class LogUtil {
     }
 
     public static void w(String message) {
-        w("JANDI", message);
+        w(TAG, message);
     }
 }
