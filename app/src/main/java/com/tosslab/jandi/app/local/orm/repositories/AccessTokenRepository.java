@@ -41,25 +41,24 @@ public class AccessTokenRepository {
         repository = null;
     }
 
-    public boolean upsertAccessToken(ResAccessToken accessToken) {
+    public boolean upsertAccessToken(ResAccessToken newResAccessToken) {
         lock.lock();
         try {
 
             Dao<ResAccessToken, ?> dao = helper.getDao(ResAccessToken.class);
-            ResAccessToken resAccessToken = dao.queryBuilder()
-                    .queryForFirst();
+            ResAccessToken resAccessToken = dao.queryBuilder().queryForFirst();
 
             if (resAccessToken == null) {
-                dao.create(accessToken);
+                dao.create(newResAccessToken);
             } else {
-                String accessToken1 = accessToken.getAccessToken();
-                String refreshToken = accessToken.getRefreshToken();
-                String tokenType = accessToken.getTokenType();
-                String expireTime = accessToken.getExpireTime();
+                String accessToken = newResAccessToken.getAccessToken();
+                String refreshToken = newResAccessToken.getRefreshToken();
+                String tokenType = newResAccessToken.getTokenType();
+                String expireTime = newResAccessToken.getExpireTime();
 
                 UpdateBuilder<ResAccessToken, ?> updateBuilder = dao.updateBuilder();
-                if (!TextUtils.isEmpty(accessToken1)) {
-                    updateBuilder.updateColumnValue("accessToken", accessToken1);
+                if (!TextUtils.isEmpty(accessToken)) {
+                    updateBuilder.updateColumnValue("accessToken", accessToken);
                 }
                 if (!TextUtils.isEmpty(refreshToken)) {
                     updateBuilder.updateColumnValue("refreshToken", refreshToken);
