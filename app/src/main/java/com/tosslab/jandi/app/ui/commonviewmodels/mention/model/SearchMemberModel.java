@@ -75,7 +75,7 @@ public class SearchMemberModel {
                         .filter(entity -> !TextUtils.isEmpty(entity.getName()) && entity.getId() == memberId))
                 .map(entity -> new SearchedItemVO().setName(entity.getName())
                         .setId(entity.getId())
-                        .setType(SearchType.Member.name())
+                        .setType(SearchType.member.name())
                         .setSmallProfileImageUrl(entity.getUserSmallProfileUrl())
                         .setEnabled(TextUtils.equals(entity.getUser().status, "enabled"))
                         .setStarred(entity.isStarred))
@@ -89,7 +89,7 @@ public class SearchMemberModel {
             searchedItemForAll
                     .setId(topicIds.get(0))
                     .setName("All")
-                    .setType(SearchType.Room.name());
+                    .setType(SearchType.room.name());
             selectableMembersLinkedHashMap.put(searchedItemForAll.getId(), searchedItemForAll);
         }
 
@@ -104,7 +104,7 @@ public class SearchMemberModel {
     private Func2<SearchedItemVO, SearchedItemVO, Integer> getChatItemComparator() {
         return (lhs, rhs) -> {
 
-            String roomType = SearchType.Room.name();
+            String roomType = SearchType.room.name();
             if (TextUtils.equals(lhs.getType(), roomType)) {
                 return -1;
             } else if (TextUtils.equals(rhs.getType(), roomType)) {
@@ -116,6 +116,6 @@ public class SearchMemberModel {
     }
 
     private enum SearchType {
-        Room, Member
+        room, member
     }
 }
