@@ -221,12 +221,16 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("tossandroid.keystore")
+            storeFile file("keystore/tossandroid.keystore")
             keyAlias "tosskeystore"
             storePassword "Xhtmfoq23@#"
             keyPassword "Xhtmfoq23@#"
         }
         debug {
+            storeFile file("keystore/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
         }
     }
 
