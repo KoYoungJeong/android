@@ -43,6 +43,12 @@ public class AccessTokenRepository {
 
     public boolean upsertAccessToken(ResAccessToken newResAccessToken) {
         lock.lock();
+
+        if (newResAccessToken == null) {
+            lock.unlock();
+            return false;
+        }
+
         try {
 
             Dao<ResAccessToken, ?> dao = helper.getDao(ResAccessToken.class);

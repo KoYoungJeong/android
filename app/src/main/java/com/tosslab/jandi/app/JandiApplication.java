@@ -125,6 +125,8 @@ public class JandiApplication extends MultiDexApplication {
             newToken.setTokenType(accessTokenType);
             AccessTokenRepository.getRepository().upsertAccessToken(newToken);
         }
+
+        JandiPreference.removeTokenInfo(this);
     }
 
     private void registerScreenOffReceiver() {

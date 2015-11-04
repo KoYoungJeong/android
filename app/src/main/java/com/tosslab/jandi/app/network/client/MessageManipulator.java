@@ -43,6 +43,9 @@ public class MessageManipulator {
     @AfterInject
     void initSelectedTeam() {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
+        if (selectedTeamInfo == null) {
+            return;
+        }
         selectedTeamId = selectedTeamInfo.getTeamId();
     }
 
