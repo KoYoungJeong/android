@@ -3,10 +3,10 @@
     android:id="@android:id/text1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textAppearance="@color/jandi_black_de"
-    android:gravity="center_vertical"
-    android:textColor="@color/white"
     android:background="@color/jandi_primary_color"
-    android:paddingStart="16dp"
+    android:gravity="center_vertical"
+    android:minHeight="48dp"
     android:paddingEnd="16dp"
-    android:minHeight="48dp" />
+    android:paddingStart="16dp"
+    android:textColor="@color/white"
+    android:textSize="@dimen/jandi_text_size_medium" />
