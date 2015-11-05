@@ -444,18 +444,11 @@ public class JandiSocketServiceModel {
         }
     }
 
-    public boolean refreshToken() {
-        try {
-            ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
-            String jandiRefreshToken = accessToken.getRefreshToken();
-            ReqAccessToken refreshReqToken = ReqAccessToken.createRefreshReqToken(jandiRefreshToken);
-            ResAccessToken token = RequestApiManager.getInstance()
-                    .getAccessTokenByMainRest(refreshReqToken);
-            return token != null;
-        } catch (Exception e) {
-            LogUtil.e(TAG, e.getMessage());
-            return false;
-        }
+    public ResAccessToken refreshToken() throws RetrofitError {
+        ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
+        String jandiRefreshToken = accessToken.getRefreshToken();
+        ReqAccessToken refreshReqToken = ReqAccessToken.createRefreshReqToken(jandiRefreshToken);
+        return RequestApiManager.getInstance().getAccessTokenByMainRest(refreshReqToken);
     }
 
     public void createFile(Object object) {

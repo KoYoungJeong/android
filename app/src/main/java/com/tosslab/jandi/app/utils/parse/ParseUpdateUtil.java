@@ -61,7 +61,6 @@ public class ParseUpdateUtil {
         }
     }
 
-
     public static void addChannelOnServer() {
         Observable.OnSubscribe<String> subscribe = subscriber -> {
             String accountId = AccountUtil.getAccountId(JandiApplication.getContext());

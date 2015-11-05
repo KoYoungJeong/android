@@ -11,9 +11,11 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
+import com.tosslab.jandi.app.services.SignOutService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -21,6 +23,12 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import retrofit.RetrofitError;
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 3..
@@ -38,6 +46,7 @@ public class JandiSocketService extends Service {
     private boolean isRegister = true;
     private boolean isStopForcibly = false;
     private boolean isRunning = false;
+    private boolean isInRefreshToken = false;
 
     private BroadcastReceiver connectReceiver = new BroadcastReceiver() {
         @Override
@@ -49,7 +58,7 @@ public class JandiSocketService extends Service {
                 return;
             }
 
-            trySocketConnect();
+            checkTokenAndTrySocketConnect();
         }
     };
 
@@ -129,9 +138,9 @@ public class JandiSocketService extends Service {
         jandiSocketServiceModel.startLinkPreviewObserver();
 
         initEventMapper();
-
-        trySocketConnect();
         setUpSocketListener();
+
+        checkTokenAndTrySocketConnect();
 
         isRunning = true;
         return START_NOT_STICKY;
@@ -148,7 +157,6 @@ public class JandiSocketService extends Service {
         EventListener memberLeftListener = objects -> jandiSocketServiceModel.refreshLeaveMember(objects[0]);
 
         eventHashMap.put("team_left", memberLeftListener);
-
 
         EventListener chatLCloseListener = objects ->
                 jandiSocketServiceModel.refreshChatCloseListener(objects[0]);
@@ -199,25 +207,12 @@ public class JandiSocketService extends Service {
 
         eventHashMap.put("check_connect_team", objects -> {
             LogUtil.d(TAG, "check_connect_team");
-
-            long last = System.currentTimeMillis();
-            LogUtil.i(TAG, "start time = " + last);
-            boolean refreshToken = jandiSocketServiceModel.refreshToken();
-            long current = System.currentTimeMillis();
-
-            LogUtil.i(TAG, "end time - " + current + " gap = " + (current - last));
-
-            if (refreshToken) {
-                ConnectTeam connectTeam = jandiSocketServiceModel.getConnectTeam();
-                if (connectTeam != null) {
-                    jandiSocketManager.sendByJson("connect_team", connectTeam);
-                } else {
-                    // 만료된 것으로 보고 소켓 서비스 강제 종료
-                    setStopForcibly(true);
-                    stopSelf();
-                }
+            ConnectTeam connectTeam = jandiSocketServiceModel.getConnectTeam();
+            if (connectTeam != null) {
+                jandiSocketManager.sendByJson("connect_team", connectTeam);
             } else {
-                LogUtil.e(TAG, "refreshToken failed");
+                // 만료된 것으로 보고 소켓 서비스 강제 종료
+                setStopForcibly(true);
                 stopSelf();
             }
         });
@@ -324,28 +319,72 @@ public class JandiSocketService extends Service {
         return NetworkCheckUtil.isConnected();
     }
 
-    synchronized private void trySocketConnect() {
+    private synchronized void checkTokenAndTrySocketConnect() {
+        LogUtil.e(TAG, "checkTokenAndTrySocketConnect");
+
         if (!isActiveNetwork()) {
             LogUtil.e(TAG, "Unavailable networking");
             closeAll();
             return;
         }
 
-        if (!jandiSocketManager.isConnectingOrConnected()) {
-            LogUtil.e(TAG, "trySocketConnect");
-            jandiSocketManager.connect(objects -> {
-                StringBuilder sb = new StringBuilder();
-                for (Object o : objects) {
-                    sb.append(o.toString() + "\n");
-                }
-                stopService(getBaseContext());
-                sendBroadcastForRestart();
-            });
-            jandiSocketManager.register("check_connect_team", eventHashMap.get("check_connect_team"));
-        } else {
+        if (jandiSocketManager.isConnectingOrConnected()) {
             LogUtil.d(TAG, "Socket is connected");
             setUpSocketListener();
+            return;
         }
+
+        if (isInRefreshToken) {
+            return;
+        }
+
+        isInRefreshToken = true;
+
+        Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                subscriber.onNext(isValidToken());
+            }
+        }).subscribeOn(Schedulers.io())
+                .subscribe(isValidToken -> {
+                    if (!isValidToken) {
+                        LogUtil.e("Invalid Token, Stop SocketService");
+                        setStopForcibly(true);
+                        stopSelf();
+                        SignOutService.start();
+                        return;
+                    }
+
+                    trySocketConnect();
+                });
+    }
+
+    private Boolean isValidToken() {
+        try {
+            jandiSocketServiceModel.refreshToken();
+        } catch (RetrofitError e) {
+            /**
+             * RefreshToken 요청에서 400 에러가 발생하면 비정상적인 RefreshToken 을 가지고 있다고 판단.
+             */
+            e.printStackTrace();
+            if (e.getKind() == RetrofitError.Kind.HTTP
+                    && e.getResponse().getStatus() == JandiConstants.NetworkError.BAD_REQUEST) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void trySocketConnect() {
+        jandiSocketManager.connect(objects -> {
+            StringBuilder sb = new StringBuilder();
+            for (Object o : objects) {
+                sb.append(o.toString() + "\n");
+            }
+            stopService(getBaseContext());
+            sendBroadcastForRestart();
+        });
+        jandiSocketManager.register("check_connect_team", eventHashMap.get("check_connect_team"));
     }
 
     @Override

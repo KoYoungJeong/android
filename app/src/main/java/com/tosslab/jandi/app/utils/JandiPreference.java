@@ -174,6 +174,15 @@ public class JandiPreference {
         return pref.getString(PREF_REFRESH_TOKEN, "");
     }
 
+    public static void removeTokenInfo(Context context) {
+        SharedPreferences pref = getSharedPreferences(context);
+        pref.edit()
+                .remove(PREF_ACCESS_TOKEN)
+                .remove(PREF_ACCESS_TOKEN_TYPE)
+                .remove(PREF_REFRESH_TOKEN)
+                .commit();
+    }
+
     public static void signOut(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
         pref.edit().clear().commit();

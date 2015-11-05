@@ -148,8 +148,8 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 18
         targetSdkVersion 23
-        versionCode 68
-        versionName '1.6.0'
+        versionCode 69
+        versionName '1.6.1'
 
         // for Ui Testing
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -221,12 +221,16 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("tossandroid.keystore")
+            storeFile file("keystore/tossandroid.keystore")
             keyAlias "tosskeystore"
             storePassword "Xhtmfoq23@#"
             keyPassword "Xhtmfoq23@#"
         }
         debug {
+            storeFile file("keystore/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
         }
     }
 
