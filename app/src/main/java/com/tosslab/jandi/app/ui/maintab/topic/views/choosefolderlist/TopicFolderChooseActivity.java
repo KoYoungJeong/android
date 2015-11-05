@@ -153,6 +153,7 @@ public class TopicFolderChooseActivity extends BaseAppCompatActivity implements 
 
         TextView tvTitle = (TextView) rootView.findViewById(R.id.tv_popup_title);
         EditText etInput = (EditText) rootView.findViewById(R.id.et_dialog_input_text);
+        etInput.setHint(R.string.jandi_title_name);
         tvTitle.setText(R.string.jandi_folder_insert_name);
 
         builder.setView(rootView)
