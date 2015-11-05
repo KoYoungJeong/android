@@ -1,0 +1,9 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+
+        <activity android:name="com.tosslab.jandi.app.ui.base.BaseAppCompatActivity"/>
+
+    </application>
+
+</manifest>

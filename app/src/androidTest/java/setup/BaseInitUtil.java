@@ -2,6 +2,8 @@ package setup;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.DaoManager;
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.AnnouncementRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
@@ -17,6 +19,8 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 public class BaseInitUtil {
@@ -24,6 +28,9 @@ public class BaseInitUtil {
     public static final String TEST_PASSWORD = "dnrl~12AB";
 
     public static void initData() {
+
+        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class).clearAllData();
+        JandiPreference.signOut(JandiApplication.getContext());
 
         ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
                 ReqAccessToken.createPasswordReqToken(TEST_ID, TEST_PASSWORD));
@@ -34,6 +41,10 @@ public class BaseInitUtil {
         int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
         AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
+
+        ResLeftSideMenu leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(AccountRepository.getRepository().getSelectedTeamId());
+        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+
     }
 
     public static void releaseDatabase() {
