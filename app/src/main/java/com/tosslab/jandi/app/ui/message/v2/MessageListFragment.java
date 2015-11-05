@@ -488,9 +488,15 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 .delay(100, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(integer -> {
-                    messageListPresenter.justRefresh();
-                    mentionControlViewModel.onConfigurationChanged();
-                    stickerViewModel.onConfigurationChanged();
+                    if (messageListPresenter != null) {
+                        messageListPresenter.justRefresh();
+                    }
+                    if (mentionControlViewModel != null) {
+                        mentionControlViewModel.onConfigurationChanged();
+                    }
+                    if (stickerViewModel != null) {
+                        stickerViewModel.onConfigurationChanged();
+                    }
                 });
 
     }
