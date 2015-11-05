@@ -273,6 +273,8 @@
 	<string name="jandi_no_invite_email">"팀에 초대를 원하는 멤버들의 이메일 주소를 입력해주세요"</string>
 	<string name="jandi_no_long_team_member">"%s님은 더 이상 팀 멤버가 아닙니다."</string>
 	<string name="jandi_no_message_in_topic_dm">"아직 메세지가 없습니다.메세지를 입력하셔서 대화를 시작해보세요."</string>
+	<string name="jandi_no_preview_push_mention">"메시지에서 멘션했습니다."</string>
+	<string name="jandi_no_preview_push_message">"새 메시지가 도착했습니다."</string>
 	<string name="jandi_no_recent_stickers">"최근 사용한 스티커가 없습니다."</string>
 	<string name="jandi_no_topic_to_join">"참여 가능한 토픽이 없습니다"</string>
 	<string name="jandi_notification_off">"알림 끄기"</string>
@@ -288,6 +290,7 @@
 	<string name="jandi_password_strength_weak">"숫자, 특수문자, 또는 영어 대문자 중 최소한 1자 이상이 포함되어야 합니다"</string>
 	<string name="jandi_phone_led">"휴대전화 LED"</string>
 	<string name="jandi_plz_input_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
+	<string name="jandi_preview_message_contents">"메시지 내용 미리보기"</string>
 	<string name="jandi_privacy_policy">"개인정보 취급방침"</string>
 	<string name="jandi_privacy_protection">"개인 정보 보호"</string>
 	<string name="jandi_private_topic_tip_1">"비공개 토픽은 초대를 받아야만 참여할 수 있으며 참여하지 않은 멤버들에게는 목록조차 노출되지 않습니다."</string>
@@ -310,6 +313,9 @@
 	<string name="jandi_profile_status_message">"상태"</string>
 	<string name="jandi_profile_update">"완료"</string>
 	<string name="jandi_profile_update_succeed">"프로필이 수정되었습니다"</string>
+	<string name="jandi_push_no_preview">"미리보기 하지 않음"</string>
+	<string name="jandi_push_preview_all_message">"모든 메시지"</string>
+	<string name="jandi_push_preview_public_only">"공개 토픽만"</string>
 	<string name="jandi_question_team_create">"아직 잔디 사용자가 아니세요?"</string>
 	<string name="jandi_retry_voice_search">"음성 검색을 다시 시도해주십시요."</string>
 	<string name="jandi_save">"저장"</string>
@@ -332,7 +338,9 @@
 	<string name="jandi_set_passcode">"비밀번호 잠금 설정"</string>
 	<string name="jandi_set_passcode_detail">"비밀번호를 잊은 경우 다시 찾을 수 있는 방법이 없으므로 
 앱을 지우고 재설치 해 주시기 바랍니다"</string>
+	<string name="jandi_setting_display">"화면"</string>
 	<string name="jandi_setting_general">"일반"</string>
+	<string name="jandi_setting_notification">"알림 설정"</string>
 	<string name="jandi_setting_push">"알림 설정"</string>
 	<string name="jandi_setting_push_subscription">"알림"</string>
 	<string name="jandi_setting_push_subscription_cancel">"푸쉬 알림을 받지 않습니다."</string>

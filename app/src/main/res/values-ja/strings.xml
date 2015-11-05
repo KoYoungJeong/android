@@ -273,6 +273,8 @@
 	<string name="jandi_no_invite_email">"招待したいメンバーのメールアドレスを入力してください"</string>
 	<string name="jandi_no_long_team_member">"%sさんはもうこのチームのメンバーではありません"</string>
 	<string name="jandi_no_message_in_topic_dm">"メッセージを書いて会話を始めましょう"</string>
+	<string name="jandi_no_preview_push_mention">"メッセージでメンションされました。"</string>
+	<string name="jandi_no_preview_push_message">"新着メッセージがあります。"</string>
 	<string name="jandi_no_recent_stickers">"最近利用したスタンプがありません"</string>
 	<string name="jandi_no_topic_to_join">"参加できるトピックがありません"</string>
 	<string name="jandi_notification_off">"通知をオフにする"</string>
@@ -288,6 +290,7 @@
 	<string name="jandi_password_strength_weak">"最低1文字の数字または大文字または記号を含めてください"</string>
 	<string name="jandi_phone_led">"携帯の通知ランプ"</string>
 	<string name="jandi_plz_input_topic_description">"トピックの説明（選択）"</string>
+	<string name="jandi_preview_message_contents">"メッセージプレビュー"</string>
 	<string name="jandi_privacy_policy">"プライバシーポリシー"</string>
 	<string name="jandi_privacy_protection">"プライバシー"</string>
 	<string name="jandi_private_topic_tip_1">"プライベートトピックはそのトピックに招待されていないメンバーから見ることはできません"</string>
@@ -310,6 +313,9 @@
 	<string name="jandi_profile_status_message">"今日の気分"</string>
 	<string name="jandi_profile_update">"変更する"</string>
 	<string name="jandi_profile_update_succeed">"プロフィールは正常に更新されました"</string>
+	<string name="jandi_push_no_preview">"プレビューなし"</string>
+	<string name="jandi_push_preview_all_message">"全メッセージ"</string>
+	<string name="jandi_push_preview_public_only">"公開トピックのみ"</string>
 	<string name="jandi_question_team_create">"JANDIにチームを作成していない方はこちら"</string>
 	<string name="jandi_retry_voice_search">"言葉を認識できませんでした。もう一度お試し下さい"</string>
 	<string name="jandi_save">"保存"</string>
@@ -331,7 +337,9 @@
 	<string name="jandi_service_maintenance">"JANDIは現在定期メンテナンス中のためご利用できません。定期メンテナンスは数時間で終了の予定です。ご不便をお掛けし申し訳ありません。"</string>
 	<string name="jandi_set_passcode">"パスコードロック設定"</string>
 	<string name="jandi_set_passcode_detail">"パスコードを忘れた場合はJANDIアプリを削除して再インストールしてください。"</string>
+	<string name="jandi_setting_display">"画面表示"</string>
 	<string name="jandi_setting_general">"一般"</string>
+	<string name="jandi_setting_notification">"通知設定"</string>
 	<string name="jandi_setting_push">"プッシュ"</string>
 	<string name="jandi_setting_push_subscription">"プッシュ通知"</string>
 	<string name="jandi_setting_push_subscription_cancel">"通知をオフになっています"</string>
