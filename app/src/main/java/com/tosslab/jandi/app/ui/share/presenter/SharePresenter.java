@@ -148,13 +148,17 @@ public class SharePresenter {
                 view.showSuccessToast(JandiApplication.getContext()
                         .getString(R.string.jandi_file_upload_succeed));
                 int entityType = 0;
+                setupSelectedTeam(teamId);
+                view.moveEntity(teamId, roomId, roomType);
+
+                view.finishOnUiThread();
+
                 shareModel.trackUploadingFile(entityType, result);
             } else {
                 LogUtil.e("Upload Fail : Result : " + result);
                 view.showFailToast(JandiApplication.getContext()
                         .getString(R.string.err_file_upload_failed));
             }
-            view.finishOnUiThread();
         } catch (ExecutionException e) {
             if (view != null) {
                 view.showFailToast(JandiApplication.getContext()
@@ -164,11 +168,6 @@ public class SharePresenter {
             LogUtil.e("Upload Error : ", e);
             view.showFailToast(JandiApplication.getContext()
                     .getString(R.string.err_file_upload_failed));
-        } finally {
-            // 이동해야 함.
-            setupSelectedTeam(teamId);
-            view.moveEntity(teamId, roomId, roomType);
-
         }
     }
 
