@@ -73,7 +73,8 @@ public class SearchedFileItemView extends RelativeLayout {
         MimeTypeUtil.FilterType filterType = IconFilterUtil.getMimeType(icon);
         if (filterType == MimeTypeUtil.FilterType.Image) {
             if (BitmapUtil.hasImageUrl(content)) {
-                imageViewSearchedFileType.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageViewSearchedFileType.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                imageViewSearchedFileType.setImageResource(R.drawable.file_icon_img);
                 // 썸네일
                 String thumbnailUrl =
                         BitmapUtil.getThumbnailUrlOrOriginal(content, BitmapUtil.Thumbnails.SMALL);

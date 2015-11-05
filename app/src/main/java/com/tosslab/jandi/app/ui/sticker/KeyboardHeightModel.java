@@ -73,7 +73,7 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
             this.onKeyboardHeightCapture = null;
             // if connect Hard keyboard
 
-            // 전체 화면의 3/5 만큼만 되도록 지정
+            // 전체 화면의 2/5 만큼만 되도록 지정
             int stickerHeight = resources.getDisplayMetrics().heightPixels * 2 / 5;
             JandiPreference.setKeyboardHeight(activity, stickerHeight);
 

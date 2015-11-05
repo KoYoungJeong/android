@@ -79,7 +79,6 @@ public class PushHandler {
             showNotification(context, pushTOInfo, true);
         } else {
             if (PushTO.RoomType.CHAT.getName().equals(pushTOInfo.getRoomType())) {
-                LogUtil.e("tony", "roomType == CHAT");
                 showNotification(context, pushTOInfo, false);
             } else {
                 boolean isTopicPushOn = jandiPushReceiverModel.isTopicPushOn(leftSideMenu, pushTOInfo.getRoomId());

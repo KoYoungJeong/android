@@ -804,7 +804,9 @@ public class MessageListPresenter {
     }
 
     public void loadSticker(StickerInfo stickerInfo) {
-        StickerManager.getInstance().loadStickerDefaultOption(imgStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+        StickerManager.LoadOptions loadOption = new StickerManager.LoadOptions();
+        loadOption.scaleType = ImageView.ScaleType.CENTER_CROP;
+        StickerManager.getInstance().loadSticker(imgStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), loadOption);
     }
 
     public void dismissStickerPreview() {

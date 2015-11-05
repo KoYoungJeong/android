@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.MentionMemberListAdapter;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
@@ -117,6 +118,7 @@ public class MentionControlViewModel {
         mentionMemberListAdapter = new MentionMemberListAdapter(activity, users);
 
         etMessage.setAdapter(mentionMemberListAdapter);
+        etMessage.setDropDownBackgroundResource(R.drawable.mention_popup);
         etMessage.setThreshold(1);
 
         if (keyboardHeightModel.getOnKeyboardShowListener() == null) {

@@ -29,9 +29,9 @@ public class DummyMessageDialog extends DialogFragment {
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
-                R.style.JandiTheme_AlertDialog_FixWidth_300);
+                R.style.JandiTheme_AlertDialog_FixWidth_280);
 
-        String[] items = {getString(R.string.jandi_try_again), getString(R.string.menu_entity_delete)};
+        String[] items = {getString(R.string.jandi_try_again), getString(R.string.menu_entity_delete), getString(R.string.jandi_cancel)};
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -44,8 +44,7 @@ public class DummyMessageDialog extends DialogFragment {
                         break;
                 }
             }
-        })
-                .setNegativeButton(R.string.jandi_cancel, null);
+        });
 
 
         return builder.create();

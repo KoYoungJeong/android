@@ -76,8 +76,17 @@ public class StickerManager {
             DrawableTypeRequest<Uri> glideRequestor = Glide.with(context)
                     .load(Uri.parse(stickerAssetPath));
 
+            switch (options.scaleType) {
+                case CENTER_CROP:
+                    glideRequestor.centerCrop();
+                    break;
+                default:
+                case FIT_CENTER:
+                    glideRequestor.fitCenter();
+                    break;
+            }
+
             glideRequestor.asBitmap()
-                    .fitCenter()
                     .into(new BitmapImageViewTarget(view) {
                         @Override
                         public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -128,11 +137,11 @@ public class StickerManager {
 
             String group;
             switch (stickerItem.groupId) {
-                case StickerRepository.DEFAULT_GROUP_ID_MOZZI :
+                case StickerRepository.DEFAULT_GROUP_ID_MOZZI:
                     group = "mozzi";
                     break;
 
-                case StickerRepository.DEFAULT_GROUP_ID_DAY :
+                case StickerRepository.DEFAULT_GROUP_ID_DAY:
                     group = "day";
                     break;
 
@@ -152,6 +161,7 @@ public class StickerManager {
     public static class LoadOptions {
         public boolean isFadeAnimation = true;
         public boolean isClickImage;
+        public ImageView.ScaleType scaleType = ImageView.ScaleType.FIT_CENTER;
     }
 
 }

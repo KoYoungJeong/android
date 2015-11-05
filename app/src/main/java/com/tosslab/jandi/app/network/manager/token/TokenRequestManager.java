@@ -1,72 +1,124 @@
 package com.tosslab.jandi.app.network.manager.token;
 
+import android.text.TextUtils;
+import android.util.Log;
+
+import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Date;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import retrofit.RetrofitError;
 
 public class TokenRequestManager {
+    public static final String TAG = TokenRequestManager.class.getSimpleName();
+
+    private static final int RETRY_COUNT = 3;
+    private static final int SKIP_TERM = 500;
+
     private static TokenRequestManager instance;
-    Queue<String> queue;
     private Lock lock;
 
-
-    private ResAccessToken lastestToken;
+    private LatestTokenInfo latestTokenInfo;
 
     private TokenRequestManager() {
-        queue = new ConcurrentLinkedQueue<>();
         lock = new ReentrantLock();
     }
 
-    synchronized public static TokenRequestManager getInstance() {
+    public synchronized static TokenRequestManager getInstance() {
         if (instance == null) {
             instance = new TokenRequestManager();
         }
         return instance;
     }
 
-    public ResAccessToken get(String refreshToken) {
-        queue.offer(refreshToken);
-
+    public ResAccessToken refreshToken() {
         lock.lock();
 
-        ResAccessToken accessToken = null;
-
-        if (lastestToken != null) {
-            accessToken = lastestToken;
-            queue.poll();
-            if (queue.peek() == null) {
-                lastestToken = null;
-            }
+        // DB에 토큰 정보가 저장이 안되어 있는 경우에 대한 방어코드
+        ResAccessToken savedResAccessToken = AccessTokenRepository.getRepository().getAccessToken();
+        if (savedResAccessToken == null || TextUtils.isEmpty(savedResAccessToken.getRefreshToken())) {
+            LogUtil.e(TAG, "Token is empty");
             lock.unlock();
+            return null;
+        }
+
+        if (latestTokenInfo != null) {
+            Date latestSavedDate = latestTokenInfo.getDate();
+            if (System.currentTimeMillis() - latestSavedDate.getTime() <= SKIP_TERM) {
+                LogUtil.i(TAG, "Token is already exists");
+                lock.unlock();
+                return latestTokenInfo.getAccessToken();
+            }
+        }
+
+        int loginRetryCount = 0;
+
+        String refreshToken = savedResAccessToken.getRefreshToken();
+
+        ReqAccessToken refreshReqToken = ReqAccessToken.createRefreshReqToken(refreshToken);
+
+        ResAccessToken accessToken = null;
+        while (loginRetryCount < RETRY_COUNT) {
+            try {
+                accessToken = requestRefreshTokenAndSave(refreshReqToken);
+
+                LogUtil.i(TAG, "RefreshToekn Success.");
+                latestTokenInfo = new LatestTokenInfo(accessToken, new Date());
+
+                break;
+            } catch (RetrofitError e) {
+                if (e.getKind() == RetrofitError.Kind.NETWORK) {
+                    Log.e(TAG, "RefreshToken has failed by NETWORK. retry");
+                    loginRetryCount++;
+                } else {
+                    Log.e(TAG, "RefreshToken has failed by HTTP. end the request");
+                    break;
+                }
+            }
+        }
+
+        lock.unlock();
+        return accessToken;
+    }
+
+    private ResAccessToken requestRefreshTokenAndSave(ReqAccessToken reqAccessToken) throws RetrofitError {
+        JacksonConvertedSimpleRestApiClient requestApiClient = new JacksonConvertedSimpleRestApiClient();
+        ResAccessToken accessToken = requestApiClient.getAccessTokenByMainRest(reqAccessToken);
+        TokenUtil.saveTokenInfoByRefresh(accessToken);
+        return accessToken;
+    }
+
+    private static class LatestTokenInfo {
+        private ResAccessToken accessToken;
+        private Date date;
+
+        public LatestTokenInfo(ResAccessToken accessToken, Date date) {
+            this.accessToken = accessToken;
+            this.date = date;
+        }
+
+        public ResAccessToken getAccessToken() {
             return accessToken;
         }
 
-        try {
-            ReqAccessToken refreshReqToken = ReqAccessToken.createRefreshReqToken(refreshToken);
-            accessToken = new JacksonConvertedSimpleRestApiClient()
-                    .getAccessTokenByMainRest(refreshReqToken);
-
-            queue.poll();
-            if (queue.peek() != null) {
-                lastestToken = accessToken;
-            } else {
-                lastestToken = null;
-            }
-
-        } catch (RetrofitError e) {
-            queue.poll();
-            lastestToken = null;
-        } finally {
-            lock.unlock();
+        public void setAccessToken(ResAccessToken accessToken) {
+            this.accessToken = accessToken;
         }
 
-        return accessToken;
+        public Date getDate() {
+            return date;
+        }
+
+        public void setDate(Date date) {
+            this.date = date;
+        }
     }
+
 }

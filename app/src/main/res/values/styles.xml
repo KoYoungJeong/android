@@ -341,7 +341,7 @@
 
 
     <style name="Jandi.Default.AutoCompleteTextViewStyle" parent="@style/Widget.AppCompat.AutoCompleteTextView">
-        <item name="android:popupBackground">@drawable/bg_popupwindow_default</item>
+        <item name="android:popupBackground">@drawable/mention_popup</item>
     </style>
 
 

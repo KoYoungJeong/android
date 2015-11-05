@@ -561,7 +561,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
     }
 
-    @Click(R.id.layout_file_list_empty)
+    @Click(value = {R.id.btn_file_empty_upload, R.id.iv_file_empty_upload})
     void onUploadClick() {
         DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
         fileUploadTypeDialog.show(getFragmentManager(), "dialog");
