@@ -16,8 +16,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.MentionMemberListAdapter;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
@@ -55,7 +55,7 @@ public class MentionControlViewModel {
     private String beforeText = "";
     private String afterText = "";
     private String removedText = "";
-    private String currentSearchKeywordString;
+    protected String currentSearchKeywordString;
 
     private ClipboardListener clipboardListener;
     private TextWatcher textWatcher;
@@ -236,7 +236,7 @@ public class MentionControlViewModel {
     }
 
     // @ 이후로 부터 검색에 필요한 이름을 얻어오는 메서드
-    public String getMentionSearchName(CharSequence cs) {
+    private String getMentionSearchName(CharSequence cs) {
         Pattern p = Pattern.compile("(?:(?:^|\\s)([@\\uff20]((?:[^@\\uff20]){0,30})))$");
         Matcher matcher = p.matcher(cs);
         String result = null;
