@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.photo;
 
 import android.animation.Animator;
+import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -17,6 +18,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.photo.presenter.PhotoViewPresenter;
 import com.tosslab.jandi.app.ui.photo.widget.CircleProgress;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import org.androidannotations.annotations.AfterViews;
@@ -35,6 +37,13 @@ import uk.co.senab.photoview.PhotoView;
  */
 @EFragment(R.layout.fragment_photo_view)
 public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.View {
+    public interface OnExitListener {
+        int DIRECTION_TO_TOP = 0;
+
+        int DIRECTION_TO_BOTTOM = 1;
+
+        void onExit(int direction);
+    }
 
     public static final String TASK_ID_ACTIONBAR_HIDE = "actionbar_hide";
 
@@ -61,6 +70,16 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
     private CarouselViewerActivity.OnCarouselImageClickListener carouselImageClickListener;
     private boolean isForeground = true;
 
+    private OnExitListener onExitListener;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof OnExitListener) {
+            onExitListener = (OnExitListener) activity;
+        }
+    }
+
     @AfterViews
     void initView() {
         // 캐러셀 이미지 처리를 위해 상위 액티비티로 전환
@@ -79,6 +98,19 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
             }
         });
 
+        photoView.setOnSingleFlingListener((e1, e2, velocityX, velocityY) -> {
+            if (Math.abs(velocityX) > Math.abs(velocityY)) {
+                return false;
+            }
+
+            if (onExitListener == null) {
+                return false;
+            }
+
+            onExitListener.onExit(velocityY > 0
+                    ? OnExitListener.DIRECTION_TO_BOTTOM : OnExitListener.DIRECTION_TO_TOP);
+            return true;
+        });
     }
 
     private void setupProgress() {
