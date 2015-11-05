@@ -36,15 +36,16 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/iv_sticker_default_items_no_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:scaleType="centerInside"
+                android:layout_marginBottom="15dp"
                 android:src="@drawable/icon_sticker_no_items" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
                 android:text="@string/jandi_no_recent_stickers"
                 android:textColor="#FF97989A"
                 android:textSize="21dp" />

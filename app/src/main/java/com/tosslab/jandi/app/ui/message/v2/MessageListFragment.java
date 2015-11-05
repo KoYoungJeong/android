@@ -490,6 +490,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 .subscribe(integer -> {
                     messageListPresenter.justRefresh();
                     mentionControlViewModel.onConfigurationChanged();
+                    stickerViewModel.onConfigurationChanged();
                 });
 
     }
