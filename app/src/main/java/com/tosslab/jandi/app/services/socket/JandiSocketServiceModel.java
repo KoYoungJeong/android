@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.manager.token.TokenRequestManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -445,10 +446,7 @@ public class JandiSocketServiceModel {
     }
 
     public ResAccessToken refreshToken() throws RetrofitError {
-        ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
-        String jandiRefreshToken = accessToken.getRefreshToken();
-        ReqAccessToken refreshReqToken = ReqAccessToken.createRefreshReqToken(jandiRefreshToken);
-        return RequestApiManager.getInstance().getAccessTokenByMainRest(refreshReqToken);
+        return TokenRequestManager.getInstance().refreshToken();
     }
 
     public void createFile(Object object) {
