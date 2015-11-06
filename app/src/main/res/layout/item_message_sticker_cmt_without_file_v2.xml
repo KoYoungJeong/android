@@ -15,7 +15,7 @@
         android:paddingBottom="10dp"
         android:paddingLeft="@dimen/jandi_messages_padding_left"
         android:paddingRight="@dimen/jandi_messages_padding_right"
-        android:paddingTop="15dp">
+        android:paddingTop="10dp">
 
         <!-- 내부에 포함된 댓글일 경우 -->
         <RelativeLayout
