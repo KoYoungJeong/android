@@ -74,7 +74,7 @@ public class ImageViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
+        BitmapUtil.loadCropImageByGlideOrIonWhenGif(ivProfile,
                 profileUrl,
                 R.drawable.profile_img,
                 R.drawable.profile_img
@@ -173,7 +173,7 @@ public class ImageViewHolder implements BodyViewHolder {
                                     fileContent, BitmapUtil.Thumbnails.LARGE);
                         }
 
-                        BitmapUtil.loadCropBitmapByGlide(ivFileImage,
+                        BitmapUtil.loadCropBitmapByIon(ivFileImage,
                                 thumbPath,
                                 R.drawable.file_icon_img
                         );

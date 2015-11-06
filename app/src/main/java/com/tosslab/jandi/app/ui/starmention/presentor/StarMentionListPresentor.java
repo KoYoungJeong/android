@@ -67,7 +67,7 @@ public class StarMentionListPresentor {
             EntityManager entityManager = EntityManager.getInstance();
             FormattedEntity formattedEntity = entityManager.getEntityById(starMentionVO.getRoomId());
 
-            if (formattedEntity != null) {
+            if (formattedEntity != EntityManager.UNKNOWN_USER_ENTITY) {
 
                 if (!formattedEntity.isUser()) {
                     for (Integer memberId : formattedEntity.getMembers()) {
@@ -156,6 +156,12 @@ public class StarMentionListPresentor {
 
     }
 
+    public void onTopicDeleteEvent(int teamId, int topicId) {
+        if (teamId == starMentionListModel.getTeamId()) {
+            view.deleteItemOfTopic(topicId);
+        }
+    }
+
     public interface View {
 
         void onAddAndShowList(List<StarMentionVO> starMentionMessageList);
@@ -175,6 +181,8 @@ public class StarMentionListPresentor {
         void showSuccessToast(String message);
 
         void showCheckNetworkDialog();
+
+        void deleteItemOfTopic(int topicId);
     }
 
 }

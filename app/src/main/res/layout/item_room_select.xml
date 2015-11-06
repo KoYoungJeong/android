@@ -5,9 +5,8 @@
     android:background="?android:attr/selectableItemBackground"
     android:orientation="vertical">
 
-
     <View
-        android:id="@+id/ll_line_use_for_first_no_folder_item"
+        android:id="@+id/v_line_use_for_first_no_folder_item"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#e5e5e5"

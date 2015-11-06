@@ -273,6 +273,8 @@
 	<string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>
 	<string name="jandi_no_long_team_member">"%s is no longer a team member."</string>
 	<string name="jandi_no_message_in_topic_dm">"Enter a message to start the conversation."</string>
+	<string name="jandi_no_preview_push_mention">"[{{TopicName}}] {{Sendername}} mentioned you."</string>
+	<string name="jandi_no_preview_push_message">"[{{TopicName}}] {{Sendername}} sent you a message."</string>
 	<string name="jandi_no_recent_stickers">"No Recent Stickers"</string>
 	<string name="jandi_no_topic_to_join">"No topics to join"</string>
 	<string name="jandi_notification_off">"Turn off Notifications"</string>
@@ -288,6 +290,7 @@
 	<string name="jandi_password_strength_weak">"Must contain at least one number, capitalized letter, or special character."</string>
 	<string name="jandi_phone_led">"Phone LED"</string>
 	<string name="jandi_plz_input_topic_description">"Description (optional)"</string>
+	<string name="jandi_preview_message_contents">"Preview Message Contents"</string>
 	<string name="jandi_privacy_policy">"Privacy Policy"</string>
 	<string name="jandi_privacy_protection">"Privacy"</string>
 	<string name="jandi_private_topic_tip_1">"Private topics are not available to non-invited members"</string>
@@ -310,6 +313,9 @@
 	<string name="jandi_profile_status_message">"Status"</string>
 	<string name="jandi_profile_update">"Update"</string>
 	<string name="jandi_profile_update_succeed">"Profile has been updated"</string>
+	<string name="jandi_push_no_preview">"No preview"</string>
+	<string name="jandi_push_preview_all_message">"All messages"</string>
+	<string name="jandi_push_preview_public_only">"Public topics only"</string>
 	<string name="jandi_question_team_create">"Don't have a team on JANDI yet?"</string>
 	<string name="jandi_retry_voice_search">"Didn\'t catch that, try speaking again"</string>
 	<string name="jandi_save">"Save"</string>

@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -74,6 +75,8 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
+import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
+import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -170,9 +173,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public static final String EXTRA_FILE_DELETE = "file_delete";
     public static final String EXTRA_FILE_ID = "file_id";
     public static final String EXTRA_NEW_PHOTO_FILE = "new_photo_file";
-
+    public static final int REQ_STORAGE_PERMISSION = 101;
     private static final StickerInfo NULL_STICKER = new StickerInfo();
-
     @FragmentArg
     int entityType;
     @FragmentArg
@@ -189,50 +191,33 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     int lastMarker = -1;
     @FragmentArg
     int roomId;
-
     @ViewById(R.id.list_messages)
     RecyclerView messageListView;
-
     @ViewById(R.id.btn_send_message)
     Button sendButton;
-
     @ViewById(R.id.et_message)
     EditText messageEditText;
-
     @ViewById(R.id.rv_list_search_members)
     RecyclerView rvListSearchMembers;
-
-
     @Bean
     MessageListPresenter messageListPresenter;
-
     @Bean
     MessageListModel messageListModel;
-
     @Bean
     KeyboardHeightModel keyboardHeightModel;
-
     @Bean
     StickerViewModel stickerViewModel;
-
-
     @Bean(value = EntityFileUploadViewModelImpl.class)
     FilePickerViewModel filePickerViewModel;
-
     @Bean
     FileUploadStateViewModel fileUploadStateViewModel;
-
     @Bean
     AnnouncementModel announcementModel;
-
     @Bean
     AnnouncementViewModel announcementViewModel;
-
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
-
     MentionControlViewModel mentionControlViewModel;
-
     private OldMessageLoader oldMessageLoader;
     private NewsMessageLoader newsMessageLoader;
     private MessageState messageState;
@@ -319,7 +304,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         fileUploadStateViewModel.setEntityId(entityId);
 
         keyboardHeightModel.addOnKeyboardShowListener((isShowing) -> {
-            announcementViewModel.setAnnouncementViewVisibility(!isShowing);
+            boolean visibility = keyboardHeightModel.isOpened() || stickerViewModel.isShow();
+            announcementViewModel.setAnnouncementViewVisibility(!visibility);
+        });
+
+        stickerViewModel.setOnStickerLayoutShowListener(isShow -> {
+            boolean visibility = keyboardHeightModel.isOpened() || stickerViewModel.isShow();
+            announcementViewModel.setAnnouncementViewVisibility(!visibility);
         });
 
         JandiPreference.setKeyboardHeight(getActivity(), 0);
@@ -498,8 +489,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 .delay(100, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(integer -> {
-                    messageListPresenter.justRefresh();
+                    if (messageListPresenter != null) {
+                        messageListPresenter.justRefresh();
+                    }
+                    if (mentionControlViewModel != null) {
+                        mentionControlViewModel.onConfigurationChanged();
+                    }
+                    if (stickerViewModel != null) {
+                        stickerViewModel.onConfigurationChanged();
+                    }
                 });
+
     }
 
     @Background
@@ -789,7 +789,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
             if (mentionControlViewModel == null) {
                 mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(),
-                        messageEditText, rvListSearchMembers, messageListView,
+                        messageEditText,
                         roomIds,
                         MentionControlViewModel.MENTION_TYPE_MESSAGE);
 
@@ -869,7 +869,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
     }
 
-
     private void initKeyboardHeight() {
         EditText etMessage = messageListPresenter.getSendEditTextView();
         keyboardHeightModel.setOnKeyboardHeightCaptureListener(() -> {
@@ -895,10 +894,36 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.moveLastPage();
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Click(R.id.btn_upload_file)
     void onUploadClick() {
-        filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
-        AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Upload);
+
+        Permissions.getChecker()
+                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .hasPermission(() -> {
+                    filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
+                    AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Upload);
+                })
+                .noPermission(() -> {
+                    String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    MessageListFragment.this.requestPermissions(permissions,
+                            REQ_STORAGE_PERMISSION);
+                })
+                .check();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Permissions.getResult()
+                .addRequestCode(REQ_STORAGE_PERMISSION)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        () -> Observable.just(1)
+                                .delay(300, TimeUnit.MILLISECONDS)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(integer -> {
+                                    filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
+                                }, Throwable::printStackTrace))
+                .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
     }
 
     @Click(R.id.btn_send_message)
@@ -1775,11 +1800,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (stickerViewModel.isShowStickerSelector()) {
             stickerViewModel.dismissStickerSelector();
-            return true;
-        }
-
-        if (mentionControlViewModel != null && mentionControlViewModel.isMentionListVisible()) {
-            mentionControlViewModel.dismissMentionList();
             return true;
         }
 

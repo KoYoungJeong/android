@@ -46,7 +46,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             RoomViewHolder viewHolder = new RoomViewHolder(itemView);
             viewHolder.tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
             viewHolder.ivIcon = (ImageView) itemView.findViewById(R.id.iv_room_selector_item_icon);
-            viewHolder.vgLine = itemView.findViewById(R.id.ll_line_use_for_first_no_folder_item);
+            viewHolder.vgLine = itemView.findViewById(R.id.v_line_use_for_first_no_folder_item);
             viewHolder.vgContent = (LinearLayout) itemView.findViewById(R.id.vg_room_selector_content);
             return viewHolder;
         } else if (viewType == TYPE_FOLDER) {

@@ -6,6 +6,8 @@
         <item name="android:windowEnableSplitTouch">false</item>
         <item name="android:splitMotionEvents">false</item>
 
+        <item name="autoCompleteTextViewStyle">@style/Jandi.Default.AutoCompleteTextViewStyle</item>
+
         <item name="colorPrimary">@color/jandi_primary_color</item>
         <item name="colorPrimaryDark">@color/jandi_primary_dark_color</item>
         <item name="colorAccent">@color/jandi_accent_color</item>
@@ -16,8 +18,6 @@
         <item name="toolbarStyle">@style/Jandi.Default.ActionBar</item>
         <item name="actionBarStyle">@style/Jandi.Default.ActionBar</item>
         <item name="actionMenuTextColor">@color/abc_primary_text_disable_only_material_dark</item>
-
-        <item name="android:textViewStyle">@style/JandiTheme.Widget.TextView</item>
 
     </style>
 

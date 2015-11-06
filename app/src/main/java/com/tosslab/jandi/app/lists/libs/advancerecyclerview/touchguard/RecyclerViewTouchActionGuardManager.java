@@ -44,7 +44,7 @@ public class RecyclerViewTouchActionGuardManager {
      * Constructor.
      */
     public RecyclerViewTouchActionGuardManager() {
-        mInternalUseOnItemTouchListener = new RecyclerView.OnItemTouchListener() {
+        mInternalUseOnItemTouchListener = new RecyclerView.SimpleOnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
                 return RecyclerViewTouchActionGuardManager.this.onInterceptTouchEvent(rv, e);

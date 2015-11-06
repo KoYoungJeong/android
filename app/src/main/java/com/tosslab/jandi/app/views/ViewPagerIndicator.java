@@ -89,7 +89,7 @@ public class ViewPagerIndicator extends View {
             return;
         }
 
-            canvas.save();
+        canvas.save();
 
         int drawWidth = (indicatorMargin + indicatorWidth) * indicatorCount - indicatorMargin;
 

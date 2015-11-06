@@ -63,24 +63,38 @@ public class JandiSocketService extends Service {
     };
 
     public static void stopService(Context context) {
-        ActivityManager activityManager =
-                (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        if (!isServiceRunning(context)) {
+            return;
+        }
+
+        Intent intent = new Intent(context, JandiSocketService.class);
+        intent.putExtra(STOP_FORCIBLY, true);
+        context.startService(intent);
+    }
+
+    public static void startServiceIfNeed(Context context) {
+        if (isServiceRunning(context)) {
+            return;
+        }
+
+        Intent intent = new Intent(context, JandiSocketService.class);
+        context.startService(intent);
+    }
+
+    private static boolean isServiceRunning(Context context) {ActivityManager activityManager =
+            (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> runningServices =
                 activityManager.getRunningServices(Integer.MAX_VALUE);
-
         for (ActivityManager.RunningServiceInfo runningService : runningServices) {
             String packageName = runningService.service.getPackageName();
             String className = runningService.service.getClassName();
             if (TextUtils.equals(packageName, context.getPackageName())
                     && TextUtils.equals(className, JandiSocketService.class.getName())) {
-                LogUtil.e(TAG, "stopService");
-
-                Intent intent = new Intent(context, JandiSocketService.class);
-                intent.putExtra(STOP_FORCIBLY, true);
-                context.startService(intent);
-                return;
+                LogUtil.e(TAG, "Service is running.");
+                return true;
             }
         }
+        return false;
     }
 
     public void setStopForcibly(boolean forcibly) {

@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.ui.share.model.ShareModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -72,6 +73,12 @@ public class SharePresenter {
 
     @AfterViews
     void initView() {
+        if (!NetworkCheckUtil.isConnected()) {
+            view.showFailToast(JandiApplication.getContext().getResources().getString(R.string.err_network));
+            view.finishOnUiThread();
+            return;
+        }
+
         if (mode == MainShareActivity.MODE_SHARE_FILE) {
             String imagePath = shareModel.getImagePath(uriString);
             if (TextUtils.isEmpty(imagePath)) {
@@ -141,13 +148,17 @@ public class SharePresenter {
                 view.showSuccessToast(JandiApplication.getContext()
                         .getString(R.string.jandi_file_upload_succeed));
                 int entityType = 0;
+                setupSelectedTeam(teamId);
+                view.moveEntity(teamId, roomId, roomType);
+
+                view.finishOnUiThread();
+
                 shareModel.trackUploadingFile(entityType, result);
             } else {
                 LogUtil.e("Upload Fail : Result : " + result);
                 view.showFailToast(JandiApplication.getContext()
                         .getString(R.string.err_file_upload_failed));
             }
-            view.finishOnUiThread();
         } catch (ExecutionException e) {
             if (view != null) {
                 view.showFailToast(JandiApplication.getContext()
@@ -157,11 +168,6 @@ public class SharePresenter {
             LogUtil.e("Upload Error : ", e);
             view.showFailToast(JandiApplication.getContext()
                     .getString(R.string.err_file_upload_failed));
-        } finally {
-            // 이동해야 함.
-            setupSelectedTeam(teamId);
-            view.moveEntity(teamId, roomId, roomType);
-
         }
     }
 

@@ -1,12 +1,17 @@
 package com.tosslab.jandi.app.ui.share;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
+import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.share.model.MainShareModel;
@@ -29,6 +34,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
 
     public static final int MODE_SHARE_TEXT = 1;
     public static final int MODE_SHARE_FILE = 2;
+    public static final int REQ_STORAGE_PERMISSION = 101;
 
     @Bean
     MainShareModel mainShareModel;
@@ -57,30 +63,55 @@ public class MainShareActivity extends BaseAppCompatActivity {
             return;
         }
 
-        switch (intentType) {
-            case Text:
-                fragment = MainShareFragment_
-                        .builder()
-                        .subject(mainShareModel.handleSendSubject(intent))
-                        .text(mainShareModel.handleSendText(intent))
-                        .mode(MODE_SHARE_TEXT)
-                        .build();
-                break;
-            default:
-                fragment = MainShareFragment_
-                        .builder()
-                        .mode(MODE_SHARE_FILE)
-                        .uriString(mainShareModel.handleSendImage(intent).toString())
-                        .build();
-                break;
+        if (intentType == IntentType.Text) {
+            setUpFragment(intent, intentType);
+        } else {
+            Permissions.getChecker()
+                    .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    .hasPermission(() -> setUpFragment(intent, intentType))
+                    .noPermission(() -> requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_STORAGE_PERMISSION))
+                    .check();
         }
 
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.vg_share_container, fragment, "detail")
-                .commit();
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Permissions.getResult()
+                .addRequestCode(REQ_STORAGE_PERMISSION)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, () -> {
+                    new Handler().postDelayed(() -> {
+                        Intent intent = getIntent();
+                        setUpFragment(intent, mainShareModel.getIntentType(intent.getAction(), intent.getType()));
+                    }, 300);
+                }, this::finish)
+                .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
+    }
+
+    private void setUpFragment(Intent intent, IntentType intentType) {
+        MainShareFragment_.FragmentBuilder_ builder = MainShareFragment_.builder();
+        String fragmentTag = "share";
+
+        if (intentType == IntentType.Text) {
+            builder.subject(mainShareModel.handleSendSubject(intent));
+            builder.text(mainShareModel.handleSendText(intent));
+            builder.mode(MODE_SHARE_TEXT);
+            fragmentTag += "_text";
+        } else {
+            builder.mode(MODE_SHARE_FILE);
+            builder.uriString(mainShareModel.handleSendImage(intent).toString());
+        }
+
+        Fragment addedFragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
+        if (addedFragment == null) {
+            fragment = builder.build();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.vg_share_container, this.fragment, fragmentTag)
+                    .commit();
+        }
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SharetoJandi);
-
     }
 
     private void startIntro() {

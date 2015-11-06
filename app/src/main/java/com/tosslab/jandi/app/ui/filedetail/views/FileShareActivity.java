@@ -80,8 +80,10 @@ public class FileShareActivity extends BaseAppCompatActivity {
         List<FormattedEntity> users = new ArrayList<>();
 
         for (FormattedEntity entity : unSharedEntities) {
-            if (entity.isUser() && entity.getId() != myId) {
-                users.add(entity);
+            if (entity.isUser()) {
+                if (entity.getId() != myId) {
+                    users.add(entity);
+                }
             } else {
                 topics.add(entity);
             }

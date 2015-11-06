@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.ui.sticker;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -8,11 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.ViewPagerIndicator;
@@ -32,7 +36,8 @@ import java.util.List;
 public class StickerViewModel {
 
     public static final int STICKER_GROUP_RECENT = 0;
-    public static final int STICKER_GROUP_MOZZI = 1;
+    public static final int STICKER_GROUP_DAY = 1;
+    public static final int STICKER_GROUP_MOZZI = 2;
 
     public static final int TYPE_MESSAGE = 11;
     public static final int TYPE_TOPIC = 12;
@@ -52,10 +57,13 @@ public class StickerViewModel {
 
     private OnStickerClick onStickerClick;
     private OnStickerDoubleTapListener onStickerDoubleTapListener;
+    private OnStickerLayoutShowListener onStickerLayoutShowListener;
     private int type;
 
     private Pair<Integer, String> lastClickedStickerInfo;
     private long lastClickedTime;
+    private boolean isShow;
+    private ImageView ivNoItems;
 
     @AfterViews
     void initViews() {
@@ -63,6 +71,7 @@ public class StickerViewModel {
         vgStickerGroups = (LinearLayout) vgStickerSelector.findViewById(R.id.vg_sticker_default_groups);
         pagerStickerItems = (ViewPager) vgStickerSelector.findViewById(R.id.pager_sticker_default_items);
         vgNoItemsLayout = (ViewGroup) vgStickerSelector.findViewById(R.id.vg_sticker_default_items_no_item);
+        ivNoItems = (ImageView) vgStickerSelector.findViewById(R.id.iv_sticker_default_items_no_item);
         viewPagerIndicator = (ViewPagerIndicator) vgStickerSelector.findViewById(R.id.indicator_sticker_default_items_page_indicator);
 
         initClicks();
@@ -80,13 +89,16 @@ public class StickerViewModel {
 
     private void updateStickerItems(int groupIdx, ViewPager vgStickerItems) {
         List<ResMessages.StickerContent> stickers;
+        StickerRepository stickerRepository = StickerRepository.getRepository();
         switch (groupIdx) {
             case STICKER_GROUP_RECENT:
-                stickers = StickerRepository.getRepository().getRecentStickers();
+                stickers = stickerRepository.getRecentStickers();
                 break;
             case STICKER_GROUP_MOZZI:
-                stickers = StickerRepository.getRepository().getStickers(StickerRepository
-                        .DEFAULT_GROUP_ID_MOZZI);
+                stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_MOZZI);
+                break;
+            case STICKER_GROUP_DAY:
+                stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_DAY);
                 break;
             default:
                 stickers = new ArrayList<>();
@@ -94,7 +106,6 @@ public class StickerViewModel {
         }
 
         addStickerView(stickers, vgStickerItems);
-
     }
 
     private void addStickerView(List<ResMessages.StickerContent> stickers, ViewPager vgStickerItems) {
@@ -191,10 +202,21 @@ public class StickerViewModel {
         }
     }
 
+    /**
+     * @param keyboardHeight 0 보다 커여 함
+     */
     public void showStickerSelector(int keyboardHeight) {
         ViewGroup.LayoutParams layoutParams = vgStickerSelector.getLayoutParams();
-        if (layoutParams.height != keyboardHeight) {
-            layoutParams.height = keyboardHeight;
+        Resources resources = vgStickerSelector.getResources();
+        int keyboardMaxHeight;
+        if (resources.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            int maxHeight = resources.getDisplayMetrics().heightPixels * 2 / 5;
+            keyboardMaxHeight = Math.min(maxHeight, keyboardHeight);
+        } else {
+            keyboardMaxHeight = keyboardHeight;
+        }
+        if (layoutParams.height != keyboardMaxHeight) {
+            layoutParams.height = keyboardMaxHeight;
             vgStickerSelector.setLayoutParams(layoutParams);
         }
 
@@ -203,11 +225,25 @@ public class StickerViewModel {
 
         vgStickerSelector.setVisibility(View.VISIBLE);
         btnStickerShow.setSelected(true);
+
+        isShow = true;
+
+        if (onStickerLayoutShowListener != null) {
+            onStickerLayoutShowListener.onStickerLayoutShow(true);
+        }
+
     }
 
     public void dismissStickerSelector() {
         vgStickerSelector.setVisibility(View.GONE);
         btnStickerShow.setSelected(false);
+
+        isShow = false;
+
+        if (onStickerLayoutShowListener != null) {
+            onStickerLayoutShowListener.onStickerLayoutShow(false);
+        }
+
     }
 
     public void setOnStickerClick(OnStickerClick onStickerClick) {
@@ -226,6 +262,52 @@ public class StickerViewModel {
         this.onStickerDoubleTapListener = onStickerDoubleTapListener;
     }
 
+    public StickerViewModel setOnStickerLayoutShowListener(OnStickerLayoutShowListener onStickerLayoutShowListener) {
+        this.onStickerLayoutShowListener = onStickerLayoutShowListener;
+        return this;
+    }
+
+    public boolean isShow() {
+        return isShow;
+    }
+
+    public void onConfigurationChanged() {
+        if (vgStickerSelector.getVisibility() != View.VISIBLE) {
+            return;
+        }
+
+        ViewGroup.LayoutParams layoutParams = vgStickerSelector.getLayoutParams();
+        int height = layoutParams.height;
+        Resources resources = vgStickerSelector.getResources();
+        int keyboardMaxHeight;
+        if (height > 0
+                && resources.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            int maxHeight = resources.getDisplayMetrics().heightPixels * 2 / 5;
+            keyboardMaxHeight = Math.min(maxHeight, height);
+            layoutParams.height = keyboardMaxHeight;
+            ivNoItems.setVisibility(View.GONE);
+        } else {
+            int keyboardHeight = JandiPreference.getKeyboardHeight(vgStickerSelector.getContext());
+            if (keyboardHeight > 0) {
+                layoutParams.height = keyboardHeight;
+            } else {
+                layoutParams.height = resources.getDisplayMetrics().heightPixels * 2 / 5;
+            }
+            ivNoItems.setVisibility(View.VISIBLE);
+        }
+        vgStickerSelector.setLayoutParams(layoutParams);
+
+
+        int childCount = vgStickerGroups.getChildCount();
+        for (int idx = 1; idx < childCount; idx++) {
+            boolean selected = vgStickerGroups.getChildAt(idx).isSelected();
+            if (selected) {
+                updateStickerItems(idx, pagerStickerItems);
+                break;
+            }
+        }
+    }
+
 
     public interface OnStickerClick {
         void onStickerClick(int groupId, String stickerId);
@@ -233,5 +315,9 @@ public class StickerViewModel {
 
     public interface OnStickerDoubleTapListener {
         void onStickerDoubleTap(int groupId, String stickerId);
+    }
+
+    public interface OnStickerLayoutShowListener {
+        void onStickerLayoutShow(boolean isShow);
     }
 }

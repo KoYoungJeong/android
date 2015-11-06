@@ -7,13 +7,14 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -51,6 +52,8 @@ public class AnnouncementViewModel {
     ImageView ivAnnouncementUser;
     @ViewById(R.id.tv_announcement_info)
     TextView tvAnnouncementInfo;
+    @ViewById(R.id.sv_announcement_message)
+    ScrollView svAnnouncementMessage;
     @ViewById(R.id.tv_announcement_message)
     TextView tvAnnouncementMessage;
     @ViewById(R.id.btn_announcement_open)
@@ -67,13 +70,10 @@ public class AnnouncementViewModel {
 
     private OnAnnouncementOpenListener onAnnouncementOpenListener;
     private OnAnnouncementCloseListener onAnnouncementCloseListener;
-    private TextLineDetermineRunnable textLineDetermineRunnable;
 
     @AfterViews
     void init() {
         isAfterViews = true;
-
-        textLineDetermineRunnable = new TextLineDetermineRunnable(tvAnnouncementMessage);
 
         if (announcement != null) {
             initAnnouncement(announcement, isOpened);
@@ -168,7 +168,7 @@ public class AnnouncementViewModel {
                 .show();
     }
 
-    @Click(R.id.vg_announcement_info)
+    @Click({R.id.vg_announcement_info, R.id.vg_announcement_message})
     void showAndHideAnnouncementAction() {
         int visibility = vgAnnouncementAction.getVisibility();
         vgAnnouncementAction.setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
@@ -183,16 +183,29 @@ public class AnnouncementViewModel {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, action);
     }
 
-    private void scaleAnnouncementTextArea(boolean isFullShowing) {
+    private void scaleAnnouncementTextArea(final boolean isFullShowing) {
         if (isFullShowing) {
             tvAnnouncementMessage.setSingleLine(false);
-            tvAnnouncementMessage.post(textLineDetermineRunnable);
         } else {
             tvAnnouncementMessage.setSingleLine();
-            tvAnnouncementMessage.setVerticalScrollBarEnabled(false);
-            tvAnnouncementMessage.setMovementMethod(null);
-            tvAnnouncementMessage.postInvalidate();
         }
+
+        tvAnnouncementMessage.post(() -> {
+//            // 7줄 이상인 경우 7줄까지만 보여주는게 디자인 의도임
+            int lineCount = tvAnnouncementMessage.getLineCount();
+            if (lineCount >= 7) {
+                lineCount = 7;
+            }
+
+            int newHeight = tvAnnouncementMessage.getLineHeight() * lineCount;
+            // 폰트가 잘리거나 밑줄이 안보이는 경우가 있어 2dp 정도 여백을 남김
+            float space = JandiApplication.getContext().getResources().getDisplayMetrics().density * 2;
+            ViewGroup.LayoutParams layoutParams = svAnnouncementMessage.getLayoutParams();
+            layoutParams.height = newHeight + (int) (space * 2);
+            svAnnouncementMessage.setLayoutParams(layoutParams);
+
+            svAnnouncementMessage.scrollTo(0, 0);
+        });
     }
 
     @UiThread
@@ -232,35 +245,5 @@ public class AnnouncementViewModel {
 
     public interface OnAnnouncementCloseListener {
         void onClose();
-    }
-
-    private static class TextLineDetermineRunnable implements Runnable {
-        private TextView tvAnnouncementMessage;
-
-        public TextLineDetermineRunnable(TextView textView) {
-            tvAnnouncementMessage = textView;
-        }
-
-        @Override
-        public void run() {
-            int lineCount = tvAnnouncementMessage.getLineCount();
-
-            // 7줄 이상인 경우 maxLine 선언
-            boolean exceedMaxLine = lineCount >= 7;
-            if (exceedMaxLine) {
-                tvAnnouncementMessage.setMaxLines(7);
-            }
-
-            tvAnnouncementMessage.setVerticalScrollBarEnabled(exceedMaxLine);
-            tvAnnouncementMessage.setMovementMethod(exceedMaxLine ? new ScrollingMovementMethod() : null);
-
-            tvAnnouncementMessage.invalidate();
-
-            // 스크롤 되어 있는 상태에서 7줄 이하의 글이 공지로 등록될 경우 대비
-            tvAnnouncementMessage.scrollTo(0, 0);
-
-            // 가끔 상위 레이아웃이 제대로 펼쳐지지 못해 강제로 호출
-            ((ViewGroup) tvAnnouncementMessage.getParent()).postInvalidate();
-        }
     }
 }

@@ -1,8 +1,5 @@
 package com.tosslab.jandi.app.ui.starmention.model;
 
-import android.content.Context;
-
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -36,13 +33,13 @@ public class StarMentionListModel {
     private boolean isEmpty = false;
 
     public ResStarMentioned getMentionRawDatas(Integer messageId, int count) throws RetrofitError {
-        int teamId = getTeamId(JandiApplication.getContext());
+        int teamId = getTeamId();
         return RequestApiManager.getInstance().getMentionedMessagesByTeamApi(teamId, messageId, count);
     }
 
     public ResStarMentioned getStarredRawDatas(String categoryType, Integer starredId,
                                                int count) throws RetrofitError {
-        int teamId = getTeamId(JandiApplication.getContext());
+        int teamId = getTeamId();
 
         if (categoryType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
             return RequestApiManager.getInstance().getStarredMessagesByTeamApi(
@@ -188,7 +185,7 @@ public class StarMentionListModel {
         return hasMore;
     }
 
-    public int getTeamId(Context context) {
+    public int getTeamId() {
         return AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
     }
 

@@ -33,6 +33,7 @@ public interface BodyViewHolder {
         PureStickerComment, PureStickerCommentWioutDivider,
         CollapseStickerComment, CollapseStickerCommentWioutDivider,
         Dummy, DummyPure,
+        Empty,
         Event
     }
 }

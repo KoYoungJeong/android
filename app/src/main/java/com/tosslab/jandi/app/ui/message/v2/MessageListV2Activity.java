@@ -46,8 +46,7 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        JandiSocketService.stopService(this);
-        sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
+        JandiSocketService.startServiceIfNeed(this);
 
         initViews();
     }

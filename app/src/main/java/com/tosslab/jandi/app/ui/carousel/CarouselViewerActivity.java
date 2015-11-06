@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.carousel;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
@@ -42,6 +44,7 @@ import java.util.List;
 @OptionsMenu(R.menu.carousel_menu)
 public class CarouselViewerActivity extends BaseAppCompatActivity implements CarouselViewerPresenter.View {
 
+    private static final int REQ_STORAGE_PERMISSION = 101;
     @ViewById(R.id.vp_carousel)
     ViewPager viewPager;
 
@@ -258,13 +261,31 @@ public class CarouselViewerActivity extends BaseAppCompatActivity implements Car
     void onFileDownload() {
         CarouselFileInfo fileInfo = getCarouselFileInfo();
 
-        final ProgressDialog progressDialog = new ProgressDialog(CarouselViewerActivity.this);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMessage("Downloading " + fileInfo.getFileName());
-        progressDialog.show();
+        Permissions.getChecker()
+                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .hasPermission(() -> {
+                    final ProgressDialog progressDialog = new ProgressDialog(CarouselViewerActivity.this);
+                    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                    progressDialog.setMessage("Downloading " + fileInfo.getFileName());
+                    progressDialog.show();
+                    carouselViewerPresenter.onFileDownload(CarouselViewerActivity.this, fileInfo,
+                            progressDialog);
+                })
+                .noPermission(() -> {
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            REQ_STORAGE_PERMISSION);
+                }).check();
+    }
 
-        carouselViewerPresenter.onFileDownload(CarouselViewerActivity.this, fileInfo,
-                progressDialog);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        Permissions.getResult()
+                .addRequestCode(REQ_STORAGE_PERMISSION)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::onFileDownload)
+                .resultPermission(Permissions.createPermissionResult(requestCode,
+                        permissions,
+                        grantResults));
     }
 
     @Click(R.id.iv_file_datail_info)

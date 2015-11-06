@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.profile.member;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.ActivityNotFoundException;
@@ -24,6 +25,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.modify.ModifyProfileActivity;
@@ -62,6 +64,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     public static final int EXTRA_FROM_MESSAGE = 6;
     public static final int EXTRA_FROM_PARTICIPANT = 7;
     private static final String KEY_FULL_SIZE_IMAGE_SHOWING = "full_size_image_showing";
+    private static final int REQ_CALL_PERMISSION = 102;
     @Extra
     int memberId;
 
@@ -432,9 +435,18 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             if (!TextUtils.isEmpty(userPhoneNumber)) {
                 vgProfileTeamButtons.addView(
                         getButton(R.drawable.icon_profile_mobile,
-                                getString(R.string.jandi_member_profile_call), (v) -> {
-                                    call(userPhoneNumber);
-                                    AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Call);
+                                getString(R.string.jandi_member_profile_call), v -> {
+                                    Permissions.getChecker()
+                                            .permission(() -> Manifest.permission.CALL_PHONE)
+                                            .hasPermission(() -> {
+                                                call(userPhoneNumber);
+                                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Profile_Cellphone);
+                                            })
+                                            .noPermission(() -> {
+                                                String[] permissions = {Manifest.permission.CALL_PHONE};
+                                                requestPermissions(permissions, REQ_CALL_PERMISSION);
+                                            })
+                                            .check();
                                 }));
             }
 
@@ -458,6 +470,18 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                                 AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.DirectMessage);
                             }));
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Permissions.getResult()
+                .addRequestCode(REQ_CALL_PERMISSION)
+                .addPermission(Manifest.permission.CALL_PHONE, () -> {
+                    FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
+                    call(member.getUserPhoneNumber());
+                    AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Profile_Cellphone);
+                })
+                .resultPermission(Permissions.createPermissionResult(requestCode, permissions, grantResults));
     }
 
     private View getButton(int iconResource, String title, View.OnClickListener onClickListener) {

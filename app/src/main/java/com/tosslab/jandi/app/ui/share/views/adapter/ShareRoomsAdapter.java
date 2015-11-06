@@ -52,7 +52,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             viewHolder.tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
             viewHolder.ivIcon = (ImageView) itemView.findViewById(R.id.iv_room_selector_item_icon);
-            viewHolder.vgLine = itemView.findViewById(R.id.ll_line_use_for_first_no_folder_item);
+            viewHolder.vLine = itemView.findViewById(R.id.v_line_use_for_first_no_folder_item);
 
             return viewHolder;
 
@@ -62,7 +62,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     .inflate(R.layout.item_room_select_folder, parent, false);
             FolderViewHolder viewHolder = new FolderViewHolder(itemView);
             viewHolder.tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
-            viewHolder.viewLine = itemView.findViewById(R.id.view_line);
+            viewHolder.vLine = itemView.findViewById(R.id.view_line);
 
             return viewHolder;
         }
@@ -83,9 +83,9 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             folderViewHolder.tvName.setText(item.getName().toString());
             folderViewHolder.itemView.setClickable(false);
             if (position == 0) {
-                folderViewHolder.viewLine.setVisibility(View.INVISIBLE);
+                folderViewHolder.vLine.setVisibility(View.INVISIBLE);
             } else {
-                folderViewHolder.viewLine.setVisibility(View.VISIBLE);
+                folderViewHolder.vLine.setVisibility(View.VISIBLE);
             }
             return;
         }
@@ -94,9 +94,9 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         // 폴더가 없는 첫번째 폴더는 상단에 라인이 그려져야 함.
         if (item.isFirstAmongNoFolderItem() && hasFolder) {
-            roomholder.vgLine.setVisibility(View.VISIBLE);
+            roomholder.vLine.setVisibility(View.VISIBLE);
         } else {
-            roomholder.vgLine.setVisibility(View.GONE);
+            roomholder.vLine.setVisibility(View.GONE);
         }
 
         if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
@@ -180,7 +180,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         private TextView tvName;
         private ImageView ivIcon;
-        private View vgLine;
+        private View vLine;
 
         public RoomViewHolder(View itemView) {
             super(itemView);
@@ -190,7 +190,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     static class FolderViewHolder extends RecyclerView.ViewHolder {
 
         private TextView tvName;
-        private View viewLine;
+        private View vLine;
 
         public FolderViewHolder(View itemView) {
             super(itemView);

@@ -22,11 +22,12 @@
             android:paddingLeft="14dp"
             android:paddingRight="14dp"
             android:paddingTop="14dp">
+
             <ImageView
                 android:id="@+id/iv_announcement_user"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/profile_img"/>
+                android:src="@drawable/profile_img" />
 
             <TextView
                 android:id="@+id/tv_announcement_info"
@@ -34,21 +35,38 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_toRightOf="@id/iv_announcement_user"
+                android:ellipsize="middle"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:textColor="@color/jandi_text_light"
-                android:textSize="11sp"/>
+                android:textSize="11sp" />
 
-            <TextView
-                android:id="@+id/tv_announcement_message"
-                android:scrollbars="vertical"
-                android:layout_width="wrap_content"
+            <ScrollView
+                android:id="@+id/sv_announcement_message"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_announcement_info"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="6dp"
                 android:layout_toRightOf="@id/iv_announcement_user"
-                android:singleLine="true"
-                android:textColor="@android:color/black"
-                android:textSize="14sp"/>
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:id="@+id/vg_announcement_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_announcement_message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black"
+                        android:textSize="14dp" />
+                </LinearLayout>
+
+            </ScrollView>
 
         </RelativeLayout>
 
@@ -62,7 +80,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/jandi_announcement_divider"/>
+                android:background="@color/jandi_announcement_divider" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -77,12 +95,12 @@
                     android:gravity="center"
                     android:text="@string/jandi_announcement_delete"
                     android:textColor="@color/jandi_primary_color"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="@color/jandi_announcement_divider"/>
+                    android:background="@color/jandi_announcement_divider" />
 
                 <TextView
                     android:id="@+id/btn_announcement_close"
@@ -92,7 +110,7 @@
                     android:gravity="center"
                     android:text="@string/jandi_announcement_minimize"
                     android:textColor="@color/jandi_primary_color"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -107,6 +125,6 @@
         android:layout_gravity="right"
         android:layout_margin="10dp"
         android:background="@drawable/btn_announce"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </FrameLayout>

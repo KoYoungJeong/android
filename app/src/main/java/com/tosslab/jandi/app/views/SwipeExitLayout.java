@@ -204,11 +204,14 @@ public class SwipeExitLayout extends FrameLayout {
 
         float distance = measuredHeight - firstChild.getTranslationY();
         int duration = Math.min(MIN_EXIT_ANIM_DURATION, (int) distance);
+        if (duration <= 0) {
+            return;
+        }
 
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
             child.animate()
-                    .translationY(distance)
+                    .translationYBy(measuredHeight)
                     .setDuration(duration);
         }
 

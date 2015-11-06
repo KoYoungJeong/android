@@ -1,8 +1,11 @@
 package com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter;
 
-import android.support.v7.widget.RecyclerView;
+import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Filter;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
@@ -18,43 +21,45 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tee on 15. 7. 21..
  */
-public class MentionMemberListAdapter extends RecyclerView.Adapter<MentionMemberListViewHolder> {
+public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
 
-    private List<SearchedItemVO> searchedMembersList;
-
-    public MentionMemberListAdapter(List<SearchedItemVO> searchedMembersList) {
-        this.searchedMembersList = searchedMembersList;
-    }
-
-    public List<SearchedItemVO> getSearchedMembersList() {
-        return searchedMembersList;
-    }
-
-    public void setSearchedMembersList(List<SearchedItemVO> searchedMembersList) {
-        this.searchedMembersList = searchedMembersList;
-        notifyDataSetChanged();
-    }
-
-    public SearchedItemVO getSearchedMemberByPosition(int position) {
-        return searchedMembersList.get(position);
-    }
-
-    public void clearMembersList() {
-        searchedMembersList.clear();
-        notifyDataSetChanged();
+    public MentionMemberListAdapter(Context context, List<SearchedItemVO> searchedMembersList) {
+        super(context, R.layout.item_search_member_list, searchedMembersList);
     }
 
     @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            public CharSequence convertResultToString(Object resultValue) {
+                return "";
+            }
+
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                return new FilterResults();
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                notifyDataSetChanged();
+            }
+        };
+    }
+
+    public void setSearchedMembersList(List<SearchedItemVO> searchedMembersList) {
+        clear();
+        addAll(searchedMembersList);
+        notifyDataSetChanged();
+    }
+
     public MentionMemberListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new MentionMemberListViewHolder(LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_search_member_list, parent, false));
     }
 
-    @Override
     public void onBindViewHolder(MentionMemberListViewHolder holder, int position) {
-        if (searchedMembersList == null)
-            return;
-        SearchedItemVO item = searchedMembersList.get(position);
+        SearchedItemVO item = getItem(position);
 
         if (item.getName().equals("All") && item.getType().equals("room")) {
             Ion.with(holder.getIvIcon())
@@ -72,7 +77,7 @@ public class MentionMemberListAdapter extends RecyclerView.Adapter<MentionMember
             holder.getTvName().setText(item.getName());
         }
         holder.getConvertView().setOnClickListener(v -> {
-            SearchedItemVO selectedMember = getSearchedMemberByPosition(position);
+            SearchedItemVO selectedMember = getItem(position);
             SelectedMemberInfoForMensionEvent event =
                     new SelectedMemberInfoForMensionEvent(selectedMember.getName(), selectedMember.getId(),
                             selectedMember.getType());
@@ -80,9 +85,21 @@ public class MentionMemberListAdapter extends RecyclerView.Adapter<MentionMember
         });
     }
 
-    @Override
-    public int getItemCount() {
-        return searchedMembersList.size();
-    }
 
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        MentionMemberListViewHolder viewHolder;
+        if (convertView == null) {
+            viewHolder = onCreateViewHolder(parent, getItemViewType(position));
+            convertView = viewHolder.itemView;
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (MentionMemberListViewHolder) convertView.getTag();
+            convertView = viewHolder.itemView;
+        }
+
+        onBindViewHolder(viewHolder, position);
+
+        return convertView;
+    }
 }

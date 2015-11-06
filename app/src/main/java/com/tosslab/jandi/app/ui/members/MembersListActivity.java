@@ -82,6 +82,9 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @ViewById(R.id.et_topic_member_search)
     TextView tvSearch;
 
+    @ViewById(R.id.vg_team_member_empty)
+    View vEmptyTeamMember;
+
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
 
@@ -113,6 +116,8 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @AfterViews
     void initViews() {
+        vEmptyTeamMember.setVisibility(View.GONE);
+
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.ScreenView)
@@ -303,6 +308,13 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         }
     }
 
+    @Click(value = {
+            R.id.img_chat_choose_member_empty,
+            R.id.btn_chat_choose_member_empty})
+    void onMemberJoinClick() {
+        onInviteOptionSelect();
+    }
+
     @UiThread
     @Override
     public void showListMembers(List<ChatChooseItem> members) {
@@ -327,6 +339,14 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         }
         topicMembersAdapter.addAll(members);
         topicMembersAdapter.notifyDataSetChanged();
+        if (type == TYPE_MEMBERS_LIST_TEAM
+                && tvSearch.getText().length() <= 0
+                && topicMembersAdapter.getCount() <= 1) {
+            // 팀 멤버 검색 && 검색어 없음 && 나를 포함해서 1명이하인 경우
+            vEmptyTeamMember.setVisibility(View.VISIBLE);
+        } else {
+            vEmptyTeamMember.setVisibility(View.GONE);
+        }
     }
 
     @Override

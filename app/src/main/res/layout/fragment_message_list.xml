@@ -113,7 +113,7 @@
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_centerInParent="true"
-            android:scaleType="fitCenter" />
+            android:scaleType="centerCrop" />
 
         <ImageView
             android:id="@+id/iv_messages_preview_sticker_close"
@@ -214,7 +214,7 @@
             android:layout_marginRight="4dp"
             android:background="@drawable/icon_upload_file" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/et_message"
             style="@style/JandiChat.EditText"
             android:layout_width="wrap_content"
@@ -222,7 +222,9 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/btn_send_message"
             android:layout_toRightOf="@+id/btn_upload_file"
+            android:completionThreshold="1"
             android:hint="@string/jandi_message_hint"
+            android:imeOptions="flagNoExtractUi"
             android:paddingRight="34dp"
             android:textCursorDrawable="@null" />
 

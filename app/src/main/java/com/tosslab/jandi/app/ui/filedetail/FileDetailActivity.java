@@ -1,11 +1,13 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -51,6 +53,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.MixpanelAnalytics;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
@@ -96,8 +99,11 @@ import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 import static org.androidannotations.annotations.UiThread.Propagation;
 
@@ -109,6 +115,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     public static final int INTENT_RETURN_TYPE_SHARE = 0;
     public static final int INTENT_RETURN_TYPE_UNSHARE = 1;
+    public static final int REQ_STORAGE_PERMISSION = 101;
     private static final StickerInfo NULL_STICKER = new StickerInfo();
     public static
 
@@ -754,8 +761,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return;
         }
 
-        showDownloadProgressDialog(fileDownloadStartEvent.getFileName());
-
         fileDetailPresenter.downloadFile(fileDownloadStartEvent.getUrl(),
                 fileDownloadStartEvent.getFileName(),
                 fileDownloadStartEvent.getFileType(),
@@ -932,6 +937,18 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         progressWheel.dismiss();
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Observable.just(1, 1)
+                .delay(100, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(integer -> {
+                    fileDetailPresenter.onConfigurationChanged();
+                });
+
+    }
+
     @UiThread
     @Override
     public void clearAdapter() {
@@ -1004,6 +1021,22 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void showUnsharedFileToast() {
         ColoredToast.showError(FileDetailActivity.this, getString(R.string.jandi_unshared_message));
+    }
+
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
+    public void requestPermission(int requestCode, String... permissions) {
+        requestPermissions(permissions, requestCode);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Permissions.getResult()
+                .addRequestCode(REQ_STORAGE_PERMISSION)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, () -> download())
+                .resultPermission(Permissions.createPermissionResult(requestCode,
+                        permissions,
+                        grantResults));
     }
 
     @Override

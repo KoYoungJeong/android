@@ -78,7 +78,7 @@ public class RecyclerViewExpandableItemManager {
      * @param savedState The saved state object which is obtained from the {@link #getSavedState()} method.
      */
     public RecyclerViewExpandableItemManager(Parcelable savedState) {
-        mInternalUseOnItemTouchListener = new RecyclerView.OnItemTouchListener() {
+        mInternalUseOnItemTouchListener = new RecyclerView.SimpleOnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
                 return RecyclerViewExpandableItemManager.this.onInterceptTouchEvent(rv, e);

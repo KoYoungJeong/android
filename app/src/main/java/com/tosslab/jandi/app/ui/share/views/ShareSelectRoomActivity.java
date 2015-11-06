@@ -14,10 +14,16 @@ import android.view.View;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.network.models.ResFolder;
+import com.tosslab.jandi.app.network.models.ResFolderItem;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.share.views.adapter.ShareRoomsAdapter;
 import com.tosslab.jandi.app.ui.share.views.domain.ExpandRoomData;
 import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
+import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -28,9 +34,11 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 @EActivity(R.layout.layout_room_selector)
 public class ShareSelectRoomActivity extends BaseAppCompatActivity implements ShareRoomsAdapter.OnItemClickListener {
@@ -50,16 +58,12 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
 
     ShareRoomsAdapter adapter;
 
+    ProgressWheel progressWheel;
+
     @AfterInject
     void initObject() {
         adapter = new ShareRoomsAdapter(this);
         adapter.setOnItemClickListener(this);
-    }
-
-    @Background
-    void initFormattedEntities() {
-        shareSelectModel.initFormattedEntities(teamId);
-        getTopics();
     }
 
     @AfterViews
@@ -67,7 +71,6 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
         setupActionbar();
         lvRoomSelect.setLayoutManager(new LinearLayoutManager(this));
         lvRoomSelect.setAdapter(adapter);
-        initFormattedEntities();
 
         View[] selectableViews = {topicView, dmView};
 
@@ -79,11 +82,16 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
 
         dmView.setOnClickListener(v -> {
             setSelectType(1, selectableViews);
-            getDms();
+            getDirectMessages();
             lvRoomSelect.getLayoutManager().scrollToPosition(0);
         });
 
         selectableViews[0].setSelected(true);
+
+        progressWheel = new ProgressWheel(this);
+        progressWheel.setCancelable(false);
+
+        initFormattedEntities();
     }
 
     @Override
@@ -96,20 +104,45 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
         return super.onOptionsItemSelected(item);
     }
 
-    @Background
+    @Background(serial = "share_background")
+    void initFormattedEntities() {
+        showProgress();
+
+        try {
+            ResLeftSideMenu leftSideMenu = shareSelectModel.getLeftSideMenu(teamId);
+            shareSelectModel.initFormattedEntities(leftSideMenu);
+            getTopics();
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            String errorMessage = getApplicationContext().getResources().getString(R.string.err_network);
+            showError(errorMessage);
+            hideProgress();
+            finish();
+        }
+    }
+
+    @Background(serial = "share_background")
     void getTopics() {
+        List<ResFolder> topicFolders = shareSelectModel.getTopicFolders(teamId);
+        List<ResFolderItem> topicFolderItems = shareSelectModel.getTopicFolderItems(teamId);
+        LinkedHashMap<Integer, FormattedEntity> joinEntities = shareSelectModel.getJoinEntities();
+
         List<ExpandRoomData> topicDatas =
-                shareSelectModel.getTopicDatas(teamId);
+                shareSelectModel.getExpandRoomDatas(topicFolders, topicFolderItems, joinEntities);
         showTopics(topicDatas);
+
+        hideProgress();
     }
 
     @Background
-    void getDms() {
-        List<ExpandRoomData> userRoomDatas =
-                shareSelectModel.getUserRoomDatas();
-        showDms(userRoomDatas);
-    }
+    void getDirectMessages() {
+        showProgress();
 
+        List<ExpandRoomData> userRoomDatas = shareSelectModel.getUserRoomDatas();
+        showDirectMessages(userRoomDatas);
+
+        hideProgress();
+    }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void showTopics(List<ExpandRoomData> topics) {
@@ -118,11 +151,37 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    void showDms(List<ExpandRoomData> dms) {
+    void showDirectMessages(List<ExpandRoomData> dms) {
         adapter.addAll(dms);
         adapter.notifyDataSetChanged();
     }
 
+    @UiThread
+    void showProgress() {
+        if (progressWheel == null || progressWheel.isShowing()) {
+            return;
+        }
+        progressWheel.show();
+    }
+
+    @UiThread
+    void hideProgress() {
+        if (progressWheel == null || !progressWheel.isShowing()) {
+            return;
+        }
+        progressWheel.hide();
+    }
+
+    @UiThread
+    void showError(String message) {
+        ColoredToast.showError(getApplicationContext(), message);
+    }
+
+    @UiThread
+    @Override
+    public void finish() {
+        super.finish();
+    }
 
     private void setSelectType(int type, View[] selectableViews) {
         for (int idx = 0, size = selectableViews.length; idx < size; idx++) {

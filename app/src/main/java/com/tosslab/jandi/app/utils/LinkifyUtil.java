@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  */
 public class LinkifyUtil {
 
-    static final String REG_EX_EMAIL = "^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})$";
+    static final String REG_EX_EMAIL = "[_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(\\.[a-zA-Z]{2,4})";
 
     private static final Class[] clickableSpannables = {
             JandiURLSpan.class,
@@ -151,11 +151,10 @@ public class LinkifyUtil {
                     int line = layout.getLineForVertical(y);
                     int off = layout.getOffsetForHorizontal(line, x);
 
-
                     for (int idx = 0, size = clickableSpannables.length; idx < size; idx++) {
 
-                        ClickableSpannable[] clickableSpan = (ClickableSpannable[]) buffer.getSpans
-                                (off, off, clickableSpannables[idx]);
+                        ClickableSpannable[] clickableSpan =
+                                (ClickableSpannable[]) buffer.getSpans(off, off, clickableSpannables[idx]);
                         if (clickableSpan != null && clickableSpan.length > 0) {
                             clickableSpannable = clickableSpan[0];
                             return true;
@@ -164,7 +163,7 @@ public class LinkifyUtil {
                     return false;
                 }
 
-                if (action == MotionEvent.ACTION_UP) {
+                if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                     if (clickableSpannable != null) {
                         clickableSpannable.onClick();
                         clickableSpannable = null;

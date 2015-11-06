@@ -13,7 +13,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
  */
 public class SocketServiceStarter extends BroadcastReceiver {
 
-    public static final String TAG = "SocketServiceRestarter";
+    public static final String TAG = "SocketServiceStarter";
     public static final String START_SOCKET_SERVICE =
             "com.tosslab.jandi.app.services.SOCKET_SERVICE_RESTART";
 
