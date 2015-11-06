@@ -147,7 +147,7 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 70
+        versionCode 71
         versionName '1.6.1'
 
         // for Ui Testing
