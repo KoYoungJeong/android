@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.local.orm.repositories.UploadedFileInfoRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.transform.glide.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 import java.io.File;
 
@@ -489,25 +490,15 @@ public class BitmapUtil {
                 .into(imageView);
     }
 
-    public static void loadCropImageByGlideOrIonWhenGif(ImageView imageView,
-                                                        String url, int placeHolder, int error) {
-        if (url.toLowerCase().endsWith("gif")) {
-            Ion.with(imageView)
-                    .centerCrop()
-                    .placeholder(placeHolder)
-                    .error(error)
-                    .crossfade(true)
-                    .load(url);
-            return;
-        }
-
-        Glide.with(JandiApplication.getContext())
-                .load(url)
+    public static void loadImageByIon(ImageView imageView,
+                                      String url, int placeHolder, int error) {
+        Ion.with(imageView)
                 .centerCrop()
                 .placeholder(placeHolder)
                 .error(error)
-                .crossFade()
-                .into(imageView);
+                .transform(new IonCircleTransform())
+                .crossfade(true)
+                .load(url);
     }
 
     public static String getLocalFilePath(int messageId) {

@@ -55,7 +55,7 @@ public class StickerViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        BitmapUtil.loadCropImageByGlideOrIonWhenGif(ivProfile,
+        BitmapUtil.loadImageByIon(ivProfile,
                 profileUrl,
                 R.drawable.profile_img,
                 R.drawable.profile_img

@@ -77,7 +77,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
 
         LogUtil.e("profileUrl - " + profileUrl);
 
-        BitmapUtil.loadCropImageByGlideOrIonWhenGif(ivProfile,
+        BitmapUtil.loadImageByIon(ivProfile,
                 profileUrl,
                 R.drawable.profile_img,
                 R.drawable.profile_img
