@@ -273,6 +273,8 @@
 	<string name="jandi_no_invite_email">"請提供您想邀請的團隊成員的電子郵件地址"</string>
 	<string name="jandi_no_long_team_member">"%s 不再是此團隊的成員"</string>
 	<string name="jandi_no_message_in_topic_dm">"輸入訊息以開始對話"</string>
+	<string name="jandi_no_preview_push_mention">"[{{TopicName}}] {{Sendername}}提及你"</string>
+	<string name="jandi_no_preview_push_message">"[{{TopicName}}] {{Sendername}}發送新訊息給你"</string>
 	<string name="jandi_no_recent_stickers">"無最近使用的貼圖"</string>
 	<string name="jandi_no_topic_to_join">"沒有可加入的議題"</string>
 	<string name="jandi_notification_off">"關閉推播通知"</string>
@@ -288,6 +290,7 @@
 	<string name="jandi_password_strength_weak">"必須含有至少一個數字、 大寫字母或特殊字符。"</string>
 	<string name="jandi_phone_led">"鎖屏通知"</string>
 	<string name="jandi_plz_input_topic_description">"說明 (選項)"</string>
+	<string name="jandi_preview_message_contents">"預覽訊息內容"</string>
 	<string name="jandi_privacy_policy">"隱私權條款"</string>
 	<string name="jandi_privacy_protection">"隱私"</string>
 	<string name="jandi_private_topic_tip_1">"私人議題不開放給未受邀成員"</string>
@@ -310,6 +313,9 @@
 	<string name="jandi_profile_status_message">"狀態"</string>
 	<string name="jandi_profile_update">"更新"</string>
 	<string name="jandi_profile_update_succeed">"簡介已更新"</string>
+	<string name="jandi_push_no_preview">"無預覽"</string>
+	<string name="jandi_push_preview_all_message">"所有訊息"</string>
+	<string name="jandi_push_preview_public_only">"僅限公開議題"</string>
 	<string name="jandi_question_team_create">"您的團隊還未使用JANDI嗎？"</string>
 	<string name="jandi_retry_voice_search">"沒有接收清楚您剛才説的，麻煩再說一次"</string>
 	<string name="jandi_save">"儲存"</string>

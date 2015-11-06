@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.photo.PhotoViewFragment;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
+import com.tosslab.jandi.app.utils.OnSwipeExitListener;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterInject;
@@ -44,7 +45,7 @@ import java.util.List;
 @EActivity(R.layout.activity_carousel_viewer)
 @OptionsMenu(R.menu.carousel_menu)
 public class CarouselViewerActivity extends BaseAppCompatActivity
-        implements CarouselViewerPresenter.View, PhotoViewFragment.OnExitListener {
+        implements CarouselViewerPresenter.View, OnSwipeExitListener {
 
     private static final int REQ_STORAGE_PERMISSION = 101;
     @ViewById(R.id.vp_carousel)
@@ -322,11 +323,11 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void onExit(int direction) {
+    public void onSwipeExit(int direction) {
         finish();
 
         int anim = R.anim.slide_out_to_bottom;
-        if (direction == PhotoViewFragment.OnExitListener.DIRECTION_TO_TOP) {
+        if (direction == OnSwipeExitListener.DIRECTION_TO_TOP) {
             anim = R.anim.slide_out_to_top;
         }
 

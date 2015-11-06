@@ -31,6 +31,11 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
     public Filter getFilter() {
         return new Filter() {
             @Override
+            public CharSequence convertResultToString(Object resultValue) {
+                return "";
+            }
+
+            @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 return new FilterResults();
             }
