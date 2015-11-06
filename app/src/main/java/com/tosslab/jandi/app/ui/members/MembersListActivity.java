@@ -308,6 +308,13 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         }
     }
 
+    @Click(value = {
+            R.id.img_chat_choose_member_empty,
+            R.id.btn_chat_choose_member_empty})
+    void onMemberJoinClick() {
+        onInviteOptionSelect();
+    }
+
     @UiThread
     @Override
     public void showListMembers(List<ChatChooseItem> members) {
