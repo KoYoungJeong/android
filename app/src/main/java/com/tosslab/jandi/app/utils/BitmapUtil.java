@@ -469,6 +469,14 @@ public class BitmapUtil {
                 .into(imageView);
     }
 
+    public static void loadCropBitmapByIon(ImageView imageView,
+                                           String url, int placeHolder) {
+        Ion.with(imageView)
+                .placeholder(placeHolder)
+                .centerCrop()
+                .load(url);
+    }
+
     public static void loadCropCircleImageByGlideBitmap(ImageView imageView,
                                                         String url, int placeHolder, int error) {
         Glide.with(JandiApplication.getContext())

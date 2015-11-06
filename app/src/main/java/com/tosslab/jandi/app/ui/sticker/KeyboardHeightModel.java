@@ -128,7 +128,7 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
 
         int keyboardHeight = rootView.getRootView().getHeight() - r.height() - statusbarHeight;
 
-        if (!hasNoNavigationBar()) {
+        if (!hasNoNavigationBar() && rootView.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             int navigationHeight = getNavigationHeight();
             keyboardHeight -= navigationHeight;
         }
