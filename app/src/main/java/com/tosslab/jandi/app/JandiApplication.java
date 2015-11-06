@@ -13,10 +13,12 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
+import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.SimpleApiRequester;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.utils.ApplicationActivateDetector;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
@@ -92,9 +94,39 @@ public class JandiApplication extends MultiDexApplication {
             JandiPreference.setOldParseChannelDeleted(this, true);
         }
 
+        migrationTokenIfNeed();
+
         registerActivityLifecycleCallbacks();
 
         registerScreenOffReceiver();
+    }
+
+    /**
+     * Preference 에 토큰정보가 있는 경우 && DB 에 토큰 정보가 없는 경우
+     * Preference 값을 DB에 저장
+     */
+    private void migrationTokenIfNeed() {
+        // Preference 에 저장된 정보
+        String accessToken = JandiPreference.getAccessToken(this);
+        if (TextUtils.isEmpty(accessToken)) {
+            return;
+        }
+
+        String refreshToken = JandiPreference.getRefreshToken(this);
+        String accessTokenType = JandiPreference.getAccessTokenType(this);
+
+        // DB 에 저장된 정보
+        ResAccessToken savedAccessToken = AccessTokenRepository.getRepository().getAccessToken();
+        String accessTokenFromRepository = savedAccessToken != null ? savedAccessToken.getAccessToken() : null;
+        if (TextUtils.isEmpty(accessTokenFromRepository)) {
+            ResAccessToken newToken = new ResAccessToken();
+            newToken.setAccessToken(accessToken);
+            newToken.setRefreshToken(refreshToken);
+            newToken.setTokenType(accessTokenType);
+            AccessTokenRepository.getRepository().upsertAccessToken(newToken);
+        }
+
+        JandiPreference.removeTokenInfo(this);
     }
 
     private void registerScreenOffReceiver() {
@@ -152,7 +184,8 @@ public class JandiApplication extends MultiDexApplication {
     private void updatePlatformStatus(boolean active) {
         LogUtil.i("PlatformApi", "updatePlatformStatus - " + active);
 
-        String accessToken = JandiPreference.getAccessToken(JandiApplication.getContext());
+        ResAccessToken savedAccessToken = AccessTokenRepository.getRepository().getAccessToken();
+        String accessToken = savedAccessToken != null ? savedAccessToken.getAccessToken() : null;
         if (TextUtils.isEmpty(accessToken)) {
             return;
         }
