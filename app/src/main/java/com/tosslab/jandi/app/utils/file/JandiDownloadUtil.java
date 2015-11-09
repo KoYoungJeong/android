@@ -28,7 +28,14 @@ public class JandiDownloadUtil {
 
         return Ion.with(JandiApplication.getContext())
                 .load(downloadUrl)
-                .progressDialog(progressDialog)
+                .progressHandler((downloaded, total) -> {
+                    progressDialog.setMax(100);
+                    progressDialog.setProgress((int) (downloaded * 100 / total));
+
+                    if (downloaded >= total) {
+                        progressDialog.dismiss();
+                    }
+                })
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(JandiApplication.getContext()))
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
                 .write(new File(dir, FileSizeUtil.getDownloadFileName(fileName, ext)))
