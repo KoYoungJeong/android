@@ -2,18 +2,11 @@ package com.tosslab.jandi.app.ui.filedetail.fileinfo;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.koushikdutta.ion.Ion;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
@@ -72,7 +65,7 @@ public class ImageThumbLoader implements FileThumbLoader {
                     }
 
 
-                    loadImageByGlideOrIonWhenGif(
+                    BitmapUtil.loadImageByGlideOrIonWhenGif(
                             imageViewPhotoFile, thumbnailPhotoUrl,
                             R.drawable.jandi_down_placeholder_img, R.drawable.jandi_down_placeholder_img,
                             (width, height) -> {
@@ -151,54 +144,4 @@ public class ImageThumbLoader implements FileThumbLoader {
         vgDetailPhoto.setLayoutParams(layoutParams);
     }
 
-    private void loadImageByGlideOrIonWhenGif(ImageView imageView,
-                                              String url, int placeHolder, int error, OnResourceReady onResourceReady) {
-        if (url.toLowerCase().endsWith("gif")) {
-            Ion.with(imageView)
-                    .fitCenter()
-                    .placeholder(placeHolder)
-                    .error(error)
-                    .crossfade(true)
-                    .load(url).withBitmapInfo().setCallback((e, result) -> {
-                if (e == null && onResourceReady != null) {
-                    Bitmap bitmap = result.getBitmapInfo().bitmap;
-                    int width = bitmap.getWidth();
-                    int height = bitmap.getHeight();
-                    onResourceReady.onReady(width, height);
-                }
-            });
-            return;
-        }
-
-        Glide.with(JandiApplication.getContext())
-                .load(url)
-                .placeholder(placeHolder)
-                .error(error)
-                .animate(view -> {
-                    view.setAlpha(0.0f);
-                    view.animate()
-                            .alpha(1.0f)
-                            .setDuration(300);
-                })  // Avoid doesn't working 'fitCenter with crossfade'
-                .fitCenter()
-                .listener(new RequestListener<String, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        if (onResourceReady != null) {
-                            onResourceReady.onReady(resource.getIntrinsicWidth(), resource.getIntrinsicHeight());
-                        }
-                        return false;
-                    }
-                })
-                .into(imageView);
-    }
-
-    private interface OnResourceReady {
-        void onReady(int width, int height);
-    }
 }
