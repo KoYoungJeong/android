@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -57,6 +58,7 @@ public class FileHeadManager {
 
     private ImageView btnFileDetailStarred;
     private ImageView imageViewPhotoFile;
+    private ViewGroup vgDetailPhoto;
     private ImageView iconFileType;
     private LinearLayout fileInfoLayout;
     private int roomId;
@@ -71,6 +73,7 @@ public class FileHeadManager {
         textViewFileContentInfo = (TextView) header.findViewById(R.id.txt_file_detail_file_info);
         textViewFileSharedCdp = (TextView) header.findViewById(R.id.txt_file_detail_shared_cdp);
         imageViewPhotoFile = (ImageView) header.findViewById(R.id.img_file_detail_photo);
+        vgDetailPhoto = (ViewGroup) header.findViewById(R.id.vg_file_detail_photo);
         fileInfoLayout = (LinearLayout) header.findViewById(R.id.ly_file_detail_info);
         iconFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
         disableLineThroughView = header.findViewById(R.id.iv_entity_listitem_line_through);
@@ -223,7 +226,7 @@ public class FileHeadManager {
 
                 FileThumbLoader thumbLoader;
                 if (fileMessage.content.type.startsWith("image")) {
-                    thumbLoader = new ImageThumbLoader(iconFileType, imageViewPhotoFile, roomId);
+                    thumbLoader = new ImageThumbLoader(iconFileType, vgDetailPhoto,imageViewPhotoFile, roomId);
                 } else {
                     thumbLoader = new NormalThumbLoader(iconFileType, imageViewPhotoFile);
                 }
