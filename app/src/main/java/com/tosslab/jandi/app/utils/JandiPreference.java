@@ -300,4 +300,10 @@ public class JandiPreference {
                 .getLong(PREF_VERSION_POPUP_LAST_TIME, 0);
     }
 
+    public static void init(Context context) {
+
+        SharedPreferences pref = getSharedPreferences(context);
+        pref.edit().clear().commit();
+
+    }
 }
