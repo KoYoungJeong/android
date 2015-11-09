@@ -146,9 +146,12 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
             DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
             deleteBuilder.where().eq("stickerOf_id", stickerMessage.id);
             deleteBuilder.delete();
-            for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : stickerMessage.shareEntities) {
-                shareEntity.setStickerOf(stickerMessage);
-                dao.create(shareEntity);
+
+            if (stickerMessage.shareEntities != null && !stickerMessage.shareEntities.isEmpty()) {
+                for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : stickerMessage.shareEntities) {
+                    shareEntity.setStickerOf(stickerMessage);
+                    dao.create(shareEntity);
+                }
             }
 
 
@@ -172,9 +175,11 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
             DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
             deleteBuilder.where().eq("commentStickerOf_id", stickerMessage.id);
 
-            for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : stickerMessage.shareEntities) {
-                shareEntity.setCommentStickerOf(stickerMessage);
-                dao.create(shareEntity);
+            if (stickerMessage.shareEntities != null && !stickerMessage.shareEntities.isEmpty()) {
+                for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : stickerMessage.shareEntities) {
+                    shareEntity.setCommentStickerOf(stickerMessage);
+                    dao.create(shareEntity);
+                }
             }
             DaoManager.createDao(connectionSource, ResMessages.StickerContent.class)
                     .createOrUpdate(stickerMessage.content);
@@ -195,9 +200,11 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
             deleteBuilder.where().eq("commentOf_id", commentMessage.id);
             deleteBuilder.delete();
 
-            for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : commentMessage.shareEntities) {
-                shareEntity.setCommentOf(commentMessage);
-                dao.create(shareEntity);
+            if (commentMessage.shareEntities != null && !commentMessage.shareEntities.isEmpty()) {
+                for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : commentMessage.shareEntities) {
+                    shareEntity.setCommentOf(commentMessage);
+                    dao.create(shareEntity);
+                }
             }
 
             Dao<MentionObject, ?> mentionObjectDao = DaoManager.createDao(connectionSource, MentionObject.class);
@@ -205,9 +212,11 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
             mentionObjectDeleteBuilder.where().eq("textOf_id", commentMessage.id);
             mentionObjectDeleteBuilder.delete();
 
-            for (MentionObject mention : commentMessage.mentions) {
-                mention.setCommentOf(commentMessage);
-                mentionObjectDao.create(mention);
+            if (commentMessage.mentions != null && !commentMessage.mentions.isEmpty()) {
+                for (MentionObject mention : commentMessage.mentions) {
+                    mention.setCommentOf(commentMessage);
+                    mentionObjectDao.create(mention);
+                }
             }
 
             DaoManager.createDao(connectionSource, ResMessages.TextContent.class).createOrUpdate
