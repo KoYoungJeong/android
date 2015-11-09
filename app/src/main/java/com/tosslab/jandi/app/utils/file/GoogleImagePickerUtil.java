@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.utils;
+package com.tosslab.jandi.app.utils.file;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -7,6 +7,7 @@ import android.os.Environment;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.UserAgentUtil;
 
 import java.io.File;
 
@@ -18,6 +19,16 @@ public class GoogleImagePickerUtil {
         return realFilePath.toLowerCase().startsWith("http://") || realFilePath.toLowerCase().startsWith("https://");
     }
 
+    /**
+     * 구글,피카사 등 웹의 이미지 다운로드한다
+     * @param context
+     * @param downloadProgress
+     * @param url
+     * @param downloadDir
+     * @param downloadName
+     * @return
+     * @throws Exception
+     */
     public static File downloadFile(Context context, ProgressDialog downloadProgress, String url, String downloadDir, String downloadName) throws Exception {
 
         File dir = new File(downloadDir);

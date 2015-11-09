@@ -7,7 +7,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
-import com.tosslab.jandi.app.utils.FileSizeUtil;
+import com.tosslab.jandi.app.utils.file.FileSizeUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -156,7 +156,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
         try {
             File downloadFile = carouselViewerModel.download(fileInfo.getFileLinkUrl(),
                     fileInfo.getFileName(), fileInfo.getExt(),
-                    progressDialog, context.getApplicationContext());
+                    progressDialog);
 
             carouselViewerModel.trackDownloadingFile(EntityManager.getInstance(),
                     fileInfo, context);

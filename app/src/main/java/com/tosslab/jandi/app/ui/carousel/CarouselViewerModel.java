@@ -3,12 +3,10 @@ package com.tosslab.jandi.app.ui.carousel;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
-import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -17,7 +15,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.FileSizeUtil;
+import com.tosslab.jandi.app.utils.file.JandiDownloadUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
@@ -54,15 +52,8 @@ public class CarouselViewerModel {
     }
 
     public File download(String url, String fileName, String ext, ProgressDialog
-            progressDialog, Context context) throws ExecutionException, InterruptedException {
-        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/Jandi");
-        dir.mkdirs();
-
-        return Ion.with(context)
-                .load(url)
-                .progressDialog(progressDialog)
-                .write(new File(dir, FileSizeUtil.getDownloadFileName(fileName, ext)))
-                .get();
+            progressDialog) throws ExecutionException, InterruptedException {
+        return JandiDownloadUtil.download(url, fileName, ext, progressDialog);
     }
 
     public boolean isMediaFile(String fileType) {

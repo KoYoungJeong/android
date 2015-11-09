@@ -3,11 +3,9 @@ package com.tosslab.jandi.app.ui.filedetail.model;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
-import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -28,8 +26,7 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.FileSizeUtil;
-import com.tosslab.jandi.app.utils.UserAgentUtil;
+import com.tosslab.jandi.app.utils.file.JandiDownloadUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -90,17 +87,7 @@ public class FileDetailModel {
     }
 
     public File download(String url, String fileName, String ext, ProgressDialog progressDialog) throws Exception {
-        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/Jandi");
-        dir.mkdirs();
-
-        String downloadFileName = FileSizeUtil.getDownloadFileName(fileName, ext);
-
-        return Ion.with(context)
-                .load(url)
-                .progressDialog(progressDialog)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
-                .write(new File(dir, downloadFileName))
-                .get();
+        return JandiDownloadUtil.download(url, fileName, ext, progressDialog);
     }
 
     public boolean isMyComment(int writerId) {
