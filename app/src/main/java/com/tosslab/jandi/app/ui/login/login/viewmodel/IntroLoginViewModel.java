@@ -50,7 +50,7 @@ public class IntroLoginViewModel {
     @SystemService
     InputMethodManager imm;
 
-    private ProgressWheel mProgressWheel;
+    ProgressWheel mProgressWheel;
 
     @AfterInject
     void initObject() {
