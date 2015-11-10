@@ -25,10 +25,6 @@ import org.androidannotations.annotations.ViewById;
  */
 @EActivity(R.layout.activity_intro_tutorial)
 public class IntroMainActivity extends BaseAppCompatActivity {
-    public interface KeyboardHandler {
-        void hideKeyboard();
-    }
-
     @ViewById(R.id.btn_tutorial_first)
     Button buttonTutorialFirst;
     @ViewById(R.id.btn_tutorial_second)
@@ -37,12 +33,10 @@ public class IntroMainActivity extends BaseAppCompatActivity {
     Button buttonTutorialThird;
     @ViewById(R.id.btn_tutorial_last)
     Button buttonTutorialLast;
-    private ViewPager mViewPager;
-    private IntroMainPagerAdapter mAdapter;
-
     @ViewById(R.id.layout_footer_tutorial)
     LinearLayout tutorialFooterLayout;
-
+    private ViewPager mViewPager;
+    private IntroMainPagerAdapter mAdapter;
     private KeyboardHandler keyboardHandler;
 
     @Override
@@ -99,14 +93,14 @@ public class IntroMainActivity extends BaseAppCompatActivity {
         });
     }
 
-    private void btnAction(int position) {
+    protected void btnAction(int position) {
         buttonTutorialFirst.setSelected(position == IntroTutorialFragment.FIRST_PAGE);
         buttonTutorialSecond.setSelected(position == IntroTutorialFragment.SECOND_PAGE);
         buttonTutorialThird.setSelected(position == IntroTutorialFragment.LAST_PAGE);
         buttonTutorialLast.setSelected(position > IntroTutorialFragment.LAST_PAGE);
     }
 
-    private void hideKeyboardIfNeed(int position) {
+    protected void hideKeyboardIfNeed(int position) {
         if (keyboardHandler == null) {
             return;
         }
@@ -121,5 +115,9 @@ public class IntroMainActivity extends BaseAppCompatActivity {
         if (fragment instanceof KeyboardHandler) {
             keyboardHandler = (KeyboardHandler) fragment;
         }
+    }
+
+    public interface KeyboardHandler {
+        void hideKeyboard();
     }
 }
