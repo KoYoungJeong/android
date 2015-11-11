@@ -1,10 +1,10 @@
 package com.tosslab.jandi.app.ui.account;
 
-import static org.junit.Assert.*;
+import android.support.test.runner.AndroidJUnit4;
 
-/**
- * Created by tee on 15. 10. 23..
- */
+import org.junit.runner.RunWith;
+
+@RunWith(AndroidJUnit4.class)
 public class AccountHomeActivityTest {
 
 }
