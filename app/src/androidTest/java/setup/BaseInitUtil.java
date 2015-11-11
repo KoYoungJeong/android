@@ -23,7 +23,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
-public class BaseIniUtil {
+public class BaseInitUtil {
     public static final String TEST_ID = "steve@tosslab.com";
     public static final String TEST_PASSWORD = "dnrl~12AB";
 

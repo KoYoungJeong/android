@@ -33,7 +33,6 @@ public class KickDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_kick_user_topic, null);
 
         ImageView ivProfile = (ImageView) view.findViewById(R.id.iv_kick_user_topic_profile);

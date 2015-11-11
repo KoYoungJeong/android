@@ -26,8 +26,8 @@ import rx.Observable;
 public class MembersModel {
 
     public List<ChatChooseItem> getTopicMembers(int entityId) {
-        Collection<Integer> members = EntityManager.getInstance().getEntityById(entityId)
-                .getMembers();
+        Collection<Integer> members = EntityManager.getInstance()
+                .getEntityById(entityId).getMembers();
         List<FormattedEntity> formattedUsers = EntityManager.getInstance().getFormattedUsers();
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
 

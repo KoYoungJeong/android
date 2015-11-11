@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import retrofit.RetrofitError;
-import setup.BaseIniUtil;
+import setup.BaseInitUtil;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,7 +45,7 @@ public class IntroLoginModelTest {
 
     @After
     public void tearDown() throws Exception {
-        BaseIniUtil.clear();
+        BaseInitUtil.clear();
     }
 
     @Test
@@ -99,7 +99,7 @@ public class IntroLoginModelTest {
     @Test
     public void testSaveTokenInfo() throws Exception {
 
-        ResAccessToken accessToken = introLoginModel.login(BaseIniUtil.TEST_ID, BaseIniUtil.TEST_PASSWORD);
+        ResAccessToken accessToken = introLoginModel.login(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD);
 
         boolean isSaved = introLoginModel.saveTokenInfo(accessToken);
         assertThat(isSaved, is(true));
@@ -116,7 +116,7 @@ public class IntroLoginModelTest {
     @Test
     public void testSaveAccountInfo() throws Exception {
         ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
-                ReqAccessToken.createPasswordReqToken(BaseIniUtil.TEST_ID, BaseIniUtil.TEST_PASSWORD));
+                ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
 
         TokenUtil.saveTokenInfoByPassword(accessToken);
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
@@ -142,7 +142,7 @@ public class IntroLoginModelTest {
     public void testGetAccountInfo_Has_Token() throws Exception {
 
         ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
-                ReqAccessToken.createPasswordReqToken(BaseIniUtil.TEST_ID, BaseIniUtil.TEST_PASSWORD));
+                ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
 
         TokenUtil.saveTokenInfoByPassword(accessToken);
 
@@ -204,7 +204,7 @@ public class IntroLoginModelTest {
 
     @Test
     public void testRequestPasswordReset() throws Exception {
-        ResCommon resCommon = introLoginModel.requestPasswordReset(BaseIniUtil.TEST_ID);
+        ResCommon resCommon = introLoginModel.requestPasswordReset(BaseInitUtil.TEST_ID);
         assertThat(resCommon, is(notNullValue()));
     }
 }
