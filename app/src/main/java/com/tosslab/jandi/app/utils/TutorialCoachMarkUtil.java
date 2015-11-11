@@ -99,8 +99,8 @@ public class TutorialCoachMarkUtil {
     }
 
     public static void showCoachMarkMoreIfNotShown(Context context) {
+        showCoachMarkDialog(context, COACH_MARK_MORE);
         if (!JandiPreference.isAleadyShowCoachMarkMore(context.getApplicationContext())) {
-            showCoachMarkDialog(context, COACH_MARK_MORE);
         }
     }
 
