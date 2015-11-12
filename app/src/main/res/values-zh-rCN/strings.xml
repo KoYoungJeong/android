@@ -198,6 +198,7 @@
 	<string name="jandi_has_joined">"%s已加入"</string>
 	<string name="jandi_have_an_account_already">"已经有团队注册了吗?"</string>
 	<string name="jandi_help">"说明"</string>
+	<string name="jandi_image_too_big">"图像过大无法加载"</string>
 	<string name="jandi_incorrect_passcode">"密码不吻合"</string>
 	<string name="jandi_input_password">"请为选择的团队输入您的密码"</string>
 	<string name="jandi_input_search_keyword">"按照关键词搜索您的信息"</string>
@@ -273,8 +274,8 @@
 	<string name="jandi_no_invite_email">"请提供您想邀请的团队成员的电子邮件地址"</string>
 	<string name="jandi_no_long_team_member">"%s 不再是此团队的成员"</string>
 	<string name="jandi_no_message_in_topic_dm">"输入信息以开始对话"</string>
-	<string name="jandi_no_preview_push_mention">"[{{TopicName}}] {{Sendername}}提及你"</string>
-	<string name="jandi_no_preview_push_message">"[{{TopicName}}] {{Sendername}}发送新信息给你"</string>
+	<string name="jandi_no_preview_push_mention">"你在此信息中被提及"</string>
+	<string name="jandi_no_preview_push_message">"你收到一则新信息"</string>
 	<string name="jandi_no_recent_stickers">"无最近使用的贴图"</string>
 	<string name="jandi_no_topic_to_join">"没有可加入的议题"</string>
 	<string name="jandi_notification_off">"关闭推送通知"</string>
@@ -337,7 +338,9 @@
 	<string name="jandi_service_maintenance">"JANDI现在基于定期维护而无法使用。我们预计几个小时内就可以恢复运作。感谢您的耐心等候。"</string>
 	<string name="jandi_set_passcode">"设定密码"</string>
 	<string name="jandi_set_passcode_detail">"如果你忘记密码，将无法解锁。 请重新安装JANDI，再重新登入。"</string>
+	<string name="jandi_setting_display">"屏幕显示"</string>
 	<string name="jandi_setting_general">"一般"</string>
+	<string name="jandi_setting_notification">"通知设置"</string>
 	<string name="jandi_setting_push">"通知偏好"</string>
 	<string name="jandi_setting_push_subscription">"推播通知"</string>
 	<string name="jandi_setting_push_subscription_cancel">"关闭通知功能"</string>
@@ -391,6 +394,7 @@
 	<string name="jandi_tab_file">"文件"</string>
 	<string name="jandi_tab_more">"更多"</string>
 	<string name="jandi_tab_private_group">"私人议题"</string>
+	<string name="jandi_tab_to_view_original">"点击此处浏览原始文件"</string>
 	<string name="jandi_tab_topic">"议题"</string>
 	<string name="jandi_team_creation_succeed">"团队建立成功！请查看您的电子邮件。"</string>
 	<string name="jandi_team_info">"团队"</string>
