@@ -49,6 +49,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
@@ -138,9 +139,19 @@ public class MainMoreFragment extends Fragment {
 
     private void showTeamMember() {
         String teamMember = getString(R.string.jandi_team_member);
-        int teamMemberCount = EntityManager.getInstance().getFormattedUsers().size();
+        int teamMemberCount = getEnabledUserCount();
         String fullTeamMemberText = String.format("%s\n(%d)", teamMember, teamMemberCount);
         vTeamMember.setIconText(fullTeamMemberText);
+    }
+
+    private int getEnabledUserCount() {
+        List<FormattedEntity> formattedUsers = EntityManager.getInstance().getFormattedUsers();
+        int enabledUserCount = Observable.from(formattedUsers)
+                .filter(formattedEntity -> TextUtils.equals(formattedEntity.getUser().status, "enabled"))
+                .count()
+                .toBlocking()
+                .firstOrDefault(0);
+        return enabledUserCount;
     }
 
     @Override
