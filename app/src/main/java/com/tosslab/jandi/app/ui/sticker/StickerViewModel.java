@@ -287,7 +287,12 @@ public class StickerViewModel {
             layoutParams.height = keyboardMaxHeight;
             ivNoItems.setVisibility(View.GONE);
         } else {
-            layoutParams.height = JandiPreference.getKeyboardHeight(vgStickerSelector.getContext());
+            int keyboardHeight = JandiPreference.getKeyboardHeight(vgStickerSelector.getContext());
+            if (keyboardHeight > 0) {
+                layoutParams.height = keyboardHeight;
+            } else {
+                layoutParams.height = resources.getDisplayMetrics().heightPixels * 2 / 5;
+            }
             ivNoItems.setVisibility(View.VISIBLE);
         }
         vgStickerSelector.setLayoutParams(layoutParams);

@@ -8,6 +8,8 @@ import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
+import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
@@ -75,6 +77,9 @@ public class IntroActivityPresenter {
                     model.removeOldToken(context);
                 }
 
+                // 메세지 캐시를 삭제함. 딱 1회에 한해서만 동작함
+                clearLinkRepositoryIfFirstTime();
+
                 if (!model.isNeedLogin()) {
                     if (model.hasMigration()) {
                         try {
@@ -121,6 +126,19 @@ public class IntroActivityPresenter {
             view.showCheckNetworkDialog();
         }
 
+    }
+
+    private void clearLinkRepositoryIfFirstTime() {
+        /*
+        발생하는 경우의 수
+        1. 앱 설치/업데이트 후 첫 실행
+        2. 로그아웃 직후
+         */
+        if (!JandiPreference.isClearedLink()) {
+            model.clearLinkRepository();
+            JandiPreference.setClearedLink();
+            LogUtil.d("clearLinkRepository()");
+        }
     }
 
     private void migrationAccountInfos(Context context, long initTime, final boolean startForInvite) throws RetrofitError {

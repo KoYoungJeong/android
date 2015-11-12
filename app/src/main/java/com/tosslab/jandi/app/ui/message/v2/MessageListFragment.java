@@ -917,8 +917,14 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
+                .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        () -> filePickerViewModel.showFileUploadTypeDialog(getFragmentManager()))
+                        () -> Observable.just(1)
+                                .delay(300, TimeUnit.MILLISECONDS)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(integer -> {
+                                    filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
+                                }, Throwable::printStackTrace))
                 .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
     }
 

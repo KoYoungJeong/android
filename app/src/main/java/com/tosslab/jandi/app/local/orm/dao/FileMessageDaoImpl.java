@@ -38,9 +38,11 @@ public class FileMessageDaoImpl extends BaseDaoImpl<ResMessages.FileMessage, Int
         deleteBuilder.where().eq("fileOf_id", fileMessage.id);
         deleteBuilder.delete();
 
-        for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : fileMessage.shareEntities) {
-            shareEntity.setFileOf(fileMessage);
-            dao.create(shareEntity);
+        if (fileMessage.shareEntities != null && !fileMessage.shareEntities.isEmpty()) {
+            for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : fileMessage.shareEntities) {
+                shareEntity.setFileOf(fileMessage);
+                dao.create(shareEntity);
+            }
         }
 
         DaoManager.createDao(connectionSource, ResMessages.FileContent.class)

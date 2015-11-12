@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.ui.login.login.viewmodel.IntroLoginViewModel;
 import com.tosslab.jandi.app.ui.signup.account.SignUpActivity_;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -66,6 +67,8 @@ public class IntroLoginFragment extends Fragment implements IntroMainActivity.Ke
 
     @Background
     void startLogin(String email, String password) {
+
+        SignOutUtil.initSignData();
 
         ResAccessToken accessToken = null;
         try {
