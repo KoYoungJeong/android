@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -52,8 +53,11 @@ public class SendMessageRepository {
                     .eq("sendMessageOf_id", sendMessage.getId());
             deleteBuilder.delete();
 
-            for (MentionObject mentionObject : sendMessage.getMentionObjects()) {
-                mentionObjectDao.create(mentionObject);
+            Collection<MentionObject> mentionObjects = sendMessage.getMentionObjects();
+            if (mentionObjects != null && !mentionObjects.isEmpty()) {
+                for (MentionObject mentionObject : mentionObjects) {
+                    mentionObjectDao.create(mentionObject);
+                }
             }
             return true;
         } catch (SQLException e) {

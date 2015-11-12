@@ -12,4 +12,10 @@ public class SignOutUtil {
         OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
                 .clearAllData();
     }
+
+    public static void initSignData() {
+        ParseUpdateUtil.deleteChannelOnServer();
+        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
+                .clearAllData();
+    }
 }
