@@ -27,7 +27,6 @@ import java.util.Map;
 import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -344,6 +343,7 @@ public class JandiSocketService extends Service {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
                 subscriber.onNext(isValidToken());
+                subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io())
                 .subscribe(isValidToken -> {
