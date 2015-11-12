@@ -163,14 +163,13 @@ public class FilePickerModel {
     }
 
     public boolean isPublicEntity(Context context, int entityId) {
-
         return EntityManager.getInstance().getEntityById(entityId).isPublicTopic();
     }
 
     public JsonObject uploadFile(Context context, ProgressDialog progressDialog, String realFilePath, boolean isPublicTopic, String title, int entityId, String comment) throws ExecutionException, InterruptedException {
 
         File uploadFile = new File(realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/v2/file";
+        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/file";
         String permissionCode = (isPublicTopic) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion
@@ -206,7 +205,7 @@ public class FilePickerModel {
                                  String comment, List<MentionObject> mentions,
                                  ProgressCallback progressCallback) throws ExecutionException, InterruptedException {
         File uploadFile = new File(realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/v2/file";
+        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/file";
         String permissionCode = (isPublicTopic) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion
