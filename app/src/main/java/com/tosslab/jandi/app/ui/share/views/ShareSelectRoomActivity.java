@@ -110,8 +110,12 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
         showProgress();
 
         try {
-            ResLeftSideMenu leftSideMenu = shareSelectModel.getLeftSideMenu(teamId);
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+            ResLeftSideMenu leftSideMenu;
+            leftSideMenu = LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
+            if (leftSideMenu == null) {
+                leftSideMenu = shareSelectModel.getLeftSideMenu(teamId);
+                LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+            }
             shareSelectModel.initFormattedEntities(leftSideMenu);
             getTopics();
         } catch (RetrofitError e) {
