@@ -300,4 +300,13 @@ public class JandiPreference {
                 .getLong(PREF_VERSION_POPUP_LAST_TIME, 0);
     }
 
+    public static boolean isClearedLink() {
+        return getSharedPreferences(JandiApplication.getContext()).getBoolean("cleared_link", false);
+    }
+
+    public static void setClearedLink() {
+        getSharedPreferences(JandiApplication.getContext()).edit()
+                .putBoolean("cleared_link", true)
+                .commit();
+    }
 }

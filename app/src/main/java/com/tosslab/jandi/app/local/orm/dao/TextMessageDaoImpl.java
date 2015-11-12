@@ -41,9 +41,11 @@ public class TextMessageDaoImpl extends BaseDaoImpl<ResMessages.TextMessage, Int
         deleteBuilder.where().eq("textOf_id", textMessage.id);
         deleteBuilder.delete();
 
-        for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : textMessage.shareEntities) {
-            shareEntity.setTextOf(textMessage);
-            dao.create(shareEntity);
+        if (textMessage.shareEntities != null && !textMessage.shareEntities.isEmpty()) {
+            for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : textMessage.shareEntities) {
+                shareEntity.setTextOf(textMessage);
+                dao.create(shareEntity);
+            }
         }
 
         Dao<MentionObject, ?> mentionObjectDao = DaoManager.createDao(connectionSource, MentionObject.class);
@@ -51,9 +53,11 @@ public class TextMessageDaoImpl extends BaseDaoImpl<ResMessages.TextMessage, Int
         mentionObjectDeleteBuilder.where().eq("textOf_id", textMessage.id);
         mentionObjectDeleteBuilder.delete();
 
-        for (MentionObject mention : textMessage.mentions) {
-            mention.setTextOf(textMessage);
-            mentionObjectDao.create(mention);
+        if (textMessage.mentions != null && !textMessage.mentions.isEmpty()) {
+            for (MentionObject mention : textMessage.mentions) {
+                mention.setTextOf(textMessage);
+                mentionObjectDao.create(mention);
+            }
         }
 
         textMessage.content.textMessage = textMessage;
