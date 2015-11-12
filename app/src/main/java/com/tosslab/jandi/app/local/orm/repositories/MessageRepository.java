@@ -329,4 +329,20 @@ public class MessageRepository {
         }
         return 0;
     }
+
+    public int deleteAllLink() {
+        lock.lock();
+        Dao<ResMessages.Link, ?> dao = null;
+        try {
+            dao = helper.getDao(ResMessages.Link.class);
+            DeleteBuilder<ResMessages.Link, ?> deleteBuilder = dao.deleteBuilder();
+            return deleteBuilder.delete();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+
+        return 0;
+    }
 }

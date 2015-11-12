@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -31,7 +32,8 @@ public class JandiPreference {
     private static final String PREF_ALARM_VIBRATE = "setting_push_alarm_vibration";
     private static final String PREF_ALARM_LED = "setting_push_alarm_led";
     private static final String PREF_INVITE_POPUP = "invite_popup";
-    private static final String PREF_KEYBOARD_HEIGHT = "keyboard_height";
+    private static final String PREF_KEYBOARD_HEIGHT_PORTRAIT = "keyboard_height_portrait";
+    private static final String PREF_KEYBOARD_HEIGHT_LANDSCAPE = "keyboard_height_landscape";
     private static final String PREF_COACH_MARK_TOPIC = "coach_mark_topic";
     private static final String PREF_COACH_MARK_TOPIC_LIST = "coach_mark_topic_list";
     private static final String PREF_COACH_MARK_MORE = "coach_mark_more";
@@ -235,11 +237,22 @@ public class JandiPreference {
     }
 
     public static void setKeyboardHeight(Context context, int keyboardHeight) {
-        getSharedPreferences(context).edit().putInt(PREF_KEYBOARD_HEIGHT, keyboardHeight).commit();
+
+        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            getSharedPreferences(context).edit().putInt(PREF_KEYBOARD_HEIGHT_LANDSCAPE, keyboardHeight).commit();
+        } else {
+            getSharedPreferences(context).edit().putInt(PREF_KEYBOARD_HEIGHT_PORTRAIT, keyboardHeight).commit();
+        }
+
     }
 
     public static int getKeyboardHeight(Context context) {
-        return getSharedPreferences(context).getInt(PREF_KEYBOARD_HEIGHT, 0);
+
+        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            return getSharedPreferences(context).getInt(PREF_KEYBOARD_HEIGHT_LANDSCAPE, 0);
+        } else {
+            return getSharedPreferences(context).getInt(PREF_KEYBOARD_HEIGHT_PORTRAIT, 0);
+        }
     }
 
     public static String getPassCode(Context context) {
@@ -296,4 +309,13 @@ public class JandiPreference {
                 .getString(PREF_PUSH_PREVIEW_INFO, "0");
     }
 
+    public static boolean isClearedLink() {
+        return getSharedPreferences(JandiApplication.getContext()).getBoolean("cleared_link", false);
+    }
+
+    public static void setClearedLink() {
+        getSharedPreferences(JandiApplication.getContext()).edit()
+                .putBoolean("cleared_link", true)
+                .commit();
+    }
 }

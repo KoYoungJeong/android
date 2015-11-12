@@ -119,7 +119,6 @@ dependencies {
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
-    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
 
     compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
         transitive = true;
@@ -148,7 +147,7 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 69
+        versionCode 74
         versionName '1.6.1'
 
         // for Ui Testing

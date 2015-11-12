@@ -273,8 +273,8 @@
 	<string name="jandi_no_invite_email">"招待したいメンバーのメールアドレスを入力してください"</string>
 	<string name="jandi_no_long_team_member">"%sさんはもうこのチームのメンバーではありません"</string>
 	<string name="jandi_no_message_in_topic_dm">"メッセージを書いて会話を始めましょう"</string>
-	<string name="jandi_no_preview_push_mention">"メッセージでメンションされました。"</string>
-	<string name="jandi_no_preview_push_message">"新着メッセージがあります。"</string>
+	<string name="jandi_no_preview_push_mention">"[{{TopicName}}] {{Sendername}}さんからメンションされました。"</string>
+	<string name="jandi_no_preview_push_message">"[{{TopicName}}] {{Sendername}}さんが新しいメッセージを送信しました。"</string>
 	<string name="jandi_no_recent_stickers">"最近利用したスタンプがありません"</string>
 	<string name="jandi_no_topic_to_join">"参加できるトピックがありません"</string>
 	<string name="jandi_notification_off">"通知をオフにする"</string>
@@ -337,9 +337,7 @@
 	<string name="jandi_service_maintenance">"JANDIは現在定期メンテナンス中のためご利用できません。定期メンテナンスは数時間で終了の予定です。ご不便をお掛けし申し訳ありません。"</string>
 	<string name="jandi_set_passcode">"パスコードロック設定"</string>
 	<string name="jandi_set_passcode_detail">"パスコードを忘れた場合はJANDIアプリを削除して再インストールしてください。"</string>
-	<string name="jandi_setting_display">"画面表示"</string>
 	<string name="jandi_setting_general">"一般"</string>
-	<string name="jandi_setting_notification">"通知設定"</string>
 	<string name="jandi_setting_push">"プッシュ"</string>
 	<string name="jandi_setting_push_subscription">"プッシュ通知"</string>
 	<string name="jandi_setting_push_subscription_cancel">"通知をオフになっています"</string>

@@ -46,6 +46,11 @@
 
     </RelativeLayout>
 
+    <include
+        android:id="@+id/vg_team_member_empty"
+        layout="@layout/view_team_member_empty"
+        android:visibility="visible" />
+
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/layout_search_bar"

@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -198,5 +199,9 @@ public class IntroActivityModel {
 
     public boolean hasLeftSideMenu() {
         return LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu() != null;
+    }
+
+    public int clearLinkRepository() {
+        return MessageRepository.getRepository().deleteAllLink();
     }
 }

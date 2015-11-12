@@ -19,8 +19,6 @@
         <item name="actionBarStyle">@style/Jandi.Default.ActionBar</item>
         <item name="actionMenuTextColor">@color/abc_primary_text_disable_only_material_dark</item>
 
-        <item name="android:textViewStyle">@style/JandiTheme.Widget.TextView</item>
-
     </style>
 
     <style name="JandiTheme.Widget" />

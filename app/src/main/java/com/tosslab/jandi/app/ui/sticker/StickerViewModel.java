@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.ui.sticker;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -8,11 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.ViewPagerIndicator;
@@ -59,6 +63,7 @@ public class StickerViewModel {
     private Pair<Integer, String> lastClickedStickerInfo;
     private long lastClickedTime;
     private boolean isShow;
+    private ImageView ivNoItems;
 
     @AfterViews
     void initViews() {
@@ -66,6 +71,7 @@ public class StickerViewModel {
         vgStickerGroups = (LinearLayout) vgStickerSelector.findViewById(R.id.vg_sticker_default_groups);
         pagerStickerItems = (ViewPager) vgStickerSelector.findViewById(R.id.pager_sticker_default_items);
         vgNoItemsLayout = (ViewGroup) vgStickerSelector.findViewById(R.id.vg_sticker_default_items_no_item);
+        ivNoItems = (ImageView) vgStickerSelector.findViewById(R.id.iv_sticker_default_items_no_item);
         viewPagerIndicator = (ViewPagerIndicator) vgStickerSelector.findViewById(R.id.indicator_sticker_default_items_page_indicator);
 
         initClicks();
@@ -196,10 +202,21 @@ public class StickerViewModel {
         }
     }
 
+    /**
+     * @param keyboardHeight 0 보다 커여 함
+     */
     public void showStickerSelector(int keyboardHeight) {
         ViewGroup.LayoutParams layoutParams = vgStickerSelector.getLayoutParams();
-        if (layoutParams.height != keyboardHeight) {
-            layoutParams.height = keyboardHeight;
+        Resources resources = vgStickerSelector.getResources();
+        int keyboardMaxHeight;
+        if (resources.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            int maxHeight = resources.getDisplayMetrics().heightPixels * 2 / 5;
+            keyboardMaxHeight = Math.min(maxHeight, keyboardHeight);
+        } else {
+            keyboardMaxHeight = keyboardHeight;
+        }
+        if (layoutParams.height != keyboardMaxHeight) {
+            layoutParams.height = keyboardMaxHeight;
             vgStickerSelector.setLayoutParams(layoutParams);
         }
 
@@ -252,6 +269,43 @@ public class StickerViewModel {
 
     public boolean isShow() {
         return isShow;
+    }
+
+    public void onConfigurationChanged() {
+        if (vgStickerSelector.getVisibility() != View.VISIBLE) {
+            return;
+        }
+
+        ViewGroup.LayoutParams layoutParams = vgStickerSelector.getLayoutParams();
+        int height = layoutParams.height;
+        Resources resources = vgStickerSelector.getResources();
+        int keyboardMaxHeight;
+        if (height > 0
+                && resources.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            int maxHeight = resources.getDisplayMetrics().heightPixels * 2 / 5;
+            keyboardMaxHeight = Math.min(maxHeight, height);
+            layoutParams.height = keyboardMaxHeight;
+            ivNoItems.setVisibility(View.GONE);
+        } else {
+            int keyboardHeight = JandiPreference.getKeyboardHeight(vgStickerSelector.getContext());
+            if (keyboardHeight > 0) {
+                layoutParams.height = keyboardHeight;
+            } else {
+                layoutParams.height = resources.getDisplayMetrics().heightPixels * 2 / 5;
+            }
+            ivNoItems.setVisibility(View.VISIBLE);
+        }
+        vgStickerSelector.setLayoutParams(layoutParams);
+
+
+        int childCount = vgStickerGroups.getChildCount();
+        for (int idx = 1; idx < childCount; idx++) {
+            boolean selected = vgStickerGroups.getChildAt(idx).isSelected();
+            if (selected) {
+                updateStickerItems(idx, pagerStickerItems);
+                break;
+            }
+        }
     }
 
 

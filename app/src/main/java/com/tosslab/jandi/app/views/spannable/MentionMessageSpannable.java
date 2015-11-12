@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.text.TextUtils;
 import android.text.style.ReplacementSpan;
 
 /**
@@ -16,6 +17,8 @@ public class MentionMessageSpannable extends ReplacementSpan {
     private final int textColor;
     private final int backgroundColor;
 
+    private String drawText;
+
     private int maxWidth = -1;
 
     public MentionMessageSpannable(String entityName, float textSize,
@@ -24,6 +27,7 @@ public class MentionMessageSpannable extends ReplacementSpan {
         this.textSize = textSize;
         this.textColor = textColor;
         this.backgroundColor = backgroundColor;
+        this.drawText = this.name;
     }
 
     public void setViewMaxWidthSize(int px) {
@@ -33,7 +37,7 @@ public class MentionMessageSpannable extends ReplacementSpan {
 
     @Override
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
-
+        paint.setTextSize(textSize);
         return getTextWidth(paint).width();
     }
 
@@ -41,8 +45,19 @@ public class MentionMessageSpannable extends ReplacementSpan {
         paint.setTextSize(textSize);
         Rect textRect = new Rect();
         paint.getTextBounds(name, 0, name.length(), textRect);
-        if (textRect.width() > maxWidth) {
+        if (maxWidth > 0 && textRect.width() > maxWidth) {
             textRect.right = maxWidth - textRect.left;
+
+            if (TextUtils.equals(name, drawText)) {
+                Rect drawRect = new Rect();
+                paint.getTextBounds(drawText, 0, drawText.length() - 1, drawRect);
+                while (drawText.length() > 2 && textRect.width() < (drawRect.width() + 10)) {
+                    drawText = drawText.substring(0, drawText.length() - 2);
+                    paint.getTextBounds(drawText, 0, drawText.length(), drawRect);
+                }
+                drawText = drawText + "...";
+            }
+
         }
         return textRect;
     }
@@ -53,17 +68,18 @@ public class MentionMessageSpannable extends ReplacementSpan {
 
         canvas.save();
 
+        paint.setTextSize(textSize);
+
         Rect textRect = getTextWidth(paint);
 
         paint.setColor(backgroundColor);
         canvas.drawRect(x, top, x + textRect.width(), bottom, paint);
 
-        paint.setTextSize(textSize);
         paint.setColor(textColor);
         Path path = new Path();
         path.moveTo(x, y);
         path.lineTo(x + textRect.width(), y);
-        canvas.drawTextOnPath(name, path, 0, 0, paint);
+        canvas.drawTextOnPath(drawText, path, 0, 0, paint);
 
         canvas.restore();
 

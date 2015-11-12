@@ -273,8 +273,8 @@
 	<string name="jandi_no_invite_email">"請提供您想邀請的團隊成員的電子郵件地址"</string>
 	<string name="jandi_no_long_team_member">"%s 不再是此團隊的成員"</string>
 	<string name="jandi_no_message_in_topic_dm">"輸入訊息以開始對話"</string>
-	<string name="jandi_no_preview_push_mention">"你在此訊息中被提及"</string>
-	<string name="jandi_no_preview_push_message">"你收到一則新訊息"</string>
+	<string name="jandi_no_preview_push_mention">"[{{TopicName}}] {{Sendername}}提及你"</string>
+	<string name="jandi_no_preview_push_message">"[{{TopicName}}] {{Sendername}}發送新訊息給你"</string>
 	<string name="jandi_no_recent_stickers">"無最近使用的貼圖"</string>
 	<string name="jandi_no_topic_to_join">"沒有可加入的議題"</string>
 	<string name="jandi_notification_off">"關閉推播通知"</string>
@@ -337,9 +337,7 @@
 	<string name="jandi_service_maintenance">"JANDI現在基於定期維護而無法使用。我們預計幾個小時内就可以恢復運作。感謝您的耐心等候。"</string>
 	<string name="jandi_set_passcode">"設定密碼"</string>
 	<string name="jandi_set_passcode_detail">"如果你忘記密碼，將無法解鎖。請重新安裝JANDI，再重新登入。"</string>
-	<string name="jandi_setting_display">"螢幕顯示"</string>
 	<string name="jandi_setting_general">"一般"</string>
-	<string name="jandi_setting_notification">"通知設定"</string>
 	<string name="jandi_setting_push">"通知偏好"</string>
 	<string name="jandi_setting_push_subscription">"推播通知"</string>
 	<string name="jandi_setting_push_subscription_cancel">"關閉通知功能"</string>

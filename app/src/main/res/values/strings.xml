@@ -273,8 +273,8 @@
 	<string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>
 	<string name="jandi_no_long_team_member">"%s is no longer a team member."</string>
 	<string name="jandi_no_message_in_topic_dm">"Enter a message to start the conversation."</string>
-	<string name="jandi_no_preview_push_mention">"You were mentioned in a message."</string>
-	<string name="jandi_no_preview_push_message">"You received a new message."</string>
+	<string name="jandi_no_preview_push_mention">"[{{TopicName}}] {{Sendername}} mentioned you."</string>
+	<string name="jandi_no_preview_push_message">"[{{TopicName}}] {{Sendername}} sent you a message."</string>
 	<string name="jandi_no_recent_stickers">"No Recent Stickers"</string>
 	<string name="jandi_no_topic_to_join">"No topics to join"</string>
 	<string name="jandi_notification_off">"Turn off Notifications"</string>
@@ -337,9 +337,7 @@
 	<string name="jandi_service_maintenance">"JANDI is currently unavailable due to scheduled maintenance. We expect to be back in a couple of hours. Thanks for your patience."</string>
 	<string name="jandi_set_passcode">"Set Passcode Lock"</string>
 	<string name="jandi_set_passcode_detail">"For your security, we cannot unlock this screen without the passcode. If you can't remember it, please reinstall the application to sign in again."</string>
-	<string name="jandi_setting_display">"Display"</string>
 	<string name="jandi_setting_general">"GENERAL"</string>
-	<string name="jandi_setting_notification">"Notification Settings"</string>
 	<string name="jandi_setting_push">"NOTIFICATION PREFERENCES"</string>
 	<string name="jandi_setting_push_subscription">"Push notifications"</string>
 	<string name="jandi_setting_push_subscription_cancel">"Turned off"</string>

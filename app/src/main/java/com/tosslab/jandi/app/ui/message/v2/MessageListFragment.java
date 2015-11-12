@@ -75,6 +75,7 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
+import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
@@ -488,8 +489,15 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 .delay(100, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(integer -> {
-                    messageListPresenter.justRefresh();
-                    mentionControlViewModel.onConfigurationChanged();
+                    if (messageListPresenter != null) {
+                        messageListPresenter.justRefresh();
+                    }
+                    if (mentionControlViewModel != null) {
+                        mentionControlViewModel.onConfigurationChanged();
+                    }
+                    if (stickerViewModel != null) {
+                        stickerViewModel.onConfigurationChanged();
+                    }
                 });
 
     }
@@ -902,6 +910,20 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                             REQ_STORAGE_PERMISSION);
                 })
                 .check();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Permissions.getResult()
+                .addRequestCode(REQ_STORAGE_PERMISSION)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        () -> Observable.just(1)
+                                .delay(300, TimeUnit.MILLISECONDS)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(integer -> {
+                                    filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
+                                }, Throwable::printStackTrace))
+                .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
     }
 
     @Click(R.id.btn_send_message)

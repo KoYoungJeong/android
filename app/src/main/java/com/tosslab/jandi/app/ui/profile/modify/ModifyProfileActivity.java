@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
@@ -243,7 +244,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
     @Click(R.id.profile_photo)
     void getPicture() {
         // 프로필 사진
-        filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, ModifyProfileActivity.this);
 
         Permissions.getChecker()
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -267,7 +267,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
 
         Permissions.getResult()
                 .addRequestCode(REQ_STORAGE_PERMISSION)
-                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::getPicture);
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::getPicture)
+                .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
     }
 
     public void onEvent(MemberEmailChangeEvent event) {

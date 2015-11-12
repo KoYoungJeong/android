@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.text.TextUtils;
+import android.view.View;
 
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
@@ -12,6 +14,8 @@ import java.util.Calendar;
  * Created by Steve SeongUg Jung on 15. 1. 21..
  */
 public class BodyViewFactory {
+
+    private final static EmptyViewHolder EMPTY_VIEW_HOLDER = new EmptyViewHolder();
 
     public static BodyViewHolder createViewHolder(int viewType) {
 
@@ -113,8 +117,9 @@ public class BodyViewFactory {
             case PureLinkPreviewMessage:
                 return new PureLinkPreviewViewHolder();
             case Message:
-            default:
                 return new MessageViewHolder();
+            default:
+                return EMPTY_VIEW_HOLDER;
         }
     }
 
@@ -257,7 +262,7 @@ public class BodyViewFactory {
                 }
             }
         }
-        return BodyViewHolder.Type.Message;
+        return BodyViewHolder.Type.Empty;
     }
 
     private static boolean isCommentToNext(ResMessages.Link nextLink) {
@@ -284,5 +289,37 @@ public class BodyViewFactory {
         int beforeMessageDay = beforeCalendar.get(Calendar.DAY_OF_YEAR);
 
         return (messageDay == beforeMessageDay);
+    }
+
+    private static class EmptyViewHolder implements BodyViewHolder {
+        @Override
+        public void initView(View rootView) {
+
+        }
+
+        @Override
+        public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
+
+        }
+
+        @Override
+        public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+
+        }
+
+        @Override
+        public int getLayoutId() {
+            return R.layout.item_message_empty_v2;
+        }
+
+        @Override
+        public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+
+        }
+
+        @Override
+        public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+
+        }
     }
 }

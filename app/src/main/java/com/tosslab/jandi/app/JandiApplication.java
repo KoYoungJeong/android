@@ -173,7 +173,7 @@ public class JandiApplication extends MultiDexApplication {
 
             Tracker tracker = analytics.newTracker(JandiConstantsForFlavors.GA_TRACK_ID);
             tracker.enableAdvertisingIdCollection(true);
-            tracker.enableExceptionReporting(true);
+            tracker.enableExceptionReporting(false);
 
             mTrackers.put(trackerId, tracker);
 

@@ -4,9 +4,10 @@
     android:layout_height="match_parent">
 
     <Spinner
-        android:layout_centerInParent="true"
+        android:id="@+id/file_explorer_spinner_button"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:id="@+id/file_explorer_spinner_button" />
+        android:layout_centerInParent="true"
+        android:background="@null" />
 
 </RelativeLayout>

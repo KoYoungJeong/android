@@ -273,8 +273,8 @@
 	<string name="jandi_no_invite_email">"팀에 초대를 원하는 멤버들의 이메일 주소를 입력해주세요"</string>
 	<string name="jandi_no_long_team_member">"%s님은 더 이상 팀 멤버가 아닙니다."</string>
 	<string name="jandi_no_message_in_topic_dm">"아직 메세지가 없습니다.메세지를 입력하셔서 대화를 시작해보세요."</string>
-	<string name="jandi_no_preview_push_mention">"메시지에서 멘션했습니다."</string>
-	<string name="jandi_no_preview_push_message">"새 메시지가 도착했습니다."</string>
+	<string name="jandi_no_preview_push_mention">"[{{TopicName}}] {{Sendername}}님이 멘션했습니다."</string>
+	<string name="jandi_no_preview_push_message">"[{{TopicName}}] {{Sendername}}님이 새 메시지를 보냈습니다."</string>
 	<string name="jandi_no_recent_stickers">"최근 사용한 스티커가 없습니다."</string>
 	<string name="jandi_no_topic_to_join">"참여 가능한 토픽이 없습니다"</string>
 	<string name="jandi_notification_off">"알림 끄기"</string>
@@ -338,9 +338,7 @@
 	<string name="jandi_set_passcode">"비밀번호 잠금 설정"</string>
 	<string name="jandi_set_passcode_detail">"비밀번호를 잊은 경우 다시 찾을 수 있는 방법이 없으므로 
 앱을 지우고 재설치 해 주시기 바랍니다"</string>
-	<string name="jandi_setting_display">"화면"</string>
 	<string name="jandi_setting_general">"일반"</string>
-	<string name="jandi_setting_notification">"알림 설정"</string>
 	<string name="jandi_setting_push">"알림 설정"</string>
 	<string name="jandi_setting_push_subscription">"알림"</string>
 	<string name="jandi_setting_push_subscription_cancel">"푸쉬 알림을 받지 않습니다."</string>

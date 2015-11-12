@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.ui.signup.verify.exception.VerifyNetworkException;
 import com.tosslab.jandi.app.ui.signup.verify.model.SignUpVerifyModel;
 import com.tosslab.jandi.app.ui.signup.verify.view.SignUpVerifyView;
+import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
@@ -47,6 +48,7 @@ public class SignUpVerifyPresenter {
             view.hideProgress();
             view.showToast(context.getResources().getString(R.string.jandi_welcome_message));
 
+            SignOutUtil.removeSignData();
             model.setAccountInfo(accountActivate);
             model.trackSignUpSuccessAndFlush(accountActivate.getAccount());
 
