@@ -68,7 +68,7 @@ public class IntroLoginFragment extends Fragment implements IntroMainActivity.Ke
     @Background
     void startLogin(String email, String password) {
 
-        SignOutUtil.removeSignData();
+        SignOutUtil.initSignData();
 
         ResAccessToken accessToken = null;
         try {
