@@ -42,21 +42,18 @@ public class MentionControlViewModel {
 
     public static final String MENTION_TYPE_MESSAGE = "mention_type_message";
     public static final String MENTION_TYPE_FILE_COMMENT = "mention_type_file_comment";
+    protected String currentSearchKeywordString;
     private AutoCompleteTextView etMessage;
     private KeyboardHeightModel keyboardHeightModel;
     private SearchMemberModel searchMemberModel;
-
     //message or file view type
     private String mentionType = MENTION_TYPE_MESSAGE;
-
     //for textControl
     private int beforeTextCnt = 0;
     private int afterTextCnt = 0;
     private String beforeText = "";
     private String afterText = "";
     private String removedText = "";
-    protected String currentSearchKeywordString;
-
     private ClipboardListener clipboardListener;
     private TextWatcher textWatcher;
 
@@ -423,6 +420,10 @@ public class MentionControlViewModel {
     // 현재까지의 editText에서 멘션 가공된 message와 mention object 리스트를 얻어오는 메서드
     private ResultMentionsVO getMentionInfoObject(String message,
                                                   LinkedHashMap<Integer, SearchedItemVO> selectableMembers) {
+
+        if (TextUtils.isEmpty(message)) {
+            return new ResultMentionsVO("", new ArrayList<>());
+        }
 
         StringBuilder builder = new StringBuilder(message);
         String findId = "";
