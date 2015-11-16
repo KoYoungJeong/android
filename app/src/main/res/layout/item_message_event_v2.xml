@@ -13,7 +13,7 @@
         android:paddingBottom="10dp"
         android:paddingLeft="@dimen/jandi_messages_padding_left"
         android:paddingRight="@dimen/jandi_messages_padding_right"
-        android:paddingTop="8dp">
+        android:paddingTop="10dp">
 
         <TextView
             android:id="@+id/tv_message_event_title"
