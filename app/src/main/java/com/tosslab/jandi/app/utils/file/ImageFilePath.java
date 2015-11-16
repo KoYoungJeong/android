@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.utils;
+package com.tosslab.jandi.app.utils.file;
 
 import android.annotation.SuppressLint;
 import android.content.ContentUris;

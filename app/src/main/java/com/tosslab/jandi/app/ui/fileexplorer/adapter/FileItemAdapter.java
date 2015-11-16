@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.fileexplorer.to.FileItem;
-import com.tosslab.jandi.app.utils.FileExtensionsUtil;
+import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 
 import java.util.ArrayList;
 
