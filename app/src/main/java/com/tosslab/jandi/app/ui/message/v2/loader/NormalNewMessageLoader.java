@@ -99,18 +99,19 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 newMessage = getResUpdateMessages(linkId);
             }
 
-            if (newMessage == null || newMessage.updateInfo == null) {
+            if (newMessage == null || newMessage.messages == null || newMessage.messages.isEmpty()) {
                 // 메세지가 없다면 종료시킴
                 return;
             }
 
-            List<ResMessages.Link> messages = newMessage.updateInfo.messages;
+            List<ResMessages.Link> messages = newMessage.messages;
             if (messages != null && !messages.isEmpty()) {
                 saveToDatabase(roomId, messages);
 
                 Collections.sort(messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
-                messageState.setLastUpdateLinkId(newMessage.lastLinkId);
-                messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), newMessage.lastLinkId);
+                int lastLinkId = newMessage.messages.get(newMessage.messages.size() - 1).id;
+                messageState.setLastUpdateLinkId(lastLinkId);
+                messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), lastLinkId);
                 updateMarker(roomId);
 
                 messageListPresenter.setUpNewMessage(messages, messageListModel.getMyId(), linkId, moveToLinkId);
@@ -131,10 +132,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
     private ResUpdateMessages getResUpdateMessages(final int linkId) {
         ResUpdateMessages newMessage;
         newMessage = new ResUpdateMessages();
-        newMessage.updateInfo = new ResUpdateMessages.UpdateInfo();
-        newMessage.updateInfo.messages = new ArrayList<>();
-        newMessage.updateInfo.messageCount = 0;
-        newMessage.lastLinkId = linkId;
+        newMessage.messages = new ArrayList<>();
 
         Observable.create(new Observable.OnSubscribe<ResMessages>() {
             @Override
@@ -183,14 +181,8 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 subscriber.onCompleted();
             }
         }).collect(() -> newMessage,
-                (resUpdateMessages, o) -> newMessage.updateInfo.messages.addAll(o.records))
+                (resUpdateMessages, o) -> newMessage.messages.addAll(o.records))
                 .subscribe(resUpdateMessages -> {
-                    resUpdateMessages.updateInfo.messageCount = resUpdateMessages.updateInfo.messages.size();
-                    if (resUpdateMessages.updateInfo.messageCount > 0) {
-                        resUpdateMessages.lastLinkId = resUpdateMessages.updateInfo.messages.get(resUpdateMessages.updateInfo.messageCount - 1).id;
-                    } else {
-                        resUpdateMessages.lastLinkId = linkId;
-                    }
                 }, Throwable::printStackTrace);
         return newMessage;
     }

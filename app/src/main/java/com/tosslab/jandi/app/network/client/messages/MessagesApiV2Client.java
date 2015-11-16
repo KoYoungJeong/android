@@ -37,7 +37,7 @@ public interface MessagesApiV2Client {
     ResCommon unshareMessage(@Body ReqUnshareMessage share, @Path("messageId") int messageId);
 
     @GET("/teams/{teamId}/rooms/{roomId}/messages/updatedList")
-    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
     ResUpdateMessages getRoomUpdateMessage(@Path("teamId") int teamId,
                                            @Path("roomId") int roomId,
                                            @Query("linkId") int currentLinkId);
