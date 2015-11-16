@@ -13,6 +13,9 @@ import com.tosslab.jandi.app.JandiApplication;
 public class JandiPreference {
     public static final int NOT_SET_YET = -1;
     public static final String PREF_SETTING_ORIENTATION = "setting_orientation";
+    public static final String PREF_VALUE_PUSH_PREVIEW_ALL_MESSAGE = "0";
+    public static final String PREF_VALUE_PUSH_PREVIEW_PUBLIC_ONLY = "1";
+    public static final String PREF_VALUE_PUSH_NO_PREVIEW = "2";
     // SharedPreference Key 값
     private static final String PREF_NAME = "JandiPref";
     private static final String PREF_TOKEN = "token";
@@ -42,6 +45,7 @@ public class JandiPreference {
     private static final String PREF_OLD_PARSE_CHANNEL_DELETED = "old_parse_channel_deleted";
     private static final String PREF_OLD_PARSE_FILE_CACHE_DELETED = "old_parse_file_cache_deleted";
     private static final String PREF_VERSION_POPUP_LAST_TIME = "version_popup_last_time";
+    private static final String PREF_PUSH_PREVIEW_INFO = "setting_push_preview";
 
     public static boolean isOldParseFileCacheDeleted(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
@@ -298,6 +302,11 @@ public class JandiPreference {
     public static long getVersionPopupLastTime() {
         return getSharedPreferences(JandiApplication.getContext())
                 .getLong(PREF_VERSION_POPUP_LAST_TIME, 0);
+    }
+
+    public static String getPushPreviewInfo() {
+        return PreferenceManager.getDefaultSharedPreferences(JandiApplication.getContext())
+                .getString(PREF_PUSH_PREVIEW_INFO, "0");
     }
 
     public static boolean isClearedLink() {

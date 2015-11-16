@@ -96,6 +96,10 @@
             android:name=".ui.settings.SettingsActivity_"
             android:label="@string/jandi_settings" />
 
+        <activity
+            android:name=".ui.settings.push.SettingPushActivity_"
+            android:label="@string/jandi_setting_push" />
+
         <activity android:name=".ui.settings.privacy.SettingPrivacyActivity_" />
 
         <activity
