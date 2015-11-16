@@ -127,7 +127,7 @@ public class MessageListPresenter {
     LinearLayout emptyMessageView;
 
     @ViewById(R.id.layout_messages_loading)
-    View loadingMessageView;
+    View vgProgressForMessageList;
 
     @ViewById(R.id.img_go_to_latest)
     View arrowGoToLatestView;
@@ -153,7 +153,7 @@ public class MessageListPresenter {
     KeyboardHeightModel keyboardHeightModel;
 
     private MessageListAdapter messageListAdapter;
-    private ProgressWheel progressWheel;
+    private ProgressWheel progressWheelForAction;
     private String tempMessage;
     private boolean isDisabled;
     private boolean sendLayoutVisible;
@@ -164,31 +164,32 @@ public class MessageListPresenter {
     void initObject() {
         messageListAdapter = new MessageListAdapter(activity);
         messageListAdapter.setHasStableIds(true);
-        messageListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                int originItemCount = getItemCount();
-                int itemCountWithoutEvent = getItemCountWithoutEvent();
-                int eventCount = originItemCount - itemCountWithoutEvent;
-                if (itemCountWithoutEvent > 0 || eventCount > 1) {
-                    // create 이벤트외에 다른 이벤트가 생성된 경우
-                    emptyMessageView.setVisibility(View.GONE);
-                } else {
-                    // 아예 메세지가 없거나 create 이벤트 외에는 생성된 이벤트가 없는 경우
-                    if (loadingMessageView.getVisibility() != View.VISIBLE) {
-                        emptyMessageView.setVisibility(View.VISIBLE);
-                    } else {
-                        emptyMessageView.setVisibility(View.GONE);
-                    }
-                }
-            }
-        });
 
-        progressWheel = new ProgressWheel(activity);
+        progressWheelForAction = new ProgressWheel(activity);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showEmptyViewIfNeed() {
+        int originItemCount = getItemCount();
+        int itemCountWithoutEvent = getItemCountWithoutEvent();
+        int eventCount = originItemCount - itemCountWithoutEvent;
+        if (itemCountWithoutEvent > 0 || eventCount > 1) {
+            // create 이벤트외에 다른 이벤트가 생성된 경우
+            emptyMessageView.setVisibility(View.GONE);
+        } else {
+            // 아예 메세지가 없거나 create 이벤트 외에는 생성된 이벤트가 없는 경우
+            emptyMessageView.setVisibility(View.VISIBLE);
+        }
     }
 
     @AfterViews
     void initViews() {
+        // 프로그레스를 좀 더 부드럽게 보여주기 위해서 애니메이션
+        vgProgressForMessageList.setAlpha(0f);
+        vgProgressForMessageList.animate()
+                .alpha(1.0f)
+                .setDuration(150);
+
         messageListView.setAdapter(messageListAdapter);
         messageListView.setItemAnimator(null);
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
@@ -245,19 +246,19 @@ public class MessageListPresenter {
 
     @UiThread
     public void showProgressWheel() {
-        if (progressWheel != null && progressWheel.isShowing()) {
-            progressWheel.dismiss();
+        if (progressWheelForAction != null && progressWheelForAction.isShowing()) {
+            progressWheelForAction.dismiss();
         }
 
-        if (progressWheel != null) {
-            progressWheel.show();
+        if (progressWheelForAction != null) {
+            progressWheelForAction.show();
         }
     }
 
     @UiThread
     public void dismissProgressWheel() {
-        if (progressWheel != null && progressWheel.isShowing()) {
-            progressWheel.dismiss();
+        if (progressWheelForAction != null && progressWheelForAction.isShowing()) {
+            progressWheelForAction.dismiss();
         }
     }
 
@@ -595,15 +596,11 @@ public class MessageListPresenter {
         isDisabled = true;
     }
 
-    @UiThread
-    public void showMessageLoading() {
-        loadingMessageView.setVisibility(View.VISIBLE);
-        emptyMessageView.setVisibility(View.GONE);
-    }
-
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void dismissLoadingView() {
-        loadingMessageView.setVisibility(View.GONE);
+        vgProgressForMessageList.animate()
+                .alpha(0f)
+                .setDuration(250);
     }
 
     public void setMarker(int lastMarker) {
@@ -757,16 +754,16 @@ public class MessageListPresenter {
         emptyMessageView.setVisibility(View.GONE);
     }
 
-    @UiThread
-    public void checkItemCountIfException() {
-        boolean hasItem = getFirstVisibleItemLinkId() > 0;
-        dismissLoadingView();
-        if (!hasItem) {
-            showEmptyView();
-        } else {
-            dismissEmptyView();
-        }
-    }
+//    @UiThread
+//    public void checkItemCountIfException() {
+//        boolean hasItem = getFirstVisibleItemLinkId() > 0;
+//        dismissLoadingView();
+//        if (!hasItem) {
+//            showEmptyView();
+//        } else {
+//            dismissEmptyView();
+//        }
+//    }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void clearEmptyMessageLayout() {
@@ -885,8 +882,6 @@ public class MessageListPresenter {
                                 int currentItemCount, boolean isFirstMessage, List<ResMessages.Link> dummyMessages) {
         if (currentItemCount == 0) {
             // 첫 로드라면...
-
-            dismissLoadingView();
             clearMessages();
 
             addAll(0, linkList);
@@ -900,6 +895,7 @@ public class MessageListPresenter {
                 moveLastPage();
             }
 
+            dismissLoadingView();
 
         } else {
 
@@ -989,9 +985,6 @@ public class MessageListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateMarkerMessage(int linkId, ResMessages oldMessage, boolean isCallByMarker, boolean isFirstMessage, int latestVisibleMessageId, int firstVisibleItemTop) {
-        if (!isCallByMarker) {
-            dismissLoadingView();
-        }
         addAll(0, oldMessage.records);
 
         if (latestVisibleMessageId > 0) {
@@ -1019,6 +1012,10 @@ public class MessageListPresenter {
             setOldLoadingComplete();
         } else {
             setOldNoMoreLoading();
+        }
+
+        if (!isCallByMarker) {
+            dismissLoadingView();
         }
     }
 

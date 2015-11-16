@@ -101,6 +101,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
 
             if (newMessage == null || newMessage.messages == null || newMessage.messages.isEmpty()) {
                 // 메세지가 없다면 종료시킴
+                messageListPresenter.showEmptyViewIfNeed();
                 return;
             }
 
@@ -122,6 +123,8 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 }
             }
             firstLoad = false;
+
+            messageListPresenter.showEmptyViewIfNeed();
         } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {

@@ -15,7 +15,7 @@
         android:layout_height="@dimen/jandi_progress_size"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:indeterminateDrawable="@drawable/progress_wheel_animation" />
+        android:indeterminateDrawable="@drawable/progress_animation" />
 
 
 </RelativeLayout>
