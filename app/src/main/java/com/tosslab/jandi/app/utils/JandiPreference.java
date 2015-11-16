@@ -309,4 +309,10 @@ public class JandiPreference {
                 .putBoolean("cleared_link", true)
                 .commit();
     }
+    public static void init(Context context) {
+
+        SharedPreferences pref = getSharedPreferences(context);
+        pref.edit().clear().commit();
+
+    }
 }
