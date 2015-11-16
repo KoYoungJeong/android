@@ -78,11 +78,16 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
     @Override
     public void onTopicInvite(Activity activity, int entityId) {
-        MembersListActivity_.intent(activity)
-                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .entityId(entityId)
-                .type(MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC)
-                .start();
+        if (topicDetailModel.getTopicMemberCount(entityId) != topicDetailModel.getEnabledTeamMemberCount()) {
+            MembersListActivity_.intent(activity)
+                    .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    .entityId(entityId)
+                    .type(MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC)
+                    .start();
+        } else {
+            String message = activity.getString(R.string.warn_all_users_are_already_invited);
+            view.showFailToast(message);
+        }
     }
 
     @Override

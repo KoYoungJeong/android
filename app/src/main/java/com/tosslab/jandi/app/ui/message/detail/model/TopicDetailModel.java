@@ -22,6 +22,8 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.json.JSONException;
 
+import java.util.List;
+
 import retrofit.RetrofitError;
 
 @EBean
@@ -219,5 +221,24 @@ public class TopicDetailModel {
 
     public boolean isTeamOwner() {
         return TextUtils.equals(EntityManager.getInstance().getMe().getUser().u_authority, "owner");
+    }
+
+
+    public int getEnabledTeamMemberCount() {
+        List<FormattedEntity> formattedUsers = EntityManager.getInstance().getFormattedUsers();
+
+        int size = formattedUsers.size();
+        int total = 0;
+        for (int idx = 0; idx < size; idx++) {
+            FormattedEntity formattedEntity = formattedUsers.get(idx);
+            if (formattedEntity != null
+                    && formattedEntity.getUser() != null
+                    && TextUtils.equals(formattedEntity.getUser().status, "enabled")) {
+                ++total;
+            }
+        }
+
+        return total;
+
     }
 }
