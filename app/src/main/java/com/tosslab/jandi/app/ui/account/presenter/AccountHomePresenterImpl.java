@@ -49,7 +49,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     @RootContext
     Context context;
 
-    private View view;
+    View view;
 
     @AfterViews
     void initViews() {
@@ -261,7 +261,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         refreshAccountInfo();
 
         try {
-            List<Team> teamList = accountHomeModel.getTeamInfos(context);
+            List<Team> teamList = accountHomeModel.getTeamInfos();
 
             Observable.from(teamList)
                     .filter(team -> team.getStatus() == Team.Status.JOINED)

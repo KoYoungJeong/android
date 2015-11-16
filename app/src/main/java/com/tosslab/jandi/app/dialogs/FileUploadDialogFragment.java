@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -36,11 +35,10 @@ import rx.Observable;
  * Created by justinygchoi on 2014. 6. 20..
  */
 public class FileUploadDialogFragment extends DialogFragment {
-    static private int selectedEntityIdToBeShared;    // Share 할 chat-room
+    private int selectedEntityIdToBeShared;    // Share 할 chat-room
     private EntitySimpleListAdapter mEntityArrayAdapter;
 
     public static FileUploadDialogFragment newInstance(String realFilePath, int currentEntityId) {
-        selectedEntityIdToBeShared = currentEntityId;
         FileUploadDialogFragment frag = new FileUploadDialogFragment();
         Bundle args = new Bundle();
         args.putString("realFilePath", realFilePath);
@@ -52,7 +50,7 @@ public class FileUploadDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final String realFilePath = getArguments().getString("realFilePath", "");
-        final int currentEntityId = getArguments().getInt("currentEntityId");
+        selectedEntityIdToBeShared = getArguments().getInt("currentEntityId");
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mainView = inflater.inflate(R.layout.dialog_upload_file, null);
@@ -113,7 +111,7 @@ public class FileUploadDialogFragment extends DialogFragment {
         int size = mEntityArrayAdapter.getCount();
         int currentIndex = 0;
         for (int idx = 0; idx < size; ++idx) {
-            if (mEntityArrayAdapter.getItem(idx).getId() == currentEntityId) {
+            if (mEntityArrayAdapter.getItem(idx).getId() == selectedEntityIdToBeShared) {
                 currentIndex = idx;
                 break;
             }
@@ -142,20 +140,18 @@ public class FileUploadDialogFragment extends DialogFragment {
                 .setCancelable(true)
                 .setNegativeButton(R.string.jandi_cancel, null)
                 .setPositiveButton(R.string.jandi_upload,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
+                        (dialog, whichButton) -> {
 
-                                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                                imm.hideSoftInputFromWindow(editTextInputName.getWindowToken(), 0);
+                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(editTextInputName.getWindowToken(), 0);
 
-                                EventBus.getDefault().post(
-                                        new ConfirmFileUploadEvent(
-                                                editTextInputName.getText().toString().trim(),
-                                                selectedEntityIdToBeShared,
-                                                realFilePath,
-                                                editTextFileComment.getText().toString().trim()));
-                                dismiss();
-                            }
+                            EventBus.getDefault().post(
+                                    new ConfirmFileUploadEvent(
+                                            editTextInputName.getText().toString().trim(),
+                                            selectedEntityIdToBeShared,
+                                            realFilePath,
+                                            editTextFileComment.getText().toString().trim()));
+                            dismiss();
                         }
                 );
 

@@ -57,10 +57,6 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <include
-        android:id="@+id/layout_messages_loading"
-        layout="@layout/progress_wheel" />
-
     <LinearLayout
         android:id="@+id/layout_messages_empty"
         android:layout_width="match_parent"
@@ -319,5 +315,9 @@
 
         </LinearLayout>
     </LinearLayout>
+
+    <include
+        android:id="@+id/layout_messages_loading"
+        layout="@layout/progress_wheel" />
 
 </RelativeLayout>

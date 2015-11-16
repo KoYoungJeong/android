@@ -35,7 +35,7 @@ import retrofit.RetrofitError;
 @EBean
 public class AccountHomeModel {
 
-    public List<Team> getTeamInfos(Context context) throws RetrofitError {
+    public List<Team> getTeamInfos() throws RetrofitError {
 
         List<Team> teams = new ArrayList<Team>();
 

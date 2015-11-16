@@ -15,7 +15,7 @@
         android:paddingBottom="10dp"
         android:paddingLeft="@dimen/jandi_messages_padding_left"
         android:paddingRight="@dimen/jandi_messages_padding_right"
-        android:paddingTop="5dp">
+        android:paddingTop="10dp">
         <!-- 사용자 프로필 사진 -->
         <ImageView
             android:id="@+id/iv_message_user_profile"

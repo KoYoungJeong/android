@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.koushikdutta.ion.Ion;
 import com.parse.ParseInstallation;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -249,13 +250,29 @@ public class JandiPushReceiverModel {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle(notificationTitle);
-        builder.setContentText(message);
+
+        String pushPreviewInfo = JandiPreference.getPushPreviewInfo();
 
         int roomTypeInt = getEntityType(roomType);
         if (roomTypeInt == JandiConstants.TYPE_DIRECT_MESSAGE) {
             roomName = context.getString(R.string.jandi_tab_direct_message);
         }
 
+        switch (pushPreviewInfo) {
+            case JandiPreference.PREF_VALUE_PUSH_PREVIEW_ALL_MESSAGE:
+                builder.setContentText(message);
+                break;
+            case JandiPreference.PREF_VALUE_PUSH_PREVIEW_PUBLIC_ONLY:
+                if (roomTypeInt == JandiConstants.TYPE_PUBLIC_TOPIC) {
+                    builder.setContentText(message);
+                } else {
+                    builder.setContentText(JandiApplication.getContext().getString(R.string.jandi_no_preview_push_message));
+                }
+                break;
+            case JandiPreference.PREF_VALUE_PUSH_NO_PREVIEW:
+                builder.setContentText(JandiApplication.getContext().getString(R.string.jandi_no_preview_push_message));
+                break;
+        }
 
         builder.setDefaults(getNotificationDefaults(context))
                 .setSmallIcon(R.drawable.icon_push_notification)

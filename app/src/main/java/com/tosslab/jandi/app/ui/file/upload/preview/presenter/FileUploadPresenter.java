@@ -1,6 +1,9 @@
 package com.tosslab.jandi.app.ui.file.upload.preview.presenter;
 
+import android.app.Activity;
+
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 
 import java.util.ArrayList;
@@ -14,15 +17,16 @@ public interface FileUploadPresenter {
 
     void onPagerSelect(int position);
 
-    void onInitEntity(int selectedEntityIdToBeShared);
+    void onInitEntity(Activity activity, int selectedEntityIdToBeShared);
 
     void onCommentTextChange(String text, int currentItemPosition);
 
     void onEntityUpdate(FormattedEntity item);
 
+    @Deprecated
     void onSingleFileUpload();
 
-    void onMultiFileUpload();
+    void onMultiFileUpload(MentionControlViewModel mentionControlViewModel);
 
     interface View {
 
@@ -40,6 +44,6 @@ public interface FileUploadPresenter {
 
         void exitOnOk(FileUploadVO fileUploadVO);
 
-        void setShareEntity(int entityId);
+        void setShareEntity(int entityId, boolean isUser);
     }
 }

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.share.views.model;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -10,7 +11,6 @@ import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
-import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.share.views.domain.ExpandRoomData;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -224,7 +224,7 @@ public class ShareSelectModel {
     public LinkedHashMap<Integer, FormattedEntity> getJoinEntities() {
         List<FormattedEntity> joinedChannels = getJoinedChannels();
         List<FormattedEntity> groups = getGroups();
-        LinkedHashMap topicHashMap = new LinkedHashMap<Integer, Topic>();
+        LinkedHashMap<Integer, FormattedEntity> topicHashMap = new LinkedHashMap<>();
 
         Observable<FormattedEntity> observable = Observable.merge(Observable.from(joinedChannels), Observable.from(groups));
 
@@ -368,4 +368,14 @@ public class ShareSelectModel {
         return AccountRepository.getRepository().getSelectedTeamInfo();
     }
 
+    public FormattedEntity getEntityById(int entityId) {
+
+        return Observable.just(mStarredJoinedTopics, mJoinedTopics, mStarredGroups, mGroups, mStarredUsers, mUsers, mUnjoinedTopics)
+                .filter(integerFormattedEntityMap -> integerFormattedEntityMap.containsKey(entityId))
+                .map(integerFormattedEntityMap1 -> integerFormattedEntityMap1.get(entityId))
+                .firstOrDefault(EntityManager.UNKNOWN_USER_ENTITY)
+                .toBlocking()
+                .first();
+
+    }
 }

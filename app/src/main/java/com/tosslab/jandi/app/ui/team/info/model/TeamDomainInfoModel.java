@@ -36,17 +36,11 @@ public class TeamDomainInfoModel {
     @RootContext
     Context context;
 
-    private Callback callback;
-
     public ResTeamDetailInfo createNewTeam(String name, String teamDomain) throws RetrofitError {
 
         ReqCreateNewTeam reqCreateNewTeam = new ReqCreateNewTeam(name, teamDomain);
         return RequestApiManager.getInstance().createNewTeamByTeamApi(reqCreateNewTeam);
 
-    }
-
-    public void setCallback(Callback callback) {
-        this.callback = callback;
     }
 
     public List<ResAccountInfo.UserEmail> initUserEmailInfo() {
@@ -98,7 +92,7 @@ public class TeamDomainInfoModel {
     public String getUserName() {
         return AccountRepository.getRepository().getAccountInfo().getName();
     }
-    
+
     public void trackCreateTeamSuccess(int teamId) {
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
@@ -120,12 +114,5 @@ public class TeamDomainInfoModel {
                         .build());
 
     }
-    
-    public interface Callback {
-        void onTeamCreateSuccess(String name, int memberId, int teamId);
-
-        void onTeamCreateFail(int statusCode);
-    }
-
 
 }

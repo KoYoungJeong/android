@@ -68,7 +68,7 @@ public class IntroLoginFragment extends Fragment implements IntroMainActivity.Ke
     @Background
     void startLogin(String email, String password) {
 
-        SignOutUtil.removeSignData();
+        SignOutUtil.initSignData();
 
         ResAccessToken accessToken = null;
         try {
@@ -134,14 +134,14 @@ public class IntroLoginFragment extends Fragment implements IntroMainActivity.Ke
             return;
         }
 
-        introLoginModel.setValidEmail(!FormatConverter.isInvalidEmailString(email));
-        introLoginViewModel.setSignInButtonEnable(introLoginModel.isValidEmailPassword());
+        boolean isValidEmail = !FormatConverter.isInvalidEmailString(email);
+        introLoginViewModel.setSignInButtonEnable(isValidEmail);
     }
 
     @AfterTextChange(R.id.et_intro_login_password)
     void checkValidPassword(Editable editable) {
-        introLoginModel.setValidPassword(!TextUtils.isEmpty(editable));
-        introLoginViewModel.setSignInButtonEnable(introLoginModel.isValidEmailPassword());
+        boolean isValidPassword = !TextUtils.isEmpty(editable);
+        introLoginViewModel.setSignInButtonEnable(isValidPassword);
     }
 
     @Override

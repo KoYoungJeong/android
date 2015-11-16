@@ -11,6 +11,7 @@ import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.koushikdutta.ion.Ion;
@@ -425,13 +426,25 @@ public class BitmapUtil {
 
     public static void loadImageByGlideOrIonWhenGif(ImageView imageView,
                                                     String url, int placeHolder, int error) {
+        loadImageByGlideOrIonWhenGif(imageView, url, placeHolder, error, null);
+    }
+
+    public static void loadImageByGlideOrIonWhenGif(ImageView imageView,
+                                                    String url, int placeHolder, int error, BitmapUtil.OnResourceReady onResourceReady) {
         if (url.toLowerCase().endsWith("gif")) {
             Ion.with(imageView)
                     .fitCenter()
                     .placeholder(placeHolder)
                     .error(error)
                     .crossfade(true)
-                    .load(url);
+                    .load(url).withBitmapInfo().setCallback((e, result) -> {
+                if (e == null && onResourceReady != null) {
+                    Bitmap bitmap = result.getBitmapInfo().bitmap;
+                    int width = bitmap.getWidth();
+                    int height = bitmap.getHeight();
+                    onResourceReady.onReady(width, height);
+                }
+            });
             return;
         }
 
@@ -446,6 +459,20 @@ public class BitmapUtil {
                             .setDuration(300);
                 })  // Avoid doesn't working 'fitCenter with crossfade'
                 .fitCenter()
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        if (onResourceReady != null) {
+                            onResourceReady.onReady(resource.getIntrinsicWidth(), resource.getIntrinsicHeight());
+                        }
+                        return false;
+                    }
+                })
                 .into(imageView);
     }
 
@@ -511,4 +538,7 @@ public class BitmapUtil {
         SMALL, MEDIUM, LARGE, ORIGINAL
     }
 
+    public interface OnResourceReady {
+        void onReady(int width, int height);
+    }
 }
