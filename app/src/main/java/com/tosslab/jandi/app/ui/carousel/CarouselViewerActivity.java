@@ -19,7 +19,10 @@ import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
+import com.tosslab.jandi.app.ui.photo.PhotoViewFragment;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.FileSizeUtil;
+import com.tosslab.jandi.app.utils.OnSwipeExitListener;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.file.FileSizeUtil;
 
@@ -42,7 +45,8 @@ import java.util.List;
  */
 @EActivity(R.layout.activity_carousel_viewer)
 @OptionsMenu(R.menu.carousel_menu)
-public class CarouselViewerActivity extends BaseAppCompatActivity implements CarouselViewerPresenter.View {
+public class CarouselViewerActivity extends BaseAppCompatActivity
+        implements CarouselViewerPresenter.View, OnSwipeExitListener {
 
     private static final int REQ_STORAGE_PERMISSION = 101;
     @ViewById(R.id.vp_carousel)
@@ -317,6 +321,18 @@ public class CarouselViewerActivity extends BaseAppCompatActivity implements Car
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
         return false;
+    }
+
+    @Override
+    public void onSwipeExit(int direction) {
+        finish();
+
+        int anim = R.anim.slide_out_to_bottom;
+        if (direction == OnSwipeExitListener.DIRECTION_TO_TOP) {
+            anim = R.anim.slide_out_to_top;
+        }
+
+        overridePendingTransition(0, anim);
     }
 
     public interface OnCarouselImageClickListener {
