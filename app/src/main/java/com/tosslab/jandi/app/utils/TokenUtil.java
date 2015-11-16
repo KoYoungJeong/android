@@ -9,12 +9,12 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 public class TokenUtil {
 
 
-    public static void saveTokenInfoByPassword(ResAccessToken accessToken) {
-        saveTokenInfoByRefresh(accessToken);
+    public static boolean saveTokenInfoByPassword(ResAccessToken accessToken) {
+        return saveTokenInfoByRefresh(accessToken);
     }
 
-    public static void saveTokenInfoByRefresh(ResAccessToken accessToken) {
-        AccessTokenRepository.getRepository().upsertAccessToken(accessToken);
+    public static boolean saveTokenInfoByRefresh(ResAccessToken accessToken) {
+        return AccessTokenRepository.getRepository().upsertAccessToken(accessToken);
     }
 
     public static void clearTokenInfo() {

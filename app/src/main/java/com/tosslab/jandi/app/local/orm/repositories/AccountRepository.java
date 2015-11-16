@@ -46,18 +46,19 @@ public class AccountRepository {
         repository = null;
     }
 
-    public void upsertAccountAllInfo(ResAccountInfo accountInfo) {
+    public boolean upsertAccountAllInfo(ResAccountInfo accountInfo) {
         lock.lock();
         try {
             Dao<ResAccountInfo, String> accountInfoDao = helper.getDao(ResAccountInfo.class);
 
-            accountInfoDao.createOrUpdate(accountInfo);
-
+            Dao.CreateOrUpdateStatus status = accountInfoDao.createOrUpdate(accountInfo);
+            return status.isCreated() || status.isUpdated();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             lock.unlock();
         }
+        return false;
 
     }
 

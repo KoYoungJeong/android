@@ -119,6 +119,9 @@ dependencies {
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+    androidTestCompile 'com.crittercism.dexmaker:dexmaker-mockito:1.4'
+    androidTestCompile 'com.crittercism.dexmaker:dexmaker-dx:1.4'
+    androidTestCompile 'com.jayway.awaitility:awaitility:1.6.5'
 
     compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
         transitive = true;
@@ -211,8 +214,11 @@ android {
             'META-INF/LICENSE',
             'META-INF/LICENSE.txt',
             'LICENSE.txt',
+            'LICENSE',
             'META-INF/license.txt',
             'META-INF/NOTICE',
+            'NOTICE',
+            'asm-license.txt',
             'META-INF/NOTICE.txt',
             'META-INF/notice.txt',
             'META-INF/ASL2.0'

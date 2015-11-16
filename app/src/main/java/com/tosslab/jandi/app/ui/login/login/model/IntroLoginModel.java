@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.login.login.model;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -20,8 +19,6 @@ import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.SupposeUiThread;
 
 import retrofit.RetrofitError;
 
@@ -30,12 +27,6 @@ import retrofit.RetrofitError;
  */
 @EBean
 public class IntroLoginModel {
-
-    @RootContext
-    Context context;
-
-    private boolean isValidEmail;
-    private boolean isValidPassword;
 
     public ResAccessToken login(String myEmailId, String password) throws RetrofitError {
         // 팀이 아무것도 없는 사용자일 경우의 에러 메시지
@@ -46,52 +37,26 @@ public class IntroLoginModel {
         return RequestApiManager.getInstance().getAccessTokenByMainRest(passwordReqToken);
     }
 
-    public void saveTokenInfo(ResAccessToken accessToken) {
-        TokenUtil.saveTokenInfoByPassword(accessToken);
+    public boolean saveTokenInfo(ResAccessToken accessToken) {
+        return TokenUtil.saveTokenInfoByPassword(accessToken);
     }
 
-    public void saveAccountInfo(ResAccountInfo resAccountInfo) {
-        AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+    public boolean saveAccountInfo(ResAccountInfo resAccountInfo) {
+        return AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
     }
 
     public ResAccountInfo getAccountInfo() {
         return RequestApiManager.getInstance().getAccountInfoByMainRest();
     }
 
-    @SupposeUiThread
     public boolean isValidEmailFormat(String email) {
         // ID 입력의 포멧 체크
         return !FormatConverter.isInvalidEmailString(email);
     }
 
-    public String getEmailHost(String signedEmail) {
-        if (TextUtils.isEmpty(signedEmail)) {
-            return "";
-        }
-
-        int i = signedEmail.indexOf("@");
-
-        if (i > 0 && i < signedEmail.length()) {
-            return signedEmail.substring(i + 1);
-        } else {
-            return "";
-        }
-    }
-
     public ResCommon requestPasswordReset(String email) {
+        Context context = JandiApplication.getContext();
         return RequestApiManager.getInstance().resetPasswordByAccountPasswordApi(new ReqAccountEmail(email, LanguageUtil.getLanguage(context)));
-    }
-
-    public void setValidEmail(boolean isValidEmail) {
-        this.isValidEmail = isValidEmail;
-    }
-
-    public void setValidPassword(boolean isValidPassword) {
-        this.isValidPassword = isValidPassword;
-    }
-
-    public boolean isValidEmailPassword() {
-        return isValidEmail && isValidPassword;
     }
 
     public void trackSignInSuccess() {
