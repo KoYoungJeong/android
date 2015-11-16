@@ -44,6 +44,8 @@ import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
+import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
@@ -75,6 +77,7 @@ import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -599,7 +602,10 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
         List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO, intent);
         if (filePath != null && filePath.size() > 0) {
-            filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath.get(0), mSearchQuery.mSearchEntity);
+            FileUploadPreviewActivity_.intent(this)
+                    .singleUpload(true)
+                    .realFilePathList(new ArrayList<>(filePath))
+                    .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
         }
 
     }
@@ -613,7 +619,10 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FilePickerViewModel.TYPE_UPLOAD_EXPLORER, intent);
         if (filePath != null && filePath.size() > 0) {
-            filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath.get(0), mSearchQuery.mSearchEntity);
+            FileUploadPreviewActivity_.intent(this)
+                    .singleUpload(true)
+                    .realFilePathList(new ArrayList<>(filePath))
+                    .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
         }
     }
 

@@ -77,4 +77,12 @@ public class FileUploadModel {
         return EntityManager.getInstance().getEntityById(selectedEntityIdToBeShared) !=
                 EntityManager.UNKNOWN_USER_ENTITY;
     }
+
+    public FormattedEntity getEntity(int entityId) {
+        return EntityManager.getInstance().getEntityById(entityId);
+    }
+
+    public FormattedEntity getDefaultTopicEntity() {
+        return EntityManager.getInstance().getEntityById(EntityManager.getInstance().getDefaultTopicId());
+    }
 }

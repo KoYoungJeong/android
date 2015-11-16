@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -31,6 +32,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import retrofit.RetrofitError;
@@ -107,6 +109,15 @@ public class SharePresenter {
         this.teamName = teamName;
         isPublic = false;
 
+        if (!shareModel.hasLeftSideMenu(teamId)) {
+            try {
+                ResLeftSideMenu leftSideMenu = shareModel.getLeftSideMenu(teamId);
+                shareModel.updateLeftSideMenu(leftSideMenu);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         if (isDefaultTopic) {
             int defaultTopicId =
                     Integer.valueOf(shareModel.getTeamInfoById(teamId).getTeamDefaultChannelId());
@@ -133,16 +144,17 @@ public class SharePresenter {
 
         view.setTeamName(this.teamName);
         view.setRoomName(this.roomName);
+        view.setMentionInfo(teamId, this.roomId, this.roomType);
 
     }
 
     @Background
     public void uploadFile(File imageFile,
                            String tvTitle, String commentText,
-                           ProgressDialog uploadProgress) {
+                           ProgressDialog uploadProgress, List<MentionObject> mentions) {
         try {
             JsonObject result = shareModel.uploadFile(imageFile,
-                    tvTitle, commentText, teamId, roomId, uploadProgress, isPublic);
+                    tvTitle, commentText, teamId, roomId, uploadProgress, isPublic, mentions);
             if (result.get("code") == null) {
                 LogUtil.e("Upload Success : " + result);
                 view.showSuccessToast(JandiApplication.getContext()
@@ -223,10 +235,10 @@ public class SharePresenter {
     }
 
     @Background
-    public void sendMessage(String messageText) {
+    public void sendMessage(String messageText, List<MentionObject> mention) {
         view.showProgressBar();
         try {
-            shareModel.sendMessage(teamId, roomId, roomType, messageText);
+            shareModel.sendMessage(teamId, roomId, roomType, messageText, mention);
             view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_share_succeed, view.getComment()));
             view.finishOnUiThread();
         } catch (RetrofitError e) {
@@ -297,6 +309,8 @@ public class SharePresenter {
         String getComment();
 
         void setComment(String comment);
+
+        void setMentionInfo(int teamId, int roomId, int roomType);
     }
 
 }

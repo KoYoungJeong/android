@@ -155,6 +155,7 @@
 
         <activity
             android:name=".ui.file.upload.preview.FileUploadPreviewActivity_"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <activity

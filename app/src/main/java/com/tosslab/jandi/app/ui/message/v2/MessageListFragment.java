@@ -792,12 +792,14 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                         messageEditText,
                         roomIds,
                         MentionControlViewModel.MENTION_TYPE_MESSAGE);
-
-                // copy txt from mentioned edittext message
-                mentionControlViewModel.registClipboardListener();
+                String readyMessage = messageListModel.getReadyMessage(roomId);
+                mentionControlViewModel.setUpMention(readyMessage);
             } else {
-                mentionControlViewModel.refreshSelectableMembers(roomIds);
+                mentionControlViewModel.refreshSelectableMembers(teamId, roomIds);
             }
+
+            // copy txt from mentioned edittext message
+            mentionControlViewModel.registClipboardListener();
         }
 
         if (NetworkCheckUtil.isConnected()) {
@@ -948,7 +950,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (!TextUtils.isEmpty(message)) {
             if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE && mentionControlViewModel.hasMentionMember()) {
-                mentionControlViewModel.clear();
                 reqSendMessage = new ReqSendMessageV3(message, mentions);
             } else {
                 reqSendMessage = new ReqSendMessageV3(message, new ArrayList<>());
@@ -1753,6 +1754,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     public void onEvent(SelectedMemberInfoForMensionEvent event) {
+
+        if (!isForeground) {
+            return;
+        }
+
         SearchedItemVO searchedItemVO = new SearchedItemVO();
         searchedItemVO.setId(event.getId());
         searchedItemVO.setName(event.getName());

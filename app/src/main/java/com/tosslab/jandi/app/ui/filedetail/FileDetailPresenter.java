@@ -3,9 +3,7 @@ package com.tosslab.jandi.app.ui.filedetail;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.support.v7.widget.RecyclerView;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -14,8 +12,10 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
+import com.tosslab.jandi.app.local.orm.domain.ReadyComment;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.ReadyCommentRepository;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
@@ -470,8 +470,7 @@ public class FileDetailPresenter {
     }
 
     public void refreshMentionVM(Activity activity, ResMessages.OriginalMessage fileMessage,
-                                 RecyclerView searchMemberListView,
-                                 EditText editText, ListView fileCommentListView) {
+                                 EditText editText) {
 
         List<Integer> sharedTopicIds = getSharedTopicIds(fileMessage);
 
@@ -480,12 +479,15 @@ public class FileDetailPresenter {
                     editText,
                     sharedTopicIds,
                     MentionControlViewModel.MENTION_TYPE_FILE_COMMENT);
+
+            ReadyComment readyComment = ReadyCommentRepository.getRepository().getReadyComment(fileMessage.id);
+            mentionControlViewModel.setUpMention(readyComment.getText());
             registClipboardListenerforMention();
         }
-        mentionControlViewModel.clear();
     }
 
     public void registClipboardListenerforMention() {
+        removeClipboardListenerforMention();
         if (mentionControlViewModel != null) {
             mentionControlViewModel.registClipboardListener();
         }
