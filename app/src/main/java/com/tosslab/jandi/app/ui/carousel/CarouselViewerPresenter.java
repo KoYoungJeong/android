@@ -21,7 +21,7 @@ public interface CarouselViewerPresenter {
 
     void onAfterImageFiles(Context context, int fileLinkId, int count);
 
-    void onFileDownload(Context context, CarouselFileInfo fileInfo, ProgressDialog progressDialog);
+    void onFileDownload(CarouselFileInfo fileInfo);
 
     void onFileDatail();
 
@@ -42,8 +42,6 @@ public interface CarouselViewerPresenter {
         void setFileCreateTime(String fileCreateTime);
 
         void moveToFileDatail();
-
-        void downloadDone(File file, String fileType, ProgressDialog progressDialog);
 
         void addFileInfos(int position, List<CarouselFileInfo> imageFiles);
 

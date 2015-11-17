@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.carousel;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
@@ -266,12 +265,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         Permissions.getChecker()
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .hasPermission(() -> {
-                    final ProgressDialog progressDialog = new ProgressDialog(CarouselViewerActivity.this);
-                    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                    progressDialog.setMessage("Downloading " + fileInfo.getFileName());
-                    progressDialog.show();
-                    carouselViewerPresenter.onFileDownload(CarouselViewerActivity.this, fileInfo,
-                            progressDialog);
+                    carouselViewerPresenter.onFileDownload(fileInfo);
                 })
                 .noPermission(() -> {
                     requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -293,21 +287,6 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @Click(R.id.iv_file_datail_info)
     void onMoveToFileDatail() {
         carouselViewerPresenter.onFileDatail();
-    }
-
-    @UiThread
-    @Override
-    public void downloadDone(File file, String fileType, ProgressDialog progressDialog) {
-
-        if (isFinishing()) {
-            return;
-        }
-
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-
-        ColoredToast.show(CarouselViewerActivity.this, file.getPath());
     }
 
     @UiThread

@@ -1,9 +1,6 @@
 package com.tosslab.jandi.app.ui.filedetail.model;
 
-import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -26,7 +23,6 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.file.JandiDownloadUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -37,7 +33,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -86,10 +81,6 @@ public class FileDetailModel {
         return entityClientManager.getUserProfile(userEntityId);
     }
 
-    public File download(String url, String fileName, String ext, ProgressDialog progressDialog) throws Exception {
-        return JandiDownloadUtil.download(url, fileName, ext, progressDialog);
-    }
-
     public boolean isMyComment(int writerId) {
         EntityManager entityManager = EntityManager.getInstance();
 
@@ -102,34 +93,10 @@ public class FileDetailModel {
 
     public void deleteComment(int messageId, int feedbackId) throws RetrofitError {
         entityClientManager.deleteMessageComment(messageId, feedbackId);
-
     }
 
     public void deleteStickerComment(int messageId, int messageType) throws RetrofitError {
         messageManipulator.deleteSticker(messageId, messageType);
-
-    }
-
-    public boolean isMediaFile(String fileType) {
-
-        if (TextUtils.isEmpty(fileType)) {
-            return false;
-        }
-
-        return fileType.startsWith("audio") || fileType.startsWith("video") || fileType.startsWith("image");
-    }
-
-    public android.net.Uri addGallery(File result, String fileType) {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, result.getName());
-        values.put(MediaStore.Images.Media.DISPLAY_NAME, result.getName());
-        values.put(MediaStore.Images.Media.DESCRIPTION, "");
-        values.put(MediaStore.Images.Media.MIME_TYPE, fileType);
-        values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
-        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
-        values.put(MediaStore.Images.Media.DATA, result.getAbsolutePath());
-
-        return context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
     }
 
     public List<FormattedEntity> getUnsharedEntities(ResMessages.FileMessage fileMessage) {
@@ -214,8 +181,8 @@ public class FileDetailModel {
         }
     }
 
+    //FIXME
     public void trackFileDownloadSuccess(int fileId) {
-
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.FileDownload)
@@ -224,7 +191,6 @@ public class FileDetailModel {
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.FileId, fileId)
                         .build());
-
     }
 
     public void trackFileShareSuccess(int topicId, int fileId) {

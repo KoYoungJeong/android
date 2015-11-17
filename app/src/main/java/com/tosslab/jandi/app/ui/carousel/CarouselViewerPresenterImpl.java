@@ -1,11 +1,9 @@
 package com.tosslab.jandi.app.ui.carousel;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 
-import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.services.download.DownloadService;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.utils.file.FileSizeUtil;
 
@@ -13,10 +11,8 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import retrofit.RetrofitError;
 
@@ -150,30 +146,13 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
     }
 
-    @Background
     @Override
-    public void onFileDownload(Context context, CarouselFileInfo fileInfo, ProgressDialog progressDialog) {
-        try {
-            File downloadFile = carouselViewerModel.download(fileInfo.getFileLinkUrl(),
-                    fileInfo.getFileName(), fileInfo.getExt(),
-                    progressDialog);
-
-            carouselViewerModel.trackDownloadingFile(EntityManager.getInstance(),
-                    fileInfo, context);
-
-            if (carouselViewerModel.isMediaFile(fileInfo.getFileType())) {
-                carouselViewerModel.addGallery(downloadFile, fileInfo.getFileType(), context);
-            }
-
-            view.downloadDone(downloadFile, fileInfo.getFileType(), progressDialog);
-
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            view.showFailToast(context.getApplicationContext().getString(R.string.err_download));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            view.showFailToast(context.getApplicationContext().getString(R.string.err_download));
-        }
+    public void onFileDownload(CarouselFileInfo fileInfo) {
+        DownloadService.start(fileId,
+                fileInfo.getFileLinkUrl(),
+                fileInfo.getFileName(),
+                fileInfo.getExt(),
+                fileInfo.getFileType());
     }
 
     @Override
