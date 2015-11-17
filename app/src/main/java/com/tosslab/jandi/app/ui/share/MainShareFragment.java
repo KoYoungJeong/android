@@ -149,7 +149,8 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     }
 
     private String getMentionType(int mode) {
-        return mode == MainShareActivity.MODE_SHARE_TEXT ? MentionControlViewModel.MENTION_TYPE_MESSAGE : MentionControlViewModel.MENTION_TYPE_FILE_COMMENT;
+//        return mode == MainShareActivity.MODE_SHARE_TEXT ? MentionControlViewModel.MENTION_TYPE_MESSAGE : MentionControlViewModel.MENTION_TYPE_FILE_COMMENT;
+        return MentionControlViewModel.MENTION_TYPE_FILE_COMMENT;
     }
 
     @Override

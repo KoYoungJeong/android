@@ -27,13 +27,6 @@
         android:padding="5dp"
         android:src="@drawable/upload_arrow_right" />
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/actionbar_file_upload"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true"
-        android:visibility="visible" />
-
     <RelativeLayout
         android:id="@+id/vg_file_upload_preview_content"
         android:layout_width="match_parent"
@@ -148,5 +141,12 @@
             android:paddingTop="12dp" />
 
     </RelativeLayout>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/actionbar_file_upload"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:visibility="visible" />
 
 </RelativeLayout>
