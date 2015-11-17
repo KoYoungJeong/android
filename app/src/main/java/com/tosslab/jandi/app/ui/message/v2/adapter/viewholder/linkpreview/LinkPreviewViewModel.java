@@ -77,6 +77,7 @@ public class LinkPreviewViewModel {
         }
 
         vgThumb.setVisibility(View.VISIBLE);
+        ivThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         String imageUrl = linkPreview.imageUrl;
         BitmapUtil.loadCropBitmapByIon(ivThumb,

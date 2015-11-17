@@ -434,6 +434,7 @@ public class BitmapUtil {
         if (url.toLowerCase().endsWith("gif")) {
             Ion.with(imageView)
                     .fitCenter()
+                    .resize(imageView.getMeasuredWidth() * 2, imageView.getMeasuredHeight())
                     .placeholder(placeHolder)
                     .error(error)
                     .crossfade(true)
@@ -501,6 +502,7 @@ public class BitmapUtil {
                                            String url, int placeHolder) {
         Ion.with(imageView)
                 .placeholder(placeHolder)
+                .resize(imageView.getMeasuredWidth() * 2, imageView.getMeasuredHeight())
                 .centerCrop()
                 .load(url);
     }
@@ -521,6 +523,7 @@ public class BitmapUtil {
                                       String url, int placeHolder, int error) {
         Ion.with(imageView)
                 .centerCrop()
+                .resize(imageView.getMeasuredWidth() * 2, imageView.getMeasuredHeight())
                 .placeholder(placeHolder)
                 .error(error)
                 .transform(new IonCircleTransform())

@@ -37,6 +37,7 @@ public class FileStarMentionViewHolder extends CommonStarMentionViewHolder {
 
         String icon = content.icon;
         MimeTypeUtil.FilterType filterType = IconFilterUtil.getMimeType(icon);
+        ivFile.setScaleType(ImageView.ScaleType.FIT_CENTER);
         if (filterType == MimeTypeUtil.FilterType.Image) {
             String thumbnailUrl = !TextUtils.isEmpty(content.smallThumbnailUrl)
                     ? content.smallThumbnailUrl
