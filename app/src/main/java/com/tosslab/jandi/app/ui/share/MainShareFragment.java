@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.share;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -24,6 +26,7 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.share.model.ScrollViewHelper;
 import com.tosslab.jandi.app.ui.share.presenter.SharePresenter;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
@@ -46,8 +49,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 13..
@@ -97,10 +103,15 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     @ViewById(R.id.vg_viwer)
     LinearLayout vgViewer;
 
+    @ViewById(R.id.vg_share_root)
+    ScrollView vgRoot;
+
     @Bean
     SharePresenter sharePresenter;
 
     MentionControlViewModel mentionControlViewModel;
+
+    ScrollViewHelper scrollViewHelper;
 
     @AfterInject
     void initObject() {
@@ -128,10 +139,31 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
             etComment.setSelection(etComment.getText().length());
             etComment.setMaxLines(Integer.MAX_VALUE);
         }
+
+        setOnScrollMode();
+    }
+
+    private void setOnScrollMode() {
+        scrollViewHelper = new ScrollViewHelper(etComment, vgRoot);
+        scrollViewHelper.initTouchMode();
     }
 
     private String getMentionType(int mode) {
         return mode == MainShareActivity.MODE_SHARE_TEXT ? MentionControlViewModel.MENTION_TYPE_MESSAGE : MentionControlViewModel.MENTION_TYPE_FILE_COMMENT;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Observable.just(1, 1)
+                .delay(100, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(integer -> {
+                    if (mentionControlViewModel != null) {
+                        mentionControlViewModel.onConfigurationChanged();
+                    }
+                });
+
     }
 
     @UiThread

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.file.upload.preview;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -159,6 +160,20 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
             mentionControlViewModel.registClipboardListener();
         }
         setupFullScreen();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Observable.just(1, 1)
+                .delay(100, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(integer -> {
+                    if (mentionControlViewModel != null) {
+                        mentionControlViewModel.onConfigurationChanged();
+                    }
+                });
+
     }
 
     private void setupFullScreen() {
