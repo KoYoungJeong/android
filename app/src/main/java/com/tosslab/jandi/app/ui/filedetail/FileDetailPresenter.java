@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.filedetail;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.widget.EditText;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -23,13 +22,13 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.permissions.Permissions;
+import com.tosslab.jandi.app.services.download.DownloadService;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.filedetail.domain.FileStarredInfo;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.utils.BitmapUtil;
-import com.tosslab.jandi.app.utils.file.FileSizeUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.placeholder.PlaceholderUtil;
@@ -389,7 +388,7 @@ public class FileDetailPresenter {
         }
     }
 
-    public void onClickDownload(ProgressDialog progressDialog, int fileId) {
+    public void onClickDownload(int fileId) {
         ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage(fileId);
         if (fileMessage == null) {
             return;
@@ -412,13 +411,12 @@ public class FileDetailPresenter {
                 content.title,
                 content.type,
                 content.ext,
-                progressDialog, fileId, false);
+                fileId);
     }
 
     @Background
     public void downloadFile(String url, String fileName, final String fileType, String ext,
-                             ProgressDialog progressDialog, int fileId, boolean execute) {
-
+                             int fileId) {
         Permissions.getChecker()
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .noPermission(() -> {
@@ -426,33 +424,13 @@ public class FileDetailPresenter {
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 })
                 .hasPermission(() -> {
-                    downloadFileImpl(url, fileName, fileType, ext, progressDialog, fileId, execute);
+                    downloadFileImpl(url, fileName, fileType, ext, fileId);
                 }).check();
     }
 
     private void downloadFileImpl(String url, String fileName, final String fileType, String ext,
-                                  ProgressDialog progressDialog, int fileId, boolean execute) {
-        String dialogText = FileSizeUtil.getDownloadFileName(fileName, ext);
-
-        view.showDownloadProgressDialog(dialogText);
-
-        try {
-            File result = fileDetailModel.download(url, fileName, ext, progressDialog);
-
-            if (fileDetailModel.isMediaFile(fileType)) {
-                fileDetailModel.addGallery(result, fileType);
-            }
-
-            fileDetailModel.trackFileDownloadSuccess(fileId);
-
-            view.dismissDownloadProgressDialog();
-            view.onDownloadFileSucceed(result, fileType, fileDetailModel.getFileMessage(fileId),
-                    execute);
-        } catch (Exception e) {
-            LogUtil.e("Download failed", e);
-            view.dismissDownloadProgressDialog();
-            view.showErrorToast(activity.getResources().getString(R.string.err_download));
-        }
+                                  int fileId) {
+        DownloadService.start(fileId, url, fileName, ext, fileType);
     }
 
     @Background

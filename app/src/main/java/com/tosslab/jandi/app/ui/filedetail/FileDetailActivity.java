@@ -720,8 +720,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
      * **********************************************************
      */
     public void download() {
-        initProgressDialog();
-        fileDetailPresenter.onClickDownload(progressDialog, fileId);
+        fileDetailPresenter.onClickDownload(fileId);
     }
 
     @UiThread
@@ -768,7 +767,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 fileDownloadStartEvent.getFileName(),
                 fileDownloadStartEvent.getFileType(),
                 fileDownloadStartEvent.getExt(),
-                progressDialog, fileId, true);
+                fileId);
     }
 
     @UiThread

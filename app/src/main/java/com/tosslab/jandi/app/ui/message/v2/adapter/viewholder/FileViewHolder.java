@@ -18,7 +18,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.file.FileSizeUtil;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
@@ -152,7 +152,7 @@ public class FileViewHolder implements BodyViewHolder {
                 MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
                 switch (sourceType) {
                     case S3:
-                        String fileSize = FileSizeUtil.fileSizeCalculation(fileMessage.content.size);
+                        String fileSize = FileUtil.fileSizeCalculation(fileMessage.content.size);
                         String fileType = String.format("%s, %s", fileSize, fileMessage.content.ext);
                         tvFileType.setText(fileType);
                         break;
