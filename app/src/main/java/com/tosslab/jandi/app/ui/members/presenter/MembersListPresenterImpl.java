@@ -242,8 +242,6 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     @Background
     @Override
     public void onKickUser(int topicId, int userEntityId) {
-
-
         if (!NetworkCheckUtil.isConnected()) {
             view.showKickFailToast();
             return;

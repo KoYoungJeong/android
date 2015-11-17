@@ -95,6 +95,25 @@ public class MembersModelTest {
 
     @Test
     public void testKickUser() throws Exception {
-        //membersModel.kickUser();
+        //given
+        BaseInitUtil.createDummyTopic();
+        BaseInitUtil.inviteDummyMembers();
+
+        int topicId = BaseInitUtil.tempTopicId;
+        int teamId = EntityManager.getInstance().getTeamId();
+
+        Collection<Integer> membersBefore = EntityManager.getInstance().getEntityById(topicId).getMembers();
+
+        //When
+        membersModel.kickUser(teamId, topicId, Integer.valueOf(BaseInitUtil.getUserIdByEmail("androidtester2@gustr.com")));
+
+        BaseInitUtil.refreshLeftSideMenu();
+        Collection<Integer> membersAfter = EntityManager.getInstance().getEntityById(topicId).getMembers();
+
+        BaseInitUtil.deleteDummyTopic();
+
+        //Then
+        assertThat(membersBefore.size() - 1, is(equalTo(membersAfter.size())));
+
     }
 }
