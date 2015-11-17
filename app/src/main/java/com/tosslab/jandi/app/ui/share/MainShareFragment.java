@@ -137,7 +137,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
 
             etComment.setText(buffer.toString());
             etComment.setSelection(etComment.getText().length());
-            etComment.setMaxLines(Integer.MAX_VALUE);
+            etComment.setMaxLines(6);
         }
 
         setOnScrollMode();
