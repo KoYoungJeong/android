@@ -507,6 +507,8 @@ public class BitmapUtil {
                 .placeholder(placeHolder)
                 .resize(imageView.getMeasuredWidth() * 2, imageView.getMeasuredHeight() * 2)
                 .centerCrop()
+                .crossfade(false)
+                .fadeIn(false)
                 .load(url);
     }
 
