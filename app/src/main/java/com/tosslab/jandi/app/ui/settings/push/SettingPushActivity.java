@@ -34,7 +34,7 @@ public class SettingPushActivity extends BaseAppCompatActivity {
                 getFragmentManager().findFragmentByTag(SettingsFragment.class.getName());
         if (settingPushFragment == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.fl_content,
+                    .replace(R.id.fl_content,
                             new SettingPushFragment_(), SettingPushFragment.class.getName())
                     .commit();
         }
