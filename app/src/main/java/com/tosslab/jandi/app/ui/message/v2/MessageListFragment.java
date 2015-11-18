@@ -35,7 +35,7 @@ import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
-import com.tosslab.jandi.app.events.entities.TopicThrowoutEvent;
+import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
@@ -1582,7 +1582,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
 
-    public void onEventMainThread(TopicThrowoutEvent event) {
+    public void onEventMainThread(TopicKickedoutEvent event) {
         if (roomId == event.getRoomId()) {
             getActivity().finish();
             String topicName = messageListModel.getTopicName(entityId);

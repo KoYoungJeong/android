@@ -8,7 +8,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class SocketTopicThrowoutEvent {
+public class SocketTopicKickedoutEvent {
     private String event;
     private String version;
     private Data data;
@@ -39,7 +39,7 @@ public class SocketTopicThrowoutEvent {
 
     @Override
     public String toString() {
-        return "SocketTopicThrowoutEvent{" +
+        return "SocketTopicKickedoutEvent{" +
                 "event='" + event + '\'' +
                 ", version='" + version + '\'' +
                 ", data=" + data +

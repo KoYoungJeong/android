@@ -11,7 +11,7 @@ import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
-import com.tosslab.jandi.app.events.entities.TopicThrowoutEvent;
+import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
 import com.tosslab.jandi.app.events.files.CreateFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
@@ -54,8 +54,8 @@ import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamLeaveEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicKickedoutEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketTopicThrowoutEvent;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -558,12 +558,12 @@ public class JandiSocketServiceModel {
 
     public void refreshKickedOut(Object object) {
         try {
-            SocketTopicThrowoutEvent event =
-                    objectMapper.readValue(object.toString(), SocketTopicThrowoutEvent.class);
+            SocketTopicKickedoutEvent event =
+                    objectMapper.readValue(object.toString(), SocketTopicKickedoutEvent.class);
 
-            SocketTopicThrowoutEvent.Data data = event.getData();
+            SocketTopicKickedoutEvent.Data data = event.getData();
 
-            refreshEntity(new TopicThrowoutEvent(data.getRoomId(), data.getTeamId()), true);
+            refreshEntity(new TopicKickedoutEvent(data.getRoomId(), data.getTeamId()), true);
 
         } catch (IOException e) {
             e.printStackTrace();
