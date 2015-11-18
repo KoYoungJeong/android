@@ -30,7 +30,7 @@
     <RelativeLayout
         android:id="@+id/vg_file_upload_preview_content"
         android:layout_width="match_parent"
-        android:layout_height="187dp"
+        android:layout_height="186dp"
         android:layout_alignParentBottom="true"
         android:background="@drawable/upload_bg"
         android:orientation="vertical">
@@ -62,18 +62,19 @@
                 android:textSize="@dimen/jandi_text_size_large"
                 android:textStyle="bold" />
 
-            <EditText
+            <TextView
                 android:id="@+id/tv_file_upload_title"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="6"
                 android:background="@color/transparent"
+                android:ellipsize="end"
                 android:enabled="false"
                 android:gravity="center_vertical"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="asdasdadasd"
                 android:textColor="@color/jandi_text_light"
+                android:textSize="@dimen/jandi_text_size_large"
                 android:textStyle="bold" />
         </LinearLayout>
 
