@@ -1,1 +1,1 @@
-include ':app', ':sprinkler-android', 'ui-automator-test', ':photoview-expand'
+include ':app', 'ui-automator-test' //, ':photoview-expand',':sprinkler-android'
