@@ -17,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -364,9 +365,21 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         sendInitMessage();
 
+        setUpListTouchListener();
+
         TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
 
         AnalyticsUtil.sendScreenName(messageListModel.getScreen(entityId));
+    }
+
+    private void setUpListTouchListener() {
+        messageListPresenter.setListTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                messageListPresenter.hideKeyboard();
+                stickerViewModel.dismissStickerSelector();
+            }
+            return false;
+        });
     }
 
     private void initKeyboardEvent() {
@@ -429,6 +442,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     private void initMessageList() {
         messageListPresenter.setOnItemClickListener((adapter, position) -> {
             try {
+                messageListPresenter.hideKeyboard();
+                stickerViewModel.dismissStickerSelector();
                 onMessageItemClick(messageListPresenter.getItem(position), entityId);
             } catch (Exception e) {
                 messageListPresenter.justRefresh();

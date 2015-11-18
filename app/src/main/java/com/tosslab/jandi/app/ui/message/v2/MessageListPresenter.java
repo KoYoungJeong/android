@@ -159,6 +159,7 @@ public class MessageListPresenter {
     private boolean sendLayoutVisible;
     private boolean gotoLatestLayoutVisible;
     private OfflineLayer offlineLayer;
+    private View.OnTouchListener listTouchListener;
 
     @AfterInject
     void initObject() {
@@ -207,6 +208,7 @@ public class MessageListPresenter {
 
         messageListView.addItemDecoration(stickyHeadersItemDecoration);
 
+        setListTouchListener(listTouchListener);
 //        setSendEditText(tempMessage);
 
         if (isDisabled) {
@@ -789,7 +791,9 @@ public class MessageListPresenter {
     }
 
     public void hideKeyboard() {
-        inputMethodManager.hideSoftInputFromWindow(messageEditText.getWindowToken(), 0);
+        if (inputMethodManager.isAcceptingText()) {
+            inputMethodManager.hideSoftInputFromWindow(messageEditText.getWindowToken(), 0);
+        }
     }
 
     public void showKeyboard() {
@@ -1092,6 +1096,14 @@ public class MessageListPresenter {
         messageListAdapter.notifyDataSetChanged();
 
         messageListView.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
+    }
+
+    public void setListTouchListener(View.OnTouchListener touchListener) {
+        if (messageListView != null) {
+            messageListView.setOnTouchListener(touchListener);
+        } else if (touchListener != null) {
+            this.listTouchListener = touchListener;
+        }
     }
 }
 
