@@ -11,12 +11,16 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResUpdateMessages {
+    public int lastLinkId;
+    public int messageCount;
     public List<ResMessages.Link> messages;
 
     @Override
     public String toString() {
         return "ResUpdateMessages{" +
-                "messages=" + messages +
+                "lastLinkId=" + lastLinkId +
+                ", messageCount=" + messageCount +
+                ", messages=" + messages +
                 '}';
     }
 
