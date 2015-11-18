@@ -193,7 +193,6 @@
 	<string name="jandi_folder_renamed">"フォルダ名が変更されました"</string>
 	<string name="jandi_forgot_password">"<u>パスワードを忘れた場合</u>"</string>
 	<string name="jandi_go_to_latest">"最新のメッセージに移動"</string>
-	<string name="jandi_go_to_main">"ホームに戻る"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_has_joined">"%sさんが参加しました"</string>
 	<string name="jandi_have_an_account_already">"すでにJANDIに登録済みの方はこちら"</string>
@@ -226,6 +225,7 @@
 	<string name="jandi_is_topic_required">"公開/非公開"</string>
 	<string name="jandi_it_has_no_topic_description">"（トピック説明なし）"</string>
 	<string name="jandi_joined_team">"すでに%1$sのメンバーです。チームリストを確認してください"</string>
+	<string name="jandi_kicked_message">"%sの管理者からトピックから退出させられました。"</string>
 	<string name="jandi_later">"後で"</string>
 	<string name="jandi_launch">"JANDIを利用する"</string>
 	<string name="jandi_left_topic">"%sが退出しました"</string>
@@ -242,7 +242,8 @@
 	<string name="jandi_mention_mentioned_you">"さんからのメンション"</string>
 	<string name="jandi_mention_mentions">"メンション"</string>
 	<string name="jandi_mention_more">"もっと見る"</string>
-	<string name="jandi_mention_no_mentions">"メンションされたことがありません"</string>
+	<string name="jandi_mention_no_mentions">"チームメンバーからメンションされたけんがありません。
+メンションするには、メッセージやコメントを入力する時「@」を入力してください"</string>
 	<string name="jandi_mention_push_message">"%sさんからのメンション"</string>
 	<string name="jandi_message_ask_about_delete_comment">"本当に削除しますか？元には戻せません"</string>
 	<string name="jandi_message_ask_about_deleting">"本当に削除しますか？元には戻せません"</string>
@@ -485,4 +486,5 @@
 チームではこの名前、メールアドレスが表示されます。アカウント情報で登録した名前、メールアドレスと異なっても構いません"</string>
 	<string name="what_is_team_domain">"チームドメインはログイン用URLに使われます。
 具体的には、abc.jandi.comの”abcの部分を指し、<b>3文字以上</b>の英数字とハイフンが利用できます。覚えやすいドメイン名にすることをお勧めします"</string>
+	<string name="로">"ホームに戻る"</string>
 </resources>

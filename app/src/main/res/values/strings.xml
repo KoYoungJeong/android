@@ -193,7 +193,6 @@
 	<string name="jandi_folder_renamed">"The folder has been renamed."</string>
 	<string name="jandi_forgot_password">"<u>Forgot Your Password?</u>"</string>
 	<string name="jandi_go_to_latest">"Go to the most recent messages"</string>
-	<string name="jandi_go_to_main">"Go to\nAccount Home"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_has_joined">"%s has joined"</string>
 	<string name="jandi_have_an_account_already">"Already have an account?"</string>
@@ -226,6 +225,7 @@
 	<string name="jandi_is_topic_required">"Type*"</string>
 	<string name="jandi_it_has_no_topic_description">"(There is no topic description)"</string>
 	<string name="jandi_joined_team">"You have already joined %1$s. Please check your team list."</string>
+	<string name="jandi_kicked_message">"You have been removed from %s."</string>
 	<string name="jandi_later">"Later"</string>
 	<string name="jandi_launch">"LAUNCH JANDI"</string>
 	<string name="jandi_left_topic">"%s has left"</string>
@@ -242,7 +242,8 @@
 	<string name="jandi_mention_mentioned_you">"mentioned you"</string>
 	<string name="jandi_mention_mentions">"Mentions"</string>
 	<string name="jandi_mention_more">"More"</string>
-	<string name="jandi_mention_no_mentions">"No mentions"</string>
+	<string name="jandi_mention_no_mentions">"You haven't been mentioned by other team members yet. 
+To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_mention_push_message">"%s mentioned you"</string>
 	<string name="jandi_message_ask_about_delete_comment">"Are you sure you want to delete this comment? It cannot be undone."</string>
 	<string name="jandi_message_ask_about_deleting">"Are you sure you want to delete this message? It cannot be undone."</string>
@@ -483,4 +484,5 @@ We combined everything you love about messaging apps and cloud storage with powe
 	<string name="warn_no_permission">"Access denied"</string>
 	<string name="what_is_member_profile">"Enter the email address and profile name you want associated with this team. Please note that your teammates may view and use this information to mention, search, or directly contact you."</string>
 	<string name="what_is_team_domain">"Choose your team's domain (URL) for signing in on the web. It's up to you as long as it is <b>3+ characters</b> and includes only letters, numbers, and hyphens (-)."</string>
+	<string name="로">"Go to\nAccount Home"</string>
 </resources>
