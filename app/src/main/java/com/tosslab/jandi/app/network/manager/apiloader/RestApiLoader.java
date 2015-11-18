@@ -504,7 +504,7 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResUpdateMessages> getRoomUpdateMessageByMessagesApiAuth(int teamId, int roomId, int currentLinkId) {
+    public IExecutor<List<ResMessages.Link>> getRoomUpdateMessageByMessagesApiAuth(int teamId, int roomId, int currentLinkId) {
         return () -> authRestApiClient.getRoomUpdateMessageByMessagesApiAuth(teamId, roomId, currentLinkId);
     }
 
