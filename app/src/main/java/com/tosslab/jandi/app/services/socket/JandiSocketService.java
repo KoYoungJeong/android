@@ -269,7 +269,7 @@ public class JandiSocketService extends Service {
 
 
         EventListener topicThrowOutListener =
-                objects -> jandiSocketServiceModel.refreshThrowOut(objects[0]);
+                objects -> jandiSocketServiceModel.refreshKickedOut(objects[0]);
         eventHashMap.put("topic_kicked_out", topicThrowOutListener);
     }
 

@@ -556,14 +556,14 @@ public class JandiSocketServiceModel {
         }
     }
 
-    public void refreshThrowOut(Object object) {
+    public void refreshKickedOut(Object object) {
         try {
             SocketTopicThrowoutEvent event =
                     objectMapper.readValue(object.toString(), SocketTopicThrowoutEvent.class);
 
             SocketTopicThrowoutEvent.Data data = event.getData();
 
-            postEvent(new TopicThrowoutEvent(data.getRoomId(), data.getTeamId()));
+            refreshEntity(new TopicThrowoutEvent(data.getRoomId(), data.getTeamId()), true);
 
         } catch (IOException e) {
             e.printStackTrace();
