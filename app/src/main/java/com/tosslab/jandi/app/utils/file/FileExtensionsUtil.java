@@ -4,7 +4,6 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -72,27 +71,24 @@ public class FileExtensionsUtil {
     }
 
     public static Extensions getExtensions(String fileName) {
-        Extensions extensions = Extensions.ETC;
         if (TextUtils.isEmpty(fileName)) {
-            return extensions;
+            return Extensions.ETC;
         }
+
+        int extSeperatorIndex = fileName.lastIndexOf(".");
+        if (extSeperatorIndex == -1) {
+            return Extensions.ETC;
+        }
+
+        String rawExt = fileName.substring(extSeperatorIndex + 1).toLowerCase();
 
         for (Extensions value : Extensions.values()) {
-            boolean find = false;
-            for (String ext : value.extensionList) {
-                if (fileName.endsWith(ext)) {
-                    LogUtil.d(fileName + " & " + ext);
-                    extensions = value;
-                    find = true;
-                    break;
-                }
-            }
-            if (find) {
-                break;
+            if (value.extensionList.contains(rawExt)) {
+                return value;
             }
         }
 
-        return extensions;
+        return Extensions.ETC;
     }
 
     public static int getFileTypeBigImageResource(String fileName) {

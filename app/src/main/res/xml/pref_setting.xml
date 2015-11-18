@@ -14,7 +14,7 @@
     <PreferenceCategory
         android:key="setting_orientation_title"
         android:title="@string/jandi_setting_display">
-        <ListPreference
+        <com.tosslab.jandi.app.views.preferences.ListPreferenceCompat
             android:defaultValue="true"
             android:entries="@array/jandi_pref_orientation"
             android:entryValues="@array/jandi_pref_orientation_values"

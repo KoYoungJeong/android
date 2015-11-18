@@ -406,7 +406,6 @@ public class FileDetailPresenter {
                 return;
         }
 
-
         downloadFile(BitmapUtil.getFileUrl(content.fileUrl),
                 content.title,
                 content.type,
@@ -414,7 +413,6 @@ public class FileDetailPresenter {
                 fileId);
     }
 
-    @Background
     public void downloadFile(String url, String fileName, final String fileType, String ext,
                              int fileId) {
         Permissions.getChecker()

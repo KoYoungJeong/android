@@ -448,9 +448,13 @@ public class BitmapUtil {
             return;
         }
 
+        DisplayMetrics displayMetrics = imageView.getResources().getDisplayMetrics();
+        int maxSize = Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels);
+
         Glide.with(JandiApplication.getContext())
                 .load(url)
                 .placeholder(placeHolder)
+                .override(maxSize, maxSize)
                 .error(error)
                 .animate(view -> {
                     view.setAlpha(0.0f);
@@ -501,7 +505,10 @@ public class BitmapUtil {
                                            String url, int placeHolder) {
         Ion.with(imageView)
                 .placeholder(placeHolder)
+                .resize(imageView.getMeasuredWidth() * 2, imageView.getMeasuredHeight() * 2)
                 .centerCrop()
+                .crossfade(false)
+                .fadeIn(false)
                 .load(url);
     }
 
@@ -521,6 +528,7 @@ public class BitmapUtil {
                                       String url, int placeHolder, int error) {
         Ion.with(imageView)
                 .centerCrop()
+                .resize(imageView.getMeasuredWidth() * 2, imageView.getMeasuredHeight() * 2)
                 .placeholder(placeHolder)
                 .error(error)
                 .transform(new IonCircleTransform())

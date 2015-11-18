@@ -61,7 +61,15 @@
     <!-- Intro 화면은 어둡기 때문에 -->
     <style name="JandiTheme.Intro" parent="android:Theme.DeviceDefault.NoActionBar.Fullscreen"></style>
 
-    <style name="JandiTheme.PushIntro" parent="@style/Theme.AppCompat.Light.NoActionBar"></style>
+    <style name="JandiTheme.PushIntro" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowEnableSplitTouch">false</item>
+
+        <item name="colorPrimary">@color/jandi_primary_color</item>
+        <item name="colorPrimaryDark">@color/jandi_primary_dark_color</item>
+        <item name="colorAccent">@color/jandi_accent_color</item>
+
+    </style>
 
     <style name="Jandi.Transparent.Dialog" parent="style/Theme.AppCompat.Light.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
