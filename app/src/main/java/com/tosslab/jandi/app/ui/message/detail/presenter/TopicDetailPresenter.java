@@ -59,5 +59,7 @@ public interface TopicDetailPresenter {
         void moveTopicDescriptionEdit();
 
         void setLeaveVisible(boolean owner, boolean defaultTopic);
+
+        void setTopicAutoJoin(boolean owner, boolean defaultTopic);
     }
 }

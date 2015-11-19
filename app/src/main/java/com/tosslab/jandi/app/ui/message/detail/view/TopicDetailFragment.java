@@ -92,8 +92,12 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     View ivStarred;
     @ViewById(R.id.switch_topic_detail_set_push)
     SwitchCompat switchSetPush;
+    @ViewById(R.id.switch_topic_detail_set_auto_join)
+    SwitchCompat switchAutoJoin;
     @ViewById(R.id.tv_topic_detail_set_push)
     TextView tvSetPush;
+
+
 
     private ProgressWheel progressWheel;
 
@@ -307,6 +311,11 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
 
         }
+    }
+
+    @Override
+    public void setTopicAutoJoin(boolean owner, boolean defaultTopic) {
+//        if (defaultTopic)
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

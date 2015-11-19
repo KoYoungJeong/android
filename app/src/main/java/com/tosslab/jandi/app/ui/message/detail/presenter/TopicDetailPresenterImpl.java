@@ -72,6 +72,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         view.setStarred(isStarred);
         view.setTopicDescription(topicDescription);
         view.setTopicMemberCount(topicMemberCount);
+        view.setTopicAutoJoin(owner, defaultTopic);
         view.setTopicPushSwitch(isTopicPushSubscribe);
         view.setLeaveVisible(owner, defaultTopic);
     }
