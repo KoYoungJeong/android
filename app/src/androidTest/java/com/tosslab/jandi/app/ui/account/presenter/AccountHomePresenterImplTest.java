@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.account.presenter;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
@@ -18,7 +17,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
-import setup.BaseIniUtil;
+import setup.BaseInitUtil;
+import setup.MockUtil;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -40,12 +40,12 @@ public class AccountHomePresenterImplTest {
         viewMock = Mockito.mock(AccountHomePresenter.View.class);
         accountHomePresenter.setView(viewMock);
 
-        BaseIniUtil.initData();
+        BaseInitUtil.initData();
     }
 
     @After
     public void tearDown() throws Exception {
-        BaseIniUtil.clear();
+        BaseInitUtil.clear();
 
     }
 
@@ -53,7 +53,7 @@ public class AccountHomePresenterImplTest {
     public void testInitViews_InvalidAccess() throws Exception {
 
         // Given
-        BaseIniUtil.clear();
+        BaseInitUtil.clear();
 
         // When
         accountHomePresenter.initViews();
@@ -67,11 +67,7 @@ public class AccountHomePresenterImplTest {
 
         // Given
         Context tempContext = JandiApplication.getContext();
-        JandiApplication.setContext(Mockito.mock(Context.class));
-        ConnectivityManager connectivityManager = Mockito.mock(ConnectivityManager.class, Mockito.RETURNS_DEEP_STUBS);
-        Mockito.doReturn(null).when(connectivityManager).getActiveNetworkInfo();
-        Mockito.doReturn(connectivityManager).when(JandiApplication.getContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
-
+        MockUtil.networkOff();
         // When
         accountHomePresenter.initViews();
 

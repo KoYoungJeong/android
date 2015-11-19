@@ -29,8 +29,7 @@ public class BaseInitUtil {
 
     public static void initData() {
 
-        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class).clearAllData();
-        JandiPreference.signOut(JandiApplication.getContext());
+        clear();
 
         ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
                 ReqAccessToken.createPasswordReqToken(TEST_ID, TEST_PASSWORD));
@@ -45,6 +44,11 @@ public class BaseInitUtil {
         ResLeftSideMenu leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(AccountRepository.getRepository().getSelectedTeamId());
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
 
+    }
+
+    public static void clear() {
+        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class).clearAllData();
+        JandiPreference.signOut(JandiApplication.getContext());
     }
 
     public static void releaseDatabase() {
