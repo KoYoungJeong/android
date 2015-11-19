@@ -181,6 +181,18 @@ public class FileDetailModel {
         }
     }
 
+    //FIXME
+    public void trackFileDownloadSuccess(int fileId) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileDownload)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.FileId, fileId)
+                        .build());
+    }
+
     public void trackFileShareSuccess(int topicId, int fileId) {
 
         Sprinkler.with(JandiApplication.getContext())
