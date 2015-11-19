@@ -162,11 +162,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:duplicateParentState="true"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:duplicateParentState="true"
                         android:text="@string/jandi_auto_join_title"
                         android:textColor="@color/jandi_text"
                         android:textSize="@dimen/jandi_text_size_large" />
@@ -175,6 +177,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
+                        android:duplicateParentState="true"
                         android:text="@string/jandi_auto_join_explain"
                         android:textColor="@color/jandi_text_topic_detail_content"
                         android:textSize="@dimen/jandi_text_size_medium" />
@@ -184,6 +187,7 @@
                 <LinearLayout
                     android:layout_width="100dp"
                     android:layout_height="match_parent"
+                    android:duplicateParentState="true"
                     android:gravity="center">
 
                     <android.support.v7.widget.SwitchCompat
@@ -193,6 +197,7 @@
                         android:layout_gravity="center"
                         android:checked="true"
                         android:clickable="false"
+                        android:duplicateParentState="true"
                         android:gravity="center" />
                 </LinearLayout>
 

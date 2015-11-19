@@ -235,6 +235,13 @@ public class EntityClientManager {
         return RequestApiManager.getInstance().modifyGroupByGroupApi(entityInfo, entityId);
     }
 
+    public ResCommon modifyChannelAutoJoin(int teamId, int entityId, boolean autoJoin) {
+        final ReqCreateTopic entityInfo = new ReqCreateTopic();
+        entityInfo.teamId = selectedTeamId;
+        entityInfo.autoJoin = autoJoin;
+        return RequestApiManager.getInstance().modifyPublicTopicNameByChannelApi(entityInfo, entityId);
+    }
+
     public int getSelectedTeamId() {
         return selectedTeamId;
     }

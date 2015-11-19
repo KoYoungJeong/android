@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
@@ -59,6 +61,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         boolean isTopicPushSubscribe = topicDetailModel.isPushOn(entityId);
 
         boolean defaultTopic = topicDetailModel.isDefaultTopic(entityId);
+        boolean privateTopic = topicDetailModel.isPrivateTopic(entityId);
+        boolean autoJoin = topicDetailModel.isAutoJoin(entityId);
 
         if (TextUtils.isEmpty(topicDescription)) {
             if (owner) {
@@ -72,7 +76,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         view.setStarred(isStarred);
         view.setTopicDescription(topicDescription);
         view.setTopicMemberCount(topicMemberCount);
-        view.setTopicAutoJoin(owner, defaultTopic);
+        view.setTopicAutoJoin(autoJoin, owner, defaultTopic, privateTopic);
         view.setTopicPushSwitch(isTopicPushSubscribe);
         view.setLeaveVisible(owner, defaultTopic);
     }
@@ -234,6 +238,25 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             e.printStackTrace();
 
             view.dismissProgressWheel();
+
+        }
+    }
+
+    @Background
+    @Override
+    public void onAutoJoin(int entityId, boolean autoJoin) {
+        view.showProgressWheel();
+        try {
+            topicDetailModel.updateAutoJoin(entityId, autoJoin);
+            view.dismissProgressWheel();
+            ((ResLeftSideMenu.Channel) EntityManager.getInstance().getEntityById(entityId).getEntity()).autoJoin = autoJoin;
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            view.dismissProgressWheel();
+
+            if (e.getCause() instanceof ConnectionNotFoundException) {
+                view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
+            }
 
         }
     }
