@@ -67,7 +67,7 @@ public class ImageThumbLoader implements FileThumbLoader {
 
                     BitmapUtil.loadImageByGlideOrIonWhenGif(
                             imageViewPhotoFile, thumbnailPhotoUrl,
-                            R.drawable.jandi_down_placeholder_img, R.drawable.jandi_down_placeholder_img,
+                            R.drawable.file_messageview_downloading, R.drawable.file_messageview_noimage,
                             (width, height) -> {
                                 updateViewSize(width, height);
                             });

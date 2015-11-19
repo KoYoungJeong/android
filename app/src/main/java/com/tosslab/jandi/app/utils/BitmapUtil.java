@@ -505,9 +505,8 @@ public class BitmapUtil {
                                            String url, int placeHolder) {
         Ion.with(imageView)
                 .placeholder(placeHolder)
-                .resize(imageView.getMeasuredWidth() * 2, imageView.getMeasuredHeight() * 2)
-                .centerCrop()
                 .crossfade(false)
+                .centerCrop()
                 .fadeIn(false)
                 .load(url);
     }
@@ -528,7 +527,6 @@ public class BitmapUtil {
                                       String url, int placeHolder, int error) {
         Ion.with(imageView)
                 .centerCrop()
-                .resize(imageView.getMeasuredWidth() * 2, imageView.getMeasuredHeight() * 2)
                 .placeholder(placeHolder)
                 .error(error)
                 .transform(new IonCircleTransform())
