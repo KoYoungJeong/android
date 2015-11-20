@@ -20,9 +20,10 @@
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="setting_push_alarm_led"
-        android:summary="@string/jandi_setting_summary_led" />
-    <ListPreference
-        android:defaultValue="true"
+        android:summary="@string/jandi_setting_summary_led"
+        android:title="@string/jandi_phone_led" />
+    <com.tosslab.jandi.app.views.preferences.ListPreferenceCompat
+        android:defaultValue="0"
         android:entries="@array/jandi_pref_push_preview"
         android:entryValues="@array/jandi_pref_push_preview_values"
         android:key="setting_push_preview"

@@ -4,13 +4,11 @@ def checkValidProperties() {
     println "================================================================================"
     println "Properties Valid Checking.........."
 
-    if (!project.hasProperty("java8_home") || !project.hasProperty("java6_home") || !project.hasProperty("inhouse_version")) {
-        println "set up to gradle.propeties -> \"java8_home\""
-        println "set up to gradle.propeties -> \"java6_home\""
+    if (!project.hasProperty("inhouse_version")) {
         println "set up to gradle.propeties -> \"inhouse_version\""
 
         println "Properties Valid Check Fail"
-        throw new IllegalArgumentException("need properties [\"java8_home\", \"java6_home\", \"inhouse_version\"]");
+        throw new IllegalArgumentException("need properties [\"inhouse_version\"]");
     }
 
 

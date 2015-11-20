@@ -142,6 +142,8 @@ public class ImageViewHolder implements BodyViewHolder {
 
             }
 
+            ivFileImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
             if (TextUtils.equals(fileMessage.status, "archived")) {
 
                 tvFileName.setText(R.string.jandi_deleted_file);
@@ -175,7 +177,7 @@ public class ImageViewHolder implements BodyViewHolder {
 
                         BitmapUtil.loadCropBitmapByIon(ivFileImage,
                                 thumbPath,
-                                R.drawable.file_icon_img
+                                R.drawable.file_messageview_downloading
                         );
 
                         String fileSize = FileSizeUtil.fileSizeCalculation(fileContent.size);

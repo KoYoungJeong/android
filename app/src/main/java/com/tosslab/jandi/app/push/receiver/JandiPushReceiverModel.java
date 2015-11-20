@@ -244,35 +244,12 @@ public class JandiPushReceiverModel {
 
     private NotificationCompat.Builder getNotification(Context context,
                                                        String notificationTitle,
-                                                       int teamId, int roomId, String roomType, String roomName,
+                                                       int teamId, int roomId, String roomType, int roomTypeInt, String roomName,
                                                        String message, Bitmap writerProfile,
                                                        int badgeCount) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle(notificationTitle);
-
-        String pushPreviewInfo = JandiPreference.getPushPreviewInfo();
-
-        int roomTypeInt = getEntityType(roomType);
-        if (roomTypeInt == JandiConstants.TYPE_DIRECT_MESSAGE) {
-            roomName = context.getString(R.string.jandi_tab_direct_message);
-        }
-
-        switch (pushPreviewInfo) {
-            case JandiPreference.PREF_VALUE_PUSH_PREVIEW_ALL_MESSAGE:
-                builder.setContentText(message);
-                break;
-            case JandiPreference.PREF_VALUE_PUSH_PREVIEW_PUBLIC_ONLY:
-                if (roomTypeInt == JandiConstants.TYPE_PUBLIC_TOPIC) {
-                    builder.setContentText(message);
-                } else {
-                    builder.setContentText(JandiApplication.getContext().getString(R.string.jandi_no_preview_push_message));
-                }
-                break;
-            case JandiPreference.PREF_VALUE_PUSH_NO_PREVIEW:
-                builder.setContentText(JandiApplication.getContext().getString(R.string.jandi_no_preview_push_message));
-                break;
-        }
 
         builder.setDefaults(getNotificationDefaults(context))
                 .setSmallIcon(R.drawable.icon_push_notification)
@@ -280,6 +257,8 @@ public class JandiPushReceiverModel {
                 .setAutoCancel(true)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setSubText(roomName)
+                .setContentTitle(notificationTitle)
+                .setContentText(message)
                 .setNumber(badgeCount)
                 .setStyle(getBigTextStyle(notificationTitle, message, roomName));
 
@@ -347,13 +326,10 @@ public class JandiPushReceiverModel {
 
         PushMonitor.getInstance().setLastNotifiedCreatedAt(createdAt);
 
-        String message = pushInfo.getMessageContent();
         String writerName = pushInfo.getWriterName();
-        String roomName = pushInfo.getRoomName();
 
         int teamId = pushInfo.getTeamId();
         int roomId = pushInfo.getRoomId();
-        String roomType = pushInfo.getRoomType();
         String writerThumb = pushInfo.getWriterThumb();
         Bitmap profileImage = null;
         if (!TextUtils.isEmpty(writerThumb)) {
@@ -374,14 +350,52 @@ public class JandiPushReceiverModel {
 
         int badgeCount = BadgeCountRepository.getRepository().getTotalBadgeCount();
 
+        String roomType = pushInfo.getRoomType();
+        int roomTypeInt = getEntityType(roomType);
+        String roomName = getRoomName(context, pushInfo, roomTypeInt);
+
+        String message = pushInfo.getMessageContent();
+        String outMessage = getOutMessage(roomTypeInt, message);
+
+
         NotificationCompat.Builder notificationBuilder =
                 getNotification(context, notificationTitle,
-                        teamId, roomId, roomType, roomName,
-                        message, profileImage,
+                        teamId, roomId, roomType, roomTypeInt, roomName,
+                        outMessage, profileImage,
                         badgeCount);
         PushMonitor.getInstance().setLastNotificationBuilder(notificationBuilder);
 
         sendNotification(context, notificationBuilder.build());
+    }
+
+    private String getRoomName(Context context, PushTO.PushInfo pushInfo, int roomTypeInt) {
+        String roomName;
+        if (roomTypeInt == JandiConstants.TYPE_DIRECT_MESSAGE) {
+            roomName = context.getString(R.string.jandi_tab_direct_message);
+        } else {
+            roomName = pushInfo.getRoomName();
+        }
+        return roomName;
+    }
+
+    private String getOutMessage(int roomTypeInt, String message) {
+        String pushPreviewInfo = JandiPreference.getPushPreviewInfo();
+        String outMessage;
+        if (pushPreviewInfo.equals(JandiPreference.PREF_VALUE_PUSH_PREVIEW_ALL_MESSAGE)) {
+            outMessage = message;
+        } else if (pushPreviewInfo.equals(JandiPreference.PREF_VALUE_PUSH_PREVIEW_PUBLIC_ONLY)) {
+            if (roomTypeInt == JandiConstants.TYPE_PUBLIC_TOPIC) {
+                outMessage = message;
+            } else {
+                outMessage = JandiApplication.getContext().getString(R.string.jandi_no_preview_push_message);
+            }
+        } else if (pushPreviewInfo.equals(JandiPreference.PREF_VALUE_PUSH_NO_PREVIEW)) {
+            outMessage = JandiApplication.getContext().getString(R.string.jandi_no_preview_push_message);
+        } else {
+            outMessage = message;
+        }
+
+        return outMessage;
     }
 
     private boolean isPreviousMessage(String createdAt) {
