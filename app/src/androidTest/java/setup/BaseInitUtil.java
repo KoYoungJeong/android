@@ -29,7 +29,10 @@ public class BaseInitUtil {
 
     public static void initData() {
 
-        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class).clearAllData();
+        clear();
+
+        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
+                .clearAllData();
         JandiPreference.signOut(JandiApplication.getContext());
 
         ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
@@ -42,8 +45,20 @@ public class BaseInitUtil {
         AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
-        ResLeftSideMenu leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(AccountRepository.getRepository().getSelectedTeamId());
-        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+        initEntity();
+    }
+
+    public static void clear() {
+        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class).clearAllData();
+        JandiPreference.signOut(JandiApplication.getContext());
+    }
+
+
+    public static void initEntity() {
+        int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+        ResLeftSideMenu sideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
+        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(sideMenu);
+
 
     }
 
