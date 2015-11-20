@@ -226,8 +226,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @Click(R.id.vg_topic_detail_set_auto_join)
     void onAutoJoinClick() {
-        switchAutoJoin.setChecked(!switchAutoJoin.isChecked());
-        topicDetailPresenter.onAutoJoin(entityId, switchAutoJoin.isChecked());
+        topicDetailPresenter.onAutoJoin(entityId, !switchAutoJoin.isChecked());
     }
 
     // Topic Push
@@ -246,7 +245,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         }
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setTopicPushSwitch(boolean isPushOn) {
         switchSetPush.setChecked(isPushOn);
@@ -300,6 +299,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         tvMemberCount.setText(String.valueOf(topicMemberCount));
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setLeaveVisible(boolean owner, boolean defaultTopic) {
         if (defaultTopic) {
@@ -323,10 +323,11 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         }
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic) {
         if (privateTopic) {
-            vgAutoJoin.setEnabled(false);
+            vgAutoJoin.setEnabled(true);
             switchAutoJoin.setChecked(false);
         } else if (defaultTopic) {
             switchAutoJoin.setChecked(true);
@@ -372,7 +373,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         progressWheel.show();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(delay = 200L)
     @Override
     public void dismissProgressWheel() {
         if (progressWheel != null && progressWheel.isShowing()) {

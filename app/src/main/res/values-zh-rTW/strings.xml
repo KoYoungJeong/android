@@ -85,6 +85,7 @@
 	<string name="jandi_announcement_deleted">"%s 刪除公告"</string>
 	<string name="jandi_announcement_minimize">"最小化"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你確定將此成員剔除議題？"</string>
+	<string name="jandi_auto_join_cannot_be_private_topic">"自動邀請的功能僅開放於公開議題中使用"</string>
 	<string name="jandi_auto_join_explain">"邀請所有新成員至此議題"</string>
 	<string name="jandi_auto_join_title">"自動邀請"</string>
 	<string name="jandi_auto_join_title_wild">"自動邀請*"</string>

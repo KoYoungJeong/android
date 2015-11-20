@@ -245,11 +245,21 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     @Background
     @Override
     public void onAutoJoin(int entityId, boolean autoJoin) {
+
+        if (topicDetailModel.isPrivateTopic(entityId)) {
+            // private topic == true 이면 그외의 값은 의미 없음
+            view.setTopicAutoJoin(false, false, false, true);
+            view.showFailToast(JandiApplication.getContext().getString(R.string.jandi_auto_join_cannot_be_private_topic));
+            return;
+        }
+
+
         view.showProgressWheel();
         try {
             topicDetailModel.updateAutoJoin(entityId, autoJoin);
             view.dismissProgressWheel();
             ((ResLeftSideMenu.Channel) EntityManager.getInstance().getEntityById(entityId).getEntity()).autoJoin = autoJoin;
+            onInit(JandiApplication.getContext(), entityId);
         } catch (RetrofitError e) {
             e.printStackTrace();
             view.dismissProgressWheel();

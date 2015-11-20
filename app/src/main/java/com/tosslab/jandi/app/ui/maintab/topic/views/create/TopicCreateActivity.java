@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
@@ -79,6 +80,7 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
     ProgressWheel progressWheel;
     boolean lastAutoJoin;
 
+    @AfterInject
     void initObject() {
         topicCreatePresenter.setView(this);
     }

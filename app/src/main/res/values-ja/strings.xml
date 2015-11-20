@@ -85,6 +85,7 @@
 	<string name="jandi_announcement_deleted">"%sさんが告知を削除しました。"</string>
 	<string name="jandi_announcement_minimize">"環境設定"</string>
 	<string name="jandi_ask_kick_user_from_topic">"本当にこのメンバーをトピックから退室させますか？"</string>
+	<string name="jandi_auto_join_cannot_be_private_topic">"自動招待は公開トピックのみで可能です"</string>
 	<string name="jandi_auto_join_explain">"新しいメンバー全員をこのトピックに招待する"</string>
 	<string name="jandi_auto_join_title">"自動招待"</string>
 	<string name="jandi_auto_join_title_wild">"自動招待*"</string>
