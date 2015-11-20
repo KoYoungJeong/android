@@ -457,7 +457,7 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResUpdateMessages getRoomUpdateMessageByMessagesApiAuth(int teamId, int roomId, int currentLinkId) {
+    public List<ResMessages.Link> getRoomUpdateMessageByMessagesApiAuth(int teamId, int roomId, int currentLinkId) {
         return RestAdapterBuilder.newInstance(MessagesApiV2Client.class)
                 .create().getRoomUpdateMessage(teamId, roomId, currentLinkId);
     }

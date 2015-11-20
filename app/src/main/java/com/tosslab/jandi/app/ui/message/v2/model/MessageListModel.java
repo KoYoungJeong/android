@@ -37,7 +37,6 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
-import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
@@ -112,7 +111,7 @@ public class MessageListModel {
         return TextUtils.isEmpty(text);
     }
 
-    public ResUpdateMessages getNewMessage(int linkId) throws RetrofitError {
+    public List<ResMessages.Link> getNewMessage(int linkId) throws RetrofitError {
         return messageManipulator.updateMessages(linkId);
     }
 

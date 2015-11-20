@@ -46,6 +46,7 @@ public class ListPreferenceCompat extends ListPreference {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.JandiTheme_AlertDialog_FixWidth_280)
                 .setTitle(getDialogTitle())
                 .setIcon(getDialogIcon())
+                .setNegativeButton(R.string.jandi_cancel, null)
                 .setSingleChoiceItems(getEntries(), preselect, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

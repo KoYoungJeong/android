@@ -177,7 +177,7 @@ public class ImageViewHolder implements BodyViewHolder {
 
                         BitmapUtil.loadCropBitmapByIon(ivFileImage,
                                 thumbPath,
-                                R.drawable.file_icon_img
+                                R.drawable.file_messageview_downloading
                         );
 
                         String fileSize = FileUtil.fileSizeCalculation(fileContent.size);

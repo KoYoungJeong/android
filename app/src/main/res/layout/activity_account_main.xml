@@ -150,8 +150,9 @@
                 android:orientation="vertical">
 
                 <ProgressBar
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
+                    android:layout_width="@dimen/jandi_progress_size"
+                    android:layout_height="@dimen/jandi_progress_size"
+                    android:indeterminateDrawable="@drawable/progress_animation"
                     android:layout_gravity="center" />
 
             </LinearLayout>
