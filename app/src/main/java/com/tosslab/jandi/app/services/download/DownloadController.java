@@ -78,8 +78,7 @@ public class DownloadController {
         // Network 상태 변경을 파악하기 위해 receiver 등록
         view.registerNetworkChangeReceiver();
 
-        //FIXME l10n
-        view.showToast(R.string.jandi_action_download);
+        view.showToast(R.string.jandi_notify_download);
 
         File dir = makeDirIfNotExistsAndGet();
 

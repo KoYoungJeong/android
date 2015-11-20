@@ -158,9 +158,8 @@ public class DownloadService extends IntentService implements DownloadController
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setWhen(System.currentTimeMillis());
         builder.setContentTitle(fileName);
-        // FIXME l10n
-        builder.setTicker("DownloadComplete !!");
-        builder.setContentText("DownloadComplete !!");
+        builder.setTicker(getString(R.string.jandi_notify_download_complete));
+        builder.setContentText(getString(R.string.jandi_notify_download_complete));
         builder.setSmallIcon(android.R.drawable.stat_sys_upload_done);
         builder.setAutoCancel(true);
         if (openFileViewerIntent != null) {
