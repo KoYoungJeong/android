@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import org.androidannotations.annotations.AfterInject;
@@ -87,7 +86,7 @@ public class MessageManipulator {
 
     }
 
-    public ResUpdateMessages updateMessages(final int fromCurrentId) throws RetrofitError {
+    public List<ResMessages.Link> updateMessages(final int fromCurrentId) throws RetrofitError {
 
         return RequestApiManager.getInstance().getRoomUpdateMessageByMessagesApiAuth
                 (selectedTeamId, roomId, fromCurrentId);

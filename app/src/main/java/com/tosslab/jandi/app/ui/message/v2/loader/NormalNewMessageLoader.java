@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.exception.ExceptionData;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
@@ -63,7 +62,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         LogUtil.d(TAG, "historyLoad ? " + historyLoad);
 
         try {
-            ResUpdateMessages newMessage = null;
+            List<ResMessages.Link> newMessage = null;
             boolean moveToLinkId = firstLoad;
 
             if (historyLoad) {
@@ -99,18 +98,18 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 newMessage = getResUpdateMessages(linkId);
             }
 
-            if (newMessage == null || newMessage.messages == null || newMessage.messages.isEmpty()) {
+            if (newMessage == null || newMessage.isEmpty()) {
                 // 메세지가 없다면 종료시킴
                 messageListPresenter.showEmptyViewIfNeed();
                 return;
             }
 
-            List<ResMessages.Link> messages = newMessage.messages;
+            List<ResMessages.Link> messages = newMessage;
             if (messages != null && !messages.isEmpty()) {
                 saveToDatabase(roomId, messages);
 
                 Collections.sort(messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
-                int lastLinkId = newMessage.messages.get(newMessage.messages.size() - 1).id;
+                int lastLinkId = newMessage.get(newMessage.size() - 1).id;
                 messageState.setLastUpdateLinkId(lastLinkId);
                 messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), lastLinkId);
                 updateMarker(roomId);
@@ -132,10 +131,8 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         }
     }
 
-    private ResUpdateMessages getResUpdateMessages(final int linkId) {
-        ResUpdateMessages newMessage;
-        newMessage = new ResUpdateMessages();
-        newMessage.messages = new ArrayList<>();
+    private List<ResMessages.Link> getResUpdateMessages(final int linkId) {
+        List<ResMessages.Link> messages = new ArrayList<>();
 
         Observable.create(new Observable.OnSubscribe<ResMessages>() {
             @Override
@@ -183,11 +180,11 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 subscriber.onNext(afterMarkerMessage);
                 subscriber.onCompleted();
             }
-        }).collect(() -> newMessage,
-                (resUpdateMessages, o) -> newMessage.messages.addAll(o.records))
+        }).collect(() -> messages,
+                (resUpdateMessages, o) -> messages.addAll(o.records))
                 .subscribe(resUpdateMessages -> {
                 }, Throwable::printStackTrace);
-        return newMessage;
+        return messages;
     }
 
     private void saveToDatabase(int roomId, List<ResMessages.Link> messages) {

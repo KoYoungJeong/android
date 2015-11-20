@@ -502,7 +502,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public ResUpdateMessages getRoomUpdateMessageByMessagesApiAuth(int teamId, int roomId, int currentLinkId) {
+    public List<ResMessages.Link> getRoomUpdateMessageByMessagesApiAuth(int teamId, int roomId, int currentLinkId) {
         return requestApiExecute(RestApiLoader.getInstance().getRoomUpdateMessageByMessagesApiAuth(teamId, roomId, currentLinkId));
     }
 

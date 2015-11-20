@@ -77,7 +77,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
 
         LogUtil.e("profileUrl - " + profileUrl);
 
-        BitmapUtil.loadImageByIon(ivProfile,
+        BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
                 profileUrl,
                 R.drawable.profile_img,
                 R.drawable.profile_img
@@ -163,7 +163,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                                 break;
                             default:
                                 vFileImageRound.setVisibility(View.VISIBLE);
-                                BitmapUtil.loadCropBitmapByIon(ivFileImage,
+                                BitmapUtil.loadCropBitmapByGlide(ivFileImage,
                                         thumbnailUrl,
                                         R.drawable.file_icon_img
                                 );

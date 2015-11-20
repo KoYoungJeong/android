@@ -17,7 +17,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import setup.BaseIniUtil;
+import setup.BaseInitUtil;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -104,7 +104,7 @@ public class IntroLoginViewModelTest {
 
     @Test
     public void testLoginSuccess() throws Exception {
-        introLoginViewModel.loginSuccess(BaseIniUtil.TEST_ID);
+        introLoginViewModel.loginSuccess(BaseInitUtil.TEST_ID);
 
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
@@ -115,7 +115,7 @@ public class IntroLoginViewModelTest {
 
     @Test
     public void testMoveToTeamSelectionActivity() throws Throwable {
-        rule.runOnUiThread(() -> introLoginViewModel.moveToTeamSelectionActivity(BaseIniUtil.TEST_ID));
+        rule.runOnUiThread(() -> introLoginViewModel.moveToTeamSelectionActivity(BaseInitUtil.TEST_ID));
 
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
