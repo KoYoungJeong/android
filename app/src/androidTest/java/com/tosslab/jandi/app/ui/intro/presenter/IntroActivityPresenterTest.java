@@ -108,9 +108,8 @@ public class IntroActivityPresenterTest extends ApplicationTestCase<Application>
 
         IntroActivityModel mockModel = mock(IntroActivityModel.class);
 
+        when(mockModel.isNetworkConnected()).thenReturn(false);
         {
-            when(mockModel.isNetworkConnected()).thenReturn(false);
-
             // Given
             IntroActivityPresenter.View mockView = mock(IntroActivityPresenter.View.class);
             IntroActivityPresenter presenter = IntroActivityPresenter_.getInstance_(context);
