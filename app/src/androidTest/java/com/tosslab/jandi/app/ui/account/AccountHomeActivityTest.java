@@ -12,7 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import setup.BaseIniUtil;
+import setup.BaseInitUtil;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -29,7 +29,7 @@ public class AccountHomeActivityTest {
 
     @Before
     public void setUp() throws Exception {
-        BaseIniUtil.initData();
+        BaseInitUtil.initData();
         rule.launchActivity(null);
 
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
@@ -39,7 +39,7 @@ public class AccountHomeActivityTest {
 
     @After
     public void tearDown() throws Exception {
-        BaseIniUtil.clear();
+        BaseInitUtil.clear();
 
     }
 

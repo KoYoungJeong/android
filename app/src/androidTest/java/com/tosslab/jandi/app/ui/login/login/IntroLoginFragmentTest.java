@@ -16,7 +16,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import setup.BaseIniUtil;
+import setup.BaseInitUtil;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -59,7 +59,7 @@ public class IntroLoginFragmentTest {
         onView(withId(R.id.btn_intro_action_signin_start))
                 .check(matches(not(isEnabled())));
 
-        rule.runOnUiThread(() -> fragment.checkValidEmail(new SpannableStringBuilder(BaseIniUtil.TEST_ID)));
+        rule.runOnUiThread(() -> fragment.checkValidEmail(new SpannableStringBuilder(BaseInitUtil.TEST_ID)));
         onView(withId(R.id.btn_intro_action_signin_start))
                 .check(matches(isEnabled()));
     }

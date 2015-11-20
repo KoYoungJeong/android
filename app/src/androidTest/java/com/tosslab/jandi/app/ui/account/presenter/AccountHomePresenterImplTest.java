@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
-import setup.BaseIniUtil;
+import setup.BaseInitUtil;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -40,12 +40,12 @@ public class AccountHomePresenterImplTest {
         viewMock = Mockito.mock(AccountHomePresenter.View.class);
         accountHomePresenter.setView(viewMock);
 
-        BaseIniUtil.initData();
+        BaseInitUtil.initData();
     }
 
     @After
     public void tearDown() throws Exception {
-        BaseIniUtil.clear();
+        BaseInitUtil.clear();
 
     }
 
@@ -53,7 +53,7 @@ public class AccountHomePresenterImplTest {
     public void testInitViews_InvalidAccess() throws Exception {
 
         // Given
-        BaseIniUtil.clear();
+        BaseInitUtil.clear();
 
         // When
         accountHomePresenter.initViews();

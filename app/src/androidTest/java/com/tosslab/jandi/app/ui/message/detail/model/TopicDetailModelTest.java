@@ -2,13 +2,14 @@ package com.tosslab.jandi.app.ui.message.detail.model;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.BaseInitUtil;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import setup.BaseInitUtil;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
