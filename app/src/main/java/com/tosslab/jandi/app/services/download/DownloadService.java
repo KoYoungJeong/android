@@ -186,7 +186,7 @@ public class DownloadService extends IntentService implements DownloadController
     @Override
     public void showToast(int resId) {
         initializeUiHandler();
-        uiHandler.post(() -> ColoredToast.showError(getApplicationContext(), getString(resId)));
+        uiHandler.post(() -> ColoredToast.show(getApplicationContext(), getString(resId)));
     }
 
     @Override
