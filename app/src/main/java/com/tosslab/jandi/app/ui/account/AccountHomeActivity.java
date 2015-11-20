@@ -55,7 +55,7 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -73,9 +73,9 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
     @Bean(AccountHomePresenterImpl.class)
     AccountHomePresenter accountHomePresenter;
     @ViewById(R.id.txt_account_main_name)
-    TextView accountNameTextView;
+    TextView tvAccountName;
     @ViewById(R.id.txt_account_main_id_email)
-    TextView emailTextView;
+    TextView tvEmail;
     @ViewById(R.id.ll_account_main_team_choose)
     LinearLayout teamLayout;
     ProgressWheel progressWheel;
@@ -130,7 +130,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
 
     @Click(R.id.txt_account_main_name)
     void onNameEditClick() {
-        accountHomePresenter.onAccountNameEditClick(accountNameTextView.getText().toString());
+        accountHomePresenter.onAccountNameEditClick(tvAccountName.getText().toString());
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.AccountName);
     }
@@ -150,7 +150,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
 
     @UiThread
     @Override
-    public void setTeamInfo(ArrayList<Team> allTeamInfos, ResAccountInfo.UserTeam selectedTeamInfo) {
+    public void setTeamInfo(List<Team> allTeamInfos, ResAccountInfo.UserTeam selectedTeamInfo) {
 
         teamLayout.removeAllViews();
 
@@ -237,7 +237,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
     @UiThread
     @Override
     public void setAccountName(String newName) {
-        accountNameTextView.setText(newName);
+        tvAccountName.setText(newName);
     }
 
     @UiThread
@@ -289,17 +289,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
 
     @Override
     public void setUserEmailText(String email) {
-        emailTextView.setText(email);
-    }
-
-    @Override
-    public void moveCreatedTeamDomain(Team selectedTeam) {
-        TeamDomainInfoActivity_.intent(AccountHomeActivity.this)
-                .teamId(selectedTeam.getTeamId())
-                .teamName(selectedTeam.getName())
-                .domain(selectedTeam.getTeamDomain())
-                .token(selectedTeam.getToken())
-                .startForResult(REQ_TEAM_JOIN);
+        tvEmail.setText(email);
     }
 
     @UiThread
