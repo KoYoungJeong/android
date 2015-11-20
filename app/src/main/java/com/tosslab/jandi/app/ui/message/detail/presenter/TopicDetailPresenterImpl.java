@@ -248,7 +248,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
         if (topicDetailModel.isPrivateTopic(entityId)) {
             // private topic == true 이면 그외의 값은 의미 없음
-            view.setTopicAutoJoin(false, false, false, true);
+            onInit(JandiApplication.getContext(), entityId);
             view.showFailToast(JandiApplication.getContext().getString(R.string.jandi_auto_join_cannot_be_private_topic));
             return;
         }

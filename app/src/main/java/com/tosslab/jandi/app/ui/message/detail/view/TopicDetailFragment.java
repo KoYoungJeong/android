@@ -327,7 +327,11 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @Override
     public void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic) {
         if (privateTopic) {
-            vgAutoJoin.setEnabled(true);
+            if (owner) {
+                vgAutoJoin.setEnabled(true);
+            } else {
+                vgAutoJoin.setEnabled(false);
+            }
             switchAutoJoin.setChecked(false);
         } else if (defaultTopic) {
             switchAutoJoin.setChecked(true);
