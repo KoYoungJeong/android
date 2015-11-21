@@ -78,7 +78,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        BitmapUtil.loadImageByIon(ivProfile,
+        BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
                 profileUrl,
                 R.drawable.profile_img,
                 R.drawable.profile_img
@@ -155,7 +155,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 break;
                             default:
                                 vFileImageRound.setVisibility(View.VISIBLE);
-                                BitmapUtil.loadCropBitmapByIon(ivFileImage,
+                                BitmapUtil.loadCropBitmapByGlide(ivFileImage,
                                         thumbnailUrl,
                                         R.drawable.file_icon_img
                                 );
