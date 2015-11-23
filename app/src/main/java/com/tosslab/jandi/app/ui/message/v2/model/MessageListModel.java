@@ -590,4 +590,8 @@ public class MessageListModel {
     public boolean isBefore30Days(Date time) {
         return DateComparatorUtil.isBefore30Days(time);
     }
+
+    public String getTopicName(int entityId) {
+        return EntityManager.getInstance().getEntityNameById(entityId);
+    }
 }
