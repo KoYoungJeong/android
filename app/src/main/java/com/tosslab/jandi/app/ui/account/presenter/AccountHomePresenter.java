@@ -5,7 +5,7 @@ import android.content.DialogInterface;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 3..
@@ -34,11 +34,11 @@ public interface AccountHomePresenter {
 
     void onHelpOptionSelect();
 
-    public interface View {
+    interface View {
 
         void showErrorToast(String message);
 
-        void setTeamInfo(ArrayList<Team> result, ResAccountInfo.UserTeam selectedTeamInfo);
+        void setTeamInfo(List<Team> result, ResAccountInfo.UserTeam selectedTeamInfo);
 
         void loadTeamCreateActivity();
 
@@ -57,8 +57,6 @@ public interface AccountHomePresenter {
         void moveEmailEditClick();
 
         void setUserEmailText(String email);
-
-        void moveCreatedTeamDomain(Team selectedTeam);
 
         void removePendingTeamView(Team selectedTeam);
 
