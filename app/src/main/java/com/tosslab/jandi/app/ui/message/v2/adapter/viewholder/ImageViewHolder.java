@@ -18,7 +18,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.file.FileSizeUtil;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
@@ -180,7 +180,7 @@ public class ImageViewHolder implements BodyViewHolder {
                                 R.drawable.file_messageview_downloading
                         );
 
-                        String fileSize = FileSizeUtil.fileSizeCalculation(fileContent.size);
+                        String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
                         tvFileType.setText(String.format("%s, %s", fileSize, fileContent.ext));
                     }
                 } else {
