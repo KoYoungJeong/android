@@ -13,9 +13,6 @@ import com.tosslab.jandi.app.R;
 
 import java.lang.reflect.Method;
 
-/**
- * Created by jsuch2362 on 15. 11. 17..
- */
 public class ListPreferenceCompat extends ListPreference {
     private Context context;
     private Dialog dialog;
