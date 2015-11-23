@@ -88,11 +88,14 @@ public class StickerManager {
             Context context = JandiApplication.getContext();
             DrawableTypeRequest<Uri> glideRequestor = Glide.with(context)
                     .load(uri);
+
+            final ImageView.ScaleType scaleType = options.scaleType;
             glideRequestor.asBitmap()
-                    .fitCenter()
                     .into(new BitmapImageViewTarget(view) {
                         @Override
                         public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+
+                            view.setScaleType(scaleType);
 
                             if (options.isClickImage) {
                                 StateListDrawable stateListDrawable = new StateListDrawable();
