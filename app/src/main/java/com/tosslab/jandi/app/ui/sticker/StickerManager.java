@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.StateSet;
 import android.view.animation.AlphaAnimation;
@@ -21,8 +22,10 @@ import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 import rx.Observable;
 
@@ -33,6 +36,8 @@ public class StickerManager {
 
     public static final int DEFAULT_GROUP_MOZZI = 100;
     public static final int DEFAULT_GROUP_DAY = 101;
+    public static final String ASSET_SCHEMA = "file:///android_asset/";
+    public static final String STICKER_ASSET_PATH = "stickers/default";
     private static final LoadOptions DEFAULT_OPTIONS = new LoadOptions();
     private static StickerManager stickerManager;
 
@@ -76,7 +81,7 @@ public class StickerManager {
                     "files-sticker/" + groupId + "/" + stickerId + "?size=420";
         }
 
-        if (stickerAssetPath != null) {
+        if (!TextUtils.isEmpty(stickerAssetPath)) {
             Uri uri = Uri.parse(stickerAssetPath);
             AlphaAnimation animation = new AlphaAnimation(0f, 1f);
             animation.setDuration(300);
@@ -115,7 +120,7 @@ public class StickerManager {
         return localStickerGroupIds.contains(groupId);
     }
 
-    private String getStickerAssetPath(int groupId, String stickerId) {
+    String getStickerAssetPath(int groupId, String stickerId) {
         List<ResMessages.StickerContent> stickers = StickerRepository.getRepository().getStickers(groupId);
 
         ResMessages.StickerContent defaultSticker = new ResMessages.StickerContent();
@@ -125,32 +130,69 @@ public class StickerManager {
                 .toBlocking().first();
 
         if (stickerItem != defaultSticker) {
-            String filePathFormat = "file:///android_asset/stickers/default/%s/%s.png";
-
-            String fileName = stickerItem.groupId + "_" + stickerItem.stickerId;
-
-            String group;
-            switch (stickerItem.groupId) {
-                case StickerRepository.DEFAULT_GROUP_ID_MOZZI:
-                    group = "mozzi";
-                    break;
-
-                case StickerRepository.DEFAULT_GROUP_ID_DAY:
-                    group = "day";
-                    break;
-
-                default:
-                    group = "mozzi";
-                    break;
-            }
-
-            String stickerFilePath = String.format(filePathFormat, group, fileName);
-            LogUtil.e(stickerFilePath);
-            return stickerFilePath;
+            StringBuffer assetPathBuffer = new StringBuffer();
+            assetPathBuffer
+                    .append(STICKER_ASSET_PATH)
+                    .append("/").append(getGroupName(stickerItem.groupId))
+                    // 언어별 path 정보 추가 (없으면 "", 있으면 "/{언어코드}_{국가코드}"
+                    .append(getLocalePath(assetPathBuffer.toString()))
+                    .append("/").append(groupId).append("_").append(stickerId).append(".png")
+                    .insert(0, ASSET_SCHEMA);
+            LogUtil.e(assetPathBuffer.toString());
+            return assetPathBuffer.toString();
         } else {
             return "";
         }
     }
+
+    String getLocalePath(String assetPath) {
+
+        Context context = JandiApplication.getContext();
+        Locale locale = context.getResources().getConfiguration().locale;
+        String language = locale.getLanguage().toLowerCase();
+        String country = locale.getCountry().toLowerCase();
+
+        try {
+            String[] list = context.getAssets().list(assetPath + "/" + language + "_" + country);
+            if (list != null && list.length > 0) {
+                String localPath = "/" + language + "_" + country;
+                return localPath;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            String[] list = context.getAssets().list(assetPath + "/" + language);
+            if (list != null && list.length > 0) {
+                String localPath = "/" + language;
+                return localPath;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
+    @NonNull
+    private String getGroupName(int groupId) {
+        String group;
+        switch (groupId) {
+            case StickerRepository.DEFAULT_GROUP_ID_MOZZI:
+                group = "mozzi";
+                break;
+
+            case StickerRepository.DEFAULT_GROUP_ID_DAY:
+                group = "day";
+                break;
+
+            default:
+                group = "mozzi";
+                break;
+        }
+        return group;
+    }
+
 
     public static class LoadOptions {
         public boolean isFadeAnimation = true;
