@@ -85,6 +85,10 @@
 	<string name="jandi_announcement_deleted">"%s 删除公告"</string>
 	<string name="jandi_announcement_minimize">"最小化"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你确定将此成员剔除议题？"</string>
+	<string name="jandi_auto_join_cannot_be_private_topic">"自动邀请的功能仅开放于公开议题中使用"</string>
+	<string name="jandi_auto_join_explain">"邀请所有新成员至此议题"</string>
+	<string name="jandi_auto_join_title">"自动邀请"</string>
+	<string name="jandi_auto_join_title_wild">"自动邀请*"</string>
 	<string name="jandi_browse_other_topics">"浏览其他议题"</string>
 	<string name="jandi_cancel">"取消"</string>
 	<string name="jandi_canceled">"取消了"</string>
@@ -281,6 +285,8 @@
 	<string name="jandi_no_topic_to_join">"没有可加入的议题"</string>
 	<string name="jandi_notification_off">"关闭推送通知"</string>
 	<string name="jandi_notification_on">"开启推送通知"</string>
+	<string name="jandi_notify_download">"开始下载，可透过通知栏查询下载进度"</string>
+	<string name="jandi_notify_download_complete">"完成下载"</string>
 	<string name="jandi_nowhere_shared_file">"文件尚未分享到其它议题"</string>
 	<string name="jandi_off">"关闭"</string>
 	<string name="jandi_on">"打开"</string>

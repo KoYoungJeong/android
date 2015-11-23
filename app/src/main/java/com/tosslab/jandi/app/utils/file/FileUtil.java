@@ -7,7 +7,7 @@ import java.text.DecimalFormat;
 /**
  * Created by Bill MinWook Heo on 15. 6. 24..
  */
-public class FileSizeUtil {
+public class FileUtil {
 
     public static String fileSizeCalculation(int fileSize) {
         String retFormat = "0";

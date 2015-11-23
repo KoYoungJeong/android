@@ -85,6 +85,10 @@
 	<string name="jandi_announcement_deleted">"%sさんが告知を削除しました。"</string>
 	<string name="jandi_announcement_minimize">"環境設定"</string>
 	<string name="jandi_ask_kick_user_from_topic">"本当にこのメンバーをトピックから退室させますか？"</string>
+	<string name="jandi_auto_join_cannot_be_private_topic">"自動招待は公開トピックのみで可能です"</string>
+	<string name="jandi_auto_join_explain">"新しいメンバー全員をこのトピックに招待する"</string>
+	<string name="jandi_auto_join_title">"自動招待"</string>
+	<string name="jandi_auto_join_title_wild">"自動招待*"</string>
 	<string name="jandi_browse_other_topics">"未参加のトピック一覧"</string>
 	<string name="jandi_cancel">"戻る"</string>
 	<string name="jandi_canceled">"キャンセルされました"</string>
@@ -281,6 +285,8 @@
 	<string name="jandi_no_topic_to_join">"参加できるトピックがありません"</string>
 	<string name="jandi_notification_off">"通知をオフにする"</string>
 	<string name="jandi_notification_on">"通知をオンにする"</string>
+	<string name="jandi_notify_download">"ファイルをダウンロードします。通知バーで確認してください"</string>
+	<string name="jandi_notify_download_complete">"ダウンロードの完了"</string>
 	<string name="jandi_nowhere_shared_file">"共有されたファイルがありません"</string>
 	<string name="jandi_off">"オフ"</string>
 	<string name="jandi_on">"オン"</string>
