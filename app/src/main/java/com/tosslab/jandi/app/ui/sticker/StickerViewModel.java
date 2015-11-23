@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -28,6 +29,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 3..
@@ -94,11 +96,16 @@ public class StickerViewModel {
             case STICKER_GROUP_RECENT:
                 stickers = stickerRepository.getRecentStickers();
                 break;
+            case STICKER_GROUP_DAY:
+                Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
+                if (!Locale.TAIWAN.equals(locale)) {
+                    stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_DAY);
+                } else {
+                    stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_DAY_ZH_TW);
+                }
+                break;
             case STICKER_GROUP_MOZZI:
                 stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_MOZZI);
-                break;
-            case STICKER_GROUP_DAY:
-                stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_DAY);
                 break;
             default:
                 stickers = new ArrayList<>();

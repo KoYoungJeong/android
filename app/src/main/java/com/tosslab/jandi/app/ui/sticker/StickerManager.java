@@ -22,10 +22,8 @@ import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 
 import rx.Observable;
 
@@ -34,8 +32,6 @@ import rx.Observable;
  */
 public class StickerManager {
 
-    public static final int DEFAULT_GROUP_MOZZI = 100;
-    public static final int DEFAULT_GROUP_DAY = 101;
     public static final String ASSET_SCHEMA = "file:///android_asset/";
     public static final String STICKER_ASSET_PATH = "stickers/default";
     private static final LoadOptions DEFAULT_OPTIONS = new LoadOptions();
@@ -45,8 +41,9 @@ public class StickerManager {
 
     private StickerManager() {
         this.localStickerGroupIds = new HashSet<Integer>();
-        localStickerGroupIds.add(DEFAULT_GROUP_MOZZI);
-        localStickerGroupIds.add(DEFAULT_GROUP_DAY);
+        localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_MOZZI);
+        localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DAY);
+        localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DAY_ZH_TW);
     }
 
     public static StickerManager getInstance() {
@@ -137,8 +134,6 @@ public class StickerManager {
             assetPathBuffer
                     .append(STICKER_ASSET_PATH)
                     .append("/").append(getGroupName(stickerItem.groupId))
-                    // 언어별 path 정보 추가 (없으면 "", 있으면 "/{언어코드}_{국가코드}"
-                    .append(getLocalePath(assetPathBuffer.toString()))
                     .append("/").append(groupId).append("_").append(stickerId).append(".png")
                     .insert(0, ASSET_SCHEMA);
             LogUtil.e(assetPathBuffer.toString());
@@ -146,35 +141,6 @@ public class StickerManager {
         } else {
             return "";
         }
-    }
-
-    String getLocalePath(String assetPath) {
-
-        Context context = JandiApplication.getContext();
-        Locale locale = context.getResources().getConfiguration().locale;
-        String language = locale.getLanguage().toLowerCase();
-        String country = locale.getCountry().toLowerCase();
-
-        try {
-            String[] list = context.getAssets().list(assetPath + "/" + language + "_" + country);
-            if (list != null && list.length > 0) {
-                String localPath = "/" + language + "_" + country;
-                return localPath;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            String[] list = context.getAssets().list(assetPath + "/" + language);
-            if (list != null && list.length > 0) {
-                String localPath = "/" + language;
-                return localPath;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return "";
     }
 
     @NonNull
@@ -187,6 +153,10 @@ public class StickerManager {
 
             case StickerRepository.DEFAULT_GROUP_ID_DAY:
                 group = "day";
+                break;
+
+            case StickerRepository.DEFAULT_GROUP_ID_DAY_ZH_TW:
+                group = "day/zh_tw";
                 break;
 
             default:
