@@ -148,7 +148,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     ViewGroup vgStickerPreview;
     @ViewById(R.id.iv_file_detail_preview_sticker_image)
     ImageView ivStickerPreview;
-    @ViewById(R.id.rv_list_search_members)
+    @ViewById(R.id.lv_list_search_members)
     RecyclerView rvListSearchMembers;
 
     @Bean

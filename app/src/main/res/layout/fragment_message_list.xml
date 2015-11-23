@@ -8,28 +8,28 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/layout_search_bar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" />
+        android:layout_height="?attr/actionBarSize"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/list_messages"
+        android:id="@+id/lv_messages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/space_messages_divider"
+        android:layout_above="@+id/v_messages_divider"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@+id/ll_messages_disable_alert"
-        android:scrollbars="vertical" />
+        android:layout_below="@+id/vg_messages_disable_alert"
+        android:scrollbars="vertical"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/list_messages"
+        android:layout_alignTop="@+id/lv_messages"
         android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/vg_message_upload_file"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/list_messages"
+            android:layout_alignTop="@+id/lv_messages"
             android:orientation="vertical"
             android:visibility="gone">
 
@@ -42,35 +42,33 @@
                 android:paddingBottom="10dp"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
-                android:paddingTop="10dp" />
+                android:paddingTop="10dp"/>
 
             <com.tosslab.jandi.app.views.listeners.WebLoadingBar
                 android:id="@+id/loading_message_upload_file"
                 android:layout_width="match_parent"
-                android:layout_height="4dp" />
+                android:layout_height="4dp"/>
         </LinearLayout>
 
         <include
             android:id="@+id/vg_announcement"
             layout="@layout/layout_announcement"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layout_messages_empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/ll_messages"
+        android:layout_above="@+id/vg_messages_input"
         android:layout_below="@+id/layout_search_bar"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone">
-
-    </LinearLayout>
+        android:visibility="gone"/>
 
     <LinearLayout
-        android:id="@+id/ll_messages_disable_alert"
+        android:id="@+id/vg_messages_disable_alert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_search_bar"
@@ -83,7 +81,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/icon_disabled_members_bar" />
+            android:src="@drawable/icon_disabled_members_bar"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -91,7 +89,7 @@
             android:layout_marginLeft="5dp"
             android:text="@string/jandi_disabled_user"
             android:textColor="@color/jandi_text_white"
-            android:textSize="18sp" />
+            android:textSize="18sp"/>
 
     </LinearLayout>
 
@@ -99,7 +97,7 @@
         android:id="@+id/vg_messages_preview_sticker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/layout_messages_preview_last_item"
+        android:layout_above="@+id/vg_messages_preview_last_item"
         android:layout_alignWithParentIfMissing="true"
         android:background="@color/jandi_black_89"
         android:visibility="gone">
@@ -109,7 +107,7 @@
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_centerInParent="true"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"/>
 
         <ImageView
             android:id="@+id/iv_messages_preview_sticker_close"
@@ -118,16 +116,15 @@
             android:layout_alignParentRight="true"
             android:padding="15dp"
             android:scaleType="centerInside"
-            android:src="@drawable/icon_sticker_close" />
-
+            android:src="@drawable/icon_sticker_close"/>
 
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/layout_messages_preview_last_item"
+        android:id="@+id/vg_messages_preview_last_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/space_messages_divider"
+        android:layout_above="@+id/v_messages_divider"
         android:background="#E5696969"
         android:paddingLeft="@dimen/jandi_messages_padding_left"
         android:paddingRight="@dimen/jandi_messages_padding_right"
@@ -135,70 +132,69 @@
         android:visibility="gone">
 
         <ImageView
-            android:id="@+id/img_message_preview_user_profile"
+            android:id="@+id/iv_message_preview_user_profile"
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
             android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-            android:background="@drawable/profile_img" />
+            android:background="@drawable/profile_img"/>
 
         <!-- 기본 표시 레이어 -->
         <TextView
-            android:id="@+id/txt_message_preview_user_name"
+            android:id="@+id/tv_message_preview_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/jandi_messages_date_margin_left"
             android:layout_marginTop="2dp"
-            android:layout_toRightOf="@+id/img_message_preview_user_profile"
+            android:layout_toRightOf="@+id/iv_message_preview_user_profile"
             android:ellipsize="end"
             android:maxWidth="200dp"
             android:singleLine="true"
             android:text="User name"
             android:textColor="@color/white"
             android:textSize="@dimen/jandi_messages_user_name"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
         <!-- 실제 메시지 내용 -->
         <TextView
-            android:id="@+id/txt_message_preview_content"
+            android:id="@+id/tv_message_preview_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/txt_message_preview_user_name"
+            android:layout_below="@+id/tv_message_preview_user_name"
             android:layout_marginBottom="2dp"
-            android:layout_toRightOf="@+id/img_message_preview_user_profile"
+            android:layout_toRightOf="@+id/iv_message_preview_user_profile"
             android:singleLine="true"
             android:text="Text"
             android:textColor="@color/white"
-            android:textSize="@dimen/jandi_messages_content" />
+            android:textSize="@dimen/jandi_messages_content"/>
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_list_search_members"
+        android:id="@+id/lv_list_search_members"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/space_messages_divider"
+        android:layout_above="@+id/v_messages_divider"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@+id/ll_messages_disable_alert"
+        android:layout_below="@+id/vg_messages_disable_alert"
         android:background="@color/white"
         android:scrollbars="vertical"
-        android:visibility="invisible" />
-
+        android:visibility="invisible"/>
 
     <!-- Message Input Layout -->
     <View
-        android:id="@+id/space_messages_divider"
+        android:id="@+id/v_messages_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_above="@+id/ll_messages"
+        android:layout_above="@+id/vg_messages_input"
         android:layout_alignWithParentIfMissing="true"
-        android:background="@color/jandi_border_gray" />
+        android:background="@color/jandi_border_gray"/>
 
     <RelativeLayout
-        android:id="@+id/ll_messages"
+        android:id="@+id/vg_messages_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/vg_message_sticker_selector"
         android:layout_alignWithParentIfMissing="true"
         android:background="@color/jandi_messages_bottom_bg"
-        android:minHeight="63dp">
+        android:minHeight="48dp">
 
         <ImageButton
             android:id="@+id/btn_upload_file"
@@ -207,8 +203,17 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:background="@drawable/icon_upload_file" />
+            android:background="@drawable/icon_upload_file"/>
+
+        <ImageView
+            android:id="@+id/btn_message_sticker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="4dp"
+            android:layout_toRightOf="@id/btn_upload_file"
+            android:scaleType="centerInside"
+            android:src="@drawable/btn_sticker"/>
 
         <AutoCompleteTextView
             android:id="@+id/et_message"
@@ -216,26 +221,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
             android:layout_toLeftOf="@+id/btn_send_message"
-            android:layout_toRightOf="@+id/btn_upload_file"
+            android:layout_toRightOf="@+id/btn_message_sticker"
             android:completionThreshold="1"
             android:hint="@string/jandi_message_hint"
             android:imeOptions="flagNoExtractUi"
             android:paddingRight="34dp"
-            android:textCursorDrawable="@null" />
+            android:textCursorDrawable="@null"/>
 
         <ImageView
-            android:id="@+id/btn_message_sticker"
+            android:id="@+id/btn_show_mention"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/et_message"
-            android:layout_alignRight="@+id/et_message"
-            android:layout_alignTop="@+id/et_message"
             android:layout_centerVertical="true"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
+            android:layout_marginRight="4dp"
+            android:layout_toLeftOf="@+id/btn_send_message"
             android:scaleType="centerInside"
-            android:src="@drawable/btn_sticker" />
+            android:src="@drawable/btn_sticker"/>
 
         <Button
             android:id="@+id/btn_send_message"
@@ -244,19 +247,19 @@
             android:layout_alignParentRight="true"
             android:layout_alignTop="@+id/et_message"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="6dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/jandi_btn_dynamic_selector_v2"
             android:enabled="false"
-            android:text="@string/jandi_message_send" />
+            android:text="@string/jandi_message_send"/>
+
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/ll_messages_go_to_latest"
+        android:id="@+id/vg_messages_go_to_latest"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_alignBottom="@+id/ll_messages"
-        android:layout_alignTop="@+id/ll_messages"
+        android:layout_alignBottom="@+id/vg_messages_input"
+        android:layout_alignTop="@+id/vg_messages_input"
         android:layout_alignWithParentIfMissing="false"
         android:background="#FF696969"
         android:paddingLeft="24dp"
@@ -269,7 +272,7 @@
             android:layout_centerVertical="true"
             android:text="@string/jandi_go_to_latest"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="14sp"/>
 
         <ImageView
             android:id="@+id/img_go_to_latest"
@@ -277,7 +280,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/account_icon_arrow" />
+            android:src="@drawable/account_icon_arrow"/>
 
         <ProgressBar
             android:id="@+id/progress_go_to_latest"
@@ -285,7 +288,7 @@
             android:layout_height="36dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
     </RelativeLayout>
 
@@ -294,7 +297,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:visibility="gone"></FrameLayout>
+        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -311,13 +314,13 @@
             android:paddingRight="15dp"
             android:visibility="gone">
 
-            <include layout="@layout/layout_network_offline" />
+            <include layout="@layout/layout_network_offline"/>
 
         </LinearLayout>
     </LinearLayout>
 
     <include
         android:id="@+id/layout_messages_loading"
-        layout="@layout/progress_wheel" />
+        layout="@layout/progress_wheel"/>
 
 </RelativeLayout>

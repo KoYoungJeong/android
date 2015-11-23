@@ -81,7 +81,7 @@ import rx.Observable;
  */
 @EBean
 public class MessageListPresenter {
-    @ViewById(R.id.list_messages)
+    @ViewById(R.id.lv_messages)
     RecyclerView messageListView;
 
     @ViewById(R.id.btn_send_message)
@@ -90,7 +90,7 @@ public class MessageListPresenter {
     @ViewById(R.id.et_message)
     EditText messageEditText;
 
-    @ViewById(R.id.rv_list_search_members)
+    @ViewById(R.id.lv_list_search_members)
     RecyclerView rvListSearchMembers;
 
     @RootContext
@@ -102,25 +102,25 @@ public class MessageListPresenter {
     @SystemService
     InputMethodManager inputMethodManager;
 
-    @ViewById(R.id.layout_messages_preview_last_item)
+    @ViewById(R.id.vg_messages_preview_last_item)
     View previewLayout;
 
-    @ViewById(R.id.img_message_preview_user_profile)
+    @ViewById(R.id.iv_message_preview_user_profile)
     ImageView previewProfileView;
 
-    @ViewById(R.id.txt_message_preview_user_name)
+    @ViewById(R.id.tv_message_preview_user_name)
     TextView previewNameView;
 
-    @ViewById(R.id.txt_message_preview_content)
+    @ViewById(R.id.tv_message_preview_content)
     TextView previewContent;
 
-    @ViewById(R.id.ll_messages)
+    @ViewById(R.id.vg_messages_input)
     View sendLayout;
 
-    @ViewById(R.id.ll_messages_go_to_latest)
+    @ViewById(R.id.vg_messages_go_to_latest)
     View moveRealChatView;
 
-    @ViewById(R.id.ll_messages_disable_alert)
+    @ViewById(R.id.vg_messages_disable_alert)
     View disabledUser;
 
     @ViewById(R.id.layout_messages_empty)

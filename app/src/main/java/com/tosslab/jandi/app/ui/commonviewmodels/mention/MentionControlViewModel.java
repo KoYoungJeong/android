@@ -42,22 +42,28 @@ public class MentionControlViewModel {
 
     public static final String MENTION_TYPE_MESSAGE = "mention_type_message";
     public static final String MENTION_TYPE_FILE_COMMENT = "mention_type_file_comment";
+
     protected String currentSearchKeywordString;
-    private AutoCompleteTextView etMessage;
+
     private KeyboardHeightModel keyboardHeightModel;
     private SearchMemberModel searchMemberModel;
+
     //message or file view type
     private String mentionType = MENTION_TYPE_MESSAGE;
+
     //for textControl
     private int beforeTextCnt = 0;
     private int afterTextCnt = 0;
     private String beforeText = "";
     private String afterText = "";
     private String removedText = "";
-    private ClipboardListener clipboardListener;
-    private TextWatcher textWatcher;
 
     private ClipboardManager clipBoard;
+    private ClipboardListener clipboardListener;
+
+    private TextWatcher textWatcher;
+
+    private AutoCompleteTextView etMessage;
     private MentionMemberListAdapter mentionMemberListAdapter;
 
     private MentionControlViewModel(Activity activity,
@@ -97,10 +103,7 @@ public class MentionControlViewModel {
                 mentionType);
     }
 
-    private void init(Activity activity,
-                      EditText editText,
-                      int teamId,
-                      List<Integer> roomIds) {
+    private void init(Activity activity, EditText editText, int teamId, List<Integer> roomIds) {
 
         this.etMessage = (AutoCompleteTextView) editText;
 
@@ -155,12 +158,14 @@ public class MentionControlViewModel {
         textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                beforeEditTextChanged(editText, s, start, count, after);
+                beforeTextCnt = count;
+                beforeText = s.toString();
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editTextChanged(s, editText, before, start, count);
+                afterTextCnt = count;
+                afterText = s.toString();
             }
 
             @Override
@@ -170,16 +175,6 @@ public class MentionControlViewModel {
         };
 
         editText.addTextChangedListener(textWatcher);
-    }
-
-    void beforeEditTextChanged(TextView tv, CharSequence s, int start, int count, int after) {
-        beforeTextCnt = count;
-        beforeText = s.toString();
-    }
-
-    void editTextChanged(CharSequence s, TextView tv, int before, int start, int count) {
-        afterTextCnt = count;
-        afterText = s.toString();
     }
 
     void afterEditTextChanged(Editable s, TextView tv) {
@@ -262,13 +257,13 @@ public class MentionControlViewModel {
                 searchMemberModel.getUserSearchByName(searchString));
 
         if (mentionMemberListAdapter.getCount() > 0) {
-            setMetionListPopupWidth();
+            setMentionListPopupWidth();
         }
 
         mentionMemberListAdapter.notifyDataSetChanged();
     }
 
-    private void setMetionListPopupWidth() {
+    private void setMentionListPopupWidth() {
         int widthPixels = etMessage.getResources().getDisplayMetrics().widthPixels;
         int popupWidth = (widthPixels / 2 - etMessage.getLeft()) * 2;
         etMessage.setDropDownWidth(popupWidth);
@@ -534,7 +529,7 @@ public class MentionControlViewModel {
     }
 
     public void onConfigurationChanged() {
-        setMetionListPopupWidth();
+        setMentionListPopupWidth();
     }
 
     public void reset() {
@@ -547,10 +542,10 @@ public class MentionControlViewModel {
     }
 
     // 가공되지 않은 스트링이 클립보드에 복사되면 안되므로 별도의 처리 진행
-    class ClipboardListener implements
-            ClipboardManager.OnPrimaryClipChangedListener {
-        public void onPrimaryClipChanged() {
+    class ClipboardListener implements ClipboardManager.OnPrimaryClipChangedListener {
 
+        @Override
+        public void onPrimaryClipChanged() {
             if (etMessage == null)
                 return;
 

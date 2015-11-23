@@ -191,13 +191,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     int lastMarker = -1;
     @FragmentArg
     int roomId;
-    @ViewById(R.id.list_messages)
+    @ViewById(R.id.lv_messages)
     RecyclerView messageListView;
     @ViewById(R.id.btn_send_message)
     Button sendButton;
     @ViewById(R.id.et_message)
     EditText messageEditText;
-    @ViewById(R.id.rv_list_search_members)
+    @ViewById(R.id.lv_list_search_members)
     RecyclerView rvListSearchMembers;
     @Bean
     MessageListPresenter messageListPresenter;
@@ -217,7 +217,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     AnnouncementViewModel announcementViewModel;
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
+
     MentionControlViewModel mentionControlViewModel;
+
     private OldMessageLoader oldMessageLoader;
     private NewsMessageLoader newsMessageLoader;
     private MessageState messageState;
@@ -465,7 +467,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return true;
         });
 
-        ((RecyclerView) getView().findViewById(R.id.list_messages)).setOnScrollListener(new RecyclerView.OnScrollListener() {
+        ((RecyclerView) getView().findViewById(R.id.lv_messages)).setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -889,14 +891,14 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.showKeyboard();
     }
 
-    @Click(R.id.ll_messages_go_to_latest)
+    @Click(R.id.vg_messages_go_to_latest)
     void onGotoLatestClick() {
         if (!(oldMessageLoader instanceof NormalOldMessageLoader)) {
             EventBus.getDefault().post(new ChatModeChangeEvent(true));
         }
     }
 
-    @Click(R.id.layout_messages_preview_last_item)
+    @Click(R.id.vg_messages_preview_last_item)
     void onPreviewClick() {
         messageListPresenter.setPreviewVisibleGone();
         messageListPresenter.moveLastPage();
@@ -983,8 +985,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.setSendEditText("");
 
         AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Send);
+    }
 
-
+    @Click(R.id.btn_show_mention)
+    void onMentionClick() {
+        mentionControlViewModel.setUpMention("@");
     }
 
     private void sendSticker() {
