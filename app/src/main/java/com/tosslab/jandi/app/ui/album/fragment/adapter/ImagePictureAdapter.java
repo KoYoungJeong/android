@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
 import com.tosslab.jandi.app.ui.album.fragment.vo.SelectPictures;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
@@ -25,6 +26,7 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
     private final List<ImagePicture> photoList;
     private OnRecyclerItemClickListener onRecyclerItemImageClickListener;
     private OnRecyclerItemClickListener onRecyclerItemCheckClickListener;
+    private int mode;
 
     public ImagePictureAdapter(Context context, List<ImagePicture> photoList) {
         this.context = context;
@@ -55,6 +57,10 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
         } else {
             viewHolder.ivSelector.setSelected(false);
             viewHolder.ivSelected.setVisibility(View.GONE);
+        }
+
+        if (mode != ImageAlbumActivity.EXTRA_MODE_UPLOAD) {
+            viewHolder.ivSelector.setVisibility(View.GONE);
         }
 
         Glide.with(context)
@@ -96,6 +102,10 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
     public ImagePictureAdapter setOnRecyclerItemCheckClickListener(OnRecyclerItemClickListener onRecyclerItemCheckClickListener) {
         this.onRecyclerItemCheckClickListener = onRecyclerItemCheckClickListener;
         return this;
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 
     private static class PictureViewHolder extends RecyclerView.ViewHolder {

@@ -43,6 +43,10 @@ public class MentionControlViewModel {
     public static final String MENTION_TYPE_MESSAGE = "mention_type_message";
     public static final String MENTION_TYPE_FILE_COMMENT = "mention_type_file_comment";
 
+    public interface OnMentionShowingListener {
+        void onMentionShowing(boolean isShowing);
+    }
+
     protected String currentSearchKeywordString;
 
     private KeyboardHeightModel keyboardHeightModel;
@@ -65,6 +69,7 @@ public class MentionControlViewModel {
 
     private AutoCompleteTextView etMessage;
     private MentionMemberListAdapter mentionMemberListAdapter;
+    private OnMentionShowingListener onMentionShowingListener;
 
     private MentionControlViewModel(Activity activity,
                                     EditText editText,
@@ -131,6 +136,10 @@ public class MentionControlViewModel {
 
     }
 
+    public void setOnMentionShowingListener(OnMentionShowingListener onMentionShowingListener) {
+        this.onMentionShowingListener = onMentionShowingListener;
+    }
+
     public void refreshMembers(List<Integer> roomIds) {
         refreshMembers(EntityManager.getInstance().getTeamId(), roomIds);
     }
@@ -158,14 +167,12 @@ public class MentionControlViewModel {
         textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                beforeTextCnt = count;
-                beforeText = s.toString();
+                beforeEditTextChanged(editText, s, start, count, after);
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                afterTextCnt = count;
-                afterText = s.toString();
+                editTextChanged(s, editText, before, start, count);
             }
 
             @Override
@@ -175,6 +182,16 @@ public class MentionControlViewModel {
         };
 
         editText.addTextChangedListener(textWatcher);
+    }
+
+    void beforeEditTextChanged(TextView tv, CharSequence s, int start, int count, int after) {
+        beforeTextCnt = count;
+        beforeText = s.toString();
+    }
+
+    void editTextChanged(CharSequence s, TextView tv, int before, int start, int count) {
+        afterTextCnt = count;
+        afterText = s.toString();
     }
 
     void afterEditTextChanged(Editable s, TextView tv) {
@@ -256,10 +273,14 @@ public class MentionControlViewModel {
         mentionMemberListAdapter.setSearchedMembersList(
                 searchMemberModel.getUserSearchByName(searchString));
 
-        if (mentionMemberListAdapter.getCount() > 0) {
+        boolean hasMembers = mentionMemberListAdapter.getCount() > 0;
+        if (hasMembers) {
             setMentionListPopupWidth();
         }
 
+        if (onMentionShowingListener != null) {
+            onMentionShowingListener.onMentionShowing(hasMembers);
+        }
         mentionMemberListAdapter.notifyDataSetChanged();
     }
 
@@ -276,6 +297,9 @@ public class MentionControlViewModel {
     // 검색 대상 리스트를 모두 삭제하는 메서드
     private void removeAllMemberList() {
         mentionMemberListAdapter.clear();
+        if (onMentionShowingListener != null) {
+            onMentionShowingListener.onMentionShowing(false);
+        }
     }
 
     // 멘션 가능한 멤버 리스트 뷰의 view단을 컨트롤 하는 메서드
@@ -283,8 +307,14 @@ public class MentionControlViewModel {
 
         if (isShow && !etMessage.isPopupShowing()) {
             etMessage.showDropDown();
+            if (onMentionShowingListener != null) {
+                onMentionShowingListener.onMentionShowing(true);
+            }
         } else if (!isShow && etMessage.isPopupShowing()) {
             etMessage.dismissDropDown();
+            if (onMentionShowingListener != null) {
+                onMentionShowingListener.onMentionShowing(false);
+            }
         }
 
     }

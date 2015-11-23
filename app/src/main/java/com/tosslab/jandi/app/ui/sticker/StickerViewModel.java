@@ -45,7 +45,6 @@ public class StickerViewModel {
     @ViewById(R.id.vg_message_sticker_selector)
     ViewGroup vgStickerSelector;
 
-    @ViewById(R.id.btn_message_sticker)
     View btnStickerShow;
 
     @RootContext
@@ -85,6 +84,10 @@ public class StickerViewModel {
                 updateStickerItems(finalIdx, pagerStickerItems);
             });
         }
+    }
+
+    public void setStickerButton(View btnStickerShow) {
+        this.btnStickerShow = btnStickerShow;
     }
 
     private void updateStickerItems(int groupIdx, ViewPager vgStickerItems) {
@@ -224,7 +227,9 @@ public class StickerViewModel {
         updateStickerItems(1, pagerStickerItems);
 
         vgStickerSelector.setVisibility(View.VISIBLE);
-        btnStickerShow.setSelected(true);
+        if (btnStickerShow != null) {
+            btnStickerShow.setSelected(true);
+        }
 
         isShow = true;
 
@@ -236,7 +241,9 @@ public class StickerViewModel {
 
     public void dismissStickerSelector() {
         vgStickerSelector.setVisibility(View.GONE);
-        btnStickerShow.setSelected(false);
+        if (btnStickerShow != null) {
+            btnStickerShow.setSelected(false);
+        }
 
         isShow = false;
 

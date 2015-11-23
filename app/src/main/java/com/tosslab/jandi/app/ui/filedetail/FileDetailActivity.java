@@ -213,6 +213,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         stickerViewModel.setType(StickerViewModel.TYPE_FILE_DETAIL);
 
+        stickerViewModel.setStickerButton(findViewById(R.id.btn_message_sticker));
+
         if (NetworkCheckUtil.isConnected()) {
             fileDetailPresenter.getFileDetail(fileId, false, false, selectMessageId);
         } else if (!fileDetailPresenter.onLoadFromCache(fileId, selectMessageId)) {
@@ -720,8 +722,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
      * **********************************************************
      */
     public void download() {
-        initProgressDialog();
-        fileDetailPresenter.onClickDownload(progressDialog, fileId);
+        fileDetailPresenter.onClickDownload(fileId);
     }
 
     @UiThread
@@ -768,7 +769,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 fileDownloadStartEvent.getFileName(),
                 fileDownloadStartEvent.getFileType(),
                 fileDownloadStartEvent.getExt(),
-                progressDialog, fileId, true);
+                fileId);
     }
 
     @UiThread

@@ -97,6 +97,7 @@
     <color name="jandi_topic_folder_expand">#FF154A67</color>
     <color name="jandi_topic_folder_collapse">#FFA6A6A6</color>
     <!-- Message List -->
+    <color name="jandi_messages_input">#FFD9D9D9</color>
     <color name="jandi_messages_date_divider">@color/jandi_accent_color</color>
     <color name="jandi_messages_name">@color/jandi_text</color>
     <color name="jandi_messages_date">@color/jandi_text_light</color>
