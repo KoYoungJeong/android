@@ -6,7 +6,7 @@
     <RelativeLayout
         android:id="@+id/vg_linkpreview_thumb"
         android:layout_width="@dimen/jandi_messages_link_preview_thumb_max_width"
-        android:layout_height="120dp"
+        android:layout_height="110dp"
         android:padding="1dp">
 
         <ImageView
