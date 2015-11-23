@@ -210,7 +210,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         for (int idx = size - 1; idx >= 0; --idx) {
             link = messages.get(idx);
 
-            if (TextUtils.equals(link.status, "created") || TextUtils.equals(link.status, "shared") || TextUtils.equals(link.status, "event")) {
+            if (TextUtils.equals(link.status, "created") || TextUtils.equals(link.status, "shared") || TextUtils.equals(link.status, "event") || TextUtils.equals(link.status, "unshared")) {
             } else if (TextUtils.equals(link.status, "edited")) {
                 int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
                 if (searchedPosition >= 0) {
@@ -236,12 +236,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
                     }
                     messages.remove(link);
                 }
-            } else if (TextUtils.equals(link.status, "unshared")) {
-                int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
-                if (searchedPosition >= 0) {
-                    messageList.set(searchedPosition, link);
-                }
-                messages.remove(link);
             } else {
                 messages.remove(link);
             }

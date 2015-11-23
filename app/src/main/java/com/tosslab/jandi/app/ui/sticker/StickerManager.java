@@ -39,7 +39,7 @@ public class StickerManager {
     private HashSet<Integer> localStickerGroupIds;
 
     private StickerManager() {
-        this.localStickerGroupIds = new HashSet<Integer>();
+        this.localStickerGroupIds = new HashSet<>();
         localStickerGroupIds.add(DEFAULT_GROUP_MOZZI);
         localStickerGroupIds.add(DEFAULT_GROUP_DAY);
     }
@@ -117,7 +117,6 @@ public class StickerManager {
 
     private String getStickerAssetPath(int groupId, String stickerId) {
         List<ResMessages.StickerContent> stickers = StickerRepository.getRepository().getStickers(groupId);
-
         ResMessages.StickerContent defaultSticker = new ResMessages.StickerContent();
         ResMessages.StickerContent stickerItem = Observable.from(stickers)
                 .filter(resSticker -> TextUtils.equals(resSticker.stickerId, stickerId))

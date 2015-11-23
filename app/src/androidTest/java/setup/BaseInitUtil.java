@@ -80,7 +80,6 @@ public class BaseInitUtil {
         }
     }
 
-
     public static int getUserIdByEmail(String email) {
         ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
                 ReqAccessToken.createPasswordReqToken(email, "1234asdf"));
@@ -114,7 +113,6 @@ public class BaseInitUtil {
 
         ResLeftSideMenu leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(AccountRepository.getRepository().getSelectedTeamId());
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
-
     }
 
     public static void userSignin() {
@@ -171,4 +169,5 @@ public class BaseInitUtil {
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
         EntityManager.getInstance().refreshEntity();
     }
+
 }

@@ -133,7 +133,6 @@ public class FileViewHolder implements BodyViewHolder {
                 tvUploader.setText(builder);
             } else {
                 tvUploader.setVisibility(View.GONE);
-
             }
 
             int fileNameTextSizePX;
@@ -144,6 +143,12 @@ public class FileViewHolder implements BodyViewHolder {
                 tvFileType.setVisibility(View.GONE);
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
                         .jandi_text_light));
+            } else if (TextUtils.equals(link.status, "unshared")) {
+                fileNameTextSizePX = tvFileName.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_medium);
+                tvFileName.setText("temp");
+                ivFileImage.setImageResource(R.drawable.file_icon_unshared_141);
+                ivFileImage.setClickable(false);
+                tvFileType.setText("공유 해제된 파일");
             } else {
                 fileNameTextSizePX = tvFileName.getResources().getDimensionPixelSize(R.dimen.jandi_entity_item_title_font);
                 tvFileName.setTextSize(tvFileName.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_medium));

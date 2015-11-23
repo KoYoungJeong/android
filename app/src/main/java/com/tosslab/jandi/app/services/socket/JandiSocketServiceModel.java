@@ -31,7 +31,6 @@ import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
-import com.tosslab.jandi.app.network.manager.token.TokenRequestManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -247,15 +246,36 @@ public class JandiSocketServiceModel {
 
     public void unshareFile(Object object) {
         try {
-            SocketFileEvent socketFileEvent =
+            SocketFileUnsharedEvent socketFileEvent =
                     objectMapper.readValue(object.toString(), SocketFileUnsharedEvent.class);
+
+            int fileId = socketFileEvent.getFile().getId();
+            int roomId = socketFileEvent.room.id;
+            // DB 업데이트 작업 실시
+            MessageRepository.getRepository().updateUnshared(fileId, roomId);
 
             postEvent(new ShareFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
+
+    public void shareFile(Object object) {
+//        try {
+//            SocketFileUnsharedEvent socketFileEvent =
+//                    objectMapper.readValue(object.toString(), SocketFileSharedEvent.class);
+//
+//            int fileId = socketFileEvent.getFile().getId();
+//            int roomId = socketFileEvent.room.id;
+//            // DB 업데이트 작업 실시
+//            MessageRepository.getRepository().updateUnshared(fileId, roomId);
+//
+//            postEvent(new ShareFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+
 
     public void updateMarker(Object object) {
         try {

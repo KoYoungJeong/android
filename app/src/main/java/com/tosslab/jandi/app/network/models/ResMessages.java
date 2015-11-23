@@ -83,7 +83,6 @@ public class ResMessages {
         public String status;
         @DatabaseField
         public int feedbackId;
-
         @DatabaseField(foreign = true)
         public EventInfo info; // How to convert other type
         @DatabaseField

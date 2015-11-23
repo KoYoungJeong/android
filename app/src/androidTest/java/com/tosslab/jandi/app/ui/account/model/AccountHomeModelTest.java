@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import rx.Observable;
-import setup.BaseIniUtil;
+import setup.BaseInitUtil;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -30,6 +30,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+
 
 /**
  * Created by jsuch2362 on 15. 11. 11..
@@ -41,13 +42,13 @@ public class AccountHomeModelTest {
 
     @Before
     public void setUp() throws Exception {
-        BaseIniUtil.initData();
+        BaseInitUtil.initData();
         accountHomeModel = AccountHomeModel_.getInstance_(JandiApplication.getContext());
     }
 
     @After
     public void tearDown() throws Exception {
-        BaseIniUtil.clear();
+        BaseInitUtil.clear();
     }
 
     @Test

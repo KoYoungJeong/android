@@ -80,8 +80,9 @@ public class JandiSocketService extends Service {
         context.startService(intent);
     }
 
-    private static boolean isServiceRunning(Context context) {ActivityManager activityManager =
-            (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+    private static boolean isServiceRunning(Context context) {
+        ActivityManager activityManager =
+                (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> runningServices =
                 activityManager.getRunningServices(Integer.MAX_VALUE);
         for (ActivityManager.RunningServiceInfo runningService : runningServices) {
@@ -103,7 +104,7 @@ public class JandiSocketService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        eventHashMap = new HashMap<String, EventListener>();
+        eventHashMap = new HashMap<>();
 
         jandiSocketServiceModel = new JandiSocketServiceModel(JandiSocketService.this);
         jandiSocketManager = JandiSocketManager.getInstance();
@@ -194,10 +195,11 @@ public class JandiSocketService extends Service {
                 jandiSocketServiceModel.createFile(objects[0]);
         eventHashMap.put("file_created", createFileListener);
 
-        EventListener unshareFileListener = objects ->
-                jandiSocketServiceModel.unshareFile(objects[0]);
+        EventListener unshareFileListener = objects -> jandiSocketServiceModel.unshareFile(objects[0]);
         eventHashMap.put("file_unshared", unshareFileListener);
-        eventHashMap.put("file_shared", unshareFileListener);
+
+        EventListener shareFileListener = objects -> jandiSocketServiceModel.shareFile(objects[0]);
+        eventHashMap.put("file_shared", shareFileListener);
 
         EventListener fileCommentRefreshListener = objects ->
                 jandiSocketServiceModel.refreshFileComment(objects[0]);

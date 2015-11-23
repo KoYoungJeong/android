@@ -10,6 +10,8 @@ import com.tosslab.jandi.app.network.client.chat.ChatApiV2Client;
 import com.tosslab.jandi.app.network.client.chat.IChatApiAuth;
 import com.tosslab.jandi.app.network.client.direct.message.DirectMessageApiV2Client;
 import com.tosslab.jandi.app.network.client.direct.message.IDirectMessageApiAuth;
+import com.tosslab.jandi.app.network.client.events.EventsApiV2Client;
+import com.tosslab.jandi.app.network.client.events.IEventsApiAuth;
 import com.tosslab.jandi.app.network.client.file.FileApiV2Client;
 import com.tosslab.jandi.app.network.client.file.IFileApiAuth;
 import com.tosslab.jandi.app.network.client.invitation.IInvitationApiAuth;
@@ -84,6 +86,7 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResCreateFolder;
+import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
@@ -112,7 +115,8 @@ import retrofit.RetrofitError;
 public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth, IAccountEmailsApiAuth, IAccountPasswordApiAuth,
         IChatApiAuth, IDirectMessageApiAuth, IInvitationApiAuth, IMainRestApiAuth, ICommentsApiAuth, IMessageSearchApiAuth,
         IMessagesApiAuth, IGroupMessageApiAuth, IGroupApiAuth, IProfileApiAuth, IChannelMessageApiAuth, IChannelApiAuth,
-        IRoomsApiAuth, IAccountProfileApiAuth, IStarredEntityApiAuth, IStickerApiAuth, ITeamApiAuth, IFileApiAuth, IPlatformApiAuth {
+        IRoomsApiAuth, IAccountProfileApiAuth, IStarredEntityApiAuth, IStickerApiAuth, ITeamApiAuth, IFileApiAuth, IPlatformApiAuth,
+        IEventsApiAuth {
 
     @Override
     public ResAccountInfo registerNotificationTokenByAccountDeviceApi(ReqNotificationRegister reqNotificationRegister) throws RetrofitError {
@@ -647,5 +651,10 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     @Override
     public ResCommon kickUserFromTopic(int teamId, int topicId, ReqMember member) {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().kickUserFromTopic(teamId, topicId, member);
+    }
+
+    @Override
+    public ResEventHistory getEventHistory(long ts, Integer memberId, String eventType, int size) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(EventsApiV2Client.class).create().getEventHistory(ts, memberId, eventType, size);
     }
 }

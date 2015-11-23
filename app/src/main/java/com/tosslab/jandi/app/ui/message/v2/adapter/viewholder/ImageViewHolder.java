@@ -145,7 +145,6 @@ public class ImageViewHolder implements BodyViewHolder {
             ivFileImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
             if (TextUtils.equals(fileMessage.status, "archived")) {
-
                 tvFileName.setText(R.string.jandi_deleted_file);
                 ivFileImage.setImageResource(R.drawable.jandi_fview_icon_deleted);
                 ivFileImage.setClickable(false);

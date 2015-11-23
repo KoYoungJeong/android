@@ -371,38 +371,34 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     private void initKeyboardEvent() {
 
-        messageEditText.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
+        messageEditText.setOnKeyListener((v, keyCode, event) -> {
 
+            LogUtil.d("In messageEditText KeyCode : " + keyCode);
 
-                LogUtil.d("In messageEditText KeyCode : " + keyCode);
+            if (keyCode == KeyEvent.KEYCODE_ENTER
+                    && getResources().getConfiguration().keyboard != Configuration
+                    .KEYBOARD_NOKEYS) {
 
-                if (keyCode == KeyEvent.KEYCODE_ENTER
-                        && getResources().getConfiguration().keyboard != Configuration
-                        .KEYBOARD_NOKEYS) {
-
-                    if (!event.isShiftPressed()) {
-                        onSendClick();
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-
-                if (event.getAction() != KeyEvent.ACTION_DOWN) {
-                    //We only look at ACTION_DOWN in this code, assuming that ACTION_UP is redundant.
-                    // If not, adjust accordingly.
-                    return false;
-                } else if (event.getUnicodeChar() ==
-                        (int) EditableAccomodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
-                    //We are ignoring this character, and we want everyone else to ignore it, too, so
-                    // we return true indicating that we have handled it (by ignoring it).
+                if (!event.isShiftPressed()) {
+                    onSendClick();
                     return true;
+                } else {
+                    return false;
                 }
-
-                return false;
             }
+
+            if (event.getAction() != KeyEvent.ACTION_DOWN) {
+                //We only look at ACTION_DOWN in this code, assuming that ACTION_UP is redundant.
+                // If not, adjust accordingly.
+                return false;
+            } else if (event.getUnicodeChar() ==
+                    (int) EditableAccomodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
+                //We are ignoring this character, and we want everyone else to ignore it, too, so
+                // we return true indicating that we have handled it (by ignoring it).
+                return true;
+            }
+
+            return false;
         });
 
     }
@@ -807,6 +803,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         } else {
             messageListPresenter.showOfflineLayer();
         }
+
     }
 
     @Override
