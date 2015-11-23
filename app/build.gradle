@@ -114,7 +114,6 @@ dependencies {
     testCompile 'org.robolectric:shadows-httpclient:3.0'
     testCompile 'com.jayway.awaitility:awaitility:1.6.+'
     testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-all:1.10.+'
     testCompile 'com.google.guava:guava:18.+'
 
     // Force usage of support annotations in the test app, since it is internally used by the runner module.
@@ -213,6 +212,9 @@ android {
 
     packagingOptions.excludes = [
             'META-INF/DEPENDENCIES',
+            'LICENSE',
+            'asm-license.txt',
+            'NOTICE',
             'META-INF/LICENSE',
             'META-INF/LICENSE.txt',
             'LICENSE.txt',

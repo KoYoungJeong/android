@@ -10,6 +10,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
 import java.sql.SQLException;
+import java.util.Collection;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 28..
@@ -54,7 +55,12 @@ public class AccountInfoDaoImpl extends BaseDaoImpl<ResAccountInfo, String> {
         deleteBuilder.where().eq("accountInfo_id", accountInfo.getId());
         deleteBuilder.delete();
 
-        for (ResAccountInfo.UserEmail userEmail : accountInfo.getEmails()) {
+        Collection<ResAccountInfo.UserEmail> emails = accountInfo.getEmails();
+        if (emails == null || emails.isEmpty()) {
+            return;
+        }
+
+        for (ResAccountInfo.UserEmail userEmail : emails) {
             userEmail.setAccountInfo(accountInfo);
             userEmailDao.create(userEmail);
         }
@@ -70,8 +76,13 @@ public class AccountInfoDaoImpl extends BaseDaoImpl<ResAccountInfo, String> {
         deleteBuilder.where().eq("accountInfo_id", accountInfo.getId());
         deleteBuilder.delete();
 
+        Collection<ResAccountInfo.UserTeam> memberships = accountInfo.getMemberships();
+        if (memberships == null || memberships.isEmpty()) {
+            return;
+        }
+
         int order = 1;
-        for (ResAccountInfo.UserTeam userTeam : accountInfo.getMemberships()) {
+        for (ResAccountInfo.UserTeam userTeam : memberships) {
             if (!TextUtils.equals(userTeam.getStatus(), "enabled")) {
                 continue;
             }
@@ -90,7 +101,12 @@ public class AccountInfoDaoImpl extends BaseDaoImpl<ResAccountInfo, String> {
         deleteBuilder.where().eq("accountInfo_id", accountInfo.getId());
         deleteBuilder.delete();
 
-        for (ResAccountInfo.UserDevice userDevice : accountInfo.getDevices()) {
+        Collection<ResAccountInfo.UserDevice> devices = accountInfo.getDevices();
+        if (devices == null || devices.isEmpty()) {
+            return;
+        }
+
+        for (ResAccountInfo.UserDevice userDevice : devices) {
             userDevice.setAccountInfo(accountInfo);
             userDeviceDao.create(userDevice);
         }
