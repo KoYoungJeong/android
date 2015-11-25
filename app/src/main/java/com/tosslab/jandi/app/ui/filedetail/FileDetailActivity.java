@@ -366,7 +366,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     protected void onPause() {
         isForeground = false;
         fileDetailPresenter.removeClipboardListenerforMention();
-        ReadyCommentRepository.getRepository().upsertReadyComment(new ReadyComment(fileId, etComment.getText().toString() ));
+        ReadyCommentRepository.getRepository().upsertReadyComment(new ReadyComment(fileId, etComment.getText().toString()));
         super.onPause();
     }
 
@@ -763,6 +763,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         if (!isForeground) {
             return;
         }
+
+        initProgressDialog();
 
         fileDetailPresenter.downloadFile(fileDownloadStartEvent.getUrl(),
                 fileDownloadStartEvent.getFileName(),
