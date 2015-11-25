@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -18,7 +19,6 @@ import com.tosslab.jandi.app.utils.UserAgentUtil;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -35,9 +35,6 @@ import rx.Observable;
  */
 @EBean
 public class ModifyProfileModel {
-
-    @RootContext
-    Context context;
 
     @Bean
     EntityClientManager entityClientManager;
@@ -59,6 +56,7 @@ public class ModifyProfileModel {
         String requestURL
                 = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/members/" + entityManager.getMe().getId() + "/profile/photo";
 
+        Context context = JandiApplication.getContext();
         return Ion.with(context)
                 .load("PUT", requestURL)
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
@@ -112,7 +110,7 @@ public class ModifyProfileModel {
         return EntityManager.getInstance().getMe().getId() == id;
     }
 
-    public ResLeftSideMenu.User getSavedProfile(Context context) {
+    public ResLeftSideMenu.User getSavedProfile() {
 
         return EntityManager.getInstance().getMe().getUser();
 

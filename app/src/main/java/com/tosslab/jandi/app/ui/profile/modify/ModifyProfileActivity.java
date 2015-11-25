@@ -145,7 +145,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
         try {
             ResLeftSideMenu.User me;
             if (!NetworkCheckUtil.isConnected()) {
-                me = modifyProfileModel.getSavedProfile(JandiApplication.getContext());
+                me = modifyProfileModel.getSavedProfile();
             } else {
                 me = modifyProfileModel.getProfile();
             }
