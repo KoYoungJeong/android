@@ -108,4 +108,16 @@ public class MembersModel {
     public void kickUser(int teamId, int topicId, int userEntityId) throws RetrofitError {
         RequestApiManager.getInstance().kickUserFromTopic(teamId, topicId, new ReqMember(userEntityId));
     }
+
+    public boolean removeMember(int topicId, int userEntityId) {
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(topicId);
+        if (entity.isPublicTopic()) {
+            return entity.getChannel().ch_members.remove(new Integer(userEntityId));
+
+        } else if (entity.isPrivateGroup()) {
+            return entity.getPrivateGroup().pg_members.remove(new Integer(userEntityId));
+        }
+
+        return false;
+    }
 }

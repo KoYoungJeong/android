@@ -256,7 +256,9 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         try {
             memberModel.kickUser(teamId, topicId, userEntityId);
             // UI 갱신은 요청 전 성공
-            // 나머지 정보는 소켓에 의해 자동 갱신 될 것으로 예상
+            // 나머지 정보는 소켓에 의해 자동 갱신 될 것으로 예상되나 메모리상 정보도 갱신하도록 함
+            memberModel.removeMember(topicId, userEntityId);
+            EventBus.getDefault().post(new RetrieveTopicListEvent());
             view.removeUser(userEntityId);
             view.showKickSuccessToast();
         } catch (RetrofitError retrofitError) {
