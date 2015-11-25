@@ -40,6 +40,7 @@ import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
+import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
@@ -1757,6 +1758,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         searchedItemVO.setName(event.getName());
         searchedItemVO.setType(event.getType());
         mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
+    }
+
+    public void onEvent(UnshareFileEvent event){
+        messageListPresenter.justRefresh();
     }
 
     @Background
