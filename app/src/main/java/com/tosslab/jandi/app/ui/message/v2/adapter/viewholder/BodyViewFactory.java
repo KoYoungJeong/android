@@ -4,11 +4,14 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 21..
@@ -160,10 +163,27 @@ public class BodyViewFactory {
             }
 
         } else if (currentMessage instanceof ResMessages.FileMessage) {
+
+            boolean isSharedFile = false;
+            Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities = ((ResMessages.FileMessage) currentMessage).shareEntities;
+
+            // ArrayList로 나오는 경우 아직 DB에 기록되지 않은 경우 - object가 자동갱신되지 않는 문제 해결
+            if (shareEntities instanceof ArrayList) {
+                ResMessages.FileMessage file = MessageRepository.getRepository().getFileMessage(currentMessage.id);
+                shareEntities = file.shareEntities;
+            }
+
+            for (ResMessages.OriginalMessage.IntegerWrapper entity : shareEntities) {
+                if (entity.getShareEntity() == currentLink.roomId) {
+                    isSharedFile = true;
+                }
+            }
+
             String fileType = ((ResMessages.FileMessage) currentMessage).content.icon;
 
             boolean isImage = !TextUtils.isEmpty(fileType)
                     && fileType.startsWith("image")
+                    && isSharedFile
                     && !TextUtils.equals(currentMessage.status, "archived");
 
 
@@ -314,12 +334,11 @@ public class BodyViewFactory {
 
         @Override
         public void setOnItemClickListener(View.OnClickListener itemClickListener) {
-
         }
 
         @Override
         public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
-
         }
+
     }
 }

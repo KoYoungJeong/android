@@ -7,6 +7,7 @@ import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.BitmapUtil;
@@ -23,6 +25,9 @@ import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 import de.greenrobot.event.EventBus;
 
@@ -72,11 +77,15 @@ public class FileCommentViewHolder implements BodyViewHolder {
     public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
 
         int fromEntityId = link.fromEntity;
-
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(fromEntityId);
+        EntityManager entityManager = EntityManager.getInstance();
+        FormattedEntity entity = entityManager.getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
         String profileUrl = entity.getUserLargeProfileUrl();
+
+        FormattedEntity room = entityManager.getEntityById(roomId);
+
+        boolean isPublicTopic = room.isPublicTopic();
 
         BitmapUtil.loadImageByIon(ivProfile,
                 profileUrl,
@@ -84,7 +93,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 R.drawable.profile_img
         );
 
-        EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById != EntityManager.UNKNOWN_USER_ENTITY ? entityById.getUser() : null;
 
@@ -110,17 +118,59 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
             ResMessages.FileMessage feedbackFileMessage = link.feedback;
 
+            boolean isSharedFile = false;
+
+            Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities = feedbackFileMessage.shareEntities;
+
+            // ArrayList로 나오는 경우 아직 DB에 기록되지 않은 경우 - object가 자동갱신되지 않는 문제 해결
+            if (shareEntities instanceof ArrayList) {
+                ResMessages.FileMessage file = MessageRepository.getRepository().getFileMessage(feedbackFileMessage.id);
+                shareEntities = file.shareEntities;
+            }
+
+            for (ResMessages.OriginalMessage.IntegerWrapper e : shareEntities) {
+                if (e.getShareEntity() == roomId) {
+                    isSharedFile = true;
+                }
+            }
+
             ivFileImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
             vFileImageRound.setVisibility(View.GONE);
+
             if (TextUtils.equals(link.feedback.status, "archived")) {
                 tvFileOwner.setVisibility(View.GONE);
-
                 tvFileName.setText(R.string.jandi_deleted_file);
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
                         .jandi_text_light));
                 ivFileImage.setBackgroundDrawable(null);
                 ivFileImage.setImageResource(R.drawable.jandi_fl_icon_deleted);
                 ivFileImage.setOnClickListener(null);
+            } else if (!isSharedFile) {
+                int TextSizePX = tvFileName.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_11sp);
+                tvFileOwner.setVisibility(View.VISIBLE);
+                tvFileOwner.setText(Html.fromHtml(tvFileOwner.getResources().getString(R.string.jandi_commented_on, feedbackUser.name)));
+                tvFileOwner.setTextSize(TypedValue.COMPLEX_UNIT_PX, TextSizePX);
+                ResMessages.FileContent content = feedbackFileMessage.content;
+                StringBuilder sbTitle = new StringBuilder();
+                String title = content.title;
+                sbTitle.append(title);
+                if (content.title.length() > 15) {
+                    title = sbTitle.substring(0, 14).toString() + "...";
+                }
+
+                tvFileName.setText(title + context.getResources().getString(R.string.jandi_unshared_file));
+                tvFileName.setTextSize(TypedValue.COMPLEX_UNIT_PX, TextSizePX);
+                tvFileName.setTextColor(tvFileName.getResources().getColor(R.color.jandi_text_light));
+
+                if (isPublicTopic) {
+                    int mimeTypeIconImage =
+                            MimeTypeUtil.getMimeTypeIconImage(
+                                    feedbackFileMessage.content.serverUrl, feedbackFileMessage.content.icon);
+                    ivFileImage.setImageResource(mimeTypeIconImage);
+                } else {
+                    ivFileImage.setImageResource(R.drawable.file_icon_unshared_141);
+                }
+                ivFileImage.setClickable(false);
             } else {
                 tvFileOwner.setText(Html.fromHtml(tvFileOwner.getResources().getString(R.string.jandi_commented_on, feedbackUser.name)));
                 ResMessages.FileContent content = feedbackFileMessage.content;
@@ -131,6 +181,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 tvFileOwner.setVisibility(View.VISIBLE);
 
                 String fileType = content.icon;
+
                 if (TextUtils.equals(fileType, "image")) {
                     if (BitmapUtil.hasImageUrl(content)) {
                         String thumbnailUrl = BitmapUtil.getThumbnailUrlOrOriginal(
@@ -159,10 +210,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                         thumbnailUrl,
                                         R.drawable.file_icon_img
                                 );
-
                                 break;
                         }
-
                     } else {
                         ivFileImage.setBackgroundDrawable(null);
                         ivFileImage.setImageResource(

@@ -194,9 +194,8 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         }
 
         Observable.from(messages)
-                .onBackpressureBuffer()
-                .observeOn(Schedulers.io())
                 .subscribe(message -> {
+                    LogUtil.e("message", message.status);
                     message.roomId = roomId;
                     if (!TextUtils.equals(message.status, "event")) {
                         if (TextUtils.equals(message.message.status, "archived")) {

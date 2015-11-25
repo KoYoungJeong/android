@@ -7,7 +7,6 @@ import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -233,30 +232,15 @@ public class MessageRepository {
     public void updateUnshared(int fileId, int roomId) {
         lock.lock();
         try {
-            LogUtil.e("hahaha");
-            Dao<ResMessages.Link, Integer> dao = helper.getDao(ResMessages.Link.class);
-            UpdateBuilder<ResMessages.Link, Integer> updateBuilder = dao.updateBuilder();
-            updateBuilder.updateColumnValue("status", "unshared");
-            updateBuilder.where()
-                    .eq("roomId", roomId)
-                    .and()
-                    .eq("messageId", fileId);
-            updateBuilder.update();
-
-            updateBuilder.updateColumnValue("status", "unshared");
-            updateBuilder.where()
-                    .eq("roomId", roomId)
-                    .and()
-                    .eq("feedbackId", fileId);
-            updateBuilder.update();
-
+            Dao<ResMessages.OriginalMessage.IntegerWrapper, Integer> dao = helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class);
+            DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
+            deleteBuilder.where().eq("fileOf_id", fileId).and().eq("shareEntity", roomId);
+            deleteBuilder.delete();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             lock.unlock();
         }
-
-
     }
 
     public void upsertFileMessage(ResMessages.FileMessage fileMessage) {

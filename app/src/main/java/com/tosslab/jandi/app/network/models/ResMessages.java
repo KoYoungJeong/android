@@ -246,6 +246,7 @@ public class ResMessages {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TextMessage extends OriginalMessage {
+
         @ForeignCollectionField(foreignFieldName = "textOf")
         public Collection<IntegerWrapper> shareEntities;
 

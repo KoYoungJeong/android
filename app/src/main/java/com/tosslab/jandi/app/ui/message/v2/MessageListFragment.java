@@ -1346,7 +1346,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
 
-
         if (!isForeground) {
             return;
         }
@@ -1418,9 +1417,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     public void onEvent(DeleteFileEvent event) {
-
         messageListPresenter.changeToArchive(event.getId());
-
     }
 
     public void onEvent(FileCommentRefreshEvent event) {
@@ -1717,7 +1714,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Background
     public void onEvent(MessageStarredEvent event) {
-
         if (!isForeground) {
             return;
         }

@@ -52,7 +52,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
 
     public MessageListAdapter(Context context) {
         this.context = context;
-        this.messageList = new ArrayList<ResMessages.Link>();
+        this.messageList = new ArrayList<>();
         oldMoreState = MoreState.Idle;
     }
 
@@ -146,7 +146,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
 
     @Override
     public int getItemViewType(int position) {
-
         ResMessages.Link currentLink = messageList.get(position);
         ResMessages.Link previousLink = null;
         ResMessages.Link nextLink = null;
@@ -157,7 +156,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         if (position < getCount() - 1) {
             nextLink = messageList.get(position + 1);
         }
-
 
         return BodyViewFactory.getContentType(previousLink, currentLink, nextLink).ordinal();
     }
@@ -204,13 +202,13 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
             }
         }
 
-
         int size = messages.size();
         ResMessages.Link link;
+
         for (int idx = size - 1; idx >= 0; --idx) {
             link = messages.get(idx);
 
-            if (TextUtils.equals(link.status, "created") || TextUtils.equals(link.status, "shared") || TextUtils.equals(link.status, "event") || TextUtils.equals(link.status, "unshared")) {
+            if (TextUtils.equals(link.status, "created") || TextUtils.equals(link.status, "shared") || TextUtils.equals(link.status, "event")) {
             } else if (TextUtils.equals(link.status, "edited")) {
                 int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
                 if (searchedPosition >= 0) {
@@ -221,7 +219,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
                 int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
                 // if file type
                 if (TextUtils.equals(link.message.contentType, "file")) {
-
                     if (searchedPosition >= 0) {
                         ResMessages.Link originLink = messageList.get(searchedPosition);
                         originLink.message = link.message;
@@ -229,7 +226,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
                         messages.remove(link);
                     }
                     // if cannot find same object, will be add to list.
-
                 } else {
                     if (searchedPosition >= 0) {
                         messageList.remove(searchedPosition);
@@ -338,7 +334,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
     }
 
     public int getDummeMessagePositionByLocalId(long localId) {
-
         if (localId <= 0) {
             return -1;
         }

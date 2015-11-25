@@ -71,7 +71,6 @@ public class ImageViewHolder implements BodyViewHolder {
         FormattedEntity entity =
                 EntityManager.getInstance().getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
-
         String profileUrl = entity.getUserLargeProfileUrl();
 
         BitmapUtil.loadImageByIon(ivProfile,
@@ -83,6 +82,7 @@ public class ImageViewHolder implements BodyViewHolder {
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById != EntityManager.UNKNOWN_USER_ENTITY ? entityById.getUser() : null;
+
         if (user != null && TextUtils.equals(user.status, "enabled")) {
             tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
             vDisableCover.setVisibility(View.GONE);
@@ -96,8 +96,8 @@ public class ImageViewHolder implements BodyViewHolder {
 
         int unreadCount = UnreadCountUtil.getUnreadCount(
                 teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
-
         tvUnread.setText(String.valueOf(unreadCount));
+
         if (unreadCount <= 0) {
             tvUnread.setVisibility(View.GONE);
         } else {
@@ -164,8 +164,6 @@ public class ImageViewHolder implements BodyViewHolder {
                         // small 은 80 x 80 사이즈가 로딩됨 -> medium 으로 로딩
 
                         String localFilePath = BitmapUtil.getLocalFilePath(fileMessage.id);
-
-
                         String thumbPath;
                         if (!TextUtils.isEmpty(localFilePath)) {
                             thumbPath = localFilePath;
