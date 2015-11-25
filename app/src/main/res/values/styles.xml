@@ -249,7 +249,7 @@
     <style name="JandiChat.EditText"
         parent="JandiChat">
         <item name="android:textSize">14dp</item>
-        <item name="android:textColor">@color/jandi_messages_input</item>
+        <item name="android:textColorHint">@color/jandi_messages_input_hint</item>
         <item name="android:lines">4</item>
         <item name="android:minLines">1</item>
         <item name="android:scrollbars">none</item>
