@@ -34,7 +34,8 @@ public class LinkifyUtil {
             ClickableMentionMessageSpannable.class
     };
 
-    private LinkifyUtil() {}
+    private LinkifyUtil() {
+    }
 
     public static boolean addLinks(Context context, Spannable text) {
 
@@ -73,7 +74,6 @@ public class LinkifyUtil {
             hasLink = true;
 
             JandiURLSpan span = new JandiURLSpan(context, url, color);
-
             text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         return hasLink;
@@ -151,14 +151,16 @@ public class LinkifyUtil {
                     int line = layout.getLineForVertical(y);
                     int off = layout.getOffsetForHorizontal(line, x);
 
-                    for (int idx = 0, size = clickableSpannables.length; idx < size; idx++) {
-
-                        ClickableSpannable[] clickableSpan =
-                                (ClickableSpannable[]) buffer.getSpans(off, off, clickableSpannables[idx]);
-                        if (clickableSpan != null && clickableSpan.length > 0) {
-                            clickableSpannable = clickableSpan[0];
-                            return true;
+                    ClickableSpannable[] clickableSpan =
+                            buffer.getSpans(off, off, ClickableSpannable.class);
+                    if (clickableSpan != null && clickableSpan.length > 0) {
+                        for (int spanIdx = clickableSpan.length - 1; spanIdx >= 0; spanIdx--) {
+                            clickableSpannable = clickableSpan[spanIdx];
+                            if (clickableSpan[spanIdx] instanceof ClickableMentionMessageSpannable) {
+                                return true;
+                            }
                         }
+                        return true;
                     }
                     return false;
                 }
