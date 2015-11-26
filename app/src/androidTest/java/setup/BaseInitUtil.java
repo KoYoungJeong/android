@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.mockito.Mockito;
 
@@ -174,7 +175,12 @@ public class BaseInitUtil {
     }
 
     public static void deleteDummyTopic() {
-        ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+        ResAccountInfo accountInfo = null;
+        try {
+            accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
         int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
         if (topicState == STATE_TEMP_TOPIC_CREATED) {
             RequestApiManager.getInstance().deleteTopicByChannelApi(tempTopicId, new ReqDeleteTopic(teamId));
@@ -191,6 +197,7 @@ public class BaseInitUtil {
 
     public static void disconnectWifi() {
         ORIGIN_CONTEXT = JandiApplication.getContext();
+        LogUtil.d("disconnectWifi : " + ORIGIN_CONTEXT.toString());
         JandiApplication mock = Mockito.mock(JandiApplication.class);
         JandiApplication.setContext(mock);
         ConnectivityManager mockConnectManager = Mockito.mock(ConnectivityManager.class);
@@ -200,8 +207,7 @@ public class BaseInitUtil {
 
 
     public static void restoreContext() {
-        if (ORIGIN_CONTEXT != null) {
-            JandiApplication.setContext(ORIGIN_CONTEXT);
-        }
+        LogUtil.d("restoreContext : " + ORIGIN_CONTEXT.toString());
+        JandiApplication.setContext(ORIGIN_CONTEXT);
     }
 }
