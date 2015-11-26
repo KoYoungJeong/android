@@ -654,7 +654,7 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResEventHistory getEventHistory(long ts, Integer memberId, String eventType, int size) throws RetrofitError {
+    public ResEventHistory getEventHistory(long ts, Integer memberId, String eventType, Integer size) throws RetrofitError {
         return RestAdapterBuilder.newInstance(EventsApiV2Client.class).create().getEventHistory(ts, memberId, eventType, size);
     }
 }

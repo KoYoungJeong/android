@@ -720,7 +720,7 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResEventHistory> loadGetEventHistory(long ts, Integer memberId, String eventType, int size) {
+    public IExecutor<ResEventHistory> loadGetEventHistory(long ts, Integer memberId, String eventType, Integer size) {
         return () -> authRestApiClient.getEventHistory(ts, memberId, eventType, size);
     }
 

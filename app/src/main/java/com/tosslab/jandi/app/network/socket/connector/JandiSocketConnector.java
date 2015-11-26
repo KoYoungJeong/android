@@ -1,6 +1,12 @@
 package com.tosslab.jandi.app.network.socket.connector;
 
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
+import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.net.URISyntaxException;
@@ -9,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Iterator;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -17,6 +24,7 @@ import javax.net.ssl.X509TrustManager;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 1..
@@ -56,28 +64,60 @@ public class JandiSocketConnector implements SocketConnector {
             socket.on(Socket.EVENT_CONNECT, args -> {
                 LogUtil.e(TAG, Socket.EVENT_CONNECT);
                 status = Status.CONNECTED;
-
+                updateEventHistory();
             }).on(Socket.EVENT_ERROR, args -> {
                 LogUtil.e(TAG, Socket.EVENT_ERROR);
+                JandiPreference.setSocketConnectedLastTime();
                 disconnectCallback(disconnectListener, args);
-
             }).on(Socket.EVENT_DISCONNECT, args -> {
                 LogUtil.e(TAG, Socket.EVENT_DISCONNECT);
+                JandiPreference.setSocketConnectedLastTime();
                 disconnectCallback(disconnectListener, args);
-
             }).on(Socket.EVENT_CONNECT_ERROR, args -> {
                 LogUtil.e(TAG, Socket.EVENT_CONNECT_ERROR);
+                JandiPreference.setSocketConnectedLastTime();
                 disconnectCallback(disconnectListener, args);
-
             }).on(Socket.EVENT_CONNECT_TIMEOUT, args -> {
                 LogUtil.e(TAG, Socket.EVENT_CONNECT_TIMEOUT);
+                JandiPreference.setSocketConnectedLastTime();
                 disconnectCallback(disconnectListener, args);
             });
-
             socket.connect();
         }
 
         return socket;
+    }
+
+    // 확장성 생각하여 추후 모듈로 빼내야 함.
+    private void updateEventHistory() {
+        long ts = JandiPreference.getSocketConnectedLastTime();
+        EntityManager entityManager = EntityManager.getInstance();
+        int userId = entityManager.getMe().getId();
+
+        if (ts != -1) {
+            try {
+                ResEventHistory eventHistory =
+                        RequestApiManager.getInstance().getEventHistory(ts, userId, "file_unshared", null);
+                Iterator<ResEventHistory.EventHistoryInfo> i = eventHistory.records.iterator();
+                while (i.hasNext()) {
+                    ResEventHistory.EventHistoryInfo eventInfo = i.next();
+                    if (eventInfo instanceof SocketFileUnsharedEvent) {
+                        SocketFileUnsharedEvent event = (SocketFileUnsharedEvent) eventInfo;
+                        int fileId = event.getFile().getId();
+                        int roomId = event.room.id;
+                        MessageRepository.getRepository().updateUnshared(fileId, roomId);
+                    }
+                }
+            } catch (RetrofitError e) {
+                JandiPreference.setSocketConnectedLastTime();
+                e.printStackTrace();
+                // 캐시 다 지우기
+            }
+        } else {
+            JandiPreference.setSocketConnectedLastTime();
+            // 캐시 다 지우기
+        }
+
     }
 
     private void disconnectCallback(EventListener disconnectListener, Object[] args) {

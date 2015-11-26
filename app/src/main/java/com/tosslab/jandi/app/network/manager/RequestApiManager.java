@@ -694,7 +694,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public ResEventHistory getEventHistory(long ts, Integer memberId, String eventType, int size) throws RetrofitError {
+    public ResEventHistory getEventHistory(long ts, Integer memberId, String eventType, Integer size) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadGetEventHistory(ts, memberId, eventType, size));
     }
 }
