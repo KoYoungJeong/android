@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.events.files.FileUploadProgressEvent;
 import com.tosslab.jandi.app.events.files.FileUploadStartEvent;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
+import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.views.listeners.WebLoadingBar;
 
 import org.androidannotations.annotations.AfterViews;
@@ -79,6 +80,10 @@ public class FileUploadStateViewModel {
         }
 
         rvUploadFile.getAdapter().notifyDataSetChanged();
+
+        if (webLoadingBar.getVisibility() != View.VISIBLE) {
+            webLoadingBar.setVisibility(View.VISIBLE);
+        }
 
         webLoadingBar.setMax(100);
         webLoadingBar.setProgress(event.getProgressPercent());
@@ -155,11 +160,17 @@ public class FileUploadStateViewModel {
         @Override
         public void onBindViewHolder(FileUploadViewHolder holder, int position) {
             FileUploadDTO item = uploadInfos.get(position);
-            Glide.with(context)
-                    .load(item.getFilePath())
-                    .asBitmap()
-                    .centerCrop()
-                    .into(holder.ivPhoto);
+            FileExtensionsUtil.Extensions fileExtType = FileExtensionsUtil.getExtensions(item.getFilePath());
+            if (fileExtType == FileExtensionsUtil.Extensions.IMAGE) {
+                Glide.with(context)
+                        .load(item.getFilePath())
+                        .asBitmap()
+                        .centerCrop()
+                        .into(holder.ivPhoto);
+            } else {
+                holder.ivPhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                holder.ivPhoto.setImageResource(FileExtensionsUtil.getTypeResourceId(fileExtType));
+            }
 
             switch (item.getUploadState()) {
                 case PROGRESS:

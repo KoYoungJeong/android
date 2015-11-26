@@ -42,7 +42,7 @@ public class IntroActivityPresenter {
 
         long initTime = System.currentTimeMillis();
 
-        if (!NetworkCheckUtil.isConnected()) {
+        if (!model.isNetworkConnected()) {
             // 네트워크 연결 상태 아니면 로그인 여부만 확인하고 넘어감
             if (!model.isNeedLogin()) {
 
@@ -169,9 +169,7 @@ public class IntroActivityPresenter {
 
         model.sleep(initTime, MAX_DELAY_MS);
 
-        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
-
-        if (selectedTeamInfo != null && !startForInvite) {
+        if (model.hasSelectedTeam() && !startForInvite) {
             ParseUpdateUtil.addChannelOnServer();
 
             if (!model.hasLeftSideMenu() && NetworkCheckUtil.isConnected()) {
