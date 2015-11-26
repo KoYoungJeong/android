@@ -26,7 +26,6 @@ import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
@@ -83,7 +82,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     TextView textViewProfileUserDivision;
     @ViewById(R.id.profile_user_position)
     TextView textViewProfileUserPosition;
-    private ProgressWheel progressWheel;
+    ProgressWheel progressWheel;
 
     @AfterInject
     void initObject() {
@@ -314,18 +313,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         ColoredToast.showError(this, getString(event.errorMessageResId));
     }
 
-    @UiThread
-    void upateOptionMenu() {
-        invalidateOptionsMenu();
-    }
-
-    private boolean isJpgOrPng(String filePath) {
-        String filePathLowerCase = filePath.toLowerCase();
-        return filePathLowerCase.endsWith("png") ||
-                filePathLowerCase.endsWith("jpg") ||
-                filePathLowerCase.endsWith("jpeg");
-    }
-
     @OnActivityResult(Crop.REQUEST_CROP)
     public void onImageCropResult(int resultCode, Intent imageData) {
         if (resultCode != RESULT_OK) {
@@ -343,11 +330,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         if (!TextUtils.isEmpty(filePath)) {
             memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, filePath);
         }
-    }
-
-    private String getDistictId() {
-        EntityManager entityManager = EntityManager.getInstance();
-        return entityManager.getDistictId();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
