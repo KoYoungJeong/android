@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface SearchPresenter {
 
-    public void setView(View view);
+    void setView(View view);
 
     void onSearchTextChange(String s);
 
@@ -19,7 +19,7 @@ public interface SearchPresenter {
 
     void onSearchAction(String text);
 
-    public interface View {
+    interface View {
 
         void setOldQueries(List<SearchKeyword> searchKeywords);
 

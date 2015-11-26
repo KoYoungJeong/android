@@ -17,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -262,6 +263,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 }, () -> {
 
                 });
+
+        messageListView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
 
         if (isFromSearch) {
             MarkerNewMessageLoader newsMessageLoader = new MarkerNewMessageLoader(getActivity());

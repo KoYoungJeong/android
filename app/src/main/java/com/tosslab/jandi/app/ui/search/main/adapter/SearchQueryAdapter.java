@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.search.main.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,12 @@ public class SearchQueryAdapter extends ArrayAdapter<SearchKeyword> {
         holder.textView.setText(getItem(position).getKeyword());
 
         return convertView;
+    }
+
+    @Override
+    public int getCount() {
+        Log.i("Test", "getCount");
+        return super.getCount();
     }
 
     static class ViewHolder {

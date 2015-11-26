@@ -25,39 +25,40 @@ public class SearchPresenterImpl implements SearchPresenter {
     @Bean
     SearchModel searchModel;
 
-    private View view;
+    View view;
     private PublishSubject<String> objectPublishSubject;
 
     @AfterInject
     void initObject() {
         objectPublishSubject = PublishSubject.create();
-
         objectPublishSubject
                 .throttleWithTimeout(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String text) {
-                        List<SearchKeyword> searchKeywords = searchModel.searchOldQuery(text);
-                        view.setOldQueries(searchKeywords);
-                    }
-                });
+                .subscribe(this::onSearchText);
     }
 
     @Override
     public void setView(View view) {
-
         this.view = view;
+    }
+
+    void onSearchText(String text) {
+        List<SearchKeyword> searchKeywords = searchModel.searchOldQuery(text);
+        view.setOldQueries(searchKeywords);
     }
 
     @Override
     public void onSearchTextChange(String text) {
         if (!TextUtils.isEmpty(text)) {
-            objectPublishSubject.onNext(text);
+            publishNext(text);
             view.setMicToClearImage();
         } else {
             view.setClearToMicImage();
         }
+    }
+
+    public void publishNext(String text) {
+        objectPublishSubject.onNext(text);
     }
 
     @Override
@@ -82,7 +83,6 @@ public class SearchPresenterImpl implements SearchPresenter {
         } else {
             view.showNoVoiceSearchItem();
         }
-
     }
 
     @Override
