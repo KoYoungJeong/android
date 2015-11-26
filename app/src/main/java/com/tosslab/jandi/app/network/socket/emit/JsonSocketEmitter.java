@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.network.socket.emit;
 
 import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import java.io.IOException;
 
@@ -25,9 +26,9 @@ public class JsonSocketEmitter implements SocketEmitter {
         try {
             String jsonData = JacksonMapper.getInstance().getObjectMapper().writeValueAsString(data);
             emitter.emit(socketEmitData.getEvent(), jsonData);
+            JandiPreference.setSocketConnectedLastTime();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
