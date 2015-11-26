@@ -69,19 +69,19 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     ModifyProfilePresenter memberProfilePresenter;
 
     @ViewById(R.id.profile_photo)
-    ImageView imageViewProfilePhoto;
+    ImageView ivProfilePhoto;
     @ViewById(R.id.profile_user_realname)
-    TextView textViewProfileRealName;
+    TextView tvProfileRealName;
     @ViewById(R.id.profile_user_status_message)
-    TextView textViewProfileStatusMessage;
+    TextView tvProfileStatusMessage;
     @ViewById(R.id.profile_user_email)
-    TextView textViewProfileUserEmail;
+    TextView tvProfileUserEmail;
     @ViewById(R.id.profile_user_phone_number)
-    TextView textViewProfileUserPhone;
+    TextView tvProfileUserPhone;
     @ViewById(R.id.profile_user_division)
-    TextView textViewProfileUserDivision;
+    TextView tvProfileUserDivision;
     @ViewById(R.id.profile_user_position)
-    TextView textViewProfileUserPosition;
+    TextView tvProfileUserPosition;
     ProgressWheel progressWheel;
 
     @AfterInject
@@ -268,7 +268,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void closeDialogFragment() {
         android.app.Fragment dialogFragment = getFragmentManager().findFragmentByTag("dialog");
@@ -351,7 +351,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     }
 
     @Override
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void displayProfile(ResLeftSideMenu.User user) {
         // 프로필 사진
 
@@ -364,33 +364,33 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
         displayProfileImage(profileImageUrlPath);
         // 프로필 이름
-        textViewProfileRealName.setText(user.name);
+        tvProfileRealName.setText(user.name);
         // 상태 메시지
         String strStatus = (user.u_statusMessage);
         if (!TextUtils.isEmpty(strStatus)) {
-            textViewProfileStatusMessage.setText(strStatus);
-            textViewProfileStatusMessage.setTextColor(getResources().getColor(R.color.jandi_text));
+            tvProfileStatusMessage.setText(strStatus);
+            tvProfileStatusMessage.setTextColor(getResources().getColor(R.color.jandi_text));
         }
 
         // 이메일
-        textViewProfileUserEmail.setText(user.u_email);
+        tvProfileUserEmail.setText(user.u_email);
         // 폰넘버
         String strPhone = (user.u_extraData.phoneNumber);
         if (!TextUtils.isEmpty(strPhone)) {
-            textViewProfileUserPhone.setText(strPhone);
-            textViewProfileUserPhone.setTextColor(getResources().getColor(R.color.jandi_text));
+            tvProfileUserPhone.setText(strPhone);
+            tvProfileUserPhone.setTextColor(getResources().getColor(R.color.jandi_text));
         }
         // 부서
         String strDivision = (user.u_extraData.department);
         if (!TextUtils.isEmpty(strDivision)) {
-            textViewProfileUserDivision.setText(strDivision);
-            textViewProfileUserDivision.setTextColor(getResources().getColor(R.color.jandi_text));
+            tvProfileUserDivision.setText(strDivision);
+            tvProfileUserDivision.setTextColor(getResources().getColor(R.color.jandi_text));
         }
         // 직책
         String strPosition = user.u_extraData.position;
         if (!TextUtils.isEmpty(strPosition)) {
-            textViewProfileUserPosition.setText(strPosition);
-            textViewProfileUserPosition.setTextColor(getResources().getColor(R.color.jandi_text));
+            tvProfileUserPosition.setText(strPosition);
+            tvProfileUserPosition.setTextColor(getResources().getColor(R.color.jandi_text));
         }
     }
 
@@ -402,7 +402,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
                     .placeholder(R.drawable.profile_img)
                     .error(R.drawable.profile_img)
                     .transform(new GlideCircleTransform(ModifyProfileActivity.this))
-                    .into(imageViewProfilePhoto);
+                    .into(ivProfilePhoto);
         }
     }
 
@@ -416,48 +416,48 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     public ReqUpdateProfile getUpdateProfile() {
         ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
-        reqUpdateProfile.statusMessage = textViewProfileStatusMessage.getText().toString();
-        reqUpdateProfile.phoneNumber = textViewProfileUserPhone.getText().toString();
-        reqUpdateProfile.department = textViewProfileUserDivision.getText().toString();
-        reqUpdateProfile.position = textViewProfileUserPosition.getText().toString();
+        reqUpdateProfile.statusMessage = tvProfileStatusMessage.getText().toString();
+        reqUpdateProfile.phoneNumber = tvProfileUserPhone.getText().toString();
+        reqUpdateProfile.department = tvProfileUserDivision.getText().toString();
+        reqUpdateProfile.position = tvProfileUserPosition.getText().toString();
         return reqUpdateProfile;
     }
 
-    public void updateProfileTextColor(int actionType, String inputMessage) {
+    private void updateProfileTextColor(int actionType, String inputMessage) {
         switch (actionType) {
             case EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS:
-                setTextAndChangeColor(textViewProfileStatusMessage, inputMessage);
+                setTextAndChangeColor(tvProfileStatusMessage, inputMessage);
                 break;
             case EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE:
-                setTextAndChangeColor(textViewProfileUserPhone, inputMessage);
+                setTextAndChangeColor(tvProfileUserPhone, inputMessage);
                 break;
             case EditTextDialogFragment.ACTION_MODIFY_PROFILE_DIVISION:
-                setTextAndChangeColor(textViewProfileUserDivision, inputMessage);
+                setTextAndChangeColor(tvProfileUserDivision, inputMessage);
                 break;
             case EditTextDialogFragment.ACTION_MODIFY_PROFILE_POSITION:
-                setTextAndChangeColor(textViewProfileUserPosition, inputMessage);
+                setTextAndChangeColor(tvProfileUserPosition, inputMessage);
                 break;
             case EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME:
-                setTextAndChangeColor(textViewProfileRealName, inputMessage);
+                setTextAndChangeColor(tvProfileRealName, inputMessage);
                 break;
             default:
                 break;
         }
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     void setTextAndChangeColor(TextView textView, String textToBeChanged) {
         textView.setText(textToBeChanged);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateLocalProfileImage(File mTempPhotoFile) {
         Glide.with(ModifyProfileActivity.this)
                 .load(mTempPhotoFile)
                 .placeholder(R.drawable.profile_img)
                 .error(R.drawable.profile_img)
                 .transform(new GlideCircleTransform(ModifyProfileActivity.this))
-                .into(imageViewProfilePhoto);
+                .into(ivProfilePhoto);
 
     }
 
@@ -470,13 +470,13 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         newFragment.show(getFragmentManager(), "dialog");
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showToastNoUpdateProfile() {
         ColoredToast.showWarning(ModifyProfileActivity.this, JandiApplication.getContext()
                 .getString(R.string.err_profile_unmodified));
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showPhotoUploadProgressDialog(ProgressDialog progressDialog) {
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setMessage(JandiApplication.getContext().getString(R.string.jandi_file_uploading));
@@ -484,48 +484,43 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void dismissProgressDialog(ProgressDialog progressDialog) {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void successPhotoUpload() {
         ColoredToast.show(ModifyProfileActivity.this, JandiApplication.getContext()
                 .getString(R.string.jandi_profile_photo_upload_succeed));
 
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void failPhotoUpload() {
         ColoredToast.showError(ModifyProfileActivity.this, JandiApplication.getContext()
                 .getString(R.string.err_profile_photo_upload));
 
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateProfileSucceed() {
         ColoredToast.show(ModifyProfileActivity.this, JandiApplication.getContext()
                 .getString(R.string.jandi_profile_update_succeed));
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateProfileFailed() {
         ColoredToast.showError(ModifyProfileActivity.this, JandiApplication.getContext()
                 .getString(R.string.err_profile_update));
 
     }
 
-
-    public String getName() {
-        return textViewProfileRealName.getText().toString();
-    }
-
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void successUpdateNameColor() {
-        textViewProfileRealName.setTextColor(JandiApplication.getContext().getResources().getColor(R.color.jandi_text));
+        tvProfileRealName.setTextColor(JandiApplication.getContext().getResources().getColor(R.color.jandi_text));
 
     }
 
@@ -557,19 +552,19 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
                 .create().show();
     }
 
-    public String getEmail() {
+    private String getEmail() {
 
-        return textViewProfileUserEmail.getText().toString();
+        return tvProfileUserEmail.getText().toString();
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateEmailTextColor(String email) {
-        setTextAndChangeColor(textViewProfileUserEmail, email);
+        setTextAndChangeColor(tvProfileUserEmail, email);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void successUpdateEmailColor() {
-        textViewProfileUserEmail.setTextColor(JandiApplication.getContext().getResources().getColor(R.color.jandi_text));
+        tvProfileUserEmail.setTextColor(JandiApplication.getContext().getResources().getColor(R.color.jandi_text));
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
