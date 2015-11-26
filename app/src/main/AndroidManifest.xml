@@ -103,7 +103,7 @@
         <activity android:name=".ui.settings.privacy.SettingPrivacyActivity_" />
 
         <activity
-            android:name=".ui.profile.modify.ModifyProfileActivity_"
+            android:name=".ui.profile.modify.view.ModifyProfileActivity_"
             android:label="@string/jandi_profile_actionb" />
 
         <activity
@@ -368,15 +368,15 @@
         <service android:name=".push.receiver.JandiPushIntentService" />
 
         <!-- Log Out Service -->
-        <service android:name=".services.SignOutService"/>
+        <service android:name=".services.SignOutService" />
 
         <!-- Download Service -->
-        <service android:name=".services.download.DownloadService"/>
+        <service android:name=".services.download.DownloadService" />
 
         <!-- Download File Open Receiver -->
         <receiver android:name=".services.download.FileOpenDelegator">
             <intent-filter>
-                <action android:name="com.tosslab.jandi.app.FileOpen"/>
+                <action android:name="com.tosslab.jandi.app.FileOpen" />
             </intent-filter>
         </receiver>
 
