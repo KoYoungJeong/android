@@ -85,6 +85,10 @@
 	<string name="jandi_announcement_deleted">"%s deleted the announcement."</string>
 	<string name="jandi_announcement_minimize">"Hide"</string>
 	<string name="jandi_ask_kick_user_from_topic">"Are you sure you want to remove this member from the topic?"</string>
+	<string name="jandi_auto_join_cannot_be_private_topic">"Auto invitation is only available in public topics."</string>
+	<string name="jandi_auto_join_explain">"Invite all new members to this topic"</string>
+	<string name="jandi_auto_join_title">"Auto Invitation"</string>
+	<string name="jandi_auto_join_title_wild">"Auto Invitation*"</string>
 	<string name="jandi_browse_other_topics">"Browse other topics"</string>
 	<string name="jandi_cancel">"Cancel"</string>
 	<string name="jandi_canceled">"Canceled"</string>
@@ -281,6 +285,8 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_no_topic_to_join">"No topics to join"</string>
 	<string name="jandi_notification_off">"Turn off Notifications"</string>
 	<string name="jandi_notification_on">"Turn on notifications"</string>
+	<string name="jandi_notify_download">"Download started. You can check the progress in the notification bar."</string>
+	<string name="jandi_notify_download_complete">"Download complete"</string>
 	<string name="jandi_nowhere_shared_file">"File has not been shared in other rooms."</string>
 	<string name="jandi_off">"Off"</string>
 	<string name="jandi_on">"On"</string>

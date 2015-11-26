@@ -13,9 +13,6 @@ import com.tosslab.jandi.app.R;
 
 import java.lang.reflect.Method;
 
-/**
- * Created by jsuch2362 on 15. 11. 17..
- */
 public class ListPreferenceCompat extends ListPreference {
     private Context context;
     private Dialog dialog;
@@ -46,6 +43,7 @@ public class ListPreferenceCompat extends ListPreference {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.JandiTheme_AlertDialog_FixWidth_280)
                 .setTitle(getDialogTitle())
                 .setIcon(getDialogIcon())
+                .setNegativeButton(R.string.jandi_cancel, null)
                 .setSingleChoiceItems(getEntries(), preselect, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

@@ -65,7 +65,7 @@ public class MessageViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        BitmapUtil.loadImageByIon(ivProfile,
+        BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
                 profileUrl,
                 R.drawable.profile_img,
                 R.drawable.profile_img

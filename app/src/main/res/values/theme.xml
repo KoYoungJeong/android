@@ -34,9 +34,15 @@
 
         <item name="windowMinWidthMinor">@dimen/jandi_dialog_min_width</item>
         <item name="windowMinWidthMajor">@dimen/jandi_dialog_min_width</item>
+        <item name="alertDialogStyle">@style/JandiTheme.AlertDialogStyle</item>
+
 
         <!--<item name="buttonBarButtonStyle">@style/JandiButtonBarButtonStyle</item>-->
 
+    </style>
+
+    <style name="JandiTheme.AlertDialogStyle" parent="@style/AlertDialog.AppCompat.Light">
+        <item name="singleChoiceItemLayout">@layout/select_dialog_singlechoice</item>
     </style>
 
     <style name="JandiButtonBarButtonStyle" parent="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog">

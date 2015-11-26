@@ -652,9 +652,15 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         MessageListFragment.this.stickerInfo = NULL_STICKER;
         messageListPresenter.dismissStickerPreview();
 
-        ResultMentionsVO mentionInfoObject = mentionControlViewModel.getMentionInfoObject();
-        if (TextUtils.isEmpty(mentionInfoObject.getMessage())) {
-            messageListPresenter.setEnableSendButton(false);
+        if (mentionControlViewModel != null) {
+            ResultMentionsVO mentionInfoObject = mentionControlViewModel.getMentionInfoObject();
+            if (TextUtils.isEmpty(mentionInfoObject.getMessage())) {
+                messageListPresenter.setEnableSendButton(false);
+            }
+        } else {
+            if (TextUtils.isEmpty(messageEditText.getText())) {
+                messageListPresenter.setEnableSendButton(false);
+            }
         }
 
         AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_cancel);

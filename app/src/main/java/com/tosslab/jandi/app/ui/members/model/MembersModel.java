@@ -108,4 +108,12 @@ public class MembersModel {
     public void kickUser(int teamId, int topicId, int userEntityId) throws RetrofitError {
         RequestApiManager.getInstance().kickUserFromTopic(teamId, topicId, new ReqMember(userEntityId));
     }
+
+    public boolean isTeamOwner() {
+        return TextUtils.equals(EntityManager.getInstance().getMe().getUser().u_authority, "owner");
+    }
+
+    public boolean isTopicOwner(int entityId) {
+        return EntityManager.getInstance().isMyTopic(entityId);
+    }
 }

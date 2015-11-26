@@ -18,7 +18,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.file.FileSizeUtil;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
@@ -74,7 +74,7 @@ public class ImageViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        BitmapUtil.loadImageByIon(ivProfile,
+        BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
                 profileUrl,
                 R.drawable.profile_img,
                 R.drawable.profile_img
@@ -175,12 +175,12 @@ public class ImageViewHolder implements BodyViewHolder {
                                     fileContent, BitmapUtil.Thumbnails.LARGE);
                         }
 
-                        BitmapUtil.loadCropBitmapByIon(ivFileImage,
+                        BitmapUtil.loadCropBitmapByGlide(ivFileImage,
                                 thumbPath,
-                                R.drawable.file_icon_img
+                                R.drawable.file_messageview_downloading
                         );
 
-                        String fileSize = FileSizeUtil.fileSizeCalculation(fileContent.size);
+                        String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
                         tvFileType.setText(String.format("%s, %s", fileSize, fileContent.ext));
                     }
                 } else {

@@ -32,10 +32,8 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -51,9 +49,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.UiThread;
-
-import java.io.File;
-import java.io.IOException;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
@@ -248,7 +243,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
         Permissions.getChecker()
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .hasPermission(() -> {
-                    filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY,
+                    filePickerViewModel.selectFileSelector(Crop.REQUEST_CROP,
                             ModifyProfileActivity.this);
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile,
                             AnalyticsValue.Action.PhotoEdit);
@@ -381,33 +376,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity {
     @UiThread
     void upateOptionMenu() {
         invalidateOptionsMenu();
-    }
-
-    @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_GALLERY)
-    public void onImagePickResult(int resultCode, Intent imageData) {
-        UnLockPassCodeManager.getInstance().setUnLocked(true);
-
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-
-        String filePath = filePickerViewModel.getFilePath(getApplicationContext(), FilePickerViewModel.TYPE_UPLOAD_GALLERY, imageData).get(0);
-        if (!TextUtils.isEmpty(filePath) && isJpgOrPng(filePath)) {
-            try {
-                // fileExt = .jpg or .png
-                String fileExt = filePath.substring(filePath.lastIndexOf("."), filePath.length());
-                Crop.of(Uri.fromFile(new File(filePath)),
-                        Uri.fromFile(File.createTempFile("temp_", fileExt,
-                                new File(GoogleImagePickerUtil.getDownloadPath()))))
-                        .asSquare()
-                        .start(ModifyProfileActivity.this);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            ColoredToast.showWarning(ModifyProfileActivity.this, getString(R.string.jandi_unsupported_type_picture));
-        }
-
     }
 
     private boolean isJpgOrPng(String filePath) {

@@ -1,7 +1,11 @@
 package com.tosslab.jandi.app.ui.album.fragment;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +15,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
+import com.soundcloud.android.crop.Crop;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.album.fragment.adapter.DefaultAlbumAdapter;
 import com.tosslab.jandi.app.ui.album.fragment.adapter.ImagePictureAdapter;
 import com.tosslab.jandi.app.ui.album.fragment.presenter.ImageAlbumPresenter;
@@ -20,6 +26,7 @@ import com.tosslab.jandi.app.ui.album.fragment.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
 import com.tosslab.jandi.app.utils.AnimationModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
@@ -30,6 +37,8 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @EFragment(R.layout.fragment_image_album)
@@ -48,6 +57,9 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
 
     @FragmentArg
     int buckerId = BUCKET_ALBUM_LIST;
+
+    @FragmentArg
+    int mode;
 
     @AfterInject
     void initObject() {
@@ -104,23 +116,62 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
         recyclerView.setItemAnimator(null);
         recyclerView.setLayoutManager(layoutManager);
         ImagePictureAdapter adapter = new ImagePictureAdapter(getActivity(), photoList);
+        adapter.setMode(mode);
         adapter.setOnRecyclerItemCheckClickListener((view, adapter1, position) -> {
+
             ImagePicture item = ((ImagePictureAdapter) adapter1).getItem(position);
 
-            imageAlbumPresenter.onSelectPicture(item, position);
-            imageAlbumPresenter.onSetupActionbar(buckerId);
+            if (mode == ImageAlbumActivity.EXTRA_MODE_UPLOAD) {
+                imageAlbumPresenter.onSelectPicture(item, position);
+                imageAlbumPresenter.onSetupActionbar(buckerId);
+            } else {
+                callCropActivity(item);
+            }
 
         });
 
         adapter.setOnRecyclerItemImageClickListener((view, adapter1, position) -> {
             ImagePicture item = ((ImagePictureAdapter) adapter1).getItem(position);
 
-            imageAlbumPresenter.onSelectPicture(item, position);
-            imageAlbumPresenter.onSetupActionbar(buckerId);
+            if (mode == ImageAlbumActivity.EXTRA_MODE_UPLOAD) {
+
+
+                imageAlbumPresenter.onSelectPicture(item, position);
+                imageAlbumPresenter.onSetupActionbar(buckerId);
+            } else {
+                callCropActivity(item);
+            }
 
         });
         recyclerView.setAdapter(adapter);
 
+    }
+
+    private void callCropActivity(ImagePicture item) {
+        String imagePath = item.getImagePath();
+        try {
+            Crop.of(Uri.fromFile(new File(imagePath)),
+                    Uri.fromFile(File.createTempFile("temp_", ".jpg",
+                            new File(GoogleImagePickerUtil.getDownloadPath()))))
+                    .asSquare()
+                    .start(getActivity(), ImageAlbumFragment.this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (requestCode == Crop.REQUEST_CROP) {
+            FragmentActivity activity = getActivity();
+            activity.setResult(Activity.RESULT_OK, data);
+            activity.finish();
+        }
     }
 
     @Override
@@ -139,7 +190,7 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
     @Override
     public void moveImagePicture(int bucketId) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        Fragment fragment = ImageAlbumFragment_.builder().buckerId(bucketId).build();
+        Fragment fragment = ImageAlbumFragment_.builder().mode(mode).buckerId(bucketId).build();
         fragmentTransaction.replace(R.id.vg_image_album_content, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();

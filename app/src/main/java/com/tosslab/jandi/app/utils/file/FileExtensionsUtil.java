@@ -17,6 +17,10 @@ public class FileExtensionsUtil {
     public static int getFileTypeImageResource(String fileName) {
         Extensions extensions = getExtensions(fileName);
 
+        return getTypeResourceId(extensions);
+    }
+
+    public static int getTypeResourceId(Extensions extensions) {
         switch (extensions) {
             case IMAGE:
                 return R.drawable.file_icon_img;
@@ -94,29 +98,7 @@ public class FileExtensionsUtil {
     public static int getFileTypeBigImageResource(String fileName) {
         Extensions extensions = getExtensions(fileName);
 
-        switch (extensions) {
-            case IMAGE:
-                return R.drawable.file_icon_img;
-            case VIDEO:
-                return R.drawable.file_icon_video;
-            case AUDIO:
-                return R.drawable.file_icon_audio;
-            case PDF:
-                return R.drawable.file_icon_pdf;
-            case TXT:
-                return R.drawable.file_icon_txt;
-            case HWP:
-                return R.drawable.file_icon_hwp;
-            case EXEL:
-                return R.drawable.file_icon_exel;
-            case DOC:
-                return R.drawable.file_icon_txt;
-            case PPT:
-                return R.drawable.file_icon_ppt;
-            default:
-            case ETC:
-                return R.drawable.file_icon_etc;
-        }
+        return getTypeResourceId(extensions);
     }
 
     public enum Extensions {

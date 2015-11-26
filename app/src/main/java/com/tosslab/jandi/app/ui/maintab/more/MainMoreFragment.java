@@ -109,7 +109,7 @@ public class MainMoreFragment extends Fragment {
         Observable.just(1)
                 .delay(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(integer -> initTextLine());
+                .subscribe(integer -> initTextLine(), Throwable::printStackTrace);
     }
 
     private void initTextLine() {
@@ -129,9 +129,8 @@ public class MainMoreFragment extends Fragment {
             final int finalIdx = idx;
             Observable.range(0, maxTextLine - textLine)
                     .map(integer -> "\n")
-                    .subscribe(s -> {
-                        views[finalIdx].setIconText(views[finalIdx].getText() + s);
-                    });
+                    .subscribe(s -> views[finalIdx].setIconText(views[finalIdx].getText() + s),
+                            Throwable::printStackTrace);
         }
 
 
