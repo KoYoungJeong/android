@@ -1,6 +1,9 @@
 package com.tosslab.jandi.app.network.socket.connector;
 
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
@@ -68,15 +71,19 @@ public class JandiSocketConnector implements SocketConnector {
             }).on(Socket.EVENT_ERROR, args -> {
                 LogUtil.e(TAG, Socket.EVENT_ERROR);
                 disconnectCallback(disconnectListener, args);
+                JandiPreference.setSocketConnectedLastTime();
             }).on(Socket.EVENT_DISCONNECT, args -> {
                 LogUtil.e(TAG, Socket.EVENT_DISCONNECT);
                 disconnectCallback(disconnectListener, args);
+                JandiPreference.setSocketConnectedLastTime();
             }).on(Socket.EVENT_CONNECT_ERROR, args -> {
                 LogUtil.e(TAG, Socket.EVENT_CONNECT_ERROR);
                 disconnectCallback(disconnectListener, args);
+                JandiPreference.setSocketConnectedLastTime();
             }).on(Socket.EVENT_CONNECT_TIMEOUT, args -> {
                 LogUtil.e(TAG, Socket.EVENT_CONNECT_TIMEOUT);
                 disconnectCallback(disconnectListener, args);
+                JandiPreference.setSocketConnectedLastTime();
             });
             socket.connect();
         }
@@ -107,11 +114,18 @@ public class JandiSocketConnector implements SocketConnector {
             } catch (RetrofitError e) {
                 JandiPreference.setSocketConnectedLastTime();
                 e.printStackTrace();
-                // 캐시 다 지우기
+                // 오류 나면 그 때 부터 데이터가 꼬이기 시작한다. 다 지우기 - 최선인가.....
+                OrmDatabaseHelper dbHelper =
+                        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
+                dbHelper.clearAllData();
+
             }
         } else {
             JandiPreference.setSocketConnectedLastTime();
             // 캐시 다 지우기
+            OrmDatabaseHelper dbHelper =
+                    OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
+            dbHelper.clearAllData();
         }
 
     }
