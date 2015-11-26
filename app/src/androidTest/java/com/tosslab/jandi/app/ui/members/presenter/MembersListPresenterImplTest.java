@@ -4,6 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.ui.members.MembersListActivity;
 
 import org.junit.After;
 import org.junit.Before;
@@ -16,8 +17,8 @@ import setup.BaseInitUtil;
 @RunWith(AndroidJUnit4.class)
 public class MembersListPresenterImplTest {
 
-    private MembersListPresenter presenter;
-    private MembersListPresenter.View mockView;
+    private MembersListPresenterImpl presenter;
+    private MembersListPresenterImpl.View mockView;
     private int topicId;
 
     @Before
@@ -26,7 +27,6 @@ public class MembersListPresenterImplTest {
         BaseInitUtil.inviteDummyMembers();
 
         topicId = BaseInitUtil.tempTopicId;
-
 
         presenter = MembersListPresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = Mockito.mock(MembersListPresenter.View.class);
@@ -41,8 +41,7 @@ public class MembersListPresenterImplTest {
 
     @Test
     public void testOnKickUser() throws Exception {
-        int entityId = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_ID);
-
+        int entityId = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL);
         {
             final boolean[] finish = {false};
             Mockito.doAnswer(invocationOnMock -> {
@@ -60,7 +59,6 @@ public class MembersListPresenterImplTest {
         }
 
         {
-
             final boolean[] finish = {false};
             Mockito.doAnswer(invocationOnMock -> {
                 finish[0] = true;
@@ -75,7 +73,6 @@ public class MembersListPresenterImplTest {
         }
 
         {
-
             BaseInitUtil.disconnectWifi();
 
             final boolean[] finish = {false};
@@ -90,6 +87,26 @@ public class MembersListPresenterImplTest {
             Mockito.verify(mockView).showKickFailToast();
             BaseInitUtil.restoreContext();
         }
+    }
 
+    @Test
+    public void testGetFilteredChatChooseItems() throws Exception {
+
+    }
+
+    @Test
+    public void testGetChatChooseItems() throws Exception {
+
+        Mockito.doAnswer(invocationOnMock -> {
+
+        }).doReturn()
+        presenter.getChatChooseItems();
+
+
+        Mockito.when(mockView.getEntityId()).thenReturn(BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL));
+        Mockito.when(mockView.getType()).thenReturn(MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC);
+        Mockito.when(mockView.getType()).thenReturn(MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC);
+        Mockito.when(mockView.getType()).thenReturn(MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC);
+        Mockito.when(mockView.getType()).thenReturn(MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC);
     }
 }

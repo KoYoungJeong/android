@@ -50,12 +50,12 @@ public class BaseInitUtil {
     public static int tempTopicId = -1;
     public static int topicState = STATE_TEMP_TOPIC_NOT_CREATED;
 
-    public static String TEST_ID = "androidtester1@gustr.com";
+    public static String TEST_EMAIL = "androidtester1@gustr.com";
     public static String TEST_PASSWORD = "asdf1234";
 
-    public static String TEST1_ID = "androidtester1@gustr.com";
-    public static String TEST2_ID = "androidtester2@gustr.com";
-    public static String TEST3_ID = "androidtester3@gustr.com";
+    public static String TEST1_EMAIL = "androidtester1@gustr.com";
+    public static String TEST2_EMAIL = "androidtester2@gustr.com";
+    public static String TEST3_EMAIL = "androidtester3@gustr.com";
     private static Context ORIGIN_CONTEXT;
 
     public static void initData() {
@@ -92,6 +92,18 @@ public class BaseInitUtil {
         TokenUtil.saveTokenInfoByPassword(accessToken);
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         int result = accountInfo.getMemberships().iterator().next().getMemberId();
+        accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
+                ReqAccessToken.createPasswordReqToken("androidtester1@gustr.com", "1234asdf"));
+        TokenUtil.saveTokenInfoByPassword(accessToken);
+        return result;
+    }
+
+    public static String getUserNameByEmail(String email) {
+        ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
+                ReqAccessToken.createPasswordReqToken(email, "1234asdf"));
+        TokenUtil.saveTokenInfoByPassword(accessToken);
+        ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+        String result = accountInfo.getMemberships().iterator().next().getName();
         accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
                 ReqAccessToken.createPasswordReqToken("androidtester1@gustr.com", "1234asdf"));
         TokenUtil.saveTokenInfoByPassword(accessToken);
@@ -150,8 +162,8 @@ public class BaseInitUtil {
     public static void inviteDummyMembers() {
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
-        int tester2Id = getUserIdByEmail(TEST2_ID);
-        int tester3Id = getUserIdByEmail(TEST3_ID);
+        int tester2Id = getUserIdByEmail(TEST2_EMAIL);
+        int tester3Id = getUserIdByEmail(TEST3_EMAIL);
         List<Integer> members = new ArrayList<>();
         members.add(tester2Id);
         members.add(tester3Id);
