@@ -234,11 +234,11 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     @Override
     public void initKickableMode(int entityId) {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        int myId = EntityManager.getInstance().getMe().getId();
+        boolean topicOwner = memberModel.isTopicOwner(entityId);
+        boolean teamOwner = memberModel.isTeamOwner();
         boolean isDefaultTopic = EntityManager.getInstance().getDefaultTopicId() == entityId;
         // 내 토픽이되 기본 토픽이 아니어야 함
-        view.setKickMode(entity.isMine(myId) && !isDefaultTopic);
+        view.setKickMode((topicOwner || teamOwner) && !isDefaultTopic);
     }
 
     @Background
