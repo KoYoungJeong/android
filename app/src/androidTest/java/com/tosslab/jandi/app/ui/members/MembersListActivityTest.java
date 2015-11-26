@@ -1,9 +1,16 @@
 package com.tosslab.jandi.app.ui.members;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 
+import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
+import com.tosslab.jandi.app.ui.members.adapter.MembersAdapter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl_;
 
@@ -11,12 +18,19 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import setup.BaseInitUtil;
 
-/**
- * Created by tee on 15. 11. 13..
- */
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.RootMatchers.isDialog;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static junit.framework.Assert.fail;
+import static org.hamcrest.Matchers.not;
+
+@RunWith(AndroidJUnit4.class)
 public class MembersListActivityTest {
 
     @Rule
@@ -38,17 +52,57 @@ public class MembersListActivityTest {
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
     }
 
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.deleteDummyTopic();
+    }
+
     @Test
-    public void kickMemberToast() {
-        int id = BaseInitUtil.tempTopicId;
-        int userId = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST3_ID);
-        membersListPresenter.onKickUser(id, userId);
+    public void testRemoveUser() throws Throwable {
+        // Given
+        int entityId = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_ID);
+
+        // When
+        rule.runOnUiThread(() -> activity.removeUser(entityId));
+
+        // Then
+        MembersAdapter adapter = (MembersAdapter) activity.memberListView.getAdapter();
+        for (int idx = 0; idx < adapter.getItemCount(); idx++) {
+            int entityId1 = adapter.getItem(idx).getEntityId();
+            if (entityId1 == entityId) {
+                fail("삭제 했는데 왜 있지?");
+            }
+        }
+
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
+
+        onView(withText(entity.getName()))
+                // 체크 메소드 다시 설정해야함.
+                .check(matches(not(isDisplayed())));
 
     }
 
-    @After
-    public void finish() throws Exception {
-        BaseInitUtil.deleteDummyTopic();
+    @Test
+    public void testShowKickFromTopicDialog() {
+        ChatChooseItem item = getTempItem();
+
+        rule.getActivity().showKickFromTopicDialog(item);
+
+        onView(withText(R.string.jandi_confirm))
+                .inRoot(isDialog())
+                .check(matches(isDisplayed()));
+
+    }
+
+    @NonNull
+    private ChatChooseItem getTempItem() {
+        int entityId = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_ID);
+
+        ChatChooseItem item = new ChatChooseItem();
+        item.name("aaa");
+        item.photoUrl("");
+        item.entityId(entityId);
+        return item;
     }
 
 }
