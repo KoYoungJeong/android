@@ -159,6 +159,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@id/iv_icon_help"
                     android:text="@string/jandi_help"
+                    android:textColor="@color/jandi_member_profile_user_name"
                     android:textSize="14sp" />
 
                 <ImageView
@@ -193,6 +194,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@id/iv_icon_setting"
                     android:text="@string/jandi_settings"
+                    android:textColor="@color/jandi_member_profile_user_name"
                     android:textSize="@dimen/jandi_text_size_medium" />
 
                 <ImageView
@@ -228,6 +230,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@id/iv_icon_version"
                     android:text="Version"
+                    android:textColor="@color/jandi_member_profile_user_name"
                     android:textSize="@dimen/jandi_text_size_medium" />
 
                 <TextView
@@ -236,7 +239,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/tv_version_title"
-                    android:text="(v1.5.0)" />
+                    android:text="(v1.5.0)"
+                    android:textColor="@color/jandi_member_profile_user_name" />
 
                 <TextView
                     android:id="@+id/btn_update_version"

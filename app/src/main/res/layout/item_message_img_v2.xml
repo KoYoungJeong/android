@@ -14,7 +14,7 @@
         android:orientation="horizontal"
         android:paddingBottom="10dp"
         android:paddingLeft="@dimen/jandi_messages_padding_left"
-        android:paddingTop="8dp"
+        android:paddingTop="10dp"
         android:visibility="visible">
         <!-- 사용자 프로필 사진 -->
         <ImageView
@@ -100,7 +100,7 @@
                 android:layout_height="115dp"
                 android:layout_marginBottom="11dp"
                 android:layout_marginRight="25dp"
-                android:scaleType="centerCrop" />
+                android:scaleType="fitCenter" />
 
             <View
                 android:layout_width="wrap_content"

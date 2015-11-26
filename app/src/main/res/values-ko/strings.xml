@@ -85,6 +85,10 @@
 	<string name="jandi_announcement_deleted">"%s님이 공지사항을 삭제했습니다."</string>
 	<string name="jandi_announcement_minimize">"최소화"</string>
 	<string name="jandi_ask_kick_user_from_topic">"정말 이 멤버를 내보내시겠습니까?"</string>
+	<string name="jandi_auto_join_cannot_be_private_topic">"자동 초대는 공개 토픽 에서만 사용 가능합니다"</string>
+	<string name="jandi_auto_join_explain">"새로 팀에 참여하는 모든 멤버를 이 토픽에 초대합니다."</string>
+	<string name="jandi_auto_join_title">"자동 초대"</string>
+	<string name="jandi_auto_join_title_wild">"자동 초대*"</string>
 	<string name="jandi_browse_other_topics">"참여하지 않은 토픽 목록 보기"</string>
 	<string name="jandi_cancel">"취소"</string>
 	<string name="jandi_canceled">"취소됨"</string>
@@ -193,11 +197,11 @@
 	<string name="jandi_folder_renamed">"폴더명이 변경되었습니다."</string>
 	<string name="jandi_forgot_password">"<u>비밀번호 찾기</u>"</string>
 	<string name="jandi_go_to_latest">"최신 메시지로 가기"</string>
-	<string name="jandi_go_to_main">"잔디 메인으로"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_has_joined">"%s님이 참여하였습니다"</string>
 	<string name="jandi_have_an_account_already">"이미 계정이 있으신가요?"</string>
 	<string name="jandi_help">"도움말"</string>
+	<string name="jandi_image_too_big">"이미지가 너무 큽니다."</string>
 	<string name="jandi_incorrect_passcode">"비밀번호가 일치하지 않습니다."</string>
 	<string name="jandi_input_password">"선택한 팀 계정의 비밀번호를 입력하세요"</string>
 	<string name="jandi_input_search_keyword">"검색어를 입력해주세요."</string>
@@ -225,9 +229,10 @@
 	<string name="jandi_is_topic_required">"공개 여부"</string>
 	<string name="jandi_it_has_no_topic_description">"(토픽 설명이 없습니다)"</string>
 	<string name="jandi_joined_team">"이미 %1$s의 멤버입니다. 팀 리스트를 확인해주세요."</string>
+	<string name="jandi_kicked_message">"%s에서 관리자에 의해 퇴장되었습니다."</string>
 	<string name="jandi_later">"나중에 하기"</string>
 	<string name="jandi_launch">"잔디 시작하기"</string>
-	<string name="jandi_left_topic">"%s님이 떠났습니다"</string>
+	<string name="jandi_left_topic">"%s님이 나갔습니다"</string>
 	<string name="jandi_logout">"로그아웃"</string>
 	<string name="jandi_member_invite_popup_1">"지금 바로 멤버들을 초대하세요!"</string>
 	<string name="jandi_member_invite_popup_2">"메시지 검색이 가능한 업무용 메신저 잔디는 팀원 모두와 함께 사용해야 그 진가가 발휘됩니다. 지금 바로 멤버들을 초대하세요."</string>
@@ -241,7 +246,8 @@
 	<string name="jandi_mention_mentioned_you">"님의 멘션"</string>
 	<string name="jandi_mention_mentions">"멘션"</string>
 	<string name="jandi_mention_more">"더보기"</string>
-	<string name="jandi_mention_no_mentions">"아직 다른 팀 멤버로부터 받은 멘션이 없습니다."</string>
+	<string name="jandi_mention_no_mentions">"다른 팀 멤버에게 받은 멘션이 없습니다. 
+메시지 입력창에서 "@"을 입력하여 멘션을 주고받을 수 있습니다."</string>
 	<string name="jandi_mention_push_message">"%s 님의 멘션"</string>
 	<string name="jandi_message_ask_about_delete_comment">"이 댓글을 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
 	<string name="jandi_message_ask_about_deleting">"이 메시지를 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
@@ -273,12 +279,14 @@
 	<string name="jandi_no_invite_email">"팀에 초대를 원하는 멤버들의 이메일 주소를 입력해주세요"</string>
 	<string name="jandi_no_long_team_member">"%s님은 더 이상 팀 멤버가 아닙니다."</string>
 	<string name="jandi_no_message_in_topic_dm">"아직 메세지가 없습니다.메세지를 입력하셔서 대화를 시작해보세요."</string>
-	<string name="jandi_no_preview_push_mention">"[{{TopicName}}] {{Sendername}}님이 멘션했습니다."</string>
-	<string name="jandi_no_preview_push_message">"[{{TopicName}}] {{Sendername}}님이 새 메시지를 보냈습니다."</string>
+	<string name="jandi_no_preview_push_mention">"메시지에서 멘션했습니다."</string>
+	<string name="jandi_no_preview_push_message">"새 메시지가 도착했습니다."</string>
 	<string name="jandi_no_recent_stickers">"최근 사용한 스티커가 없습니다."</string>
 	<string name="jandi_no_topic_to_join">"참여 가능한 토픽이 없습니다"</string>
 	<string name="jandi_notification_off">"알림 끄기"</string>
 	<string name="jandi_notification_on">"알림 켜기"</string>
+	<string name="jandi_notify_download">"파일을 다운로드 합니다. 알림 표시줄에서 확인해주세요."</string>
+	<string name="jandi_notify_download_complete">"다운로드 완료"</string>
 	<string name="jandi_nowhere_shared_file">"공유된 대화방이 없습니다"</string>
 	<string name="jandi_off">"끄기"</string>
 	<string name="jandi_on">"켜기"</string>
@@ -338,7 +346,9 @@
 	<string name="jandi_set_passcode">"비밀번호 잠금 설정"</string>
 	<string name="jandi_set_passcode_detail">"비밀번호를 잊은 경우 다시 찾을 수 있는 방법이 없으므로 
 앱을 지우고 재설치 해 주시기 바랍니다"</string>
+	<string name="jandi_setting_display">"화면"</string>
 	<string name="jandi_setting_general">"일반"</string>
+	<string name="jandi_setting_notification">"알림 설정"</string>
 	<string name="jandi_setting_push">"알림 설정"</string>
 	<string name="jandi_setting_push_subscription">"알림"</string>
 	<string name="jandi_setting_push_subscription_cancel">"푸쉬 알림을 받지 않습니다."</string>
@@ -392,6 +402,7 @@
 	<string name="jandi_tab_file">"파일"</string>
 	<string name="jandi_tab_more">"더보기"</string>
 	<string name="jandi_tab_private_group">"비공개 토픽"</string>
+	<string name="jandi_tab_to_view_original">"이곳을 탭하면 원본으로 불 수 있습니다."</string>
 	<string name="jandi_tab_topic">"토픽"</string>
 	<string name="jandi_team_creation_succeed">"메일 전송 성공. 메일함을 확인하여 잔디 팀을 생성하세요."</string>
 	<string name="jandi_team_info">"팀 정보"</string>
@@ -485,4 +496,5 @@
 계정 정보와는 다른 내용을 사용할 수 있지만, 이름은 멘션 또는 검색에도 이용되기 때문에 팀원들에게 통용되는 호칭이 좋습니다."</string>
 	<string name="what_is_team_domain">"팀 도메인은 팀에 쉽게 접속하실 수 있도록 잔디가 발급해드리는 고유 웹 주소입니다.
 팀 이름과는 달라도 되지만 기억하기 쉬운 이름이 좋습니다. <b>영어 알파벳 3자 이상</b>으로 숫자 또는 빼기(-) 표시와 함께 구성하시면 됩니다."</string>
+	<string name="로">"잔디 메인으로"</string>
 </resources>

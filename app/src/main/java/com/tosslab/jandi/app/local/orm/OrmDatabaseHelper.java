@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.local.orm.domain.BadgeCount;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.domain.LeftSideMenu;
+import com.tosslab.jandi.app.local.orm.domain.ReadyComment;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.RecentSticker;
 import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
@@ -47,7 +48,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_FOLDER_MODIFY = 4;
     private static final int DATABASE_VERSION_STICKER_SEND_STATUS = 5;
     private static final int DATABASE_VERSION_ADD_TOKEN_TABLE = 6;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_ADD_TOKEN_TABLE;
+    private static final int DATABASE_VERSION_ADD_READY_COMMENT = 7;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_ADD_READY_COMMENT;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -102,6 +104,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, ResChat.class);
 
             createTable(connectionSource, ReadyMessage.class);
+            createTable(connectionSource, ReadyComment.class);
             createTable(connectionSource, SendMessage.class);
 
 
@@ -169,6 +172,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
                         }
 
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_ADD_READY_COMMENT, () -> {
+                        createTable(connectionSource, ReadyComment.class);
                     }));
 
             Observable.from(upgradeCheckers)

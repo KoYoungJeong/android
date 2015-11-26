@@ -163,11 +163,17 @@ public class LinkifyUtil {
                     return false;
                 }
 
-                if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                if (action == MotionEvent.ACTION_UP) {
                     if (clickableSpannable != null) {
                         clickableSpannable.onClick();
                         clickableSpannable = null;
                         return true;
+                    }
+                }
+
+                if (action == MotionEvent.ACTION_CANCEL) {
+                    if (clickableSpannable != null) {
+                        clickableSpannable = null;
                     }
                 }
 

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:variablePadding="true"
+    android:visible="true">
+    <item
+        android:drawable="@drawable/progress_refresh_01"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_02"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_03"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_04"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_05"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_06"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_07"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_08"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_09"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_10"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_11"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_12"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_13"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_14"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_15"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_16"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_17"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_18"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_19"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_20"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_21"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_22"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_23"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_24"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_25"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_26"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_27"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_28"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_29"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_30"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_31"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_32"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_33"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_34"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_35"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_36"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_37"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_38"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_39"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_40"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_41"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_42"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_43"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_44"
+        android:duration="10" />
+    <item
+        android:drawable="@drawable/progress_refresh_45"
+        android:duration="10" />
+</animation-list>

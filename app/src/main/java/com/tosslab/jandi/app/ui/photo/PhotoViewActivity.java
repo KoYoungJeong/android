@@ -11,6 +11,7 @@ import com.bumptech.glide.MemoryCategory;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
+import com.tosslab.jandi.app.utils.OnSwipeExitListener;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
@@ -22,7 +23,7 @@ import org.androidannotations.annotations.OptionsItem;
  * Created by Steve SeongUg Jung on 15. 7. 14..
  */
 @EActivity(R.layout.activity_photo_view)
-public class PhotoViewActivity extends BaseAppCompatActivity {
+public class PhotoViewActivity extends BaseAppCompatActivity implements OnSwipeExitListener {
 
     @Extra
     String imageUrl;
@@ -127,5 +128,17 @@ public class PhotoViewActivity extends BaseAppCompatActivity {
     @OptionsItem(android.R.id.home)
     void onHomeOptionSelect() {
         finish();
+    }
+
+    @Override
+    public void onSwipeExit(int direction) {
+        finish();
+
+        int anim = R.anim.slide_out_to_bottom;
+        if (direction == OnSwipeExitListener.DIRECTION_TO_TOP) {
+            anim = R.anim.slide_out_to_top;
+        }
+
+        overridePendingTransition(0, anim);
     }
 }

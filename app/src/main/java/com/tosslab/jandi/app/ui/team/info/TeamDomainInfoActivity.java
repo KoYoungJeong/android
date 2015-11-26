@@ -74,21 +74,6 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity {
 
         setUpActionBar();
 
-        teamDomainInfoModel.setCallback(new TeamDomainInfoModel.Callback() {
-            @Override
-            public void onTeamCreateSuccess(String name, int memberId, int teamId) {
-
-
-            }
-
-            @Override
-            public void onTeamCreateFail(int statusCode) {
-                teamDomainInfoPresenter.dismissProgressWheel();
-                teamDomainInfoPresenter.failCreateTeam(statusCode);
-
-            }
-        });
-
         initUserEmailInfo();
         initUserDefaultName();
 

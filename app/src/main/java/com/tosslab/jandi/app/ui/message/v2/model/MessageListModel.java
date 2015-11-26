@@ -37,7 +37,6 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
-import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
@@ -112,7 +111,7 @@ public class MessageListModel {
         return TextUtils.isEmpty(text);
     }
 
-    public ResUpdateMessages getNewMessage(int linkId) throws RetrofitError {
+    public List<ResMessages.Link> getNewMessage(int linkId) throws RetrofitError {
         return messageManipulator.updateMessages(linkId);
     }
 
@@ -211,7 +210,7 @@ public class MessageListModel {
     @Deprecated
     public JsonObject uploadFile(ConfirmFileUploadEvent event, ProgressDialog progressDialog, boolean isPublicTopic) throws ExecutionException, InterruptedException {
         File uploadFile = new File(event.realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/v2/file";
+        String requestURL = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/file";
         String permissionCode = (isPublicTopic) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion
@@ -590,5 +589,9 @@ public class MessageListModel {
 
     public boolean isBefore30Days(Date time) {
         return DateComparatorUtil.isBefore30Days(time);
+    }
+
+    public String getTopicName(int entityId) {
+        return EntityManager.getInstance().getEntityNameById(entityId);
     }
 }

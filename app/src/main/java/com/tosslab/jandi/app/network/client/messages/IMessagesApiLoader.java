@@ -5,7 +5,9 @@ import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
-import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.models.ResMessages;
+
+import java.util.List;
 
 /**
  * Created by tee on 15. 6. 23..
@@ -18,7 +20,7 @@ public interface IMessagesApiLoader {
 
     IExecutor<ResCommon> loadUnshareMessageByMessagesApiAuth(ReqUnshareMessage share, int messageId);
 
-    IExecutor<ResUpdateMessages> getRoomUpdateMessageByMessagesApiAuth(int teamId,
+    IExecutor<List<ResMessages.Link>> getRoomUpdateMessageByMessagesApiAuth(int teamId,
                                                                        int roomId,
                                                                        int currentLinkId);
 

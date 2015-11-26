@@ -6,7 +6,9 @@ import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
-import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.models.ResMessages;
+
+import java.util.List;
 
 import retrofit.http.Body;
 import retrofit.http.GET;
@@ -37,8 +39,8 @@ public interface MessagesApiV2Client {
     ResCommon unshareMessage(@Body ReqUnshareMessage share, @Path("messageId") int messageId);
 
     @GET("/teams/{teamId}/rooms/{roomId}/messages/updatedList")
-    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResUpdateMessages getRoomUpdateMessage(@Path("teamId") int teamId,
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+    List<ResMessages.Link> getRoomUpdateMessage(@Path("teamId") int teamId,
                                            @Path("roomId") int roomId,
                                            @Query("linkId") int currentLinkId);
 

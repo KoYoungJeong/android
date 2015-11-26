@@ -2,14 +2,12 @@ package com.tosslab.jandi.app.ui.settings;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.text.TextUtils;
 
-import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
@@ -22,6 +20,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity_;
+import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
 import com.tosslab.jandi.app.ui.settings.viewmodel.SettingFragmentViewModel;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
@@ -32,7 +31,6 @@ import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -76,12 +74,13 @@ public class SettingsFragment extends PreferenceFragment {
 
         addPreferencesFromResource(R.xml.pref_setting);
 
-        boolean isPush = ((CheckBoxPreference) getPreferenceManager().findPreference("setting_push_auto_alarm")).isChecked();
-        setPushSubState(isPush);
-
         ListPreference settingOrientation = ((ListPreference) getPreferenceManager().findPreference
                 ("setting_orientation"));
         String value = settingOrientation.getValue();
+
+        if (TextUtils.isEmpty(value)) {
+            settingOrientation.setValue("0");
+        }
 
         settingOrientation.setSummary(SettingsModel.getOrientationSummary(value));
 
@@ -112,25 +111,13 @@ public class SettingsFragment extends PreferenceFragment {
 
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-        if (TextUtils.equals(preference.getKey(), "setting_push_auto_alarm")) {
-            CheckBoxPreference pref = (CheckBoxPreference) preference;
 
-
-            boolean isEnabled;
-
-            if (pref.isChecked()) {
-                onPushNotification();
-                isEnabled = true;
-            } else {
-                offPushNotification();
-                isEnabled = false;
-            }
-
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, isEnabled ? AnalyticsValue.Action.TurnOnNotifications : AnalyticsValue.Action.TurnOffNotifications);
-
-            setPushSubState(isEnabled);
+        if (TextUtils.equals(preference.getKey(), "setting_push")) {
+            // setting push activity 호출.
+            SettingPushActivity_
+                    .intent(getActivity())
+                    .start();
         } else if (TextUtils.equals(preference.getKey(), "setting_tos")) {
-
             TermActivity_
                     .intent(getActivity())
                     .termMode(TermActivity.Mode.Agreement.name())
@@ -143,13 +130,10 @@ public class SettingsFragment extends PreferenceFragment {
                     .termMode(TermActivity.Mode.Privacy.name())
                     .start();
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.PrivacyPolicy);
-        } else if(TextUtils.equals(preference.getKey(), "setting_set_passcode")) {
-
+        } else if (TextUtils.equals(preference.getKey(), "setting_set_passcode")) {
             SettingPrivacyActivity_.intent(getActivity())
                     .start();
-
         } else if (preference.getKey().equals("setting_logout")) {
-
             if (NetworkCheckUtil.isConnected()) {
                 settingFragmentViewModel.showSignoutDialog(getActivity());
             } else {
@@ -157,15 +141,6 @@ public class SettingsFragment extends PreferenceFragment {
             }
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.SignOut);
 
-        } else if (preference.getKey().equals("setting_push_alarm_sound")) {
-            CheckBoxPreference pref = (CheckBoxPreference) preference;
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, pref.isChecked() ? AnalyticsValue.Action.SoundsOn : AnalyticsValue.Action.SoundsOff);
-        } else if (preference.getKey().equals("setting_push_alarm_vibration")) {
-            CheckBoxPreference pref = (CheckBoxPreference) preference;
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, pref.isChecked() ? AnalyticsValue.Action.VibrateOn : AnalyticsValue.Action.VibrateOff);
-        } else if (preference.getKey().equals("setting_push_alarm_led")) {
-            CheckBoxPreference pref = (CheckBoxPreference) preference;
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, pref.isChecked() ? AnalyticsValue.Action.PhoneLedOn : AnalyticsValue.Action.PhoneLedOff);
         }
         return false;
     }
@@ -231,51 +206,4 @@ public class SettingsFragment extends PreferenceFragment {
 
     }
 
-    private void setPushSubState(boolean isEnabled) {
-        Preference soundPref = getPreferenceManager().findPreference("setting_push_alarm_sound");
-        Preference ledPref = getPreferenceManager().findPreference("setting_push_alarm_led");
-        Preference vibratePref = getPreferenceManager().findPreference("setting_push_alarm_vibration");
-
-        soundPref.setEnabled(isEnabled);
-        ledPref.setEnabled(isEnabled);
-        vibratePref.setEnabled(isEnabled);
-    }
-
-    void onPushNotification() {
-        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-        if (installation.containsKey(ParseUpdateUtil.PARSE_ACTIVATION)) {
-            String isPushOn = (String) installation.get(ParseUpdateUtil.PARSE_ACTIVATION);
-            if (TextUtils.equals(isPushOn, ParseUpdateUtil.PARSE_ACTIVATION_ON)) {
-                return;
-            }
-        }
-
-        installation.put(ParseUpdateUtil.PARSE_ACTIVATION, ParseUpdateUtil.PARSE_ACTIVATION_ON);
-        installation.saveEventually(e -> {
-            Activity activity = getActivity();
-            if (activity != null && !(activity.isFinishing())) {
-                ColoredToast.show(activity,
-                        activity.getString(R.string.jandi_setting_push_subscription_ok));
-            }
-        });
-    }
-
-    void offPushNotification() {
-        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-        if (installation.containsKey(ParseUpdateUtil.PARSE_ACTIVATION)) {
-            String isPushOff = (String) installation.get(ParseUpdateUtil.PARSE_ACTIVATION);
-            if (TextUtils.equals(isPushOff, ParseUpdateUtil.PARSE_ACTIVATION_OFF)) {
-                return;
-            }
-        }
-
-        installation.put(ParseUpdateUtil.PARSE_ACTIVATION, ParseUpdateUtil.PARSE_ACTIVATION_OFF);
-        installation.saveEventually(e -> {
-            Activity activity = getActivity();
-            if (activity != null && !(activity.isFinishing())) {
-                ColoredToast.show(activity,
-                        activity.getString(R.string.jandi_setting_push_subscription_cancel));
-            }
-        });
-    }
 }

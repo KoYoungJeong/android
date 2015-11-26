@@ -6,12 +6,16 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiApplication;
@@ -425,19 +429,35 @@ public class BitmapUtil {
 
     public static void loadImageByGlideOrIonWhenGif(ImageView imageView,
                                                     String url, int placeHolder, int error) {
+        loadImageByGlideOrIonWhenGif(imageView, url, placeHolder, error, null);
+    }
+
+    public static void loadImageByGlideOrIonWhenGif(ImageView imageView,
+                                                    String url, int placeHolder, int error, BitmapUtil.OnResourceReady onResourceReady) {
         if (url.toLowerCase().endsWith("gif")) {
             Ion.with(imageView)
                     .fitCenter()
                     .placeholder(placeHolder)
                     .error(error)
                     .crossfade(true)
-                    .load(url);
+                    .load(url).withBitmapInfo().setCallback((e, result) -> {
+                if (e == null && onResourceReady != null) {
+                    Bitmap bitmap = result.getBitmapInfo().bitmap;
+                    int width = bitmap.getWidth();
+                    int height = bitmap.getHeight();
+                    onResourceReady.onReady(width, height);
+                }
+            });
             return;
         }
+
+        DisplayMetrics displayMetrics = imageView.getResources().getDisplayMetrics();
+        int maxSize = Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels);
 
         Glide.with(JandiApplication.getContext())
                 .load(url)
                 .placeholder(placeHolder)
+                .override(maxSize, maxSize)
                 .error(error)
                 .animate(view -> {
                     view.setAlpha(0.0f);
@@ -446,6 +466,20 @@ public class BitmapUtil {
                             .setDuration(300);
                 })  // Avoid doesn't working 'fitCenter with crossfade'
                 .fitCenter()
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        if (onResourceReady != null) {
+                            onResourceReady.onReady(resource.getIntrinsicWidth(), resource.getIntrinsicHeight());
+                        }
+                        return false;
+                    }
+                })
                 .into(imageView);
     }
 
@@ -454,26 +488,29 @@ public class BitmapUtil {
         Glide.with(JandiApplication.getContext())
                 .load(url)
                 .asBitmap()
+                .dontAnimate()
                 .placeholder(placeHolder)
                 .centerCrop()
-                .listener(new RequestListener<String, Bitmap>() {
+                .into(new BitmapImageViewTarget(imageView) {
                     @Override
-                    public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
-                        return true;
+                    public void onLoadCleared(Drawable placeholder) {
+                        super.onLoadCleared(placeholder);
                     }
 
                     @Override
-                    public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        return false;
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        if (resource != null && !resource.isRecycled()) {
+                            setResource(resource);
+                        }
                     }
-                })
-                .into(imageView);
+                });
     }
 
     public static void loadCropBitmapByIon(ImageView imageView,
                                            String url, int placeHolder) {
         Ion.with(imageView)
                 .placeholder(placeHolder)
+                .crossfade(false)
                 .centerCrop()
                 .load(url);
     }
@@ -487,7 +524,14 @@ public class BitmapUtil {
                 .error(error)
                 .centerCrop()
                 .transform(new GlideCircleTransform(JandiApplication.getContext()))
-                .into(imageView);
+                .into(new BitmapImageViewTarget(imageView) {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        if (resource != null && !resource.isRecycled()) {
+                            setResource(resource);
+                        }
+                    }
+                });
     }
 
     public static void loadImageByIon(ImageView imageView,
@@ -511,4 +555,7 @@ public class BitmapUtil {
         SMALL, MEDIUM, LARGE, ORIGINAL
     }
 
+    public interface OnResourceReady {
+        void onReady(int width, int height);
+    }
 }

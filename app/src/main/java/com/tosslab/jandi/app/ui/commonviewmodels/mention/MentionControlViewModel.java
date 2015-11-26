@@ -10,12 +10,14 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Pair;
 import android.util.TypedValue;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.MentionMemberListAdapter;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
@@ -27,7 +29,6 @@ import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel_;
 import com.tosslab.jandi.app.views.spannable.MentionMessageSpannable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -41,44 +42,34 @@ public class MentionControlViewModel {
 
     public static final String MENTION_TYPE_MESSAGE = "mention_type_message";
     public static final String MENTION_TYPE_FILE_COMMENT = "mention_type_file_comment";
-
+    protected String currentSearchKeywordString;
     private AutoCompleteTextView etMessage;
-
     private KeyboardHeightModel keyboardHeightModel;
     private SearchMemberModel searchMemberModel;
-
     //message or file view type
     private String mentionType = MENTION_TYPE_MESSAGE;
-
     //for textControl
     private int beforeTextCnt = 0;
     private int afterTextCnt = 0;
     private String beforeText = "";
     private String afterText = "";
     private String removedText = "";
-    private String currentSearchKeywordString;
-    private List<Integer> roomIds;
-
-    // restore mentioned members using hashmap for time complexity
-    private LinkedHashMap<Integer, SearchedItemVO> selectedMemberHashMap;
     private ClipboardListener clipboardListener;
     private TextWatcher textWatcher;
 
-    // 멘션 선택된 멤버 리스트의 사본
-    // 클립 보드에서 CUT(잘라내기) 시 해당 정보를 한꺼번에 잃기 때문에 사본을 저장할 필요성 있음.
-    private LinkedHashMap<Integer, SearchedItemVO> cloneSelectedMemberHashMap;
     private ClipboardManager clipBoard;
     private MentionMemberListAdapter mentionMemberListAdapter;
 
     private MentionControlViewModel(Activity activity,
                                     EditText editText,
+                                    int teamId,
                                     List<Integer> roomIds,
                                     String mentionType) {
 
         this.clipBoard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
         this.mentionType = mentionType;
 
-        init(activity, editText, roomIds);
+        init(activity, editText, teamId, roomIds);
 
     }
 
@@ -86,27 +77,41 @@ public class MentionControlViewModel {
                                                       EditText editText,
                                                       List<Integer> roomIds,
                                                       String mentionType) {
+        int teamId = EntityManager.getInstance().getTeamId();
         return new MentionControlViewModel(activity,
                 editText,
+                teamId,
+                roomIds,
+                mentionType);
+    }
+
+    public static MentionControlViewModel newInstance(Activity activity,
+                                                      EditText editText,
+                                                      int teamId,
+                                                      List<Integer> roomIds,
+                                                      String mentionType) {
+        return new MentionControlViewModel(activity,
+                editText,
+                teamId,
                 roomIds,
                 mentionType);
     }
 
     private void init(Activity activity,
                       EditText editText,
+                      int teamId,
                       List<Integer> roomIds) {
 
         this.etMessage = (AutoCompleteTextView) editText;
-        this.roomIds = roomIds;
 
         addTextWatcher(editText);
 
         keyboardHeightModel = KeyboardHeightModel_.getInstance_(activity);
         searchMemberModel = SearchMemberModel_.getInstance_(activity);
 
-        refreshSelectableMembers(roomIds);
+        refreshSelectableMembers(teamId, roomIds);
 
-        List<SearchedItemVO> users = searchMemberModel.getUserSearchByName("", null);
+        List<SearchedItemVO> users = searchMemberModel.getUserSearchByName("");
         mentionMemberListAdapter = new MentionMemberListAdapter(activity, users);
 
         etMessage.setAdapter(mentionMemberListAdapter);
@@ -121,12 +126,14 @@ public class MentionControlViewModel {
             });
         }
 
-        selectedMemberHashMap = new LinkedHashMap<>();
-
     }
 
     public void refreshMembers(List<Integer> roomIds) {
-        refreshSelectableMembers(roomIds);
+        refreshMembers(EntityManager.getInstance().getTeamId(), roomIds);
+    }
+
+    public void refreshMembers(int teamId, List<Integer> roomIds) {
+        refreshSelectableMembers(teamId, roomIds);
 
         if (etMessage != null) {
 
@@ -145,38 +152,34 @@ public class MentionControlViewModel {
     }
 
     private void addTextWatcher(EditText editText) {
-        editText.addTextChangedListener(
-                textWatcher = new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        beforeEditTextChanged(editText, s, start, count, after);
-                    }
+        textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                beforeEditTextChanged(editText, s, start, count, after);
+            }
 
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        editTextChanged(s, editText, before, start, count);
-                    }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                editTextChanged(s, editText, before, start, count);
+            }
 
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                        afterEditTextChanged(s, editText);
-                    }
-                }
-        );
+            @Override
+            public void afterTextChanged(Editable s) {
+                afterEditTextChanged(s, editText);
+            }
+        };
+
+        editText.addTextChangedListener(textWatcher);
     }
 
     void beforeEditTextChanged(TextView tv, CharSequence s, int start, int count, int after) {
         beforeTextCnt = count;
-        cloneSelectedMemberHashMap = (LinkedHashMap<Integer, SearchedItemVO>) selectedMemberHashMap.clone();
         beforeText = s.toString();
     }
 
     void editTextChanged(CharSequence s, TextView tv, int before, int start, int count) {
         afterTextCnt = count;
         afterText = s.toString();
-        if (s.length() == 0) {
-            selectedMemberHashMap.clear();
-        }
     }
 
     void afterEditTextChanged(Editable s, TextView tv) {
@@ -208,8 +211,6 @@ public class MentionControlViewModel {
 
             }
 
-            removeSelectedMentionMemberInfo(removedText);
-
         }
 
         Editable e = tv.getEditableText();
@@ -232,7 +233,7 @@ public class MentionControlViewModel {
     }
 
     // @ 이후로 부터 검색에 필요한 이름을 얻어오는 메서드
-    public String getMentionSearchName(CharSequence cs) {
+    private String getMentionSearchName(CharSequence cs) {
         Pattern p = Pattern.compile("(?:(?:^|\\s)([@\\uff20]((?:[^@\\uff20]){0,30})))$");
         Matcher matcher = p.matcher(cs);
         String result = null;
@@ -258,7 +259,7 @@ public class MentionControlViewModel {
     // 실제 화면에 멘션 가능한 사람들을 보여주는 메서드
     private void showSearchMembersInfo(String searchString) {
         mentionMemberListAdapter.setSearchedMembersList(
-                searchMemberModel.getUserSearchByName(searchString, selectedMemberHashMap));
+                searchMemberModel.getUserSearchByName(searchString));
 
         if (mentionMemberListAdapter.getCount() > 0) {
             setMetionListPopupWidth();
@@ -306,41 +307,14 @@ public class MentionControlViewModel {
         return removedText;
     }
 
-    // 멘션된 멤버를 리스트에 저장하는 메서드
-    private void restoreSelectedMentionMemberInfo(String rawMemberText) {
-        if (rawMemberText != null) {
-            String id = "";
-            Pattern p = Pattern.compile("(?:@)([^@]+)(?:\\u2063)(\\d+)(?:\\u2063)");
-            Matcher matcher = p.matcher(rawMemberText);
-            while (matcher.find()) {
-                id = matcher.group(2);
-                selectedMemberHashMap.put(new Integer(id),
-                        getAllSelectableMembers().get(new Integer(id)));
-            }
-        }
-    }
-
-    // 멘션된 멤버를 리스트에서 제거하는 메서드
-    private void removeSelectedMentionMemberInfo(String rawMemberText) {
-        if (rawMemberText != null) {
-            String id = "";
-            Pattern p = Pattern.compile("(?:@)([^@]+)(?:\\u2063)(\\d+)(?:\\u2063)");
-            Matcher matcher = p.matcher(rawMemberText);
-            while (matcher.find()) {
-                id = matcher.group(2);
-                selectedMemberHashMap.remove(Integer.valueOf(id));
-            }
-        }
-    }
-
     // 현재 토픽 또는 파일에서 멘션 가능한 모든 멤버들을 얻어오는 메서드
     public LinkedHashMap<Integer, SearchedItemVO> getAllSelectableMembers() {
         return searchMemberModel.getAllSelectableMembers();
     }
 
     // 토픽 또는 파일의 정보 갱신으로 갱신된 멘션가능한 멤버들을 얻어오는 메서드
-    public void refreshSelectableMembers(List<Integer> roomIds) {
-        searchMemberModel.refreshSelectableMembers(roomIds, mentionType);
+    public void refreshSelectableMembers(int teamId, List<Integer> roomIds) {
+        searchMemberModel.refreshSelectableMembers(teamId, roomIds, mentionType);
     }
 
     // 멘션된 멤버들을 etMessage 뷰 단에서 하일라이트 처리하는 로직
@@ -371,8 +345,6 @@ public class MentionControlViewModel {
                 .append(searchedItemVO.getId())
                 .append("\u2063");
 
-        restoreSelectedMentionMemberInfo("@" + convertedTextBuilder);
-
         ssb.replace(startIndex, selectionIndex, convertedTextBuilder);
 
         ssb.setSpan(spannable, startIndex - 1, startIndex + convertedTextBuilder.length(),
@@ -383,13 +355,74 @@ public class MentionControlViewModel {
 
     }
 
+    public void setUpMention(String comment) {
+        if (TextUtils.isEmpty(comment)) {
+            return;
+        }
+        StringBuilder builder = new StringBuilder(comment);
+        Pattern p = Pattern.compile("(?:@)([^\\u2063]+)(?:\\u2063)(\\d+)(?:\\u2063)");
+        Matcher matcher = p.matcher(comment);
+
+        List<Pair<Integer, Integer>> replaceIndex = new ArrayList<>();
+
+        LinkedHashMap<Integer, SearchedItemVO> selectableMembers = getAllSelectableMembers();
+
+        String findId = "";
+        // 해제할 멘션 정보.
+        while (matcher.find()) {
+            findId = matcher.group(2);
+            try {
+                int id = Integer.parseInt(findId);
+                if (!selectableMembers.containsKey(id)) {
+                    replaceIndex.add(new Pair<>(matcher.start(2) - 1, matcher.end(2) + 1));
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 멘션 정보 수정
+        for (int idx = replaceIndex.size() - 1; idx >= 0; idx--) {
+            Pair<Integer, Integer> replace = replaceIndex.get(idx);
+            if (replace != null && replace.first >= 0 && replace.second >= 0) {
+                builder.replace(replace.first, replace.second, "");
+            }
+        }
+
+        // 멘션 정보 반영
+        matcher = p.matcher(builder.toString());
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(builder.toString());
+        while (matcher.find()) {
+
+            int nameStart = matcher.start(1);
+            int nameEnd = matcher.end(1);
+
+            MentionMessageSpannable spannable = new MentionMessageSpannable(
+                    builder.substring(nameStart, nameEnd),
+                    etMessage.getTextSize(),
+                    0xFFfefefe,
+                    0xFF01a4e7
+            );
+            float maginDp = 50;
+            float marginPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    maginDp, etMessage.getContext().getResources().getDisplayMetrics());
+            spannable.setViewMaxWidthSize(etMessage.getMeasuredWidth() - (int) marginPx);
+
+
+            spannableStringBuilder.setSpan(spannable, matcher.start(), matcher.end(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        }
+
+        etMessage.setText(spannableStringBuilder);
+        etMessage.setSelection(etMessage.length());
+    }
+
     // 현재까지의 editText에서 멘션 가공된 message와 mention object 리스트를 얻어오는 메서드
     private ResultMentionsVO getMentionInfoObject(String message,
-                                                  LinkedHashMap<Integer, SearchedItemVO> selectedMembers,
                                                   LinkedHashMap<Integer, SearchedItemVO> selectableMembers) {
 
-        if (selectedMembers.size() == 0) {
-            return new ResultMentionsVO(message, new ArrayList<MentionObject>());
+        if (TextUtils.isEmpty(message)) {
+            return new ResultMentionsVO("", new ArrayList<>());
         }
 
         StringBuilder builder = new StringBuilder(message);
@@ -397,40 +430,45 @@ public class MentionControlViewModel {
         Pattern p = Pattern.compile("(?:@)([^\\u2063]+)(?:\\u2063)(\\d+)(?:\\u2063)");
         Matcher matcher = p.matcher(message);
 
-        LinkedHashMap<Integer, SearchedItemVO> orderedSearchedMember = new LinkedHashMap<>();
+        List<SearchedItemVO> orderedSearchedMember = new ArrayList<>();
+
+        List<Pair<Integer, Integer>> replaceIndex = new ArrayList<>();
 
         while (matcher.find()) {
             findId = matcher.group(2);
             try {
                 int id = Integer.parseInt(findId);
                 if (selectableMembers.containsKey(id)) {
-                    orderedSearchedMember.put(id, selectableMembers.get(id));
+                    orderedSearchedMember.add(selectableMembers.get(id));
                 } else {
-                    builder.replace(matcher.start(2) - 1, matcher.end(2) + 1, "");
+                    replaceIndex.add(new Pair<>(matcher.start(2) - 1, matcher.end(2) + 1));
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         }
 
-        Iterator iterator = orderedSearchedMember.keySet().iterator();
+        for (int idx = replaceIndex.size() - 1; idx >= 0; idx--) {
+            Pair<Integer, Integer> replace = replaceIndex.get(idx);
+            if (replace != null && replace.first >= 0 && replace.second >= 0) {
+                builder.replace(replace.first, replace.second, "");
+            }
+        }
 
         List<MentionObject> mentions = new ArrayList<>();
 
         StringBuilder memberInfoStringSB;
 
-        while (iterator.hasNext()) {
+        for (SearchedItemVO searchedItemVO : orderedSearchedMember) {
 
-            int key = (Integer) iterator.next();
             memberInfoStringSB = new StringBuilder();
-            SearchedItemVO searchedItemVO = orderedSearchedMember.get(Integer.valueOf(key));
 
             if (searchedItemVO == null) {
                 continue;
             }
 
             String name = searchedItemVO.getName();
-            String id = String.valueOf(key);
+            String id = String.valueOf(searchedItemVO.getId());
             String type = searchedItemVO.getType();
 
             memberInfoStringSB
@@ -441,13 +479,16 @@ public class MentionControlViewModel {
 
             int startIndexOfMemberString = builder.indexOf(memberInfoStringSB.toString());
 
-            builder.replace(startIndexOfMemberString,
-                    startIndexOfMemberString + memberInfoStringSB.length(), name);
+            if (startIndexOfMemberString >= 0) {
 
-            int offset = startIndexOfMemberString - 1;
-            int length = name.length() + 1;
-            MentionObject mentionInfo = new MentionObject(key, type, offset, length);
-            mentions.add(mentionInfo);
+                builder.replace(startIndexOfMemberString,
+                        startIndexOfMemberString + memberInfoStringSB.length(), name);
+                int offset = startIndexOfMemberString - 1;
+                int length = name.length() + 1;
+                MentionObject mentionInfo = new MentionObject(searchedItemVO.getId(), type, offset, length);
+                mentions.add(mentionInfo);
+            }
+
 
         }
 
@@ -457,22 +498,17 @@ public class MentionControlViewModel {
 
     public ResultMentionsVO getMentionInfoObject() {
         return getMentionInfoObject(etMessage.getText().toString().trim(),
-                selectedMemberHashMap, getAllSelectableMembers());
+                getAllSelectableMembers());
     }
 
     // use to get converted message for clipboard
-    public ResultMentionsVO getMentionInfoObject(
-            String string, LinkedHashMap<Integer, SearchedItemVO> selectedMemberHashMap) {
-        return getMentionInfoObject(string,
-                selectedMemberHashMap, getAllSelectableMembers());
+    public ResultMentionsVO getMentionInfoObject(String message) {
+        return getMentionInfoObject(message,
+                getAllSelectableMembers());
     }
 
     public boolean hasMentionMember() {
-        return selectedMemberHashMap.size() > 0;
-    }
-
-    public void clear() {
-        selectedMemberHashMap.clear();
+        return true;
     }
 
     public void setTextOnClip(String pasteData) {
@@ -499,6 +535,15 @@ public class MentionControlViewModel {
 
     public void onConfigurationChanged() {
         setMetionListPopupWidth();
+    }
+
+    public void reset() {
+        etMessage.removeTextChangedListener(textWatcher);
+        if (keyboardHeightModel != null) {
+            keyboardHeightModel.setOnKeyboardShowListener(null);
+        }
+        removeClipboardListener();
+        showListView(false);
     }
 
     // 가공되지 않은 스트링이 클립보드에 복사되면 안되므로 별도의 처리 진행
@@ -532,10 +577,10 @@ public class MentionControlViewModel {
                 String convertedMessage = null;
                 if (isCut) {
                     convertedMessage =
-                            getMentionInfoObject(et, cloneSelectedMemberHashMap).getMessage();
+                            getMentionInfoObject(et).getMessage();
                 } else {
                     convertedMessage =
-                            getMentionInfoObject(et, selectedMemberHashMap).getMessage();
+                            getMentionInfoObject(et).getMessage();
                 }
                 Log.e(convertedMessage, convertedMessage);
                 setTextOnClip(convertedMessage);

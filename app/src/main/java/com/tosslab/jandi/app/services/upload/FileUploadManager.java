@@ -52,7 +52,7 @@ public class FileUploadManager {
                     boolean isPublicTopic = filePickerModel.isPublicEntity(context, fileUploadDTO.getEntity());
 
                     try {
-                        JsonObject result = filePickerModel.uploadFile(FileUploadManager.this.context, fileUploadDTO.getFilePath(), isPublicTopic, fileUploadDTO.getFileName(), fileUploadDTO.getEntity(), fileUploadDTO.getComment(), new ProgressCallback() {
+                        JsonObject result = filePickerModel.uploadFile(FileUploadManager.this.context, fileUploadDTO.getFilePath(), isPublicTopic, fileUploadDTO.getFileName(), fileUploadDTO.getEntity(), fileUploadDTO.getComment(), fileUploadDTO.getMentions(), new ProgressCallback() {
                             @Override
                             public void onProgress(long downloaded, long total) {
                                 EventBus.getDefault().post(new FileUploadProgressEvent(fileUploadDTO.getEntity(), (int) (downloaded * 100 / total)));

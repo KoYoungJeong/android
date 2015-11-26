@@ -35,6 +35,7 @@ import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
+import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
@@ -651,9 +652,15 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         MessageListFragment.this.stickerInfo = NULL_STICKER;
         messageListPresenter.dismissStickerPreview();
 
-        ResultMentionsVO mentionInfoObject = mentionControlViewModel.getMentionInfoObject();
-        if (TextUtils.isEmpty(mentionInfoObject.getMessage())) {
-            messageListPresenter.setEnableSendButton(false);
+        if (mentionControlViewModel != null) {
+            ResultMentionsVO mentionInfoObject = mentionControlViewModel.getMentionInfoObject();
+            if (TextUtils.isEmpty(mentionInfoObject.getMessage())) {
+                messageListPresenter.setEnableSendButton(false);
+            }
+        } else {
+            if (TextUtils.isEmpty(messageEditText.getText())) {
+                messageListPresenter.setEnableSendButton(false);
+            }
         }
 
         AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_cancel);
@@ -792,12 +799,14 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                         messageEditText,
                         roomIds,
                         MentionControlViewModel.MENTION_TYPE_MESSAGE);
-
-                // copy txt from mentioned edittext message
-                mentionControlViewModel.registClipboardListener();
+                String readyMessage = messageListModel.getReadyMessage(roomId);
+                mentionControlViewModel.setUpMention(readyMessage);
             } else {
-                mentionControlViewModel.refreshSelectableMembers(roomIds);
+                mentionControlViewModel.refreshSelectableMembers(teamId, roomIds);
             }
+
+            // copy txt from mentioned edittext message
+            mentionControlViewModel.registClipboardListener();
         }
 
         if (NetworkCheckUtil.isConnected()) {
@@ -948,7 +957,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (!TextUtils.isEmpty(message)) {
             if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE && mentionControlViewModel.hasMentionMember()) {
-                mentionControlViewModel.clear();
                 reqSendMessage = new ReqSendMessageV3(message, mentions);
             } else {
                 reqSendMessage = new ReqSendMessageV3(message, new ArrayList<>());
@@ -1579,6 +1587,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
     }
 
+
+    public void onEventMainThread(TopicKickedoutEvent event) {
+        if (roomId == event.getRoomId()) {
+            getActivity().finish();
+            String topicName = messageListModel.getTopicName(entityId);
+            String msg = JandiApplication.getContext().getString(R.string.jandi_kicked_message, topicName);
+            messageListPresenter.showFailToast(msg);
+        }
+    }
+
+
     public void onEvent(TopicInfoUpdateEvent event) {
         if (event.getId() == entityId) {
             FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
@@ -1753,6 +1772,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     public void onEvent(SelectedMemberInfoForMensionEvent event) {
+
+        if (!isForeground) {
+            return;
+        }
+
         SearchedItemVO searchedItemVO = new SearchedItemVO();
         searchedItemVO.setId(event.getId());
         searchedItemVO.setName(event.getName());

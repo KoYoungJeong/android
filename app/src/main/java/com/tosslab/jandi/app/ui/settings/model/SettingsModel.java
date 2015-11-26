@@ -32,7 +32,18 @@ public class SettingsModel {
             return R.string.jandi_screen_horizontal;
         }
         return R.string.jandi_screen_auto;
-
     }
 
+    public static int getPushPreviewSummary(String value) {
+        if (TextUtils.isEmpty(value) || TextUtils.equals(value, "0")) {
+            // 자동
+            return R.string.jandi_push_preview_all_message;
+        } else if (TextUtils.equals(value, "1")) {
+            // 세로 고정
+            return R.string.jandi_push_preview_public_only;
+        } else if (TextUtils.equals(value, "2")) {
+            return R.string.jandi_push_no_preview;
+        }
+        return R.string.jandi_push_preview_all_message;
+    }
 }

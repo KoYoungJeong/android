@@ -391,7 +391,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     @UiThread
     @Override
     public void dismissMoreLoadingProgressBar() {
-        Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_out_bottom);
+        Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_out_to_bottom);
         progressBar.setAnimation(animation);
         animation.setAnimationListener(new SimpleEndAnimationListener() {
             @Override

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
@@ -22,12 +23,14 @@ import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 public class ImageThumbLoader implements FileThumbLoader {
 
     private final ImageView iconFileType;
+    private final ViewGroup vgDetailPhoto;
     private final ImageView imageViewPhotoFile;
     private final int roomId;
     private Context context;
 
-    public ImageThumbLoader(ImageView iconFileType, ImageView imageViewPhotoFile, int roomId) {
+    public ImageThumbLoader(ImageView iconFileType, ViewGroup vgDetailPhoto, ImageView imageViewPhotoFile, int roomId) {
         this.iconFileType = iconFileType;
+        this.vgDetailPhoto = vgDetailPhoto;
         this.imageViewPhotoFile = imageViewPhotoFile;
         this.roomId = roomId;
         context = imageViewPhotoFile.getContext();
@@ -35,6 +38,7 @@ public class ImageThumbLoader implements FileThumbLoader {
 
     @Override
     public void loadThumb(ResMessages.FileMessage fileMessage) {
+
         ResMessages.FileContent content = fileMessage.content;
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(content.serverUrl);
         iconFileType.setImageResource(
@@ -52,7 +56,6 @@ public class ImageThumbLoader implements FileThumbLoader {
                     imageViewPhotoFile.setImageResource(R.drawable.jandi_down_placeholder_dropbox);
                     break;
                 default:
-
                     String localFilePath = BitmapUtil.getLocalFilePath(fileMessage.id);
                     String thumbnailPhotoUrl;
                     if (!TextUtils.isEmpty(localFilePath)) {
@@ -64,7 +67,10 @@ public class ImageThumbLoader implements FileThumbLoader {
 
                     BitmapUtil.loadImageByGlideOrIonWhenGif(
                             imageViewPhotoFile, thumbnailPhotoUrl,
-                            R.drawable.jandi_down_placeholder_img, R.drawable.jandi_down_placeholder_img);
+                            R.drawable.file_messageview_downloading, R.drawable.file_messageview_noimage,
+                            (width, height) -> {
+                                updateViewSize(width, height);
+                            });
                     break;
             }
 
@@ -117,6 +123,25 @@ public class ImageThumbLoader implements FileThumbLoader {
                     break;
             }
         }
+    }
+
+    private void updateViewSize(int imageWidth, int imageHeight) {
+
+        ViewGroup.LayoutParams layoutParams = vgDetailPhoto.getLayoutParams();
+        if (imageWidth > imageHeight) {
+
+            int viewWidth = vgDetailPhoto.getMeasuredWidth();
+            float ratio = (viewWidth * 10f) / (imageWidth * 10f);
+
+            layoutParams.width = (int) (imageWidth * ratio);
+            layoutParams.height = (int) (imageHeight * ratio);
+        } else {
+            int photoWidth = vgDetailPhoto.getMeasuredWidth();
+            layoutParams.width = photoWidth;
+            layoutParams.height = photoWidth;
+
+        }
+        vgDetailPhoto.setLayoutParams(layoutParams);
     }
 
 }

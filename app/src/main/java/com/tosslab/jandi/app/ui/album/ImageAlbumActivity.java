@@ -42,8 +42,14 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
     public static final String EXTRA_DATAS = "datas";
     public static final int REQ_STORAGE_PERMISSION = 101;
 
+    public static final int EXTRA_MODE_CROP_PICK = 2;
+    public static final int EXTRA_MODE_UPLOAD = 1;
+
     @Extra
     int entityId;
+
+    @Extra
+    int mode = EXTRA_MODE_UPLOAD;
 
     @ViewById(R.id.vg_image_album_content)
     ViewGroup contentLayout;
@@ -75,7 +81,9 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
 
     private void initFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = ImageAlbumFragment_.builder().build();
+        Fragment fragment = ImageAlbumFragment_.builder()
+                .mode(mode)
+                .build();
         fragmentTransaction.replace(R.id.vg_image_album_content, fragment);
         fragmentTransaction.commit();
     }
@@ -108,7 +116,7 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
 
         menu.clear();
 
-        if (hasSelectedPicture()) {
+        if (mode == EXTRA_MODE_UPLOAD && hasSelectedPicture()) {
             getMenuInflater().inflate(R.menu.select_picture, menu);
         }
 
@@ -134,6 +142,7 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
         } else {
             ColoredToast.showError(ImageAlbumActivity.this, getString(R.string.err_file_upload_failed));
         }
+
 
     }
 

@@ -266,6 +266,11 @@ public class JandiSocketService extends Service {
         eventHashMap.put("folder_item_created", topicFolderUpdateListener);
         eventHashMap.put("folder_deleted", topicFolderUpdateListener);
         eventHashMap.put("folder_created", topicFolderUpdateListener);
+
+
+        EventListener topicThrowOutListener =
+                objects -> jandiSocketServiceModel.refreshKickedOut(objects[0]);
+        eventHashMap.put("topic_kicked_out", topicThrowOutListener);
     }
 
     private void setUpSocketListener() {

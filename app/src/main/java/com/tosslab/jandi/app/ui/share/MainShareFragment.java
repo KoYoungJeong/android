@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.share;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
@@ -9,23 +10,30 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.share.model.ScrollViewHelper;
 import com.tosslab.jandi.app.ui.share.presenter.SharePresenter;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -38,8 +46,14 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 13..
@@ -89,8 +103,15 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     @ViewById(R.id.vg_viwer)
     LinearLayout vgViewer;
 
+    @ViewById(R.id.vg_share_root)
+    ScrollView vgRoot;
+
     @Bean
     SharePresenter sharePresenter;
+
+    MentionControlViewModel mentionControlViewModel;
+
+    ScrollViewHelper scrollViewHelper;
 
     @AfterInject
     void initObject() {
@@ -116,8 +137,34 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
 
             etComment.setText(buffer.toString());
             etComment.setSelection(etComment.getText().length());
-            etComment.setMaxLines(Integer.MAX_VALUE);
+            etComment.setMaxLines(6);
         }
+
+        setOnScrollMode();
+    }
+
+    private void setOnScrollMode() {
+        scrollViewHelper = new ScrollViewHelper(etComment, vgRoot);
+        scrollViewHelper.initTouchMode();
+    }
+
+    private String getMentionType(int mode) {
+//        return mode == MainShareActivity.MODE_SHARE_TEXT ? MentionControlViewModel.MENTION_TYPE_MESSAGE : MentionControlViewModel.MENTION_TYPE_FILE_COMMENT;
+        return MentionControlViewModel.MENTION_TYPE_FILE_COMMENT;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Observable.just(1, 1)
+                .delay(100, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(integer -> {
+                    if (mentionControlViewModel != null) {
+                        mentionControlViewModel.onConfigurationChanged();
+                    }
+                });
+
     }
 
     @UiThread
@@ -182,6 +229,18 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     @Override
     public void onResume() {
         super.onResume();
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.registClipboardListener();
+        }
+    }
+
+
+    @Override
+    public void onPause() {
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.removeClipboardListener();
+        }
+        super.onPause();
     }
 
     @Override
@@ -234,13 +293,25 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     }
 
     public void startShare() {
+
+        List<MentionObject> mentions;
+        String messageText;
+        if (mentionControlViewModel != null) {
+            ResultMentionsVO mentionInfoObject = mentionControlViewModel.getMentionInfoObject();
+            mentions = mentionInfoObject.getMentions();
+            messageText = mentionInfoObject.getMessage();
+        } else {
+            mentions = new ArrayList<>();
+            messageText = etComment.getText().toString();
+        }
+
+
         if (mode == MainShareActivity.MODE_SHARE_FILE) {
             File imageFile = sharePresenter.getImageFile();
             ProgressDialog uploadProgress = getUploadProgress(imageFile.getParentFile().getAbsolutePath(), imageFile.getName());
-            sharePresenter.uploadFile(imageFile, getTitleText(), getCommentText(), uploadProgress);
+            sharePresenter.uploadFile(imageFile, getTitleText(), messageText, uploadProgress, mentions);
         } else if (mode == MainShareActivity.MODE_SHARE_TEXT) {
-            String messageText = etComment.getText().toString();
-            sharePresenter.sendMessage(messageText);
+            sharePresenter.sendMessage(messageText, mentions);
         }
     }
 
@@ -292,6 +363,29 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     @Override
     public void setComment(String comment) {
         etComment.setText(comment);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void setMentionInfo(int teamId, int roomId, int roomType) {
+
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.reset();
+            mentionControlViewModel = null;
+        }
+
+        mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(), etComment, teamId, Arrays.asList(roomId), getMentionType(mode));
+    }
+
+
+    public void onEvent(SelectedMemberInfoForMensionEvent event) {
+        if (mentionControlViewModel != null) {
+            SearchedItemVO searchedItemVO = new SearchedItemVO();
+            searchedItemVO.setId(event.getId());
+            searchedItemVO.setName(event.getName());
+            searchedItemVO.setType(event.getType());
+            mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
+        }
     }
 
 }

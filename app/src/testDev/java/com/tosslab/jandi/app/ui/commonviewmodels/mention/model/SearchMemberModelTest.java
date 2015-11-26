@@ -52,7 +52,8 @@ public class SearchMemberModelTest {
     @Test
     public void testRefreshSelectableMembers() throws Exception {
         List<Integer> topicIds = Arrays.asList(EntityManager.getInstance().getDefaultTopicId());
-        LinkedHashMap<Integer, SearchedItemVO> map = searchMemberModel.refreshSelectableMembers(topicIds,
+        LinkedHashMap<Integer, SearchedItemVO> map = searchMemberModel.refreshSelectableMembers(EntityManager.getInstance().getTeamId(),
+                topicIds,
                 MentionControlViewModel.MENTION_TYPE_MESSAGE);
 
         assertThat(map.size(), is(greaterThan(0)));

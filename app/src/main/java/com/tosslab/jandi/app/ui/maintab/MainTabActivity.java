@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.maintab;
 
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -183,7 +184,9 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
         if (needInvitePopup()) {
             JandiPreference.setInvitePopup(MainTabActivity.this);
-            showInvitePopup();
+            showInvitePopup(dialog -> TutorialCoachMarkUtil.showCoachMarkTopicListIfNotShown(this));
+        } else {
+            TutorialCoachMarkUtil.showCoachMarkTopicListIfNotShown(this);
         }
 
         offlineLayer = new OfflineLayer(vgOffline);
@@ -198,22 +201,26 @@ public class MainTabActivity extends BaseAppCompatActivity {
         updateMoreBadge();
     }
 
-    private void showInvitePopup() {
+    private void showInvitePopup(DialogInterface.OnDismissListener onDismissListener) {
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.InviteTeamMember);
         AlertDialog.Builder builder = new AlertDialog.Builder(MainTabActivity.this,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
         View view = LayoutInflater.from(MainTabActivity.this).inflate(R.layout.dialog_invite_popup, null);
 
-        builder.setOnDismissListener(dialog ->
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.CloseModal));
+        builder.setOnDismissListener(dialog -> {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.CloseModal);
+            if (onDismissListener != null) {
+                onDismissListener.onDismiss(dialog);
+            }
+        });
 
-        final AlertDialog materialDialog = builder.setView(view)
+        final AlertDialog dialog = builder.setView(view)
                 .show();
 
         view.findViewById(R.id.btn_invitation_popup_invite).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                materialDialog.dismiss();
+                dialog.dismiss();
                 invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_POPUP);
                 invitationDialogExecutor.execute();
 
@@ -224,11 +231,10 @@ public class MainTabActivity extends BaseAppCompatActivity {
         view.findViewById(R.id.btn_invitation_popup_later).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                materialDialog.dismiss();
+                dialog.dismiss();
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.Later);
             }
         });
-
 
     }
 
@@ -274,8 +280,6 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         setupActionBar(selectedTeamInfo.getName());
-
-        TutorialCoachMarkUtil.showCoachMarkTopicListIfNotShown(this);
 
         if (NetworkCheckUtil.isConnected()) {
             offlineLayer.dismissOfflineView();

@@ -1,42 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
     <PreferenceCategory
         android:key="setting_push"
-        android:title="@string/jandi_setting_push">
-        <CheckBoxPreference
+        android:title="@string/jandi_setting_notification">
+        <Preference
             android:defaultValue="true"
-            android:key="setting_push_auto_alarm"
-            android:summaryOff="@string/jandi_setting_push_subscription_cancel"
-            android:summaryOn="@string/jandi_setting_push_subscription_ok"
-            android:title="@string/jandi_setting_push_subscription"/>
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="setting_push_alarm_sound"
-            android:summaryOff="@string/jandi_off"
-            android:summaryOn="@string/jandi_on"
-            android:title="@string/jandi_sounds"/>
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="setting_push_alarm_vibration"
-            android:summary="@string/jandi_setting_summary_vibrate"
-            android:title="@string/jandi_vibrate"/>
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="setting_push_alarm_led"
-            android:summary="@string/jandi_setting_summary_led"
-            android:title="@string/jandi_phone_led"/>
+            android:key="setting_push"
+            android:title="@string/jandi_setting_notification" />
     </PreferenceCategory>
 
-    <ListPreference
-        android:defaultValue="true"
-        android:key="setting_orientation"
-        android:summary="@string/jandi_screen_auto"
-        android:title="@string/jandi_screen_orientation"
-        android:entries="@array/jandi_pref_orientation"
-        android:entryValues="@array/jandi_pref_orientation_values"
-        android:widgetLayout="@layout/preference_orientation"/>
-
+    <PreferenceCategory
+        android:key="setting_orientation_title"
+        android:title="@string/jandi_setting_display">
+        <com.tosslab.jandi.app.views.preferences.ListPreferenceCompat
+            android:defaultValue="0"
+            android:entries="@array/jandi_pref_orientation"
+            android:entryValues="@array/jandi_pref_orientation_values"
+            android:key="setting_orientation"
+            android:summary="@string/jandi_screen_auto"
+            android:title="@string/jandi_screen_orientation"
+            android:widgetLayout="@layout/preference_orientation" />
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:key="setting_privacy_protection"
@@ -44,7 +30,7 @@
         <Preference
             android:defaultValue="true"
             android:key="setting_set_passcode"
-            android:title="@string/jandi_set_passcode"/>
+            android:title="@string/jandi_set_passcode" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -53,11 +39,11 @@
         <Preference
             android:defaultValue="true"
             android:key="setting_tos"
-            android:title="@string/jandi_term_of_service"/>
+            android:title="@string/jandi_term_of_service" />
         <Preference
             android:defaultValue="true"
             android:key="setting_pp"
-            android:title="@string/jandi_privacy_policy"/>
+            android:title="@string/jandi_privacy_policy" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -66,7 +52,7 @@
         <Preference
             android:key="setting_logout"
             android:selectable="true"
-            android:title="@string/jandi_setting_sign_out"/>
+            android:title="@string/jandi_setting_sign_out" />
     </PreferenceCategory>
 
 </PreferenceScreen>

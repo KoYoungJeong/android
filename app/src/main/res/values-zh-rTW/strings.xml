@@ -4,7 +4,7 @@
 	<string name="comment">"留言"</string>
 	<string name="err_delete_file">"檔案無法刪除"</string>
 	<string name="err_download">"檔案無法下載"</string>
-	<string name="err_email_exists">"此電子郵箱已被註冊a"</string>
+	<string name="err_email_exists">"此電子郵箱已被註冊"</string>
 	<string name="err_entity_create">"建立不成功"</string>
 	<string name="err_entity_delete">"刪除不成功"</string>
 	<string name="err_entity_duplicated_name">"這名字已被使用。請再試一次"</string>
@@ -85,6 +85,10 @@
 	<string name="jandi_announcement_deleted">"%s 刪除公告"</string>
 	<string name="jandi_announcement_minimize">"最小化"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你確定將此成員剔除議題？"</string>
+	<string name="jandi_auto_join_cannot_be_private_topic">"自動邀請的功能僅開放於公開議題中使用"</string>
+	<string name="jandi_auto_join_explain">"邀請所有新成員至此議題"</string>
+	<string name="jandi_auto_join_title">"自動邀請"</string>
+	<string name="jandi_auto_join_title_wild">"自動邀請*"</string>
 	<string name="jandi_browse_other_topics">"瀏覽其他議題"</string>
 	<string name="jandi_cancel">"取消"</string>
 	<string name="jandi_canceled">"取消了"</string>
@@ -193,11 +197,11 @@
 	<string name="jandi_folder_renamed">"資料夾已被重新命名"</string>
 	<string name="jandi_forgot_password">"<u>忘記密碼？</u>"</string>
 	<string name="jandi_go_to_latest">"去到最近的訊息"</string>
-	<string name="jandi_go_to_main">"回到帳號首頁"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_has_joined">"%s已加入"</string>
 	<string name="jandi_have_an_account_already">"已經有團隊註冊了嗎?"</string>
 	<string name="jandi_help">"説明"</string>
+	<string name="jandi_image_too_big">"圖像過大無法載入"</string>
 	<string name="jandi_incorrect_passcode">"密碼不吻合"</string>
 	<string name="jandi_input_password">"請爲選擇的團隊輸入您的密碼"</string>
 	<string name="jandi_input_search_keyword">"按照關鍵字搜尋您的訊息"</string>
@@ -225,6 +229,7 @@
 	<string name="jandi_is_topic_required">"公開/私人"</string>
 	<string name="jandi_it_has_no_topic_description">"(無議題內容)"</string>
 	<string name="jandi_joined_team">"你已加入%1$s，請再次確認團隊列表。"</string>
+	<string name="jandi_kicked_message">"你已被移除出%s"</string>
 	<string name="jandi_later">"稍後再說"</string>
 	<string name="jandi_launch">"開啓JANDI"</string>
 	<string name="jandi_left_topic">"%s已經離開"</string>
@@ -241,7 +246,8 @@
 	<string name="jandi_mention_mentioned_you">"提到你"</string>
 	<string name="jandi_mention_mentions">"提及"</string>
 	<string name="jandi_mention_more">"更多"</string>
-	<string name="jandi_mention_no_mentions">"還沒有人提到你"</string>
+	<string name="jandi_mention_no_mentions">"你尚未被其他成員提及。
+欲提及其他成員？輸入"@"後成員名單跳出，選取成員完成提及。"</string>
 	<string name="jandi_mention_push_message">"%s 提到你"</string>
 	<string name="jandi_message_ask_about_delete_comment">"您確定要永久刪除這留言嗎？刪除的留言將無法回復。"</string>
 	<string name="jandi_message_ask_about_deleting">"您確定要刪除此訊息嗎？刪除的訊息將無法回復。"</string>
@@ -273,12 +279,14 @@
 	<string name="jandi_no_invite_email">"請提供您想邀請的團隊成員的電子郵件地址"</string>
 	<string name="jandi_no_long_team_member">"%s 不再是此團隊的成員"</string>
 	<string name="jandi_no_message_in_topic_dm">"輸入訊息以開始對話"</string>
-	<string name="jandi_no_preview_push_mention">"[{{TopicName}}] {{Sendername}}提及你"</string>
-	<string name="jandi_no_preview_push_message">"[{{TopicName}}] {{Sendername}}發送新訊息給你"</string>
+	<string name="jandi_no_preview_push_mention">"你在此訊息中被提及"</string>
+	<string name="jandi_no_preview_push_message">"你收到一則新訊息"</string>
 	<string name="jandi_no_recent_stickers">"無最近使用的貼圖"</string>
 	<string name="jandi_no_topic_to_join">"沒有可加入的議題"</string>
 	<string name="jandi_notification_off">"關閉推播通知"</string>
 	<string name="jandi_notification_on">"開啟推播通知"</string>
+	<string name="jandi_notify_download">"開始下載，可透過通知列查詢下載進度"</string>
+	<string name="jandi_notify_download_complete">"完成下載"</string>
 	<string name="jandi_nowhere_shared_file">"檔案尚未分享到其它議題"</string>
 	<string name="jandi_off">"關閉"</string>
 	<string name="jandi_on">"打開"</string>
@@ -337,7 +345,9 @@
 	<string name="jandi_service_maintenance">"JANDI現在基於定期維護而無法使用。我們預計幾個小時内就可以恢復運作。感謝您的耐心等候。"</string>
 	<string name="jandi_set_passcode">"設定密碼"</string>
 	<string name="jandi_set_passcode_detail">"如果你忘記密碼，將無法解鎖。請重新安裝JANDI，再重新登入。"</string>
+	<string name="jandi_setting_display">"螢幕顯示"</string>
 	<string name="jandi_setting_general">"一般"</string>
+	<string name="jandi_setting_notification">"通知設定"</string>
 	<string name="jandi_setting_push">"通知偏好"</string>
 	<string name="jandi_setting_push_subscription">"推播通知"</string>
 	<string name="jandi_setting_push_subscription_cancel">"關閉通知功能"</string>
@@ -391,6 +401,7 @@
 	<string name="jandi_tab_file">"檔案"</string>
 	<string name="jandi_tab_more">"更多"</string>
 	<string name="jandi_tab_private_group">"私人議題"</string>
+	<string name="jandi_tab_to_view_original">"點擊此處瀏覽原始檔"</string>
 	<string name="jandi_tab_topic">"議題"</string>
 	<string name="jandi_team_creation_succeed">"團隊建立成功！請查看您的電子郵件。"</string>
 	<string name="jandi_team_info">"團隊"</string>
@@ -478,4 +489,5 @@
 	<string name="what_is_member_profile">"請輸入與這團隊相關聯的電子郵箱及簡介名字。
 請注意您的團隊成員可以查看和使用這資料來提到、 搜尋或直接聯係您。"</string>
 	<string name="what_is_team_domain">"選擇團隊的網域(URL)供網頁登錄使用。網域名稱須為三個以上的字元並包含字母、數字、及連字符(-)。"</string>
+	<string name="로">"回到帳號首頁"</string>
 </resources>

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.file.upload.preview;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -25,9 +27,12 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
+import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadPagerAdapter;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenter;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenterImpl;
@@ -42,7 +47,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.Fullscreen;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.SystemService;
@@ -50,6 +54,7 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.ViewsById;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -65,7 +70,6 @@ import rx.subjects.PublishSubject;
  */
 @EActivity(R.layout.activity_file_upload_insert_commnet)
 @OptionsMenu(R.menu.file_insert_comment_menu)
-@Fullscreen
 public class FileUploadPreviewActivity extends BaseAppCompatActivity implements FileUploadPresenter.View {
 
     public static final int REQUEST_CODE = 17863;
@@ -102,6 +106,8 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
     @ViewsById({R.id.iv_file_upload_preview_previous, R.id.iv_file_upload_preview_next})
     List<ImageView> scrollButtons;
+
+    private MentionControlViewModel mentionControlViewModel;
     private PublishSubject<Object> scrollButtonPublishSubject;
     private Subscription subscribe;
 
@@ -116,7 +122,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         setupActionbar();
 
         fileUploadPresenter.setView(this);
-        fileUploadPresenter.onInitEntity(selectedEntityIdToBeShared);
+        fileUploadPresenter.onInitEntity(FileUploadPreviewActivity.this, selectedEntityIdToBeShared);
         fileUploadPresenter.onInitViewPager(selectedEntityIdToBeShared, realFilePathList);
 
 
@@ -149,12 +155,49 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         EventBus.getDefault().register(this);
         ActivityHelper.setOrientation(this);
         setNeedUnLockPassCode(true);
+
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.registClipboardListener();
+        }
+        setupFullScreen();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Observable.just(1, 1)
+                .delay(100, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(integer -> {
+                    if (mentionControlViewModel != null) {
+                        mentionControlViewModel.onConfigurationChanged();
+                    }
+                });
+
+    }
+
+    private void setupFullScreen() {
+        int systemUiFlagFullscreen = View.SYSTEM_UI_FLAG_FULLSCREEN;
+
+        getWindow().getDecorView().setSystemUiVisibility(systemUiFlagFullscreen);
     }
 
     @Override
     protected void onPause() {
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.removeClipboardListener();
+        }
         EventBus.getDefault().unregister(this);
         super.onPause();
+    }
+
+    public void onEvent(SelectedMemberInfoForMensionEvent event) {
+
+        SearchedItemVO searchedItemVO = new SearchedItemVO();
+        searchedItemVO.setId(event.getId());
+        searchedItemVO.setName(event.getName());
+        searchedItemVO.setType(event.getType());
+        mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
     }
 
     public void onEventMainThread(FileUploadPreviewImageClickEvent event) {
@@ -177,6 +220,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
             inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
         }
+        setupFullScreen();
     }
 
     @Override
@@ -194,11 +238,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
     @OptionsItem(R.id.action_confirm)
     void onSendFile() {
-        if (singleUpload) {
-            fileUploadPresenter.onSingleFileUpload();
-            return;
-        }
-        fileUploadPresenter.onMultiFileUpload();
+        fileUploadPresenter.onMultiFileUpload(mentionControlViewModel);
     }
 
     private void setupActionbar() {
@@ -303,8 +343,14 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
     @Override
     public void setComment(String comment) {
-        etComment.setText(comment);
-        etComment.setSelection(etComment.getText().length());
+
+        if (mentionControlViewModel != null && !TextUtils.isEmpty(comment)) {
+            mentionControlViewModel.setUpMention(comment);
+        } else {
+            etComment.setText(comment);
+            etComment.setSelection(etComment.getText().length());
+        }
+
     }
 
     @Override
@@ -383,8 +429,15 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     }
 
     @Override
-    public void setShareEntity(int entityId) {
+    public void setShareEntity(int entityId, boolean isUser) {
         this.selectedEntityIdToBeShared = entityId;
+
+        if (!isUser) {
+            mentionControlViewModel = MentionControlViewModel.newInstance(FileUploadPreviewActivity.this,
+                    etComment,
+                    Arrays.asList(entityId),
+                    MentionControlViewModel.MENTION_TYPE_FILE_COMMENT);
+        }
     }
 
     @Override

@@ -9,9 +9,11 @@ import android.support.v4.app.FragmentManager;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
+import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
+import com.tosslab.jandi.app.ui.album.ImageAlbumActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
@@ -48,7 +50,9 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
 
     @Override
     public void selectFileSelector(int requestCode, Activity activity) {
-        filePickerModel.openAlbumForActivityResult(activity, requestCode);
+        ImageAlbumActivity_.intent(activity)
+                .mode(ImageAlbumActivity.EXTRA_MODE_CROP_PICK)
+                .startForResult(requestCode);
     }
 
     @Override

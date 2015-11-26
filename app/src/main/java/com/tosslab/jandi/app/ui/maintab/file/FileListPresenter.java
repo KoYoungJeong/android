@@ -379,7 +379,7 @@ public class FileListPresenter {
 
         moreLoadingProgressBar.getAnimation().reset();
 
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_out_bottom);
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_out_to_bottom);
         moreLoadingProgressBar.setAnimation(animation);
         animation.setAnimationListener(new SimpleEndAnimationListener() {
             @Override
@@ -448,7 +448,7 @@ public class FileListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void dismissMoreProgressBar() {
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_out_bottom);
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_out_to_bottom);
         animation.setAnimationListener(new SimpleEndAnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {

@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.carousel;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
@@ -20,8 +19,9 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.FileSizeUtil;
+import com.tosslab.jandi.app.utils.OnSwipeExitListener;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -34,7 +34,6 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -42,7 +41,8 @@ import java.util.List;
  */
 @EActivity(R.layout.activity_carousel_viewer)
 @OptionsMenu(R.menu.carousel_menu)
-public class CarouselViewerActivity extends BaseAppCompatActivity implements CarouselViewerPresenter.View {
+public class CarouselViewerActivity extends BaseAppCompatActivity
+        implements CarouselViewerPresenter.View, OnSwipeExitListener {
 
     private static final int REQ_STORAGE_PERMISSION = 101;
     @ViewById(R.id.vp_carousel)
@@ -111,7 +111,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity implements Car
                 ActionBar actionBar = getSupportActionBar();
                 if (actionBar != null) {
                     actionBar.setTitle(fileInfo.getFileName());
-                    actionBar.setSubtitle(FileSizeUtil.fileSizeCalculation(fileInfo.getSize())
+                    actionBar.setSubtitle(FileUtil.fileSizeCalculation(fileInfo.getSize())
                             + ", " + fileInfo.getExt());
                 }
                 tvFileWriterName.setText(fileInfo.getFileWriter());
@@ -264,12 +264,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity implements Car
         Permissions.getChecker()
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .hasPermission(() -> {
-                    final ProgressDialog progressDialog = new ProgressDialog(CarouselViewerActivity.this);
-                    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                    progressDialog.setMessage("Downloading " + fileInfo.getFileName());
-                    progressDialog.show();
-                    carouselViewerPresenter.onFileDownload(CarouselViewerActivity.this, fileInfo,
-                            progressDialog);
+                    carouselViewerPresenter.onFileDownload(fileInfo);
                 })
                 .noPermission(() -> {
                     requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -295,21 +290,6 @@ public class CarouselViewerActivity extends BaseAppCompatActivity implements Car
 
     @UiThread
     @Override
-    public void downloadDone(File file, String fileType, ProgressDialog progressDialog) {
-
-        if (isFinishing()) {
-            return;
-        }
-
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-
-        ColoredToast.show(CarouselViewerActivity.this, file.getPath());
-    }
-
-    @UiThread
-    @Override
     public void showFailToast(String message) {
         ColoredToast.showError(this, message);
     }
@@ -317,6 +297,18 @@ public class CarouselViewerActivity extends BaseAppCompatActivity implements Car
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
         return false;
+    }
+
+    @Override
+    public void onSwipeExit(int direction) {
+        finish();
+
+        int anim = R.anim.slide_out_to_bottom;
+        if (direction == OnSwipeExitListener.DIRECTION_TO_TOP) {
+            anim = R.anim.slide_out_to_top;
+        }
+
+        overridePendingTransition(0, anim);
     }
 
     public interface OnCarouselImageClickListener {
