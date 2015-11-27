@@ -12,15 +12,22 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 import com.tosslab.jandi.app.services.SignOutService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
+import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -217,6 +224,7 @@ public class JandiSocketService extends Service {
         eventHashMap.put("connect_team", objects -> {
             LogUtil.d(TAG, "connect_team");
             jandiSocketManager.sendByJson("ping", "");
+            updateEventHistory();
         });
         eventHashMap.put("pong", objects -> LogUtil.d(TAG, "pong"));
         eventHashMap.put("error_connect_team", objects -> {
@@ -266,6 +274,35 @@ public class JandiSocketService extends Service {
         eventHashMap.put("folder_deleted", topicFolderUpdateListener);
         eventHashMap.put("folder_created", topicFolderUpdateListener);
     }
+
+    // 확장성 생각하여 추후 모듈로 빼내야 함.
+    private void updateEventHistory() {
+        long ts = JandiPreference.getSocketConnectedLastTime();
+        EntityManager entityManager = EntityManager.getInstance();
+        int userId = entityManager.getMe().getId();
+        if (ts != -1) {
+            try {
+                ResEventHistory eventHistory =
+                        RequestApiManager.getInstance().getEventHistory(ts, userId, "file_unshared", null);
+                // 이하는 모든 이벤트 받아올 때
+//                ResEventHistory eventHistory =
+//                        RequestApiManager.getInstance().getEventHistory(ts, userId, null, null);
+                Iterator<ResEventHistory.EventHistoryInfo> i = eventHistory.records.iterator();
+                while (i.hasNext()) {
+                    ResEventHistory.EventHistoryInfo eventInfo = i.next();
+                    if (eventInfo instanceof SocketFileUnsharedEvent) {
+                        SocketFileUnsharedEvent event = (SocketFileUnsharedEvent) eventInfo;
+                        int fileId = event.getFile().getId();
+                        int roomId = event.room.id;
+                        MessageRepository.getRepository().updateUnshared(fileId, roomId);
+                    }
+                }
+            } catch (RetrofitError e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     private void setUpSocketListener() {
         for (String key : eventHashMap.keySet()) {
