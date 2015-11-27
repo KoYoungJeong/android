@@ -40,9 +40,9 @@ public class FormattedEntity {
     public boolean announcementOpened = false;
     // Starred
     public boolean isStarred = false;
-    private ResLeftSideMenu.Entity entity;
     // Topic Push
     public boolean isTopicPushOn = true;
+    private ResLeftSideMenu.Entity entity;
 
     public FormattedEntity(ResLeftSideMenu.Channel channel, boolean isJoined) {
         this.entity = channel;
@@ -366,6 +366,18 @@ public class FormattedEntity {
             default:
             case TYPE_REAL_USER:
                 return "";
+        }
+    }
+
+    public boolean isAutoJoin() {
+        switch (type) {
+            case TYPE_REAL_CHANNEL:
+                return ((ResLeftSideMenu.Channel) entity).autoJoin;
+            case TYPE_REAL_PRIVATE_GROUP:
+                return false;
+            default:
+            case TYPE_REAL_USER:
+                return false;
         }
     }
 }

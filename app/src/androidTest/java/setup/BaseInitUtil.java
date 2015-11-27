@@ -31,10 +31,6 @@ public class BaseInitUtil {
 
         clear();
 
-        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
-                .clearAllData();
-        JandiPreference.signOut(JandiApplication.getContext());
-
         ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
                 ReqAccessToken.createPasswordReqToken(TEST_ID, TEST_PASSWORD));
 
@@ -60,6 +56,11 @@ public class BaseInitUtil {
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(sideMenu);
 
 
+    }
+
+    public static void clear() {
+        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class).clearAllData();
+        JandiPreference.signOut(JandiApplication.getContext());
     }
 
     public static void releaseDatabase() {

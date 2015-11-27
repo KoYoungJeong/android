@@ -74,6 +74,8 @@ public class ResLeftSideMenu {
         public Date ch_createTime;
         public List<Integer> ch_members;
         public String description;
+        public boolean autoJoin;
+
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -104,6 +106,7 @@ public class ResLeftSideMenu {
         public Date pg_createTime;
         public List<Integer> pg_members;
         public String description;
+        public boolean autoJoin;
 
     }
 

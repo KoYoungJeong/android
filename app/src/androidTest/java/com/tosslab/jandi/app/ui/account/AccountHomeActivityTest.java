@@ -15,8 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
-import java.util.List;
+import setup.BaseInitUtil;
 
 import rx.Observable;
 import setup.BaseInitUtil;

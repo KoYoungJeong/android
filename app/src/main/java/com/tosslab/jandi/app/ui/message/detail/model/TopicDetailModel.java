@@ -241,4 +241,17 @@ public class TopicDetailModel {
         return total;
 
     }
+
+    public boolean isPrivateTopic(int entityId) {
+        return EntityManager.getInstance().getEntityById(entityId).isPrivateGroup();
+    }
+
+    public boolean isAutoJoin(int entityId) {
+        return EntityManager.getInstance().getEntityById(entityId).isAutoJoin();
+    }
+
+    public void updateAutoJoin(int entityId, boolean autoJoin) {
+        int teamId = EntityManager.getInstance().getTeamId();
+        entityClientManager.modifyChannelAutoJoin(teamId, entityId, autoJoin);
+    }
 }

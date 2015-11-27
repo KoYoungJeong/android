@@ -13,6 +13,7 @@ import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -92,8 +93,13 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     View ivStarred;
     @ViewById(R.id.switch_topic_detail_set_push)
     SwitchCompat switchSetPush;
+    @ViewById(R.id.switch_topic_detail_set_auto_join)
+    SwitchCompat switchAutoJoin;
+    @ViewById(R.id.vg_topic_detail_set_auto_join)
+    ViewGroup vgAutoJoin;
     @ViewById(R.id.tv_topic_detail_set_push)
     TextView tvSetPush;
+
 
     private ProgressWheel progressWheel;
 
@@ -114,7 +120,9 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     private void setUpActionbar() {
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
         Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar_topic_detail);
-        activity.setSupportActionBar(toolbar);
+        if (toolbar != null) {
+            activity.setSupportActionBar(toolbar);
+        }
 
         ActionBar actionBar = activity.getSupportActionBar();
 
@@ -216,6 +224,11 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Participants);
     }
 
+    @Click(R.id.vg_topic_detail_set_auto_join)
+    void onAutoJoinClick() {
+        topicDetailPresenter.onAutoJoin(entityId, !switchAutoJoin.isChecked());
+    }
+
     // Topic Push
     @Click(R.id.vg_topic_detail_set_push)
     void onPushClick() {
@@ -232,7 +245,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         }
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setTopicPushSwitch(boolean isPushOn) {
         switchSetPush.setChecked(isPushOn);
@@ -286,6 +299,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         tvMemberCount.setText(String.valueOf(topicMemberCount));
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setLeaveVisible(boolean owner, boolean defaultTopic) {
         if (defaultTopic) {
@@ -306,6 +320,28 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
             vgDefaultMessage.setVisibility(View.GONE);
 
 
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic) {
+        if (privateTopic) {
+            if (owner) {
+                vgAutoJoin.setEnabled(true);
+            } else {
+                vgAutoJoin.setEnabled(false);
+            }
+            switchAutoJoin.setChecked(false);
+        } else if (defaultTopic) {
+            switchAutoJoin.setChecked(true);
+            vgAutoJoin.setEnabled(false);
+        } else if (owner) {
+            switchAutoJoin.setChecked(autoJoin);
+            vgAutoJoin.setEnabled(true);
+        } else {
+            switchAutoJoin.setChecked(autoJoin);
+            vgAutoJoin.setEnabled(false);
         }
     }
 
@@ -341,7 +377,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         progressWheel.show();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(delay = 200L)
     @Override
     public void dismissProgressWheel() {
         if (progressWheel != null && progressWheel.isShowing()) {
