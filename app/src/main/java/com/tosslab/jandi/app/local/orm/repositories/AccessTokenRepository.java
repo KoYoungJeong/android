@@ -8,6 +8,7 @@ import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.sql.SQLException;
 import java.util.concurrent.locks.Lock;
@@ -103,6 +104,8 @@ public class AccessTokenRepository {
         } finally {
             lock.unlock();
         }
+
+        LogUtil.i(resAccessToken != null ? resAccessToken.toString() : "Access token null !!");
 
         if (resAccessToken != null) {
             return resAccessToken;

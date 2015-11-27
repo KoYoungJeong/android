@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
@@ -118,6 +119,8 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     @AfterViews
     void initView() {
+
+        ColoredToast.show(this, AccessTokenRepository.getRepository().getAccessToken().toString());
 
         showDialogIfNotLastestVersion();
         ParseUpdateUtil.addChannelOnServer();

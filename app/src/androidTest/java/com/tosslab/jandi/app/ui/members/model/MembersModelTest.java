@@ -89,23 +89,6 @@ public class MembersModelTest {
     }
 
     @Test
-    public void testGetTopicMembers() throws Exception {
-        // Given
-        int defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
-        Collection<Integer> members = EntityManager.getInstance().getEntityById(defaultTopicId).getMembers();
-        // When
-        List<ChatChooseItem> topicMembers = membersModel.getTopicMembers(defaultTopicId);
-        // Then
-        assertThat(topicMembers.size(), is(equalTo(members.size())));
-
-        for (ChatChooseItem topicMember : topicMembers) {
-            if (!topicMember.isEnabled()) {
-                fail("모든 멤버는 enabled 상태이어야 한다.");
-            }
-        }
-    }
-
-    @Test
     public void testGetTeamMembers() throws Exception {
         // Given
         List<FormattedEntity> formattedMembers = EntityManager.getInstance().getFormattedUsers();
