@@ -1,9 +1,6 @@
 package com.tosslab.jandi.app.network.socket.connector;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
@@ -96,7 +93,6 @@ public class JandiSocketConnector implements SocketConnector {
         long ts = JandiPreference.getSocketConnectedLastTime();
         EntityManager entityManager = EntityManager.getInstance();
         int userId = entityManager.getMe().getId();
-
         if (ts != -1) {
             try {
                 ResEventHistory eventHistory =
@@ -112,22 +108,9 @@ public class JandiSocketConnector implements SocketConnector {
                     }
                 }
             } catch (RetrofitError e) {
-                JandiPreference.setSocketConnectedLastTime();
                 e.printStackTrace();
-                // 오류 나면 그 때 부터 데이터가 꼬이기 시작한다. 다 지우기 - 최선인가.....
-                OrmDatabaseHelper dbHelper =
-                        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
-                dbHelper.clearAllData();
-
             }
-        } else {
-            JandiPreference.setSocketConnectedLastTime();
-            // 캐시 다 지우기
-            OrmDatabaseHelper dbHelper =
-                    OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
-            dbHelper.clearAllData();
         }
-
     }
 
     private void disconnectCallback(EventListener disconnectListener, Object[] args) {
