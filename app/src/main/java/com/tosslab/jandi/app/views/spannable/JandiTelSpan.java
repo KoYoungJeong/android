@@ -32,7 +32,11 @@ public class JandiTelSpan extends UnderlineSpan implements ClickableSpannable {
         callIntent.setData(Uri.parse("tel:" + phoneNumber));
         callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        JandiApplication.getContext().startActivity(callIntent);
+        try {
+            JandiApplication.getContext().startActivity(callIntent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public String getPhoneNumber() {
