@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.local.orm.repositories;
 
 import android.content.res.AssetManager;
+import android.text.TextUtils;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
@@ -25,6 +26,7 @@ public class StickerRepository {
 
     public static final int DEFAULT_GROUP_ID_MOZZI = 100;
     public static final int DEFAULT_GROUP_ID_DAY = 101;
+    public static final int DEFAULT_GROUP_ID_DAY_ZH_TW = 102;
     public static final int DEFAULT_MOZZI_COUNT = 26;
     private static StickerRepository repository;
     private final OrmDatabaseHelper helper;
@@ -62,6 +64,9 @@ public class StickerRepository {
             String[] dayList = assetManager.list("stickers/default/day");
             addStickerConetentIfNeed(dao, dayList, DEFAULT_GROUP_ID_DAY);
 
+            String[] dayZhTwList = assetManager.list("stickers/default/day/zh_tw");
+            addStickerConetentIfNeed(dao, dayZhTwList, DEFAULT_GROUP_ID_DAY_ZH_TW);
+
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -75,11 +80,18 @@ public class StickerRepository {
                 .where()
                 .eq("groupId", stickerGroupId)
                 .query();
+
         if (savedStickerList.size() == stickerAssetList.length) {
             return;
+        } else if (stickerGroupId == DEFAULT_GROUP_ID_DAY) {
+            // Days 의 기본 경로는 대만의 경로가 포함되어 있음
+            if (savedStickerList.size() - 1 == stickerAssetList.length) {
+                return;
+            }
         }
 
         Observable.from(stickerAssetList)
+                .filter(file -> !TextUtils.isEmpty(file) && file.endsWith(".png"))
                 .map(file -> {
                     ResMessages.StickerContent stickerContent = new ResMessages.StickerContent();
                     String[] split = file.split("\\.")[0].split("_");
