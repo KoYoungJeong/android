@@ -445,12 +445,13 @@ public class MessageListPresenter {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void changeToArchive(int messageId) {
         int position = messageListAdapter.indexByMessageId(messageId);
+
         String archivedStatus = "archived";
-        if (position > 0) {
+
+        if (position >= 0) {
             ResMessages.Link item = messageListAdapter.getItem(position);
             item.message.status = archivedStatus;
             item.message.createTime = new Date();
-
         }
 
         List<Integer> commentIndexes = messageListAdapter.indexByFeedbackId(messageId);
@@ -461,11 +462,10 @@ public class MessageListPresenter {
             item.feedback.createTime = new Date();
         }
 
-        if (position > 0 || commentIndexes.size() > 0) {
+        if (position >= 0 || commentIndexes.size() > 0) {
 
             messageListAdapter.notifyDataSetChanged();
         }
-
     }
 
     public void updateLinkPreviewMessage(ResMessages.TextMessage message) {

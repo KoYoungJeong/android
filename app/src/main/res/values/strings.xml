@@ -446,6 +446,7 @@ We combined everything you love about messaging apps and cloud storage with powe
 	<string name="jandi_unpinned_message">"Unstarred"</string>
 	<string name="jandi_unread_messages_below">"Unread messages below"</string>
 	<string name="jandi_unshare_succeed">"%s has been unshared"</string>
+	<string name="jandi_unshared_file">"Unshared file"</string>
 	<string name="jandi_unshared_file_in_dm">"This file has been unshared from this conversation."</string>
 	<string name="jandi_unshared_message">"You cannot access this item anymore."</string>
 	<string name="jandi_unstarred">"Unstar"</string>

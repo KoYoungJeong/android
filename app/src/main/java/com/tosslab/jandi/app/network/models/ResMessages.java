@@ -83,7 +83,6 @@ public class ResMessages {
         public String status;
         @DatabaseField
         public int feedbackId;
-
         @DatabaseField(foreign = true)
         public EventInfo info; // How to convert other type
         @DatabaseField
@@ -247,6 +246,7 @@ public class ResMessages {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TextMessage extends OriginalMessage {
+
         @ForeignCollectionField(foreignFieldName = "textOf")
         public Collection<IntegerWrapper> shareEntities;
 

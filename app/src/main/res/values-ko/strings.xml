@@ -449,6 +449,7 @@
 	<string name="jandi_unpinned_message">"즐겨찾기 해제됨"</string>
 	<string name="jandi_unread_messages_below">"여기까지 읽었습니다."</string>
 	<string name="jandi_unshare_succeed">"%s 공유가 해제되었습니다."</string>
+	<string name="jandi_unshared_file">"공유 해제됨"</string>
 	<string name="jandi_unshared_file_in_dm">"이 파일은 이 대화에서 공유 해제되어 더 이상 즐겨찾기를 하실 수 없습니다."</string>
 	<string name="jandi_unshared_message">"원본에 대한 접근 권한이 없습니다."</string>
 	<string name="jandi_unstarred">"즐겨찾기 해제"</string>

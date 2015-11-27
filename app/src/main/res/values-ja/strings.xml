@@ -446,6 +446,7 @@
 	<string name="jandi_unpinned_message">"スターなし"</string>
 	<string name="jandi_unread_messages_below">"ここから未読メッセージ"</string>
 	<string name="jandi_unshare_succeed">"%sが非共有にされました"</string>
+	<string name="jandi_unshared_file">"共有解除されたファイル"</string>
 	<string name="jandi_unshared_file_in_dm">"このファイルは非共有化されました"</string>
 	<string name="jandi_unshared_message">"原本ファイルへのアクセス権がありません。"</string>
 	<string name="jandi_unstarred">"お気に入りから削除する"</string>

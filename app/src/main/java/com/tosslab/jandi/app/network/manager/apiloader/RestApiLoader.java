@@ -5,6 +5,7 @@ import com.tosslab.jandi.app.network.client.account.emails.IAccountEmailsApiLoad
 import com.tosslab.jandi.app.network.client.account.password.IAccountPasswordApiLoader;
 import com.tosslab.jandi.app.network.client.chat.IChatApiLoader;
 import com.tosslab.jandi.app.network.client.direct.message.IDirectMessageApiLoader;
+import com.tosslab.jandi.app.network.client.events.IEventsApiLoader;
 import com.tosslab.jandi.app.network.client.file.IFileApiLoader;
 import com.tosslab.jandi.app.network.client.invitation.IInvitationApiLoader;
 import com.tosslab.jandi.app.network.client.main.IMainRestApiLoader;
@@ -70,6 +71,7 @@ import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResCreateFolder;
+import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
@@ -97,7 +99,8 @@ import java.util.List;
 public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApiLoader, IAccountPasswordApiLoader, IChatApiLoader,
         IDirectMessageApiLoader, IInvitationApiLoader, IMainRestApiLoader, ICommentsApiLoader, IMessageSearchApiLoader,
         IMessagesApiLoader, IGroupMessageApiLoader, IGroupApiLoader, IProfileApiLoader, IChannelMessageApiLoader, IChannelApiLoader,
-        IRoomsApiLoader, IAccountProfileApiLoader, IStarredEntityApiLoader, IStickerApiLoader, ITeamApiLoader, IFileApiLoader, IPlatformApiLoader {
+        IRoomsApiLoader, IAccountProfileApiLoader, IStarredEntityApiLoader, IStickerApiLoader, ITeamApiLoader, IFileApiLoader, IPlatformApiLoader,
+        IEventsApiLoader {
 
     JacksonConvertedAuthRestApiClient authRestApiClient = new JacksonConvertedAuthRestApiClient();
 
@@ -715,4 +718,10 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     public IExecutor<ResCommon> loadKickUserFromTopic(int teamId, int topicId, ReqMember member) {
         return () -> authRestApiClient.kickUserFromTopic(teamId, topicId, member);
     }
+
+    @Override
+    public IExecutor<ResEventHistory> loadGetEventHistory(long ts, Integer memberId, String eventType, Integer size) {
+        return () -> authRestApiClient.getEventHistory(ts, memberId, eventType, size);
+    }
+
 }

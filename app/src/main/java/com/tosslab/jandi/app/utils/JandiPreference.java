@@ -7,6 +7,8 @@ import android.preference.PreferenceManager;
 
 import com.tosslab.jandi.app.JandiApplication;
 
+import java.sql.Timestamp;
+
 /**
  * Created by justinygchoi on 2014. 7. 8..
  */
@@ -46,6 +48,7 @@ public class JandiPreference {
     private static final String PREF_OLD_PARSE_FILE_CACHE_DELETED = "old_parse_file_cache_deleted";
     private static final String PREF_VERSION_POPUP_LAST_TIME = "version_popup_last_time";
     private static final String PREF_PUSH_PREVIEW_INFO = "setting_push_preview";
+    private static final String PREF_SOCKET_CONNECTED_LAST_TIME = "socket_connected_last_time";
 
     public static boolean isOldParseFileCacheDeleted(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
@@ -318,10 +321,22 @@ public class JandiPreference {
                 .putBoolean("cleared_link", true)
                 .commit();
     }
+
     public static void init(Context context) {
 
         SharedPreferences pref = getSharedPreferences(context);
         pref.edit().clear().commit();
 
     }
+
+    public static void setSocketConnectedLastTime() {
+        getSharedPreferences(JandiApplication.getContext()).edit()
+                .putLong(PREF_SOCKET_CONNECTED_LAST_TIME, new Timestamp(System.currentTimeMillis()).getTime())
+                .commit();
+    }
+
+    public static long getSocketConnectedLastTime() {
+        return getSharedPreferences(JandiApplication.getContext()).getLong(PREF_SOCKET_CONNECTED_LAST_TIME, -1);
+    }
+
 }

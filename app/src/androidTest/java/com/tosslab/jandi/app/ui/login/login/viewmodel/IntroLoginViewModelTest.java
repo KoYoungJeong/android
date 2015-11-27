@@ -37,7 +37,7 @@ import static org.hamcrest.Matchers.notNullValue;
 public class IntroLoginViewModelTest {
 
     @Rule
-    public ActivityTestRule<BaseAppCompatActivity> rule = new ActivityTestRule<BaseAppCompatActivity>(BaseAppCompatActivity.class);
+    public ActivityTestRule<BaseAppCompatActivity> rule = new ActivityTestRule<>(BaseAppCompatActivity.class);
     private IntroLoginViewModel introLoginViewModel;
 
     @Before

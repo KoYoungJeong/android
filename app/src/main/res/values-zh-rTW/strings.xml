@@ -444,6 +444,7 @@
 	<string name="jandi_unpinned_message">"已取消標示"</string>
 	<string name="jandi_unread_messages_below">"以下為未讀訊息"</string>
 	<string name="jandi_unshare_succeed">"%s已被取消分享"</string>
+	<string name="jandi_unshared_file">"檔案已取消分享"</string>
 	<string name="jandi_unshared_file_in_dm">"此檔案已經從這個對話中取消分享"</string>
 	<string name="jandi_unshared_message">"無法存取該檔案/訊息"</string>
 	<string name="jandi_unstarred">"取消標記"</string>

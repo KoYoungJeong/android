@@ -42,6 +42,7 @@ import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
+import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
@@ -385,38 +386,34 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     private void initKeyboardEvent() {
 
-        messageEditText.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
+        messageEditText.setOnKeyListener((v, keyCode, event) -> {
 
+            LogUtil.d("In messageEditText KeyCode : " + keyCode);
 
-                LogUtil.d("In messageEditText KeyCode : " + keyCode);
+            if (keyCode == KeyEvent.KEYCODE_ENTER
+                    && getResources().getConfiguration().keyboard != Configuration
+                    .KEYBOARD_NOKEYS) {
 
-                if (keyCode == KeyEvent.KEYCODE_ENTER
-                        && getResources().getConfiguration().keyboard != Configuration
-                        .KEYBOARD_NOKEYS) {
-
-                    if (!event.isShiftPressed()) {
-                        onSendClick();
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-
-                if (event.getAction() != KeyEvent.ACTION_DOWN) {
-                    //We only look at ACTION_DOWN in this code, assuming that ACTION_UP is redundant.
-                    // If not, adjust accordingly.
-                    return false;
-                } else if (event.getUnicodeChar() ==
-                        (int) EditableAccomodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
-                    //We are ignoring this character, and we want everyone else to ignore it, too, so
-                    // we return true indicating that we have handled it (by ignoring it).
+                if (!event.isShiftPressed()) {
+                    onSendClick();
                     return true;
+                } else {
+                    return false;
                 }
-
-                return false;
             }
+
+            if (event.getAction() != KeyEvent.ACTION_DOWN) {
+                //We only look at ACTION_DOWN in this code, assuming that ACTION_UP is redundant.
+                // If not, adjust accordingly.
+                return false;
+            } else if (event.getUnicodeChar() ==
+                    (int) EditableAccomodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
+                //We are ignoring this character, and we want everyone else to ignore it, too, so
+                // we return true indicating that we have handled it (by ignoring it).
+                return true;
+            }
+
+            return false;
         });
 
     }
@@ -829,6 +826,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         } else {
             messageListPresenter.showOfflineLayer();
         }
+
     }
 
     @Override
@@ -1371,7 +1369,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
 
-
         if (!isForeground) {
             return;
         }
@@ -1443,9 +1440,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     public void onEvent(DeleteFileEvent event) {
-
         messageListPresenter.changeToArchive(event.getId());
-
     }
 
     public void onEvent(FileCommentRefreshEvent event) {
@@ -1753,7 +1748,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Background
     public void onEvent(MessageStarredEvent event) {
-
         if (!isForeground) {
             return;
         }
@@ -1797,6 +1791,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         searchedItemVO.setName(event.getName());
         searchedItemVO.setType(event.getType());
         mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
+    }
+
+    public void onEvent(UnshareFileEvent event){
+        messageListPresenter.justRefresh();
     }
 
     @Background

@@ -122,7 +122,6 @@ public class StickerManager {
 
     String getStickerAssetPath(int groupId, String stickerId) {
         List<ResMessages.StickerContent> stickers = StickerRepository.getRepository().getStickers(groupId);
-
         ResMessages.StickerContent defaultSticker = new ResMessages.StickerContent();
         ResMessages.StickerContent stickerItem = Observable.from(stickers)
                 .filter(resSticker -> TextUtils.equals(resSticker.stickerId, stickerId))
