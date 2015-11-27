@@ -20,6 +20,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -94,6 +95,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
@@ -209,6 +211,17 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Select);
         });
 
+        lvFileDetailComments.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    hideSoftKeyboard();
+                    stickerViewModel.dismissStickerSelector();
+                }
+                return false;
+            }
+        });
+
         stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
 
         stickerViewModel.setType(StickerViewModel.TYPE_FILE_DETAIL);
@@ -272,6 +285,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     void onCommentLongClick(ResMessages.OriginalMessage item) {
         fileDetailPresenter.onLongClickComment(item);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap);
+    }
+
+    @ItemClick(R.id.lv_file_detail_comments)
+    void onCommentClick(ResMessages.OriginalMessage item) {
+        hideSoftKeyboard();
+        stickerViewModel.dismissStickerSelector();
     }
 
     @Click(R.id.iv_file_detail_preview_sticker_close)
@@ -649,7 +668,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread(propagation = Propagation.REUSE)
     @Override
     public void hideSoftKeyboard() {
-        inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+        if (inputMethodManager.isAcceptingText()) {
+            inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+        }
     }
 
     @UiThread(propagation = Propagation.REUSE)
