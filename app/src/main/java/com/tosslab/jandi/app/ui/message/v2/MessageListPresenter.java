@@ -868,6 +868,8 @@ public class MessageListPresenter {
             }
             ((LinearLayoutManager) messageListView.getLayoutManager())
                     .scrollToPositionWithOffset(position + 1, measuredHeight);
+        } else if (position < 0) {
+            messageListView.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
         }
 
     }
@@ -892,12 +894,7 @@ public class MessageListPresenter {
 
             addDummyMessages(dummyMessages);
 
-            if (lastReadLinkId > 0 && isContainLinkId(linkList, lastReadLinkId)) {
-                // Marker 로 이동
-                moveToLink(lastReadLinkId);
-            } else {
-                moveLastPage();
-            }
+            moveLastPage();
 
             dismissLoadingView();
 
