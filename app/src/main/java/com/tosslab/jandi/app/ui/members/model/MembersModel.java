@@ -116,4 +116,16 @@ public class MembersModel {
     public boolean isTopicOwner(int entityId) {
         return EntityManager.getInstance().isMyTopic(entityId);
     }
+
+    public boolean removeMember(int topicId, int userEntityId) {
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(topicId);
+        if (entity.isPublicTopic()) {
+            return entity.getChannel().ch_members.remove(new Integer(userEntityId));
+
+        } else if (entity.isPrivateGroup()) {
+            return entity.getPrivateGroup().pg_members.remove(new Integer(userEntityId));
+        }
+
+        return false;
+    }
 }
