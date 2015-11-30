@@ -46,9 +46,6 @@ import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscription;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.functions.Func2;
 import rx.subjects.PublishSubject;
 
 /**
@@ -60,6 +57,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     @RootContext
     AppCompatActivity activity;
+
     @Bean
     MembersModel memberModel;
 
@@ -80,68 +78,55 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         objectPublishSubject = PublishSubject.create();
         subscribe = objectPublishSubject
                 .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
-                .map(new Func1<String, List<ChatChooseItem>>() {
-                    @Override
-                    public List<ChatChooseItem> call(String s) {
-                        int entityId = view.getEntityId();
-                        int type = view.getType();
-
-                        List<ChatChooseItem> members;
-                        if (type == MembersListActivity.TYPE_MEMBERS_LIST_TEAM) {
-                            members = memberModel.getTeamMembers();
-                        } else if (type == MembersListActivity.TYPE_MEMBERS_LIST_TOPIC) {
-                            members = memberModel.getTopicMembers(entityId);
-                        } else if (type == MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC) {
-                            members = memberModel.getUnjoinedTopicMembers(entityId);
-                        } else {
-                            members = memberModel.getTeamMembers();
-                        }
-
-                        List<ChatChooseItem> chatChooseItems = new ArrayList<>();
-                        Observable.from(members)
-                                .filter(new Func1<ChatChooseItem, Boolean>() {
-                                    @Override
-                                    public Boolean call(ChatChooseItem chatChooseItem) {
-                                        if (TextUtils.isEmpty(s)) {
-                                            return true;
-                                        } else
-                                            return chatChooseItem.getName().toLowerCase().contains(s.toLowerCase());
-                                    }
-                                })
-                                .toSortedList(new Func2<ChatChooseItem, ChatChooseItem, Integer>() {
-                                    @Override
-                                    public Integer call(ChatChooseItem chatChooseItem, ChatChooseItem chatChooseItem2) {
-
-                                        int myId = EntityManager.getInstance().getMe().getId();
-                                        if (chatChooseItem.getEntityId() == myId) {
-                                            return -1;
-                                        } else if (chatChooseItem2.getEntityId() == myId) {
-                                            return 1;
-                                        } else {
-                                            return chatChooseItem.getName().toLowerCase()
-                                                    .compareTo(chatChooseItem2.getName().toLowerCase());
-                                        }
-                                    }
-                                })
-                                .subscribe(new Action1<List<ChatChooseItem>>() {
-                                    @Override
-                                    public void call(List<ChatChooseItem> collection) {
-                                        chatChooseItems.addAll(collection);
-                                    }
-                                }, Throwable::printStackTrace);
-                        return chatChooseItems;
-                    }
+                .map(s -> {
+                    List<ChatChooseItem> members = getChatChooseItems();
+                    return getFilteredChatChooseItems(s, members);
                 })
-                .subscribe(new Action1<List<ChatChooseItem>>() {
-                    @Override
-                    public void call(List<ChatChooseItem> topicMembers) {
-                        view.showListMembers(topicMembers);
-                    }
-                }, Throwable::printStackTrace);
+                .subscribe(topicMembers -> view.showListMembers(topicMembers), Throwable::printStackTrace);
 
         entityRefreshPublishSubject = PublishSubject.create();
         entityRefreshSubscriber = entityRefreshPublishSubject.throttleWithTimeout(500, TimeUnit.MILLISECONDS)
                 .subscribe(integer -> initObject(), Throwable::printStackTrace);
+    }
+
+    public List<ChatChooseItem> getFilteredChatChooseItems(String s, List<ChatChooseItem> members) {
+        List<ChatChooseItem> chatChooseItems = new ArrayList<>();
+        Observable.from(members)
+                .filter(chatChooseItem -> {
+                    if (TextUtils.isEmpty(s)) {
+                        return true;
+                    } else
+                        return chatChooseItem.getName().toLowerCase().contains(s.toLowerCase());
+                })
+                .toSortedList((chatChooseItem, chatChooseItem2) -> {
+                    int myId = EntityManager.getInstance().getMe().getId();
+                    if (chatChooseItem.getEntityId() == myId) {
+                        return -1;
+                    } else if (chatChooseItem2.getEntityId() == myId) {
+                        return 1;
+                    } else {
+                        return chatChooseItem.getName().toLowerCase()
+                                .compareTo(chatChooseItem2.getName().toLowerCase());
+                    }
+                })
+                .subscribe(collection -> chatChooseItems.addAll(collection), Throwable::printStackTrace);
+        return chatChooseItems;
+    }
+
+    public List<ChatChooseItem> getChatChooseItems() {
+        int entityId = view.getEntityId();
+        int type = view.getType();
+        List<ChatChooseItem> members;
+        if (type == MembersListActivity.TYPE_MEMBERS_LIST_TEAM) {
+            members = memberModel.getTeamMembers();
+        } else if (type == MembersListActivity.TYPE_MEMBERS_LIST_TOPIC) {
+            members = memberModel.getTopicMembers(entityId);
+        } else if (type == MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC) {
+            members = memberModel.getUnjoinedTopicMembers(entityId);
+        } else {
+            members = memberModel.getTeamMembers();
+        }
+        return members;
     }
 
     @AfterViews
@@ -169,7 +154,6 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         if (!subscribe.isUnsubscribed()) {
             objectPublishSubject.onNext(text.toString());
         }
-
     }
 
     @Override
@@ -206,7 +190,6 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     @Override
     public void inviteInBackground(List<Integer> invitedUsers, int entityId) {
         try {
-
             FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
             if (entity.isPublicTopic()) {
@@ -279,7 +262,6 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                         .property(PropertyKey.TopicId, entityId)
                         .property(PropertyKey.MemberCount, memberCount)
                         .build());
-
     }
 
     private void trackTopicMemberInviteFail(int errorCode) {
