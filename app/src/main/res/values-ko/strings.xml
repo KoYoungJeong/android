@@ -85,6 +85,7 @@
 	<string name="jandi_announcement_deleted">"%s님이 공지사항을 삭제했습니다."</string>
 	<string name="jandi_announcement_minimize">"최소화"</string>
 	<string name="jandi_ask_kick_user_from_topic">"정말 이 멤버를 내보내시겠습니까?"</string>
+	<string name="jandi_auto_join_cannot_be_default_topic">"기본토픽에서는 자동초대를 해제할 수 없습니다."</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"자동 초대는 공개 토픽 에서만 사용 가능합니다"</string>
 	<string name="jandi_auto_join_explain">"새로 팀에 참여하는 모든 멤버를 이 토픽에 초대합니다."</string>
 	<string name="jandi_auto_join_title">"자동 초대"</string>
@@ -221,7 +222,7 @@
 	<string name="jandi_invite_member">"멤버 초대하기"</string>
 	<string name="jandi_invite_member_to_topic">"토픽에 멤버 초대하기"</string>
 	<string name="jandi_invite_succes_copy_link">"초대 링크가 클립보드에 복사되었습니다. 초대를 원하시는 멤버에게 이 링크를 보내세요!"</string>
-	<string name="jandi_invite_succes_send">"아래 주소들로 초대장이 성공적으로 전송되었습니다."</string>
+	<string name="jandi_invite_succes_send">"아래 주소로 초대장이 성공적으로 전송되었습니다."</string>
 	<string name="jandi_invite_success">"초대 메일이 성공적으로 발송되었습니다"</string>
 	<string name="jandi_invite_wechat">"위챗으로 보내기"</string>
 	<string name="jandi_invited_topic">"%1$s님이 %2$s님을 초대했습니다."</string>
