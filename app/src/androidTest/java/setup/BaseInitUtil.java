@@ -112,6 +112,8 @@ public class BaseInitUtil {
     }
 
     public static void userSignin(String testId) {
+
+        clear();
         if (TextUtils.isEmpty(testId)) {
             testId = "androidtester1@gustr.com";
         }
