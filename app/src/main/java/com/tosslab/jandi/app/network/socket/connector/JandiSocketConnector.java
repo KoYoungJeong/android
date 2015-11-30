@@ -64,7 +64,6 @@ public class JandiSocketConnector implements SocketConnector {
             socket.on(Socket.EVENT_CONNECT, args -> {
                 LogUtil.e(TAG, Socket.EVENT_CONNECT);
                 status = Status.CONNECTED;
-                updateEventHistory();
             }).on(Socket.EVENT_ERROR, args -> {
                 LogUtil.e(TAG, Socket.EVENT_ERROR);
                 disconnectCallback(disconnectListener, args);
@@ -86,31 +85,6 @@ public class JandiSocketConnector implements SocketConnector {
         }
 
         return socket;
-    }
-
-    // 확장성 생각하여 추후 모듈로 빼내야 함.
-    private void updateEventHistory() {
-        long ts = JandiPreference.getSocketConnectedLastTime();
-        EntityManager entityManager = EntityManager.getInstance();
-        int userId = entityManager.getMe().getId();
-        if (ts != -1) {
-            try {
-                ResEventHistory eventHistory =
-                        RequestApiManager.getInstance().getEventHistory(ts, userId, "file_unshared", null);
-                Iterator<ResEventHistory.EventHistoryInfo> i = eventHistory.records.iterator();
-                while (i.hasNext()) {
-                    ResEventHistory.EventHistoryInfo eventInfo = i.next();
-                    if (eventInfo instanceof SocketFileUnsharedEvent) {
-                        SocketFileUnsharedEvent event = (SocketFileUnsharedEvent) eventInfo;
-                        int fileId = event.getFile().getId();
-                        int roomId = event.room.id;
-                        MessageRepository.getRepository().updateUnshared(fileId, roomId);
-                    }
-                }
-            } catch (RetrofitError e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void disconnectCallback(EventListener disconnectListener, Object[] args) {
