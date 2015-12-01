@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.local.orm.domain.RecentSticker;
 import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.domain.UploadedFileInfo;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.upgrade.UpgradeChecker;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -49,7 +50,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_STICKER_SEND_STATUS = 5;
     private static final int DATABASE_VERSION_ADD_TOKEN_TABLE = 6;
     private static final int DATABASE_VERSION_ADD_READY_COMMENT = 7;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_ADD_READY_COMMENT;
+    private static final int DATABASE_VERSION_FILE_SHARE_INFO = 8;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_FILE_SHARE_INFO;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -175,6 +177,15 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_ADD_READY_COMMENT, () -> {
                         createTable(connectionSource, ReadyComment.class);
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_FILE_SHARE_INFO, () -> {
+                        dropTable(connectionSource, ResMessages.FileContent.class);
+                        dropTable(connectionSource, ResMessages.ThumbnailUrls.class);
+
+                        createTable(connectionSource, ResMessages.FileContent.class);
+                        createTable(connectionSource, ResMessages.ThumbnailUrls.class);
+
+                        MessageRepository.getRepository().deleteAllLink();
                     }));
 
             Observable.from(upgradeCheckers)

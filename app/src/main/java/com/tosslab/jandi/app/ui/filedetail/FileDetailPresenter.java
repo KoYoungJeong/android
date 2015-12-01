@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.widget.EditText;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
@@ -37,7 +38,6 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,9 +55,6 @@ import rx.subjects.PublishSubject;
  */
 @EBean
 public class FileDetailPresenter {
-
-    @RootContext
-    Activity activity;
 
     @Bean
     FileDetailModel fileDetailModel;
@@ -177,16 +174,16 @@ public class FileDetailPresenter {
                 view.showUnsharedFileToast();
             } else {
                 if (e.getCause() instanceof ConnectionNotFoundException) {
-                    errorMessage = activity.getResources().getString(R.string.err_network);
+                    errorMessage = JandiApplication.getContext().getResources().getString(R.string.err_network);
                 } else {
-                    errorMessage = activity.getResources().getString(R.string.err_file_detail);
+                    errorMessage = JandiApplication.getContext().getResources().getString(R.string.err_file_detail);
                 }
                 view.showToast(errorMessage);
             }
             view.finishOnMainThread();
         } catch (Exception e) {
             view.dismissProgress();
-            view.showToast(activity.getResources().getString(R.string.err_file_detail));
+            view.showToast(JandiApplication.getContext().getResources().getString(R.string.err_file_detail));
             view.finishOnMainThread();
         }
 
@@ -217,12 +214,12 @@ public class FileDetailPresenter {
             int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
             fileDetailModel.trackFileShareFail(errorCode);
             view.dismissProgress();
-            view.showErrorToast(activity.getResources().getString(R.string.err_share));
+            view.showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_share));
         } catch (Exception e) {
             LogUtil.e("fail to send message", e);
             fileDetailModel.trackFileShareFail(-1);
             view.dismissProgress();
-            view.showErrorToast(activity.getResources().getString(R.string.err_share));
+            view.showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_share));
         }
     }
 
@@ -245,12 +242,12 @@ public class FileDetailPresenter {
             int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
             fileDetailModel.trackFileUnShareFail(errorCode);
             view.dismissProgress();
-            view.showErrorToast(activity.getResources().getString(R.string.err_unshare));
+            view.showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_unshare));
         } catch (Exception e) {
             LogUtil.e("fail to send message", e);
             fileDetailModel.trackFileUnShareFail(-1);
             view.dismissProgress();
-            view.showErrorToast(activity.getResources().getString(R.string.err_unshare));
+            view.showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_unshare));
         }
     }
 
@@ -263,7 +260,7 @@ public class FileDetailPresenter {
             fileDetailModel.joinEntity(entityId);
 
             MixpanelMemberAnalyticsClient
-                    .getInstance(activity, entityManager.getDistictId())
+                    .getInstance(JandiApplication.getContext(), entityManager.getDistictId())
                     .trackJoinChannel();
 
             int entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
@@ -493,7 +490,7 @@ public class FileDetailPresenter {
             int teamId = AccountRepository.getRepository().getSelectedTeamId();
             fileDetailModel.registStarredMessage(teamId, messageId);
             MessageRepository.getRepository().updateStarred(messageId, true);
-            view.showToast(activity.getString(R.string.jandi_message_starred));
+            view.showToast(JandiApplication.getContext().getString(R.string.jandi_message_starred));
             view.modifyStarredInfo(messageId, true);
             EventBus.getDefault().post(new StarredInfoChangeEvent());
 
@@ -510,7 +507,7 @@ public class FileDetailPresenter {
             MessageRepository.getRepository().updateStarred(messageId, false);
 
             view.modifyStarredInfo(messageId, false);
-            view.showToast(activity.getString(R.string.jandi_unpinned_message));
+            view.showToast(JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
             EventBus.getDefault().post(new StarredInfoChangeEvent());
 
         } catch (RetrofitError retrofitError) {
@@ -527,7 +524,7 @@ public class FileDetailPresenter {
             MessageRepository.getRepository().updateStarred(fileId, false);
 
             view.updateFileStarred(false);
-            view.showToast(activity.getString(R.string.jandi_unpinned_message));
+            view.showToast(JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
             EventBus.getDefault().post(new StarredInfoChangeEvent());
         } catch (RetrofitError retrofitError) {
             retrofitError.printStackTrace();
@@ -540,7 +537,7 @@ public class FileDetailPresenter {
             int teamId = AccountRepository.getRepository().getSelectedTeamId();
             fileDetailModel.registStarredMessage(teamId, fileId);
             view.updateFileStarred(true);
-            view.showToast(activity.getString(R.string.jandi_message_starred));
+            view.showToast(JandiApplication.getContext().getString(R.string.jandi_message_starred));
             MessageRepository.getRepository().updateStarred(fileId, true);
         } catch (RetrofitError retrofitError) {
             retrofitError.printStackTrace();
