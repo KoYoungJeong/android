@@ -654,6 +654,16 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
+    public ResMessages.FileMessage enableFileExternalLink(int teamId, int fileId) {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().enableFileExternalLink(teamId, fileId, new ReqNull());
+    }
+
+    @Override
+    public ResMessages.FileMessage disableFileExternalLink(int teamId, int fileId) {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().disableFileExternalLink(teamId, fileId);
+    }
+
+    @Override
     public ResEventHistory getEventHistory(long ts, Integer memberId, String eventType, Integer size) throws RetrofitError {
         return RestAdapterBuilder.newInstance(EventsApiV2Client.class).create().getEventHistory(ts, memberId, eventType, size);
     }

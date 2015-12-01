@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
@@ -21,6 +23,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -171,6 +174,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     private ProgressDialog progressDialog;
     private StickerInfo stickerInfo = NULL_STICKER;
     private MixpanelAnalytics mixpanelAnalytics;
+    private boolean isExternalShared;
 
     @AfterViews
     public void initForm() {
@@ -278,6 +282,14 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             getMenuInflater().inflate(R.menu.file_detail_activity_menu, menu);
         }
 
+        SubMenu subMenu = menu.findItem(R.id.menu_overflow).getSubMenu();
+        if (isExternalShared) {
+            MenuItem miEnableExternalLink = subMenu.findItem(R.id.action_file_detail_enable_external_link);
+            miEnableExternalLink.setTitle(R.string.jandi_copy_link);
+        } else {
+            subMenu.removeItem(R.id.action_file_detail_disable_external_link);
+        }
+
         return true;
     }
 
@@ -361,6 +373,20 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             case R.id.menu_overflow:
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu);
                 return true;
+            case R.id.action_file_detail_export:
+                ProgressDialog progressDialog = new ProgressDialog(FileDetailActivity.this);
+                progressDialog.setMax(100);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.show();
+                fileDetailPresenter.onExportFile(fileId, progressDialog);
+                break;
+            case R.id.action_file_detail_enable_external_link:
+                fileDetailPresenter.onCopyExternLink(fileId, isExternalShared);
+                break;
+            case R.id.action_file_detail_disable_external_link:
+                fileDetailPresenter.onDisableExternLink(fileId);
+                break;
 
         }
 
@@ -870,9 +896,34 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 .start();
     }
 
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
     public void copyToClipboard(String contentString) {
+        if (TextUtils.isEmpty(contentString)) {
+            contentString = "";
+        }
         ClipData clipData = ClipData.newPlainText("", contentString);
         clipboardManager.setPrimaryClip(clipData);
+    }
+
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
+    public void setExternalShared(boolean externalShared) {
+        this.isExternalShared = externalShared;
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public void exportIntentFile(File result, String mimeType) {
+        Intent target = new Intent(Intent.ACTION_SEND);
+        target.setDataAndType(Uri.parse(result.getAbsolutePath()), mimeType);
+        try {
+            Intent chooser = Intent.createChooser(target, getString(R.string.jandi_export_to_app));
+            startActivity(chooser);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+            showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
+        }
     }
 
     public void showDeleteFileDialog(int fileId) {
@@ -909,6 +960,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         isMyFile = fileMessage.writerId == EntityManager.getInstance().getMe().getId() ||
                 fileDetailPresenter.isTeamOwner();
 
+        isExternalShared = fileMessage.content.externalShared;
+
         invalidateOptionsMenu();
 
         fileDetailCommentListAdapter.clear();
@@ -943,23 +996,19 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         btnSend.setSelected(selected);
     }
 
-    @UiThread
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void showProgress() {
-        if (progressWheel == null || progressWheel.isShowing()) {
-            return;
-        }
-
+        dismissProgress();
         progressWheel.show();
     }
 
-    @UiThread
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void dismissProgress() {
-        if (progressWheel == null || !progressWheel.isShowing()) {
-            return;
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
         }
-        progressWheel.dismiss();
     }
 
     @Override
@@ -980,7 +1029,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         fileDetailCommentListAdapter.clear();
     }
 
-    @UiThread
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void showToast(String message) {
         ColoredToast.show(this, message);
@@ -1051,6 +1100,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         ColoredToast.showError(FileDetailActivity.this, getString(R.string.jandi_unshared_message));
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     @UiThread(propagation = Propagation.REUSE)
     @Override
     public void requestPermission(int requestCode, String... permissions) {
@@ -1079,4 +1129,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             }
         }
     }
+
+
 }

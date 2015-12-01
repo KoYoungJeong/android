@@ -21,6 +21,7 @@ public class GoogleImagePickerUtil {
 
     /**
      * 구글,피카사 등 웹의 이미지 다운로드한다
+     *
      * @param context
      * @param downloadProgress
      * @param url
@@ -60,6 +61,9 @@ public class GoogleImagePickerUtil {
         return String.format("%s_%s", String.valueOf(System.currentTimeMillis()), "web_image");
     }
 
+    /**
+     * @return /sdcard/DOWNLOAD/Jandi
+     */
     public static String getDownloadPath() {
         return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS + "/Jandi";
     }
