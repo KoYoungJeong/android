@@ -123,6 +123,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public static final int INTENT_RETURN_TYPE_SHARE = 0;
     public static final int INTENT_RETURN_TYPE_UNSHARE = 1;
     public static final int REQ_STORAGE_PERMISSION = 101;
+    public static final int REQ_STORAGE_PERMISSION_EXPORT = 102;
     private static final StickerInfo NULL_STICKER = new StickerInfo();
     public static
 
@@ -374,12 +375,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu);
                 return true;
             case R.id.action_file_detail_export:
-                ProgressDialog progressDialog = new ProgressDialog(FileDetailActivity.this);
-                progressDialog.setMax(100);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                progressDialog.setCanceledOnTouchOutside(false);
-                progressDialog.show();
-                fileDetailPresenter.onExportFile(fileId, progressDialog);
+                Permissions.getChecker()
+                        .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .hasPermission(() -> onExportFile())
+                        .noPermission(() -> {
+                            requestPermission(REQ_STORAGE_PERMISSION_EXPORT, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                        }).check();
                 break;
             case R.id.action_file_detail_enable_external_link:
                 fileDetailPresenter.onCopyExternLink(fileId, isExternalShared);
@@ -391,6 +392,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void onExportFile() {
+        ProgressDialog progressDialog = new ProgressDialog(FileDetailActivity.this);
+        progressDialog.setMax(100);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+        fileDetailPresenter.onExportFile(fileId, progressDialog);
     }
 
     @Override
@@ -1111,7 +1121,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
                 .addRequestCode(REQ_STORAGE_PERMISSION)
-                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, () -> download())
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::download)
+                .addRequestCode(REQ_STORAGE_PERMISSION_EXPORT)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::onExportFile)
                 .resultPermission(Permissions.createPermissionResult(requestCode,
                         permissions,
                         grantResults));
