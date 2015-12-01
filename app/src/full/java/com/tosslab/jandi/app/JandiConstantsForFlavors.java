@@ -7,6 +7,7 @@ public class JandiConstantsForFlavors {
     // These constants are for REAL sevice
     public static final String SERVICE_ROOT_URL = "https://i2.jandi.com/";
     public static final String SERVICE_FILE_URL = "https://files.jandi.com/";
+    public static final String SERVICE_FILE_UPLOAD_URL = "https://upload.jandi.com/";
     public static final String SOCKET_ROOT_URL = "https://ws.jandi.com/";
     public static final String SERVICE_INNER_API_URL = SERVICE_ROOT_URL + "inner-api";
     public static final String GA_TRACK_ID = "UA-53634725-3";

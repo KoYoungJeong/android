@@ -94,10 +94,11 @@
             android:layout_below="@+id/tv_message_user_name"
             android:layout_toRightOf="@+id/iv_message_user_profile">
 
-            <ImageView
+            <!--<ImageView-->
+            <com.tosslab.jandi.app.views.AutoScaleImageView
                 android:id="@+id/iv_message_photo"
-                android:layout_width="match_parent"
-                android:layout_height="115dp"
+                android:layout_width="213dp"
+                android:layout_height="120dp"
                 android:layout_marginBottom="11dp"
                 android:layout_marginRight="25dp"
                 android:scaleType="fitCenter" />

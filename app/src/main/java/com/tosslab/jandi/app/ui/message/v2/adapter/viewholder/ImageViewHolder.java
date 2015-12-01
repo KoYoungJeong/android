@@ -1,16 +1,27 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.PreloadTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -20,8 +31,10 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.file.FileUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
+import com.tosslab.jandi.app.views.AutoScaleImageView;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import de.greenrobot.event.EventBus;
@@ -34,7 +47,8 @@ public class ImageViewHolder implements BodyViewHolder {
     private ImageView ivProfile;
     private TextView tvName;
     private TextView tvDate;
-    private ImageView ivFileImage;
+    private AutoScaleImageView ivFileImage;
+//    private ImageView ivFileImage;
     private TextView tvFileName;
     private TextView tvFileType;
     private TextView tvUploader;
@@ -52,7 +66,8 @@ public class ImageViewHolder implements BodyViewHolder {
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvDate = (TextView) rootView.findViewById(R.id.tv_message_create_date);
 
-        ivFileImage = (ImageView) rootView.findViewById(R.id.iv_message_photo);
+//        ivFileImage = (ImageView) rootView.findViewById(R.id.iv_message_photo);
+        ivFileImage = (AutoScaleImageView) rootView.findViewById(R.id.iv_message_photo);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_message_image_file_name);
         tvFileType = (TextView) rootView.findViewById(R.id.tv_img_file_type);
         tvUploader = (TextView) rootView.findViewById(R.id.tv_img_file_uploader);
@@ -66,12 +81,14 @@ public class ImageViewHolder implements BodyViewHolder {
 
     @Override
     public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
+        LogUtil.i("tony", link.toString());
+
         int fromEntityId = link.fromEntity;
 
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity fromEntity = entityManager.getEntityById(fromEntityId);
 
-        boolean isUnknownUser = fromEntity != EntityManager.UNKNOWN_USER_ENTITY;
+        boolean isUnknownUser = fromEntity == EntityManager.UNKNOWN_USER_ENTITY;
         ResLeftSideMenu.User user = isUnknownUser ? null : fromEntity.getUser();
 
         bindUser(user, fromEntity.getUserLargeProfileUrl());
@@ -200,14 +217,153 @@ public class ImageViewHolder implements BodyViewHolder {
                     BitmapUtil.getThumbnailUrlOrOriginal(fileContent, BitmapUtil.Thumbnails.LARGE);
             String thumbPath = !TextUtils.isEmpty(localFilePath) ? localFilePath : remoteFilePth;
 
-            BitmapUtil.loadCropBitmapByGlide(ivFileImage,
-                    thumbPath,
-                    R.drawable.file_messageview_downloading
-            );
+            ResMessages.ThumbnailUrls extraInfo = fileContent.extraInfo;
+            if (extraInfo != null && extraInfo.width > 0 && extraInfo.height > 0) {
+                ivFileImage.load(thumbPath, extraInfo.width, extraInfo.height, extraInfo.orientation);
+            } else {
+                ivFileImage.load(thumbPath);
+            }
 
             String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
             tvFileType.setText(String.format("%s, %s", fileSize, fileContent.ext));
         }
+    }
+
+    private void scaleToDefault(final String thumbnailPath) {
+        final ViewGroup.LayoutParams params = ivFileImage.getLayoutParams();
+        params.width = getDpFromPixel(213);
+        params.height = getDpFromPixel(120);
+        ivFileImage.post(() -> {
+            ivFileImage.setLayoutParams(params);
+            loadImage(thumbnailPath);
+        });
+    }
+
+    private void loadImage(final String thumbPath) {
+//        Glide.with(JandiApplication.getContext())
+//                .load(thumbPath)
+//                .asBitmap()
+//                .dontAnimate()
+//                .placeholder(R.drawable.file_messageview_downloading)
+//                .listener(new RequestListener<String, Bitmap>() {
+//                    @Override
+//                    public boolean onException(Exception e, String model, Target<Bitmap> target,
+//                                               boolean isFirstResource) {
+//                        LogUtil.e("Image", model + " - " + Log.getStackTraceString(e));
+//                        return false;
+//                    }
+//
+//                    @Override
+//                    public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target,
+//                                                   boolean isFromMemoryCache, boolean isFirstResource) {
+//                        if (!thumbPath.equals(model)) {
+//                            LogUtil.d("Image", "View has recycled.");
+//                            return false;
+//                        }
+//
+//                        resizeImageView(resource);
+//                        return true;
+//                    }
+//                })
+//                .into(ivFileImage);
+
+        BitmapUtil.loadCropBitmapByGlide(ivFileImage,
+                thumbPath,
+                R.drawable.file_messageview_downloading
+        );
+    }
+
+    private void resizeImageView(final String thumbnailPath,
+                                 int width, int height, int orientation) {
+        if (orientation == 6 || orientation == 8) {
+            int temp = height;
+            height = width;
+            width = temp;
+        }
+
+        float ratio = height / (float) width;
+        LogUtil.i("ImageSize", String.format("width=%d, height=%d, orientation=%d, ratio=%f", width, height, orientation, ratio));
+
+        if (height > width) {
+            int maxWidth = getDpFromPixel(160);
+            int maxHeight = getDpFromPixel(284);
+            width = maxWidth;
+            height = Math.min((int) (width * ratio), maxHeight);
+        } else if (height == width) {
+            int maxWidth = getDpFromPixel(213);
+            width = maxWidth;
+            height = maxWidth;
+        } else {
+            int maxWidth = getDpFromPixel(213);
+            width = maxWidth;
+            height = (int) (width * ratio);
+        }
+
+        final ViewGroup.LayoutParams params = ivFileImage.getLayoutParams();
+        params.width = width;
+        params.height = height;
+        ivFileImage.post(() -> {
+            ivFileImage.setLayoutParams(params);
+            loadImage(thumbnailPath);
+        });
+    }
+
+    private void resizeImageView(Bitmap resource) {
+        int width = resource.getWidth();
+        int height = resource.getHeight();
+
+        float ratio = height / (float) width;
+        LogUtil.i("ImageSize", String.format("%d, %d, %f", width, height, ratio));
+
+        if (height > width) {
+            int maxWidth = getDpFromPixel(160);
+            int maxHeight = getDpFromPixel(284);
+
+            if (maxWidth == width) {
+                height = Math.min((int) (width * ratio), maxHeight);
+                resizeImage(resource, width, height);
+                return;
+            }
+
+            width = maxWidth;
+            height = Math.min((int) (width * ratio), maxHeight);
+        } else if (height == width) {
+            int maxWidth = getDpFromPixel(213);
+            height = maxWidth;
+            if (maxWidth == width) {
+                resizeImage(resource, width, height);
+                return;
+            }
+            width = maxWidth;
+        } else {
+            int maxWidth = getDpFromPixel(213);
+            if (maxWidth == width) {
+                height = (int) (width * ratio);
+                resizeImage(resource, width, height);
+                return;
+            }
+
+            width = maxWidth;
+            height = (int) (width * ratio);
+        }
+
+        resource = Bitmap.createScaledBitmap(resource, width, height, true);
+
+        resizeImage(resource, width, height);
+    }
+
+    private void resizeImage(final Bitmap resource, int width, int height) {
+        final ViewGroup.LayoutParams params = ivFileImage.getLayoutParams();
+        params.width = width;
+        params.height = height;
+        ivFileImage.post(() -> {
+            ivFileImage.setLayoutParams(params);
+            ivFileImage.setImageBitmap(resource);
+        });
+    }
+
+    private int getDpFromPixel(int pixel) {
+        return (int) (pixel * context.getResources().getDisplayMetrics().density);
     }
 
     private boolean isFileFromGoogleOrDropbox(MimeTypeUtil.SourceType sourceType) {

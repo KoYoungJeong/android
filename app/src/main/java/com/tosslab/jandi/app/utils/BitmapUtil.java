@@ -483,8 +483,7 @@ public class BitmapUtil {
                 .into(imageView);
     }
 
-    public static void loadCropBitmapByGlide(ImageView imageView,
-                                             String url, int placeHolder) {
+    public static void loadCropBitmapByGlide(ImageView imageView, String url, int placeHolder) {
         Glide.with(JandiApplication.getContext())
                 .load(url)
                 .asBitmap()
@@ -498,7 +497,8 @@ public class BitmapUtil {
                     }
 
                     @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                    public void onResourceReady(Bitmap resource,
+                                                GlideAnimation<? super Bitmap> glideAnimation) {
                         if (resource != null && !resource.isRecycled()) {
                             setResource(resource);
                         }

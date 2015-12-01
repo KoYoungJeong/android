@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.Divider;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -179,7 +180,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
     }
 
     public void addAll(int position, List<ResMessages.Link> messages) {
-
         // delete dummy message by same messageId
         for (int idx = messages.size() - 1; idx >= 0; --idx) {
             int dummyMessagePosition = getDummyMessagePositionByMessageId(messages.get(idx).messageId);

@@ -253,6 +253,12 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             return;
         }
 
+        if (topicDetailModel.isDefaultTopic(entityId)) {
+            onInit(JandiApplication.getContext(), entityId);
+            view.showFailToast(JandiApplication.getContext().getString(R.string.jandi_auto_join_cannot_be_default_topic));
+            return;
+        }
+
 
         view.showProgressWheel();
         try {

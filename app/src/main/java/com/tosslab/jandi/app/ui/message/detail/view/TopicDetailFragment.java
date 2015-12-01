@@ -335,7 +335,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
             switchAutoJoin.setChecked(false);
         } else if (defaultTopic) {
             switchAutoJoin.setChecked(true);
-            vgAutoJoin.setEnabled(false);
+            vgAutoJoin.setEnabled(true);
         } else if (owner) {
             switchAutoJoin.setChecked(autoJoin);
             vgAutoJoin.setEnabled(true);
