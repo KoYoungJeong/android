@@ -10,13 +10,20 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize" />
 
+    <com.tosslab.jandi.app.views.eastereggs.SnowView
+        android:layout_above="@+id/space_messages_divider"
+        android:layout_below="@+id/ll_messages_disable_alert"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_messages"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_above="@+id/space_messages_divider"
-        android:layout_alignWithParentIfMissing="true"
         android:layout_below="@+id/ll_messages_disable_alert"
+        android:layout_alignWithParentIfMissing="true"
         android:scrollbars="vertical" />
 
     <LinearLayout
