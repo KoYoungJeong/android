@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.sticker;
+package com.tosslab.jandi.app.ui.commonviewmodels.sticker;
 
 import android.content.Context;
 import android.content.res.Configuration;

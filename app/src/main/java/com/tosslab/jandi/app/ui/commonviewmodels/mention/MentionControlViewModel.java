@@ -24,8 +24,8 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel_;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
-import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel_;
+import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel_;
 import com.tosslab.jandi.app.views.spannable.MentionMessageSpannable;
 
 import java.util.ArrayList;
@@ -42,35 +42,23 @@ public class MentionControlViewModel {
 
     public static final String MENTION_TYPE_MESSAGE = "mention_type_message";
     public static final String MENTION_TYPE_FILE_COMMENT = "mention_type_file_comment";
-
-    public interface OnMentionShowingListener {
-        void onMentionShowing(boolean isShowing);
-    }
-
     protected String currentSearchKeywordString;
-
     private KeyboardHeightModel keyboardHeightModel;
     private SearchMemberModel searchMemberModel;
-
     //message or file view type
     private String mentionType = MENTION_TYPE_MESSAGE;
-
     //for textControl
     private int beforeTextCnt = 0;
     private int afterTextCnt = 0;
     private String beforeText = "";
     private String afterText = "";
     private String removedText = "";
-
     private ClipboardManager clipBoard;
     private ClipboardListener clipboardListener;
-
     private TextWatcher textWatcher;
-
     private AutoCompleteTextView etMessage;
     private MentionMemberListAdapter mentionMemberListAdapter;
     private OnMentionShowingListener onMentionShowingListener;
-
     private MentionControlViewModel(Activity activity,
                                     EditText editText,
                                     int teamId,
@@ -569,6 +557,10 @@ public class MentionControlViewModel {
         }
         removeClipboardListener();
         showListView(false);
+    }
+
+    public interface OnMentionShowingListener {
+        void onMentionShowing(boolean isShowing);
     }
 
     // 가공되지 않은 스트링이 클립보드에 복사되면 안되므로 별도의 처리 진행

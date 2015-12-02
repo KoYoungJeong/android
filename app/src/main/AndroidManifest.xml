@@ -368,15 +368,15 @@
         <service android:name=".push.receiver.JandiPushIntentService" />
 
         <!-- Log Out Service -->
-        <service android:name=".services.SignOutService"/>
+        <service android:name=".services.SignOutService" />
 
         <!-- Download Service -->
-        <service android:name=".services.download.DownloadService"/>
+        <service android:name=".services.download.DownloadService" />
 
         <!-- Download File Open Receiver -->
         <receiver android:name=".services.download.FileOpenDelegator">
             <intent-filter>
-                <action android:name="com.tosslab.jandi.app.FileOpen"/>
+                <action android:name="com.tosslab.jandi.app.FileOpen" />
             </intent-filter>
         </receiver>
 
@@ -407,6 +407,8 @@
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
 </manifest>
 

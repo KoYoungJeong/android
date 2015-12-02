@@ -41,6 +41,8 @@ import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -51,8 +53,6 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
-import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
-import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -754,17 +754,6 @@ public class MessageListPresenter {
         layoutEmpty.setVisibility(View.GONE);
     }
 
-//    @UiThread
-//    public void checkItemCountIfException() {
-//        boolean hasItem = getFirstVisibleItemLinkId() > 0;
-//        dismissLoadingView();
-//        if (!hasItem) {
-//            showEmptyView();
-//        } else {
-//            dismissEmptyView();
-//        }
-//    }
-
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void clearEmptyMessageLayout() {
         if (layoutEmpty != null) {
@@ -1094,5 +1083,3 @@ public class MessageListPresenter {
         lvMessages.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
     }
 }
-
-

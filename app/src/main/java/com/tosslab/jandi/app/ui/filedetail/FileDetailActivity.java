@@ -25,7 +25,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -61,6 +60,9 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
+import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
+import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.filedetail.fileinfo.FileHeadManager;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileUnshareActivity_;
@@ -69,9 +71,6 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
-import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
-import com.tosslab.jandi.app.ui.sticker.StickerManager;
-import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -80,6 +79,7 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.extracomponent.BackpressEditText;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -141,7 +141,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @ViewById(R.id.vg_file_detail_input_comment)
     RelativeLayout vgCommentLayout;
     @ViewById(R.id.et_message)
-    EditText etComment;
+    BackpressEditText etComment;
     @ViewById(R.id.btn_send_message)
     Button btnSend;
     @ViewById(R.id.vg_file_detail_preview_sticker)
@@ -150,6 +150,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     ImageView ivStickerPreview;
     @ViewById(R.id.lv_list_search_members)
     RecyclerView rvListSearchMembers;
+    @ViewById(R.id.vg_option_space)
+    ViewGroup vgOptionSpace;
 
     @Bean
     StickerViewModel stickerViewModel;
@@ -193,6 +195,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         fileDetailPresenter.setView(this);
 
+        stickerViewModel.setOptionSpace(vgOptionSpace);
         stickerViewModel.setOnStickerClick((groupId, stickerId) -> {
             StickerInfo oldSticker = stickerInfo;
             stickerInfo = new StickerInfo();
@@ -221,11 +224,28 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             showCheckNetworkDialog();
         }
 
-
-        JandiPreference.setKeyboardHeight(FileDetailActivity.this, 0);
+        JandiPreference.setKeyboardHeight(FileDetailActivity.this, -1);
         addStarredButtonExecution();
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FileDetail);
+        setEditTextTouchEvent();
+        setKeyboardBackpressCallback();
+    }
+
+    private void setKeyboardBackpressCallback() {
+        etComment.setOnBackPressListener(() -> {
+            if (keyboardHeightModel.isOpened()) {
+                //키보드가 열려져 있고 그 위에 스티커가 있는 상태에서 둘다 제거 할때 속도를 맞추기 위해 딜레이를 줌
+                Observable.just(1)
+                        .delay(200, TimeUnit.MILLISECONDS)
+                        .subscribe(i -> {
+                            if (stickerViewModel.isShow()) {
+                                stickerViewModel.dismissStickerSelector(true);
+                            }
+                        });
+            }
+            return false;
+        });
     }
 
     @Override
@@ -368,7 +388,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     protected void onPause() {
         isForeground = false;
         fileDetailPresenter.removeClipboardListenerforMention();
-        ReadyCommentRepository.getRepository().upsertReadyComment(new ReadyComment(fileId, etComment.getText().toString() ));
+        ReadyCommentRepository.getRepository().upsertReadyComment(new ReadyComment(fileId, etComment.getText().toString()));
         super.onPause();
     }
 
@@ -663,37 +683,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Click(R.id.btn_message_sticker)
     void onStickerClick(View view) {
         boolean selected = view.isSelected();
-
         if (selected) {
-            stickerViewModel.dismissStickerSelector();
+            stickerViewModel.dismissStickerSelector(true);
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker);
         } else {
             int keyboardHeight =
-                    JandiPreference.getKeyboardHeight(FileDetailActivity.this.getApplicationContext());
-            if (keyboardHeight > 0) {
-                hideSoftKeyboard();
-                stickerViewModel.showStickerSelector(keyboardHeight);
-                if (keyboardHeightModel.getOnKeyboardShowListener() == null) {
-                    keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
-                        if (isShow) {
-                            stickerViewModel.dismissStickerSelector();
-                        }
-                    });
-                }
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker);
-            } else {
-                initKeyboardHeight();
-            }
+                    JandiPreference.getKeyboardHeight(getApplicationContext());
+            stickerViewModel.showStickerSelector(keyboardHeight);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker);
         }
-    }
-
-    private void initKeyboardHeight() {
-        keyboardHeightModel.setOnKeyboardHeightCaptureListener(() -> {
-            onStickerClick(findViewById(R.id.btn_message_sticker));
-            keyboardHeightModel.setOnKeyboardHeightCaptureListener(null);
-        });
-        etComment.requestFocus();
-        showKeyboard();
     }
 
     @UiThread(propagation = Propagation.REUSE)
@@ -944,13 +942,13 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        Observable.just(1, 1)
-                .delay(100, TimeUnit.MILLISECONDS)
+        Observable.just(1)
+                .delay(200, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(integer -> {
                     fileDetailPresenter.onConfigurationChanged();
+                    stickerViewModel.onConfigurationChanged();
                 });
-
     }
 
     @UiThread
@@ -973,10 +971,10 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @Override
     public void onBackPressed() {
-        if (!stickerViewModel.isShowStickerSelector()) {
+        if (!stickerViewModel.isShow()) {
             super.onBackPressed();
         } else {
-            stickerViewModel.dismissStickerSelector();
+            stickerViewModel.dismissStickerSelector(true);
         }
     }
 
@@ -1057,5 +1055,13 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 fileDetailPresenter.unShareMessage(fileId, entityId);
             }
         }
+    }
+
+    private void setEditTextTouchEvent() {
+        etComment.setOnClickListener(v -> {
+            if (stickerViewModel.isShow()) {
+                stickerViewModel.dismissStickerSelector(true);
+            }
+        });
     }
 }

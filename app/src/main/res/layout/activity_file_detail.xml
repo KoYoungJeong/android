@@ -82,7 +82,7 @@
     <RelativeLayout
         android:id="@+id/vg_file_detail_input_comment"
         style="@style/JandiChat.Wrapper"
-        android:layout_above="@+id/vg_message_sticker_selector"
+        android:layout_above="@+id/vg_option_space"
         android:layout_alignWithParentIfMissing="true">
 
         <LinearLayout
@@ -91,17 +91,18 @@
             android:layout_toLeftOf="@+id/btn_send_message"
             android:layout_toRightOf="@+id/btn_message_sticker"
             android:orientation="horizontal">
-            <AutoCompleteTextView
+
+            <com.tosslab.jandi.app.utils.extracomponent.BackpressEditText
                 android:id="@+id/et_message"
                 style="@style/JandiChat.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical" />
         </LinearLayout>
 
         <ImageView
             android:id="@+id/btn_message_sticker"
-            style="@style/JandiChat.ActionButton.Sticker"/>
+            style="@style/JandiChat.ActionButton.Sticker" />
 
         <Button
             android:id="@+id/btn_send_message"
@@ -114,7 +115,7 @@
     </RelativeLayout>
 
     <FrameLayout
-        android:id="@+id/vg_message_sticker_selector"
+        android:id="@+id/vg_option_space"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
