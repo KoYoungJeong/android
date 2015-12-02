@@ -5,13 +5,19 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -22,6 +28,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.local.orm.repositories.UploadedFileInfoRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.transform.glide.GlideCircleTransform;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
@@ -275,8 +282,37 @@ public class BitmapUtil {
         return bitmap;
     }
 
-    public static String getFileUrl(String url) {
+    public static Bitmap getRoundedCornerBitmap(BitmapPool pool, Bitmap bitmap, float radius) {
+        LogUtil.d("jsp", "getRoundedCornerBitmap1");
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        Bitmap output = pool.get(width, height, bitmap.getConfig() != null
+                ? bitmap.getConfig() : Bitmap.Config.ARGB_8888);
+        LogUtil.d("jsp", "getRoundedCornerBitmap2 - " + (output == null));
 
+        if (output == null) {
+            output = Bitmap.createBitmap(width, height, bitmap.getConfig() != null
+                    ? bitmap.getConfig() : Bitmap.Config.ARGB_8888);
+        }
+
+        Canvas canvas = new Canvas(output);
+
+        Paint paint = new Paint();
+        Rect rect = new Rect(0, 0, width, height);
+        RectF rectF = new RectF(rect);
+        paint.setFlags(Paint.DITHER_FLAG | Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(Color.BLACK);
+        LogUtil.i("jsp", String.format("drawRoundRect(%f, %f, %f, %f, radius=%f",
+                rectF.top, rectF.right, rectF.bottom, rectF.left, radius));
+        canvas.drawRoundRect(rectF, radius, radius, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+        return output;
+    }
+
+    public static String getFileUrl(String url) {
         if (TextUtils.isEmpty(url)) {
             return url;
         }

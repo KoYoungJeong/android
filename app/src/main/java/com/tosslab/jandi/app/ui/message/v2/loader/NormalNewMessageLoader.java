@@ -24,7 +24,6 @@ import java.util.List;
 import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 17..
@@ -194,8 +193,6 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         }
 
         Observable.from(messages)
-                .onBackpressureBuffer()
-                .observeOn(Schedulers.io())
                 .subscribe(message -> {
                     message.roomId = roomId;
                     if (!TextUtils.equals(message.status, "event")) {

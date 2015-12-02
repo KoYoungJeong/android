@@ -159,6 +159,7 @@
                 android:paddingRight="0dp">
 
                 <LinearLayout
+                    android:id="@+id/vg_topic_detail_set_auto_join_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

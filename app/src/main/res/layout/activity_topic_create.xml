@@ -131,7 +131,7 @@
                     android:layout_marginTop="10dp"
                     android:text="@string/jandi_what_is_topic_type"
                     android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
-                    android:textSize="12sp" />
+                    android:textSize="@dimen/jandi_text_size_small" />
             </LinearLayout>
 
 
@@ -180,7 +180,8 @@
                     android:layout_marginLeft="25dp"
                     android:layout_marginRight="25dp"
                     android:layout_marginTop="10dp"
-                    android:text="@string/jandi_auto_join_explain" />
+                    android:text="@string/jandi_auto_join_explain"
+                    android:textSize="@dimen/jandi_text_size_small" />
             </LinearLayout>
 
 

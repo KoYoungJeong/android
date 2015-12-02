@@ -97,6 +97,8 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     SwitchCompat switchAutoJoin;
     @ViewById(R.id.vg_topic_detail_set_auto_join)
     ViewGroup vgAutoJoin;
+    @ViewById(R.id.vg_topic_detail_set_auto_join_text)
+    ViewGroup vgAutoJoinText;
     @ViewById(R.id.tv_topic_detail_set_push)
     TextView tvSetPush;
 
@@ -329,6 +331,8 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         if (privateTopic) {
             if (owner) {
                 vgAutoJoin.setEnabled(true);
+                vgAutoJoinText.setDuplicateParentStateEnabled(false);
+                vgAutoJoinText.setEnabled(false);
             } else {
                 vgAutoJoin.setEnabled(false);
             }

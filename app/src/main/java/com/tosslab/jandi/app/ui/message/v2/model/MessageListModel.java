@@ -73,7 +73,6 @@ import java.util.concurrent.ExecutionException;
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -498,8 +497,6 @@ public class MessageListModel {
 
     public void upsertMessages(ResMessages messages) {
         Observable.from(messages.records)
-                .onBackpressureBuffer()
-                .observeOn(Schedulers.io())
                 .subscribe(link -> {
                     link.roomId = messages.entityId;
                     MessageRepository.getRepository().upsertMessage(link);

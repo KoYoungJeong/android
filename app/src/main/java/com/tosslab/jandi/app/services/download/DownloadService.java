@@ -21,36 +21,18 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
  */
 public class DownloadService extends IntentService implements DownloadController.View {
     public static final String TAG = DownloadService.class.getSimpleName();
-
-    public static void start(int fileId, String url, String fileName, String ext, String fileType) {
-        Intent intent = new Intent(JandiApplication.getContext(), DownloadService.class);
-        intent.putExtra(KEY_FILE_ID, fileId);
-        intent.putExtra(KEY_FILE_URL, url);
-        intent.putExtra(KEY_FILE_NAME, fileName);
-        intent.putExtra(KEY_FILE_EXTENSIONS, ext);
-        intent.putExtra(KEY_FILE_TYPE, fileType);
-        JandiApplication.getContext().startService(intent);
-    }
-
-    private static final String ACTION_CONNECTIVITY_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
-
     static final String KEY_FILE_ID = "file_id";
     static final String KEY_FILE_URL = "url";
     static final String KEY_FILE_NAME = "file_name";
     static final String KEY_FILE_EXTENSIONS = "ext";
     static final String KEY_FILE_TYPE = "file_type";
-
     static final int NONE_FILE_ID = -1;
-
+    private static final String ACTION_CONNECTIVITY_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
     private DownloadController downloadController;
-
     private NotificationManager notificationManager;
-
     private Handler uiHandler;
-
     // 노티피케이션을 자주 업데이트 하는 경우 시스템 렉이 엄청 걸림. 초단위로 보여주기 위한 마지막 타임스탬프
     private long lastNotificationTime;
-
     private BroadcastReceiver networkChangeBroadcastReceiver = new BroadcastReceiver() {
         private boolean isRegister = true;
         private boolean isHandled = false;
@@ -77,6 +59,16 @@ public class DownloadService extends IntentService implements DownloadController
 
     public DownloadService() {
         super(TAG);
+    }
+
+    public static void start(int fileId, String url, String fileName, String ext, String fileType) {
+        Intent intent = new Intent(JandiApplication.getContext(), DownloadService.class);
+        intent.putExtra(KEY_FILE_ID, fileId);
+        intent.putExtra(KEY_FILE_URL, url);
+        intent.putExtra(KEY_FILE_NAME, fileName);
+        intent.putExtra(KEY_FILE_EXTENSIONS, ext);
+        intent.putExtra(KEY_FILE_TYPE, fileType);
+        JandiApplication.getContext().startService(intent);
     }
 
     @Override
@@ -132,12 +124,14 @@ public class DownloadService extends IntentService implements DownloadController
     @Override
     public NotificationCompat.Builder getProgressNotificationBuilder(String fileName) {
         NotificationCompat.Builder progressNotificationBuilder = new NotificationCompat.Builder(this);
-        progressNotificationBuilder.setWhen(System.currentTimeMillis());
-        progressNotificationBuilder.setOngoing(true);
-        progressNotificationBuilder.setTicker(getString(R.string.app_name));
-        progressNotificationBuilder.setContentText(getString(R.string.app_name));
-        progressNotificationBuilder.setSmallIcon(android.R.drawable.stat_sys_download);
-        progressNotificationBuilder.setContentTitle(fileName);
+        progressNotificationBuilder
+                .setWhen(System.currentTimeMillis())
+                .setOngoing(true)
+                .setTicker(fileName)
+                .setContentTitle(fileName)
+                .setContentText(getString(R.string.app_name))
+                .setCategory(NotificationCompat.CATEGORY_PROGRESS)
+                .setSmallIcon(android.R.drawable.stat_sys_download);
         return progressNotificationBuilder;
     }
 
@@ -156,12 +150,14 @@ public class DownloadService extends IntentService implements DownloadController
     @Override
     public void notifyComplete(String fileName, int notificationId, Intent openFileViewerIntent) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setWhen(System.currentTimeMillis());
-        builder.setContentTitle(fileName);
-        builder.setTicker(getString(R.string.jandi_notify_download_complete));
-        builder.setContentText(getString(R.string.jandi_notify_download_complete));
-        builder.setSmallIcon(android.R.drawable.stat_sys_upload_done);
-        builder.setAutoCancel(true);
+        builder.setWhen(System.currentTimeMillis())
+                .setAutoCancel(true)
+                .setContentTitle(fileName)
+                .setTicker(fileName)
+                .setContentTitle(fileName)
+                .setContentText(getString(R.string.jandi_notify_download_complete))
+                .setCategory(NotificationCompat.CATEGORY_PROGRESS)
+                .setSmallIcon(android.R.drawable.stat_sys_download_done);
         if (openFileViewerIntent != null) {
             PendingIntent pendingIntent =
                     PendingIntent.getBroadcast(JandiApplication.getContext(),

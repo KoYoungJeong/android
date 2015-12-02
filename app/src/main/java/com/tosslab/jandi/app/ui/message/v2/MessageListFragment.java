@@ -1601,7 +1601,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public void onEventMainThread(TopicKickedoutEvent event) {
         if (roomId == event.getRoomId()) {
             getActivity().finish();
-            String topicName = messageListModel.getTopicName(entityId);
+            CharSequence topicName = ((AppCompatActivity) getActivity()).getSupportActionBar().getTitle();
             String msg = JandiApplication.getContext().getString(R.string.jandi_kicked_message, topicName);
             messageListPresenter.showFailToast(msg);
         }
@@ -1793,7 +1793,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
     }
 
-    public void onEvent(UnshareFileEvent event){
+    public void onEvent(UnshareFileEvent event) {
         messageListPresenter.justRefresh();
     }
 
