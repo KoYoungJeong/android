@@ -100,6 +100,7 @@
                 android:layout_height="115dp"
                 android:layout_marginBottom="11dp"
                 android:layout_marginRight="25dp"
+                android:background="@color/jandi_messages_image_bg"
                 android:scaleType="fitCenter" />
 
             <View
