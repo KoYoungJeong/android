@@ -462,6 +462,10 @@ We combined everything you love about messaging apps and cloud storage with powe
 	<string name="jandi_update_title">"Old Version"</string>
 	<string name="jandi_upload">"Upload"</string>
 	<string name="jandi_upload_a_file">"Upload a File"</string>
+	<string name="jandi_upload_menu_camera">"Camera"</string>
+	<string name="jandi_upload_menu_file">"File"</string>
+	<string name="jandi_upload_menu_gallay">"Gallery"</string>
+	<string name="jandi_upload_menu_video">"Video"</string>
 	<string name="jandi_user_default_email">"Primary Email Address"</string>
 	<string name="jandi_user_id">"Email"</string>
 	<string name="jandi_user_password">"Password"</string>

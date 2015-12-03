@@ -170,7 +170,7 @@ public class BodyViewFactory {
             // ArrayList로 나오는 경우 아직 DB에 기록되지 않은 경우 - object가 자동갱신되지 않는 문제 해결
             if (shareEntities instanceof ArrayList) {
                 ResMessages.FileMessage file = MessageRepository.getRepository().getFileMessage(currentMessage.id);
-                shareEntities = file.shareEntities;
+                shareEntities = file != null ? file.shareEntities : shareEntities;
             }
 
             for (ResMessages.OriginalMessage.IntegerWrapper entity : shareEntities) {

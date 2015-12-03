@@ -131,7 +131,7 @@
                     android:layout_marginTop="10dp"
                     android:text="@string/jandi_what_is_topic_type"
                     android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
-                    android:textSize="12sp" />
+                    android:textSize="@dimen/jandi_text_size_small" />
             </LinearLayout>
 
 
@@ -139,6 +139,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:paddingBottom="26dp"
                 android:paddingTop="20dp">
 
                 <TextView
@@ -180,7 +181,9 @@
                     android:layout_marginLeft="25dp"
                     android:layout_marginRight="25dp"
                     android:layout_marginTop="10dp"
-                    android:text="@string/jandi_auto_join_explain" />
+                    android:text="@string/jandi_auto_join_explain"
+                    android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
+                    android:textSize="@dimen/jandi_text_size_small" />
             </LinearLayout>
 
 
@@ -201,9 +204,7 @@
                     android:layout_marginRight="8dp"
                     android:hint="@string/jandi_explain_topic_description"
                     android:inputType="text|textMultiLine"
-                    android:lineSpacingExtra="12dp"
                     android:maxLength="300"
-                    android:maxLines="8"
                     android:paddingBottom="12dp"
                     android:paddingLeft="17dp"
                     android:paddingRight="17dp"

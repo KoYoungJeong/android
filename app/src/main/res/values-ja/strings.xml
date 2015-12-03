@@ -462,6 +462,10 @@
 	<string name="jandi_update_title">"古いバージョン"</string>
 	<string name="jandi_upload">"アップロード"</string>
 	<string name="jandi_upload_a_file">"ファイルをアップロード"</string>
+	<string name="jandi_upload_menu_camera">"カメラ"</string>
+	<string name="jandi_upload_menu_file">"ファイル"</string>
+	<string name="jandi_upload_menu_gallay">"写真"</string>
+	<string name="jandi_upload_menu_video">"動画"</string>
 	<string name="jandi_user_default_email">"プライマリメールアドレス"</string>
 	<string name="jandi_user_id">"メールアドレス"</string>
 	<string name="jandi_user_password">"パスワード"</string>

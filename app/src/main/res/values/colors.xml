@@ -110,6 +110,7 @@
     <color name="jandi_linkpreview_thumb_background">#FFF4F4F4</color>
     <color name="jandi_messages_file_writer">#000000</color>
     <color name="jandi_messages_file_content">#353535</color>
+    <color name="jandi_messages_image_bg">#FFA4AFBC</color>
 
     <!-- Main panel -->
     <color name="jandi_messages_bottom_bg">#FFFFFF</color>

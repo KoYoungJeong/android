@@ -27,7 +27,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -285,23 +284,18 @@ public class JandiSocketService extends Service {
         long ts = JandiPreference.getSocketConnectedLastTime();
         EntityManager entityManager = EntityManager.getInstance();
         int userId = entityManager.getMe().getId();
-        if (ts != -1) {
+        if (ts > -1) {
             try {
                 ResEventHistory eventHistory =
                         RequestApiManager.getInstance().getEventHistory(ts, userId, "file_unshared", null);
-                // 이하는 모든 이벤트 받아올 때
-//                ResEventHistory eventHistory =
-//                        RequestApiManager.getInstance().getEventHistory(ts, userId, null, null);
-                Iterator<ResEventHistory.EventHistoryInfo> i = eventHistory.records.iterator();
-                while (i.hasNext()) {
-                    ResEventHistory.EventHistoryInfo eventInfo = i.next();
-                    if (eventInfo instanceof SocketFileUnsharedEvent) {
-                        SocketFileUnsharedEvent event = (SocketFileUnsharedEvent) eventInfo;
-                        int fileId = event.getFile().getId();
-                        int roomId = event.room.id;
-                        MessageRepository.getRepository().updateUnshared(fileId, roomId);
-                    }
-                }
+                Observable.from(eventHistory.records)
+                        .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketFileUnsharedEvent)
+                        .map(eventHistoryInfo -> (SocketFileUnsharedEvent) eventHistoryInfo)
+                        .subscribe(eventHistoryInfo -> {
+                            int fileId = eventHistoryInfo.getFile().getId();
+                            int roomId = eventHistoryInfo.room.id;
+                            MessageRepository.getRepository().updateUnshared(fileId, roomId);
+                        }, Throwable::printStackTrace);
             } catch (RetrofitError e) {
                 e.printStackTrace();
             }

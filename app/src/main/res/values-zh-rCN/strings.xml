@@ -460,6 +460,10 @@
 	<string name="jandi_update_title">"旧版"</string>
 	<string name="jandi_upload">"上传"</string>
 	<string name="jandi_upload_a_file">"上传文件"</string>
+	<string name="jandi_upload_menu_camera">"相机"</string>
+	<string name="jandi_upload_menu_file">"文件"</string>
+	<string name="jandi_upload_menu_gallay">"图库"</string>
+	<string name="jandi_upload_menu_video">"视频"</string>
 	<string name="jandi_user_default_email">"主要电子邮件地址"</string>
 	<string name="jandi_user_id">"电子邮件"</string>
 	<string name="jandi_user_password">"密码"</string>

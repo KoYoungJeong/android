@@ -113,7 +113,7 @@ public class FileDetailModel {
 
         // 모든 대상이 공유 대상이 되도록 함
         EntityManager entityManager = EntityManager.getInstance();
-        List<FormattedEntity> entities = entityManager.retrieveExclusivedEntities(new ArrayList<>(0));
+        List<FormattedEntity> entities = entityManager.retrieveAccessableEntities();
 
         List<FormattedEntity> formattedEntities = new ArrayList<>();
 
@@ -282,7 +282,10 @@ public class FileDetailModel {
     public void saveFileDetailInfo(ResFileDetail resFileDetail) {
         ResMessages.FileMessage fileMessage = extractFileMssage(resFileDetail.messageDetails);
 
-        MessageRepository.getRepository().upsertFileMessage(fileMessage);
+        if (TextUtils.equals(fileMessage.status, "archived")) {
+            // 삭제 상태만 갱신하도록 수정
+            MessageRepository.getRepository().updateStatus(fileMessage.id, fileMessage.status);
+        }
 
         Observable.from(resFileDetail.messageDetails)
                 .filter(originalMessage -> !(originalMessage instanceof ResMessages.FileMessage))

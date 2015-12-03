@@ -105,6 +105,8 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -175,6 +177,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     private ProgressDialog progressDialog;
     private StickerInfo stickerInfo = NULL_STICKER;
     private MixpanelAnalytics mixpanelAnalytics;
+    private Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities;
     private boolean isExternalShared;
 
     @AfterViews
@@ -465,6 +468,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public void loadSuccess(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages,
                             boolean isSendAction, int selectMessageId) {
 
+        shareEntities = fileMessage.shareEntities;
+
         drawFileDetail(fileMessage, commentMessages, isSendAction);
 
         if (selectMessageId > 0) {
@@ -538,8 +543,17 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
      * **********************************************************
      */
     void clickUnShareButton() {
+        ArrayList<Integer> rawSharedEntities = new ArrayList<>();
+        if (shareEntities != null) {
+
+            Observable.from(shareEntities)
+                    .map(integerWrapper -> integerWrapper.getShareEntity())
+                    .collect(() -> rawSharedEntities, (integers, integer) -> integers.add(integer))
+                    .subscribe();
+        }
         FileUnshareActivity_.intent(this)
-                .extra("fileId", fileId)
+                .fileId(fileId)
+                .sharedEntities(rawSharedEntities)
                 .startForResult(INTENT_RETURN_TYPE_UNSHARE);
     }
 
