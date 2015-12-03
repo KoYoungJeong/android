@@ -190,15 +190,6 @@ android {
             }
         }
 
-        landscapeDev {
-            applicationId('com.tosslab.jandi.app.landscapeDev')
-            versionName(defaultConfig.versionName + ".landscapeDev")
-        }
-
-        landscape {
-            applicationId('com.tosslab.jandi.app.landscape')
-            versionName(defaultConfig.versionName + ".landscape")
-        }
     }
 
     sourceSets {
