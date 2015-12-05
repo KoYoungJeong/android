@@ -304,10 +304,10 @@ public class StickerViewModel {
     }
 
     @UiThread
-    public void dismissStickerSelector(boolean removeSpace) {
+    public void dismissStickerSelector(boolean isRemoveSpace) {
         dismissStickerWindow();
         vgStickerSelector.setVisibility(View.GONE);
-        if (removeSpace) {
+        if (isRemoveSpace) {
             vgOptionSpace.setVisibility(View.GONE);
         }
         if (btnStickerShow != null) {

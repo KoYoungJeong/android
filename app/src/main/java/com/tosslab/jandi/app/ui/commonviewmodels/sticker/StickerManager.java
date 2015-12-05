@@ -69,6 +69,7 @@ public class StickerManager {
     public void loadSticker(ImageView view, int groupId, String stickerId, LoadOptions options) {
 
         String stickerAssetPath = null;
+
         if (isLocalSticker(groupId)) {
             stickerAssetPath = getStickerAssetPath(groupId, stickerId);
         } else {
@@ -152,6 +153,7 @@ public class StickerManager {
         }
     }
 
+    
     public static class LoadOptions {
         public boolean isFadeAnimation = true;
         public boolean isClickImage;
