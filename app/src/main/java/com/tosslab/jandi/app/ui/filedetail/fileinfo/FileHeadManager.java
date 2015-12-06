@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
@@ -24,9 +24,9 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.spannable.EntitySpannable;
 import com.tosslab.jandi.app.views.spannable.MessageSpannable;
 
@@ -47,7 +47,7 @@ public class FileHeadManager {
     AppCompatActivity activity;
 
     // in File Detail Header
-    private ImageView imageViewUserProfile;
+    private SimpleDraweeView imageViewUserProfile;
     private TextView textViewUserName;
     private TextView textViewFileCreateDate;
     private TextView textViewFileContentInfo;
@@ -56,7 +56,7 @@ public class FileHeadManager {
     private View disableCoverView;
 
     private ImageView btnFileDetailStarred;
-    private ImageView imageViewPhotoFile;
+    private SimpleDraweeView imageViewPhotoFile;
     private ViewGroup vgDetailPhoto;
     private ImageView iconFileType;
     private LinearLayout fileInfoLayout;
@@ -66,12 +66,12 @@ public class FileHeadManager {
 
     public View getHeaderView() {
         View header = LayoutInflater.from(activity).inflate(R.layout.activity_file_detail_header, null, false);
-        imageViewUserProfile = (ImageView) header.findViewById(R.id.img_file_detail_user_profile);
+        imageViewUserProfile = (SimpleDraweeView) header.findViewById(R.id.img_file_detail_user_profile);
         textViewUserName = (TextView) header.findViewById(R.id.txt_file_detail_user_name);
         textViewFileCreateDate = (TextView) header.findViewById(R.id.txt_file_detail_create_date);
         textViewFileContentInfo = (TextView) header.findViewById(R.id.txt_file_detail_file_info);
         textViewFileSharedCdp = (TextView) header.findViewById(R.id.txt_file_detail_shared_cdp);
-        imageViewPhotoFile = (ImageView) header.findViewById(R.id.img_file_detail_photo);
+        imageViewPhotoFile = (SimpleDraweeView) header.findViewById(R.id.img_file_detail_photo);
         vgDetailPhoto = (ViewGroup) header.findViewById(R.id.vg_file_detail_photo);
         fileInfoLayout = (LinearLayout) header.findViewById(R.id.ly_file_detail_info);
         iconFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
@@ -157,12 +157,11 @@ public class FileHeadManager {
     public void setFileInfo(ResMessages.FileMessage fileMessage) {
         // 사용자
         FormattedEntity writer = EntityManager.getInstance().getEntityById(fileMessage.writerId);
+
         String profileUrl = writer.getUserSmallProfileUrl();
-        Ion.with(imageViewUserProfile)
-                .placeholder(R.drawable.profile_img)
-                .error(R.drawable.profile_img)
-                .transform(new IonCircleTransform())
-                .load(profileUrl);
+
+        ImageUtil.loadCircleImageByFresco(imageViewUserProfile, profileUrl, R.drawable.profile_img);
+
         String userName = writer.getName();
         textViewUserName.setText(userName);
 
@@ -182,8 +181,6 @@ public class FileHeadManager {
         textViewFileCreateDate.setText(createTime);
         // if Deleted File
         if (TextUtils.equals(fileMessage.status, "archived")) {
-
-            imageViewPhotoFile.setImageResource(R.drawable.jandi_fl_icon_deleted);
             imageViewPhotoFile.setOnClickListener(null);
             imageViewPhotoFile.setVisibility(View.GONE);
             fileInfoLayout.setVisibility(View.GONE);

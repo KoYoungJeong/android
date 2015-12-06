@@ -51,7 +51,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ADD_TOKEN_TABLE = 6;
     private static final int DATABASE_VERSION_ADD_READY_COMMENT = 7;
     private static final int DATABASE_VERSION_SHARE_ENTITY_RESET = 8;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_SHARE_ENTITY_RESET;
+    private static final int DATABASE_VERSION_ADD_FILE_EXTRA_INFO = 9;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_ADD_FILE_EXTRA_INFO;
+
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -180,6 +182,13 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_SHARE_ENTITY_RESET, () -> {
                         MessageRepository.getRepository().deleteAllLink();
+                    }),
+
+                    UpgradeChecker.create(() -> DATABASE_VERSION_STICKER_SEND_STATUS, () -> {
+                        Dao<ResMessages.FileContent, ?> dao = DaoManager.createDao(connectionSource, ResMessages.FileContent.class);
+                        dao.executeRawNoArgs("ALTER TABLE `message_file_content` ADD COLUMN width INTEGER;");
+                        dao.executeRawNoArgs("ALTER TABLE `message_file_content` ADD COLUMN height INTEGER;");
+                        dao.executeRawNoArgs("ALTER TABLE `message_file_content` ADD COLUMN orientation INTEGER;");
                     }));
 
             Observable.from(upgradeCheckers)

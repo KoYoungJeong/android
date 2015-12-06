@@ -121,7 +121,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/iv_profile_guide_image_icon"
                     android:layout_width="33dp"
                     android:layout_height="33dp"

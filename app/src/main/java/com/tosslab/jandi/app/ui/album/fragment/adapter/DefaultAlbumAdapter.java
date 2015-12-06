@@ -1,18 +1,24 @@
 package com.tosslab.jandi.app.ui.album.fragment.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.album.fragment.ImageAlbumFragment;
 import com.tosslab.jandi.app.ui.album.fragment.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.fragment.vo.SelectPictures;
+import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import java.util.List;
@@ -38,7 +44,7 @@ public class DefaultAlbumAdapter extends RecyclerView.Adapter {
         AlbumViewHolder albumViewHolder = new AlbumViewHolder(view);
         albumViewHolder.tvTitle = (TextView) view.findViewById(R.id.tv_item_default_album_title);
         albumViewHolder.tvSelectCount = (TextView) view.findViewById(R.id.tv_item_default_album_count);
-        albumViewHolder.ivSample = (ImageView) view.findViewById(R.id.iv_item_default_album_sample);
+        albumViewHolder.ivSample = (SimpleDraweeView) view.findViewById(R.id.iv_item_default_album_sample);
 
 
         return albumViewHolder;
@@ -52,6 +58,7 @@ public class DefaultAlbumAdapter extends RecyclerView.Adapter {
 
         String buckerName = item.getBuckerName();
         String imagePath = item.getImagePath();
+
         int bucketCount = item.getCount();
 
         int countOfBucket;
@@ -76,12 +83,24 @@ public class DefaultAlbumAdapter extends RecyclerView.Adapter {
             viewHolder.tvTitle.setText(String.format("%s (%s)", buckerName, bucketCount));
         }
 
+        Uri uri = UriFactory.getFileUri(imagePath);
 
-        Glide.with(context)
-                .load(imagePath)
-                .error(R.drawable.upload_icon_list_thumbnail)
-                .centerCrop()
-                .into(viewHolder.ivSample);
+        SimpleDraweeView ivSample = viewHolder.ivSample;
+
+        ViewGroup.LayoutParams layoutParams = ivSample.getLayoutParams();
+        ResizeOptions options = new ResizeOptions(layoutParams.width, layoutParams.height);
+        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
+                .setAutoRotateEnabled(true)
+                .setResizeOptions(options)
+                .build();
+
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setImageRequest(imageRequest)
+                .setAutoPlayAnimations(true)
+                .setOldController(ivSample.getController())
+                .build();
+
+        ivSample.setController(controller);
 
         viewHolder.itemView.setOnClickListener(v -> {
             if (onRecyclerItemClickListener != null) {
@@ -110,11 +129,12 @@ public class DefaultAlbumAdapter extends RecyclerView.Adapter {
 
         TextView tvTitle;
         TextView tvSelectCount;
-        ImageView ivSample;
+        SimpleDraweeView ivSample;
 
         public AlbumViewHolder(View itemView) {
             super(itemView);
 
         }
     }
+
 }

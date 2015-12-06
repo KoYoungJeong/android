@@ -11,15 +11,15 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
+import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import java.util.ArrayList;
@@ -129,7 +129,8 @@ public class UserSelectorImpl implements UserSelector {
             UserViewHolder viewHolder = new UserViewHolder(itemView);
 
             viewHolder.tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
-            viewHolder.ivIcon = (ImageView) itemView.findViewById(R.id.iv_room_selector_item_icon);
+            viewHolder.ivIcon =
+                    (SimpleDraweeView) itemView.findViewById(R.id.iv_room_selector_item_icon);
 
             return viewHolder;
         }
@@ -138,21 +139,15 @@ public class UserSelectorImpl implements UserSelector {
         public void onBindViewHolder(UserViewHolder holder, int position) {
             FormattedEntity item = getItem(position);
 
+            SimpleDraweeView ivIcon = holder.ivIcon;
             if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
                 holder.tvName.setText(R.string.jandi_file_category_everyone);
-                holder.ivIcon.setImageResource(R.drawable.icon_search_all_members);
+                ivIcon.setImageURI(UriFactory.getResourceUri(R.drawable.icon_search_all_members));
             } else {
-                Ion.with(holder.ivIcon)
-                        .placeholder(R.drawable.profile_img_comment)
-                        .error(R.drawable.profile_img_comment)
-                        .fitCenter()
-                        .crossfade(true)
-                        .transform(new IonCircleTransform())
-                        .load(item.getUserSmallProfileUrl());
-
+                ImageUtil.loadCircleImageByFresco(ivIcon,
+                        item.getUserSmallProfileUrl(), R.drawable.profile_img_comment);
                 holder.tvName.setText(item.getName());
             }
-
 
             holder.itemView.setOnClickListener(v -> {
                 if (onRoomSelectListener != null) {
@@ -182,7 +177,7 @@ public class UserSelectorImpl implements UserSelector {
 
     private static class UserViewHolder extends RecyclerView.ViewHolder {
         public TextView tvName;
-        public ImageView ivIcon;
+        public SimpleDraweeView ivIcon;
 
         public UserViewHolder(View itemView) {
             super(itemView);

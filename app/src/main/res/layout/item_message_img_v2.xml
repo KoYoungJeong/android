@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cardview="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -17,8 +19,10 @@
         android:paddingTop="10dp"
         android:visibility="visible">
         <!-- 사용자 프로필 사진 -->
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/iv_message_user_profile"
+            fresco:backgroundImage="@color/black"
+            fresco:roundAsCircle="true"
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
             android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
@@ -94,29 +98,47 @@
             android:layout_below="@+id/tv_message_user_name"
             android:layout_toRightOf="@+id/iv_message_user_profile">
 
-            <ImageView
-                android:id="@+id/iv_message_photo"
-                android:layout_width="match_parent"
-                android:layout_height="115dp"
+            <android.support.v7.widget.CardView
+                android:id="@+id/vg_message_photo_wrapper"
+                cardview:cardBackgroundColor="@color/jandi_messages_image_background"
+                cardview:cardCornerRadius="2dp"
+                cardview:cardUseCompatPadding="true"
+                cardview:cardPreventCornerOverlap="false"
+                cardview:contentPadding="0dp"
+                cardview:cardElevation="2dp"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
                 android:layout_marginBottom="11dp"
                 android:layout_marginRight="25dp"
-                android:background="@color/jandi_messages_image_bg"
-                android:scaleType="fitCenter" />
-
-            <View
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/iv_message_photo"
-                android:layout_alignLeft="@+id/iv_message_photo"
-                android:layout_alignRight="@+id/iv_message_photo"
-                android:layout_alignTop="@+id/iv_message_photo"
-                android:background="@drawable/jandi_message_image_frame" />
+                android:layout_height="wrap_content">
+
+                <!--<ImageView-->
+                <!--<com.tosslab.jandi.app.views.AutoScaleImageView-->
+                    <!--fresco:actualImageScaleType="centerCrop"-->
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/iv_message_photo"
+                    fresco:placeholderImage="@drawable/image_preview_download"
+                    fresco:placeholderImageScaleType="fitXY"
+                    android:layout_width="213dp"
+                    android:layout_height="120dp"/>
+            </android.support.v7.widget.CardView>
+
+            <!--<View-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignBottom="@+id/iv_message_photo"-->
+                <!--android:layout_alignLeft="@+id/iv_message_photo"-->
+                <!--android:layout_alignRight="@+id/iv_message_photo"-->
+                <!--android:layout_alignTop="@+id/iv_message_photo"-->
+                <!--android:background="@drawable/jandi_message_image_frame" />-->
 
             <RelativeLayout
                 android:id="@+id/vg_image_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/iv_message_photo">
+                android:layout_below="@+id/vg_message_photo_wrapper">
 
                 <LinearLayout
                     android:layout_width="match_parent"

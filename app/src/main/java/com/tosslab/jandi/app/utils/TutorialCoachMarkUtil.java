@@ -6,13 +6,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.ImageView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 /**
  * Created by tee on 15. 7. 16..
@@ -63,15 +62,14 @@ public class TutorialCoachMarkUtil {
         EntityManager entityManager = EntityManager.getInstance();
 
         if (coachMarkType == COACH_MARK_MORE) {
-            ImageView profileImageView = (ImageView) masterView.findViewById(R.id.iv_profile_guide_image_icon);
+            SimpleDraweeView profileImageView =
+                    (SimpleDraweeView) masterView.findViewById(R.id.iv_profile_guide_image_icon);
             if (profileImageView != null) {
                 if (entityManager != null) {
                     FormattedEntity me = entityManager.getMe();
-                    Ion.with(profileImageView)
-                            .placeholder(R.drawable.profile_img)
-                            .error(R.drawable.profile_img)
-                            .transform(new IonCircleTransform())
-                            .load(me.getUserSmallProfileUrl());
+
+                    ImageUtil.loadCircleImageByFresco(
+                            profileImageView, me.getUserSmallProfileUrl(), R.drawable.profile_img);
                 }
             }
         }

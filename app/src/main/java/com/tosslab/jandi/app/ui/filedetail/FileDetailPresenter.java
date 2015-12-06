@@ -28,7 +28,7 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.filedetail.domain.FileStarredInfo;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.placeholder.PlaceholderUtil;
@@ -401,12 +401,12 @@ public class FileDetailPresenter {
         switch (placeholderType) {
             case Google:
             case Dropbox:
-                String photoUrl = BitmapUtil.getFileUrl(content.fileUrl);
+                String photoUrl = ImageUtil.getFileUrl(content.fileUrl);
                 view.startGoogleOrDropboxFileActivity(photoUrl);
                 return;
         }
 
-        downloadFile(BitmapUtil.getFileUrl(content.fileUrl),
+        downloadFile(ImageUtil.getFileUrl(content.fileUrl),
                 content.title,
                 content.type,
                 content.ext,

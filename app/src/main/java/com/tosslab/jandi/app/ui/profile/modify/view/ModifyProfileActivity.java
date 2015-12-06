@@ -14,10 +14,9 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.soundcloud.android.crop.Crop;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -35,12 +34,12 @@ import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenter;
 import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenterImpl;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.app.utils.transform.glide.GlideCircleTransform;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -69,7 +68,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     ModifyProfilePresenter memberProfilePresenter;
 
     @ViewById(R.id.profile_photo)
-    ImageView ivProfilePhoto;
+    SimpleDraweeView ivProfilePhoto;
     @ViewById(R.id.profile_user_realname)
     TextView tvProfileRealName;
     @ViewById(R.id.profile_user_status_message)
@@ -395,14 +394,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     }
 
     void displayProfileImage(String profileImageUrlPath) {
-        if (!TextUtils.isEmpty(profileImageUrlPath)
-                && !isFinishing()) {
-            Glide.with(ModifyProfileActivity.this)
-                    .load(profileImageUrlPath)
-                    .placeholder(R.drawable.profile_img)
-                    .error(R.drawable.profile_img)
-                    .transform(new GlideCircleTransform(ModifyProfileActivity.this))
-                    .into(ivProfilePhoto);
+        if (!TextUtils.isEmpty(profileImageUrlPath) && !isFinishing()) {
+            ImageUtil.loadCircleImageByFresco(ivProfilePhoto, profileImageUrlPath, R.drawable.profile_img);
         }
     }
 
@@ -451,16 +444,10 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void updateLocalProfileImage(File mTempPhotoFile) {
-        Glide.with(ModifyProfileActivity.this)
-                .load(mTempPhotoFile)
-                .placeholder(R.drawable.profile_img)
-                .error(R.drawable.profile_img)
-                .transform(new GlideCircleTransform(ModifyProfileActivity.this))
-                .into(ivProfilePhoto);
-
+    public void updateLocalProfileImage(File tempPhotoFile) {
+        ImageUtil.loadCircleImageByFresco(ivProfilePhoto,
+                Uri.fromFile(tempPhotoFile), R.drawable.profile_img);
     }
-
 
     public void launchEditDialog(int dialogActionType, TextView textView) {
         String currentText = textView.getText().toString();

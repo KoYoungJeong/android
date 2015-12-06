@@ -1,22 +1,17 @@
 package com.tosslab.jandi.app.ui.carousel;
 
 import android.content.Context;
-import android.webkit.MimeTypeMap;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
-import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
-import org.json.JSONException;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +50,8 @@ public class CarouselViewerModel {
                         .fileLinkId(fileMessage.id)
                         .fileName(fileMessage.content.name)
                         .fileType(fileMessage.content.type)
-                        .fileLinkUrl(BitmapUtil.getOptimizedImageUrl(fileMessage.content))
+                        .fileLinkUrl(ImageUtil.getFileUrl(fileMessage.content.fileUrl))
+                        .fileThumbUrl(ImageUtil.getOptimizedImageUrl(fileMessage.content))
                         .ext(fileMessage.content.ext)
                         .size(fileMessage.content.size)
                         .fileCreateTime(

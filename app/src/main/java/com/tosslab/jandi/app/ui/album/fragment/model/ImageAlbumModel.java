@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.album.fragment.model;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -19,23 +20,29 @@ import java.util.List;
 @EBean
 public class ImageAlbumModel {
 
+    public static final int LIMIT = 60;
+
     public List<ImageAlbum> getDefaultAlbumList(Context context) {
         // which image properties are we querying
         String COUNT_COLUMN = "count";
         String[] projection = {
+                MediaStore.Images.ImageColumns._ID,
                 MediaStore.Images.ImageColumns.BUCKET_ID,
                 MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME,
                 MediaStore.Images.ImageColumns.DATA,
                 String.format("COUNT(%s) as %s", MediaStore.Images.ImageColumns.BUCKET_ID, COUNT_COLUMN)};
 
         String groupBy = "1) GROUP BY (" + MediaStore.Images.ImageColumns.BUCKET_ID;
-        String orderBy = String.format("%s DESC, MAX(%s) DESC", MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_TAKEN);
+        String orderBy = String.format("%s DESC, MAX(%s) DESC",
+                MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME,
+                MediaStore.Images.ImageColumns.DATE_TAKEN);
 
         // Get the base URI for the People table in the Contacts content provider.
         Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
         // Make the query.
-        Cursor cursor = context.getContentResolver().query(images,
+        ContentResolver contentResolver = context.getContentResolver();
+        Cursor cursor = contentResolver.query(images,
                 projection, // Which columns to return
                 groupBy,       // Which rows to return (all rows)
                 null,       // Selection arguments (none)
@@ -53,7 +60,6 @@ public class ImageAlbumModel {
         int idxData = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
         int idxCount = cursor.getColumnIndex(COUNT_COLUMN);
 
-
         while (cursor.moveToNext()) {
             albumName.add(
                     new ImageAlbum.ImageAlbumBuilder()
@@ -70,7 +76,7 @@ public class ImageAlbumModel {
         return albumName;
     }
 
-    public List<ImagePicture> getPhotoList(Context context, int buckerId) {
+    public List<ImagePicture> getPhotoList(Context context, int buckerId, int offset) {
         // which image properties are we querying
         String[] projection = {
                 MediaStore.Images.ImageColumns._ID,
@@ -80,13 +86,25 @@ public class ImageAlbumModel {
         String orderBy = String.format("%s DESC", MediaStore.Images.ImageColumns.DATE_TAKEN);
 
         // Get the base URI for the People table in the Contacts content provider.
-        Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                .buildUpon()
+                .appendQueryParameter("limit", String.valueOf(LIMIT))
+                .build();
 
         // Make the query.
-        String selection = String.format("%s = ?", MediaStore.Images.ImageColumns.BUCKET_ID);
-        String[] selectionArgs = {String.valueOf(buckerId)};
+        String bucketIdSelection = String.format("%s = ?", MediaStore.Images.ImageColumns.BUCKET_ID);
+        StringBuilder sb = new StringBuilder(bucketIdSelection);
+        if (offset > 0) {
+            sb.append(String.format(" and %s < ?", MediaStore.Images.ImageColumns._ID));
+        }
 
-        Cursor cursor = context.getContentResolver().query(images,
+        String selection = sb.toString();
+        String[] selectionArgs = offset > 0
+                ? new String[]{String.valueOf(buckerId), String.valueOf(offset)}
+                : new String[]{String.valueOf(buckerId)};
+
+        ContentResolver contentResolver = context.getContentResolver();
+        Cursor cursor = contentResolver.query(images,
                 projection, // Which columns to return
                 selection,       // Which rows to return (all rows)
                 selectionArgs,       // Selection arguments (none)
@@ -99,29 +117,45 @@ public class ImageAlbumModel {
             return imagePictures;
         }
 
-        int idxId = cursor.getColumnIndex(
-                MediaStore.Images.ImageColumns._ID);
-
         int idxBucketId = cursor.getColumnIndex(
                 MediaStore.Images.ImageColumns.BUCKET_ID);
 
         int idxData = cursor.getColumnIndex(
                 MediaStore.Images.ImageColumns.DATA);
 
-
         while (cursor.moveToNext()) {
             imagePictures.add(
                     new ImagePicture.ImagePictureBuilder()
-                            ._id(cursor.getInt(idxId))
                             .buckerId(cursor.getInt(idxBucketId))
                             .imagePath(cursor.getString(idxData))
                             .createImagePicture()
             );
         }
         cursor.close();
-
         return imagePictures;
 
+    }
+
+    private String getImageThumbPath(ContentResolver contentResolver, int id) {
+        String[] thumbProjection = {MediaStore.Images.Thumbnails.DATA};
+
+        Cursor thumbCursor = contentResolver.query(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
+                thumbProjection,
+                String.format("%s = ?", MediaStore.Images.Thumbnails.IMAGE_ID),
+                new String[]{String.valueOf(id)},
+                null);
+
+        String imageThumbPath = "";
+        if (thumbCursor != null) {
+            if (thumbCursor.getCount() > 0) {
+                thumbCursor.moveToFirst();
+                imageThumbPath = thumbCursor.getString(
+                        thumbCursor.getColumnIndex(MediaStore.Images.Thumbnails.DATA));
+            }
+            thumbCursor.close();
+        }
+
+        return imageThumbPath;
     }
 
     public boolean isFirstAlbumPage(int buckerId) {
@@ -171,14 +205,13 @@ public class ImageAlbumModel {
     }
 
     public ImageAlbum createViewAllAlbum(Context context) {
-
-
         int albumCount = 0;
 
         // which image properties are we querying
         String COUNT_COLUMN = "count";
         String[] projection = {
                 String.format("COUNT(%s) as %s", MediaStore.Images.ImageColumns.DATA, COUNT_COLUMN),
+                MediaStore.Images.ImageColumns._ID,
                 MediaStore.Images.ImageColumns.DATA
         };
 
@@ -187,7 +220,8 @@ public class ImageAlbumModel {
         Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
         // Make the query.
-        Cursor cursor = context.getContentResolver().query(images,
+        ContentResolver contentResolver = context.getContentResolver();
+        Cursor cursor = contentResolver.query(images,
                 projection, // Which columns to return
                 null,       // Which rows to return (all rows)
                 null,       // Selection arguments (none)
@@ -222,7 +256,7 @@ public class ImageAlbumModel {
         return buckerId == ImageAlbumFragment.BUCKET_ALL_IMAGE_ALBUM;
     }
 
-    public List<ImagePicture> getAllPhotoList(Context context) {
+    public List<ImagePicture> getAllPhotoList(Context context, int offset) {
         // which image properties are we querying
         String[] projection = {
                 MediaStore.Images.ImageColumns._ID,
@@ -232,12 +266,23 @@ public class ImageAlbumModel {
         String orderBy = String.format("%s DESC", MediaStore.Images.ImageColumns.DATE_TAKEN);
 
         // Get the base URI for the People table in the Contacts content provider.
-        Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                .buildUpon()
+                .appendQueryParameter("limit", String.valueOf(LIMIT))
+                .build();
 
-        Cursor cursor = context.getContentResolver().query(images,
+        String selection = null;
+        String[] selectionArgs = null;
+        if (offset > 0) {
+            selection = String.format("%s < ?", MediaStore.Images.ImageColumns._ID);
+            selectionArgs = new String[]{String.valueOf(offset)};
+        }
+
+        ContentResolver contentResolver = context.getContentResolver();
+        Cursor cursor = contentResolver.query(images,
                 projection, // Which columns to return
-                null,       // Which rows to return (all rows)
-                null,       // Selection arguments (none)
+                selection,       // Which rows to return (all rows)
+                selectionArgs,       // Selection arguments (none)
                 orderBy        // Ordering
         );
 
@@ -247,15 +292,11 @@ public class ImageAlbumModel {
             return imagePictures;
         }
 
-        int idxId = cursor.getColumnIndex(
-                MediaStore.Images.ImageColumns._ID);
+        int idxId = cursor.getColumnIndex(MediaStore.Images.ImageColumns._ID);
 
-        int idxBucketId = cursor.getColumnIndex(
-                MediaStore.Images.ImageColumns.BUCKET_ID);
+        int idxBucketId = cursor.getColumnIndex(MediaStore.Images.ImageColumns.BUCKET_ID);
 
-        int idxData = cursor.getColumnIndex(
-                MediaStore.Images.ImageColumns.DATA);
-
+        int idxData = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
 
         while (cursor.moveToNext()) {
             imagePictures.add(
@@ -263,11 +304,9 @@ public class ImageAlbumModel {
                             ._id(cursor.getInt(idxId))
                             .buckerId(cursor.getInt(idxBucketId))
                             .imagePath(cursor.getString(idxData))
-                            .createImagePicture()
-            );
+                            .createImagePicture());
         }
         cursor.close();
-
         return imagePictures;
 
     }

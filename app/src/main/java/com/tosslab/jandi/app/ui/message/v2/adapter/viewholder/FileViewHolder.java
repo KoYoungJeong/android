@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -17,7 +18,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -34,7 +35,7 @@ import de.greenrobot.event.EventBus;
  */
 public class FileViewHolder implements BodyViewHolder {
 
-    private ImageView ivProfile;
+    private SimpleDraweeView ivProfile;
     private TextView tvName;
     private TextView tvDate;
     private ImageView ivFileImage;
@@ -51,7 +52,7 @@ public class FileViewHolder implements BodyViewHolder {
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
-        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+        ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvDate = (TextView) rootView.findViewById(R.id.tv_message_create_date);
 
@@ -83,11 +84,7 @@ public class FileViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
-                profileUrl,
-                R.drawable.profile_img,
-                R.drawable.profile_img
-        );
+        ImageUtil.loadCircleImageByFresco(ivProfile, profileUrl, R.drawable.profile_img);
 
         if (TextUtils.equals(fromEntity.status, "enabled")) {
             tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));

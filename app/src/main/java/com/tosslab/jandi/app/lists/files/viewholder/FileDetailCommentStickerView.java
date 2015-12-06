@@ -10,17 +10,17 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 import de.greenrobot.event.EventBus;
 
@@ -29,7 +29,7 @@ import de.greenrobot.event.EventBus;
  */
 public class FileDetailCommentStickerView implements CommentViewHolder {
 
-    ImageView ivCommentUserProfile;
+    SimpleDraweeView ivCommentUserProfile;
     TextView tvCommentUserName;
     TextView tvCommentFileCreateDate;
     ImageView ivCommentSticker;
@@ -40,7 +40,8 @@ public class FileDetailCommentStickerView implements CommentViewHolder {
 
     @Override
     public void init(View rootView) {
-        ivCommentUserProfile = (ImageView) rootView.findViewById(R.id.iv_file_detail_comment_user_profile);
+        ivCommentUserProfile =
+                (SimpleDraweeView) rootView.findViewById(R.id.iv_file_detail_comment_user_profile);
         tvCommentUserName = (TextView) rootView.findViewById(R.id.tv_file_detail_comment_user_name);
         tvCommentFileCreateDate = (TextView) rootView.findViewById(R.id.tv_file_detail_comment_create_date);
         ivCommentSticker = (ImageView) rootView.findViewById(R.id.iv_file_detail_comment_sticker);
@@ -69,11 +70,8 @@ public class FileDetailCommentStickerView implements CommentViewHolder {
                     tvCommentUserName.getContext().getResources().getColor(R.color.deactivate_text_color));
         }
 
-        Ion.with(ivCommentUserProfile)
-                .placeholder(R.drawable.profile_img_comment)
-                .error(R.drawable.profile_img_comment)
-                .transform(new IonCircleTransform())
-                .load(profileUrl);
+        ImageUtil.loadCircleImageByFresco(
+                ivCommentUserProfile, profileUrl, R.drawable.profile_img_comment);
 
         ivCommentUserProfile.setOnClickListener(v -> {
             EventBus.getDefault().post(new ShowProfileEvent(writer.getId(), ShowProfileEvent.From.Image));

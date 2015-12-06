@@ -11,7 +11,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
@@ -35,9 +35,9 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.IconWithTextView;
 
 import org.androidannotations.annotations.AfterInject;
@@ -163,11 +163,11 @@ public class MainMoreFragment extends Fragment {
     private void showUserProfile() {
         if (mEntityManager != null) {
             FormattedEntity me = mEntityManager.getMe();
-            Ion.with(profileIconView.getImageView())
-                    .placeholder(R.drawable.profile_img)
-                    .error(R.drawable.profile_img)
-                    .transform(new IonCircleTransform())
-                    .load(me.getUserSmallProfileUrl());
+
+            SimpleDraweeView imageView = profileIconView.getImageView();
+            Uri uri = Uri.parse(me.getUserSmallProfileUrl());
+
+            ImageUtil.loadCircleImageByFresco(imageView, uri, R.drawable.profile_img);
         }
     }
 

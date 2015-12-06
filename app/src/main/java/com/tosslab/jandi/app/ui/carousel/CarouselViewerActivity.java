@@ -11,8 +11,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.MemoryCategory;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -81,9 +79,8 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @AfterViews
     public void initViews() {
 
-        Glide.get(getApplicationContext()).clearMemory();
-        Glide.get(getApplicationContext()).setMemoryCategory(MemoryCategory.HIGH);
-
+//        Glide.get(getApplicationContext()).clearMemory();
+//        Glide.get(getApplicationContext()).setMemoryCategory(MemoryCategory.HIGH);
 
         if (roomId <= 0) {
             finish();

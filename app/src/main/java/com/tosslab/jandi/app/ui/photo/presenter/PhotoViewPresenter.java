@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.photo.presenter;
 
+import android.net.Uri;
+
 import com.koushikdutta.ion.ProgressCallback;
 import com.tosslab.jandi.app.ui.photo.model.PhotoViewModel;
 
@@ -14,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by tonyjs on 15. 6. 4..
  */
+@Deprecated
 @EBean
 public class PhotoViewPresenter {
 
@@ -30,28 +33,20 @@ public class PhotoViewPresenter {
 
         File file = model.getFile(url);
         if (file.exists()) {
-            if (model.isGif(imageType)) {
-                view.loadImageGif(file);
-            } else {
-                view.loadImage(file);
-            }
+            view.loadImage(Uri.fromFile(file));
             return;
         }
 
         try {
             File downloadedFile = model.downloadFile(url, file, callback);
-            if (model.isGif(imageType)) {
-                view.loadImageGif(downloadedFile);
-            } else {
-                view.loadImage(downloadedFile);
-            }
+            view.loadImage(Uri.fromFile(downloadedFile));
         } catch (ExecutionException | InterruptedException
                 | IOException e) {
             // 다운로드 로직에서 발생한 Exception (User cancelled and else)
             // Temporary file create 중 발생한 Exception
             e.printStackTrace();
             if (view.isForeground()) {
-                view.loadImage(url);
+                view.loadImage(Uri.parse(url));
             }
         }
     }
@@ -63,7 +58,7 @@ public class PhotoViewPresenter {
 
         void loadImageGif(File file);
 
-        <T> void loadImage(T target);
+        void loadImage(Uri uri);
 
         boolean isForeground();
     }

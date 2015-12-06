@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:padding="16dp">
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/iv_star_mention_profile"
         android:layout_width="44dp"
         android:layout_height="44dp"
@@ -34,13 +35,13 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/iv_star_file"
             android:layout_width="47dp"
             android:layout_height="56.6dp"
             android:layout_below="@id/tv_star_mention_name"
             android:layout_marginTop="7dp"
-            android:src="@drawable/file_icon_audio_dropbox" />
+            fresco:placeholderImage="@drawable/file_icon_audio_dropbox"/>
 
         <View
             android:id="@+id/v_star_file_round"

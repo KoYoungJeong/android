@@ -1,17 +1,22 @@
 package com.tosslab.jandi.app.lists.files;
 
 import android.content.Context;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.filter.IconFilterUtil;
@@ -33,7 +38,7 @@ public class SearchedFileItemView extends RelativeLayout {
     @ViewById(R.id.txt_searched_file_date)
     TextView textViewSearchedFileDate;
     @ViewById(R.id.iv_searched_file_type)
-    ImageView imageViewSearchedFileType;
+    SimpleDraweeView imageViewSearchedFileType;
     @ViewById(R.id.img_searched_file_name_line_through)
     View imageViewLineThrough;
 
@@ -71,23 +76,26 @@ public class SearchedFileItemView extends RelativeLayout {
 
         String icon = content.icon;
         MimeTypeUtil.FilterType filterType = IconFilterUtil.getMimeType(icon);
-        imageViewSearchedFileType.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        GenericDraweeHierarchy hierarchy = imageViewSearchedFileType.getHierarchy();
+        hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
         if (filterType == MimeTypeUtil.FilterType.Image) {
-            if (BitmapUtil.hasImageUrl(content)) {
-                imageViewSearchedFileType.setImageResource(R.drawable.file_icon_img);
+            if (ImageUtil.hasImageUrl(content)) {
+                hierarchy.setPlaceholderImage(R.drawable.file_icon_img);
+                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+                imageViewSearchedFileType.setHierarchy(hierarchy);
                 // 썸네일
                 String thumbnailUrl =
-                        BitmapUtil.getThumbnailUrlOrOriginal(content, BitmapUtil.Thumbnails.SMALL);
-                BitmapUtil.loadCropBitmapByGlide(imageViewSearchedFileType,
-                        thumbnailUrl,
-                        R.drawable.file_icon_img);
+                        ImageUtil.getThumbnailUrlOrOriginal(content, ImageUtil.Thumbnails.SMALL);
+                imageViewSearchedFileType.setImageURI(Uri.parse(thumbnailUrl));
             } else {
-                imageViewSearchedFileType.setImageResource(R.drawable.file_icon_img);
+                imageViewSearchedFileType.setHierarchy(hierarchy);
+                imageViewSearchedFileType.setImageURI(UriFactory.getResourceUri(R.drawable.file_icon_img));
             }
         } else {
             // 파일 타입에 해당하는 아이콘 연결
+            imageViewSearchedFileType.setHierarchy(hierarchy);
             int mimeTypeResource = MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, icon);
-            imageViewSearchedFileType.setImageResource(mimeTypeResource);
+            imageViewSearchedFileType.setImageURI(UriFactory.getResourceUri(mimeTypeResource));
         }
 
         commentTextView.setText(String.valueOf(searchedFile.commentCount));

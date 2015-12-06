@@ -16,7 +16,7 @@
             android:layout_height="222dp"
             android:orientation="vertical">
 
-            <ImageView
+            <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/iv_share_image"
                 android:layout_width="match_parent"
                 android:layout_height="222dp"
@@ -29,7 +29,7 @@
                 android:orientation="vertical"
                 android:visibility="visible">
 
-                <ImageView
+                <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/iv_share_file_icon"
                     android:layout_width="66dp"
                     android:layout_height="79dp"

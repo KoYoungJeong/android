@@ -26,7 +26,8 @@ import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
@@ -55,11 +56,11 @@ import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AlertUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -106,7 +107,7 @@ public class MessageListPresenter {
     View previewLayout;
 
     @ViewById(R.id.img_message_preview_user_profile)
-    ImageView previewProfileView;
+    SimpleDraweeView previewProfileView;
 
     @ViewById(R.id.txt_message_preview_user_name)
     TextView previewNameView;
@@ -570,9 +571,9 @@ public class MessageListPresenter {
                 user.u_photoThumbnailUrl != null && !(TextUtils.isEmpty(user.u_photoThumbnailUrl.smallThumbnailUrl));
         String url = hasSmallThumbnailUrl
                 ? user.u_photoThumbnailUrl.smallThumbnailUrl : user.u_photoUrl;
-        Ion.with(previewProfileView)
-                .transform(new IonCircleTransform())
-                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + url);
+
+        Uri uri = Uri.parse(JandiConstantsForFlavors.SERVICE_ROOT_URL + url);
+        ImageUtil.loadCircleImageByFresco(previewProfileView, uri, R.drawable.profile_img);
 
         if (item.message instanceof ResMessages.FileMessage) {
             previewContent.setText(((ResMessages.FileMessage) item.message).content.title);
@@ -806,7 +807,7 @@ public class MessageListPresenter {
 
     public void loadSticker(StickerInfo stickerInfo) {
         StickerManager.LoadOptions loadOption = new StickerManager.LoadOptions();
-        loadOption.scaleType = ImageView.ScaleType.CENTER_CROP;
+        loadOption.scaleType = ScalingUtils.ScaleType.CENTER_CROP;
         StickerManager.getInstance().loadSticker(imgStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), loadOption);
     }
 
@@ -855,6 +856,10 @@ public class MessageListPresenter {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveLastReadLink() {
         int lastReadLinkId = messageListAdapter.getLastReadLinkId();
+
+        if (lastReadLinkId <= 0) {
+            return;
+        }
 
         int position = messageListAdapter.indexOfLinkId(lastReadLinkId);
 
@@ -1100,6 +1105,16 @@ public class MessageListPresenter {
             messageListView.setOnTouchListener(touchListener);
         } else if (touchListener != null) {
             this.listTouchListener = touchListener;
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void setUpLastReadLinkIdIfPosition() {
+        // 마커가 마지막아이템을 가르키고 있을때만 position = -1 처리
+        int lastReadLinkId = messageListAdapter.getLastReadLinkId();
+        int markerPosition = messageListAdapter.indexOfLinkId(lastReadLinkId);
+        if (markerPosition == messageListAdapter.getItemCount() - messageListAdapter.getDummyMessageCount() - 1) {
+            messageListAdapter.setLastReadLinkId(-1);
         }
     }
 }

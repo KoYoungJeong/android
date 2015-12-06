@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2.viewmodel;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,13 +11,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.FileUploadProgressEvent;
 import com.tosslab.jandi.app.events.files.FileUploadStartEvent;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
+import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.views.listeners.WebLoadingBar;
 
@@ -146,12 +155,12 @@ public class FileUploadStateViewModel {
 
         @Override
         public FileUploadViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_file_upload_state, parent, false);
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_message_file_upload_state, parent, false);
 
             FileUploadViewHolder holder = new FileUploadViewHolder(view);
-
-            holder.ivPhoto = (ImageView) view.findViewById(R.id.iv_item_message_file_upload_state_photo);
+            holder.ivPhoto =
+                    (SimpleDraweeView) view.findViewById(R.id.iv_item_message_file_upload_state_photo);
             holder.ivState = (ImageView) view.findViewById(R.id.iv_item_message_file_upload_state_state);
 
             return holder;
@@ -161,15 +170,30 @@ public class FileUploadStateViewModel {
         public void onBindViewHolder(FileUploadViewHolder holder, int position) {
             FileUploadDTO item = uploadInfos.get(position);
             FileExtensionsUtil.Extensions fileExtType = FileExtensionsUtil.getExtensions(item.getFilePath());
+            SimpleDraweeView ivPhoto = holder.ivPhoto;
+            GenericDraweeHierarchy hierarchy = ivPhoto.getHierarchy();
+
             if (fileExtType == FileExtensionsUtil.Extensions.IMAGE) {
-                Glide.with(context)
-                        .load(item.getFilePath())
-                        .asBitmap()
-                        .centerCrop()
-                        .into(holder.ivPhoto);
+                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+                ivPhoto.setHierarchy(hierarchy);
+                ViewGroup.LayoutParams layoutParams = ivPhoto.getLayoutParams();
+                int width = layoutParams.width;
+                int height = layoutParams.height;
+                Uri uri = UriFactory.getFileUri(item.getFilePath());
+                ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
+                        .setAutoRotateEnabled(true)
+                        .setResizeOptions(new ResizeOptions(width, height))
+                        .build();
+                DraweeController controller = Fresco.newDraweeControllerBuilder()
+                        .setImageRequest(imageRequest)
+                        .setOldController(ivPhoto.getController())
+                        .build();
+                ivPhoto.setController(controller);
             } else {
-                holder.ivPhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                holder.ivPhoto.setImageResource(FileExtensionsUtil.getTypeResourceId(fileExtType));
+                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+                ivPhoto.setHierarchy(hierarchy);
+                int resId = FileExtensionsUtil.getTypeResourceId(fileExtType);
+                ivPhoto.setImageURI(UriFactory.getResourceUri(resId));
             }
 
             switch (item.getUploadState()) {
@@ -209,7 +233,7 @@ public class FileUploadStateViewModel {
     }
 
     private static class FileUploadViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivPhoto;
+        SimpleDraweeView ivPhoto;
         ImageView ivState;
 
         public FileUploadViewHolder(View itemView) {

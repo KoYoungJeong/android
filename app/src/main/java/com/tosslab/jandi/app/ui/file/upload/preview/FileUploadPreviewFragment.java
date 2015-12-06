@@ -1,14 +1,23 @@
 package com.tosslab.jandi.app.ui.file.upload.preview;
 
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
+import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 
 import org.androidannotations.annotations.AfterViews;
@@ -29,7 +38,7 @@ public class FileUploadPreviewFragment extends Fragment {
     String realFilePath;
 
     @ViewById(R.id.iv_file_upload_preview)
-    ImageView ivFileImage;
+    SimpleDraweeView ivFileImage;
 
     @ViewById(R.id.vg_file_extensions)
     ViewGroup vgFileExtensions;
@@ -44,14 +53,25 @@ public class FileUploadPreviewFragment extends Fragment {
     void initView() {
         FileExtensionsUtil.Extensions extensions = FileExtensionsUtil.getExtensions(realFilePath);
 
-        ivFileImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         if (extensions == FileExtensionsUtil.Extensions.IMAGE) {
-            ivFileImage.setImageResource(R.drawable.file_icon_img_198);
+            GenericDraweeHierarchy hierarchy = ivFileImage.getHierarchy();
+            hierarchy.setPlaceholderImage(R.drawable.file_icon_img_198);
+            ivFileImage.setHierarchy(hierarchy);
 
-            Glide.with(getActivity())
-                    .load(realFilePath)
-                    .fitCenter()
-                    .into(ivFileImage);
+            Uri uri = UriFactory.getFileUri(realFilePath);
+
+            int width = ApplicationUtil.getDisplaySize(false);
+            int height = ApplicationUtil.getDisplaySize(true);
+
+            ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
+                    .setAutoRotateEnabled(true)
+                    .setResizeOptions(new ResizeOptions(width, height))
+                    .build();
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setImageRequest(imageRequest)
+                    .setOldController(ivFileImage.getController())
+                    .build();
+            ivFileImage.setController(controller);
         } else {
             ivFileImage.setVisibility(View.GONE);
             vgFileExtensions.setVisibility(View.VISIBLE);

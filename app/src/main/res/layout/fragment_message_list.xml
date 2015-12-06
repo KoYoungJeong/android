@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -135,12 +136,12 @@
         android:paddingTop="5dp"
         android:visibility="gone">
 
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/img_message_preview_user_profile"
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
             android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-            android:background="@drawable/profile_img" />
+            fresco:placeholderImage="@drawable/profile_img"/>
 
         <!-- 기본 표시 레이어 -->
         <TextView

@@ -1,36 +1,55 @@
-package com.tosslab.jandi.app.utils;
+package com.tosslab.jandi.app.utils.image;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.widget.ImageView;
+import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.bumptech.glide.request.target.Target;
-import com.koushikdutta.ion.Ion;
+import com.facebook.common.executors.CallerThreadExecutor;
+import com.facebook.common.executors.UiThreadExecutorService;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.BaseDataSubscriber;
+import com.facebook.datasource.DataSource;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.RoundingParams;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.animated.factory.AnimatedDrawableFactory;
+import com.facebook.imagepipeline.common.ImageDecodeOptions;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.image.CloseableAnimatedImage;
+import com.facebook.imagepipeline.image.CloseableBitmap;
+import com.facebook.imagepipeline.image.CloseableImage;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.local.orm.repositories.UploadedFileInfoRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.transform.glide.GlideCircleTransform;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.transform.TransformConfig;
 
 import java.io.File;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 11..
  */
-public class BitmapUtil {
+public class ImageUtil {
+    public static final String TAG = ImageUtil.class.getSimpleName();
+
     public static Bitmap getBlurBitmap(Bitmap bitmap, int radius) {
         Bitmap result;
         if (bitmap.getConfig() == null) {
@@ -327,8 +346,8 @@ public class BitmapUtil {
         options.inJustDecodeBounds = false;
         options.inSampleSize = samplingSize;
 
-        Glide.get(JandiApplication.getContext()).clearMemory();
-        Ion.getDefault(JandiApplication.getContext()).dump();
+//        Glide.get(JandiApplication.getContext()).clearMemory();
+//        Ion.getDefault(JandiApplication.getContext()).dump();
 
         while (true) {
             try {
@@ -427,122 +446,78 @@ public class BitmapUtil {
         return small;
     }
 
-    public static void loadImageByGlideOrIonWhenGif(ImageView imageView,
-                                                    String url, int placeHolder, int error) {
-        loadImageByGlideOrIonWhenGif(imageView, url, placeHolder, error, null);
+    public static void loadCircleImageByFresco(SimpleDraweeView draweeView, Uri uri,
+                                               int placeHolderResId) {
+        GenericDraweeHierarchy hierarchy = draweeView.getHierarchy();
+        RoundingParams roundingParams = hierarchy.getRoundingParams() == null
+                ? new RoundingParams() : hierarchy.getRoundingParams();
+        roundingParams.setRoundAsCircle(true);
+        roundingParams.setBorder(
+                TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
+        hierarchy.setRoundingParams(roundingParams);
+
+        hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+        Resources resources = draweeView.getResources();
+        Drawable placeHolder = resources.getDrawable(placeHolderResId);
+        hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.CENTER_CROP);
+
+        draweeView.setHierarchy(hierarchy);
+
+        ImageDecodeOptions imageDecodeOptions = ImageDecodeOptions.newBuilder()
+                .setBackgroundColor(Color.BLACK)
+                .build();
+
+        ViewGroup.LayoutParams layoutParams = draweeView.getLayoutParams();
+        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
+                .setImageDecodeOptions(imageDecodeOptions)
+                .setResizeOptions(new ResizeOptions(layoutParams.width, layoutParams.height))
+                .build();
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setImageRequest(imageRequest)
+                .setOldController(draweeView.getController())
+                .build();
+
+        draweeView.setController(controller);
     }
 
-    public static void loadImageByGlideOrIonWhenGif(ImageView imageView,
-                                                    String url, int placeHolder, int error, BitmapUtil.OnResourceReady onResourceReady) {
-        if (url.toLowerCase().endsWith("gif")) {
-            Ion.with(imageView)
-                    .fitCenter()
-                    .placeholder(placeHolder)
-                    .error(error)
-                    .crossfade(true)
-                    .load(url).withBitmapInfo().setCallback((e, result) -> {
-                if (e == null && onResourceReady != null) {
-                    Bitmap bitmap = result.getBitmapInfo().bitmap;
-                    int width = bitmap.getWidth();
-                    int height = bitmap.getHeight();
-                    onResourceReady.onReady(width, height);
-                }
-            });
-            return;
-        }
-
-        DisplayMetrics displayMetrics = imageView.getResources().getDisplayMetrics();
-        int maxSize = Math.max(displayMetrics.widthPixels, displayMetrics.heightPixels);
-
-        Glide.with(JandiApplication.getContext())
-                .load(url)
-                .placeholder(placeHolder)
-                .override(maxSize, maxSize)
-                .error(error)
-                .animate(view -> {
-                    view.setAlpha(0.0f);
-                    view.animate()
-                            .alpha(1.0f)
-                            .setDuration(300);
-                })  // Avoid doesn't working 'fitCenter with crossfade'
-                .fitCenter()
-                .listener(new RequestListener<String, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        if (onResourceReady != null) {
-                            onResourceReady.onReady(resource.getIntrinsicWidth(), resource.getIntrinsicHeight());
-                        }
-                        return false;
-                    }
-                })
-                .into(imageView);
+    public static void loadCircleImageByFresco(SimpleDraweeView draweeView, String url,
+                                               int placeHolder) {
+        loadCircleImageByFresco(draweeView, Uri.parse(url), placeHolder);
     }
 
-    public static void loadCropBitmapByGlide(ImageView imageView,
-                                             String url, int placeHolder) {
-        Glide.with(JandiApplication.getContext())
-                .load(url)
-                .asBitmap()
-                .dontAnimate()
-                .placeholder(placeHolder)
-                .centerCrop()
-                .into(new BitmapImageViewTarget(imageView) {
-                    @Override
-                    public void onLoadCleared(Drawable placeholder) {
-                        super.onLoadCleared(placeholder);
-                    }
-
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        if (resource != null && !resource.isRecycled()) {
-                            setResource(resource);
-                        }
-                    }
-                });
+    public static void loadDrawable(Uri uri, final OnResourceReadyCallback onResourceReadyCallback) {
+        loadDrawable(uri, null, false, onResourceReadyCallback);
     }
 
-    public static void loadCropBitmapByIon(ImageView imageView,
-                                           String url, int placeHolder) {
-        Ion.with(imageView)
-                .placeholder(placeHolder)
-                .crossfade(false)
-                .centerCrop()
-                .load(url);
+    public static void loadDrawable(Uri uri, boolean executeIntoCallerThread,
+                                    final OnResourceReadyCallback onResourceReadyCallback) {
+        loadDrawable(uri, null, executeIntoCallerThread, onResourceReadyCallback);
     }
 
-    public static void loadCropCircleImageByGlideBitmap(ImageView imageView,
-                                                        String url, int placeHolder, int error) {
-        Glide.with(JandiApplication.getContext())
-                .load(url)
-                .asBitmap()
-                .placeholder(placeHolder)
-                .error(error)
-                .centerCrop()
-                .transform(new GlideCircleTransform(JandiApplication.getContext()))
-                .into(new BitmapImageViewTarget(imageView) {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        if (resource != null && !resource.isRecycled()) {
-                            setResource(resource);
-                        }
-                    }
-                });
+    public static void loadDrawable(Uri uri,
+                                    ResizeOptions resizeOptions,
+                                    final OnResourceReadyCallback onResourceReadyCallback) {
+        loadDrawable(uri, resizeOptions, false, onResourceReadyCallback);
     }
 
-    public static void loadImageByIon(ImageView imageView,
-                                      String url, int placeHolder, int error) {
-        Ion.with(imageView)
-                .centerCrop()
-                .placeholder(placeHolder)
-                .error(error)
-                .transform(new IonCircleTransform())
-                .crossfade(true)
-                .load(url);
+    public static void loadDrawable(Uri uri,
+                                    ResizeOptions resizeOptions,
+                                    boolean executeIntoCallerThread,
+                                    final OnResourceReadyCallback onResourceReadyCallback) {
+        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
+                .setAutoRotateEnabled(true)
+                .setResizeOptions(resizeOptions)
+                .build();
+
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        DataSource<CloseableReference<CloseableImage>> dataSource =
+                imagePipeline.fetchDecodedImage(imageRequest, JandiApplication.getContext());
+
+        ExecutorService executorService = executeIntoCallerThread
+                ? CallerThreadExecutor.getInstance()
+                : UiThreadExecutorService.getInstance();
+
+        dataSource.subscribe(new BitmapDataSubscriber(onResourceReadyCallback), executorService);
     }
 
     public static String getLocalFilePath(int messageId) {
@@ -551,11 +526,105 @@ public class BitmapUtil {
         return new File(localPath).exists() ? localPath : "";
     }
 
+    public static int getMaximumBitmapSize() {
+        int minimum = 512;
+
+        DisplayMetrics displayMetrics =
+                JandiApplication.getContext().getResources().getDisplayMetrics();
+
+        return (int) (minimum * Math.pow(2, displayMetrics.density));
+    }
+
+    public static Bitmap getBitmapFromDrawable(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+        int width = drawable.getIntrinsicWidth();
+        int height = drawable.getIntrinsicHeight();
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
     public enum Thumbnails {
         SMALL, MEDIUM, LARGE, ORIGINAL
     }
 
-    public interface OnResourceReady {
-        void onReady(int width, int height);
+    public static class BitmapDataSubscriber
+            extends BaseDataSubscriber<CloseableReference<CloseableImage>> {
+
+        private OnResourceReadyCallback onResourceReadyCallback;
+
+        public BitmapDataSubscriber(OnResourceReadyCallback onResourceReadyCallback) {
+            this.onResourceReadyCallback = onResourceReadyCallback;
+        }
+
+        @Override
+        public void onNewResultImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
+            if (!dataSource.isFinished() || onResourceReadyCallback == null) {
+                return;
+            }
+            CloseableReference<CloseableImage> imageReference = dataSource.getResult();
+            if (imageReference != null) {
+                CloseableImage closeableImage = imageReference.get();
+                Drawable drawable = getDrawable(closeableImage);
+                if (drawable != null) {
+                    onResourceReadyCallback.onReady(drawable, imageReference);
+                } else {
+                    onResourceReadyCallback.onFail(new NullPointerException("Drawable is empty."));
+                }
+            } else {
+                onResourceReadyCallback.onFail(new NullPointerException("ImageReference is empty."));
+            }
+        }
+
+        private Drawable getDrawable(CloseableImage closeableImage) {
+            if (closeableImage instanceof CloseableBitmap) {
+                return getBitmapDrawable((CloseableBitmap) closeableImage);
+            } else if (closeableImage instanceof CloseableAnimatedImage) {
+                return getAnimatedDrawable((CloseableAnimatedImage) closeableImage);
+            }
+            return null;
+        }
+
+        private Drawable getAnimatedDrawable(CloseableAnimatedImage animatedImage) {
+            LogUtil.i(TAG, "animatableImage loaded");
+            AnimatedDrawableFactory animatedDrawableFactory =
+                    Fresco.getImagePipelineFactory().getAnimatedDrawableFactory();
+            return animatedDrawableFactory.create(animatedImage.getImageResult());
+        }
+
+        private Drawable getBitmapDrawable(CloseableBitmap closeableBitmap) {
+            Bitmap underlyingBitmap = closeableBitmap.getUnderlyingBitmap();
+            if (isValidateBitmap(underlyingBitmap)) {
+                return new BitmapDrawable(
+                        JandiApplication.getContext().getResources(), underlyingBitmap);
+            }
+            return null;
+        }
+
+        private boolean isValidateBitmap(Bitmap bitmap) {
+            return bitmap != null && !bitmap.isRecycled();
+        }
+
+        @Override
+        public void onFailureImpl(DataSource dataSource) {
+            // handle failure
+            if (onResourceReadyCallback != null) {
+                onResourceReadyCallback.onFail(dataSource.getFailureCause());
+            }
+        }
+
+        @Override
+        public void onProgressUpdate(DataSource<CloseableReference<CloseableImage>> dataSource) {
+            if (!dataSource.isFinished() && onResourceReadyCallback != null) {
+                onResourceReadyCallback.onProgressUpdate(dataSource.getProgress());
+            }
+        }
     }
+
 }

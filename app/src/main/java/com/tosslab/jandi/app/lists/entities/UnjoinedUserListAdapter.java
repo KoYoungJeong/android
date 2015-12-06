@@ -1,19 +1,19 @@
 package com.tosslab.jandi.app.lists.entities;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +57,7 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_check_user, null);
             holder = new ViewHolder();
             holder.textView = (TextView) convertView.findViewById(R.id.txt_check_user_name);
-            holder.imageView = (ImageView) convertView.findViewById(R.id.img_check_user_icon);
+            holder.imageView = (SimpleDraweeView) convertView.findViewById(R.id.img_check_user_icon);
             holder.checkBox = (CheckBox) convertView.findViewById(R.id.cb_check_user);
             holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -75,11 +75,14 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
         FormattedEntity entity = getItem(i);
         if (entity.isUser()) {
             // 프로필 사진
-            Ion.with(holder.imageView)
-                    .placeholder(R.drawable.profile_img)
-                    .error(R.drawable.profile_img)
-                    .transform(new IonCircleTransform())
-                    .load(entity.getUserSmallProfileUrl());
+            GenericDraweeHierarchy hierarchy = holder.imageView.getHierarchy();
+            hierarchy.setPlaceholderImage(R.drawable.profile_img_comment);
+            hierarchy.getRoundingParams().setRoundAsCircle(true);
+
+            Uri uri = Uri.parse(entity.getUserSmallProfileUrl());
+            holder.imageView.setHierarchy(hierarchy);
+            holder.imageView.setImageURI(uri);
+
             holder.textView.setText(entity.getName());
             holder.checkBox.setTag(entity);
             if (entity.isSelectedToBeJoined) {
@@ -104,7 +107,7 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
 
     static class ViewHolder {
         TextView textView;
-        ImageView imageView;
+        SimpleDraweeView imageView;
         CheckBox checkBox;
     }
 }
