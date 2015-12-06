@@ -10,10 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize" />
 
-    <com.tosslab.jandi.app.views.eastereggs.SnowView
+    <FrameLayout
+        android:id="@+id/vg_easteregg_snow"
+        android:layout_alignWithParentIfMissing="true"
         android:layout_above="@+id/space_messages_divider"
         android:layout_below="@+id/ll_messages_disable_alert"
-        android:layout_alignWithParentIfMissing="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
