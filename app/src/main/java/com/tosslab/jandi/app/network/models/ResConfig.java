@@ -11,7 +11,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 public class ResConfig {
     public Versions versions;
     public Maintenance maintenance;
-    public LatestVersions latestVersions;
+    public Versions latestVersions;
 
     @Override
     public String toString() {
@@ -52,27 +52,6 @@ public class ResConfig {
             return "Maintenance{" +
                     "status=" + status +
                     ", msg='" + msg + '\'' +
-                    '}';
-        }
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class LatestVersions {
-        public String ios;
-        public int android;
-        public String osx;
-        public String web;
-        public String windows;
-
-        @Override
-        public String toString() {
-            return "LatestVersions{" +
-                    "ios='" + ios + '\'' +
-                    ", android=" + android +
-                    ", osx='" + osx + '\'' +
-                    ", web='" + web + '\'' +
-                    ", windows='" + windows + '\'' +
                     '}';
         }
     }
