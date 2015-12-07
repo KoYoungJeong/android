@@ -47,7 +47,6 @@ public class SnowView extends View {
     @Override
     protected void onSizeChanged(int width, int height, int oldw, int oldh) {
         super.onSizeChanged(width, height, oldw, oldh);
-        LogUtil.e(TAG, "onSizeChanged");
         if (snows != null) {
             return;
         }

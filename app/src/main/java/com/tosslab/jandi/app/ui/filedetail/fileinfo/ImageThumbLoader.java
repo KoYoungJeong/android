@@ -64,7 +64,7 @@ public class ImageThumbLoader implements FileThumbLoader {
                         thumbnailPhotoUrl = BitmapUtil.getThumbnailUrlOrOriginal(content, BitmapUtil.Thumbnails.LARGE);
                     }
 
-
+                    imageViewPhotoFile.setBackgroundResource(R.color.jandi_messages_image_bg);
                     BitmapUtil.loadImageByGlideOrIonWhenGif(
                             imageViewPhotoFile, thumbnailPhotoUrl,
                             R.drawable.file_messageview_downloading, R.drawable.file_messageview_noimage,

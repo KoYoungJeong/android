@@ -2,11 +2,14 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
@@ -82,11 +85,11 @@ public class FileCommentViewHolder implements BodyViewHolder {
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
         String profileUrl = entity.getUserLargeProfileUrl();
-        
+
         FormattedEntity room = entityManager.getEntityById(roomId);
 
         boolean isPublicTopic = room.isPublicTopic();
-        
+
         BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
                 profileUrl,
                 R.drawable.profile_img,
@@ -136,6 +139,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
             ivFileImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
             vFileImageRound.setVisibility(View.GONE);
+            tvFileName.setTypeface(null, Typeface.BOLD);
 
             if (TextUtils.equals(link.feedback.status, "archived")) {
                 tvFileOwner.setVisibility(View.GONE);
@@ -146,19 +150,25 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 ivFileImage.setImageResource(R.drawable.jandi_fl_icon_deleted);
                 ivFileImage.setOnClickListener(null);
             } else if (!isSharedFile) {
+                tvFileName.setTypeface(null, Typeface.NORMAL);
                 int TextSizePX = tvFileName.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_11sp);
                 tvFileOwner.setVisibility(View.VISIBLE);
                 tvFileOwner.setText(Html.fromHtml(tvFileOwner.getResources().getString(R.string.jandi_commented_on, feedbackUser.name)));
                 tvFileOwner.setTextSize(TypedValue.COMPLEX_UNIT_PX, TextSizePX);
                 ResMessages.FileContent content = feedbackFileMessage.content;
-                StringBuilder sbTitle = new StringBuilder();
+                SpannableStringBuilder unshareTextBuilder = new SpannableStringBuilder();
                 String title = content.title;
-                sbTitle.append(title);
                 if (content.title.length() > 15) {
-                    title = sbTitle.substring(0, 14).toString() + "...";
+                    unshareTextBuilder.append(title.substring(0, 14))
+                            .append("...");
+                } else {
+                    unshareTextBuilder.append(title).append(" ");
                 }
 
-                tvFileName.setText(title + context.getResources().getString(R.string.jandi_unshared_file));
+                unshareTextBuilder.setSpan(new StyleSpan(Typeface.BOLD), 0, unshareTextBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                unshareTextBuilder.append(context.getResources().getString(R.string.jandi_unshared_file));
+                tvFileName.setText(unshareTextBuilder);
                 tvFileName.setTextSize(TypedValue.COMPLEX_UNIT_PX, TextSizePX);
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color.jandi_text_light));
 

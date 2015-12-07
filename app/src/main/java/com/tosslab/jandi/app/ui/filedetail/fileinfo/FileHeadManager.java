@@ -34,9 +34,8 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 
-import java.util.Iterator;
-
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 29..
@@ -118,38 +117,35 @@ public class FileHeadManager {
             spannableStringBuilder.append(" ");
             int firstLength = spannableStringBuilder.length();
 
-            Iterator<ResMessages.OriginalMessage.IntegerWrapper> iterator = resFileDetail.shareEntities.iterator();
-            while (iterator.hasNext()) {
-                FormattedEntity sharedEntity = mEntityManager.getEntityById(iterator.next().getShareEntity());
+            Observable.from(resFileDetail.shareEntities)
+                    .distinct(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
+                    .map(integerWrapper -> mEntityManager.getEntityById(integerWrapper.getShareEntity()))
+                    .filter(formattedEntity -> formattedEntity != EntityManager.UNKNOWN_USER_ENTITY)
+                    .doOnNext(formattedEntity1 -> {
+                        if (spannableStringBuilder.length() > firstLength) {
+                            spannableStringBuilder.append(", ");
+                        }
+                    })
+                    .subscribe(formattedEntity2 -> {
+                        int entityType;
+                        if (formattedEntity2.isPrivateGroup()) {
+                            entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
+                        } else if (formattedEntity2.isPublicTopic()) {
+                            entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
+                        } else {
+                            entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
 
-                if (sharedEntity == EntityManager.UNKNOWN_USER_ENTITY) {
-                    continue;
-                }
+                        }
 
-                if (spannableStringBuilder.length() > firstLength) {
-                    spannableStringBuilder.append(", ");
-                }
+                        EntitySpannable entitySpannable = new EntitySpannable(activity, teamId, formattedEntity2.getId(), entityType, formattedEntity2.isStarred);
 
-                int entityType;
-                if (sharedEntity.isPrivateGroup()) {
-                    entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
-                } else if (sharedEntity.isPublicTopic()) {
-                    entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
-                } else {
-                    entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
+                        int length = spannableStringBuilder.length();
+                        spannableStringBuilder.append(formattedEntity2.getName());
 
-                }
+                        spannableStringBuilder.setSpan(entitySpannable, length,
+                                length + formattedEntity2.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }, Throwable::printStackTrace);
 
-                EntitySpannable entitySpannable = new EntitySpannable(activity, teamId, sharedEntity.getId(), entityType, sharedEntity.isStarred);
-
-                int length = spannableStringBuilder.length();
-                spannableStringBuilder.append(sharedEntity.getName());
-
-                spannableStringBuilder.setSpan(entitySpannable, length,
-                        length + sharedEntity.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-
-            }
             textViewFileSharedCdp.setMovementMethod(LinkMovementMethod.getInstance());
             textViewFileSharedCdp.setText(spannableStringBuilder, TextView.BufferType.SPANNABLE);
         } else {
@@ -226,7 +222,7 @@ public class FileHeadManager {
 
                 FileThumbLoader thumbLoader;
                 if (fileMessage.content.type.startsWith("image")) {
-                    thumbLoader = new ImageThumbLoader(iconFileType, vgDetailPhoto,imageViewPhotoFile, roomId);
+                    thumbLoader = new ImageThumbLoader(iconFileType, vgDetailPhoto, imageViewPhotoFile, roomId);
                 } else {
                     thumbLoader = new NormalThumbLoader(iconFileType, imageViewPhotoFile);
                 }

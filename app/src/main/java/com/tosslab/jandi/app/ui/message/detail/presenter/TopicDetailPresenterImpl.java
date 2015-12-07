@@ -246,6 +246,12 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     @Override
     public void onAutoJoin(int entityId, boolean autoJoin) {
 
+        if (!topicDetailModel.isOwner(entityId) && !topicDetailModel.isTeamOwner()) {
+            // 수정권한 없음
+            onInit(JandiApplication.getContext(), entityId);
+            return;
+        }
+
         if (topicDetailModel.isPrivateTopic(entityId)) {
             // private topic == true 이면 그외의 값은 의미 없음
             onInit(JandiApplication.getContext(), entityId);
@@ -254,11 +260,11 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         }
 
         if (topicDetailModel.isDefaultTopic(entityId)) {
+            // 기본 토픽  == true 의미 없음..
             onInit(JandiApplication.getContext(), entityId);
             view.showFailToast(JandiApplication.getContext().getString(R.string.jandi_auto_join_cannot_be_default_topic));
             return;
         }
-
 
         view.showProgressWheel();
         try {

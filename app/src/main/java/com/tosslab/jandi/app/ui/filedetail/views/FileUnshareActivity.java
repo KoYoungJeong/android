@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -25,7 +24,6 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import rx.Observable;
@@ -39,6 +37,9 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
 
     @Extra
     int fileId;
+
+    @Extra
+    ArrayList<Integer> sharedEntities;
 
     @ViewById(R.id.lv_shared_entity)
     ListView lvSharedEntities;
@@ -77,17 +78,13 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
     }
 
     public void showList() {
-        final Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities =
-                fileDetailModel.getFileMessage(fileId).shareEntities;
-
         int myId = fileDetailModel.getMyId();
 
         List<Integer> sharedEntityWithoutMe = new ArrayList<>();
 
-        Observable.from(shareEntities)
-                .filter(integerWrapper -> integerWrapper.getShareEntity() != myId)
-                .collect(() -> sharedEntityWithoutMe,
-                        (integers, integerWrapper1) -> integers.add(integerWrapper1.getShareEntity()))
+        Observable.from(sharedEntities)
+                .filter(integerWrapper -> integerWrapper != myId)
+                .collect(() -> sharedEntityWithoutMe, List::add)
                 .subscribe();
 
         EntityManager entityManager = EntityManager.getInstance();

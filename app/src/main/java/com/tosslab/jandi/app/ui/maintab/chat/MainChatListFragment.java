@@ -269,7 +269,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
                 .show(getFragmentManager(), "dialog");
     }
 
-    @Click({R.id.btn_main_chat_fab, R.id.layout_main_chat_list_empty})
+    @Click({R.id.btn_main_chat_fab, R.id.vg_member_empty})
     void onAddClick(View view) {
         EntityChooseActivity_.intent(getActivity())
                 .type(EntityChooseActivity.Type.MESSAGES.name())
