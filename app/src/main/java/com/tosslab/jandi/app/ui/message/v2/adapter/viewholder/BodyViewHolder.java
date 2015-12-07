@@ -34,6 +34,8 @@ public interface BodyViewHolder {
         CollapseStickerComment, CollapseStickerCommentWioutDivider,
         Dummy, DummyPure,
         Empty,
-        Event
+        Event,
+        JandiBot, CollapseJandiBot, CollapseLinkPreviewJandiBot,
+        IntegrationBot, CollapseIntegrationBot
     }
 }

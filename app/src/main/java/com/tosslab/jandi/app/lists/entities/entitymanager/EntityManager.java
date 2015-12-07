@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.lists.entities.entitymanager;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -502,4 +504,18 @@ public class EntityManager {
         return sortedEntities;
     }
 
+    public FormattedEntity getJandiBot() {
+        return Observable.from(bots.values())
+                .filter(botEntity -> TextUtils.equals(botEntity.getBotType(), "jandi_bot"))
+                .toBlocking()
+                .firstOrDefault(null);
+    }
+
+    public boolean hasJandiBot() {
+        return Observable.from(bots.values())
+                .filter(botEntity -> TextUtils.equals(botEntity.getBotType(), "jandi_bot"))
+                .map(botEntity1 -> true)
+                .toBlocking()
+                .firstOrDefault(false);
+    }
 }

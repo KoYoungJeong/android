@@ -90,6 +90,8 @@
 	<string name="jandi_auto_join_explain">"邀请所有新成员至此议题"</string>
 	<string name="jandi_auto_join_title">"自动邀请"</string>
 	<string name="jandi_auto_join_title_wild">"自动邀请*"</string>
+	<string name="jandi_bot_role">"身为JANDI最强使者，肩负传递JANDI Connect和平台信息通知的任务，绝对使命必达！"</string>
+	<string name="jandi_bot_status">"你好，我是Mr.J！"</string>
 	<string name="jandi_browse_other_topics">"浏览其他议题"</string>
 	<string name="jandi_cancel">"取消"</string>
 	<string name="jandi_canceled">"取消了"</string>

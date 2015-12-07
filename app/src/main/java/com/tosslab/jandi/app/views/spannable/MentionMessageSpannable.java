@@ -6,6 +6,10 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.text.TextUtils;
 import android.text.style.ReplacementSpan;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
+
+import com.tosslab.jandi.app.JandiApplication;
 
 /**
  * Created by tee on 15. 8. 6..
@@ -20,6 +24,7 @@ public class MentionMessageSpannable extends ReplacementSpan {
     private String drawText;
 
     private int maxWidth = -1;
+    private final int defaultMargin;
 
     public MentionMessageSpannable(String entityName, float textSize,
                                    int textColor, int backgroundColor) {
@@ -28,6 +33,8 @@ public class MentionMessageSpannable extends ReplacementSpan {
         this.textColor = textColor;
         this.backgroundColor = backgroundColor;
         this.drawText = this.name;
+        DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
+        defaultMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, displayMetrics);
     }
 
     public void setViewMaxWidthSize(int px) {
@@ -59,6 +66,8 @@ public class MentionMessageSpannable extends ReplacementSpan {
             }
 
         }
+
+        textRect.right = textRect.right + defaultMargin;
         return textRect;
     }
 

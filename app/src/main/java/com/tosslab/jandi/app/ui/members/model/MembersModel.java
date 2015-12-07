@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.members.model;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -71,6 +72,15 @@ public class MembersModel {
                 .filter(ChatChooseItem::isEnabled)
                 .subscribe(chatChooseItems::add, Throwable::printStackTrace);
 
+        if (EntityManager.getInstance().hasJandiBot()) {
+            BotEntity botEntity = (BotEntity) EntityManager.getInstance().getJandiBot();
+            ChatChooseItem bot = new ChatChooseItem();
+            bot.entityId(botEntity.getId())
+                    .name(botEntity.getName())
+                    .isBot(true)
+                    .enabled(botEntity.isEnabled());
+            chatChooseItems.add(bot);
+        }
 
         return chatChooseItems;
     }

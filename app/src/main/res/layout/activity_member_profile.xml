@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <FrameLayout
         android:id="@+id/vg_member_profile_img_large"
         android:layout_width="match_parent"
@@ -11,13 +12,13 @@
         <ImageView
             android:id="@+id/iv_member_profile_img_large"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <View
             android:id="@+id/v_member_profile_img_large_overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/jandi_member_profile_img_overlay"/>
+            android:background="@color/jandi_member_profile_img_overlay" />
     </FrameLayout>
 
     <FrameLayout
@@ -38,7 +39,7 @@
                 android:layout_gravity="center"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/alert_icon_warning"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_member_profile_description"
@@ -52,7 +53,7 @@
                 android:lineSpacingExtra="5dp"
                 android:maxLines="3"
                 android:textColor="@color/white"
-                android:textSize="15sp"/>
+                android:textSize="16sp" />
         </LinearLayout>
     </FrameLayout>
 
@@ -90,7 +91,7 @@
                             android:layout_width="14dp"
                             android:layout_height="14dp"
                             android:layout_gravity="center"
-                            android:background="@drawable/jandi_member_profile_star_selector"/>
+                            android:background="@drawable/jandi_member_profile_star_selector" />
                     </FrameLayout>
 
                     <TextView
@@ -106,7 +107,7 @@
                         android:maxLines="2"
                         android:textColor="@color/jandi_member_profile_user_name"
                         android:textSize="20dp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                     <LinearLayout
                         android:id="@+id/vg_member_profile_team_info"
@@ -125,7 +126,8 @@
                             android:gravity="center"
                             android:maxLines="2"
                             android:textColor="@color/jandi_text_light"
-                            android:textSize="13dp"/>
+                            android:textSize="13sp" />
+
                         <TextView
                             android:id="@+id/tv_member_profile_position"
                             android:layout_width="match_parent"
@@ -137,7 +139,7 @@
                             android:gravity="center"
                             android:maxLines="2"
                             android:textColor="@color/jandi_text_light"
-                            android:textSize="13dp"/>
+                            android:textSize="13sp" />
                     </LinearLayout>
 
                     <TextView
@@ -150,7 +152,7 @@
                         android:background="@drawable/bg_profile_info"
                         android:gravity="center"
                         android:textColor="@color/jandi_text_light"
-                        android:textSize="13dp"/>
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/tv_member_profile_email"
@@ -160,7 +162,7 @@
                         android:background="@drawable/bg_profile_info"
                         android:gravity="center"
                         android:textColor="@color/jandi_text_light"
-                        android:textSize="13dp"/>
+                        android:textSize="13sp" />
 
                 </LinearLayout>
 
@@ -168,7 +170,7 @@
                     android:id="@+id/vg_member_profile_buttons"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/jandi_member_profile_buttons_height"
-                    android:orientation="horizontal"/>
+                    android:orientation="horizontal" />
 
             </LinearLayout>
 
@@ -179,7 +181,7 @@
                 android:layout_alignTop="@id/vg_member_profile_detail"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="-40dp"
-                android:scaleType="fitXY"/>
+                android:scaleType="fitXY" />
 
         </RelativeLayout>
 
@@ -191,7 +193,7 @@
         android:layout_height="@dimen/jandi_member_profile_btn_close_height"
         android:layout_marginTop="@dimen/jandi_member_profile_margin_top"
         android:scaleType="center"
-        android:src="@drawable/actionbar_icon_remove"/>
+        android:src="@drawable/actionbar_icon_remove" />
 
     <uk.co.senab.photoview.PhotoView
         android:id="@+id/iv_member_profile_img_full"
@@ -199,5 +201,5 @@
         android:layout_height="match_parent"
         android:background="@color/black"
         android:scaleType="fitCenter"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </RelativeLayout>

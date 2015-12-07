@@ -90,6 +90,8 @@
 	<string name="jandi_auto_join_explain">"새로 팀에 참여하는 모든 멤버를 이 토픽에 초대합니다."</string>
 	<string name="jandi_auto_join_title">"자동 초대"</string>
 	<string name="jandi_auto_join_title_wild">"자동 초대*"</string>
+	<string name="jandi_bot_role">"저는 잔디 사용에 꼭 필요한 메시지나, 잔디 Connect 메시지를 전달합니다."</string>
+	<string name="jandi_bot_status">"안녕하세요? Mr.J입니다. "</string>
 	<string name="jandi_browse_other_topics">"참여하지 않은 토픽 목록 보기"</string>
 	<string name="jandi_cancel">"취소"</string>
 	<string name="jandi_canceled">"취소됨"</string>

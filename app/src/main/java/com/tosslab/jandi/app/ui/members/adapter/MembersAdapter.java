@@ -202,7 +202,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             vDisableLineThrough.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
             vDisableCover.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
 
-            if (kickMode && item.getEntityId() != myId) {
+            if (kickMode && item.getEntityId() != myId && item.isBot()) {
                 ivKick.setVisibility(View.VISIBLE);
                 ivKick.setOnClickListener(onKickClickListener);
             } else {
@@ -210,11 +210,16 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 ivKick.setOnClickListener(null);
             }
 
-            Ion.with(ivIcon)
-                    .placeholder(R.drawable.profile_img)
-                    .error(R.drawable.profile_img)
-                    .transform(new IonCircleTransform())
-                    .load(item.getPhotoUrl());
+            if (!item.isBot()) {
+
+                Ion.with(ivIcon)
+                        .placeholder(R.drawable.profile_img)
+                        .error(R.drawable.profile_img)
+                        .transform(new IonCircleTransform())
+                        .load(item.getPhotoUrl());
+            } else {
+                ivIcon.setImageResource(R.drawable.bot_43x54);
+            }
 
             itemView.setOnClickListener(v ->
                     EventBus.getDefault().post(new ShowProfileEvent(item.getEntityId())));

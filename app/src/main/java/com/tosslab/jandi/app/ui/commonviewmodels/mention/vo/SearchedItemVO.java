@@ -13,6 +13,7 @@ public class SearchedItemVO {
     private String smallProfileImageUrl;
     private boolean enabled;
     private boolean starred;
+    private boolean bot;
 
     public String getName() {
         return name;
@@ -84,5 +85,14 @@ public class SearchedItemVO {
     public SearchedItemVO setStarred(boolean starred) {
         this.starred = starred;
         return this;
+    }
+
+    public SearchedItemVO setBot(boolean bot) {
+        this.bot = bot;
+        return this;
+    }
+
+    public boolean isBot() {
+        return bot;
     }
 }

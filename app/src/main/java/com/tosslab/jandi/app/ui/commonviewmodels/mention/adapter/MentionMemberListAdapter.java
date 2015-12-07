@@ -68,6 +68,9 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
                     .load(null);
 
             holder.getTvName().setText(item.getName() + " (of topic member)");
+        } else if (item.isBot()) {
+            holder.getIvIcon().setImageResource(R.drawable.bot_32x40);
+            holder.getTvName().setText(item.getName());
         } else {
             Ion.with(holder.getIvIcon())
                     .placeholder(R.drawable.profile_img)

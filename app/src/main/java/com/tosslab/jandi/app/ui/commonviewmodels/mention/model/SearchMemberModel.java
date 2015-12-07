@@ -3,7 +3,9 @@ package com.tosslab.jandi.app.ui.commonviewmodels.mention.model;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
@@ -99,7 +101,23 @@ public class SearchMemberModel {
                     .setId(topicIds.get(0))
                     .setName("All")
                     .setType(SearchType.room.name());
+
             selectableMembersLinkedHashMap.put(searchedItemForAll.getId(), searchedItemForAll);
+
+            if (EntityManager.getInstance().hasJandiBot()) {
+                BotEntity botEntity = (BotEntity) EntityManager.getInstance().getJandiBot();
+                if (botEntity.isEnabled()) {
+                    SearchedItemVO jandiBot = new SearchedItemVO();
+                    jandiBot.setId(botEntity.getId())
+                            .setName(botEntity.getName())
+                            .setEnabled(true)
+                            .setStarred(false)
+                            .setBot(true)
+                            .setType(SearchType.member.name());
+                    selectableMembersLinkedHashMap.put(jandiBot.getId(), jandiBot);
+                }
+            }
+
         }
 
         return selectableMembersLinkedHashMap;
@@ -118,7 +136,11 @@ public class SearchMemberModel {
         return (lhs, rhs) -> {
 
             String roomType = SearchType.room.name();
-            if (TextUtils.equals(lhs.getType(), roomType)) {
+            if (lhs.isBot()) {
+                return 1;
+            } else if (rhs.isBot()) {
+                return -1;
+            } else if (TextUtils.equals(lhs.getType(), roomType)) {
                 return -1;
             } else if (TextUtils.equals(rhs.getType(), roomType)) {
                 return 1;
