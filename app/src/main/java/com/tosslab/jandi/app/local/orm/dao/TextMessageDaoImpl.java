@@ -70,6 +70,19 @@ public class TextMessageDaoImpl extends BaseDaoImpl<ResMessages.TextMessage, Int
 
         textContentDao.create(textMessage.content);
 
+        Dao<ResMessages.ConnectInfo, ?> connectInfoDao = DaoManager.createDao(getConnectionSource(), ResMessages.ConnectInfo.class);
+        DeleteBuilder<ResMessages.ConnectInfo, ?> connectInfoDeleteBuilder = connectInfoDao.deleteBuilder();
+        connectInfoDeleteBuilder.where()
+                .eq("textContentOf_id", textMessage.content._id);
+        connectInfoDeleteBuilder.delete();
+
+        if (textMessage.content.connectInfo != null && !textMessage.content.connectInfo.isEmpty()) {
+            for (ResMessages.ConnectInfo connectInfo : textMessage.content.connectInfo) {
+                connectInfo.textContentOf = textMessage.content;
+                connectInfoDao.create(connectInfo);
+            }
+        }
+
         if (hasLinkPreview(textMessage)) {
             Dao<ResMessages.LinkPreview, ?> linkPreviewDao = DaoManager.createDao
                     (connectionSource, ResMessages

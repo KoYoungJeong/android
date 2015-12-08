@@ -8,9 +8,12 @@ import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.converter.JacksonConverter;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,9 +24,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import retrofit.RestAdapter;
+import retrofit.http.GET;
+import retrofit.http.Path;
+import rx.Observable;
+import setup.BaseInitUtil;
+
 import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -181,6 +192,40 @@ public class MessageRepositoryTest {
         assertThat(sendMessages.size(), is(equalTo(0)));
     }
 
+    @Test
+    public void testIntegrationMessage() throws Exception {
+        BaseInitUtil.clear();
+        MessageRepository.getRepository().deleteAllLink();
+        TempObject githubs = getRestAdapter().getIntegrations("github");
+
+        assertThat(githubs.messages, is(notNullValue()));
+        assertThat(githubs.messages.size(), is(greaterThan(0)));
+
+        final int[] messageId = {0};
+        Observable.from(githubs.messages)
+                .subscribe(textMessage -> {
+                    if (messageId[0] == 0) {
+                        messageId[0] = textMessage.id;
+                    } else {
+                        messageId[0] += 1;
+                        textMessage.id = messageId[0];
+                    }
+                    MessageRepository.getRepository().upsertTextMessage(textMessage);
+                });
+        List<ResMessages.TextMessage> textMessages = MessageRepository.getRepository().getTextMessages();
+        assertThat(textMessages.size(), is(equalTo(githubs.messages.size())));
+    }
+
+    private IntegrationMessage getRestAdapter() {
+        return new RestAdapter.Builder()
+                .setEndpoint("https://i-bot.jandi.io")
+                .setConverter(new JacksonConverter(JacksonMapper.getInstance().getObjectMapper()))
+                .build()
+                .create(IntegrationMessage.class);
+
+
+    }
+
     private List<ResMessages.Link> getMessages() {
 
         try {
@@ -192,6 +237,18 @@ public class MessageRepositoryTest {
         }
 
         return new ArrayList<>();
+    }
+
+    interface IntegrationMessage {
+
+        @GET("/temp-api/messages/connects/{service}")
+        TempObject getIntegrations(@Path("service") String service);
+    }
+
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class TempObject {
+        public List<ResMessages.TextMessage> messages;
     }
 
 }

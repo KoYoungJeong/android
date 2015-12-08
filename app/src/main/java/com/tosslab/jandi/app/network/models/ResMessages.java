@@ -347,8 +347,14 @@ public class ResMessages {
         }
     }
 
+    @DatabaseTable(tableName = "message_text_content_connectInfo")
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ConnectInfo {
+        @DatabaseField(generatedId = true)
+        public long _id;
         @DatabaseField(foreign = true)
+        @JsonIgnore
         public TextContent textContentOf;
         @DatabaseField
         public String event;

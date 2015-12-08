@@ -326,6 +326,26 @@ public class MessageRepository {
         return null;
     }
 
+    /**
+     * Only For Test!!!
+     * @return
+     */
+    public List<ResMessages.TextMessage> getTextMessages() {
+        lock.lock();
+        try {
+            Dao<ResMessages.TextMessage, ?> dao = helper.getDao(ResMessages.TextMessage.class);
+
+            return dao.queryForAll();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+        return new ArrayList<>(0);
+
+    }
+
     public int clearLinks(int teamId, int roomId) {
         lock.lock();
         try {
