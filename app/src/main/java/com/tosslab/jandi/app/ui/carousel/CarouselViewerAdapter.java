@@ -47,10 +47,10 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
         } else {
             fragment = PhotoViewFragment_.builder()
                     .imageType(fileInfo.getFileType())
-                    .imageUrl(fileInfo.getFileLinkUrl())
+                    .imageUrl(fileInfo.getFileThumbUrl())
                     .build();
 
-//            weakHashMap.put(fileLinkId, fragment);
+            weakHashMap.put(fileLinkId, fragment);
         }
 
         if (fragment instanceof PhotoViewFragment) {

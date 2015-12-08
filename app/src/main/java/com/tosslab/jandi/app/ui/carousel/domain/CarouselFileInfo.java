@@ -12,10 +12,11 @@ public class CarouselFileInfo {
     private final String ext;
     private final int size;
     private final String fileLinkUrl;
+    private final String fileThumbUrl;
     private final String fileCreateTime;
     private final String fileWriter;
 
-    private CarouselFileInfo(int entityId, int fileLinkId, String fileName, String fileType, String ext, int size, String fileLinkUrl, String fileCreateTime, String fileWriter) {
+    private CarouselFileInfo(int entityId, int fileLinkId, String fileName, String fileType, String ext, int size, String fileLinkUrl, String fileThumbUrl, String fileCreateTime, String fileWriter) {
         this.entityId = entityId;
         this.fileLinkId = fileLinkId;
         this.fileName = fileName;
@@ -23,6 +24,7 @@ public class CarouselFileInfo {
         this.ext = ext;
         this.size = size;
         this.fileLinkUrl = fileLinkUrl;
+        this.fileThumbUrl = fileThumbUrl;
         this.fileCreateTime = fileCreateTime;
         this.fileWriter = fileWriter;
     }
@@ -63,6 +65,10 @@ public class CarouselFileInfo {
         return fileLinkUrl;
     }
 
+    public String getFileThumbUrl() {
+        return fileThumbUrl;
+    }
+
     public static class Builder {
         private int entityId;
         private int fileLinkId;
@@ -73,6 +79,7 @@ public class CarouselFileInfo {
         private int size;
         private String fileCreateTime;
         private String fileWriter;
+        private String fileThumbUrl;
 
         public Builder fileWriter(String fileWriter) {
             this.fileWriter = fileWriter;
@@ -121,7 +128,12 @@ public class CarouselFileInfo {
         }
 
         public CarouselFileInfo create() {
-            return new CarouselFileInfo(entityId, fileLinkId, fileName, fileType, ext, size, fileLinkUrl, fileCreateTime, fileWriter);
+            return new CarouselFileInfo(entityId, fileLinkId, fileName, fileType, ext, size, fileLinkUrl, fileThumbUrl, fileCreateTime, fileWriter);
+        }
+
+        public Builder fileThumbUrl(String fileThumbUrl) {
+            this.fileThumbUrl = fileThumbUrl;
+            return this;
         }
     }
 }
