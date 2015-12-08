@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot;
+package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration;
 
 import android.content.Context;
 import android.text.Spannable;
@@ -7,10 +7,10 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -18,25 +18,24 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.UnreadCountUtil;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
-import de.greenrobot.event.EventBus;
+public class IntegrationBotViewHolder implements BodyViewHolder {
 
-public class JandiBotViewHolder implements BodyViewHolder {
-    protected Context context;
+    private View contentView;
     private ImageView ivProfile;
     private TextView tvName;
     private TextView tvMessage;
     private View vDisableCover;
     private View vDisableLineThrough;
-    private LinkPreviewViewModel linkPreviewViewModel;
+    private View vConnectLine;
+    private LinearLayout vgConnectInfo;
+    private ImageView ivConnectImage;
     private View vLastRead;
-    private View contentView;
 
     @Override
     public void initView(View rootView) {
@@ -46,10 +45,9 @@ public class JandiBotViewHolder implements BodyViewHolder {
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
-        context = rootView.getContext();
-
-        linkPreviewViewModel = new LinkPreviewViewModel(context);
-        linkPreviewViewModel.initView(rootView);
+        vConnectLine = rootView.findViewById(R.id.v_message_sub_menu_connect_color);
+        vgConnectInfo = ((LinearLayout) rootView.findViewById(R.id.vg_message_sub_menu));
+        ivConnectImage = ((ImageView) rootView.findViewById(R.id.iv_message_sub_menu_connect_image));
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);
     }
 
@@ -69,7 +67,7 @@ public class JandiBotViewHolder implements BodyViewHolder {
         ivProfile.setImageResource(R.drawable.bot_32x40);
 
         if (bot != null && TextUtils.equals(bot.status, "enabled")) {
-            tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
+            tvName.setTextColor(tvName.getResources().getColor(R.color.jandi_messages_name));
             vDisableCover.setVisibility(View.GONE);
             vDisableLineThrough.setVisibility(View.GONE);
         } else {
@@ -79,13 +77,13 @@ public class JandiBotViewHolder implements BodyViewHolder {
             vDisableLineThrough.setVisibility(View.VISIBLE);
         }
 
-        tvName.setText(bot.name);
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
             SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
             messageStringBuilder.append(!TextUtils.isEmpty(textMessage.content.body) ? textMessage.content.body : "");
 
+            Context context = tvMessage.getContext();
 
             boolean hasLink = LinkifyUtil.addLinks(context, messageStringBuilder);
             if (hasLink) {
@@ -131,10 +129,10 @@ public class JandiBotViewHolder implements BodyViewHolder {
             tvMessage.setText(messageStringBuilder);
 
         }
-        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(bot.id, ShowProfileEvent.From.Image)));
-        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(bot.id, ShowProfileEvent.From.Name)));
 
-        linkPreviewViewModel.bindData(link);
+        tvName.setText(bot.name);
+
+
     }
 
     @Override
@@ -148,7 +146,7 @@ public class JandiBotViewHolder implements BodyViewHolder {
 
     @Override
     public int getLayoutId() {
-        return R.layout.item_message_jandi_bot_msg_v2;
+        return R.layout.item_message_integration_bot_msg_v2;
     }
 
     @Override

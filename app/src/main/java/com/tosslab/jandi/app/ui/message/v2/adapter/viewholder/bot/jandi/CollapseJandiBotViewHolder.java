@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot;
+package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi;
 
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.PureMessageViewHolder;
 

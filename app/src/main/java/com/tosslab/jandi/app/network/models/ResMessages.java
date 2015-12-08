@@ -332,12 +332,30 @@ public class ResMessages {
         @DatabaseField
         public String body;
 
+        @DatabaseField
+        public String connectType;
+        @DatabaseField
+        public String connectColor;
+        @ForeignCollectionField(foreignFieldName = "textContentOf")
+        public Collection<ConnectInfo> connectInfo;
+
         @Override
         public String toString() {
             return "TextContent{" +
                     "body='" + body + '\'' +
                     '}';
         }
+    }
+
+    public static class ConnectInfo {
+        @DatabaseField(foreign = true)
+        public TextContent textContentOf;
+        @DatabaseField
+        public String event;
+        @DatabaseField
+        public String title;
+        @DatabaseField
+        public String description;
     }
 
     @DatabaseTable(tableName = "message_sticker")

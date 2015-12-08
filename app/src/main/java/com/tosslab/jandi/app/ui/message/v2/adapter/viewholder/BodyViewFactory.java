@@ -10,9 +10,9 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.CollapseJandiBotViewHolder;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.CollapseLinkPreviewJandiBotViewHolder;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.JandiBotViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.CollapseJandiBotViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.CollapseLinkPreviewJandiBotViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.JandiBotViewHolder;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
 
 import java.util.ArrayList;
