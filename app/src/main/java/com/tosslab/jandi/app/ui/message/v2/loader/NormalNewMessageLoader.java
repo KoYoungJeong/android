@@ -24,6 +24,7 @@ import java.util.List;
 import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Func0;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 17..
@@ -193,21 +194,25 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         }
 
         Observable.from(messages)
-                .subscribe(message -> {
-                    message.roomId = roomId;
-                    if (!TextUtils.equals(message.status, "event")) {
-                        if (TextUtils.equals(message.message.status, "archived")) {
-                            if (!(message.message instanceof ResMessages.FileMessage)) {
-                                MessageRepository.getRepository().deleteMessage(message.messageId);
-                            } else {
-                                MessageRepository.getRepository().upsertFileMessage((ResMessages.FileMessage) message.message);
-                            }
+                .doOnNext(link -> link.roomId = roomId)
+                .doOnNext(link -> {
+                    // event 가 아니고 삭제된 파일/코멘트/메세지만 처리
+                    if (!TextUtils.equals(link.status, "event")
+                            && TextUtils.equals(link.message.status, "archived")) {
+                        if (!(link.message instanceof ResMessages.FileMessage)) {
+                            MessageRepository.getRepository().deleteMessage(link.messageId);
                         } else {
-                            MessageRepository.getRepository().upsertMessage(message);
+                            MessageRepository.getRepository().upsertFileMessage((ResMessages.FileMessage) link.message);
                         }
-                    } else {
-                        MessageRepository.getRepository().upsertMessage(message);
                     }
+                })
+                .filter(link -> {
+                    // 이벤트와 삭제된 메세지는 처리 됐으므로..
+                    return TextUtils.equals(link.status, "event") || !TextUtils.equals(link.message.status, "archived");
+                })
+                .collect((Func0<List<ResMessages.Link>>) ArrayList::new, List::add)
+                .subscribe(links -> {
+                    MessageRepository.getRepository().upsertMessages(links);
                 });
     }
 

@@ -499,9 +499,9 @@ public class MessageListModel {
         Observable.from(messages.records)
                 .subscribe(link -> {
                     link.roomId = messages.entityId;
-                    MessageRepository.getRepository().upsertMessage(link);
                 });
 
+        MessageRepository.getRepository().upsertMessages(messages.records);
 
     }
 
