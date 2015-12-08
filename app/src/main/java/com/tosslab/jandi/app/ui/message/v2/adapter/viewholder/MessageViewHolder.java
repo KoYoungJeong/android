@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.GenerateMarkdownMessageUtil;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
@@ -126,6 +127,10 @@ public class MessageViewHolder implements BodyViewHolder {
                         .setSpan(unreadCountSpannable, beforeLength, messageStringBuilder.length(),
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
+
+            GenerateMarkdownMessageUtil generateMarkdownMessageUtil =
+                    new GenerateMarkdownMessageUtil(tvMessage, messageStringBuilder);
+            messageStringBuilder = generateMarkdownMessageUtil.generate();
 
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                     tvMessage, messageStringBuilder, textMessage.mentions, entityManager.getMe().getId());
