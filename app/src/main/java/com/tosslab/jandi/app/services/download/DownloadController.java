@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.services.download;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
@@ -20,6 +19,7 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.file.FileUtil;
+import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -40,7 +40,8 @@ public class DownloadController {
 
     private ResponseFuture<File> downloadTask;
 
-    public DownloadController() {}
+    public DownloadController() {
+    }
 
     public DownloadController(View view) {
         this.view = view;
@@ -143,9 +144,9 @@ public class DownloadController {
 
     File makeDirIfNotExistsAndGet() {
         File dir =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/Jandi");
+                new File(GoogleImagePickerUtil.getDownloadPath());
         if (!dir.exists()) {
-            dir.mkdir();
+            dir.mkdirs();
         }
         return dir;
     }
@@ -221,10 +222,12 @@ public class DownloadController {
         return newFile;
     }
 
-    int getNotificationId() {return Math.abs(new Random().nextInt());}
+    int getNotificationId() {
+        return Math.abs(new Random().nextInt());
+    }
 
     public File downloadFileAndGet(File downloadTargetFile, String downloadUrl,
-                            int notificationId, NotificationCompat.Builder progressNotificationBuilder)
+                                   int notificationId, NotificationCompat.Builder progressNotificationBuilder)
             throws InterruptedException, java.util.concurrent.ExecutionException {
         // Ion File download task - 인터넷이 끊긴 상황에서 cancel 하기 위해 field 로 활용
         downloadTask = buildDownloadTask(
@@ -246,7 +249,9 @@ public class DownloadController {
                 .write(downloadTargetFile);
     }
 
-    void logDownloadException(Exception e) {LogUtil.e(TAG, Log.getStackTraceString(e));}
+    void logDownloadException(Exception e) {
+        LogUtil.e(TAG, Log.getStackTraceString(e));
+    }
 
     synchronized void cancelDownload() {
         view.showErrorToast(R.string.err_network);

@@ -269,13 +269,13 @@ public class MessageListPresenter {
     }
 
     public int getLastItemPosition() {
-        return messageListAdapter.getCount();
+        return messageListAdapter.getItemCount();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveLastPage() {
         if (messageListView != null) {
-            messageListView.getLayoutManager().scrollToPosition(messageListAdapter.getCount() - 1);
+            messageListView.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
         }
     }
 
@@ -289,18 +289,18 @@ public class MessageListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveToMessage(int linkId, int firstVisibleItemTop) {
-        int itemPosition = messageListAdapter.getItemPositionByMessageId(linkId);
+        int itemPosition = messageListAdapter.indexByMessageId(linkId);
         ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveToMessageById(int id, int firstVisibleItemTop) {
-        int itemPosition = messageListAdapter.getItemPositionById(id);
+        int itemPosition = messageListAdapter.indexOfLinkId(id);
         ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
     public int getFirstVisibleItemLinkId() {
-        if (messageListAdapter.getCount() > 0) {
+        if (messageListAdapter.getItemCount() > 0) {
             int firstVisibleItemPosition = ((LinearLayoutManager) messageListView.getLayoutManager()).findFirstVisibleItemPosition();
             if (firstVisibleItemPosition >= 0) {
                 return messageListAdapter.getItem(firstVisibleItemPosition).messageId;
@@ -421,7 +421,7 @@ public class MessageListPresenter {
     }
 
     public ResMessages.Link getLastItemWithoutDummy() {
-        int count = messageListAdapter.getCount();
+        int count = messageListAdapter.getItemCount();
         for (int idx = count - 1; idx >= 0; --idx) {
             if (messageListAdapter.getItem(idx) instanceof DummyMessageLink) {
                 continue;
@@ -546,7 +546,7 @@ public class MessageListPresenter {
 
     private boolean isVisibleLastItem() {
         return ((LinearLayoutManager) messageListView.getLayoutManager())
-                .findFirstVisibleItemPosition() == messageListAdapter.getCount() - 1;
+                .findFirstVisibleItemPosition() == messageListAdapter.getItemCount() - 1;
     }
 
     @UiThread
@@ -556,7 +556,7 @@ public class MessageListPresenter {
             return;
         }
 
-        ResMessages.Link item = messageListAdapter.getItem(messageListAdapter.getCount() - 1);
+        ResMessages.Link item = messageListAdapter.getItem(messageListAdapter.getItemCount() - 1);
 
         if (TextUtils.equals(item.status, "event")) {
             return;
@@ -820,7 +820,7 @@ public class MessageListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void modifyStarredInfo(int messageId, boolean isStarred) {
-        int position = messageListAdapter.getItemPositionByMessageId(messageId);
+        int position = messageListAdapter.indexByMessageId(messageId);
         messageListAdapter.modifyStarredStateByPosition(position, isStarred);
     }
 
@@ -971,7 +971,7 @@ public class MessageListPresenter {
         }
 
 
-        if (indexOfLinkId >= messageListAdapter.getCount() - 1) {
+        if (indexOfLinkId >= messageListAdapter.getItemCount() - 1) {
             // 라스트 링크가 마지막 아이템인경우
             messageListAdapter.setLastReadLinkId(-1);
         } else {
@@ -1046,10 +1046,6 @@ public class MessageListPresenter {
         int position = messageListAdapter.indexByMessageId(messageId);
         messageListAdapter.remove(position);
         messageListAdapter.notifyDataSetChanged();
-    }
-
-    public boolean isLastOfLastReadPosition() {
-        return messageListAdapter.isLastOfLastReadPosition();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
