@@ -1,10 +1,8 @@
 package com.tosslab.jandi.app.utils;
 
 import android.content.Context;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.ui.commonviewmodels.markdown.vo.MarkdownVO;
@@ -50,8 +48,8 @@ public class GenerateMarkdownMessageUtil {
 //                        markdown.getEndIndex(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 //            } while ((markdown = generateMarkdownModels(markdown.getMarkdownString()))***);
 
-            return stringBuilder;
-        }
+        return stringBuilder;
+//        }
     }
 
     public List<MarkdownVO> generateMarkdownModels(String message) {
