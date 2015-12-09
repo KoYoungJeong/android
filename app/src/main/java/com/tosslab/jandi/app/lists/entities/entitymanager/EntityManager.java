@@ -220,9 +220,11 @@ public class EntityManager {
             }
         }
 
-        Observable.from(resLeftSideMenu.bots)
-                .collect(() -> bots, (botEntities, bot) -> botEntities.put(bot.id, new BotEntity(bot)))
-                .subscribe();
+        if (resLeftSideMenu.bots != null) {
+            Observable.from(resLeftSideMenu.bots)
+                    .collect(() -> bots, (botEntities, bot) -> botEntities.put(bot.id, new BotEntity(bot)))
+                    .subscribe();
+        }
 
         // Sort 도 다시해야 하기 때문에 해당 List 들을 초기화
         zeroizeSortedEntityList();

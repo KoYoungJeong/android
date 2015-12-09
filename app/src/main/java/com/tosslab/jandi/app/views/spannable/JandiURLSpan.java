@@ -31,7 +31,7 @@ public class JandiURLSpan extends UnderlineSpan implements ClickableSpannable{
 
     public void onClick() {
         InternalWebActivity_.intent(context)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .url(url)
                 .start();
 

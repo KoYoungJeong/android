@@ -37,7 +37,7 @@ public class LinkAnalysisTest {
     public void testAnalysis() throws Exception {
         for (String testMarkdown : TEST_MARKDOWNS) {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(testMarkdown);
-            analysis.analysis(spannableStringBuilder);
+            analysis.analysis(null, spannableStringBuilder);
 
             int length = spannableStringBuilder.length();
             boolean find = false;
@@ -51,7 +51,7 @@ public class LinkAnalysisTest {
 
         for (String testMarkdown : TEST_MARKDOWNS_2) {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(testMarkdown);
-            analysis.analysis(spannableStringBuilder);
+            analysis.analysis(null, spannableStringBuilder);
 
             int length = spannableStringBuilder.length();
             boolean find = false;

@@ -4,28 +4,24 @@ import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.markdown.MarkdownLookup;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.UnreadCountUtil;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.util.IntegrationBotUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 public class IntegrationBotViewHolder implements BodyViewHolder {
 
+    private static final String TAG = "IntegrationBotViewHolder";
     private View contentView;
     private ImageView ivProfile;
     private TextView tvName;
@@ -34,7 +30,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
     private View vDisableLineThrough;
     private View vConnectLine;
     private LinearLayout vgConnectInfo;
-//    private ImageView ivConnectImage;
+    //    private ImageView ivConnectImage;
     private View vLastRead;
 
     @Override
@@ -53,84 +49,85 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
     @Override
     public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
-        int fromEntityId = link.fromEntity;
+//        int fromEntityId = link.fromEntity;
 
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity entity = entityManager.getEntityById(fromEntityId);
-        if (!(entity instanceof BotEntity)) {
-            return;
-        }
+//        EntityManager entityManager = EntityManager.getInstance();
+//        FormattedEntity entity = entityManager.getEntityById(fromEntityId);
+//        if (!(entity instanceof BotEntity)) {
+//            return;
+//        }
 
-        BotEntity botEntity = (BotEntity) entity;
-        ResLeftSideMenu.Bot bot = botEntity.getBot();
+//        BotEntity botEntity = (BotEntity) entity;
+//        ResLeftSideMenu.Bot bot = botEntity.getBot();
 
-        ivProfile.setImageResource(R.drawable.bot_32x40);
+        ivProfile.setImageResource(R.drawable.profile_img);
 
-        if (bot != null && TextUtils.equals(bot.status, "enabled")) {
-            tvName.setTextColor(tvName.getResources().getColor(R.color.jandi_messages_name));
-            vDisableCover.setVisibility(View.GONE);
-            vDisableLineThrough.setVisibility(View.GONE);
-        } else {
-            tvName.setTextColor(
-                    tvName.getResources().getColor(R.color.deactivate_text_color));
-            vDisableCover.setVisibility(View.VISIBLE);
-            vDisableLineThrough.setVisibility(View.VISIBLE);
-        }
+//        if (bot != null && TextUtils.equals(bot.status, "enabled")) {
+        tvName.setTextColor(tvName.getResources().getColor(R.color.jandi_messages_name));
+        vDisableCover.setVisibility(View.GONE);
+        vDisableLineThrough.setVisibility(View.GONE);
+//        } else {
+//            tvName.setTextColor(
+//                    tvName.getResources().getColor(R.color.deactivate_text_color));
+//            vDisableCover.setVisibility(View.VISIBLE);
+//            vDisableLineThrough.setVisibility(View.VISIBLE);
+//        }
 
-        if (link.message instanceof ResMessages.TextMessage) {
-            ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
+        ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
-            SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
-            messageStringBuilder.append(!TextUtils.isEmpty(textMessage.content.body) ? textMessage.content.body : "");
+        SpannableStringBuilder messageStringBuilder = MarkdownLookup
+                .text(textMessage.content.body)
+                .lookUp(tvMessage.getContext());
 
-            Context context = tvMessage.getContext();
+        Context context = tvMessage.getContext();
 
-            boolean hasLink = LinkifyUtil.addLinks(context, messageStringBuilder);
-            if (hasLink) {
-                Spannable linkSpannable =
-                        Spannable.Factory.getInstance().newSpannable(messageStringBuilder);
-                messageStringBuilder.setSpan(linkSpannable,
-                        0, textMessage.content.body.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                LinkifyUtil.setOnLinkClick(tvMessage);
-            }
+        boolean hasLink = LinkifyUtil.addLinks(context, messageStringBuilder);
+//        if (hasLink) {
+        Spannable linkSpannable =
+                Spannable.Factory.getInstance().newSpannable(messageStringBuilder);
+        messageStringBuilder.setSpan(linkSpannable,
+                0, messageStringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        LinkifyUtil.setOnLinkClick(tvMessage);
+//        }
 
+        messageStringBuilder.append(" ");
+
+        int startIndex = messageStringBuilder.length();
+        messageStringBuilder.append(
+                DateTransformator.getTimeStringForSimple(link.message.createTime));
+        int endIndex = messageStringBuilder.length();
+
+        DateViewSpannable spannable =
+                new DateViewSpannable(tvMessage.getContext(),
+                        DateTransformator.getTimeStringForSimple(link.message.createTime));
+        messageStringBuilder.setSpan(spannable,
+                startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        int unreadCount = 99;
+//                UnreadCountUtil.getUnreadCount(teamId, roomId,
+//                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
+
+        if (unreadCount > 0) {
+            NameSpannable unreadCountSpannable =
+                    new NameSpannable(
+                            context.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_small)
+                            , context.getResources().getColor(R.color.jandi_accent_color));
+            int beforeLength = messageStringBuilder.length();
             messageStringBuilder.append(" ");
-
-            int startIndex = messageStringBuilder.length();
-            messageStringBuilder.append(
-                    DateTransformator.getTimeStringForSimple(link.message.createTime));
-            int endIndex = messageStringBuilder.length();
-
-            DateViewSpannable spannable =
-                    new DateViewSpannable(tvMessage.getContext(),
-                            DateTransformator.getTimeStringForSimple(link.message.createTime));
-            messageStringBuilder.setSpan(spannable,
-                    startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-            int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                    link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
-
-            if (unreadCount > 0) {
-                NameSpannable unreadCountSpannable =
-                        new NameSpannable(
-                                context.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_small)
-                                , context.getResources().getColor(R.color.jandi_accent_color));
-                int beforeLength = messageStringBuilder.length();
-                messageStringBuilder.append(" ");
-                messageStringBuilder.append(String.valueOf(unreadCount))
-                        .setSpan(unreadCountSpannable, beforeLength, messageStringBuilder.length(),
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-
-            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                    tvMessage, messageStringBuilder, textMessage.mentions, entityManager.getMe().getId());
-            messageStringBuilder = generateMentionMessageUtil.generate(true);
-
-            tvMessage.setText(messageStringBuilder);
-
+            messageStringBuilder.append(String.valueOf(unreadCount))
+                    .setSpan(unreadCountSpannable, beforeLength, messageStringBuilder.length(),
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        tvName.setText(bot.name);
+//        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+//                tvMessage, messageStringBuilder, textMessage.mentions, entityManager.getMe().getId());
+//        messageStringBuilder = generateMentionMessageUtil.generate(true);
+
+        tvMessage.setText(messageStringBuilder);
+
+        IntegrationBotUtil.setIntegrationSubUI(textMessage.content, vConnectLine, vgConnectInfo);
+
+        tvName.setText("TEST!!!!");
 
 
     }
