@@ -34,7 +34,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
     private View vDisableLineThrough;
     private View vConnectLine;
     private LinearLayout vgConnectInfo;
-    private ImageView ivConnectImage;
+//    private ImageView ivConnectImage;
     private View vLastRead;
 
     @Override
@@ -47,7 +47,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         vConnectLine = rootView.findViewById(R.id.v_message_sub_menu_connect_color);
         vgConnectInfo = ((LinearLayout) rootView.findViewById(R.id.vg_message_sub_menu));
-        ivConnectImage = ((ImageView) rootView.findViewById(R.id.iv_message_sub_menu_connect_image));
+//        ivConnectImage = ((ImageView) rootView.findViewById(R.id.iv_message_sub_menu_connect_image));
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);
     }
 

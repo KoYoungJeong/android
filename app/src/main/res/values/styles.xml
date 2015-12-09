@@ -449,4 +449,21 @@
         <item name="android:paddingRight">17dp</item>
     </style>
 
+    <style name="JandiIntegration" />
+
+    <style name="JandiIntegration.Sub">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/jandi_member_profile_user_name</item>
+    </style>
+
+    <style name="JandiIntegration.Sub.Title">
+        <item name="android:textSize">@dimen/jandi_text_size_medium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="JandiIntegration.Sub.Description">
+        <item name="android:textSize">@dimen/jandi_mention_star_list_item_font_size</item>
+    </style>
+
 </resources>

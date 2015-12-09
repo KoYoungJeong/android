@@ -95,8 +95,82 @@
             android:layout_toRightOf="@+id/v_message_sub_menu_connect_color"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/tv_message_sub_menu_1_title"
+                style="@style/JandiIntegration.Sub.Title" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_1_description"
+                style="@style/JandiIntegration.Sub.Description" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_2_title"
+                style="@style/JandiIntegration.Sub.Title" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_2_description"
+                style="@style/JandiIntegration.Sub.Description" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_3_title"
+                style="@style/JandiIntegration.Sub.Title" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_3_description"
+                style="@style/JandiIntegration.Sub.Description" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_4_title"
+                style="@style/JandiIntegration.Sub.Title" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_4_description"
+                style="@style/JandiIntegration.Sub.Description" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_5_title"
+                style="@style/JandiIntegration.Sub.Title" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_5_description"
+                style="@style/JandiIntegration.Sub.Description" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_6_title"
+                style="@style/JandiIntegration.Sub.Title" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_6_description"
+                style="@style/JandiIntegration.Sub.Description" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_7_title"
+                style="@style/JandiIntegration.Sub.Title" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_7_description"
+                style="@style/JandiIntegration.Sub.Description" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_8_title"
+                style="@style/JandiIntegration.Sub.Title" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_8_description"
+                style="@style/JandiIntegration.Sub.Description" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_9_title"
+                style="@style/JandiIntegration.Sub.Title" />
+
+            <TextView
+                android:id="@+id/tv_message_sub_menu_9_description"
+                style="@style/JandiIntegration.Sub.Description" />
+
         </LinearLayout>
 
+        <!--
+        데이터 명세상 아직 없어서 주석 처리
         <ImageView
             android:id="@+id/iv_message_sub_menu_connect_image"
             android:layout_width="match_parent"
@@ -104,7 +178,7 @@
             android:layout_alignLeft="@+id/v_message_sub_menu_connect_color"
             android:layout_alignRight="@+id/vg_message_sub_menu"
             android:layout_below="@+id/vg_message_sub_menu" />
-
+-->
     </com.tosslab.jandi.app.views.LongClickableRelativeLayout>
 
     <include
