@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.StateSet;
 import android.view.animation.AlphaAnimation;
@@ -31,8 +32,8 @@ import rx.Observable;
  */
 public class StickerManager {
 
-    public static final int DEFAULT_GROUP_MOZZI = 100;
-    public static final int DEFAULT_GROUP_DAY = 101;
+    public static final String ASSET_SCHEMA = "file:///android_asset/";
+    public static final String STICKER_ASSET_PATH = "stickers/default";
     private static final LoadOptions DEFAULT_OPTIONS = new LoadOptions();
     private static StickerManager stickerManager;
 
@@ -40,8 +41,9 @@ public class StickerManager {
 
     private StickerManager() {
         this.localStickerGroupIds = new HashSet<Integer>();
-        localStickerGroupIds.add(DEFAULT_GROUP_MOZZI);
-        localStickerGroupIds.add(DEFAULT_GROUP_DAY);
+        localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_MOZZI);
+        localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DAY);
+        localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DAY_ZH_TW);
     }
 
     public static StickerManager getInstance() {
@@ -77,18 +79,21 @@ public class StickerManager {
                     "files-sticker/" + groupId + "/" + stickerId + "?size=420";
         }
 
-        if (stickerAssetPath != null) {
+        if (!TextUtils.isEmpty(stickerAssetPath)) {
             Uri uri = Uri.parse(stickerAssetPath);
             AlphaAnimation animation = new AlphaAnimation(0f, 1f);
             animation.setDuration(300);
             Context context = JandiApplication.getContext();
             DrawableTypeRequest<Uri> glideRequestor = Glide.with(context)
                     .load(uri);
+
+            final ImageView.ScaleType scaleType = options.scaleType;
             glideRequestor.asBitmap()
-                    .fitCenter()
                     .into(new BitmapImageViewTarget(view) {
                         @Override
                         public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+
+                            view.setScaleType(scaleType);
 
                             if (options.isClickImage) {
                                 StateListDrawable stateListDrawable = new StateListDrawable();
@@ -116,9 +121,8 @@ public class StickerManager {
         return localStickerGroupIds.contains(groupId);
     }
 
-    private String getStickerAssetPath(int groupId, String stickerId) {
+    String getStickerAssetPath(int groupId, String stickerId) {
         List<ResMessages.StickerContent> stickers = StickerRepository.getRepository().getStickers(groupId);
-
         ResMessages.StickerContent defaultSticker = new ResMessages.StickerContent();
         ResMessages.StickerContent stickerItem = Observable.from(stickers)
                 .filter(resSticker -> TextUtils.equals(resSticker.stickerId, stickerId))
@@ -126,32 +130,42 @@ public class StickerManager {
                 .toBlocking().first();
 
         if (stickerItem != defaultSticker) {
-            String filePathFormat = "file:///android_asset/stickers/default/%s/%s.png";
-
-            String fileName = stickerItem.groupId + "_" + stickerItem.stickerId;
-
-            String group;
-            switch (stickerItem.groupId) {
-                case StickerRepository.DEFAULT_GROUP_ID_MOZZI:
-                    group = "mozzi";
-                    break;
-
-                case StickerRepository.DEFAULT_GROUP_ID_DAY:
-                    group = "day";
-                    break;
-
-                default:
-                    group = "mozzi";
-                    break;
-            }
-
-            String stickerFilePath = String.format(filePathFormat, group, fileName);
-            LogUtil.e(stickerFilePath);
-            return stickerFilePath;
+            StringBuffer assetPathBuffer = new StringBuffer();
+            assetPathBuffer
+                    .append(STICKER_ASSET_PATH)
+                    .append("/").append(getGroupName(stickerItem.groupId))
+                    .append("/").append(groupId).append("_").append(stickerId).append(".png")
+                    .insert(0, ASSET_SCHEMA);
+            LogUtil.e(assetPathBuffer.toString());
+            return assetPathBuffer.toString();
         } else {
             return "";
         }
     }
+
+    @NonNull
+    private String getGroupName(int groupId) {
+        String group;
+        switch (groupId) {
+            case StickerRepository.DEFAULT_GROUP_ID_MOZZI:
+                group = "mozzi";
+                break;
+
+            case StickerRepository.DEFAULT_GROUP_ID_DAY:
+                group = "day";
+                break;
+
+            case StickerRepository.DEFAULT_GROUP_ID_DAY_ZH_TW:
+                group = "day/zh_tw";
+                break;
+
+            default:
+                group = "mozzi";
+                break;
+        }
+        return group;
+    }
+
 
     
     public static class LoadOptions {

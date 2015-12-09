@@ -154,7 +154,6 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
                 }
             }
 
-
             DaoManager.createDao(connectionSource, ResMessages.StickerContent.class)
                     .createOrUpdate(stickerMessage.content);
             DaoManager.createDao(connectionSource, ResMessages.StickerMessage.class)

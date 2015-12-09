@@ -335,6 +335,7 @@
         parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">45dp</item>
         <item name="android:textColorHint">@color/jandi_text_hint</item>
         <item name="android:layout_marginRight">25dp</item>
         <item name="android:textSize">14dp</item>

@@ -20,6 +20,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -94,12 +95,15 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -171,6 +175,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     private ProgressDialog progressDialog;
     private StickerInfo stickerInfo = NULL_STICKER;
     private MixpanelAnalytics mixpanelAnalytics;
+    private Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities;
 
     @AfterViews
     public void initForm() {
@@ -210,6 +215,17 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             setSendButtonSelected(true);
 
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Select);
+        });
+
+        lvFileDetailComments.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    hideSoftKeyboard();
+                    stickerViewModel.dismissStickerSelector();
+                }
+                return false;
+            }
         });
 
         stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
@@ -294,6 +310,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     void onCommentLongClick(ResMessages.OriginalMessage item) {
         fileDetailPresenter.onLongClickComment(item);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.CommentLongTap);
+    }
+
+    @ItemClick(R.id.lv_file_detail_comments)
+    void onCommentClick(ResMessages.OriginalMessage item) {
+        hideSoftKeyboard();
+        stickerViewModel.dismissStickerSelector();
     }
 
     @Click(R.id.iv_file_detail_preview_sticker_close)
@@ -432,6 +454,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public void loadSuccess(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages,
                             boolean isSendAction, int selectMessageId) {
 
+        shareEntities = fileMessage.shareEntities;
+
         drawFileDetail(fileMessage, commentMessages, isSendAction);
 
         if (selectMessageId > 0) {
@@ -505,8 +529,17 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
      * **********************************************************
      */
     void clickUnShareButton() {
+        ArrayList<Integer> rawSharedEntities = new ArrayList<>();
+        if (shareEntities != null) {
+
+            Observable.from(shareEntities)
+                    .map(integerWrapper -> integerWrapper.getShareEntity())
+                    .collect(() -> rawSharedEntities, (integers, integer) -> integers.add(integer))
+                    .subscribe();
+        }
         FileUnshareActivity_.intent(this)
-                .extra("fileId", fileId)
+                .fileId(fileId)
+                .sharedEntities(rawSharedEntities)
                 .startForResult(INTENT_RETURN_TYPE_UNSHARE);
     }
 
@@ -671,7 +704,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread(propagation = Propagation.REUSE)
     @Override
     public void hideSoftKeyboard() {
-        inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+        if (inputMethodManager.isAcceptingText()) {
+            inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+        }
     }
 
     @UiThread(propagation = Propagation.REUSE)
@@ -762,6 +797,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         if (!isForeground) {
             return;
         }
+
+        initProgressDialog();
 
         fileDetailPresenter.downloadFile(fileDownloadStartEvent.getUrl(),
                 fileDownloadStartEvent.getFileName(),

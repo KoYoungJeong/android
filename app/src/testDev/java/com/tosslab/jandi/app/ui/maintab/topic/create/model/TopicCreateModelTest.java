@@ -49,7 +49,7 @@ public class TopicCreateModelTest {
         String tempName = "Topic Create Test Name";
         String tempDescription = "tempDescription";
 
-        ResCommon topic = topicCreateModel.createTopic(tempName, false, tempDescription);
+        ResCommon topic = topicCreateModel.createTopic(tempName, false, tempDescription, isAutojoin);
         assertTrue(topic.id > 0);
 
         int createdId = topic.id;
@@ -84,7 +84,7 @@ public class TopicCreateModelTest {
         String tempName = "Topic Create Test Name";
         String tempDescription = "tempDescription";
 
-        ResCommon topic = topicCreateModel.createTopic(tempName, true, tempDescription);
+        ResCommon topic = topicCreateModel.createTopic(tempName, true, tempDescription, isAutojoin);
 
         assertTrue(topic.id > 0);
 

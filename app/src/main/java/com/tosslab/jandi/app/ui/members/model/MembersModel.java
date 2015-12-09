@@ -26,8 +26,8 @@ import rx.Observable;
 public class MembersModel {
 
     public List<ChatChooseItem> getTopicMembers(int entityId) {
-        Collection<Integer> members = EntityManager.getInstance().getEntityById(entityId)
-                .getMembers();
+        Collection<Integer> members = EntityManager.getInstance()
+                .getEntityById(entityId).getMembers();
         List<FormattedEntity> formattedUsers = EntityManager.getInstance().getFormattedUsers();
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
 
@@ -107,5 +107,25 @@ public class MembersModel {
 
     public void kickUser(int teamId, int topicId, int userEntityId) throws RetrofitError {
         RequestApiManager.getInstance().kickUserFromTopic(teamId, topicId, new ReqMember(userEntityId));
+    }
+
+    public boolean isTeamOwner() {
+        return TextUtils.equals(EntityManager.getInstance().getMe().getUser().u_authority, "owner");
+    }
+
+    public boolean isTopicOwner(int entityId) {
+        return EntityManager.getInstance().isMyTopic(entityId);
+    }
+
+    public boolean removeMember(int topicId, int userEntityId) {
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(topicId);
+        if (entity.isPublicTopic()) {
+            return entity.getChannel().ch_members.remove(new Integer(userEntityId));
+
+        } else if (entity.isPrivateGroup()) {
+            return entity.getPrivateGroup().pg_members.remove(new Integer(userEntityId));
+        }
+
+        return false;
     }
 }

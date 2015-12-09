@@ -25,7 +25,6 @@ import rx.subjects.PublishSubject;
 @RunWith(JandiRobolectricGradleTestRunner.class)
 public class MembersListPresenterImplTest {
 
-
     @Test
     public void testSearchMember() throws Exception {
 
@@ -36,8 +35,8 @@ public class MembersListPresenterImplTest {
         publishSubject
                 .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
                 .flatMap(s -> Observable.from(chatChooseItems)
-                        .filter(chatChooseItem -> chatChooseItem.getName().toLowerCase().contains(s.toLowerCase()))
-                        .toSortedList((lhs, rhs) -> lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase()))
+                                .filter(chatChooseItem -> chatChooseItem.getName().toLowerCase().contains(s.toLowerCase()))
+                                .toSortedList((lhs, rhs) -> lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase()))
                 )
                 .subscribe(testList::addAll);
 
@@ -53,7 +52,6 @@ public class MembersListPresenterImplTest {
 
         ChatChooseItem mock1 = Mockito.mock(ChatChooseItem.class);
         Mockito.when(mock1.getName()).thenReturn("hahah1");
-
         ChatChooseItem mock2 = Mockito.mock(ChatChooseItem.class);
         Mockito.when(mock2.getName()).thenReturn("heheh1");
         ChatChooseItem mock3 = Mockito.mock(ChatChooseItem.class);

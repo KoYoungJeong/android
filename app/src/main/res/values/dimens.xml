@@ -52,7 +52,7 @@
     <dimen name="jandi_messages_comment">12sp</dimen>
     <dimen name="jandi_messages_file_name">17sp</dimen>
     <!-- // 링크 프리뷰 -->
-    <dimen name="jandi_messages_link_preview_thumb_max_width">298dp</dimen>
+    <dimen name="jandi_messages_link_preview_thumb_max_width">274dp</dimen>
 
     <!-- File Detail -->
     <!--// 상단 작성자 프로필 부-->
@@ -113,6 +113,7 @@
     <dimen name="jandi_text_size_large">16sp</dimen>
     <dimen name="jandi_text_size_medium">14sp</dimen>
     <dimen name="jandi_text_size_small">12sp</dimen>
+    <dimen name="jandi_text_size_11sp">11sp</dimen>
     <dimen name="jandi_text_size_smaller">10sp</dimen>
     <dimen name="jandi_progress_size">20dp</dimen>
 

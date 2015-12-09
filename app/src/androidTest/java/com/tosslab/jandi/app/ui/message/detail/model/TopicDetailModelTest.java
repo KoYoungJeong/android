@@ -32,6 +32,48 @@ public class TopicDetailModelTest {
     }
 
     @Test
+    public void testIsPrivateTopic() throws Exception {
+
+        {
+            int defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
+            boolean privateTopic = topicDetailModel.isPrivateTopic(defaultTopicId);
+            assertThat(privateTopic, is(false));
+        }
+
+        {
+            int privateTopicId = EntityManager.getInstance().getGroups().get(0).getId();
+            boolean privateTopic = topicDetailModel.isPrivateTopic(privateTopicId);
+            assertThat(privateTopic, is(true));
+        }
+
+        {
+            boolean privateTopic = topicDetailModel.isPrivateTopic(-1);
+            assertThat(privateTopic, is(false));
+        }
+    }
+
+    @Test
+    public void testIsAutoJoin() throws Exception {
+        {
+            int defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
+            boolean autoJoin = topicDetailModel.isAutoJoin(defaultTopicId);
+            assertThat(autoJoin, is(true));
+        }
+
+        {
+            int privateTopicId = EntityManager.getInstance().getGroups().get(0).getId();
+            boolean autoJoin = topicDetailModel.isAutoJoin(privateTopicId);
+            assertThat(autoJoin, is(false));
+        }
+
+        {
+            boolean autoJoin = topicDetailModel.isAutoJoin(-1);
+            assertThat(autoJoin, is(false));
+        }
+
+    }
+
+    @Test
     public void testGetEnabledTeamMemberCount() throws Exception {
 
         int enabledTeamMemberCount = topicDetailModel.getEnabledTeamMemberCount();

@@ -17,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.BaseInputConnection;
@@ -42,6 +43,7 @@ import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
+import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
@@ -399,6 +401,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         sendInitMessage();
 
+        setUpListTouchListener();
+
         TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
 
         AnalyticsUtil.sendScreenName(messageListModel.getScreen(entityId));
@@ -422,7 +426,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return false;
         });
     }
-
 
     private void showStickerSelectorIfNotShow(int height) {
         if (!stickerViewModel.isShow()) {
@@ -531,6 +534,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     private void initMessageList() {
         messageListPresenter.setOnItemClickListener((adapter, position) -> {
             try {
+                messageListPresenter.hideKeyboard();
+                stickerViewModel.dismissStickerSelector();
                 onMessageItemClick(messageListPresenter.getItem(position), entityId);
             } catch (Exception e) {
                 messageListPresenter.justRefresh();
@@ -686,10 +691,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 messageListModel.updateMarkerInfo(teamId, roomId);
                 messageListModel.setRoomId(roomId);
             }
+
         }
     }
 
     private void loadNewMessage(MessageQueue messageQueue) {
+
+
         if (newsMessageLoader != null) {
             MessageState data = (MessageState) messageQueue.getData();
             int lastUpdateLinkId = data.getLastUpdateLinkId();
@@ -790,6 +798,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             } else {
                 messageListPresenter.clearEmptyMessageLayout();
             }
+
         } else {
             messageListPresenter.insertMessageEmptyLayout();
         }
@@ -1421,7 +1430,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
 
-
         if (!isForeground) {
             return;
         }
@@ -1493,9 +1501,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     public void onEvent(DeleteFileEvent event) {
-
         messageListPresenter.changeToArchive(event.getId());
-
     }
 
     public void onEvent(FileCommentRefreshEvent event) {
@@ -1652,14 +1658,16 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
     }
 
+
     public void onEventMainThread(TopicKickedoutEvent event) {
         if (roomId == event.getRoomId()) {
             getActivity().finish();
-            String topicName = messageListModel.getTopicName(entityId);
+            CharSequence topicName = ((AppCompatActivity) getActivity()).getSupportActionBar().getTitle();
             String msg = JandiApplication.getContext().getString(R.string.jandi_kicked_message, topicName);
             messageListPresenter.showFailToast(msg);
         }
     }
+
 
     public void onEvent(TopicInfoUpdateEvent event) {
         if (event.getId() == entityId) {
@@ -1800,7 +1808,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Background
     public void onEvent(MessageStarredEvent event) {
-
         if (!isForeground) {
             return;
         }
@@ -1844,6 +1851,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         searchedItemVO.setName(event.getName());
         searchedItemVO.setType(event.getType());
         mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
+    }
+
+    public void onEvent(UnshareFileEvent event) {
+        messageListPresenter.justRefresh();
     }
 
     @Background

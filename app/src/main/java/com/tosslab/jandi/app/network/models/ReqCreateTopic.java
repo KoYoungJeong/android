@@ -7,4 +7,5 @@ public class ReqCreateTopic {
     public int teamId;
     public String name;
     public String description;
+    public boolean autoJoin;
 }

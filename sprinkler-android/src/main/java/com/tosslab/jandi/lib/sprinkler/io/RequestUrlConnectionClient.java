@@ -15,6 +15,7 @@ import retrofit.client.UrlConnectionClient;
 /**
  * Created by tonyjs on 15. 7. 28..
  */
+@Deprecated
 final class RequestUrlConnectionClient extends UrlConnectionClient {
 
     private static final int CONNECTION_TIMEOUT = 7 * 1000;

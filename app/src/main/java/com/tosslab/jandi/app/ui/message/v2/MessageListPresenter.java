@@ -159,6 +159,7 @@ public class MessageListPresenter {
     private boolean sendLayoutVisible;
     private boolean gotoLatestLayoutVisible;
     private OfflineLayer offlineLayer;
+    private View.OnTouchListener listTouchListener;
 
     @AfterInject
     void initObject() {
@@ -207,6 +208,7 @@ public class MessageListPresenter {
 
         lvMessages.addItemDecoration(stickyHeadersItemDecoration);
 
+        setListTouchListener(listTouchListener);
 //        setSendEditText(tempMessage);
 
         if (isDisabled) {
@@ -459,11 +461,10 @@ public class MessageListPresenter {
             item.feedback.createTime = new Date();
         }
 
-        if (position > 0 || commentIndexes.size() > 0) {
+        if (position >= 0 || commentIndexes.size() > 0) {
 
             messageListAdapter.notifyDataSetChanged();
         }
-
     }
 
     public void updateLinkPreviewMessage(ResMessages.TextMessage message) {
@@ -751,7 +752,7 @@ public class MessageListPresenter {
 
     @UiThread
     public void dismissEmptyView() {
-        layoutEmpty.setVisibility(View.GONE);
+        emptyMessageView.setVisibility(View.GONE);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -778,7 +779,9 @@ public class MessageListPresenter {
     }
 
     public void hideKeyboard() {
-        inputMethodManager.hideSoftInputFromWindow(etMessage.getWindowToken(), 0);
+        if (inputMethodManager.isAcceptingText()) {
+            inputMethodManager.hideSoftInputFromWindow(messageEditText.getWindowToken(), 0);
+        }
     }
 
     public void showKeyboard() {
@@ -853,6 +856,8 @@ public class MessageListPresenter {
             }
             ((LinearLayoutManager) lvMessages.getLayoutManager())
                     .scrollToPositionWithOffset(position + 1, measuredHeight);
+        } else if (position < 0) {
+            messageListView.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
         }
 
     }
@@ -877,12 +882,7 @@ public class MessageListPresenter {
 
             addDummyMessages(dummyMessages);
 
-            if (lastReadLinkId > 0 && isContainLinkId(linkList, lastReadLinkId)) {
-                // Marker 로 이동
-                moveToLink(lastReadLinkId);
-            } else {
-                moveLastPage();
-            }
+            moveLastPage();
 
             dismissLoadingView();
 
@@ -1080,6 +1080,16 @@ public class MessageListPresenter {
         messageListAdapter.addDummyMessage(dummyMessageLink);
         messageListAdapter.notifyDataSetChanged();
 
-        lvMessages.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
+        messageListView.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
+    }
+
+    public void setListTouchListener(View.OnTouchListener touchListener) {
+        if (messageListView != null) {
+            messageListView.setOnTouchListener(touchListener);
+        } else if (touchListener != null) {
+            this.listTouchListener = touchListener;
+        }
     }
 }
+
+

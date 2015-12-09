@@ -31,9 +31,7 @@ public class FileMessageDaoImpl extends BaseDaoImpl<ResMessages.FileMessage, Int
 
     private void upsertMessage(ConnectionSource connectionSource, ResMessages.FileMessage fileMessage) throws SQLException {
         Dao<ResMessages.OriginalMessage.IntegerWrapper, ?> dao = DaoManager.createDao
-                (connectionSource, ResMessages
-                        .OriginalMessage
-                        .IntegerWrapper.class);
+                (connectionSource, ResMessages.OriginalMessage.IntegerWrapper.class);
         DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
         deleteBuilder.where().eq("fileOf_id", fileMessage.id);
         deleteBuilder.delete();
@@ -47,6 +45,7 @@ public class FileMessageDaoImpl extends BaseDaoImpl<ResMessages.FileMessage, Int
 
         DaoManager.createDao(connectionSource, ResMessages.FileContent.class)
                 .createOrUpdate(fileMessage.content);
+
         DaoManager.createDao(connectionSource, ResMessages.ThumbnailUrls.class)
                 .createOrUpdate(fileMessage.content.extraInfo);
     }
