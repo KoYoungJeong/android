@@ -32,7 +32,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Steve SeongUg Jung on 15. 1. 21..
  */
-public class  FileViewHolder implements BodyViewHolder {
+public class FileViewHolder implements BodyViewHolder {
 
     private ImageView ivProfile;
     private TextView tvName;

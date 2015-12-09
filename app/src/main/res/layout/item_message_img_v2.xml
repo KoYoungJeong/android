@@ -97,6 +97,7 @@
 
             <android.support.v7.widget.CardView
                 android:id="@+id/vg_message_photo_wrapper"
+                android:background="@color/jandi_messages_image_background"
                 app:cardCornerRadius="2dp"
                 app:cardUseCompatPadding="true"
                 app:cardPreventCornerOverlap="false"

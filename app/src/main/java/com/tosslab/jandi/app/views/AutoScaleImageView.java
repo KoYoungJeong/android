@@ -92,9 +92,12 @@ public class AutoScaleImageView extends ImageView {
         setScaleType(ScaleType.FIT_XY);
 
         LogUtil.e(TAG, imageSpec.toString());
+
+        DefaultImageViewTarget target = new DefaultImageViewTarget(this);
         switch (imageSpec.getType()) {
             case SMALL:
                 requestBuilder.fitCenter();
+                target.setNeedRoundedCorner(false);
                 break;
             case LONG_HORIZONTAL:
                 requestBuilder.centerCrop();
@@ -123,7 +126,7 @@ public class AutoScaleImageView extends ImageView {
         }
 
         requestBuilder.placeholder(R.drawable.image_preview_download);
-        BaseTarget requestTarget = requestBuilder.into(new DefaultImageViewTarget(this));
+        BaseTarget requestTarget = requestBuilder.into(target);
 
         imageSpec.setRequest(requestTarget.getRequest());
     }
@@ -296,6 +299,10 @@ public class AutoScaleImageView extends ImageView {
 
         public DefaultImageViewTarget(ImageView view, boolean needRoundedCorner) {
             super(view);
+            this.needRoundedCorner = needRoundedCorner;
+        }
+
+        public void setNeedRoundedCorner(boolean needRoundedCorner) {
             this.needRoundedCorner = needRoundedCorner;
         }
 
