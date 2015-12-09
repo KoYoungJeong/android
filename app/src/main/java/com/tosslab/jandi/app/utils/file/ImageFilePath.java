@@ -18,20 +18,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-//import android.provider.DocumentsContract;
-
 public class ImageFilePath {
     private static final String TEMP_PHOTO_FILE = "temp.jpg";   // 임시 저장파일
 
     /**
-     * 파   경로   환
+     * 임시 저장 파일의 경로를 반환
      */
     public static Uri getTempUri(Context context) {
         return Uri.fromFile(getTempFile(context));
     }
 
     /**
-     * 파     하  그 파   경로   환
+     * 외장메모리에 임시 이미지 파일을 생성하여 그 파일의 경로를 반환
      */
     public static File getTempFile(Context context) {
         if (isSDCARDMOUNTED()) {
@@ -58,7 +56,7 @@ public class ImageFilePath {
     }
 
     /**
-     * SD 드가   트 되   는  확
+     * SD카드가 마운트 되어 있는지 확
      */
     private static boolean isSDCARDMOUNTED() {
         String status = Environment.getExternalStorageState();
