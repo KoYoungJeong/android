@@ -132,14 +132,17 @@ public class ImageFilePath {
             // Return the remote address
             if (isGoogleOldPhotosUri(uri)) {
                 return uri.getLastPathSegment();
-            } else if (isGoogleNewPhotosUri(uri)) {
-                String fileName = getGoogleFileInfo(context, uri);
-                return copyFileFromGoogleImage(context, uri, fileName);
             } else if (isPicasaPhotoUri(uri)) {
                 return copyFile(context, uri);
             }
-
-            return getDataColumn(context, uri, null, null);
+            String fileName = getGoogleFileInfo(context, uri);
+            if (!TextUtils.isEmpty(fileName)) {
+                // Standard FileProvide Resolver
+                // Ref : https://developer.android.com/intl/ko/training/secure-file-sharing/retrieve-info.html
+                return copyFileFromGoogleImage(context, uri, fileName);
+            } else {
+                return getDataColumn(context, uri, null, null);
+            }
         }
         // File
         else if ("file".equalsIgnoreCase(uri.getScheme())) {
@@ -158,8 +161,7 @@ public class ImageFilePath {
         try {
             cursor = context.getContentResolver().query(uri, projection, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                String displayName = cursor.getString(0);
-                return displayName;
+                return cursor.getString(0);
             }
 
         } catch (Exception e) {
@@ -336,17 +338,4 @@ public class ImageFilePath {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
-    public static boolean isGoogleNewPhotosUri(Uri uri) {
-        String authority = uri.getAuthority();
-        return !TextUtils.isEmpty(authority) && authority.startsWith("com.google.android.apps");
-//        return Observable.just(
-//                "com.google.android.apps.photos.contentprovider", // Google Photo
-//                "com.google.android.apps.docs.storage.legacy"   // Google Drive
-//        )
-//                .filter(s -> TextUtils.equals(authority, s))
-//                .map(s1 -> true)
-//                .firstOrDefault(false)
-//                .toBlocking()
-//                .first();
-    }
 }
