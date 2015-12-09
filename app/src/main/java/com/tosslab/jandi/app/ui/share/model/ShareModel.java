@@ -82,7 +82,9 @@ public class ShareModel {
                 = Ion
                 .with(context)
                 .load(requestURL)
-                .uploadProgressDialog(progressDialog)
+                .uploadProgressHandler((downloaded, total) -> {
+                    progressDialog.setProgress((int) (downloaded * 100 / total));
+                })
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
                 .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))

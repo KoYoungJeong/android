@@ -172,6 +172,8 @@ public class SharePresenter {
                         .getString(R.string.err_file_upload_failed));
             }
         } catch (ExecutionException e) {
+            LogUtil.e("ExecutionException : ", e);
+
             if (view != null) {
                 view.showFailToast(JandiApplication.getContext()
                         .getString(R.string.jandi_canceled));
@@ -180,6 +182,8 @@ public class SharePresenter {
             LogUtil.e("Upload Error : ", e);
             view.showFailToast(JandiApplication.getContext()
                     .getString(R.string.err_file_upload_failed));
+        } finally {
+            view.dismissDialog(uploadProgress);
         }
     }
 
@@ -311,6 +315,8 @@ public class SharePresenter {
         void setComment(String comment);
 
         void setMentionInfo(int teamId, int roomId, int roomType);
+
+        void dismissDialog(ProgressDialog uploadProgress);
     }
 
 }
