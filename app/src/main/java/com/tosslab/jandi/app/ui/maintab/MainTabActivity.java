@@ -563,7 +563,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
                 .show();
     }
 
-    public ResConfig getConfigInfo() throws RetrofitError {
+    public ResConfig getConfigInfo() {
         ResConfig resConfig = null;
         try {
             resConfig = RequestApiManager.getInstance().getConfigByMainRest();
