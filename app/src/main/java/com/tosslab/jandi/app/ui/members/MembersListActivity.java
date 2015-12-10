@@ -411,7 +411,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     }
 
-    private void showKickFromTopicDialog(ChatChooseItem item) {
+    void showKickFromTopicDialog(ChatChooseItem item) {
 
         KickDialogFragment dialogFragment = KickDialogFragment_.builder()
                 .profileUrl(item.getPhotoUrl())

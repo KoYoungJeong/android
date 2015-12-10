@@ -59,7 +59,7 @@ public class IntroLoginFragmentTest {
         onView(withId(R.id.btn_intro_action_signin_start))
                 .check(matches(not(isEnabled())));
 
-        rule.runOnUiThread(() -> fragment.checkValidEmail(new SpannableStringBuilder(BaseInitUtil.TEST_ID)));
+        rule.runOnUiThread(() -> fragment.checkValidEmail(new SpannableStringBuilder(BaseInitUtil.TEST_EMAIL)));
         onView(withId(R.id.btn_intro_action_signin_start))
                 .check(matches(isEnabled()));
     }

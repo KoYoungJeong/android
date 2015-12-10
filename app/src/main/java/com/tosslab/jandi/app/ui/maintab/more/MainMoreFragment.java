@@ -25,7 +25,7 @@ import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
-import com.tosslab.jandi.app.ui.profile.modify.ModifyProfileActivity_;
+import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
 import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
@@ -109,7 +109,7 @@ public class MainMoreFragment extends Fragment {
         Observable.just(1)
                 .delay(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(integer -> initTextLine());
+                .subscribe(integer -> initTextLine(), Throwable::printStackTrace);
     }
 
     private void initTextLine() {
@@ -129,9 +129,8 @@ public class MainMoreFragment extends Fragment {
             final int finalIdx = idx;
             Observable.range(0, maxTextLine - textLine)
                     .map(integer -> "\n")
-                    .subscribe(s -> {
-                        views[finalIdx].setIconText(views[finalIdx].getText() + s);
-                    });
+                    .subscribe(s -> views[finalIdx].setIconText(views[finalIdx].getText() + s),
+                            Throwable::printStackTrace);
         }
 
 

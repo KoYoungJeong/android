@@ -55,24 +55,6 @@ public class IntroActivityModelTest {
 
     }
 
-    @Ignore
-    @Test
-    public void testCheckNewVersion() throws Exception {
-
-        // When : Check app version to server
-        introActivityModel.checkNewVersion(RuntimeEnvironment.application);
-
-        await().until(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                return isCalled;
-            }
-        });
-
-        // Then : Success. if not called Fail
-
-    }
-
     @Test
     public void testRetrieveThisAppVersion() throws Exception {
 

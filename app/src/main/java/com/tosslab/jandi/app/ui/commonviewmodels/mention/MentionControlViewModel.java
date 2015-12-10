@@ -45,10 +45,13 @@ public class MentionControlViewModel {
     protected String currentSearchKeywordString;
     private KeyboardHeightModel keyboardHeightModel;
     private SearchMemberModel searchMemberModel;
+
     //message or file view type
     private String mentionType = MENTION_TYPE_MESSAGE;
+
     //for textControl
     private int beforeTextCnt = 0;
+
     private int afterTextCnt = 0;
     private String beforeText = "";
     private String afterText = "";
@@ -59,6 +62,7 @@ public class MentionControlViewModel {
     private AutoCompleteTextView etMessage;
     private MentionMemberListAdapter mentionMemberListAdapter;
     private OnMentionShowingListener onMentionShowingListener;
+
     private MentionControlViewModel(Activity activity,
                                     EditText editText,
                                     int teamId,

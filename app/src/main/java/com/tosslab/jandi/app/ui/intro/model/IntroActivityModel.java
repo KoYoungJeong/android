@@ -24,7 +24,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -41,28 +41,8 @@ import retrofit.RetrofitError;
 @EBean
 public class IntroActivityModel {
 
-    /**
-     * Check new app version
-     */
-    public boolean checkNewVersion(Context context) {
-        // 예외가 발생할 경우에도 그저 업데이트 안내만 무시한다.
-        boolean isLatestVersion = true;
-        try {
-            // get current app version
-            int thisVersion = getInstalledAppVersion(context);
-            // get stored app version at server
-            int latestVersion = getLatestVersionInBackground();
-            if (thisVersion < latestVersion) {
-                isLatestVersion = false;
-                LogUtil.i("A new version of JANDI is available.");
-            }
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            return isLatestVersion;
-        }
+    public boolean isNetworkConnected() {
+        return NetworkCheckUtil.isConnected();
     }
 
     public int getInstalledAppVersion(Context context) {
@@ -75,11 +55,6 @@ public class IntroActivityModel {
             // should never happen
             return 0;
         }
-    }
-
-    int getLatestVersionInBackground() throws RetrofitError {
-        ResConfig resConfig = getConfigInfo();
-        return resConfig.versions.android;
     }
 
     public boolean isNeedLogin() {
@@ -199,6 +174,11 @@ public class IntroActivityModel {
 
     public boolean hasLeftSideMenu() {
         return LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu() != null;
+    }
+
+    public boolean hasSelectedTeam() {
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
+        return selectedTeamInfo != null;
     }
 
     public int clearLinkRepository() {

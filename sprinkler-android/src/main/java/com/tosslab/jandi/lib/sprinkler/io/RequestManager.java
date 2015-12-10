@@ -34,7 +34,7 @@ final class RequestManager {
     private RequestManager() {
         RequestConfig config = getRequestConfig();
         restAdapter = new RestAdapter.Builder()
-                .setClient(new RequestUrlConnectionClient())
+                .setClient(new OkConnectionClient())
                 .setEndpoint(config.getEndPoint())
                 .setLogLevel(config.getLogLevel())
                 .build();
@@ -110,7 +110,7 @@ final class RequestManager {
 
         @Override
         public String getEndPoint() {
-            return "http://112.219.215.148:50080";
+            return "https://dev-tracker.sprinklr.io:50079";
         }
 
         @Override

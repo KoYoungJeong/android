@@ -1,8 +1,13 @@
 package setup;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.text.TextUtils;
+
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.DaoManager;
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.AnnouncementRepository;
@@ -17,49 +22,50 @@ import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
+import com.tosslab.jandi.app.network.models.ReqCreateTopic;
+import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
+import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
+import org.mockito.Mockito;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit.RetrofitError;
+
+
+// email : androidtester1@gustr.com / androidtester2@gustr.com / androidtester3@gustr.com
 public class BaseInitUtil {
-    public static final String TEST_ID = "steve@tosslab.com";
-    public static final String TEST_PASSWORD = "dnrl~12AB";
+
+    public static final int STATE_TEMP_TOPIC_NOT_CREATED = 0;
+    public static final int STATE_TEMP_TOPIC_CREATED = 1;
+
+
+    public static int tempTopicId = -1;
+    public static int topicState = STATE_TEMP_TOPIC_NOT_CREATED;
+
+    public static String TEST_EMAIL = "androidtester1@gustr.com";
+    public static String TEST_PASSWORD = "asdf1234";
+
+    public static String TEST1_EMAIL = "androidtester1@gustr.com";
+    public static String TEST2_EMAIL = "androidtester2@gustr.com";
+    public static String TEST3_EMAIL = "androidtester3@gustr.com";
+    private static Context ORIGIN_CONTEXT;
 
     public static void initData() {
-
-        clear();
-
-        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
-                .clearAllData();
-        JandiPreference.signOut(JandiApplication.getContext());
-
-        ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
-                ReqAccessToken.createPasswordReqToken(TEST_ID, TEST_PASSWORD));
-
-        TokenUtil.saveTokenInfoByPassword(accessToken);
-
-        ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-        int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
-        AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
-        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
-
-        initEntity();
+        userSignin();
     }
 
     public static void clear() {
         OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class).clearAllData();
         JandiPreference.signOut(JandiApplication.getContext());
-    }
-
-
-    public static void initEntity() {
-        int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-        ResLeftSideMenu sideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
-        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(sideMenu);
-
-
     }
 
     public static void releaseDatabase() {
@@ -78,6 +84,132 @@ public class BaseInitUtil {
         for (int idx = 0; idx < 10; ++idx) {
             OpenHelperManager.releaseHelper();
         }
+    }
 
+
+    public static int getUserIdByEmail(String email) {
+        ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
+                ReqAccessToken.createPasswordReqToken(email, "1234asdf"));
+        TokenUtil.saveTokenInfoByPassword(accessToken);
+        ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+        int result = accountInfo.getMemberships().iterator().next().getMemberId();
+        accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
+                ReqAccessToken.createPasswordReqToken("androidtester1@gustr.com", "1234asdf"));
+        TokenUtil.saveTokenInfoByPassword(accessToken);
+        return result;
+    }
+
+    public static String getUserNameByEmail(String email) {
+        ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
+                ReqAccessToken.createPasswordReqToken(email, "1234asdf"));
+        TokenUtil.saveTokenInfoByPassword(accessToken);
+        ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+        String result = accountInfo.getMemberships().iterator().next().getName();
+        accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
+                ReqAccessToken.createPasswordReqToken("androidtester1@gustr.com", "1234asdf"));
+        TokenUtil.saveTokenInfoByPassword(accessToken);
+        return result;
+    }
+
+    public static void userSignin(String testId) {
+
+        clear();
+        if (TextUtils.isEmpty(testId)) {
+            testId = "androidtester1@gustr.com";
+        }
+
+        String testPasswd = "1234asdf";
+
+        clear();
+
+        ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
+                ReqAccessToken.createPasswordReqToken(testId, testPasswd));
+
+        TokenUtil.saveTokenInfoByPassword(accessToken);
+
+        ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+        int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
+        AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
+
+        ResLeftSideMenu leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(AccountRepository.getRepository().getSelectedTeamId());
+        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+
+    }
+
+    public static void userSignin() {
+        userSignin("");
+    }
+
+    public static void createDummyTopic() {
+        if (topicState == STATE_TEMP_TOPIC_NOT_CREATED) {
+            userSignin();
+            ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+            int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
+            ReqCreateTopic topic = new ReqCreateTopic();
+            topic.teamId = teamId;
+            topic.name = "테스트 토픽";
+            topic.description = "테스트 토픽 입니다.";
+            ResCommon resCommon = null;
+            try {
+                resCommon = RequestApiManager.getInstance().createChannelByChannelApi(topic);
+            } catch (RetrofitError e) {
+                e.printStackTrace();
+            }
+            tempTopicId = resCommon.id;
+            topicState = STATE_TEMP_TOPIC_CREATED;
+        }
+        refreshLeftSideMenu();
+    }
+
+    public static void inviteDummyMembers() {
+        ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+        int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
+        int tester2Id = getUserIdByEmail(TEST2_EMAIL);
+        int tester3Id = getUserIdByEmail(TEST3_EMAIL);
+        List<Integer> members = new ArrayList<>();
+        members.add(tester2Id);
+        members.add(tester3Id);
+        ReqInviteTopicUsers reqInviteTopicUsers = new ReqInviteTopicUsers(members, teamId);
+        RequestApiManager.getInstance().invitePublicTopicByChannelApi(tempTopicId, reqInviteTopicUsers);
+        refreshLeftSideMenu();
+
+    }
+
+    public static void deleteDummyTopic() {
+        ResAccountInfo accountInfo = null;
+        try {
+            accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
+        int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
+        if (topicState == STATE_TEMP_TOPIC_CREATED) {
+            RequestApiManager.getInstance().deleteTopicByChannelApi(tempTopicId, new ReqDeleteTopic(teamId));
+            topicState = STATE_TEMP_TOPIC_NOT_CREATED;
+        }
+        refreshLeftSideMenu();
+    }
+
+    public static void refreshLeftSideMenu() {
+        ResLeftSideMenu leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(AccountRepository.getRepository().getSelectedTeamId());
+        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+        EntityManager.getInstance().refreshEntity();
+    }
+
+    public static void disconnectWifi() {
+        ORIGIN_CONTEXT = JandiApplication.getContext();
+        LogUtil.d("disconnectWifi : " + ORIGIN_CONTEXT.toString());
+        JandiApplication mock = Mockito.mock(JandiApplication.class);
+        JandiApplication.setContext(mock);
+        ConnectivityManager mockConnectManager = Mockito.mock(ConnectivityManager.class);
+        Mockito.when(mock.getSystemService(Context.CONNECTIVITY_SERVICE)).thenReturn(mockConnectManager);
+        Mockito.when(mockConnectManager.getActiveNetworkInfo()).thenReturn(null);
+    }
+
+
+    public static void restoreContext() {
+        LogUtil.d("restoreContext : " + ORIGIN_CONTEXT.toString());
+        JandiApplication.setContext(ORIGIN_CONTEXT);
     }
 }

@@ -78,6 +78,10 @@ public class SettingsFragment extends PreferenceFragment {
                 ("setting_orientation"));
         String value = settingOrientation.getValue();
 
+        if (TextUtils.isEmpty(value)) {
+            settingOrientation.setValue("0");
+        }
+
         settingOrientation.setSummary(SettingsModel.getOrientationSummary(value));
 
         settingOrientation.setOnPreferenceChangeListener((preference, newValue) -> {

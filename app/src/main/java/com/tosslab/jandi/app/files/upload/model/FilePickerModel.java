@@ -205,7 +205,7 @@ public class FilePickerModel {
                                  String comment, List<MentionObject> mentions,
                                  ProgressCallback progressCallback) throws ExecutionException, InterruptedException {
         File uploadFile = new File(realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/file";
+        String requestURL = JandiConstantsForFlavors.SERVICE_FILE_UPLOAD_URL + "inner-api/file";
         String permissionCode = (isPublicTopic) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion

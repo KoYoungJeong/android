@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.BitmapUtil;
@@ -22,6 +23,9 @@ import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 import de.greenrobot.event.EventBus;
 
@@ -72,6 +76,10 @@ public class FileViewHolder implements BodyViewHolder {
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entity = entityManager.getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
+
+        FormattedEntity room = entityManager.getEntityById(roomId);
+
+        boolean isPublicTopic = room.isPublicTopic();
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
@@ -133,15 +141,49 @@ public class FileViewHolder implements BodyViewHolder {
                 tvUploader.setText(builder);
             } else {
                 tvUploader.setVisibility(View.GONE);
+            }
 
+            boolean isSharedFile = false;
+
+            Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities = ((ResMessages.FileMessage) link.message).shareEntities;
+
+            // ArrayList로 나오는 경우 아직 DB에 기록되지 않은 경우 - object가 자동갱신되지 않는 문제 해결
+            if (shareEntities instanceof ArrayList) {
+                ResMessages.FileMessage file = MessageRepository.getRepository().getFileMessage(link.message.id);
+                shareEntities = file.shareEntities;
+            }
+
+            for (ResMessages.OriginalMessage.IntegerWrapper e : shareEntities) {
+                if (e.getShareEntity() == roomId) {
+                    isSharedFile = true;
+                }
             }
 
             int fileNameTextSizePX;
             if (TextUtils.equals(link.message.status, "archived")) {
+
                 tvFileName.setText(R.string.jandi_deleted_file);
                 fileNameTextSizePX = tvFileName.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_medium);
                 ivFileImage.setImageResource(R.drawable.jandi_fl_icon_deleted);
                 tvFileType.setVisibility(View.GONE);
+                tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
+                        .jandi_text_light));
+
+            } else if (!isSharedFile) {
+                fileNameTextSizePX = tvFileName.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_medium);
+                tvFileName.setText(fileMessage.content.title);
+
+                if (isPublicTopic) {
+                    int mimeTypeIconImage =
+                            MimeTypeUtil.getMimeTypeIconImage(
+                                    fileMessage.content.serverUrl, fileMessage.content.icon);
+                    ivFileImage.setImageResource(mimeTypeIconImage);
+                } else {
+                    ivFileImage.setImageResource(R.drawable.file_icon_unshared_141);
+                }
+
+                ivFileImage.setClickable(false);
+                tvFileType.setText(R.string.jandi_unshared_file);
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
                         .jandi_text_light));
             } else {
@@ -161,7 +203,6 @@ public class FileViewHolder implements BodyViewHolder {
                         tvFileType.setText(fileMessage.content.ext);
                         break;
                 }
-
                 int mimeTypeIconImage =
                         MimeTypeUtil.getMimeTypeIconImage(
                                 fileMessage.content.serverUrl, fileMessage.content.icon);

@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.account.presenter;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
@@ -19,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import setup.BaseInitUtil;
+import setup.MockUtil;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -67,11 +67,7 @@ public class AccountHomePresenterImplTest {
 
         // Given
         Context tempContext = JandiApplication.getContext();
-        JandiApplication.setContext(Mockito.mock(Context.class));
-        ConnectivityManager connectivityManager = Mockito.mock(ConnectivityManager.class, Mockito.RETURNS_DEEP_STUBS);
-        Mockito.doReturn(null).when(connectivityManager).getActiveNetworkInfo();
-        Mockito.doReturn(connectivityManager).when(JandiApplication.getContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
-
+        MockUtil.networkOff();
         // When
         accountHomePresenter.initViews();
 

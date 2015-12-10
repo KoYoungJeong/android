@@ -103,7 +103,7 @@
         <activity android:name=".ui.settings.privacy.SettingPrivacyActivity_" />
 
         <activity
-            android:name=".ui.profile.modify.ModifyProfileActivity_"
+            android:name=".ui.profile.modify.view.ModifyProfileActivity_"
             android:label="@string/jandi_profile_actionb" />
 
         <activity

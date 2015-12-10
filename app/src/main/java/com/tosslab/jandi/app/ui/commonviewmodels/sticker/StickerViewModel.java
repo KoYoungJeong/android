@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -32,6 +33,7 @@ import org.androidannotations.annotations.UiThread;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -139,11 +141,16 @@ public class StickerViewModel {
             case STICKER_GROUP_RECENT:
                 stickers = stickerRepository.getRecentStickers();
                 break;
+            case STICKER_GROUP_DAY:
+                Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
+                if (!Locale.TAIWAN.equals(locale)) {
+                    stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_DAY);
+                } else {
+                    stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_DAY_ZH_TW);
+                }
+                break;
             case STICKER_GROUP_MOZZI:
                 stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_MOZZI);
-                break;
-            case STICKER_GROUP_DAY:
-                stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_DAY);
                 break;
             default:
                 stickers = new ArrayList<>();
@@ -163,25 +170,28 @@ public class StickerViewModel {
             viewPagerIndicator.setVisibility(View.VISIBLE);
         }
 
-        StickerViewPagerAdapter adapter = new StickerViewPagerAdapter(context, stickers, (groupId, stickerId) -> {
-            if (onStickerClick != null) {
-                onStickerClick.onStickerClick(groupId, stickerId);
-            }
+        StickerViewPagerAdapter adapter = new StickerViewPagerAdapter(context, stickers, new OnStickerClick() {
+            @Override
+            public void onStickerClick(int groupId, String stickerId) {
+                if (onStickerClick != null) {
+                    onStickerClick.onStickerClick(groupId, stickerId);
+                }
 
-            if (lastClickedStickerInfo != null) {
-                if (isSameSticker(groupId, stickerId)
-                        && isDoubleTap(lastClickedTime)
-                        && onStickerDoubleTapListener != null) {
-                    onStickerDoubleTapListener.onStickerDoubleTap(groupId, stickerId);
-                    lastClickedStickerInfo = null;
+                if (lastClickedStickerInfo != null) {
+                    if (isSameSticker(groupId, stickerId)
+                            && isDoubleTap(lastClickedTime)
+                            && onStickerDoubleTapListener != null) {
+                        onStickerDoubleTapListener.onStickerDoubleTap(groupId, stickerId);
+                        lastClickedStickerInfo = null;
+                    } else {
+                        lastClickedStickerInfo = Pair.create(groupId, stickerId);
+                    }
                 } else {
                     lastClickedStickerInfo = Pair.create(groupId, stickerId);
                 }
-            } else {
-                lastClickedStickerInfo = Pair.create(groupId, stickerId);
-            }
 
-            lastClickedTime = System.currentTimeMillis();
+                lastClickedTime = System.currentTimeMillis();
+            }
         });
         vgStickerItems.setAdapter(adapter);
         viewPagerIndicator.setCurrentPosition(0);
@@ -238,6 +248,7 @@ public class StickerViewModel {
             default:
             case TYPE_TOPIC:
                 return AnalyticsValue.Screen.TopicChat;
+
         }
     }
 
@@ -319,6 +330,7 @@ public class StickerViewModel {
         if (onStickerLayoutShowListener != null) {
             onStickerLayoutShowListener.onStickerLayoutShow(false);
         }
+
     }
 
     public void setOnStickerClick(OnStickerClick onStickerClick) {
@@ -374,6 +386,7 @@ public class StickerViewModel {
         }
     }
 
+
     public interface OnStickerClick {
         void onStickerClick(int groupId, String stickerId);
     }
@@ -385,5 +398,4 @@ public class StickerViewModel {
     public interface OnStickerLayoutShowListener {
         void onStickerLayoutShow(boolean isShow);
     }
-
 }

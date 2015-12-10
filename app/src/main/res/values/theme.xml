@@ -14,6 +14,7 @@
 
         <item name="alertDialogTheme">@style/JandiTheme.AlertDialog</item>
         <item name="dialogTheme">@style/JandiTheme.AlertDialog</item>
+        <item name="colorSwitchThumbNormal">@color/jandi_switch_thumb_normal</item>
 
         <item name="toolbarStyle">@style/Jandi.Default.ActionBar</item>
         <item name="actionBarStyle">@style/Jandi.Default.ActionBar</item>

@@ -34,9 +34,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import retrofit.RetrofitError;
@@ -105,25 +103,15 @@ public class FileDetailModel {
             return Collections.emptyList();
         }
 
-        Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities = fileMessage.shareEntities;
-
+        // 모든 대상이 공유 대상이 되도록 함
         EntityManager entityManager = EntityManager.getInstance();
-
-        List<Integer> list = new ArrayList<>();
-
-        Iterator<ResMessages.OriginalMessage.IntegerWrapper> iterator = shareEntities.iterator();
-
-        while (iterator.hasNext()) {
-            int shareEntity = iterator.next().getShareEntity();
-            list.add(shareEntity);
-        }
-
-        List<FormattedEntity> entities = entityManager.retrieveExclusivedEntities(list);
+        List<FormattedEntity> entities = entityManager.retrieveAccessableEntities();
 
         List<FormattedEntity> formattedEntities = new ArrayList<>();
 
         Observable.from(entities)
                 .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
+                .filter(formattedEntity -> formattedEntity.getId() != entityManager.getMe().getId())
                 .toSortedList((formattedEntity, formattedEntity2) -> {
                     if (formattedEntity.isUser() && formattedEntity2.isUser()) {
                         return formattedEntity.getName()
@@ -286,7 +274,10 @@ public class FileDetailModel {
     public void saveFileDetailInfo(ResFileDetail resFileDetail) {
         ResMessages.FileMessage fileMessage = extractFileMssage(resFileDetail.messageDetails);
 
-        MessageRepository.getRepository().upsertFileMessage(fileMessage);
+        if (TextUtils.equals(fileMessage.status, "archived")) {
+            // 삭제 상태만 갱신하도록 수정
+            MessageRepository.getRepository().updateStatus(fileMessage.id, fileMessage.status);
+        }
 
         Observable.from(resFileDetail.messageDetails)
                 .filter(originalMessage -> !(originalMessage instanceof ResMessages.FileMessage))

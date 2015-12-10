@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.maintab.topic.views.create.model;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -19,7 +18,6 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
 import retrofit.RetrofitError;
 
@@ -32,14 +30,11 @@ public class TopicCreateModel {
     @Bean
     EntityClientManager entityClientManager;
 
-    @RootContext
-    Context context;
-
-    public ResCommon createTopic(String entityName, boolean publicSelected, String topicDescription) throws RetrofitError {
+    public ResCommon createTopic(String entityName, boolean publicSelected, String topicDescription, boolean isAutojoin) throws RetrofitError {
         if (publicSelected) {
-            return entityClientManager.createPublicTopic(entityName, topicDescription);
+            return entityClientManager.createPublicTopic(entityName, topicDescription, isAutojoin);
         } else {
-            return entityClientManager.createPrivateGroup(entityName, topicDescription);
+            return entityClientManager.createPrivateGroup(entityName, topicDescription, isAutojoin);
         }
 
     }
@@ -51,6 +46,7 @@ public class TopicCreateModel {
         BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
         badgeCountRepository.upsertBadgeCount(EntityManager.getInstance().getTeamId(), totalUnreadCount);
         BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
+        EntityManager.getInstance().refreshEntity();
     }
 
     public boolean invalideTitle(String topicTitle) {

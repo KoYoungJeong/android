@@ -30,6 +30,8 @@ public interface TopicDetailPresenter {
 
     void updateTopicPushSubscribe(Context context, int teamId, int entityId, boolean pushOn);
 
+    void onAutoJoin(int entityId, boolean autoJoin);
+
     interface View {
 
         void leaveTopic();
@@ -59,5 +61,7 @@ public interface TopicDetailPresenter {
         void moveTopicDescriptionEdit();
 
         void setLeaveVisible(boolean owner, boolean defaultTopic);
+
+        void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic);
     }
 }

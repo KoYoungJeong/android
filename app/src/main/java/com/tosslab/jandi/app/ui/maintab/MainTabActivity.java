@@ -118,7 +118,6 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     @AfterViews
     void initView() {
-
         showDialogIfNotLastestVersion();
         ParseUpdateUtil.addChannelOnServer();
 
