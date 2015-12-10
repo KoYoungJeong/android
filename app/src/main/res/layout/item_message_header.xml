@@ -7,10 +7,10 @@
     android:paddingLeft="8dp"
     android:paddingRight="8dp">
 
+        <!--android:background="@color/white"-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:background="@color/white"
         android:foreground="?android:attr/selectableItemBackground"
         android:gravity="center"
         android:orientation="vertical"
