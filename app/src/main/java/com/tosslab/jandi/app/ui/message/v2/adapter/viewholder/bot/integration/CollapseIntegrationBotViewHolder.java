@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.markdown.MarkdownLookup;
+import com.tosslab.jandi.app.markdown.MarkdownLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.util.IntegrationBotUtil;
@@ -53,7 +53,7 @@ public class CollapseIntegrationBotViewHolder implements BodyViewHolder {
         ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
         String message = textMessage.content.body;
 
-        SpannableStringBuilder builder = MarkdownLookup.text(message).lookUp(tvMessage.getContext());
+        SpannableStringBuilder builder = MarkdownLookUp.text(message).lookUp(tvMessage.getContext());
         Context context = tvMessage.getContext();
 
         boolean hasLink = LinkifyUtil.addLinks(context, builder);

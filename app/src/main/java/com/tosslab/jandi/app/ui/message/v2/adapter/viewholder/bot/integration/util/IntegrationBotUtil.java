@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.markdown.MarkdownLookup;
+import com.tosslab.jandi.app.markdown.MarkdownLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -71,13 +71,13 @@ public class IntegrationBotUtil {
                 info = iterator.next();
                 if (!TextUtils.isEmpty(info.title)) {
                     titleVisible = View.VISIBLE;
-                    title.append(MarkdownLookup.text(info.title).lookUp(vgConnectInfo.getContext()));
+                    title.append(MarkdownLookUp.text(info.title).lookUp(vgConnectInfo.getContext()));
                 } else {
                     titleVisible = View.GONE;
                 }
 
                 if (!TextUtils.isEmpty(info.description)) {
-                    description.append(MarkdownLookup.text(info.description).lookUp(vgConnectInfo.getContext()));
+                    description.append(MarkdownLookUp.text(info.description).lookUp(vgConnectInfo.getContext()));
                     descriptionVisible = View.VISIBLE;
                 } else {
                     descriptionVisible = View.GONE;

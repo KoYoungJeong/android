@@ -9,11 +9,11 @@ import com.tosslab.jandi.app.markdown.rule.MarkdownRule;
 
 import rx.Observable;
 
-public class MarkdownLookup {
+public class MarkdownLookUp {
 
     private String text;
 
-    private MarkdownLookup(String text) {
+    private MarkdownLookUp(String text) {
         if (!TextUtils.isEmpty(text)) {
             this.text = text;
         } else {
@@ -21,8 +21,8 @@ public class MarkdownLookup {
         }
     }
 
-    public static MarkdownLookup text(String text) {
-        return new MarkdownLookup(text);
+    public static MarkdownLookUp text(String text) {
+        return new MarkdownLookUp(text);
     }
 
     public SpannableStringBuilder lookUp(Context context) {

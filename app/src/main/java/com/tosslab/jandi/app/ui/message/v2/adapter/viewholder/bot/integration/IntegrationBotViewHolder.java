@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.markdown.MarkdownLookup;
+import com.tosslab.jandi.app.markdown.MarkdownLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.util.IntegrationBotUtil;
@@ -75,7 +75,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
-        SpannableStringBuilder messageStringBuilder = MarkdownLookup
+        SpannableStringBuilder messageStringBuilder = MarkdownLookUp
                 .text(textMessage.content.body)
                 .lookUp(tvMessage.getContext());
 
