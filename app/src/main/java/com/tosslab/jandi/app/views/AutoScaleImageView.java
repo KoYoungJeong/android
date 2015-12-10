@@ -27,14 +27,16 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 public class AutoScaleImageView extends ImageView {
     public static final String TAG = AutoScaleImageView.class.getSimpleName();
 
-    public static final int MAX_WIDTH_WHEN_VERTICAL_IMAGE = 160;
-    public static final int MAX_HEIGHT_WHEN_VERTICAL_IMAGE = 284;
+    private static final int MAX_WIDTH_WHEN_VERTICAL_IMAGE = 160;
+    private static final int MAX_HEIGHT_WHEN_VERTICAL_IMAGE = 284;
 
-    public static final int MAX_WIDTH = 213;
-    public static final int MAX_HEIGHT = 120;
+    private static final int MAX_WIDTH = 213;
+    private static final int MAX_HEIGHT = 120;
 
-    public static final int MIN_SIZE = 46;
-    public static final int SMALL_SIZE = 90;
+    private static final int MIN_SIZE = 46;
+    private static final int SMALL_SIZE = 90;
+    private static final float LONG_HORIZONTAL_RATIO = 46 / 213f;
+    private static final float LONG_VERTICAL_RATIO = 284 / 46f;
 
     private ImageSpec imageSpec;
 
@@ -158,7 +160,7 @@ public class AutoScaleImageView extends ImageView {
             width = Math.min(width, getPixelFromDp(MAX_WIDTH));
 
             int minSize = getPixelFromDp(MIN_SIZE);
-            if (ratio <= (46 / 213f)) {
+            if (ratio <= LONG_HORIZONTAL_RATIO) {
                 ImageSpec.Type type = ImageSpec.Type.LONG_HORIZONTAL;
                 height = minSize;
                 return new ImageSpec(url, width, height, orientation, type);
@@ -171,7 +173,7 @@ public class AutoScaleImageView extends ImageView {
             height = Math.min(height, getPixelFromDp(MAX_HEIGHT_WHEN_VERTICAL_IMAGE));
 
             int minSize = getPixelFromDp(MIN_SIZE);
-            if (ratio > (284 / 46f)) {
+            if (ratio > LONG_VERTICAL_RATIO) {
                 ImageSpec.Type type = ImageSpec.Type.LONG_VERTICAL;
                 width = minSize;
                 return new ImageSpec(url, width, height, orientation, type);

@@ -88,7 +88,6 @@ public class ImageThumbLoader implements FileThumbLoader {
                     break;
                 default:
                     imageViewPhotoFile.setOnClickListener(view -> {
-                        String optimizedImageUrl = BitmapUtil.getOptimizedImageUrl(content);
 
                         if (roomId > 0) {
                             CarouselViewerActivity_.intent(context)
@@ -96,6 +95,7 @@ public class ImageThumbLoader implements FileThumbLoader {
                                     .startLinkId(fileMessage.id)
                                     .start();
                         } else {
+                            String optimizedImageUrl = BitmapUtil.getOptimizedImageUrl(content);
                             PhotoViewActivity_
                                     .intent(context)
                                     .imageUrl(optimizedImageUrl)

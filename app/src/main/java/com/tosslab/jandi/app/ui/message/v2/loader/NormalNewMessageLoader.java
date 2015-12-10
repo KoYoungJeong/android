@@ -100,26 +100,25 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
             if (newMessage == null || newMessage.isEmpty()) {
                 // 메세지가 없다면 종료시킴
                 messageListPresenter.showEmptyViewIfNeed();
+
+                if (firstLoad) {
+                    messageListPresenter.setUpLastReadLinkIdIfPosition();
+                    messageListPresenter.moveLastReadLink();
+                    messageListPresenter.justRefresh();
+                }
                 return;
             }
 
             List<ResMessages.Link> messages = newMessage;
-            if (messages != null && !messages.isEmpty()) {
-                saveToDatabase(roomId, messages);
+            saveToDatabase(roomId, messages);
 
-                Collections.sort(messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
-                int lastLinkId = newMessage.get(newMessage.size() - 1).id;
-                messageState.setLastUpdateLinkId(lastLinkId);
-                messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), lastLinkId);
-                updateMarker(roomId);
+            Collections.sort(messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
+            int lastLinkId = newMessage.get(newMessage.size() - 1).id;
+            messageState.setLastUpdateLinkId(lastLinkId);
+            messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), lastLinkId);
+            updateMarker(roomId);
 
-                messageListPresenter.setUpNewMessage(messages, messageListModel.getMyId(), linkId, moveToLinkId);
-            } else {
-                if (firstLoad && messageListPresenter.isLastOfLastReadPosition()) {
-                    messageListPresenter.setLastReadLinkId(-1);
-                    messageListPresenter.justRefresh();
-                }
-            }
+            messageListPresenter.setUpNewMessage(messages, messageListModel.getMyId(), linkId, moveToLinkId);
             firstLoad = false;
 
             messageListPresenter.showEmptyViewIfNeed();

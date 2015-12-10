@@ -282,36 +282,6 @@ public class BitmapUtil {
         return bitmap;
     }
 
-    public static Bitmap getRoundedCornerBitmap(BitmapPool pool, Bitmap bitmap, float radius) {
-        LogUtil.d("jsp", "getRoundedCornerBitmap1");
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        Bitmap output = pool.get(width, height, bitmap.getConfig() != null
-                ? bitmap.getConfig() : Bitmap.Config.ARGB_8888);
-        LogUtil.d("jsp", "getRoundedCornerBitmap2 - " + (output == null));
-
-        if (output == null) {
-            output = Bitmap.createBitmap(width, height, bitmap.getConfig() != null
-                    ? bitmap.getConfig() : Bitmap.Config.ARGB_8888);
-        }
-
-        Canvas canvas = new Canvas(output);
-
-        Paint paint = new Paint();
-        Rect rect = new Rect(0, 0, width, height);
-        RectF rectF = new RectF(rect);
-        paint.setFlags(Paint.DITHER_FLAG | Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.BLACK);
-        LogUtil.i("jsp", String.format("drawRoundRect(%f, %f, %f, %f, radius=%f",
-                rectF.top, rectF.right, rectF.bottom, rectF.left, radius));
-        canvas.drawRoundRect(rectF, radius, radius, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-        return output;
-    }
-
     public static String getFileUrl(String url) {
         if (TextUtils.isEmpty(url)) {
             return url;
