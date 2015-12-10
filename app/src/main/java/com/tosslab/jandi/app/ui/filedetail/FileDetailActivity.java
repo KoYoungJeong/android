@@ -179,6 +179,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     private MixpanelAnalytics mixpanelAnalytics;
     private Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities;
     private boolean isExternalShared;
+    private ResMessages.FileMessage fileMessage;
 
     @AfterViews
     public void initForm() {
@@ -380,16 +381,16 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             case R.id.action_file_detail_export:
                 Permissions.getChecker()
                         .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        .hasPermission(() -> onExportFile())
+                        .hasPermission(() -> onExportFile(fileMessage))
                         .noPermission(() -> {
                             requestPermission(REQ_STORAGE_PERMISSION_EXPORT, Manifest.permission.WRITE_EXTERNAL_STORAGE);
                         }).check();
                 break;
             case R.id.action_file_detail_enable_external_link:
-                fileDetailPresenter.onCopyExternLink(fileId, isExternalShared);
+                fileDetailPresenter.onCopyExternLink(fileMessage, isExternalShared);
                 break;
             case R.id.action_file_detail_disable_external_link:
-                fileDetailPresenter.onDisableExternLink(fileId);
+                fileDetailPresenter.onDisableExternLink(fileMessage);
                 break;
 
         }
@@ -397,13 +398,13 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         return super.onOptionsItemSelected(item);
     }
 
-    private void onExportFile() {
+    private void onExportFile(ResMessages.FileMessage fileMessage) {
         ProgressDialog progressDialog = new ProgressDialog(FileDetailActivity.this);
         progressDialog.setMax(100);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
-        fileDetailPresenter.onExportFile(fileId, progressDialog);
+        fileDetailPresenter.onExportFile(fileMessage, progressDialog);
     }
 
     @Override
@@ -467,7 +468,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void loadSuccess(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages,
                             boolean isSendAction, int selectMessageId) {
-
+        this.fileMessage = fileMessage;
         shareEntities = fileMessage.shareEntities;
 
         drawFileDetail(fileMessage, commentMessages, isSendAction);
@@ -940,7 +941,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void exportIntentFile(File result, String mimeType) {
         Intent target = new Intent(Intent.ACTION_SEND);
-        target.setDataAndType(Uri.parse(result.getAbsolutePath()), mimeType);
+        Uri parse = Uri.parse(result.getAbsolutePath());
+        target.setDataAndType(parse, mimeType);
+        Bundle extras = new Bundle();
+        extras.putParcelable(Intent.EXTRA_STREAM, Uri.fromFile(result));
+        target.putExtras(extras);
         try {
             Intent chooser = Intent.createChooser(target, getString(R.string.jandi_export_to_app));
             startActivity(chooser);
@@ -948,6 +953,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             e.printStackTrace();
             showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
         }
+    }
+
+    @Override
+    public void setFileMessage(ResMessages.FileMessage fileMessage) {
+        this.fileMessage = fileMessage;
     }
 
     public void showDeleteFileDialog(int fileId) {
@@ -1137,7 +1147,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::download)
                 .addRequestCode(REQ_STORAGE_PERMISSION_EXPORT)
-                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::onExportFile)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, () -> onExportFile(fileMessage))
                 .resultPermission(Permissions.createPermissionResult(requestCode,
                         permissions,
                         grantResults));
