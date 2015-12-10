@@ -23,6 +23,8 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 public class SnowView extends View {
     public static final String TAG = SnowView.class.getSimpleName();
 
+    public static final int BACKGROUND_COLOR = Color.parseColor("#e1e9ec");
+
     private Drawable[] snows;
 
     public SnowView(Context context) {
@@ -42,7 +44,7 @@ public class SnowView extends View {
 
     private void init() {
         setWillNotDraw(false);
-        setBackgroundColor(Color.parseColor("#e1e9ec"));
+        setBackgroundColor(BACKGROUND_COLOR);
     }
 
     @Override

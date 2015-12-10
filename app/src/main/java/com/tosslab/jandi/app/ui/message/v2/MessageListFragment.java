@@ -181,6 +181,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public static final String EXTRA_NEW_PHOTO_FILE = "new_photo_file";
     public static final int REQ_STORAGE_PERMISSION = 101;
     private static final StickerInfo NULL_STICKER = new StickerInfo();
+
     @FragmentArg
     int entityType;
     @FragmentArg
@@ -240,6 +241,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @AfterInject
     void initObject() {
+        SNOWING_EASTEREGG_STARTED = false;
+
         messageState = new MessageState();
 
         messagePublishSubject = PublishSubject.create();
@@ -1011,7 +1014,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     private void handleEasterEggSnowing(String message) {
-        if ("설쏴".equals(message)) {
+        if (TextUtils.isEmpty(message)) {
+            return;
+        }
+
+        if ("눈".equals(message)
+                || "雪".equals(message)
+                || "snow".equals(message.toLowerCase())) {
             if (vgEasterEggSnow.getChildCount() > 0) {
                 return;
             }
@@ -1021,8 +1030,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                     new FrameLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             vgEasterEggSnow.addView(snowView);
-        } else if ("설쏴지마".equals(message)) {
+
+            SNOWING_EASTEREGG_STARTED = true;
+        } else if ("눈셉션".equals(message)) {
             vgEasterEggSnow.removeAllViews();
+            SNOWING_EASTEREGG_STARTED = false;
         }
     }
 
@@ -1883,4 +1895,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         return false;
     }
+
+    // EASTER EGG SNOW
+    public static boolean SNOWING_EASTEREGG_STARTED = false;
 }
