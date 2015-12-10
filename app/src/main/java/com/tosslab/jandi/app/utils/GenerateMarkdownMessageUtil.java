@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.ui.commonviewmodels.markdown.vo.MarkdownVO;
-import com.tosslab.jandi.app.views.spannable.MarkdownSpannable;
 
 import java.util.ArrayList;
 import java.util.List;
