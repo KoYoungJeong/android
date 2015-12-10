@@ -60,10 +60,8 @@ public class ImageFilePath {
      */
     private static boolean isSDCARDMOUNTED() {
         String status = Environment.getExternalStorageState();
-        if (status.equals(Environment.MEDIA_MOUNTED))
-            return true;
+        return status.equals(Environment.MEDIA_MOUNTED);
 
-        return false;
     }
 
     /**
@@ -149,6 +147,7 @@ public class ImageFilePath {
 
         return null;
     }
+
 
     private static String getGoogleFileInfo(Context context, Uri uri) {
 
