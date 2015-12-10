@@ -217,15 +217,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Select);
         });
 
-        lvFileDetailComments.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    hideSoftKeyboard();
-                    stickerViewModel.dismissStickerSelector();
-                }
-                return false;
+        lvFileDetailComments.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                hideSoftKeyboard();
+                stickerViewModel.dismissStickerSelector(false);
             }
+            return false;
         });
 
         stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
@@ -315,7 +312,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @ItemClick(R.id.lv_file_detail_comments)
     void onCommentClick(ResMessages.OriginalMessage item) {
         hideSoftKeyboard();
-        stickerViewModel.dismissStickerSelector();
+        stickerViewModel.dismissStickerSelector(false);
     }
 
     @Click(R.id.iv_file_detail_preview_sticker_close)

@@ -121,7 +121,7 @@ public class StickerManager {
         return localStickerGroupIds.contains(groupId);
     }
 
-    String getStickerAssetPath(int groupId, String stickerId) {
+    public String getStickerAssetPath(int groupId, String stickerId) {
         List<ResMessages.StickerContent> stickers = StickerRepository.getRepository().getStickers(groupId);
         ResMessages.StickerContent defaultSticker = new ResMessages.StickerContent();
         ResMessages.StickerContent stickerItem = Observable.from(stickers)
@@ -167,7 +167,6 @@ public class StickerManager {
     }
 
 
-    
     public static class LoadOptions {
         public boolean isFadeAnimation = true;
         public boolean isClickImage;

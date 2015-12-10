@@ -412,6 +412,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         setEditTextTouchEvent();
     }
 
+    private void setUpListTouchListener() {
+        messageListPresenter.setListTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                messageListPresenter.hideKeyboard();
+                dismissStickerSelectorIfShow();
+                dismissUploadSelectorIfShow();
+            }
+            return false;
+        });
+    }
+
     private void setKeyboardBackpressCallback() {
         etMessage.setOnBackPressListener(() -> {
             if (keyboardHeightModel.isOpened()) {
@@ -535,7 +546,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.setOnItemClickListener((adapter, position) -> {
             try {
                 messageListPresenter.hideKeyboard();
-                stickerViewModel.dismissStickerSelector();
+                dismissStickerSelectorIfShow();
+                dismissUploadSelectorIfShow();
                 onMessageItemClick(messageListPresenter.getItem(position), entityId);
             } catch (Exception e) {
                 messageListPresenter.justRefresh();

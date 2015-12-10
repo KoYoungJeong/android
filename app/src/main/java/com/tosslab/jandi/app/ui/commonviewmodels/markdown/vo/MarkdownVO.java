@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.commonviewmodels.markdown;
+package com.tosslab.jandi.app.ui.commonviewmodels.markdown.vo;
 
 /**
  * Created by tee on 15. 12. 7..

@@ -8,8 +8,6 @@ import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.text.style.ReplacementSpan;
 
-import com.tosslab.jandi.app.ui.commonviewmodels.markdown.vo.MarkdownVO;
-
 /**
  * Created by tee on 15. 12. 7..
  */
@@ -17,15 +15,17 @@ public class MarkdownSpannable extends ReplacementSpan {
 
     private final String markdownString;
     private final float textSize;
-    private final MarkdownVO.TYPE type;
     private String drawText;
+
+    private boolean isItalic = false;
+    private boolean isBold = false;
+    private boolean isStrike = false;
 
     private int maxWidth = -1;
 
-    public MarkdownSpannable(String markdownString, float textSize, MarkdownVO.TYPE type) {
+    public MarkdownSpannable(String markdownString, float textSize) {
         this.markdownString = markdownString;
         this.textSize = textSize;
-        this.type = type;
         this.drawText = this.markdownString;
     }
 
@@ -64,34 +64,52 @@ public class MarkdownSpannable extends ReplacementSpan {
         canvas.save();
 
         paint.setTextSize(textSize);
-
         Rect textRect = getTextWidth(paint);
-
         paint.setColor(0xFFFFFFFF);
 
         Typeface typeface = null;
-        if (type.equals(MarkdownVO.TYPE.BOLD)) {
-            typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
-            paint.setTypeface(typeface);
-        } else if (type.equals(MarkdownVO.TYPE.ITALIC)) {
-            typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.ITALIC);
-            paint.setTypeface(typeface);
-        } else if (type.equals(MarkdownVO.TYPE.ITALICBOLD)) {
-            typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD_ITALIC);
-            paint.setTypeface(typeface);
-        } else if (type.equals(MarkdownVO.TYPE.STRIKE)) {
-            paint.setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-        }
 
         canvas.drawRect(x, top, x + textRect.width(), bottom, paint);
+
         paint.setColor(0xFF000000);
+
+        if (isBold && !isItalic) {
+            typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
+            paint.setTypeface(typeface);
+        }
+        if (isItalic && !isBold) {
+            typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.ITALIC);
+            paint.setTypeface(typeface);
+        }
+
+        if (isItalic && isBold) {
+            typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD_ITALIC);
+            paint.setTypeface(typeface);
+        }
 
         Path path = new Path();
         path.moveTo(x, y);
         path.lineTo(x + textRect.width(), y);
+
         canvas.drawTextOnPath(drawText, path, 0, 0, paint);
+
+        if (isStrike) {
+            canvas.drawLine(textRect.width() / 10, (textRect.height() - textRect.height() / 10),
+                    (textRect.width() - textRect.width() / 10), (textRect.height() - textRect.height() / 10), paint);
+        }
 
         canvas.restore();
     }
 
+    public void setIsItalic(boolean isItalic) {
+        this.isItalic = isItalic;
+    }
+
+    public void setIsBold(boolean isBold) {
+        this.isBold = isBold;
+    }
+
+    public void setIsStrike(boolean isStrike) {
+        this.isStrike = isStrike;
+    }
 }

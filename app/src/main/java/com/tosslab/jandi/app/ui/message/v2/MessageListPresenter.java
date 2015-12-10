@@ -752,7 +752,7 @@ public class MessageListPresenter {
 
     @UiThread
     public void dismissEmptyView() {
-        emptyMessageView.setVisibility(View.GONE);
+        layoutEmpty.setVisibility(View.GONE);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -780,7 +780,7 @@ public class MessageListPresenter {
 
     public void hideKeyboard() {
         if (inputMethodManager.isAcceptingText()) {
-            inputMethodManager.hideSoftInputFromWindow(messageEditText.getWindowToken(), 0);
+            inputMethodManager.hideSoftInputFromWindow(etMessage.getWindowToken(), 0);
         }
     }
 
@@ -857,7 +857,7 @@ public class MessageListPresenter {
             ((LinearLayoutManager) lvMessages.getLayoutManager())
                     .scrollToPositionWithOffset(position + 1, measuredHeight);
         } else if (position < 0) {
-            messageListView.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
+            lvMessages.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
         }
 
     }
@@ -1080,12 +1080,12 @@ public class MessageListPresenter {
         messageListAdapter.addDummyMessage(dummyMessageLink);
         messageListAdapter.notifyDataSetChanged();
 
-        messageListView.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
+        lvMessages.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
     }
 
     public void setListTouchListener(View.OnTouchListener touchListener) {
-        if (messageListView != null) {
-            messageListView.setOnTouchListener(touchListener);
+        if (lvMessages != null) {
+            lvMessages.setOnTouchListener(touchListener);
         } else if (touchListener != null) {
             this.listTouchListener = touchListener;
         }

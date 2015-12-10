@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.sticker;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

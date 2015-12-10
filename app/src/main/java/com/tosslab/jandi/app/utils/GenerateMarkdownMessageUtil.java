@@ -30,26 +30,8 @@ public class GenerateMarkdownMessageUtil {
         this.stringBuilder = stringBuilder;
     }
 
-    public SpannableStringBuilder generate() {
-        MarkdownSpannable spannable = null;
+    public void generate() {
 
-        List<MarkdownVO> markdowns = generateMarkdownModels(stringBuilder.toString());
-
-//        for (MarkdownVO markdown : markdowns) {
-//            do {
-//                spannable = new MarkdownSpannable(
-//                        markdown.getMarkdownString(), tvMessageView.getTextSize(), markdown.getType());
-//
-//                int dp = 260;
-//                float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-//                        dp, context.getResources().getDisplayMetrics());
-//                spannable.setViewMaxWidthSize((int) px);
-//                stringBuilder.setSpan(spannable, markdown.getStartIndex(),
-//                        markdown.getEndIndex(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            } while ((markdown = generateMarkdownModels(markdown.getMarkdownString()))***);
-
-        return stringBuilder;
-//        }
     }
 
     public List<MarkdownVO> generateMarkdownModels(String message) {
