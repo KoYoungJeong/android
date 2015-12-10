@@ -516,8 +516,8 @@ public class MainTabActivity extends BaseAppCompatActivity {
     private void showChooseUpdateWebsiteDialog(String appPackageName, ResConfig.Versions latestVersions) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainTabActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_280);
-        String[] storeNames = {"Play Store", "Baidu Android Store", "91 Apk", "HiApk"};
-        builder.setTitle("Move to Website")
+        String[] storeNames = getResources().getStringArray(R.array.jandi_markets);
+        builder.setTitle(R.string.jandi_choose_app_store)
                 .setItems(storeNames, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
