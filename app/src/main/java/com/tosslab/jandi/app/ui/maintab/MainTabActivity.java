@@ -483,9 +483,9 @@ public class MainTabActivity extends BaseAppCompatActivity {
             final long oneDayMillis = 1000 * 60 * 60 * 24;
             long timeFromLastPopup = System.currentTimeMillis() - JandiPreference.getVersionPopupLastTime();
             if (timeFromLastPopup > oneDayMillis) {
+                showUpdateVersionDialog(configInfo);
             }
         }
-        showUpdateVersionDialog(configInfo);
     }
 
     @UiThread
