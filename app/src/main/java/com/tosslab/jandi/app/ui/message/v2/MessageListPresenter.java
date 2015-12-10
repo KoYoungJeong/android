@@ -856,6 +856,10 @@ public class MessageListPresenter {
     public void moveLastReadLink() {
         int lastReadLinkId = messageListAdapter.getLastReadLinkId();
 
+        if (lastReadLinkId <= 0) {
+            return;
+        }
+
         int position = messageListAdapter.indexOfLinkId(lastReadLinkId);
 
         if (position > 0) {
@@ -1100,6 +1104,16 @@ public class MessageListPresenter {
             messageListView.setOnTouchListener(touchListener);
         } else if (touchListener != null) {
             this.listTouchListener = touchListener;
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void setUpLastReadLinkIdIfPosition() {
+        // 마커가 마지막아이템을 가르키고 있을때만 position = -1 처리
+        int lastReadLinkId = messageListAdapter.getLastReadLinkId();
+        int markerPosition = messageListAdapter.indexOfLinkId(lastReadLinkId);
+        if (markerPosition == messageListAdapter.getItemCount() - messageListAdapter.getDummyMessageCount() - 1) {
+            messageListAdapter.setLastReadLinkId(-1);
         }
     }
 }

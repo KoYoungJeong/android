@@ -58,7 +58,7 @@ public class ImageFilePath {
     }
 
     /**
-     * SD카드가 마운트 되어 있는지 확인
+     * SD카드가 마운트 되어 있는지 확
      */
     private static boolean isSDCARDMOUNTED() {
         String status = Environment.getExternalStorageState();
