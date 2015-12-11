@@ -84,14 +84,13 @@ public class ImageThumbLoader implements FileThumbLoader {
                     break;
                 default:
                     ivFile.setOnClickListener(view -> {
-                        String optimizedImageUrl = ImageUtil.getOptimizedImageUrl(content);
-
                         if (roomId > 0) {
                             CarouselViewerActivity_.intent(context)
                                     .roomId(roomId)
                                     .startLinkId(fileMessage.id)
                                     .start();
                         } else {
+                            String optimizedImageUrl = ImageUtil.getOptimizedImageUrl(content);
                             PhotoViewActivity_
                                     .intent(context)
                                     .imageUrl(optimizedImageUrl)
