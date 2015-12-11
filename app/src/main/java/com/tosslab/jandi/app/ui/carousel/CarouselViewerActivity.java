@@ -67,7 +67,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
     @Bean(CarouselViewerPresenterImpl.class)
     CarouselViewerPresenter carouselViewerPresenter;
-    private CarouselViewerAdapter carouselViewerAdapter;
+    CarouselViewerAdapter carouselViewerAdapter;
     private boolean isFullScreen = false;
 
     @AfterInject
