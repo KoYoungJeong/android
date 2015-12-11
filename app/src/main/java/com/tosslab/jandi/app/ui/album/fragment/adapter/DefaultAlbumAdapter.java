@@ -57,8 +57,6 @@ public class DefaultAlbumAdapter extends RecyclerView.Adapter {
         ImageAlbum item = getItem(position);
 
         String buckerName = item.getBuckerName();
-        String imagePath = item.getImagePath();
-
         int bucketCount = item.getCount();
 
         int countOfBucket;
@@ -83,7 +81,7 @@ public class DefaultAlbumAdapter extends RecyclerView.Adapter {
             viewHolder.tvTitle.setText(String.format("%s (%s)", buckerName, bucketCount));
         }
 
-        Uri uri = UriFactory.getFileUri(imagePath);
+        Uri uri = UriFactory.getContentUri(item.get_id());
 
         SimpleDraweeView ivSample = viewHolder.ivSample;
 

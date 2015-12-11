@@ -55,6 +55,7 @@ public class ImageAlbumModel {
             return albumName;
         }
 
+        int idxId = cursor.getColumnIndex(MediaStore.Images.ImageColumns._ID);
         int idxBucketName = cursor.getColumnIndex(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME);
         int idxBucketId = cursor.getColumnIndex(MediaStore.Images.ImageColumns.BUCKET_ID);
         int idxData = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
@@ -63,6 +64,7 @@ public class ImageAlbumModel {
         while (cursor.moveToNext()) {
             albumName.add(
                     new ImageAlbum.ImageAlbumBuilder()
+                            ._id(cursor.getInt(idxId))
                             .buckerName(cursor.getString(idxBucketName))
                             .bucketId(cursor.getInt(idxBucketId))
                             .imagePath(cursor.getString(idxData))
@@ -117,15 +119,17 @@ public class ImageAlbumModel {
             return imagePictures;
         }
 
-        int idxBucketId = cursor.getColumnIndex(
-                MediaStore.Images.ImageColumns.BUCKET_ID);
 
-        int idxData = cursor.getColumnIndex(
-                MediaStore.Images.ImageColumns.DATA);
+        int idxId = cursor.getColumnIndex(MediaStore.Images.ImageColumns._ID);
+
+        int idxBucketId = cursor.getColumnIndex(MediaStore.Images.ImageColumns.BUCKET_ID);
+
+        int idxData = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
 
         while (cursor.moveToNext()) {
             imagePictures.add(
                     new ImagePicture.ImagePictureBuilder()
+                            ._id(cursor.getInt(idxId))
                             .buckerId(cursor.getInt(idxBucketId))
                             .imagePath(cursor.getString(idxData))
                             .createImagePicture()
@@ -235,16 +239,20 @@ public class ImageAlbumModel {
                     .createImageAlbum();
         }
 
+
         int idxCount = cursor.getColumnIndex(COUNT_COLUMN);
+        int idxId = cursor.getColumnIndex(MediaStore.Images.ImageColumns._ID);
         int idxData = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
 
         cursor.moveToFirst();
+        int _id = cursor.getInt(idxId);
         albumCount = cursor.getInt(idxCount);
         String firstImagePath = cursor.getString(idxData);
 
         cursor.close();
 
         return new ImageAlbum.ImageAlbumBuilder()
+                ._id(_id)
                 .bucketId(ImageAlbumFragment.BUCKET_ALL_IMAGE_ALBUM)
                 .buckerName(context.getString(R.string.jandi_view_all))
                 .count(albumCount)

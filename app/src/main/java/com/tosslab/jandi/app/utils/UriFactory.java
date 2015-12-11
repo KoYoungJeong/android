@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.utils;
 
+import android.content.ContentResolver;
 import android.net.Uri;
+import android.provider.MediaStore;
 
 import com.facebook.common.util.UriUtil;
 
@@ -14,11 +16,16 @@ public class UriFactory {
 
         if (!UriUtil.isLocalFileUri(uri)) {
             uri = new Uri.Builder()
-                    .scheme(UriUtil.LOCAL_FILE_SCHEME)
+                    .scheme(ContentResolver.SCHEME_FILE)
                     .path(filePath)
                     .build();
         }
         return uri;
+    }
+
+    public static Uri getContentUri(int imageId) {
+        return Uri.withAppendedPath(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, String.valueOf(imageId));
     }
 
     public static Uri getResourceUri(int resId) {

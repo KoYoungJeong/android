@@ -10,10 +10,10 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,13 +75,9 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
         FormattedEntity entity = getItem(i);
         if (entity.isUser()) {
             // 프로필 사진
-            GenericDraweeHierarchy hierarchy = holder.imageView.getHierarchy();
-            hierarchy.setPlaceholderImage(R.drawable.profile_img_comment);
-            hierarchy.getRoundingParams().setRoundAsCircle(true);
-
             Uri uri = Uri.parse(entity.getUserSmallProfileUrl());
-            holder.imageView.setHierarchy(hierarchy);
-            holder.imageView.setImageURI(uri);
+
+            ImageUtil.loadCircleImageByFresco(holder.imageView, uri, R.drawable.profile_img);
 
             holder.textView.setText(entity.getName());
             holder.checkBox.setTag(entity);

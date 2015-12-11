@@ -4,16 +4,22 @@ package com.tosslab.jandi.app.ui.album.fragment.vo;
  * Created by Steve SeongUg Jung on 15. 6. 15..
  */
 public class ImageAlbum {
+    private final int _id;
     private final int bucketId;
     private final String buckerName;
     private final String imagePath;
     private final int count;
 
-    private ImageAlbum(int bucketId, String buckerName, String imagePath, int count) {
+    private ImageAlbum(int _id, int bucketId, String buckerName, String imagePath, int count) {
+        this._id = _id;
         this.bucketId = bucketId;
         this.buckerName = buckerName;
         this.imagePath = imagePath;
         this.count = count;
+    }
+
+    public int get_id() {
+        return _id;
     }
 
     public int getCount() {
@@ -33,10 +39,16 @@ public class ImageAlbum {
     }
 
     public static class ImageAlbumBuilder {
+        private int _id;
         private int bucketId;
         private String buckerName;
         private String imagePath;
         private int count;
+
+        public ImageAlbumBuilder _id(int _id) {
+            this._id = _id;
+            return this;
+        }
 
         public ImageAlbumBuilder count(int count) {
             this.count = count;
@@ -59,7 +71,7 @@ public class ImageAlbum {
         }
 
         public ImageAlbum createImageAlbum() {
-            return new ImageAlbum(bucketId, buckerName, imagePath, count);
+            return new ImageAlbum(_id, bucketId, buckerName, imagePath, count);
         }
     }
 }

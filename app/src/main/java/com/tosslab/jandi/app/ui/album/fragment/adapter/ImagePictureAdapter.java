@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +24,7 @@ import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
 import com.tosslab.jandi.app.ui.album.fragment.vo.SelectPictures;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.UriFactory;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
-
-import org.androidannotations.annotations.App;
 
 import java.util.List;
 
@@ -102,7 +98,7 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
 
         final SimpleDraweeView ivPicture = viewHolder.ivPicture;
 
-        final Uri uri = UriFactory.getFileUri(imagePath);
+        final Uri uri = UriFactory.getContentUri(item.get_id());
 
         setImage(ivPicture, uri);
 
@@ -149,6 +145,7 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
         ResizeOptions options = new ResizeOptions(size, size);
 
         ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
+                .setLocalThumbnailPreviewsEnabled(true)
                 .setAutoRotateEnabled(true)
                 .setResizeOptions(options)
                 .build();
@@ -159,6 +156,7 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
                 .setOldController(ivPicture.getController())
                 .build();
 
+        ivPicture.setAspectRatio(1.0f);
         ivPicture.setHierarchy(hierarchy);
         ivPicture.setController(controller);
     }

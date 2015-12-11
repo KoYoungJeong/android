@@ -69,7 +69,6 @@ public class FileUploadDialogFragment extends DialogFragment {
             imageView.setVisibility(View.GONE);
         }
 
-
         // CDP
         final Spinner spinner = (Spinner) mainView.findViewById(R.id.spinner_cdps);
         spinner.setPrompt(getString(R.string.jandi_action_share));
