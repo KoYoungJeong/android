@@ -7,6 +7,7 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -16,11 +17,16 @@ import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.image.ImageInfo;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
 import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -146,8 +152,16 @@ public class ImageThumbLoader implements FileThumbLoader {
                 ? UriFactory.getFileUri(thumbnailPhotoUrl)
                 : Uri.parse(thumbnailPhotoUrl);
 
+        int displayWidth = ApplicationUtil.getDisplaySize(false);
+        int displayHeight = ApplicationUtil.getDisplaySize(true);
+        ResizeOptions resizeOptions = new ResizeOptions(displayWidth, displayHeight);
+        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
+                .setResizeOptions(resizeOptions)
+                .setAutoRotateEnabled(true)
+                .build();
+
         DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setUri(uri)
+                .setImageRequest(imageRequest)
                 .setControllerListener(new BaseControllerListener<ImageInfo>() {
                     @Override
                     public void onFinalImageSet(String id, ImageInfo imageInfo,
@@ -161,19 +175,27 @@ public class ImageThumbLoader implements FileThumbLoader {
     }
 
     private void updateViewSize(int imageWidth, int imageHeight) {
-        ViewGroup.LayoutParams layoutParams = vgDetailPhoto.getLayoutParams();
-        if (imageWidth > imageHeight) {
+        int displayWidth = ApplicationUtil.getDisplaySize(false);
+        int displayHeight = ApplicationUtil.getDisplaySize(true);
 
+        ViewGroup.LayoutParams layoutParams = vgDetailPhoto.getLayoutParams();
+        if (imageWidth <= 0 || imageHeight <= 0) {
+            imageWidth = displayWidth;
+            imageHeight = displayWidth;
+            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
+
+        if (imageWidth > imageHeight) {
             int viewWidth = vgDetailPhoto.getMeasuredWidth();
             float ratio = (viewWidth * 10f) / (imageWidth * 10f);
 
             layoutParams.width = (int) (imageWidth * ratio);
             layoutParams.height = (int) (imageHeight * ratio);
         } else {
-            int photoWidth = vgDetailPhoto.getMeasuredWidth();
+            DisplayMetrics metrics = JandiApplication.getContext().getResources().getDisplayMetrics();
+            int photoWidth = (int) (Math.min(displayWidth, displayHeight) - (metrics.density * 22));
             layoutParams.width = photoWidth;
             layoutParams.height = photoWidth;
-
         }
         vgDetailPhoto.setLayoutParams(layoutParams);
     }

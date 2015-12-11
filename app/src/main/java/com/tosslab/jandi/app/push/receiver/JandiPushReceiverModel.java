@@ -5,16 +5,14 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.facebook.common.references.CloseableReference;
+import com.koushikdutta.ion.Ion;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -32,8 +30,6 @@ import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.image.BaseOnResourceReadyCallback;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
@@ -74,7 +70,6 @@ public class JandiPushReceiverModel {
         }
 
         Intent intent = intentBuilder.get();
-
 
         // 노티피케이션은 해제 됐지만 PendingIntent 가 살아있는 경우가 있어 cancel 을 호출해줌.
         PendingIntent.getActivity(context,
@@ -248,9 +243,8 @@ public class JandiPushReceiverModel {
 
     private NotificationCompat.Builder getNotification(Context context,
                                                        String notificationTitle,
-                                                       int teamId, int roomId, String roomType,
-                                                       int roomTypeInt, String roomName,
-                                                       String message, String writerProfile,
+                                                       int teamId, int roomId, String roomType, int roomTypeInt, String roomName,
+                                                       String message, Bitmap writerProfile,
                                                        int badgeCount) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
@@ -275,26 +269,10 @@ public class JandiPushReceiverModel {
         PendingIntent pendingIntent = generatePendingIntent(context, roomId, roomTypeInt, teamId, roomType);
         builder.setContentIntent(pendingIntent);
 
-        Uri writerProfileUri = Uri.parse(writerProfile);
-        LogUtil.d(TAG, "async test start");
+        if (writerProfile != null) {    // 작성자의 프로필 사진
+            builder.setLargeIcon(writerProfile);
+        }
 
-        ImageUtil.loadDrawable(writerProfileUri, true, new BaseOnResourceReadyCallback() {
-            @Override
-            public void onReady(Drawable drawable, CloseableReference reference) {
-                if (drawable instanceof BitmapDrawable) {
-                    LogUtil.i(TAG, "drawable ready");
-                    builder.setLargeIcon(((BitmapDrawable) drawable).getBitmap());
-                }
-                CloseableReference.closeSafely(reference);
-            }
-
-            @Override
-            public void onFail(Throwable cause) {
-                LogUtil.e(TAG, "Ger profile image failed. " + cause);
-            }
-        });
-
-        LogUtil.d(TAG, "async test end");
         return builder;
     }
 
@@ -352,6 +330,16 @@ public class JandiPushReceiverModel {
         int teamId = pushInfo.getTeamId();
         int roomId = pushInfo.getRoomId();
         String writerThumb = pushInfo.getWriterThumb();
+        Bitmap profileImage = null;
+        if (!TextUtils.isEmpty(writerThumb)) {
+            try {
+                profileImage = Ion.with(context)
+                        .load(writerThumb)
+                        .asBitmap()
+                        .get();
+            } catch (Exception e) {
+            }
+        }
 
         String notificationTitle = writerName;
         if (isMentionMessage) {
@@ -372,7 +360,7 @@ public class JandiPushReceiverModel {
         NotificationCompat.Builder notificationBuilder =
                 getNotification(context, notificationTitle,
                         teamId, roomId, roomType, roomTypeInt, roomName,
-                        outMessage, writerThumb,
+                        outMessage, profileImage,
                         badgeCount);
         PushMonitor.getInstance().setLastNotificationBuilder(notificationBuilder);
 
