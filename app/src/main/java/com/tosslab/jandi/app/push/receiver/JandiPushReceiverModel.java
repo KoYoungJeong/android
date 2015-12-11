@@ -294,6 +294,7 @@ public class JandiPushReceiverModel {
             }
         });
 
+        LogUtil.d(TAG, "async test end");
         return builder;
     }
 

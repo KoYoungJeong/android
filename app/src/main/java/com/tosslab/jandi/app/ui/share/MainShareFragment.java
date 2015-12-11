@@ -388,6 +388,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
         }
     }
 
+
     public void onEvent(SelectedMemberInfoForMensionEvent event) {
         if (mentionControlViewModel != null) {
             SearchedItemVO searchedItemVO = new SearchedItemVO();

@@ -184,7 +184,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         MessageRepository.getRepository().deleteAllLink();
                     }),
 
-                    UpgradeChecker.create(() -> DATABASE_VERSION_STICKER_SEND_STATUS, () -> {
+                    UpgradeChecker.create(() -> DATABASE_VERSION_ADD_FILE_EXTRA_INFO, () -> {
                         Dao<ResMessages.FileContent, ?> dao = DaoManager.createDao(connectionSource, ResMessages.FileContent.class);
                         dao.executeRawNoArgs("ALTER TABLE `message_file_content` ADD COLUMN width INTEGER;");
                         dao.executeRawNoArgs("ALTER TABLE `message_file_content` ADD COLUMN height INTEGER;");
