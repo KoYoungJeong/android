@@ -135,7 +135,9 @@ public class PhotoViewFragment extends Fragment {
         int width = ApplicationUtil.getDisplaySize(false);
         int height = ApplicationUtil.getDisplaySize(true);
 
-        ResizeOptions resizeOptions = fromCarousel ? new ResizeOptions(width, height) : null;
+        ResizeOptions resizeOptions = fromCarousel
+                ? new ResizeOptions(width, height)
+                : new ResizeOptions(ImageUtil.getMaximumBitmapSize(), ImageUtil.getMaximumBitmapSize());
 
         ImageUtil.loadDrawable(uri, resizeOptions, new BaseOnResourceReadyCallback() {
             @Override

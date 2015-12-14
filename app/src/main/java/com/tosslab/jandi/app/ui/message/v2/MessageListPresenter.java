@@ -106,7 +106,7 @@ public class MessageListPresenter {
     @ViewById(R.id.vg_messages_preview_last_item)
     View vgPreview;
 
-    @ViewById(R.id.img_message_preview_user_profile)
+    @ViewById(R.id.iv_message_preview_user_profile)
     SimpleDraweeView ivPreviewProfile;
 
     @ViewById(R.id.tv_message_preview_user_name)
