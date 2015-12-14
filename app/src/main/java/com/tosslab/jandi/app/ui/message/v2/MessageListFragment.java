@@ -19,9 +19,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -133,6 +135,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.app.views.eastereggs.SnowView;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -178,6 +181,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public static final String EXTRA_NEW_PHOTO_FILE = "new_photo_file";
     public static final int REQ_STORAGE_PERMISSION = 101;
     private static final StickerInfo NULL_STICKER = new StickerInfo();
+
     @FragmentArg
     int entityType;
     @FragmentArg
@@ -202,6 +206,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     EditText messageEditText;
     @ViewById(R.id.rv_list_search_members)
     RecyclerView rvListSearchMembers;
+
+    @ViewById(R.id.vg_easteregg_snow)
+    FrameLayout vgEasterEggSnow;
+
     @Bean
     MessageListPresenter messageListPresenter;
     @Bean
@@ -233,6 +241,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @AfterInject
     void initObject() {
+        SNOWING_EASTEREGG_STARTED = false;
+
         messageState = new MessageState();
 
         messagePublishSubject = PublishSubject.create();
@@ -952,6 +962,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     void onSendClick() {
 
         String message = messageEditText.getText().toString();
+
+        handleEasterEggSnowing(message);
+
         List<MentionObject> mentions;
 
         if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
@@ -998,7 +1011,33 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Send);
 
+    }
 
+    private void handleEasterEggSnowing(String message) {
+        if (TextUtils.isEmpty(message)) {
+            return;
+        }
+
+        if ("눈".equals(message)
+                || "雪".equals(message)
+                || "snow".equals(message.toLowerCase())) {
+            if (vgEasterEggSnow.getChildCount() > 0) {
+                return;
+            }
+
+            SnowView snowView = new SnowView(getActivity());
+            snowView.setLayoutParams(
+                    new FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            vgEasterEggSnow.addView(snowView);
+
+            SNOWING_EASTEREGG_STARTED = true;
+
+            messageListPresenter.justRefresh();
+        } else if ("설쏴지마".equals(message)) {
+            vgEasterEggSnow.removeAllViews();
+            SNOWING_EASTEREGG_STARTED = false;
+        }
     }
 
     private void sendSticker() {
@@ -1858,4 +1897,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         return false;
     }
+
+    // EASTER EGG SNOW
+    public static boolean SNOWING_EASTEREGG_STARTED = false;
 }
