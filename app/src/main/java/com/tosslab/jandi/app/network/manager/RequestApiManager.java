@@ -694,6 +694,16 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
+    public ResMessages.FileMessage enableFileExternalLink(int teamId, int fileId) {
+        return requestApiExecute(RestApiLoader.getInstance().loadEnableFileExternalLink(teamId, fileId));
+    }
+
+    @Override
+    public ResMessages.FileMessage disableFileExternalLink(int teamId, int fileId) {
+        return requestApiExecute(RestApiLoader.getInstance().loadDisableFileExternalLink(teamId, fileId));
+    }
+
+    @Override
     public ResEventHistory getEventHistory(long ts, Integer memberId, String eventType, Integer size) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadGetEventHistory(ts, memberId, eventType, size));
     }

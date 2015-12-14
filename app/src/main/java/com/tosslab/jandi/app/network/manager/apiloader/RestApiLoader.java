@@ -720,6 +720,16 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
+    public IExecutor<ResMessages.FileMessage> loadEnableFileExternalLink(int teamId, int fileId) {
+        return () -> authRestApiClient.enableFileExternalLink(teamId, fileId);
+    }
+
+    @Override
+    public IExecutor<ResMessages.FileMessage> loadDisableFileExternalLink(int teamId, int fileId) {
+        return () -> authRestApiClient.disableFileExternalLink(teamId, fileId);
+    }
+
+    @Override
     public IExecutor<ResEventHistory> loadGetEventHistory(long ts, Integer memberId, String eventType, Integer size) {
         return () -> authRestApiClient.getEventHistory(ts, memberId, eventType, size);
     }

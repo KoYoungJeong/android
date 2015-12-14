@@ -3,7 +3,11 @@ package com.tosslab.jandi.app.ui.filedetail.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.ProgressCallback;
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
@@ -23,6 +27,9 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.UserAgentUtil;
+import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -33,6 +40,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -340,5 +348,50 @@ public class FileDetailModel {
 
     public boolean isTeamOwner() {
         return TextUtils.equals(EntityManager.getInstance().getMe().getUser().u_authority, "owner");
+    }
+
+
+    public int getTeamId() {
+        return EntityManager.getInstance().getTeamId();
+    }
+
+    public ResMessages.FileMessage enableExternalLink(int teamId, int fileId) {
+        return RequestApiManager.getInstance().enableFileExternalLink(teamId, fileId);
+    }
+
+    public ResMessages.FileMessage disableExternalLink(int teamId, int fileId) {
+        return RequestApiManager.getInstance().disableFileExternalLink(teamId, fileId);
+    }
+
+    public void updateExternalLink(String fileUrl, boolean externalShared, String externalUrl, String externalCode) {
+        FileDetailRepository.getRepository().updateFileExternalLink(fileUrl,
+                externalShared,
+                externalUrl,
+                externalCode);
+    }
+
+    public void downloadFile(String downloadUrl, String downloadPath, ProgressCallback progressCallback, FutureCallback<File> callback) {
+        Ion.with(JandiApplication.getContext())
+                .load(downloadUrl)
+                .progressHandler(progressCallback)
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(JandiApplication.getContext()))
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
+                .write(new File(downloadPath)).setCallback(callback);
+    }
+
+    public String getDownloadFilePath(String title) {
+        String downloadPath = GoogleImagePickerUtil.getDownloadPath();
+        File file = new File(downloadPath);
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        return new StringBuffer(downloadPath).append("/").append(title).toString();
+    }
+
+    public String getDownloadUrl(String fileUrl) {
+        if (!fileUrl.endsWith("/download")) {
+            return new StringBuffer(fileUrl).append("/download").toString();
+        }
+        return fileUrl;
     }
 }

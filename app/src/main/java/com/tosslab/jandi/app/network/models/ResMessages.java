@@ -405,6 +405,14 @@ public class ResMessages {
         public String ext;
         @DatabaseField
         public int size;
+
+        @DatabaseField
+        public boolean externalShared;
+        @DatabaseField
+        public String externalUrl;
+        @DatabaseField
+        public String externalCode;
+
         @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public ThumbnailUrls extraInfo;
 
@@ -420,6 +428,9 @@ public class ResMessages {
                     ", fileUrl='" + fileUrl + '\'' +
                     ", ext='" + ext + '\'' +
                     ", size=" + size +
+                    ", externalShared=" + externalShared +
+                    ", externalUrl='" + externalUrl + '\'' +
+                    ", externalCode='" + externalCode + '\'' +
                     ", extraInfo=" + extraInfo +
                     '}';
         }
@@ -430,12 +441,17 @@ public class ResMessages {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ThumbnailUrls {
 
+        @DatabaseField(generatedId = true)
+        public long _id;
+
         @DatabaseField
         public String smallThumbnailUrl;
         @DatabaseField
         public String mediumThumbnailUrl;
-        @DatabaseField(id = true)
+        @DatabaseField
         public String largeThumbnailUrl;
+        @DatabaseField
+        public String thumbnailUrl;
 
         @DatabaseField
         public int width;
@@ -447,12 +463,14 @@ public class ResMessages {
         @Override
         public String toString() {
             return "ThumbnailUrls{" +
-                    "smallThumbnailUrl='" + smallThumbnailUrl + '\'' +
+                    "_id=" + _id +
+                    ", smallThumbnailUrl='" + smallThumbnailUrl + '\'' +
                     ", mediumThumbnailUrl='" + mediumThumbnailUrl + '\'' +
                     ", largeThumbnailUrl='" + largeThumbnailUrl + '\'' +
                     ", width=" + width +
                     ", height=" + height +
                     ", orientation=" + orientation +
+                    ", thumbnailUrl='" + thumbnailUrl + '\'' +
                     '}';
         }
     }
