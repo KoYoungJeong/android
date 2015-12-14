@@ -664,7 +664,7 @@ public class FileDetailPresenter {
 
         void onGetProfileFailed();
 
-        void setSendButtonSelected(boolean selected);
+        void setSendButtonSelected();
 
         void showProgress();
 

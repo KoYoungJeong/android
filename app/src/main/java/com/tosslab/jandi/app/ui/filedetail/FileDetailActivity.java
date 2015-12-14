@@ -218,7 +218,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                     || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
                 loadSticker(stickerInfo);
             }
-            setSendButtonSelected(true);
+            setSendButtonSelected();
 
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Select);
         });
@@ -333,7 +333,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     void onStickerPreviewClose() {
         FileDetailActivity.this.stickerInfo = NULL_STICKER;
         dismissStickerPreview();
-        setSendButtonSelected(false);
+        setSendButtonSelected();
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_cancel);
     }
@@ -468,8 +468,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @AfterTextChange(R.id.et_message)
     void onCommentTextChange(Editable editable) {
-        int inputLength = editable.length();
-        setSendButtonSelected(inputLength > 0);
+        setSendButtonSelected();
     }
 
     @Click(R.id.et_message)
@@ -1023,8 +1022,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @UiThread(propagation = Propagation.REUSE)
     @Override
-    public void setSendButtonSelected(boolean selected) {
-        btnSend.setSelected(selected);
+    public void setSendButtonSelected() {
+        boolean visible = vgStickerPreview.getVisibility() == View.VISIBLE || etComment.length() > 0;
+        btnSend.setEnabled(visible);
     }
 
     @UiThread(propagation = Propagation.REUSE)
