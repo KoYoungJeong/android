@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.services.socket.to;
 
 import com.tosslab.jandi.app.network.models.ResEventHistory;
+import com.tosslab.jandi.app.services.socket.annotations.Version;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.JsonDeserializer;
@@ -13,6 +14,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
+@Version(1)
 public class SocketFileEvent extends ResEventHistory.EventHistoryInfo {
     private int teamId;
     private long ts;

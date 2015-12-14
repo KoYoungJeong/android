@@ -74,6 +74,9 @@ public class JandiEventRegister implements EventRegister {
         for (String event : eventMapper.keySet()) {
             if (socket != null && !socket.hasListeners(event)) {
                 socket.on(event, args -> {
+                    if (args != null && args[0] != null) {
+                        LogUtil.d(TAG, event + " = " + args[0].toString());
+                    }
                     for (EventListener listener : eventMapper.get(event)) {
                         listener.callback(args);
                     }

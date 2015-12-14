@@ -1,7 +1,8 @@
 package com.tosslab.jandi.app.services.socket.to;
 
+import com.tosslab.jandi.app.services.socket.annotations.Version;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.util.List;
@@ -11,10 +12,30 @@ import java.util.List;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@Version(1)
 public class SocketRoomMarkerEvent {
+    private int version;
     private String event;
     private MarkerRoom room;
     private Marker marker;
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    @Override
+    public String toString() {
+        return "SocketRoomMarkerEvent{" +
+                "version=" + version +
+                ", event='" + event + '\'' +
+                ", room=" + room +
+                ", marker=" + marker +
+                '}';
+    }
 
     public String getEvent() {
         return event;
