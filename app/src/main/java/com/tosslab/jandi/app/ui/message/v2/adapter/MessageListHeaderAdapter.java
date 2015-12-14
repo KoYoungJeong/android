@@ -24,9 +24,9 @@ import java.util.Calendar;
 public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageListHeaderAdapter.HeaderViewHolder> {
 
     private final Context context;
-    private final MessageListAdapter originAdapter;
+    private final MessageAdapter originAdapter;
 
-    public MessageListHeaderAdapter(Context context, MessageListAdapter originAdapter) {
+    public MessageListHeaderAdapter(Context context, MessageAdapter originAdapter) {
         this.context = context;
         this.originAdapter = originAdapter;
     }

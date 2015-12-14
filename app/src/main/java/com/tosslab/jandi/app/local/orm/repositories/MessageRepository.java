@@ -360,15 +360,18 @@ public class MessageRepository {
         return 0;
     }
 
-    public int getMessagesCount(int roomId) {
+    public int getMessagesCount(int roomId, int firstCursorLinkId) {
         try {
             int teamId = AccountRepository.getRepository().getSelectedTeamId();
             return (Long.valueOf(helper.getDao(ResMessages.Link.class)
                     .queryBuilder()
+                    .orderBy("time", true)
                     .where()
                     .eq("teamId", teamId)
                     .and()
                     .eq("roomId", roomId)
+                    .and()
+                    .ge("id", firstCursorLinkId)
                     .countOf())).intValue();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -378,23 +381,25 @@ public class MessageRepository {
         return 0;
     }
 
-    public ResMessages.Link getMessage(int roomId, int position) {
+    public ResMessages.Link getMessage(int roomId, int position, int firstCursorLinkId) {
         try {
             int teamId = AccountRepository.getRepository().getSelectedTeamId();
             return helper.getDao(ResMessages.Link.class)
                     .queryBuilder()
-                    .offset(position - 1)
+                    .offset(position)
                     .limit(1)
-                    .orderBy("time", false)
+                    .orderBy("time", true)
                     .where()
                     .eq("teamId", teamId)
                     .and()
                     .eq("roomId", roomId)
                     .and()
+                    .ge("id", firstCursorLinkId)
                     .queryForFirst();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
+
 }

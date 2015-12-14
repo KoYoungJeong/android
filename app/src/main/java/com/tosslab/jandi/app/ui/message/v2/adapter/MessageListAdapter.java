@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +26,7 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHolder> {
+public class MessageListAdapter extends MessageAdapter {
 
     private Context context;
 
@@ -54,14 +53,17 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
 
     }
 
+    @Override
     public int getLastReadLinkId() {
         return lastReadLinkId;
     }
 
+    @Override
     public void setLastReadLinkId(int lastReadLinkId) {
         this.lastReadLinkId = lastReadLinkId;
     }
 
+    @Override
     public void setTeamId(int teamId) {
         this.teamId = teamId;
     }
@@ -154,6 +156,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         return BodyViewFactory.getContentType(previousLink, currentLink, nextLink).ordinal();
     }
 
+    @Override
     public ResMessages.Link getItem(int position) {
         return messageList.get(position);
     }
@@ -168,6 +171,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         return messageList.size();
     }
 
+    @Override
     public void addAll(int position, List<ResMessages.Link> messages) {
         // delete dummy message by same messageId
         for (int idx = messages.size() - 1; idx >= 0; --idx) {
@@ -229,6 +233,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         messageList.addAll(Math.min(position, messageList.size() - getDummyMessageCount()), messages);
     }
 
+    @Override
     public int getDummyMessageCount() {
 
         int total = 0;
@@ -246,6 +251,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         return total;
     }
 
+    @Override
     public int indexByMessageId(int messageId) {
         int count = getItemCount();
         for (int idx = 0; idx < count; idx++) {
@@ -255,22 +261,27 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         return -1;
     }
 
+    @Override
     public void setOldNoMoreLoading() {
         oldMoreState = MoreState.Nope;
     }
 
+    @Override
     public void setOldLoadingComplete() {
         oldMoreState = MoreState.Idle;
     }
 
+    @Override
     public void clear() {
         messageList.clear();
     }
 
+    @Override
     public void addDummyMessage(DummyMessageLink dummyMessageLink) {
         messageList.add(dummyMessageLink);
     }
 
+    @Override
     public void updateMessageId(long localId, int id) {
 
         int dummeMessagePosition = getDummeMessagePositionByLocalId(localId);
@@ -281,6 +292,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         }
     }
 
+    @Override
     public int getDummeMessagePositionByLocalId(long localId) {
         if (localId <= 0) {
             return -1;
@@ -323,6 +335,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
 
     }
 
+    @Override
     public void updateDummyMessageState(long localId, SendMessage.Status state) {
         int dummeMessagePositionByLocalId = getDummeMessagePositionByLocalId(localId);
         if (dummeMessagePositionByLocalId >= 0) {
@@ -330,10 +343,12 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         }
     }
 
+    @Override
     public void remove(int position) {
         messageList.remove(position);
     }
 
+    @Override
     public List<Integer> indexByFeedbackId(int messageId) {
 
         List<Integer> indexList = new ArrayList<Integer>();
@@ -352,22 +367,27 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         return indexList;
     }
 
+    @Override
     public void setMarker(int lastMarker) {
         this.lastMarker = lastMarker;
     }
 
+    @Override
     public void setMoreFromNew(boolean moreFromNew) {
         this.moreFromNew = moreFromNew;
     }
 
+    @Override
     public void setNewLoadingComplete() {
         newMoreState = MoreState.Idle;
     }
 
+    @Override
     public void setNewNoMoreLoading() {
         newMoreState = MoreState.Nope;
     }
 
+    @Override
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
@@ -376,19 +396,22 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         this.onItemLongClickListener = onItemLongClickListener;
     }
 
+    @Override
     public int getRoomId() {
         return roomId;
     }
 
+    @Override
     public void setRoomId(int roomId) {
         this.roomId = roomId;
     }
 
-    public MessageListAdapter setEntityId(int entityId) {
+    @Override
+    public void setEntityId(int entityId) {
         this.entityId = entityId;
-        return this;
     }
 
+    @Override
     public int indexOfLinkId(int linkId) {
         int size = getItemCount();
         for (int idx = size - 1; idx >= 0; --idx) {
@@ -399,25 +422,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         return -1;
     }
 
+    @Override
     public void modifyStarredStateByPosition(int position, boolean isStarred) {
         messageList.get(position).message.isStarred = isStarred;
         notifyItemChanged(position);
-    }
-
-    private enum MoreState {
-        Idle, Loading, Nope
-    }
-
-    private enum AnimState {
-        Idle, Loading, End
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(RecyclerView.Adapter adapter, int position);
-    }
-
-    public interface OnItemLongClickListener {
-        boolean onItemLongClick(RecyclerView.Adapter adapter, int position);
     }
 
 }

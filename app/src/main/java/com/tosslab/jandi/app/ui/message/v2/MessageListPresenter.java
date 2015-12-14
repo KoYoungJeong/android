@@ -1,11 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
-import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.Intent;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,9 +27,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
-import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
-import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
@@ -44,10 +37,11 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
-import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
+import com.tosslab.jandi.app.ui.message.v2.adapter.MessageAdapter;
+import com.tosslab.jandi.app.ui.message.v2.adapter.MessageCursorListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
@@ -57,7 +51,6 @@ import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
@@ -74,7 +67,6 @@ import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -152,7 +144,6 @@ public class MessageListPresenter {
     @Bean
     KeyboardHeightModel keyboardHeightModel;
 
-    private MessageListAdapter messageListAdapter;
     private ProgressWheel progressWheelForAction;
     private String tempMessage;
     private boolean isDisabled;
@@ -161,10 +152,11 @@ public class MessageListPresenter {
     private OfflineLayer offlineLayer;
     private View.OnTouchListener listTouchListener;
 
+    private MessageAdapter messageAdapter;
+    private boolean isFromSearch;
+
     @AfterInject
     void initObject() {
-        messageListAdapter = new MessageListAdapter(activity);
-        messageListAdapter.setHasStableIds(true);
 
         progressWheelForAction = new ProgressWheel(activity);
     }
@@ -185,23 +177,24 @@ public class MessageListPresenter {
 
     @AfterViews
     void initViews() {
+
         // 프로그레스를 좀 더 부드럽게 보여주기 위해서 애니메이션
         vgProgressForMessageList.setAlpha(0f);
         vgProgressForMessageList.animate()
                 .alpha(1.0f)
                 .setDuration(150);
 
-        lvMessages.setAdapter(messageListAdapter);
+        lvMessages.setAdapter(messageAdapter);
         lvMessages.setItemAnimator(null);
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
         layoutManager.setStackFromEnd(true);
         layoutManager.setSmoothScrollbarEnabled(true);
         lvMessages.setLayoutManager(layoutManager);
 
-        MessageListHeaderAdapter messageListHeaderAdapter = new MessageListHeaderAdapter(activity, messageListAdapter);
+        MessageListHeaderAdapter messageListHeaderAdapter = new MessageListHeaderAdapter(activity, messageAdapter);
 
         StickyHeadersItemDecoration stickyHeadersItemDecoration = new StickyHeadersBuilder()
-                .setAdapter(messageListAdapter)
+                .setAdapter(messageAdapter)
                 .setRecyclerView(lvMessages)
                 .setStickyHeadersAdapter(messageListHeaderAdapter, false)
                 .build();
@@ -209,7 +202,6 @@ public class MessageListPresenter {
         lvMessages.addItemDecoration(stickyHeadersItemDecoration);
 
         setListTouchListener(listTouchListener);
-//        setSendEditText(tempMessage);
 
         if (isDisabled) {
             setDisableUser();
@@ -242,8 +234,8 @@ public class MessageListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void addAll(int position, List<ResMessages.Link> messages) {
-        messageListAdapter.addAll(position, messages);
-        messageListAdapter.notifyDataSetChanged();
+        messageAdapter.addAll(position, messages);
+        messageAdapter.notifyDataSetChanged();
     }
 
     @UiThread
@@ -269,41 +261,41 @@ public class MessageListPresenter {
     }
 
     public int getLastItemPosition() {
-        return messageListAdapter.getItemCount();
+        return messageAdapter.getItemCount();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveLastPage() {
         if (lvMessages != null) {
-            lvMessages.getLayoutManager().scrollToPosition(messageListAdapter.getCount() - 1);
+            lvMessages.getLayoutManager().scrollToPosition(messageAdapter.getItemCount() - 1);
         }
     }
 
     public void setOldLoadingComplete() {
-        messageListAdapter.setOldLoadingComplete();
+        messageAdapter.setOldLoadingComplete();
     }
 
     public void setOldNoMoreLoading() {
-        messageListAdapter.setOldNoMoreLoading();
+        messageAdapter.setOldNoMoreLoading();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void moveToMessage(int linkId, int firstVisibleItemTop) {
-        int itemPosition = messageListAdapter.indexByMessageId(linkId);
-        ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
+    public void moveToMessage(int messageId, int firstVisibleItemTop) {
+        int itemPosition = messageAdapter.indexByMessageId(messageId);
+        ((LinearLayoutManager) lvMessages.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void moveToMessageById(int id, int firstVisibleItemTop) {
-        int itemPosition = messageListAdapter.indexOfLinkId(id);
-        ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
+    public void moveToMessageById(int linkId, int firstVisibleItemTop) {
+        int itemPosition = messageAdapter.indexOfLinkId(linkId);
+        ((LinearLayoutManager) lvMessages.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
     public int getFirstVisibleItemLinkId() {
-        if (messageListAdapter.getItemCount() > 0) {
-            int firstVisibleItemPosition = ((LinearLayoutManager) messageListView.getLayoutManager()).findFirstVisibleItemPosition();
+        if (messageAdapter.getItemCount() > 0) {
+            int firstVisibleItemPosition = ((LinearLayoutManager) lvMessages.getLayoutManager()).findFirstVisibleItemPosition();
             if (firstVisibleItemPosition >= 0) {
-                return messageListAdapter.getItem(firstVisibleItemPosition).messageId;
+                return messageAdapter.getItem(firstVisibleItemPosition).messageId;
             } else {
                 return -1;
             }
@@ -337,30 +329,7 @@ public class MessageListPresenter {
     }
 
     public ResMessages.Link getItem(int position) {
-        return messageListAdapter.getItem(position);
-    }
-
-    public void openExplorerForActivityResult(Fragment fragment) {
-        Intent intent = new Intent(activity, FileExplorerActivity.class);
-        fragment.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_EXPLORER);
-    }
-
-    public void openCameraForActivityResult(Fragment fragment, Uri fileUri) {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-        fragment.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO);
-    }
-
-    public void openAlbumForActivityResult(Fragment fragment) {
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*");
-        fragment.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_GALLERY);
-    }
-
-    public void exceedMaxFileSizeError() {
-
-        ColoredToast.showError(activity, activity.getString(R.string.jandi_file_size_large_error));
+        return messageAdapter.getItem(position);
     }
 
     public String getSendEditText() {
@@ -399,16 +368,6 @@ public class MessageListPresenter {
         newFragment.show(activity.getSupportFragmentManager(), "dioalog");
     }
 
-    public ProgressDialog getUploadProgress(ConfirmFileUploadEvent event) {
-        final ProgressDialog progressDialog = new ProgressDialog(activity);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMessage(activity.getString(R.string.jandi_file_uploading) + " " + event.realFilePath);
-        progressDialog.show();
-
-        return progressDialog;
-
-    }
-
     @UiThread
     public void showSuccessToast(String message) {
         ColoredToast.show(activity, message);
@@ -416,17 +375,17 @@ public class MessageListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void clearMessages() {
-        messageListAdapter.clear();
+        messageAdapter.clear();
 
     }
 
     public ResMessages.Link getLastItemWithoutDummy() {
-        int count = messageListAdapter.getItemCount();
+        int count = messageAdapter.getItemCount();
         for (int idx = count - 1; idx >= 0; --idx) {
-            if (messageListAdapter.getItem(idx) instanceof DummyMessageLink) {
+            if (messageAdapter.getItem(idx) instanceof DummyMessageLink) {
                 continue;
             }
-            return messageListAdapter.getItem(idx);
+            return messageAdapter.getItem(idx);
         }
 
         return null;
@@ -444,32 +403,32 @@ public class MessageListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void changeToArchive(int messageId) {
-        int position = messageListAdapter.indexByMessageId(messageId);
+        int position = messageAdapter.indexByMessageId(messageId);
         String archivedStatus = "archived";
         if (position > 0) {
-            ResMessages.Link item = messageListAdapter.getItem(position);
+            ResMessages.Link item = messageAdapter.getItem(position);
             item.message.status = archivedStatus;
             item.message.createTime = new Date();
 
         }
 
-        List<Integer> commentIndexes = messageListAdapter.indexByFeedbackId(messageId);
+        List<Integer> commentIndexes = messageAdapter.indexByFeedbackId(messageId);
 
         for (Integer commentIndex : commentIndexes) {
-            ResMessages.Link item = messageListAdapter.getItem(commentIndex);
+            ResMessages.Link item = messageAdapter.getItem(commentIndex);
             item.feedback.status = archivedStatus;
             item.feedback.createTime = new Date();
         }
 
         if (position >= 0 || commentIndexes.size() > 0) {
 
-            messageListAdapter.notifyDataSetChanged();
+            messageAdapter.notifyDataSetChanged();
         }
     }
 
     public void updateLinkPreviewMessage(ResMessages.TextMessage message) {
         int messageId = message.id;
-        int index = messageListAdapter.indexByMessageId(messageId);
+        int index = messageAdapter.indexByMessageId(messageId);
         if (index < 0) {
             return;
         }
@@ -483,9 +442,9 @@ public class MessageListPresenter {
 
     public void updateMessageIdAtSendingMessage(long localId, int messageId) {
         if (!hasMessage(messageId)) {
-            messageListAdapter.updateMessageId(localId, messageId);
+            messageAdapter.updateMessageId(localId, messageId);
         } else {
-            deleteLocalMessage(localId);
+//            deleteLocalMessage(localId);
         }
     }
 
@@ -494,34 +453,34 @@ public class MessageListPresenter {
     }
 
     private boolean hasMessage(int messageId) {
-        int idx = messageListAdapter.indexByMessageId(messageId);
+        int idx = messageAdapter.indexByMessageId(messageId);
         return idx >= 0;
     }
 
-    public void insertSendingMessage(long localId, String message, String name, String userLargeProfileUrl, List<MentionObject> mentions) {
+    public void insertSendingMessage(long localId, String message, List<MentionObject> mentions) {
         DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, message, SendMessage
                 .Status.SENDING.name(), mentions);
         dummyMessageLink.message.writerId = EntityManager.getInstance().getMe().getId();
         dummyMessageLink.message.createTime = new Date();
         dummyMessageLink.message.updateTime = new Date();
 
-        messageListAdapter.addDummyMessage(dummyMessageLink);
-        messageListAdapter.notifyDataSetChanged();
+        messageAdapter.addDummyMessage(dummyMessageLink);
+        messageAdapter.notifyDataSetChanged();
 
-        lvMessages.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
+        lvMessages.getLayoutManager().scrollToPosition(messageAdapter.getItemCount() - 1);
     }
 
     public void updateDummyMessageState(long localId, SendMessage.Status state) {
-        messageListAdapter.updateDummyMessageState(localId, state);
+        messageAdapter.updateDummyMessageState(localId, state);
         justRefresh();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void addDummyMessages(List<ResMessages.Link> dummyMessages) {
         for (ResMessages.Link dummyMessage : dummyMessages) {
-            messageListAdapter.addDummyMessage(((DummyMessageLink) dummyMessage));
+            messageAdapter.addDummyMessage(((DummyMessageLink) dummyMessage));
         }
-        messageListAdapter.notifyDataSetChanged();
+        messageAdapter.notifyDataSetChanged();
     }
 
     public void showDummyMessageDialog(long localId) {
@@ -532,20 +491,20 @@ public class MessageListPresenter {
     }
 
     public DummyMessageLink getDummyMessage(long localId) {
-        int position = messageListAdapter.getDummeMessagePositionByLocalId(localId);
-        return ((DummyMessageLink) messageListAdapter.getItem(position));
+        int position = messageAdapter.getDummeMessagePositionByLocalId(localId);
+        return ((DummyMessageLink) messageAdapter.getItem(position));
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void deleteDummyMessageAtList(long localId) {
-        int position = messageListAdapter.getDummeMessagePositionByLocalId(localId);
-        messageListAdapter.remove(position);
-        messageListAdapter.notifyDataSetChanged();
+        int position = messageAdapter.getDummeMessagePositionByLocalId(localId);
+        messageAdapter.remove(position);
+        messageAdapter.notifyDataSetChanged();
     }
 
     private boolean isVisibleLastItem() {
-        return ((LinearLayoutManager) messageListView.getLayoutManager())
-                .findFirstVisibleItemPosition() == messageListAdapter.getItemCount() - 1;
+        return ((LinearLayoutManager) lvMessages.getLayoutManager())
+                .findFirstVisibleItemPosition() == messageAdapter.getItemCount() - 1;
     }
 
     @UiThread
@@ -555,7 +514,7 @@ public class MessageListPresenter {
             return;
         }
 
-        ResMessages.Link item = messageListAdapter.getItem(messageListAdapter.getItemCount() - 1);
+        ResMessages.Link item = messageAdapter.getItem(messageAdapter.getItemCount() - 1);
 
         if (TextUtils.equals(item.status, "event")) {
             return;
@@ -605,21 +564,21 @@ public class MessageListPresenter {
     }
 
     public void setMarker(int lastMarker) {
-        if (messageListAdapter != null) {
-            messageListAdapter.setMarker(lastMarker);
+        if (messageAdapter != null) {
+            messageAdapter.setMarker(lastMarker);
         }
     }
 
     public void setMoreNewFromAdapter(boolean isMoreNew) {
-        messageListAdapter.setMoreFromNew(isMoreNew);
+        messageAdapter.setMoreFromNew(isMoreNew);
     }
 
     public void setNewLoadingComplete() {
-        messageListAdapter.setNewLoadingComplete();
+        messageAdapter.setNewLoadingComplete();
     }
 
     public void setNewNoMoreLoading() {
-        messageListAdapter.setNewNoMoreLoading();
+        messageAdapter.setNewNoMoreLoading();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -650,12 +609,12 @@ public class MessageListPresenter {
         }
     }
 
-    public void setOnItemClickListener(MessageListAdapter.OnItemClickListener onItemClickListener) {
-        messageListAdapter.setOnItemClickListener(onItemClickListener);
+    public void setOnItemClickListener(MessageAdapter.OnItemClickListener onItemClickListener) {
+        messageAdapter.setOnItemClickListener(onItemClickListener);
     }
 
-    public void setOnItemLongClickListener(MessageListAdapter.OnItemLongClickListener onItemLongClickListener) {
-        messageListAdapter.setOnItemLongClickListener(onItemLongClickListener);
+    public void setOnItemLongClickListener(MessageAdapter.OnItemLongClickListener onItemLongClickListener) {
+        messageAdapter.setOnItemLongClickListener(onItemLongClickListener);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -675,14 +634,14 @@ public class MessageListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void justRefresh() {
-        messageListAdapter.notifyDataSetChanged();
+        messageAdapter.notifyDataSetChanged();
     }
 
     @UiThread
     public void setMarkerInfo(int teamId, int roomId) {
-        messageListAdapter.setTeamId(teamId);
-        messageListAdapter.setRoomId(roomId);
-        messageListAdapter.notifyDataSetChanged();
+        messageAdapter.setTeamId(teamId);
+        messageAdapter.setRoomId(roomId);
+        messageAdapter.notifyDataSetChanged();
     }
 
     @UiThread
@@ -712,18 +671,6 @@ public class MessageListPresenter {
         view.findViewById(R.id.btn_chat_choose_member_empty).setOnClickListener(onClickListener);
     }
 
-    private String getOwnerName() {
-        List<FormattedEntity> users = EntityManager.getInstance().getFormattedUsers();
-        FormattedEntity tempDefaultEntity = new FormattedEntity();
-        FormattedEntity owner = Observable.from(users)
-                .filter(formattedEntity ->
-                        TextUtils.equals(formattedEntity.getUser().u_authority, "owner"))
-                .firstOrDefault(tempDefaultEntity)
-                .toBlocking()
-                .first();
-        return owner.getUser().name;
-    }
-
     @UiThread
     public void insertTopicMemberEmptyLayout() {
 
@@ -740,9 +687,9 @@ public class MessageListPresenter {
 
     public int getItemCountWithoutEvent() {
 
-        int itemCount = messageListAdapter.getItemCount();
+        int itemCount = messageAdapter.getItemCount();
         for (int idx = itemCount - 1; idx >= 0; --idx) {
-            if (messageListAdapter.getItemViewType(idx) == BodyViewHolder.Type.Event.ordinal()) {
+            if (messageAdapter.getItemViewType(idx) == BodyViewHolder.Type.Event.ordinal()) {
                 itemCount--;
             }
         }
@@ -763,19 +710,15 @@ public class MessageListPresenter {
     }
 
     public int getItemCount() {
-        return messageListAdapter.getItemCount();
+        return messageAdapter.getItemCount();
     }
 
     public int getItemCountWithoutDummy() {
-        return messageListAdapter.getItemCount() - messageListAdapter.getDummyMessageCount();
+        return messageAdapter.getItemCount() - messageAdapter.getDummyMessageCount();
     }
 
     public int getRoomId() {
-        return messageListAdapter.getRoomId();
-    }
-
-    public EditText getSendEditTextView() {
-        return etMessage;
+        return messageAdapter.getRoomId();
     }
 
     public void hideKeyboard() {
@@ -784,11 +727,7 @@ public class MessageListPresenter {
         }
     }
 
-    public void showKeyboard() {
-        inputMethodManager.showSoftInput(etMessage, InputMethodManager.SHOW_IMPLICIT);
-    }
-
-    public void showStickerPreview(StickerInfo stickerInfo) {
+    public void showStickerPreview() {
         vgStickerPreview.setVisibility(View.VISIBLE);
     }
 
@@ -803,52 +742,28 @@ public class MessageListPresenter {
     }
 
     public void setEntityInfo(int entityId) {
-        messageListAdapter.setEntityId(entityId);
+        messageAdapter.setEntityId(entityId);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void modifyStarredInfo(int messageId, boolean isStarred) {
-        int position = messageListAdapter.indexByMessageId(messageId);
-        messageListAdapter.modifyStarredStateByPosition(position, isStarred);
-    }
-
-    private void setEditTextKeyListener() {
-
-        etMessage.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() != KeyEvent.ACTION_DOWN) {
-                    //We only look at ACTION_DOWN in this code, assuming that ACTION_UP is redundant.
-                    // If not, adjust accordingly.
-                    return false;
-                } else if (event.getUnicodeChar() ==
-                        (int) EditableAccomodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
-                    //We are ignoring this character, and we want everyone else to ignore it, too, so
-                    // we return true indicating that we have handled it (by ignoring it).
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
-
-    public RecyclerView getLvSearchMembers() {
-        return lvSearchMembers;
+        int position = messageAdapter.indexByMessageId(messageId);
+        messageAdapter.modifyStarredStateByPosition(position, isStarred);
     }
 
     public void setLastReadLinkId(int lastReadLinkId) {
-        messageListAdapter.setLastReadLinkId(lastReadLinkId);
+        messageAdapter.setLastReadLinkId(lastReadLinkId);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveLastReadLink() {
-        int lastReadLinkId = messageListAdapter.getLastReadLinkId();
+        int lastReadLinkId = messageAdapter.getLastReadLinkId();
 
         if (lastReadLinkId <= 0) {
             return;
         }
 
-        int position = messageListAdapter.indexOfLinkId(lastReadLinkId);
+        int position = messageAdapter.indexOfLinkId(lastReadLinkId);
 
         if (position > 0) {
             int measuredHeight = lvMessages.getMeasuredHeight() / 2;
@@ -861,14 +776,14 @@ public class MessageListPresenter {
             ((LinearLayoutManager) lvMessages.getLayoutManager())
                     .scrollToPositionWithOffset(position + 1, measuredHeight);
         } else if (position < 0) {
-            lvMessages.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
+            lvMessages.getLayoutManager().scrollToPosition(messageAdapter.getItemCount() - 1);
         }
 
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveToLink(int linkId) {
-        int position = messageListAdapter.indexOfLinkId(linkId);
+        int position = messageAdapter.indexOfLinkId(linkId);
 
         if (position > 0) {
             lvMessages.smoothScrollToPosition(position);
@@ -907,21 +822,10 @@ public class MessageListPresenter {
         }
     }
 
-    private boolean isContainLinkId(List<ResMessages.Link> records, int linkId) {
-
-        return Observable.from(records)
-                .filter(link -> link.id == linkId)
-                .map(link1 -> true)
-                .firstOrDefault(false)
-                .toBlocking()
-                .first();
-
-    }
-
     @UiThread
     public void setUpNewMessage(List<ResMessages.Link> linkList, int myId, int lastLinkId, boolean firstLoad) {
         int visibleLastItemPosition = getLastVisibleItemPosition();
-        int lastItemPosition = getLastItemPosition();
+        int lastItemPosition = getLastItemPosition() - linkList.size();
 
         addAll(lastItemPosition, linkList);
 
@@ -955,22 +859,22 @@ public class MessageListPresenter {
     }
 
     private void setUpLastReadLink(int myId) {
-        int lastReadLinkId = messageListAdapter.getLastReadLinkId();
-        int indexOfLinkId = messageListAdapter.indexOfLinkId(lastReadLinkId);
+        int lastReadLinkId = messageAdapter.getLastReadLinkId();
+        int indexOfLinkId = messageAdapter.indexOfLinkId(lastReadLinkId);
 
         if (indexOfLinkId < 0) {
             return;
         }
 
 
-        if (indexOfLinkId >= messageListAdapter.getItemCount() - 1) {
+        if (indexOfLinkId >= messageAdapter.getItemCount() - 1) {
             // 라스트 링크가 마지막 아이템인경우
-            messageListAdapter.setLastReadLinkId(-1);
+            messageAdapter.setLastReadLinkId(-1);
         } else {
-            ResMessages.Link item = messageListAdapter.getItem(indexOfLinkId + 1);
+            ResMessages.Link item = messageAdapter.getItem(indexOfLinkId + 1);
             if (item instanceof DummyMessageLink) {
                 // 마지막 아이템은 아니지만 다음 아이템이 더미인경우 마지막 아이템으로 간주
-                messageListAdapter.setLastReadLinkId(-1);
+                messageAdapter.setLastReadLinkId(-1);
             }
         }
 
@@ -1023,9 +927,9 @@ public class MessageListPresenter {
     }
 
     public void updateMessageStarred(int messageId, boolean starred) {
-        int itemCount = messageListAdapter.getItemCount();
+        int itemCount = messageAdapter.getItemCount();
         for (int idx = 0; idx > itemCount; ++idx) {
-            ResMessages.OriginalMessage message = messageListAdapter.getItem(idx).message;
+            ResMessages.OriginalMessage message = messageAdapter.getItem(idx).message;
             if (message.id == messageId) {
                 message.isStarred = starred;
                 break;
@@ -1035,9 +939,9 @@ public class MessageListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void deleteLinkByMessageId(int messageId) {
-        int position = messageListAdapter.indexByMessageId(messageId);
-        messageListAdapter.remove(position);
-        messageListAdapter.notifyDataSetChanged();
+        int position = messageAdapter.indexByMessageId(messageId);
+        messageAdapter.remove(position);
+        messageAdapter.notifyDataSetChanged();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -1077,10 +981,10 @@ public class MessageListPresenter {
         dummyMessageLink.message.createTime = new Date();
         dummyMessageLink.message.updateTime = new Date();
 
-        messageListAdapter.addDummyMessage(dummyMessageLink);
-        messageListAdapter.notifyDataSetChanged();
+        messageAdapter.addDummyMessage(dummyMessageLink);
+        messageAdapter.notifyDataSetChanged();
 
-        lvMessages.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
+        lvMessages.getLayoutManager().scrollToPosition(messageAdapter.getItemCount() - 1);
     }
 
     public void setListTouchListener(View.OnTouchListener touchListener) {
@@ -1094,11 +998,23 @@ public class MessageListPresenter {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setUpLastReadLinkIdIfPosition() {
         // 마커가 마지막아이템을 가르키고 있을때만 position = -1 처리
-        int lastReadLinkId = messageListAdapter.getLastReadLinkId();
-        int markerPosition = messageListAdapter.indexOfLinkId(lastReadLinkId);
-        if (markerPosition == messageListAdapter.getItemCount() - messageListAdapter.getDummyMessageCount() - 1) {
-            messageListAdapter.setLastReadLinkId(-1);
+        int lastReadLinkId = messageAdapter.getLastReadLinkId();
+        int markerPosition = messageAdapter.indexOfLinkId(lastReadLinkId);
+        if (markerPosition == messageAdapter.getItemCount() - messageAdapter.getDummyMessageCount() - 1) {
+            messageAdapter.setLastReadLinkId(-1);
         }
+    }
+
+    public void initAdapter(boolean isFromSearch) {
+        this.isFromSearch = isFromSearch;
+
+        if (isFromSearch) {
+            messageAdapter = new MessageListAdapter(activity);
+        } else {
+            messageAdapter = new MessageCursorListAdapter(activity);
+        }
+        messageAdapter.setHasStableIds(true);
+
     }
 }
 

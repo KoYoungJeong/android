@@ -74,6 +74,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
@@ -111,7 +112,6 @@ import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.UpdateLinkPreviewMessageQueue;
-import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerOldMessageLoader;
@@ -183,7 +183,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public static final String EXTRA_NEW_PHOTO_FILE = "new_photo_file";
     public static final int REQ_STORAGE_PERMISSION = 101;
     private static final StickerInfo NULL_STICKER = new StickerInfo();
-
+    // EASTER EGG SNOW
+    public static boolean SNOWING_EASTEREGG_STARTED = false;
     @FragmentArg
     int entityType;
     @FragmentArg
@@ -202,7 +203,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     int roomId;
     @ViewById(R.id.lv_messages)
     RecyclerView messageListView;
-
     @ViewById(R.id.btn_message_action_button_1)
     ImageView btnActionButton1;
     @ViewById(R.id.btn_message_action_button_2)
@@ -213,14 +213,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     BackpressEditText etMessage;
     @ViewById(R.id.vg_option_space)
     ViewGroup vgOptionSpace;
-
     @ViewById(R.id.lv_list_search_members)
     RecyclerView rvListSearchMembers;
-
     @ViewById(R.id.vg_easteregg_snow)
     FrameLayout vgEasterEggSnow;
-
-
     @Bean
     MessageListPresenter messageListPresenter;
     @Bean
@@ -241,9 +237,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     AnnouncementViewModel announcementViewModel;
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
-
     MentionControlViewModel mentionControlViewModel;
-
     private OldMessageLoader oldMessageLoader;
     private NewsMessageLoader newsMessageLoader;
     private MessageState messageState;
@@ -257,6 +251,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @AfterInject
     void initObject() {
+
+        SendMessageRepository.getRepository().deleteAllOfCompletedMessages();
+
+        messageListPresenter.initAdapter(isFromSearch);
         SNOWING_EASTEREGG_STARTED = false;
 
         messageState = new MessageState();
@@ -598,7 +596,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (layoutManager.findLastVisibleItemPosition() == ((MessageListAdapter) recyclerView.getAdapter()).getItemCount() - 1) {
+                if (layoutManager.findLastVisibleItemPosition() == recyclerView.getAdapter().getItemCount() - 1) {
                     messageListPresenter.setPreviewVisibleGone();
 
                 }
@@ -770,7 +768,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
-        messageListPresenter.showStickerPreview(stickerInfo);
+        messageListPresenter.showStickerPreview();
         if (oldSticker.getStickerGroupId() != stickerInfo.getStickerGroupId()
                 || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
             messageListPresenter.loadSticker(stickerInfo);
@@ -1130,7 +1128,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (localId > 0) {
             FormattedEntity me = EntityManager.getInstance().getMe();
             // insert to ui
-            messageListPresenter.insertSendingMessage(localId, message, me.getName(), me.getUserLargeProfileUrl(), mentions);
+            messageListPresenter.insertSendingMessage(localId, message, mentions);
             // networking...
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, reqSendMessage)));
 
@@ -1709,7 +1707,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
     }
 
-
     public void onEventMainThread(TopicKickedoutEvent event) {
         if (roomId == event.getRoomId()) {
             getActivity().finish();
@@ -1718,7 +1715,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListPresenter.showFailToast(msg);
         }
     }
-
 
     public void onEvent(TopicInfoUpdateEvent event) {
         if (event.getId() == entityId) {
@@ -1973,7 +1969,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         return false;
     }
 
-
     //FIXME 업로드 레이아웃 열기
     void openUploadPanel() {
         Permissions.getChecker()
@@ -2051,12 +2046,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
     }
 
+
     enum ButtonAction {
         UPLOAD, STICKER, KEYBOARD
     }
-
-
-
-    // EASTER EGG SNOW
-    public static boolean SNOWING_EASTEREGG_STARTED = false;
 }

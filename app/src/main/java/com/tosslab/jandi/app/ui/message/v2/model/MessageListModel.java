@@ -161,7 +161,8 @@ public class MessageListModel {
         try {
             ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage(), sendingMessage.getMentions());
 
-            SendMessageRepository.getRepository().deleteSendMessage(sendingMessage.getLocalId());
+            SendMessageRepository.getRepository().updateSendMessageStatus(
+                    sendingMessage.getLocalId(), resCommon.id, SendMessage.Status.COMPLETE);
 
             trackMessagePostSuccess();
 
@@ -294,31 +295,36 @@ public class MessageListModel {
         List<ResMessages.Link> links = new ArrayList<>();
         for (SendMessage link : sendMessage) {
 
-            List<MentionObject> mentionObjects = new ArrayList<>();
-
-            Collection<MentionObject> savedMention = link.getMentionObjects();
-            if (savedMention != null) {
-                for (MentionObject mentionObject : savedMention) {
-                    mentionObjects.add(mentionObject);
-                }
-            }
-
-            if (link.getStickerGroupId() > 0 && !TextUtils.isEmpty(link.getStickerId())) {
-
-                DummyMessageLink dummyMessageLink = new DummyMessageLink(link.getId(), link.getStatus(),
-                        link.getStickerGroupId(), link.getStickerId());
-                dummyMessageLink.message.writerId = id;
-                dummyMessageLink.message.createTime = new Date();
-                links.add(dummyMessageLink);
-            } else {
-                DummyMessageLink dummyMessageLink = new DummyMessageLink(link.getId(), link.getMessage(),
-                        link.getStatus(), mentionObjects);
-                dummyMessageLink.message.writerId = id;
-                dummyMessageLink.message.createTime = new Date();
-                links.add(dummyMessageLink);
-            }
+            DummyMessageLink dummyMessageLink = getDummyMessageLink(id, link);
+            links.add(dummyMessageLink);
         }
         return links;
+    }
+
+    private DummyMessageLink getDummyMessageLink(int id, SendMessage link) {
+        List<MentionObject> mentionObjects = new ArrayList<>();
+
+        Collection<MentionObject> savedMention = link.getMentionObjects();
+        if (savedMention != null) {
+            for (MentionObject mentionObject : savedMention) {
+                mentionObjects.add(mentionObject);
+            }
+        }
+
+        DummyMessageLink dummyMessageLink;
+        if (link.getStickerGroupId() > 0 && !TextUtils.isEmpty(link.getStickerId())) {
+
+            dummyMessageLink = new DummyMessageLink(link.getId(), link.getStatus(),
+                    link.getStickerGroupId(), link.getStickerId());
+            dummyMessageLink.message.writerId = id;
+            dummyMessageLink.message.createTime = new Date();
+        } else {
+            dummyMessageLink = new DummyMessageLink(link.getId(), link.getMessage(),
+                    link.getStatus(), mentionObjects);
+            dummyMessageLink.message.writerId = id;
+            dummyMessageLink.message.createTime = new Date();
+        }
+        return dummyMessageLink;
     }
 
     public boolean isFailedDummyMessage(DummyMessageLink dummyMessageLink) {
@@ -395,8 +401,11 @@ public class MessageListModel {
         ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), teamId, entityId, type, "", new ArrayList<>());
 
         try {
-            ResCommon resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(reqSendSticker);
-            SendMessageRepository.getRepository().deleteSendMessage(localId);
+            ResCommon resCommon = RequestApiManager.getInstance()
+                    .sendStickerByStickerApi(reqSendSticker);
+
+            SendMessageRepository.getRepository()
+                    .updateSendMessageStatus(localId, resCommon.id, SendMessage.Status.COMPLETE);
 
             trackMessagePostSuccess();
             EventBus.getDefault().post(new SendCompleteEvent(localId, resCommon.id));
