@@ -90,7 +90,6 @@ public class PureMessageViewHolder implements BodyViewHolder {
 
 
         linkPreviewViewModel.bindData(link);
-
     }
 
     @Override
