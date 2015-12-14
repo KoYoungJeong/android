@@ -20,11 +20,8 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -415,7 +412,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         setUpListTouchListener();
 
-        TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
+        TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(entityType == JandiConstants.TYPE_DIRECT_MESSAGE, getActivity());
 
         AnalyticsUtil.sendScreenName(messageListModel.getScreen(entityId));
 

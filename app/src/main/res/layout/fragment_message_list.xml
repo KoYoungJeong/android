@@ -12,11 +12,11 @@
 
     <FrameLayout
         android:id="@+id/vg_easteregg_snow"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_above="@+id/space_messages_divider"
-        android:layout_below="@+id/ll_messages_disable_alert"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_above="@+id/space_messages_divider"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_below="@+id/ll_messages_disable_alert" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/lv_messages"
@@ -114,8 +114,8 @@
             android:id="@+id/iv_messages_preview_sticker_image"
             android:layout_width="140dp"
             android:layout_height="140dp"
-            android:layout_marginTop="4dp"
             android:layout_centerInParent="true"
+            android:layout_marginTop="4dp"
             android:scaleType="centerCrop" />
 
         <ImageView
@@ -228,10 +228,10 @@
 
             <ImageView
                 android:id="@+id/btn_show_mention"
-                android:layout_width="37dp"
-                android:layout_height="19dp"
-                android:layout_gravity="bottom"
-                android:layout_marginBottom="8.5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="9dp"
+                android:paddingRight="9dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/chat_mention"
                 android:visibility="gone" />

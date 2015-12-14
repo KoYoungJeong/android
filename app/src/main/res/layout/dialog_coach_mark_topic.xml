@@ -126,8 +126,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="-13dp"
-        android:layout_marginLeft="1.2dp"
+        android:layout_marginBottom="-22.3dp"
+        android:layout_marginLeft="3dp"
         android:src="@drawable/coachmark_img_upload" />
 
     <TextView
@@ -151,24 +151,26 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="-15.1dp"
-        android:layout_marginRight="97.6dp"
-        android:src="@drawable/coachmark_img_sticker" />
+        android:layout_marginBottom="-22.3dp"
+        android:layout_marginRight="62.7dp"
+        android:src="@drawable/coachmark_img_mention" />
 
     <TextView
-        android:layout_width="100dp"
+        android:id="@+id/tv_topic_sticker_guide"
+        android:layout_width="wrap_content"
         android:layout_height="18dp"
         android:layout_above="@id/iv_topic_sticker_guide_icon"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="4dp"
-        android:layout_marginRight="69dp"
+        android:layout_marginRight="54dp"
         android:gravity="center"
         android:shadowColor="@color/jandi_coach_mark_text_shadow"
         android:shadowDy="1"
         android:shadowRadius="1"
-        android:text="@string/jandi_coach_mark_stickers"
+        android:text="@string/jandi_mention_mentions"
         android:textColor="@color/jandi_coach_mark_text"
         android:textSize="14sp"
         android:textStyle="bold" />
+
 
 </RelativeLayout>
