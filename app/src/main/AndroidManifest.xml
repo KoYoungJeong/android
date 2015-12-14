@@ -364,6 +364,11 @@
             android:name="io.fabric.ApiKey"
             android:value="24a73214fd9000841e8d34390de55bdfd4150668" />
 
+        <!-- Glide -->
+        <meta-data
+            android:name="com.tosslab.jandi.app.utils.GlideQualityModule"
+            android:value="GlideModule" />
+
         <!-- Push Intent Service -->
         <service android:name=".push.receiver.JandiPushIntentService" />
 

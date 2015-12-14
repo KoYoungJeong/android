@@ -316,6 +316,15 @@ public class ResMessages {
         public FileMessage() {
             contentType = "file";
         }
+
+        @Override
+        public String toString() {
+            return "FileMessage{" +
+                    "shareEntities=" + shareEntities +
+                    ", content=" + content +
+                    ", commentCount=" + commentCount +
+                    '}';
+        }
     }
 
     @DatabaseTable(tableName = "message_text_content")
@@ -428,12 +437,22 @@ public class ResMessages {
         @DatabaseField(id = true)
         public String largeThumbnailUrl;
 
+        @DatabaseField
+        public int width;
+        @DatabaseField
+        public int height;
+        @DatabaseField
+        public int orientation;
+
         @Override
         public String toString() {
             return "ThumbnailUrls{" +
                     "smallThumbnailUrl='" + smallThumbnailUrl + '\'' +
                     ", mediumThumbnailUrl='" + mediumThumbnailUrl + '\'' +
                     ", largeThumbnailUrl='" + largeThumbnailUrl + '\'' +
+                    ", width=" + width +
+                    ", height=" + height +
+                    ", orientation=" + orientation +
                     '}';
         }
     }
