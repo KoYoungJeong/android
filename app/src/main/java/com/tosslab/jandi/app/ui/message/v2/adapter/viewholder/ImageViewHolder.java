@@ -277,10 +277,11 @@ public class ImageViewHolder implements BodyViewHolder {
             LogUtil.e(TAG, String.format("width=%s, height=%s, needToResize=%b",
                     layoutParams.width, layoutParams.height, needToResize));
 
+            int maximumBitmapSize = ImageUtil.getMaximumBitmapSize();
             ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
                     .setResizeOptions(needToResize
                             ? new ResizeOptions(layoutParams.width, layoutParams.height)
-                            : null)
+                            : new ResizeOptions(maximumBitmapSize, maximumBitmapSize))
                     .setProgressiveRenderingEnabled(true)
                     .build();
 
