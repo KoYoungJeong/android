@@ -24,7 +24,7 @@ public class TutorialCoachMarkUtil {
     private static final int COACH_MARK_MORE = 0x3;
     private static final int COACH_MARK_TOPIC = 0x4;
 
-    private static void showCoachMarkDialog(Context context, int coachMarkType) {
+    private static Dialog showCoachMarkDialog(Context context, int coachMarkType) {
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -49,15 +49,11 @@ public class TutorialCoachMarkUtil {
                 break;
             case COACH_MARK_TOPIC:
                 dialog.setContentView(R.layout.dialog_coach_mark_topic);
+                break;
         }
 
         View masterView = dialog.findViewById(R.id.coach_mark_master_view);
-        masterView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
+        masterView.setOnClickListener(view -> dialog.dismiss());
 
         EntityManager entityManager = EntityManager.getInstance();
 
@@ -76,6 +72,7 @@ public class TutorialCoachMarkUtil {
 
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         dialog.show();
+        return dialog;
     }
 
     public static void showCoachMarkTopicListIfNotShown(Context context) {
@@ -102,9 +99,13 @@ public class TutorialCoachMarkUtil {
         }
     }
 
-    public static void showCoachMarkTopicIfNotShown(Context context) {
+    public static void showCoachMarkTopicIfNotShown(boolean user, Context context) {
         if (!JandiPreference.isAleadyShowCoachMarkTopic(context.getApplicationContext())) {
-            showCoachMarkDialog(context, COACH_MARK_TOPIC);
+            Dialog dialog = showCoachMarkDialog(context, COACH_MARK_TOPIC);
+            if (user) {
+                dialog.findViewById(R.id.tv_topic_sticker_guide).setVisibility(View.GONE);
+                dialog.findViewById(R.id.iv_topic_sticker_guide_icon).setVisibility(View.GONE);
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.sticker;
+package com.tosslab.jandi.app.ui.commonviewmodels.sticker;
 
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -138,10 +138,8 @@ public class StickerManager {
         return localStickerGroupIds.contains(groupId);
     }
 
-    String getStickerAssetPath(int groupId, String stickerId) {
-        List<ResMessages.StickerContent> stickers =
-                StickerRepository.getRepository().getStickers(groupId);
-
+    public String getStickerAssetPath(int groupId, String stickerId) {
+        List<ResMessages.StickerContent> stickers = StickerRepository.getRepository().getStickers(groupId);
         ResMessages.StickerContent defaultSticker = new ResMessages.StickerContent();
         ResMessages.StickerContent stickerItem = Observable.from(stickers)
                 .filter(resSticker -> TextUtils.equals(resSticker.stickerId, stickerId))

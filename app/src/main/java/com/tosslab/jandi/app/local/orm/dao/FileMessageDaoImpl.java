@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
@@ -43,10 +44,30 @@ public class FileMessageDaoImpl extends BaseDaoImpl<ResMessages.FileMessage, Int
             }
         }
 
-        DaoManager.createDao(connectionSource, ResMessages.FileContent.class)
-                .createOrUpdate(fileMessage.content);
+        if (fileMessage.content != null) {
 
-        DaoManager.createDao(connectionSource, ResMessages.ThumbnailUrls.class)
-                .createOrUpdate(fileMessage.content.extraInfo);
+            if (fileMessage.content.extraInfo != null) {
+                Dao<ResMessages.ThumbnailUrls, ?> thumbnailUrlsDao = DaoManager.createDao(connectionSource, ResMessages.ThumbnailUrls.class);
+                QueryBuilder<ResMessages.ThumbnailUrls, ?> thumbnailUrlsQueryBuilder = thumbnailUrlsDao.queryBuilder();
+                thumbnailUrlsQueryBuilder
+                        .where()
+                        .eq("largeThumbnailUrl", fileMessage.content.extraInfo.largeThumbnailUrl)
+                        .or()
+                        .eq("thumbnailUrl", fileMessage.content.extraInfo.thumbnailUrl);
+                if (thumbnailUrlsQueryBuilder.countOf() <= 0) {
+                    thumbnailUrlsDao.create(fileMessage.content.extraInfo);
+                } else {
+                    thumbnailUrlsQueryBuilder.reset();
+                    ResMessages.ThumbnailUrls thumbnailUrls = thumbnailUrlsQueryBuilder.queryForFirst();
+                    fileMessage.content.extraInfo._id = thumbnailUrls._id;
+
+                }
+            }
+
+            DaoManager.createDao(connectionSource, ResMessages.FileContent.class)
+                    .createOrUpdate(fileMessage.content);
+
+        }
+
     }
 }

@@ -252,9 +252,9 @@ public class JandiPreference {
     public static int getKeyboardHeight(Context context) {
 
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            return getSharedPreferences(context).getInt(PREF_KEYBOARD_HEIGHT_LANDSCAPE, 0);
+            return getSharedPreferences(context).getInt(PREF_KEYBOARD_HEIGHT_LANDSCAPE, -1);
         } else {
-            return getSharedPreferences(context).getInt(PREF_KEYBOARD_HEIGHT_PORTRAIT, 0);
+            return getSharedPreferences(context).getInt(PREF_KEYBOARD_HEIGHT_PORTRAIT, -1);
         }
     }
 

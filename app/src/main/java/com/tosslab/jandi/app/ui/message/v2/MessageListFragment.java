@@ -19,9 +19,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -87,6 +89,9 @@ import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
+import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu.UploadMenuViewModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
@@ -122,17 +127,17 @@ import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
-import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
-import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.extracomponent.BackpressEditText;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.app.views.eastereggs.SnowView;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -178,6 +183,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public static final String EXTRA_NEW_PHOTO_FILE = "new_photo_file";
     public static final int REQ_STORAGE_PERMISSION = 101;
     private static final StickerInfo NULL_STICKER = new StickerInfo();
+
     @FragmentArg
     int entityType;
     @FragmentArg
@@ -194,14 +200,27 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     int lastMarker = -1;
     @FragmentArg
     int roomId;
-    @ViewById(R.id.list_messages)
+    @ViewById(R.id.lv_messages)
     RecyclerView messageListView;
-    @ViewById(R.id.btn_send_message)
-    Button sendButton;
+
+    @ViewById(R.id.btn_message_action_button_1)
+    ImageView btnActionButton1;
+    @ViewById(R.id.btn_message_action_button_2)
+    ImageView btnActionButton2;
+    @ViewById(R.id.btn_show_mention)
+    ImageView btnShowMention;
     @ViewById(R.id.et_message)
-    EditText messageEditText;
-    @ViewById(R.id.rv_list_search_members)
+    BackpressEditText etMessage;
+    @ViewById(R.id.vg_option_space)
+    ViewGroup vgOptionSpace;
+
+    @ViewById(R.id.lv_list_search_members)
     RecyclerView rvListSearchMembers;
+
+    @ViewById(R.id.vg_easteregg_snow)
+    FrameLayout vgEasterEggSnow;
+
+
     @Bean
     MessageListPresenter messageListPresenter;
     @Bean
@@ -210,6 +229,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     KeyboardHeightModel keyboardHeightModel;
     @Bean
     StickerViewModel stickerViewModel;
+    @Bean
+    UploadMenuViewModel uploadMenuViewModel;
     @Bean(value = EntityFileUploadViewModelImpl.class)
     FilePickerViewModel filePickerViewModel;
     @Bean
@@ -220,7 +241,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     AnnouncementViewModel announcementViewModel;
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
+
     MentionControlViewModel mentionControlViewModel;
+
     private OldMessageLoader oldMessageLoader;
     private NewsMessageLoader newsMessageLoader;
     private MessageState messageState;
@@ -230,9 +253,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     private File photoFileByCamera;
     private StickerInfo stickerInfo = NULL_STICKER;
     private boolean isRoomInit;
+    private ButtonAction buttonAction = ButtonAction.KEYBOARD;
 
     @AfterInject
     void initObject() {
+        SNOWING_EASTEREGG_STARTED = false;
+
         messageState = new MessageState();
 
         messagePublishSubject = PublishSubject.create();
@@ -241,7 +267,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 .onBackpressureBuffer()
                 .observeOn(Schedulers.io())
                 .subscribe(messageQueue -> {
-
                     switch (messageQueue.getQueueType()) {
                         case Old:
                             loadOldMessage(messageQueue);
@@ -307,16 +332,32 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         fileUploadStateViewModel.setEntityId(entityId);
 
         keyboardHeightModel.addOnKeyboardShowListener((isShowing) -> {
-            boolean visibility = keyboardHeightModel.isOpened() || stickerViewModel.isShow();
+            boolean visibility = keyboardHeightModel.isOpened()
+                    || stickerViewModel.isShow() || uploadMenuViewModel.isShow();
             announcementViewModel.setAnnouncementViewVisibility(!visibility);
         });
 
         stickerViewModel.setOnStickerLayoutShowListener(isShow -> {
-            boolean visibility = keyboardHeightModel.isOpened() || stickerViewModel.isShow();
+            boolean visibility = keyboardHeightModel.isOpened()
+                    || stickerViewModel.isShow() || uploadMenuViewModel.isShow();
             announcementViewModel.setAnnouncementViewVisibility(!visibility);
         });
 
-        JandiPreference.setKeyboardHeight(getActivity(), 0);
+        uploadMenuViewModel.setOnUploadLayoutShowListener(isShow -> {
+            boolean visibility = keyboardHeightModel.isOpened()
+                    || stickerViewModel.isShow() || uploadMenuViewModel.isShow();
+            announcementViewModel.setAnnouncementViewVisibility(!visibility);
+        });
+
+        uploadMenuViewModel.setOnClickUploadEventListener(() -> {
+            if (keyboardHeightModel.isOpened()) {
+                keyboardHeightModel.hideKeyboard();
+            }
+            buttonAction = ButtonAction.KEYBOARD;
+            setActionButtons();
+        });
+
+        JandiPreference.setKeyboardHeight(getActivity(), -1);
     }
 
     @AfterViews
@@ -361,6 +402,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         initStickerViewModel();
 
+        initUploadViewModel();
+
         insertEmptyMessage();
 
         initAnnouncementListeners();
@@ -369,27 +412,97 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         setUpListTouchListener();
 
-        TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
+        TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(entityType == JandiConstants.TYPE_DIRECT_MESSAGE, getActivity());
 
         AnalyticsUtil.sendScreenName(messageListModel.getScreen(entityId));
+
+        setKeyboardBackpressCallback();
+
+        setEditTextTouchEvent();
     }
 
     private void setUpListTouchListener() {
         messageListPresenter.setListTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 messageListPresenter.hideKeyboard();
-                stickerViewModel.dismissStickerSelector();
+                dismissStickerSelectorIfShow();
+                dismissUploadSelectorIfShow();
             }
             return false;
         });
     }
 
+    private void setKeyboardBackpressCallback() {
+        etMessage.setOnBackPressListener(() -> {
+            if (keyboardHeightModel.isOpened()) {
+                //키보드가 열려져 있고 그 위에 스티커가 있는 상태에서 둘다 제거 할때 속도를 맞추기 위해 딜레이를 줌
+                Observable.just(1)
+                        .delay(200, TimeUnit.MILLISECONDS)
+                        .subscribe(i -> {
+                            dismissStickerSelectorIfShow();
+                            dismissUploadSelectorIfShow();
+                        });
+            }
+            return false;
+        });
+    }
+
+    private void showStickerSelectorIfNotShow(int height) {
+        if (!stickerViewModel.isShow()) {
+            stickerViewModel.showStickerSelector(height);
+            Observable.just(1)
+                    .delay(100, TimeUnit.MILLISECONDS)
+                    .subscribe(i -> {
+                        if (uploadMenuViewModel.isShow()) {
+                            uploadMenuViewModel.dismissUploadSelector(false);
+                        }
+                    });
+            buttonAction = ButtonAction.STICKER;
+            setActionButtons();
+        }
+    }
+
+    private void dismissStickerSelectorIfShow() {
+        if (stickerViewModel.isShow()) {
+            stickerViewModel.dismissStickerSelector(true);
+            buttonAction = ButtonAction.KEYBOARD;
+            setActionButtons();
+        }
+    }
+
+    private void showUploadMenuSelectorIfNotShow(int height) {
+        if (!uploadMenuViewModel.isShow()) {
+            uploadMenuViewModel.showUploadSelector(height);
+            Observable.just(1)
+                    .delay(100, TimeUnit.MILLISECONDS)
+                    .subscribe(i -> {
+                        if (stickerViewModel.isShow()) {
+                            stickerViewModel.dismissStickerSelector(false);
+                        }
+                    });
+            buttonAction = ButtonAction.UPLOAD;
+            setActionButtons();
+        }
+    }
+
+    private void dismissUploadSelectorIfShow() {
+        if (uploadMenuViewModel.isShow()) {
+            uploadMenuViewModel.dismissUploadSelector(true);
+            buttonAction = ButtonAction.KEYBOARD;
+            setActionButtons();
+        }
+    }
+
+    private void setEditTextTouchEvent() {
+        etMessage.setOnClickListener(v -> {
+            dismissStickerSelectorIfShow();
+            dismissUploadSelectorIfShow();
+        });
+    }
+
     private void initKeyboardEvent() {
-
-        messageEditText.setOnKeyListener((v, keyCode, event) -> {
-
-            LogUtil.d("In messageEditText KeyCode : " + keyCode);
-
+        etMessage.setOnKeyListener((v, keyCode, event) -> {
+            LogUtil.d("In etMessage KeyCode : " + keyCode);
             if (keyCode == KeyEvent.KEYCODE_ENTER
                     && getResources().getConfiguration().keyboard != Configuration
                     .KEYBOARD_NOKEYS) {
@@ -405,43 +518,45 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             if (event.getAction() != KeyEvent.ACTION_DOWN) {
                 //We only look at ACTION_DOWN in this code, assuming that ACTION_UP is redundant.
                 // If not, adjust accordingly.
-                return false;
             } else if (event.getUnicodeChar() ==
                     (int) EditableAccomodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
                 //We are ignoring this character, and we want everyone else to ignore it, too, so
                 // we return true indicating that we have handled it (by ignoring it).
                 return true;
             }
-
             return false;
         });
-
     }
 
     private void initStickerViewModel() {
-        stickerViewModel.setOnStickerClick(new StickerViewModel.OnStickerClick() {
-            @Override
-            public void onStickerClick(int groupId, String stickerId) {
-                StickerInfo oldSticker = stickerInfo;
-                stickerInfo = new StickerInfo();
-                stickerInfo.setStickerGroupId(groupId);
-                stickerInfo.setStickerId(stickerId);
-                showStickerPreview(oldSticker, stickerInfo);
-                messageListPresenter.setEnableSendButton(true);
-                AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_Select);
-            }
+        stickerViewModel.setOptionSpace(vgOptionSpace);
+        stickerViewModel.setOnStickerClick((groupId, stickerId) -> {
+            StickerInfo oldSticker = stickerInfo;
+            stickerInfo = new StickerInfo();
+            stickerInfo.setStickerGroupId(groupId);
+            stickerInfo.setStickerId(stickerId);
+            showStickerPreview(oldSticker, stickerInfo);
+            messageListPresenter.setEnableSendButton(true);
+            AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_Select);
         });
 
         stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> onSendClick());
 
         stickerViewModel.setType(messageListModel.isUser(entityId) ? StickerViewModel.TYPE_MESSAGE : StickerViewModel.TYPE_TOPIC);
+
+        stickerViewModel.setStickerButton(btnActionButton2);
+    }
+
+    private void initUploadViewModel() {
+        uploadMenuViewModel.setOptionSpace(vgOptionSpace);
     }
 
     private void initMessageList() {
         messageListPresenter.setOnItemClickListener((adapter, position) -> {
             try {
                 messageListPresenter.hideKeyboard();
-                stickerViewModel.dismissStickerSelector();
+                dismissStickerSelectorIfShow();
+                dismissUploadSelectorIfShow();
                 onMessageItemClick(messageListPresenter.getItem(position), entityId);
             } catch (Exception e) {
                 messageListPresenter.justRefresh();
@@ -478,7 +593,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return true;
         });
 
-        ((RecyclerView) getView().findViewById(R.id.list_messages)).setOnScrollListener(new RecyclerView.OnScrollListener() {
+        ((RecyclerView) getView().findViewById(R.id.lv_messages)).setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -498,7 +613,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         // 사유 1: 헤더가 사이즈 변경을 인식하는데 시간이 소요됨
         // 사유 2: 2번 하는 이유는 첫 100ms 에서 갱신안되는 단말을 위함...
         // 구형단말을 위한 배려 -_-v
-        Observable.just(1, 1)
+        Observable.just(1)
                 .delay(100, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(integer -> {
@@ -510,6 +625,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                     }
                     if (stickerViewModel != null) {
                         stickerViewModel.onConfigurationChanged();
+                    }
+                    if (uploadMenuViewModel != null) {
+                        uploadMenuViewModel.onConfigurationChanged();
                     }
                 });
 
@@ -663,14 +781,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     void onStickerPreviewClose() {
         MessageListFragment.this.stickerInfo = NULL_STICKER;
         messageListPresenter.dismissStickerPreview();
-
         if (mentionControlViewModel != null) {
             ResultMentionsVO mentionInfoObject = mentionControlViewModel.getMentionInfoObject();
             if (TextUtils.isEmpty(mentionInfoObject.getMessage())) {
                 messageListPresenter.setEnableSendButton(false);
             }
         } else {
-            if (TextUtils.isEmpty(messageEditText.getText())) {
+            if (TextUtils.isEmpty(etMessage.getText())) {
                 messageListPresenter.setEnableSendButton(false);
             }
         }
@@ -806,11 +923,16 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         roomIds.add(roomId);
 
         if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
+            btnShowMention.setVisibility(View.VISIBLE);
+
             if (mentionControlViewModel == null) {
                 mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(),
-                        messageEditText,
+                        etMessage,
                         roomIds,
                         MentionControlViewModel.MENTION_TYPE_MESSAGE);
+                mentionControlViewModel.setOnMentionShowingListener(
+                        isShowing -> btnShowMention.setVisibility(!isShowing ? View.VISIBLE : View.GONE));
+
                 String readyMessage = messageListModel.getReadyMessage(roomId);
                 mentionControlViewModel.setUpMention(readyMessage);
             } else {
@@ -826,7 +948,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         } else {
             messageListPresenter.showOfflineLayer();
         }
-
     }
 
     @Override
@@ -846,6 +967,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             mentionControlViewModel.removeClipboardListener();
         }
 
+        dismissStickerSelectorIfShow();
+
         super.onPause();
     }
 
@@ -864,74 +987,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
     }
 
-    @Click(R.id.btn_message_sticker)
-    void onStickerClick(View view) {
-        boolean selected = view.isSelected();
-
-        if (selected) {
-            stickerViewModel.dismissStickerSelector();
-
-            AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker);
-        } else {
-            int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity());
-            if (keyboardHeight > 0) {
-                messageListPresenter.hideKeyboard();
-                stickerViewModel.showStickerSelector(keyboardHeight);
-                if (keyboardHeightModel.getOnKeyboardShowListener() == null) {
-                    keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
-                        if (isShow) {
-                            stickerViewModel.dismissStickerSelector();
-                        }
-                    });
-                }
-                AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker);
-            } else {
-                initKeyboardHeight();
-            }
-        }
-    }
-
-    private void initKeyboardHeight() {
-        EditText etMessage = messageListPresenter.getSendEditTextView();
-        keyboardHeightModel.setOnKeyboardHeightCaptureListener(() -> {
-            onStickerClick(getView().findViewById(R.id.btn_message_sticker));
-            keyboardHeightModel.setOnKeyboardHeightCaptureListener(null);
-
-        });
-
-        etMessage.requestFocus();
-        messageListPresenter.showKeyboard();
-    }
-
-    @Click(R.id.ll_messages_go_to_latest)
+    @Click(R.id.vg_messages_go_to_latest)
     void onGotoLatestClick() {
         if (!(oldMessageLoader instanceof NormalOldMessageLoader)) {
             EventBus.getDefault().post(new ChatModeChangeEvent(true));
         }
     }
 
-    @Click(R.id.layout_messages_preview_last_item)
+    @Click(R.id.vg_messages_preview_last_item)
     void onPreviewClick() {
         messageListPresenter.setPreviewVisibleGone();
         messageListPresenter.moveLastPage();
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Click(R.id.btn_upload_file)
-    void onUploadClick() {
-
-        Permissions.getChecker()
-                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .hasPermission(() -> {
-                    filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
-                    AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Upload);
-                })
-                .noPermission(() -> {
-                    String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                    MessageListFragment.this.requestPermissions(permissions,
-                            REQ_STORAGE_PERMISSION);
-                })
-                .check();
     }
 
     @Override
@@ -951,7 +1017,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Click(R.id.btn_send_message)
     void onSendClick() {
 
-        String message = messageEditText.getText().toString();
+        String message = etMessage.getText().toString();
+
+        handleEasterEggSnowing(message);
+
         List<MentionObject> mentions;
 
         if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
@@ -997,8 +1066,51 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.setSendEditText("");
 
         AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Send);
+    }
 
+    @Click(R.id.btn_show_mention)
+    void onMentionClick() {
+        BaseInputConnection inputConnection = new BaseInputConnection(etMessage, true);
+        inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_AT));
+        if (buttonAction != ButtonAction.KEYBOARD) {
+            if (buttonAction == ButtonAction.STICKER || buttonAction == ButtonAction.UPLOAD) {
+                if (keyboardHeightModel.isOpened()) {
+                    dismissStickerSelectorIfShow();
+                    dismissUploadSelectorIfShow();
+                } else {
+                    keyboardHeightModel.showKeyboard();
+                }
+                buttonAction = ButtonAction.KEYBOARD;
+                setActionButtons();
+            }
+        }
+    }
 
+    private void handleEasterEggSnowing(String message) {
+        if (TextUtils.isEmpty(message)) {
+            return;
+        }
+
+        if ("눈".equals(message)
+                || "雪".equals(message)
+                || "snow".equals(message.toLowerCase())) {
+            if (vgEasterEggSnow.getChildCount() > 0) {
+                return;
+            }
+
+            SnowView snowView = new SnowView(getActivity());
+            snowView.setLayoutParams(
+                    new FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            vgEasterEggSnow.addView(snowView);
+
+            SNOWING_EASTEREGG_STARTED = true;
+
+            messageListPresenter.justRefresh();
+        } else if ("설쏴지마".equals(message)) {
+            vgEasterEggSnow.removeAllViews();
+            SNOWING_EASTEREGG_STARTED = false;
+        }
     }
 
     private void sendSticker() {
@@ -1654,7 +1766,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         modifyEntity(event);
     }
 
-
     @Background
     void modifyEntity(ConfirmModifyTopicEvent event) {
         messageListPresenter.showProgressWheel();
@@ -1834,12 +1945,15 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Override
     public boolean onBackPressed() {
-
-        if (stickerViewModel.isShowStickerSelector()) {
-            stickerViewModel.dismissStickerSelector();
+        if (stickerViewModel.isShow()) {
+            dismissStickerSelectorIfShow();
             return true;
         }
 
+        if (uploadMenuViewModel.isShow()) {
+            dismissUploadSelectorIfShow();
+            return true;
+        }
         return false;
     }
 
@@ -1849,13 +1963,100 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if ((keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_POUND)
                 || (keyCode >= KeyEvent.KEYCODE_A && keyCode <= KeyEvent.KEYCODE_PERIOD)
                 || (keyCode >= KeyEvent.KEYCODE_GRAVE && keyCode <= KeyEvent.KEYCODE_AT)) {
-            if (!messageEditText.isFocused()) {
-                messageEditText.requestFocus();
-                messageEditText.setSelection(messageEditText.getText().length());
+            if (!etMessage.isFocused()) {
+                etMessage.requestFocus();
+                etMessage.setSelection(etMessage.getText().length());
                 return true;
             }
         }
 
         return false;
     }
+
+
+    //FIXME 업로드 레이아웃 열기
+    void openUploadPanel() {
+        Permissions.getChecker()
+                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .hasPermission(() -> {
+                    filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
+                    AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Upload);
+                })
+                .noPermission(() -> {
+                    String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    MessageListFragment.this.requestPermissions(permissions,
+                            REQ_STORAGE_PERMISSION);
+                })
+                .check();
+    }
+
+    @Click(R.id.btn_message_action_button_1)
+    public void handleActionButton1() {
+        int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity().getApplicationContext());
+        switch (buttonAction) {
+            case KEYBOARD:
+                showUploadMenuSelectorIfNotShow(keyboardHeight);
+                break;
+            case STICKER:
+                showUploadMenuSelectorIfNotShow(keyboardHeight);
+                break;
+            case UPLOAD:
+                if (keyboardHeightModel.isOpened()) {
+                    dismissUploadSelectorIfShow();
+                } else {
+                    dismissUploadSelectorIfShow();
+                    keyboardHeightModel.showKeyboard();
+                }
+                break;
+        }
+    }
+
+    @Click(R.id.btn_message_action_button_2)
+    public void handleActionButton2() {
+        int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity().getApplicationContext());
+        switch (buttonAction) {
+            case KEYBOARD:
+                showStickerSelectorIfNotShow(keyboardHeight);
+                break;
+            case UPLOAD:
+                showStickerSelectorIfNotShow(keyboardHeight);
+                break;
+            case STICKER:
+                AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker);
+                if (keyboardHeightModel.isOpened()) {
+                    dismissStickerSelectorIfShow();
+                } else {
+                    dismissStickerSelectorIfShow();
+                    keyboardHeightModel.showKeyboard();
+                }
+                break;
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void setActionButtons() {
+        switch (buttonAction) {
+            case STICKER:
+                btnActionButton1.setImageResource(R.drawable.chat_icon_upload);
+                btnActionButton2.setImageResource(R.drawable.chat_icon_keypad);
+                break;
+            case UPLOAD:
+                btnActionButton1.setImageResource(R.drawable.chat_icon_keypad);
+                btnActionButton2.setImageResource(R.drawable.chat_icon_emoticon);
+                break;
+            case KEYBOARD:
+                btnActionButton1.setImageResource(R.drawable.chat_icon_upload);
+                btnActionButton2.setImageResource(R.drawable.chat_icon_emoticon);
+                break;
+        }
+    }
+
+    enum ButtonAction {
+        UPLOAD, STICKER, KEYBOARD
+    }
+
+
+
+    // EASTER EGG SNOW
+    public static boolean SNOWING_EASTEREGG_STARTED = false;
 }

@@ -1,6 +1,4 @@
-package com.tosslab.jandi.app.ui.carousel;
-
-import android.content.Context;
+package com.tosslab.jandi.app.ui.carousel.model;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -64,7 +62,7 @@ public class CarouselViewerModel {
         return fileInfos;
     }
 
-    public int getTeamId(Context context) {
+    public int getTeamId() {
         return AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
     }
 

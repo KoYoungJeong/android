@@ -295,7 +295,6 @@ public class ImageUtil {
     }
 
     public static String getFileUrl(String url) {
-
         if (TextUtils.isEmpty(url)) {
             return url;
         }

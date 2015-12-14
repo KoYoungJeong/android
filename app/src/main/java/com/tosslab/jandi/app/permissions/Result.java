@@ -12,11 +12,13 @@ import rx.Observable;
 
 public class Result {
     private List<Integer> requestCodes;
-    private Map<String, Pair<HasPermission, NoPermission>> permissionsActor;
+    private Map<Integer, Pair<HasPermission, NoPermission>> permissionsActor;
+    private Map<Integer, String> permissionMapper;
 
     public Result() {
         requestCodes = new ArrayList<>();
         permissionsActor = new HashMap<>();
+        permissionMapper = new HashMap<>();
     }
 
     public Result addRequestCode(int requestCode) {
@@ -27,13 +29,17 @@ public class Result {
     public Result addPermission(String permission,
                                 HasPermission hasPermission,
                                 NoPermission noPermission) {
-        permissionsActor.put(permission, new Pair<>(hasPermission, noPermission));
+        Integer key = requestCodes.get(requestCodes.size() - 1);
+        permissionsActor.put(key, new Pair<>(hasPermission, noPermission));
+        permissionMapper.put(key, permission);
         return this;
     }
 
     public Result addPermission(String permission,
                                 HasPermission hasPermission) {
-        permissionsActor.put(permission, new Pair<>(hasPermission, null));
+        Integer key = requestCodes.get(requestCodes.size() - 1);
+        permissionsActor.put(key, new Pair<>(hasPermission, null));
+        permissionMapper.put(key, permission);
         return this;
     }
 
@@ -55,20 +61,20 @@ public class Result {
 
         int permissionCount = result.getPermissions().length;
 
+        Pair<HasPermission, NoPermission> actor = permissionsActor.get(requestCode);
         for (int idx = 0; idx < permissionCount; idx++) {
-            String permission = result.getPermissions()[idx];
             int grantResult = result.getGrantResults()[idx];
 
-            Pair<HasPermission, NoPermission> actor = permissionsActor.get(permission);
-            if (grantResult == PackageManager.PERMISSION_GRANTED) {
-                if (actor.first != null) {
-                    actor.first.hasPermission();
-                }
-            } else {
+            if (grantResult != PackageManager.PERMISSION_GRANTED) {
                 if (actor.second != null) {
                     actor.second.noPermission();
                 }
+                return;
             }
+        }
+
+        if (actor.first != null) {
+            actor.first.hasPermission();
         }
     }
 }

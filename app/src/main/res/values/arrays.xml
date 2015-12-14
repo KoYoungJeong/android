@@ -44,4 +44,11 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="jandi_markets">
+        <item>@string/jandi_play_store</item>
+        <item>@string/jandi_baidu_app_store</item>
+        <item>@string/jandi_91_apk_store</item>
+        <item>@string/jandi_hi_apk_store</item>
+    </string-array>
+
 </resources>

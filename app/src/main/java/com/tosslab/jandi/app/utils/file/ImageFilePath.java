@@ -148,6 +148,7 @@ public class ImageFilePath {
         return null;
     }
 
+
     private static String getGoogleFileInfo(Context context, Uri uri) {
 
         Cursor cursor = null;

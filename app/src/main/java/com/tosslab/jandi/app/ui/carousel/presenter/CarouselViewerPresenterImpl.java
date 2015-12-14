@@ -1,10 +1,9 @@
-package com.tosslab.jandi.app.ui.carousel;
-
-import android.content.Context;
+package com.tosslab.jandi.app.ui.carousel.presenter;
 
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.services.download.DownloadService;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
+import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 
 import org.androidannotations.annotations.Background;
@@ -48,11 +47,11 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
     @Background
     @Override
-    public void onInitImageFiles(Context context) {
+    public void onInitImageFiles() {
         List<CarouselFileInfo> imageFiles;
         try {
 
-            int teamId = carouselViewerModel.getTeamId(context);
+            int teamId = carouselViewerModel.getTeamId();
 
             List<ResMessages.FileMessage> fileMessages = carouselViewerModel.searchInitFileList(teamId, roomId, fileId);
             imageFiles = carouselViewerModel.getImageFileConvert(roomId, fileMessages);
@@ -84,7 +83,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
     @Background
     @Override
-    public void onBeforeImageFiles(Context context, int fileLinkId, int count) {
+    public void onBeforeImageFiles(int fileLinkId, int count) {
 
         if (isFirst) {
             return;
@@ -93,7 +92,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
         List<CarouselFileInfo> imageFiles;
         try {
 
-            int teamId = carouselViewerModel.getTeamId(context);
+            int teamId = carouselViewerModel.getTeamId();
 
             List<ResMessages.FileMessage> fileMessages = carouselViewerModel.searchBeforeFileList
                     (teamId, roomId, fileLinkId, count);
@@ -116,7 +115,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
     @Background
     @Override
-    public void onAfterImageFiles(Context context, int fileLinkId, int count) {
+    public void onAfterImageFiles(int fileLinkId, int count) {
 
         if (isLast) {
             return;
@@ -125,7 +124,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
         List<CarouselFileInfo> imageFiles;
         try {
 
-            int teamId = carouselViewerModel.getTeamId(context);
+            int teamId = carouselViewerModel.getTeamId();
 
             List<ResMessages.FileMessage> fileMessages = carouselViewerModel
                     .searchAfterFileList(teamId, roomId, fileLinkId, count);
