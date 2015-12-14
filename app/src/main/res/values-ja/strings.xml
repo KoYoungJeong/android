@@ -55,6 +55,7 @@
 	<string name="file_upload_comment">"コメント(任意)"</string>
 	<string name="jadi_account_home">"ホームに戻る"</string>
 	<string name="jandi_1_1_message">"ダイレクトメッセージ"</string>
+	<string name="jandi_91_apk_store">"91 Apkストア"</string>
 	<string name="jandi_about">"JANDIについて"</string>
 	<string name="jandi_account">"アカウント"</string>
 	<string name="jandi_account_home_help">"1つのアカウントで複数のチームを利用できます1つのアカウントで複数のメールアドレスを登録することができますチームごとに自分のメールアドレスを1つ選んでください。プロファイルに表示されます"</string>
@@ -90,6 +91,7 @@
 	<string name="jandi_auto_join_explain">"新しいメンバー全員をこのトピックに招待する"</string>
 	<string name="jandi_auto_join_title">"自動招待"</string>
 	<string name="jandi_auto_join_title_wild">"自動招待*"</string>
+	<string name="jandi_baidu_app_store">"百度アプリストア"</string>
 	<string name="jandi_bot_role">"僕はJANDIの利用中必ず必要なメッセージや、JANDIコネクトのメッセージをお送りします。"</string>
 	<string name="jandi_bot_status">"こんにちは、ミスターJと言います。"</string>
 	<string name="jandi_browse_other_topics">"未参加のトピック一覧"</string>
@@ -101,6 +103,7 @@
 	<string name="jandi_cannot_find_search_result_old">"ファイルが見つかりません"</string>
 	<string name="jandi_change_passcode">"パスコード変更"</string>
 	<string name="jandi_chat_detail">"トピック設定"</string>
+	<string name="jandi_choose_app_store">"アプリストアを選択してください"</string>
 	<string name="jandi_choose_email">"メールアドレスを選択"</string>
 	<string name="jandi_coach_mark_create_new_topics">"トピック作成"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"ダイレクトメッセージを\n送るメンバー検索"</string>
@@ -209,6 +212,7 @@
 	<string name="jandi_has_joined">"%sさんが参加しました"</string>
 	<string name="jandi_have_an_account_already">"すでにJANDIに登録済みの方はこちら"</string>
 	<string name="jandi_help">"ヘルプ"</string>
+	<string name="jandi_hi_apk_store">"Hi Apkストア"</string>
 	<string name="jandi_image_too_big">"画像が大きすぎです"</string>
 	<string name="jandi_incorrect_passcode">"パスコードが間違っています。"</string>
 	<string name="jandi_input_password">"選択したチームのパスワードを入力してください"</string>
@@ -305,6 +309,7 @@
 	<string name="jandi_password_strength_too_short">"8文字以上入力してください"</string>
 	<string name="jandi_password_strength_weak">"最低1文字の数字または大文字または記号を含めてください"</string>
 	<string name="jandi_phone_led">"携帯の通知ランプ"</string>
+	<string name="jandi_play_store">"Google Playストア"</string>
 	<string name="jandi_plz_input_topic_description">"トピックの説明（選択）"</string>
 	<string name="jandi_preview_message_contents">"メッセージプレビュー"</string>
 	<string name="jandi_privacy_policy">"プライバシーポリシー"</string>

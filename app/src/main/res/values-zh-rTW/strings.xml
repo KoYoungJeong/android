@@ -55,6 +55,7 @@
 	<string name="file_upload_comment">"留言（非必要）"</string>
 	<string name="jadi_account_home">"帳號首頁"</string>
 	<string name="jandi_1_1_message">"私訊"</string>
+	<string name="jandi_91_apk_store">"91安卓下載"</string>
 	<string name="jandi_about">"有關"</string>
 	<string name="jandi_account">"帳號"</string>
 	<string name="jandi_account_home_help">"無限擴大你的聯絡網一組帳號可同時連接數個電子郵箱並隨意切換登入的電子郵箱確保與其他團隊成員的聯繫不斷線可針對每個團隊各別指定一個電子郵箱"</string>
@@ -90,6 +91,7 @@
 	<string name="jandi_auto_join_explain">"邀請所有新成員至此議題"</string>
 	<string name="jandi_auto_join_title">"自動邀請"</string>
 	<string name="jandi_auto_join_title_wild">"自動邀請*"</string>
+	<string name="jandi_baidu_app_store">"百度手機助手"</string>
 	<string name="jandi_bot_role">"身為JANDI最強使者，肩負傳遞JANDI Connect和平台訊息通知的任務，絕對使命必達！"</string>
 	<string name="jandi_bot_status">"你好，我是Mr.J！"</string>
 	<string name="jandi_browse_other_topics">"瀏覽其他議題"</string>
@@ -101,6 +103,7 @@
 	<string name="jandi_cannot_find_search_result_old">"找不到符合條件的內容"</string>
 	<string name="jandi_change_passcode">"更改密碼"</string>
 	<string name="jandi_chat_detail">"聊天設定"</string>
+	<string name="jandi_choose_app_store">"選擇應用程式商鋪"</string>
 	<string name="jandi_choose_email">"選擇一個電子郵件"</string>
 	<string name="jandi_coach_mark_create_new_topics">"建立新議題"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"選擇成員開始私訊"</string>
@@ -209,6 +212,7 @@
 	<string name="jandi_has_joined">"%s已加入"</string>
 	<string name="jandi_have_an_account_already">"已經有團隊註冊了嗎?"</string>
 	<string name="jandi_help">"説明"</string>
+	<string name="jandi_hi_apk_store">"安卓市場"</string>
 	<string name="jandi_image_too_big">"圖像過大無法載入"</string>
 	<string name="jandi_incorrect_passcode">"密碼不吻合"</string>
 	<string name="jandi_input_password">"請爲選擇的團隊輸入您的密碼"</string>
@@ -305,6 +309,7 @@
 	<string name="jandi_password_strength_too_short">"必須至少八個字符"</string>
 	<string name="jandi_password_strength_weak">"必須含有至少一個數字、 大寫字母或特殊字符。"</string>
 	<string name="jandi_phone_led">"鎖屏通知"</string>
+	<string name="jandi_play_store">"Google Play"</string>
 	<string name="jandi_plz_input_topic_description">"說明 (選項)"</string>
 	<string name="jandi_preview_message_contents">"預覽訊息內容"</string>
 	<string name="jandi_privacy_policy">"隱私權條款"</string>
