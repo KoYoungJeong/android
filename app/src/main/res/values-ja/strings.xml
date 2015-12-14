@@ -90,6 +90,8 @@
 	<string name="jandi_auto_join_explain">"新しいメンバー全員をこのトピックに招待する"</string>
 	<string name="jandi_auto_join_title">"自動招待"</string>
 	<string name="jandi_auto_join_title_wild">"自動招待*"</string>
+	<string name="jandi_bot_role">"僕はJANDIの利用中必ず必要なメッセージや、JANDIコネクトのメッセージをお送りします。"</string>
+	<string name="jandi_bot_status">"こんにちは、ミスターJと言います。"</string>
 	<string name="jandi_browse_other_topics">"未参加のトピック一覧"</string>
 	<string name="jandi_cancel">"戻る"</string>
 	<string name="jandi_canceled">"キャンセルされました"</string>
@@ -147,6 +149,7 @@
 	<string name="jandi_disable_user_profile_explain">"このメンバーは現在無効化されています。\n詳細はチーム管理者にお問い合わせ下さい"</string>
 	<string name="jandi_disabled_team">"%1$sから無効化されました。チーム管理者にお問い合わせ下さい"</string>
 	<string name="jandi_disabled_user">"このメンバーは現在無効化されています"</string>
+	<string name="jandi_domain_is_already_taken">"ドメイン名が既に使用されています"</string>
 	<string name="jandi_duplicate_email">"そのメールアドレスは既に使用されています"</string>
 	<string name="jandi_empty">"None"</string>
 	<string name="jandi_enable_external_link">"共有用リンクを作成する"</string>

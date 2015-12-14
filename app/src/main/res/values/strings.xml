@@ -85,11 +85,13 @@
 	<string name="jandi_announcement_deleted">"%s deleted the announcement."</string>
 	<string name="jandi_announcement_minimize">"Hide"</string>
 	<string name="jandi_ask_kick_user_from_topic">"Are you sure you want to remove this member from the topic?"</string>
-	<string name="jandi_auto_join_cannot_be_default_topic">"You can't deselect auto invitation in default topic."</string>
+	<string name="jandi_auto_join_cannot_be_default_topic">"You cannot turn off auto invitation for the default topic."</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"Auto invitation is only available in public topics."</string>
 	<string name="jandi_auto_join_explain">"Invite all new members to this topic"</string>
 	<string name="jandi_auto_join_title">"Auto Invitation"</string>
 	<string name="jandi_auto_join_title_wild">"Auto Invitation*"</string>
+	<string name="jandi_bot_role">"I deliver messages from JANDI Connect and essential notifications from our customer experience team"</string>
+	<string name="jandi_bot_status">"Hello. I'm Mr. J."</string>
 	<string name="jandi_browse_other_topics">"Browse other topics"</string>
 	<string name="jandi_cancel">"Cancel"</string>
 	<string name="jandi_canceled">"Canceled"</string>
@@ -147,6 +149,7 @@
 	<string name="jandi_disable_user_profile_explain">"This member has been temporarily disabled.\nPlease contact the team administrator for more information."</string>
 	<string name="jandi_disabled_team">"You are a disabled member of %1$s. Please contact the team administrator."</string>
 	<string name="jandi_disabled_user">"This member has been temporarily disabled"</string>
+	<string name="jandi_domain_is_already_taken">"That domain is already taken"</string>
 	<string name="jandi_duplicate_email">"That email is already registered"</string>
 	<string name="jandi_empty">"None"</string>
 	<string name="jandi_enable_external_link">"Create public link"</string>
@@ -160,7 +163,7 @@
 	<string name="jandi_expired_invitation_link">"This invitation has expired. Please request a new invitation from the team member who invited you."</string>
 	<string name="jandi_explain_topic_description">"Description (optional)"</string>
 	<string name="jandi_export">"Export"</string>
-	<string name="jandi_export_to_app">"Export file with.."</string>
+	<string name="jandi_export_to_app">"Export file using..."</string>
 	<string name="jandi_fail_send_password_reset_email">"Your password reset email could not be sent"</string>
 	<string name="jandi_fail_web_token">"We were unable to sign you in automatically. Please try the process manually."</string>
 	<string name="jandi_file_category_all">"<b>All Files</b>"</string>
