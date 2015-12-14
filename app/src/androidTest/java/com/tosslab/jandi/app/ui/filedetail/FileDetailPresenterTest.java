@@ -66,7 +66,7 @@ public class FileDetailPresenterTest {
         }).when(mockProgressDialog).dismiss();
 
         // When
-        fileDetailPresenter.onExportFile(fileMessage.id, mockProgressDialog);
+        fileDetailPresenter.onExportFile(fileMessage, mockProgressDialog);
 
         await().until(() -> finish[0]);
 
@@ -84,7 +84,7 @@ public class FileDetailPresenterTest {
                 return invocationOnMock;
             }).when(mockView).dismissProgress();
 
-            fileDetailPresenter.onCopyExternLink(fileMessage.id, false);
+            fileDetailPresenter.onCopyExternLink(fileMessage, false);
 
             await().until(() -> finish[0]);
 
@@ -98,7 +98,7 @@ public class FileDetailPresenterTest {
         {
 
             reset(mockView);
-            fileDetailPresenter.onCopyExternLink(fileMessage.id, true);
+            fileDetailPresenter.onCopyExternLink(fileMessage, true);
 
             verify(mockView).copyToClipboard(anyString());
             verify(mockView).showToast(eq(JandiApplication.getContext().getResources().getString(R.string.jandi_success_copy_clipboard_external_link)));
@@ -114,7 +114,7 @@ public class FileDetailPresenterTest {
             return invocationOnMock;
         }).when(mockView).dismissProgress();
 
-        fileDetailPresenter.enableExternalLink(fileMessage.id);
+        fileDetailPresenter.enableExternalLink(fileMessage);
 
         await().until(() -> finish[0]);
 
@@ -139,7 +139,7 @@ public class FileDetailPresenterTest {
         fileDetailPresenter.fileDetailModel.enableExternalLink(fileMessage.teamId, fileMessage.id);
 
         // When
-        fileDetailPresenter.onDisableExternLink(fileMessage.id);
+        fileDetailPresenter.onDisableExternLink(fileMessage);
 
         await().until(() -> finish[0]);
 
