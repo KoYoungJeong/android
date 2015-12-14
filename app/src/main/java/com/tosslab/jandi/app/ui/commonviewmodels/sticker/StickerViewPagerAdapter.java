@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.sticker;
+package com.tosslab.jandi.app.ui.commonviewmodels.sticker;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -29,8 +29,8 @@ class StickerViewPagerAdapter extends PagerAdapter {
     protected StickerViewPagerAdapter(Context context, List<ResMessages.StickerContent> stickers, StickerViewModel.OnStickerClick onStickerClick) {
         this.context = context;
         this.stickers = stickers;
-        this.onStickerClick = onStickerClick;
 
+        this.onStickerClick = onStickerClick;
         int orientation = context.getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             stickerMax = STICKER_MAX_VIEW_PORTAIT;

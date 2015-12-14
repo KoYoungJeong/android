@@ -17,6 +17,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
+import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenter;
+import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenterImpl;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
@@ -63,11 +65,9 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @Extra
     int roomId = -1;
 
-    @Bean
-    CarouselViewerModel carouselViewerModel;
     @Bean(CarouselViewerPresenterImpl.class)
     CarouselViewerPresenter carouselViewerPresenter;
-    private CarouselViewerAdapter carouselViewerAdapter;
+    CarouselViewerAdapter carouselViewerAdapter;
     private boolean isFullScreen = false;
 
     @AfterInject
@@ -118,11 +118,11 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
                 tvFileCreateTime.setText(fileInfo.getFileCreateTime());
 
                 if (position == 0) {
-                    carouselViewerPresenter.onBeforeImageFiles(getApplicationContext(), fileInfo
+                    carouselViewerPresenter.onBeforeImageFiles(fileInfo
                             .getFileLinkId(), count);
                 } else {
                     if (position == count - 1) {
-                        carouselViewerPresenter.onAfterImageFiles(getApplicationContext(), fileInfo
+                        carouselViewerPresenter.onAfterImageFiles(fileInfo
                                 .getFileLinkId(), count);
                     }
                 }
@@ -131,7 +131,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         });
 
 
-        carouselViewerPresenter.onInitImageFiles(getApplicationContext());
+        carouselViewerPresenter.onInitImageFiles();
 
     }
 

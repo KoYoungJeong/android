@@ -2,9 +2,11 @@ package com.tosslab.jandi.app.local.orm.repositories;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
+import com.tosslab.jandi.app.network.models.ResMessages;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -63,4 +65,20 @@ public class FileDetailRepository {
         return new ArrayList<>();
     }
 
+    public void updateFileExternalLink(String fileUrl, boolean externalShared, String externalUrl, String externalCode) {
+        try {
+            Dao<ResMessages.FileContent, ?> fileDetailDao = helper.getDao(ResMessages.FileContent.class);
+            UpdateBuilder<ResMessages.FileContent, ?> builder = fileDetailDao.updateBuilder();
+            builder.updateColumnValue("externalShared", externalShared);
+            builder.updateColumnValue("externalUrl", externalUrl);
+            builder.updateColumnValue("externalCode", externalCode);
+            builder.where()
+                    .eq("fileUrl", fileUrl);
+            builder.update();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

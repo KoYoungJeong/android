@@ -2,11 +2,16 @@ package com.tosslab.jandi.app.ui.filedetail.fileinfo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
@@ -14,6 +19,7 @@ import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
@@ -69,6 +75,8 @@ public class ImageThumbLoader implements FileThumbLoader {
                             imageViewPhotoFile, thumbnailPhotoUrl,
                             R.drawable.file_messageview_downloading, R.drawable.file_messageview_noimage,
                             (width, height) -> {
+                                imageViewPhotoFile.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                LogUtil.d("Size : " + width + ", " + height);
                                 updateViewSize(width, height);
                             });
                     break;
@@ -128,6 +136,12 @@ public class ImageThumbLoader implements FileThumbLoader {
     private void updateViewSize(int imageWidth, int imageHeight) {
 
         ViewGroup.LayoutParams layoutParams = vgDetailPhoto.getLayoutParams();
+        if (imageWidth <= 0 || imageHeight <= 0) {
+            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            vgDetailPhoto.setLayoutParams(layoutParams);
+            return;
+        }
+
         if (imageWidth > imageHeight) {
 
             int viewWidth = vgDetailPhoto.getMeasuredWidth();
@@ -136,7 +150,9 @@ public class ImageThumbLoader implements FileThumbLoader {
             layoutParams.width = (int) (imageWidth * ratio);
             layoutParams.height = (int) (imageHeight * ratio);
         } else {
-            int photoWidth = vgDetailPhoto.getMeasuredWidth();
+            DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
+            int photoWidth = (int) (Math.min(displayMetrics.widthPixels, displayMetrics.heightPixels)
+                    - TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 22f, displayMetrics));
             layoutParams.width = photoWidth;
             layoutParams.height = photoWidth;
 

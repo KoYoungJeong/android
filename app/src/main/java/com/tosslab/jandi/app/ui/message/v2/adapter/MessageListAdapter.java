@@ -169,7 +169,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
     }
 
     public void addAll(int position, List<ResMessages.Link> messages) {
-
         // delete dummy message by same messageId
         for (int idx = messages.size() - 1; idx >= 0; --idx) {
             int dummyMessagePosition = getDummyMessagePositionByMessageId(messages.get(idx).messageId);

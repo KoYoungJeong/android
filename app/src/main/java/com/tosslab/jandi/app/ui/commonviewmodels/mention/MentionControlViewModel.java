@@ -24,8 +24,8 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel_;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
-import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel_;
+import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel_;
 import com.tosslab.jandi.app.views.spannable.MentionMessageSpannable;
 
 import java.util.ArrayList;
@@ -43,22 +43,25 @@ public class MentionControlViewModel {
     public static final String MENTION_TYPE_MESSAGE = "mention_type_message";
     public static final String MENTION_TYPE_FILE_COMMENT = "mention_type_file_comment";
     protected String currentSearchKeywordString;
-    private AutoCompleteTextView etMessage;
     private KeyboardHeightModel keyboardHeightModel;
     private SearchMemberModel searchMemberModel;
+
     //message or file view type
     private String mentionType = MENTION_TYPE_MESSAGE;
+
     //for textControl
     private int beforeTextCnt = 0;
+
     private int afterTextCnt = 0;
     private String beforeText = "";
     private String afterText = "";
     private String removedText = "";
+    private ClipboardManager clipBoard;
     private ClipboardListener clipboardListener;
     private TextWatcher textWatcher;
-
-    private ClipboardManager clipBoard;
+    private AutoCompleteTextView etMessage;
     private MentionMemberListAdapter mentionMemberListAdapter;
+    private OnMentionShowingListener onMentionShowingListener;
 
     private MentionControlViewModel(Activity activity,
                                     EditText editText,
@@ -97,10 +100,7 @@ public class MentionControlViewModel {
                 mentionType);
     }
 
-    private void init(Activity activity,
-                      EditText editText,
-                      int teamId,
-                      List<Integer> roomIds) {
+    private void init(Activity activity, EditText editText, int teamId, List<Integer> roomIds) {
 
         this.etMessage = (AutoCompleteTextView) editText;
 
@@ -126,6 +126,10 @@ public class MentionControlViewModel {
             });
         }
 
+    }
+
+    public void setOnMentionShowingListener(OnMentionShowingListener onMentionShowingListener) {
+        this.onMentionShowingListener = onMentionShowingListener;
     }
 
     public void refreshMembers(List<Integer> roomIds) {
@@ -261,14 +265,18 @@ public class MentionControlViewModel {
         mentionMemberListAdapter.setSearchedMembersList(
                 searchMemberModel.getUserSearchByName(searchString));
 
-        if (mentionMemberListAdapter.getCount() > 0) {
-            setMetionListPopupWidth();
+        boolean hasMembers = mentionMemberListAdapter.getCount() > 0;
+        if (hasMembers) {
+            setMentionListPopupWidth();
         }
 
+        if (onMentionShowingListener != null) {
+            onMentionShowingListener.onMentionShowing(hasMembers);
+        }
         mentionMemberListAdapter.notifyDataSetChanged();
     }
 
-    private void setMetionListPopupWidth() {
+    private void setMentionListPopupWidth() {
         int widthPixels = etMessage.getResources().getDisplayMetrics().widthPixels;
         int popupWidth = (widthPixels / 2 - etMessage.getLeft()) * 2;
         etMessage.setDropDownWidth(popupWidth);
@@ -281,6 +289,9 @@ public class MentionControlViewModel {
     // 검색 대상 리스트를 모두 삭제하는 메서드
     private void removeAllMemberList() {
         mentionMemberListAdapter.clear();
+        if (onMentionShowingListener != null) {
+            onMentionShowingListener.onMentionShowing(false);
+        }
     }
 
     // 멘션 가능한 멤버 리스트 뷰의 view단을 컨트롤 하는 메서드
@@ -288,8 +299,14 @@ public class MentionControlViewModel {
 
         if (isShow && !etMessage.isPopupShowing()) {
             etMessage.showDropDown();
+            if (onMentionShowingListener != null) {
+                onMentionShowingListener.onMentionShowing(true);
+            }
         } else if (!isShow && etMessage.isPopupShowing()) {
             etMessage.dismissDropDown();
+            if (onMentionShowingListener != null) {
+                onMentionShowingListener.onMentionShowing(false);
+            }
         }
 
     }
@@ -534,7 +551,7 @@ public class MentionControlViewModel {
     }
 
     public void onConfigurationChanged() {
-        setMetionListPopupWidth();
+        setMentionListPopupWidth();
     }
 
     public void reset() {
@@ -546,11 +563,15 @@ public class MentionControlViewModel {
         showListView(false);
     }
 
-    // 가공되지 않은 스트링이 클립보드에 복사되면 안되므로 별도의 처리 진행
-    class ClipboardListener implements
-            ClipboardManager.OnPrimaryClipChangedListener {
-        public void onPrimaryClipChanged() {
+    public interface OnMentionShowingListener {
+        void onMentionShowing(boolean isShowing);
+    }
 
+    // 가공되지 않은 스트링이 클립보드에 복사되면 안되므로 별도의 처리 진행
+    class ClipboardListener implements ClipboardManager.OnPrimaryClipChangedListener {
+
+        @Override
+        public void onPrimaryClipChanged() {
             if (etMessage == null)
                 return;
 

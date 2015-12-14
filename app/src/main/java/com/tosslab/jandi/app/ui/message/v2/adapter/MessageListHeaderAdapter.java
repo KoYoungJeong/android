@@ -1,16 +1,20 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersAdapter;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.views.eastereggs.SnowView;
 
 import java.util.Calendar;
 
@@ -44,6 +48,12 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
         } else {
             viewHolder.dateTextView.setText(DateTransformator.getTimeStringForDivider(headerId));
         }
+
+        if (MessageListFragment.SNOWING_EASTEREGG_STARTED) {
+            viewHolder.vgHeaderWrapper.setBackgroundColor(SnowView.BACKGROUND_COLOR);
+        } else {
+            viewHolder.vgHeaderWrapper.setBackgroundColor(Color.WHITE);
+        }
     }
 
     @Override
@@ -63,10 +73,12 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
         public TextView dateTextView;
-
+        public LinearLayout vgHeaderWrapper;
         public HeaderViewHolder(View itemView) {
             super(itemView);
             dateTextView = (TextView) itemView.findViewById(R.id.txt_message_date_devider);
+            vgHeaderWrapper = (LinearLayout) itemView.findViewById(R.id.vg_message_header_wrapper);
         }
     }
+
 }

@@ -52,7 +52,7 @@ public class BaseInitUtil {
     public static int topicState = STATE_TEMP_TOPIC_NOT_CREATED;
 
     public static String TEST_EMAIL = "androidtester1@gustr.com";
-    public static String TEST_PASSWORD = "asdf1234";
+    public static String TEST_PASSWORD = "1234asdf";
 
     public static String TEST1_EMAIL = "androidtester1@gustr.com";
     public static String TEST2_EMAIL = "androidtester2@gustr.com";
@@ -89,24 +89,24 @@ public class BaseInitUtil {
 
     public static int getUserIdByEmail(String email) {
         ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
-                ReqAccessToken.createPasswordReqToken(email, "1234asdf"));
+                ReqAccessToken.createPasswordReqToken(email, TEST_PASSWORD));
         TokenUtil.saveTokenInfoByPassword(accessToken);
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         int result = accountInfo.getMemberships().iterator().next().getMemberId();
         accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
-                ReqAccessToken.createPasswordReqToken("androidtester1@gustr.com", "1234asdf"));
+                ReqAccessToken.createPasswordReqToken("androidtester1@gustr.com", TEST_PASSWORD));
         TokenUtil.saveTokenInfoByPassword(accessToken);
         return result;
     }
 
     public static String getUserNameByEmail(String email) {
         ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
-                ReqAccessToken.createPasswordReqToken(email, "1234asdf"));
+                ReqAccessToken.createPasswordReqToken(email, TEST_PASSWORD));
         TokenUtil.saveTokenInfoByPassword(accessToken);
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         String result = accountInfo.getMemberships().iterator().next().getName();
         accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
-                ReqAccessToken.createPasswordReqToken("androidtester1@gustr.com", "1234asdf"));
+                ReqAccessToken.createPasswordReqToken("androidtester1@gustr.com", TEST_PASSWORD));
         TokenUtil.saveTokenInfoByPassword(accessToken);
         return result;
     }
@@ -118,7 +118,7 @@ public class BaseInitUtil {
             testId = "androidtester1@gustr.com";
         }
 
-        String testPasswd = "1234asdf";
+        String testPasswd = TEST_PASSWORD;
 
         clear();
 

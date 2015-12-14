@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.services.socket.to;
 
+import com.tosslab.jandi.app.services.socket.annotations.Version;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -10,16 +12,32 @@ import java.util.List;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@Version(1)
 public class SocketMessageEvent {
+    private int version;
     private String event;
     private String messageType;
     private int messageId;
     private int teamId;
-
     private MessageRoom room;
     private int writer;
     private List<MessageRoom> rooms;
     private CommentInfo comment;
+
+    @Override
+    public String toString() {
+        return "SocketMessageEvent{" +
+                "version=" + version +
+                ", event='" + event + '\'' +
+                ", messageType='" + messageType + '\'' +
+                ", messageId=" + messageId +
+                ", teamId=" + teamId +
+                ", room=" + room +
+                ", writer=" + writer +
+                ", rooms=" + rooms +
+                ", comment=" + comment +
+                '}';
+    }
 
     public MessageRoom getRoom() {
         return room;
@@ -69,18 +87,6 @@ public class SocketMessageEvent {
         this.writer = writer;
     }
 
-    @Override
-    public String toString() {
-        return "SocketMessageEvent{" +
-                "event='" + event + '\'' +
-                ", messageType='" + messageType + '\'' +
-                ", room=" + room +
-                ", writer=" + writer +
-                ", rooms=" + rooms +
-                ", comment=" + comment +
-                '}';
-    }
-
     public int getTeamId() {
         return teamId;
     }
@@ -95,6 +101,14 @@ public class SocketMessageEvent {
 
     public void setMessageId(int messageId) {
         this.messageId = messageId;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

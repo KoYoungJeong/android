@@ -377,6 +377,14 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
         mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(), etComment, teamId, Arrays.asList(roomId), getMentionType(mode));
     }
 
+    @UiThread
+    @Override
+    public void dismissDialog(ProgressDialog uploadProgress) {
+        if (uploadProgress != null && uploadProgress.isShowing()) {
+            uploadProgress.dismiss();
+        }
+    }
+
 
     public void onEvent(SelectedMemberInfoForMensionEvent event) {
         if (mentionControlViewModel != null) {

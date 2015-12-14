@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.sticker.StickerManager;
+import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
 public class FileDetailCollapseStickerCommentView implements CommentViewHolder {
