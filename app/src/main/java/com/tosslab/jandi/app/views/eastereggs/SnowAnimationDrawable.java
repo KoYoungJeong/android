@@ -19,6 +19,7 @@ public class SnowAnimationDrawable extends Drawable {
     public SnowAnimationDrawable(Animation animation, Drawable drawable) {
         this.animation = animation;
         this.drawable = drawable;
+        transformation = new Transformation();
     }
 
     @Override
@@ -28,7 +29,6 @@ public class SnowAnimationDrawable extends Drawable {
         }
 
         int save = canvas.save();
-        transformation = new Transformation();
         animation.getTransformation(AnimationUtils.currentAnimationTimeMillis(), transformation);
         canvas.concat(transformation.getMatrix());
         drawable.draw(canvas);

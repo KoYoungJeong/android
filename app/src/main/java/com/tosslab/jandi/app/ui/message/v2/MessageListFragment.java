@@ -1030,6 +1030,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                     new FrameLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             vgEasterEggSnow.addView(snowView);
+
+            SNOWING_EASTEREGG_STARTED = true;
+
+            messageListPresenter.justRefresh();
         } else if ("설쏴지마".equals(message)) {
             vgEasterEggSnow.removeAllViews();
             SNOWING_EASTEREGG_STARTED = false;

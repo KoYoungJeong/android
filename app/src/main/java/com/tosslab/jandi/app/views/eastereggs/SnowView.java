@@ -97,13 +97,23 @@ public class SnowView extends View {
         if (snows == null || snows.length <= 0) {
             return;
         }
+
         for (int i = 0; i < snows.length; i++) {
             Drawable snow = snows[i];
             canvas.save();
             snow.draw(canvas);
             canvas.restore();
         }
+
         invalidate();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        if (snows != null) {
+            snows = null;
+        }
+        super.onDetachedFromWindow();
     }
 
     private float getPixelFromDp(float px) {
