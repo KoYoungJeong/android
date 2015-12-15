@@ -151,7 +151,7 @@ android {
 
     defaultConfig {
         applicationId 'com.tosslab.jandi.app'
-        minSdkVersion 21
+        minSdkVersion 14
         targetSdkVersion 23
         versionCode 86
         versionName '1.6.4'

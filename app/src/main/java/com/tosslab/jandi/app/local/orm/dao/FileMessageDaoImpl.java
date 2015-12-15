@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.local.orm.dao;
 
+import android.text.TextUtils;
+
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -44,28 +46,17 @@ public class FileMessageDaoImpl extends BaseDaoImpl<ResMessages.FileMessage, Int
             }
         }
 
-        if (fileMessage.content != null) {
+        ResMessages.FileContent content = fileMessage.content;
+        if (content != null) {
 
-            if (fileMessage.content.extraInfo != null) {
-                Dao<ResMessages.ThumbnailUrls, ?> thumbnailUrlsDao = DaoManager.createDao(connectionSource, ResMessages.ThumbnailUrls.class);
-                QueryBuilder<ResMessages.ThumbnailUrls, ?> thumbnailUrlsQueryBuilder = thumbnailUrlsDao.queryBuilder();
-                thumbnailUrlsQueryBuilder
-                        .where()
-                        .eq("largeThumbnailUrl", fileMessage.content.extraInfo.largeThumbnailUrl)
-                        .or()
-                        .eq("thumbnailUrl", fileMessage.content.extraInfo.thumbnailUrl);
-                if (thumbnailUrlsQueryBuilder.countOf() <= 0) {
-                    thumbnailUrlsDao.create(fileMessage.content.extraInfo);
-                } else {
-                    thumbnailUrlsQueryBuilder.reset();
-                    ResMessages.ThumbnailUrls thumbnailUrls = thumbnailUrlsQueryBuilder.queryForFirst();
-                    fileMessage.content.extraInfo._id = thumbnailUrls._id;
-
-                }
+            if (content.extraInfo != null) {
+                Dao<ResMessages.ThumbnailUrls, ?> thumbnailUrlsDao =
+                        DaoManager.createDao(connectionSource, ResMessages.ThumbnailUrls.class);
+                thumbnailUrlsDao.createOrUpdate(content.extraInfo);
             }
 
             DaoManager.createDao(connectionSource, ResMessages.FileContent.class)
-                    .createOrUpdate(fileMessage.content);
+                    .createOrUpdate(content);
 
         }
 
