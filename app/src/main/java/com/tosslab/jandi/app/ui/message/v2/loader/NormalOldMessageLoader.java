@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -78,19 +77,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                         oldMessage.records.get(oldMessage.records.size() - 1).id);
             }
 
-            int lastLinkIdInMessage = oldMessage.records.get(oldMessage.records.size() - 1).id;
-            if (oldMessage.lastLinkId <= lastLinkIdInMessage) {
-                updateMarker(teamId, oldMessage.entityId, lastLinkIdInMessage);
-            }
-
-            List<ResMessages.Link> dummyMessages;
-            if (currentItemCount == 0) {
-                dummyMessages = messageListModel.getDummyMessages(roomId);
-            } else {
-                dummyMessages = new ArrayList<>();
-            }
-
-            messageListPresenter.setUpOldMessage(linkId, oldMessage.records, currentItemCount, isFirstMessage, dummyMessages);
+            messageListPresenter.setUpOldMessage(linkId, oldMessage.records, currentItemCount, isFirstMessage);
 
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -151,6 +138,8 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                     if (oldMessage.records.get(oldMessage.records.size() - 1).id == linkId) {
                         messageListPresenter.setLastReadLinkId(-1);
                     }
+
+                    updateMarker(teamId, oldMessage.entityId, oldMessage.lastLinkId);
                 }
 
             }

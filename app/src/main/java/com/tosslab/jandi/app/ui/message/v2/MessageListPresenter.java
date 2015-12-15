@@ -795,14 +795,12 @@ public class MessageListPresenter {
 
     @UiThread
     public void setUpOldMessage(int lastReadLinkId, List<ResMessages.Link> linkList,
-                                int currentItemCount, boolean isFirstMessage, List<ResMessages.Link> dummyMessages) {
+                                int currentItemCount, boolean isFirstMessage) {
         if (currentItemCount == 0) {
             // 첫 로드라면...
             clearMessages();
 
             addAll(0, linkList);
-
-            addDummyMessages(dummyMessages);
 
             moveLastPage();
 
