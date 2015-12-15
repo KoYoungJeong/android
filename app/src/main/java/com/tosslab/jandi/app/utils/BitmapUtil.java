@@ -489,12 +489,14 @@ public class BitmapUtil {
                 .into(imageView);
     }
 
-    public static void loadCropBitmapByGlide(ImageView imageView, String url, int placeHolder) {
+    public static void loadCropBitmapByGlide(ImageView imageView, String url,
+                                             int placeHolder, int error) {
         Glide.with(JandiApplication.getContext())
                 .load(url)
                 .asBitmap()
                 .dontAnimate()
                 .placeholder(placeHolder)
+                .error(error)
                 .centerCrop()
                 .into(new BitmapImageViewTarget(imageView) {
                     @Override

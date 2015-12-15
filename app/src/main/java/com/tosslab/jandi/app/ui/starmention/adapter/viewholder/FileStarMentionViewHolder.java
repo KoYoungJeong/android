@@ -49,7 +49,8 @@ public class FileStarMentionViewHolder extends CommonStarMentionViewHolder {
             if (!TextUtils.isEmpty(thumbnailUrl)) {
                 BitmapUtil.loadCropBitmapByGlide(ivFile,
                         thumbnailUrl,
-                        R.drawable.file_icon_img);
+                        R.drawable.file_icon_img,
+                        R.drawable.image_no_preview);
                 vFileRound.setVisibility(View.VISIBLE);
             } else {
                 ivFile.setImageResource(R.drawable.file_icon_img);

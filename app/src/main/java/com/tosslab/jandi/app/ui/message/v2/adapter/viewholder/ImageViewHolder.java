@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.file.FileUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.AutoScaleImageView;
@@ -200,8 +201,10 @@ public class ImageViewHolder implements BodyViewHolder {
 
             ResMessages.ThumbnailUrls extraInfo = fileContent.extraInfo;
             if (extraInfo != null && extraInfo.width > 0 && extraInfo.height > 0) {
+//                LogUtil.i(AutoScaleImageView.TAG, String.format("load From spec %s, %d, %d, %d", thumbPath, extraInfo.width, extraInfo.height, extraInfo.orientation));
                 ivFileImage.load(thumbPath, extraInfo.width, extraInfo.height, extraInfo.orientation);
             } else {
+//                LogUtil.i(AutoScaleImageView.TAG, String.format("load From undefined spec %s", thumbPath));
                 ivFileImage.load(thumbPath);
             }
 
