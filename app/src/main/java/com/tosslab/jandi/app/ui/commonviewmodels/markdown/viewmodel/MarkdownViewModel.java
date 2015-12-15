@@ -1,13 +1,14 @@
 package com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel;
 
+import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.util.TypedValue;
+import android.text.style.StrikethroughSpan;
+import android.text.style.StyleSpan;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.views.spannable.MarkdownSpannable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,250 +20,165 @@ public class MarkdownViewModel {
 
     SpannableStringBuilder messageStringBuilder;
     TextView tvMessageView;
+    Boolean isPlainText = false;
 
-    public MarkdownViewModel(TextView tvMessageView, SpannableStringBuilder messageStringBuilder) {
+    public MarkdownViewModel(TextView tvMessageView, SpannableStringBuilder messageStringBuilder, Boolean isPlainText) {
         this.messageStringBuilder = messageStringBuilder;
         this.tvMessageView = tvMessageView;
+        this.isPlainText = isPlainText;
     }
 
     public void execute() {
-        LogUtil.e(messageStringBuilder.toString());
-        if (messageStringBuilder != null) {
-            recursiveBuildMarkdown(messageStringBuilder, 0,
-                    messageStringBuilder.length() - 1, new DrewMarkDownInfo());
-        }
-    }
-
-    public void recursiveBuildMarkdown(SpannableStringBuilder messageStringBuilder,
-                                       int startIndex, int endIndex, DrewMarkDownInfo drewMarkdownInfo) {
-        // 전달된 인덱스로 부터 선별된 메세지의 내용
-        String subMessage = null;
-        // 마크다운 형태로 매칭된 스트링
-        String matchingString = null;
-
-        // 매칭된 메세지의 시작과 끝 문자 인덱스
-        int matchingTotalStringStartIndex = -1;
-        int matchingTotalStringEndIndex = -1;
-
-        // 메칭된 메세지에서 마크다운 캐릭터를 제외한 핵심 스트링 시작/끝 인덱스
-        int machingStringStartIndex = -1;
-        int machingStringEndIndex = -1;
-        int markdownCharacterSize = -1;
-
-        subMessage = messageStringBuilder.subSequence(startIndex, endIndex + 1).toString();
-        Pattern p = getPattern();
-        Matcher matcher = p.matcher(subMessage);
-
-        if (matcher.find()) {
-            matcher.reset();
-            while (matcher.find()) {
-                Step step = getStep(matcher);
-                matchingString = getMatchingString(step, matcher);
-                markdownCharacterSize = getMarkdownCharacterLength(step);
-
-                // 매칭된 문자열은 0부터 시작하므로 당연히 전달된 시작 인덱스와 더해줘야 함.
-                machingStringStartIndex = startIndex + getStartIndexOfString(step, matcher);
-                machingStringEndIndex = machingStringStartIndex + matchingString.length() - 1;
-
-                matchingTotalStringStartIndex = machingStringStartIndex - markdownCharacterSize;
-                matchingTotalStringEndIndex = machingStringEndIndex + markdownCharacterSize;
-
-                drawMarkDown(messageStringBuilder,
-                        matchingTotalStringStartIndex, matchingTotalStringEndIndex, step, drewMarkdownInfo);
-
-                // 매칭된 것은 현재와 같은 단계의 재귀 호출을 한다.
-                recursiveBuildMarkdown(messageStringBuilder,
-                        machingStringStartIndex, machingStringEndIndex, updateDrewMarkDownInfo(step, drewMarkdownInfo));
-            }
-        } else {
-            //매칭된 것이 더 이상 없으므로 종료
+        if (messageStringBuilder == null) {
             return;
+        }
+        Pattern p = getPattern();
+        Matcher matcher = p.matcher(messageStringBuilder);
+
+        while (matcher.find()) {
+            Step step = getStep(matcher);
+            int startIndex = getStartIndexOfString(step, matcher);
+            int lastIndex = getEndIndexOfString(step, matcher);
+            drawMarkDown(messageStringBuilder, startIndex, lastIndex, step);
+            matcher.reset(messageStringBuilder);
         }
     }
 
     private Pattern getPattern() {
-        return Pattern.compile("(\\~{2})(.+)\\~{2}|(\\*{3})([^\\*]+)\\*{3}|(\\*{2})([^\\*]+)\\*{2}|(\\*)([^\\*]+)\\*");
+        return Pattern.compile("((\\~{2})([^~*]+)\\~{2})|((\\*{3})([^~*]+)\\*{3})|((\\*{2})([^~*]+)\\*{2})|((\\*)([^~*]+)\\*)");
     }
 
-    public void drawMarkDown(SpannableStringBuilder messageStringBuilder, int startIndex, int endIndex, Step step, DrewMarkDownInfo drewMarkDownInfo) {
+    public void drawMarkDown(SpannableStringBuilder messageStringBuilder, int startIndex, int endIndex, Step step) {
         LogUtil.e("메세지 :" + messageStringBuilder.toString() + startIndex + "부터" + endIndex + "까지");
-        String message = null;
-        MarkdownSpannable spannable = null;
+        int cSize = getMarkdownCharacterLength(step);
 
-        if (step == Step.BOLD_ITALIC) {
-            LogUtil.e("볼드 이태릭으로 그린다.");
-            message = messageStringBuilder.subSequence(startIndex + 3,
-                    endIndex - 2).toString();
-            spannable = new MarkdownSpannable(
-                    message, tvMessageView.getTextSize());
-            spannable.setIsBold(true);
-            spannable.setIsItalic(true);
-        } else if (step == Step.BOLD) {
-            LogUtil.e("볼드로 그린다.");
-            message = messageStringBuilder.subSequence(startIndex + 2,
-                    endIndex - 1).toString();
-            spannable = new MarkdownSpannable(
-                    message, tvMessageView.getTextSize());
-            spannable.setIsBold(true);
-        } else if (step == Step.ITALIC) {
-            LogUtil.e("이태릭으로 그린다.");
-            message = messageStringBuilder.subSequence(startIndex + 1,
-                    endIndex).toString();
-            spannable = new MarkdownSpannable(
-                    message, tvMessageView.getTextSize());
-            spannable.setIsItalic(true);
-        } else if (step == Step.STRIKE) {
-            LogUtil.e("취소선 그린다.");
-            message = messageStringBuilder.subSequence(startIndex + 2,
-                    endIndex - 1).toString();
-            spannable = new MarkdownSpannable(
-                    message, tvMessageView.getTextSize());
-            spannable.setIsStrike(true);
+        Object[] allSpans = messageStringBuilder.getSpans(startIndex + cSize, endIndex - cSize, Object.class);
+
+        convertPlainTextFromPlainMarkdown(messageStringBuilder, startIndex, endIndex, step);
+
+        if (!isPlainText) {
+            setMarkdown(messageStringBuilder, startIndex, endIndex - cSize * 2, step);
+            for (Object spanObject : allSpans) {
+                removeOrChangeNestedSpan(messageStringBuilder, spanObject, step);
+            }
         }
-
-        if (drewMarkDownInfo.isStrike()) {
-            spannable.setIsStrike(true);
-        }
-
-        if (drewMarkDownInfo.isItalic()) {
-            spannable.setIsItalic(true);
-        }
-
-        if (drewMarkDownInfo.isBold()) {
-            spannable.setIsBold(true);
-        }
-
-        int dp = 260;
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                dp, tvMessageView.getContext().getResources().getDisplayMetrics());
-        spannable.setViewMaxWidthSize((int) px);
-        messageStringBuilder.setSpan(spannable, startIndex, endIndex + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
-    DrewMarkDownInfo updateDrewMarkDownInfo(Step step, DrewMarkDownInfo drewMarkDownInfo) {
-        DrewMarkDownInfo newDrewMarkdownInfo = new DrewMarkDownInfo();
+    public void convertPlainTextFromPlainMarkdown(SpannableStringBuilder messageStringBuilder, int startIndex, int endIndex, Step step) {
+        int cSize = getMarkdownCharacterLength(step);
+        String message = messageStringBuilder.subSequence(startIndex + cSize, endIndex - cSize).toString();
+        messageStringBuilder.replace(startIndex, endIndex, message);
+    }
 
-        if (step == Step.BOLD_ITALIC) {
-            newDrewMarkdownInfo.setItalic(true);
-            newDrewMarkdownInfo.setBold(true);
-        } else if (step == Step.ITALIC) {
-            newDrewMarkdownInfo.setItalic(true);
-        } else if (step == Step.BOLD) {
-            newDrewMarkdownInfo.setBold(true);
-        } else if (step == Step.STRIKE) {
-            newDrewMarkdownInfo.setStrike(true);
-        }
-
-        if (drewMarkDownInfo.isEmpty()) {
-            return newDrewMarkdownInfo;
+    public void setMarkdown(SpannableStringBuilder messageStringBuilder, int startIndex, int endIndex, Step step) {
+        if (step == Step.STRIKE) {
+            StrikethroughSpan span;
+            span = new StrikethroughSpan();
+            messageStringBuilder.setSpan(span, startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         } else {
-            newDrewMarkdownInfo.setEmpty(false);
+            StyleSpan styleSpan = null;
+            if (step == Step.BOLD_ITALIC) {
+                styleSpan = new StyleSpan(Typeface.BOLD_ITALIC);
+            } else if (step == Step.BOLD) {
+                styleSpan = new StyleSpan(Typeface.BOLD);
+            } else if (step == Step.ITALIC) {
+                styleSpan = new StyleSpan(Typeface.ITALIC);
+            }
+            if (styleSpan != null) {
+                messageStringBuilder.setSpan(styleSpan, startIndex,
+                        endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
         }
+    }
 
-        if (drewMarkDownInfo.isItalic()) {
-            newDrewMarkdownInfo.setItalic(true);
+    public void removeOrChangeNestedSpan(SpannableStringBuilder messageStringBuilder, Object spanObject, Step step) {
+        if (spanObject instanceof StyleSpan) {
+            StyleSpan span = (StyleSpan) spanObject;
+            if (step == Step.BOLD_ITALIC) {
+                if (span.getStyle() == Typeface.ITALIC
+                        || span.getStyle() == Typeface.BOLD) {
+                    messageStringBuilder.removeSpan(span);
+                }
+            } else if (step == Step.BOLD) {
+                if (span.getStyle() == Typeface.ITALIC) {
+                    int startIndex = messageStringBuilder.getSpanStart(span);
+                    int endIndex = messageStringBuilder.getSpanEnd(span);
+                    messageStringBuilder.removeSpan(span);
+                    StyleSpan changedStyleSpan = new StyleSpan(Typeface.BOLD_ITALIC);
+                    try {
+                        messageStringBuilder.setSpan(changedStyleSpan, startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    } catch (IndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else if (step == Step.ITALIC) {
+                if (span.getStyle() == Typeface.BOLD) {
+                    int startIndex = messageStringBuilder.getSpanStart(span);
+                    int endIndex = messageStringBuilder.getSpanEnd(span);
+                    messageStringBuilder.removeSpan(span);
+                    StyleSpan changedStyleSpan = new StyleSpan(Typeface.BOLD_ITALIC);
+                    try {
+                        messageStringBuilder.setSpan(changedStyleSpan, startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    } catch (IndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
-
-        if (drewMarkDownInfo.isBold()) {
-            newDrewMarkdownInfo.setBold(true);
-        }
-
-        if (drewMarkDownInfo.isStrike()) {
-            newDrewMarkdownInfo.setStrike(true);
-        }
-
-        return newDrewMarkdownInfo;
     }
 
     public Step getStep(Matcher matcher) {
-        if (!TextUtils.isEmpty(matcher.group(1))) {
+        if (!TextUtils.isEmpty(matcher.group(2))) {
             return Step.STRIKE;
-        } else if (!TextUtils.isEmpty(matcher.group(3))) {
-            return Step.BOLD_ITALIC;
         } else if (!TextUtils.isEmpty((matcher.group(5)))) {
+            return Step.BOLD_ITALIC;
+        } else if (!TextUtils.isEmpty((matcher.group(8)))) {
             return Step.BOLD;
-        } else {
+        } else if (!TextUtils.isEmpty((matcher.group(11)))) {
             return Step.ITALIC;
+        } else {
+            return Step.STRIKE;
         }
     }
 
     private int getMarkdownCharacterLength(Step step) {
-        if (step == Step.BOLD_ITALIC) {
-            return 3;
-        } else if (step == Step.ITALIC) {
+        if (step == Step.ITALIC) {
             return 1;
-        } else if (step == Step.BOLD) {
-            return 2;
-        } else {
-            return 2;
-        }
-    }
-
-    public String getMatchingString(Step step, Matcher matcher) {
-        if (step == Step.STRIKE) {
-            return matcher.group(2);
         } else if (step == Step.BOLD_ITALIC) {
-            return matcher.group(4);
+            return 3;
         } else if (step == Step.BOLD) {
-            return matcher.group(6);
+            return 2;
         } else {
-            return matcher.group(8);
+            return 2;
         }
     }
 
     public int getStartIndexOfString(Step step, Matcher matcher) {
         if (step == Step.STRIKE) {
-            return matcher.start(2);
+            return matcher.start(1);
         } else if (step == Step.BOLD_ITALIC) {
             return matcher.start(4);
         } else if (step == Step.BOLD) {
-            return matcher.start(6);
+            return matcher.start(7);
         } else {
-            return matcher.start(8);
+            return matcher.start(10);
+        }
+    }
+
+    public int getEndIndexOfString(Step step, Matcher matcher) {
+        if (step == Step.STRIKE) {
+            return matcher.end(1);
+        } else if (step == Step.BOLD_ITALIC) {
+            return matcher.end(4);
+        } else if (step == Step.BOLD) {
+            return matcher.end(7);
+        } else {
+            return matcher.end(10);
         }
     }
 
     public static enum Step {
         BOLD_ITALIC, ITALIC, BOLD, STRIKE;
-    }
-
-    public class DrewMarkDownInfo {
-        private boolean bold = false;
-        private boolean italic = false;
-        private boolean strike = false;
-        private boolean empty = true;
-
-        public boolean isBold() {
-            return bold;
-        }
-
-        public void setBold(boolean bold) {
-            this.bold = bold;
-        }
-
-        public boolean isItalic() {
-            return italic;
-        }
-
-        public void setItalic(boolean italic) {
-            this.italic = italic;
-        }
-
-        public boolean isStrike() {
-            return strike;
-        }
-
-        public void setStrike(boolean strike) {
-            this.strike = strike;
-        }
-
-        public boolean isEmpty() {
-            return empty;
-        }
-
-        public void setEmpty(boolean empty) {
-            this.empty = empty;
-        }
     }
 
 }

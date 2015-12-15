@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
@@ -256,6 +257,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 tvUnread.setVisibility(View.GONE);
             }
 
+            MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvComment, builder, false);
+            markdownViewModel.execute();
 
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                     tvComment, builder, commentMessage.mentions, entityManager.getMe().getId())
