@@ -34,8 +34,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
 
 public class MessageCursorListAdapter extends MessageAdapter {
+    private final PublishSubject<Object> objectPublishSubject;
     private Context context;
 
     private int lastMarker = -1;
@@ -64,25 +68,91 @@ public class MessageCursorListAdapter extends MessageAdapter {
         registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                links.clear();
 
                 if (roomId == -1 || firstCursorLinkId == -1) {
+                    links.clear();
                     return;
                 }
 
-                List<ResMessages.Link> messages = MessageRepository.getRepository().getMessages(roomId, firstCursorLinkId);
-                List<SendMessage> sendMessages = SendMessageRepository.getRepository().getSendMessage(roomId);
 
-                links.addAll(messages);
-                Observable.from(sendMessages)
-                        .map(sendMessage -> getDummyMessageLink(EntityManager.getInstance().getMe().getId(), sendMessage))
-                        .collect(() -> links, List::add)
-                        .onErrorResumeNext(throwable -> {
-                            return Observable.empty();
-                        })
-                        .subscribe();
+                objectPublishSubject.onNext(1);
             }
         });
+
+        objectPublishSubject = PublishSubject.create();
+        objectPublishSubject
+                .doOnNext(o -> {
+                    addBeforeLinks(roomId, firstCursorLinkId, links);
+                    removeDummyLink(links);
+                    addAfterLinks(roomId, links);
+                    addDummyLink(roomId, links);
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(o1 -> {
+                    notifyItemRangeChanged(0, links.size());
+                });
+    }
+
+    private int getToCursorLinkId(List<ResMessages.Link> links) {
+        int toCursorLinkId;
+        if (!links.isEmpty()) {
+            toCursorLinkId = links.get(0).id;
+        } else {
+            toCursorLinkId = Integer.MAX_VALUE;
+        }
+        return toCursorLinkId;
+    }
+
+    private void addAfterLinks(int roomId, List<ResMessages.Link> links) {
+        int afterLinkStartId = getAfterLinkStartId(links);
+        int afterLinkEndId = Integer.MAX_VALUE;
+        int afterMessageCount = MessageRepository.getRepository().getMessagesCount(roomId, afterLinkStartId, afterLinkEndId);
+        if (afterMessageCount > 0) {
+            List<ResMessages.Link> afterLinks = MessageRepository.getRepository().getMessages(roomId, afterLinkStartId, afterLinkEndId);
+            links.addAll(afterLinks);
+        }
+    }
+
+    private int getAfterLinkStartId(List<ResMessages.Link> links) {
+        int afterLinkStartId;
+        if (!links.isEmpty()) {
+            afterLinkStartId = links.get(links.size() - 1).id + 1;
+        } else {
+            afterLinkStartId = -1;
+        }
+        return afterLinkStartId;
+    }
+
+    private void addDummyLink(int roomId, List<ResMessages.Link> links) {
+        Observable.from(SendMessageRepository.getRepository().getSendMessage(roomId))
+                .map(sendMessage -> getDummyMessageLink(EntityManager.getInstance().getMe().getId(), sendMessage))
+                .collect(() -> links, List::add)
+                .onErrorResumeNext(throwable -> {
+                    return Observable.empty();
+                })
+                .subscribe();
+    }
+
+    private void removeDummyLink(List<ResMessages.Link> links) {
+        for (int idx = links.size() - 1; idx >= 0; idx--) {
+            if (links.get(idx) instanceof DummyMessageLink) {
+                links.remove(idx);
+            } else {
+                break;
+            }
+        }
+    }
+
+    private void addBeforeLinks(int roomId, int firstCursorLinkId, List<ResMessages.Link> links) {
+        int toCursorLinkId = getToCursorLinkId(links);
+        MessageRepository messageRepository = MessageRepository.getRepository();
+        int beforeMessageCount = messageRepository.getMessagesCount(roomId, firstCursorLinkId, toCursorLinkId);
+
+        if (firstCursorLinkId < toCursorLinkId && beforeMessageCount > 0) {
+            List<ResMessages.Link> messages = messageRepository.getMessages(roomId, firstCursorLinkId, toCursorLinkId);
+            links.addAll(0, messages);
+        }
     }
 
     @Override
@@ -149,7 +219,7 @@ public class MessageCursorListAdapter extends MessageAdapter {
             bodyViewHolder.setLastReadViewVisible(0, -1);
         }
 
-        if (position == 0 && oldMoreState == MoreState.Idle) {
+        if (position <= getItemCount() / 10 && oldMoreState == MoreState.Idle) {
             oldMoreState = MoreState.Loading;
             EventBus.getDefault().post(new RefreshOldMessageEvent());
         } else if (moreFromNew && position == getItemCount() - 1 && newMoreState == MoreState.Idle) {
@@ -220,10 +290,27 @@ public class MessageCursorListAdapter extends MessageAdapter {
     }
 
     @Override
-    public void addAll(int position, List<ResMessages.Link> messages) {
+    public void addAll(int position, List<ResMessages.Link> links) {
 
-        if (position == 0 && messages != null && !messages.isEmpty()) {
-            firstCursorLinkId = messages.get(0).id;
+        if (position == 0 && links != null && !links.isEmpty()) {
+            firstCursorLinkId = links.get(0).id;
+        } else {
+            Observable.from(links)
+                    .filter(link -> TextUtils.equals(link.status, "archived"))
+                    .subscribe(link -> {
+                        int searchedPosition = indexByMessageId(link.messageId);
+                        if (searchedPosition < 0) {
+                            return;
+                        }
+
+                        if (TextUtils.equals(link.message.contentType, "file")) {
+                            ResMessages.Link originLink = MessageCursorListAdapter.this.links.get(searchedPosition);
+                            originLink.message = link.message;
+                            originLink.status = "archived";
+                        } else {
+                            MessageCursorListAdapter.this.links.remove(searchedPosition);
+                        }
+                    });
         }
 
     }
@@ -393,8 +480,8 @@ public class MessageCursorListAdapter extends MessageAdapter {
 
     @Override
     public void modifyStarredStateByPosition(int position, boolean isStarred) {
-//        messageList.get(position).message.isStarred = isStarred;
-//        notifyItemChanged(position);
+        links.get(position).message.isStarred = isStarred;
+        notifyItemChanged(position);
     }
 
 

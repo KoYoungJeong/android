@@ -159,6 +159,8 @@ public class SendMessageRepository {
     public void deleteCompletedMessages(List<Integer> messageIds) {
         try {
             Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
+
+
             dao.callBatchTasks(() -> {
 
                 for (Integer messageId : messageIds) {

@@ -634,7 +634,10 @@ public class MessageListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void justRefresh() {
-        messageAdapter.notifyDataSetChanged();
+        int itemCount = messageAdapter.getItemCount();
+        if (itemCount > 0) {
+            messageAdapter.notifyItemRangeChanged(0, itemCount);
+        }
     }
 
     @UiThread
@@ -825,7 +828,7 @@ public class MessageListPresenter {
     @UiThread
     public void setUpNewMessage(List<ResMessages.Link> linkList, int myId, int lastLinkId, boolean firstLoad) {
         int visibleLastItemPosition = getLastVisibleItemPosition();
-        int lastItemPosition = getLastItemPosition() - linkList.size();
+        int lastItemPosition = getLastItemPosition();
 
         addAll(lastItemPosition, linkList);
 

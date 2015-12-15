@@ -193,7 +193,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 .doOnNext(link -> {
                     // event 가 아니고 삭제된 파일/코멘트/메세지만 처리
                     if (!TextUtils.equals(link.status, "event")
-                            && TextUtils.equals(link.message.status, "archived")) {
+                            && TextUtils.equals(link.status, "archived")) {
                         if (!(link.message instanceof ResMessages.FileMessage)) {
                             MessageRepository.getRepository().deleteMessage(link.messageId);
                         } else {
@@ -203,7 +203,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 })
                 .filter(link -> {
                     // 이벤트와 삭제된 메세지는 처리 됐으므로..
-                    return TextUtils.equals(link.status, "event") || !TextUtils.equals(link.message.status, "archived");
+                    return TextUtils.equals(link.status, "event") || !TextUtils.equals(link.status, "archived");
                 })
                 .collect((Func0<List<ResMessages.Link>>) ArrayList::new, List::add)
                 .subscribe(links -> {

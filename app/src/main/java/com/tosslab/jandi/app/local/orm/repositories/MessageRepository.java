@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.local.orm.repositories;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
@@ -360,7 +361,8 @@ public class MessageRepository {
         return 0;
     }
 
-    public int getMessagesCount(int roomId, int firstCursorLinkId) {
+    public int getMessagesCount(int roomId, int startLinkId) {
+        lock.lock();
         try {
             int teamId = AccountRepository.getRepository().getSelectedTeamId();
             return (Long.valueOf(helper.getDao(ResMessages.Link.class)
@@ -371,38 +373,46 @@ public class MessageRepository {
                     .and()
                     .eq("roomId", roomId)
                     .and()
-                    .ge("id", firstCursorLinkId)
+                    .ge("id", startLinkId)
                     .countOf())).intValue();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
 
 
         return 0;
     }
 
-    public ResMessages.Link getMessage(int roomId, int position, int firstCursorLinkId) {
+    public int getMessagesCount(int roomId, int startLinkId, int endLinkId) {
+        lock.lock();
         try {
             int teamId = AccountRepository.getRepository().getSelectedTeamId();
-            return helper.getDao(ResMessages.Link.class)
+            return (Long.valueOf(helper.getDao(ResMessages.Link.class)
                     .queryBuilder()
-                    .offset(position)
-                    .limit(1)
                     .orderBy("time", true)
                     .where()
                     .eq("teamId", teamId)
                     .and()
                     .eq("roomId", roomId)
                     .and()
-                    .ge("id", firstCursorLinkId)
-                    .queryForFirst();
+                    .ge("id", startLinkId)
+                    .and()
+                    .lt("id", endLinkId)
+                    .countOf())).intValue();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
-        return null;
+
+
+        return 0;
     }
 
-    public List<ResMessages.Link> getMessages(int roomId, int firstCursorLinkId) {
+    public List<ResMessages.Link> getMessages(int roomId, int firstCursorLinkId, int toCursorLinkId) {
+        lock.lock();
         try {
             int teamId = AccountRepository.getRepository().getSelectedTeamId();
             return helper.getDao(ResMessages.Link.class)
@@ -414,11 +424,37 @@ public class MessageRepository {
                     .eq("roomId", roomId)
                     .and()
                     .ge("id", firstCursorLinkId)
+                    .and()
+                    .lt("id", toCursorLinkId)
                     .query();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
         return new ArrayList<>(0);
     }
 
+    public boolean hasLinkOfMessageId(int messageId) {
+        if (messageId <= 0) {
+            return false;
+        }
+
+        lock.lock();
+        try {
+            Dao<ResMessages.Link, ?> linkDao = helper.getDao(ResMessages.Link.class);
+            QueryBuilder<ResMessages.Link, ?> queryBuilder = linkDao.queryBuilder();
+            return queryBuilder
+                    .where()
+                    .eq("messageId", messageId)
+                    .countOf() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+
+
+        return false;
+    }
 }
