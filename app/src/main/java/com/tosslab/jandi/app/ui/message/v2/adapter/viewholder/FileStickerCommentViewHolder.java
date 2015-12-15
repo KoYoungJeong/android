@@ -166,9 +166,11 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                                 break;
                             default:
                                 vFileImageRound.setVisibility(View.VISIBLE);
-                                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                                ivFileImage.setHierarchy(hierarchy);
-                                loadImage(thumbnailUrl);
+                                BitmapUtil.loadCropBitmapByGlide(ivFileImage,
+                                        thumbnailUrl,
+                                        R.drawable.file_icon_img
+                                );
+
                                 break;
                         }
 

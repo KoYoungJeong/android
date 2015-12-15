@@ -57,6 +57,9 @@ public class ImageViewHolder implements BodyViewHolder {
     public static final int MIN_SIZE = 46;
     public static final int SMALL_SIZE = 90;
 
+    private static final float LONG_HORIZONTAL_RATIO = 46 / 213f;
+    private static final float LONG_VERTICAL_RATIO = 284 / 46f;
+
     private SimpleDraweeView ivProfile;
     private TextView tvName;
     private TextView tvDate;
@@ -238,7 +241,6 @@ public class ImageViewHolder implements BodyViewHolder {
             if (extraInfo != null && extraInfo.width > 0 && extraInfo.height > 0) {
                 ImageSpec imageSpec = getImageSpec(
                         extraInfo.width, extraInfo.height, extraInfo.orientation);
-                LogUtil.e(TAG, "type=" + imageSpec.getType());
                 switch (imageSpec.getType()) {
                     case SMALL:
                         hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
@@ -288,15 +290,6 @@ public class ImageViewHolder implements BodyViewHolder {
             DraweeController controller = Fresco.newDraweeControllerBuilder()
                     .setImageRequest(request)
                     .setOldController(ivFileImage.getController())
-                    .setControllerListener(new BaseControllerListener<ImageInfo>() {
-                        @Override
-                        public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
-                            super.onFinalImageSet(id, imageInfo, animatable);
-                            LogUtil.d(TAG,
-                                    String.format("width=%s, height=%s",
-                                            imageInfo.getWidth(), imageInfo.getHeight()));
-                        }
-                    })
                     .build();
             ivFileImage.setController(controller);
 
@@ -332,7 +325,7 @@ public class ImageViewHolder implements BodyViewHolder {
             width = Math.min(width, getPixelFromDp(MAX_WIDTH));
 
             int minSize = getPixelFromDp(MIN_SIZE);
-            if (ratio <= (46 / 213f)) {
+            if (ratio <= (LONG_HORIZONTAL_RATIO)) {
                 ImageSpec.Type type = ImageSpec.Type.LONG_HORIZONTAL;
                 height = minSize;
                 return new ImageSpec(width, height, orientation, type);
@@ -345,7 +338,7 @@ public class ImageViewHolder implements BodyViewHolder {
             height = Math.min(height, getPixelFromDp(MAX_HEIGHT_WHEN_VERTICAL_IMAGE));
 
             int minSize = getPixelFromDp(MIN_SIZE);
-            if (ratio > (284 / 46f)) {
+            if (ratio > (LONG_VERTICAL_RATIO)) {
                 ImageSpec.Type type = ImageSpec.Type.LONG_VERTICAL;
                 width = minSize;
                 return new ImageSpec(width, height, orientation, type);
