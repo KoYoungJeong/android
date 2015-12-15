@@ -87,10 +87,7 @@ public class LinkPreviewViewModel {
         vgThumb.setVisibility(View.VISIBLE);
 
         String imageUrl = linkPreview.imageUrl;
-        BitmapUtil.loadCropBitmapByGlide(ivThumb,
-                imageUrl,
-                R.drawable.link_preview
-        );
+        ivThumb.setImageURI(Uri.parse(imageUrl));
     }
 
     private boolean useThumbnail(String imagUrl) {
