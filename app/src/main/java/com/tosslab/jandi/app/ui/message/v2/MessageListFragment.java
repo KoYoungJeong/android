@@ -1085,13 +1085,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     private void handleEasterEggSnowing(String message) {
-        if (TextUtils.isEmpty(message)) {
-            return;
-        }
-
-        if ("눈".equals(message)
-                || "雪".equals(message)
-                || "snow".equals(message.toLowerCase())) {
+        if (isEasterEggMessage(message)) {
             if (vgEasterEggSnow.getChildCount() > 0) {
                 return;
             }
@@ -1109,6 +1103,16 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             vgEasterEggSnow.removeAllViews();
             SNOWING_EASTEREGG_STARTED = false;
         }
+    }
+
+    private boolean isEasterEggMessage(String message) {
+        if (TextUtils.isEmpty(message)) {
+            return false;
+        }
+
+        return message.contains("눈")
+                || message.contains("雪")
+                || message.toLowerCase().contains("snow");
     }
 
     private void sendSticker() {

@@ -51,8 +51,6 @@ public class FileMessageDaoImpl extends BaseDaoImpl<ResMessages.FileMessage, Int
                 QueryBuilder<ResMessages.ThumbnailUrls, ?> thumbnailUrlsQueryBuilder = thumbnailUrlsDao.queryBuilder();
                 thumbnailUrlsQueryBuilder
                         .where()
-                        .eq("largeThumbnailUrl", fileMessage.content.extraInfo.largeThumbnailUrl)
-                        .or()
                         .eq("thumbnailUrl", fileMessage.content.extraInfo.thumbnailUrl);
                 if (thumbnailUrlsQueryBuilder.countOf() <= 0) {
                     thumbnailUrlsDao.create(fileMessage.content.extraInfo);
