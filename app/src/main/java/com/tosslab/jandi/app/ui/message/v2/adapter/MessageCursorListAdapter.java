@@ -19,12 +19,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
 
 public class MessageCursorListAdapter extends MessageAdapter {
-    private final PublishSubject<Integer> objectPublishSubject;
 
     private int firstCursorLinkId = -1;
 
@@ -42,24 +38,13 @@ public class MessageCursorListAdapter extends MessageAdapter {
                     return;
                 }
 
-
-                objectPublishSubject.onNext(1);
+                addBeforeLinks(roomId, firstCursorLinkId, links);
+                removeDummyLink(links);
+                addAfterLinks(roomId, links);
+                addDummyLink(roomId, links);
             }
         });
 
-        objectPublishSubject = PublishSubject.create();
-        objectPublishSubject
-                .doOnNext(o -> {
-                    addBeforeLinks(roomId, firstCursorLinkId, links);
-                    removeDummyLink(links);
-                    addAfterLinks(roomId, links);
-                    addDummyLink(roomId, links);
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(o1 -> {
-                    notifyItemRangeChanged(0, links.size());
-                });
     }
 
     private int getToCursorLinkId(List<ResMessages.Link> links) {
