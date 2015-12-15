@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.Html;
 import android.text.TextUtils;
@@ -122,7 +124,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
             vFileImageRound.setVisibility(View.GONE);
 
             ResMessages.FileMessage feedbackFileMessage = link.feedback;
-            ivFileImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
             if (TextUtils.equals(link.feedback.status, "archived")) {
                 tvFileOwner.setVisibility(View.GONE);
 
@@ -166,11 +167,14 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                                 break;
                             default:
                                 vFileImageRound.setVisibility(View.VISIBLE);
-                                BitmapUtil.loadCropBitmapByGlide(ivFileImage,
-                                        thumbnailUrl,
-                                        R.drawable.file_icon_img
-                                );
-
+                                Resources resources = context.getResources();
+                                Drawable placeHolder = resources.getDrawable(R.drawable.file_icon_img);
+                                hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_XY);
+                                Drawable failure = resources.getDrawable(R.drawable.image_no_preview);
+                                hierarchy.setFailureImage(failure, ScalingUtils.ScaleType.FIT_XY);
+                                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+                                ivFileImage.setHierarchy(hierarchy);
+                                loadImage(thumbnailUrl);
                                 break;
                         }
 
