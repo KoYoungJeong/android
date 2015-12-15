@@ -62,7 +62,6 @@ public class AutoScaleImageView extends ImageView {
     }
 
     public void load(String url) {
-        LogUtil.d(TAG, "extrainfo is empty.");
         int width = getPixelFromDp(MAX_WIDTH);
         int height = getPixelFromDp(MAX_HEIGHT);
         int orientation = ExifInterface.ORIENTATION_UNDEFINED;
@@ -70,20 +69,17 @@ public class AutoScaleImageView extends ImageView {
     }
 
     public void load(String url, int width, int height, int orientation) {
-        LogUtil.d(TAG, "has extrainfo.");
-
         if (imageSpec != null) {
             if (imageSpec.getUrl().equals(url)) {
-                LogUtil.d(TAG, "same request is running - " + imageSpec.getRequest().isRunning());
                 return;
             } else {
                 stopPreviousRequestIfRunning();
             }
         }
 
-        LogUtil.e(TAG, String.format("%d, %d, %d, %f", width, height, orientation, height / (float) width));
-
         imageSpec = getImageSpec(url, width, height, orientation);
+        logImageSpec(imageSpec.url, imageSpec.width, imageSpec.height, imageSpec.orientation);
+
         requestLayout();
         getParent().requestLayout();
 
@@ -92,8 +88,6 @@ public class AutoScaleImageView extends ImageView {
                 .asBitmap();
 
         setScaleType(ScaleType.FIT_XY);
-
-        LogUtil.e(TAG, imageSpec.toString());
 
         DefaultImageViewTarget target = new DefaultImageViewTarget(this);
         switch (imageSpec.getType()) {
@@ -128,9 +122,16 @@ public class AutoScaleImageView extends ImageView {
         }
 
         requestBuilder.placeholder(R.drawable.image_preview_download);
+        requestBuilder.error(R.drawable.image_no_preview);
+
         BaseTarget requestTarget = requestBuilder.into(target);
 
         imageSpec.setRequest(requestTarget.getRequest());
+    }
+
+    private void logImageSpec(String url, int width, int height, int orientation) {
+        LogUtil.e(TAG, String.format("url=%s, width=%d, height=%d, orientation=%d, ratio=%f",
+                url, width, height, orientation, height / (float) width));
     }
 
     private ImageSpec getImageSpec(String url, int width, int height, int orientation) {
@@ -142,7 +143,6 @@ public class AutoScaleImageView extends ImageView {
         }
 
         float ratio = height / (float) width;
-        LogUtil.i(TAG, String.format("%d, %d, %d, %f", width, height, orientation, ratio));
 
         if (isSmallSize(width, height)) {
             ImageSpec.Type type = ImageSpec.Type.SMALL;
@@ -187,9 +187,7 @@ public class AutoScaleImageView extends ImageView {
 
     private void stopPreviousRequestIfRunning() {
         boolean running = imageSpec.getRequest().isRunning();
-        LogUtil.i(TAG, "different imageSpec passed. running ? " + running);
         if (running) {
-            LogUtil.i(TAG, "previous request is running so clear.");
             Request request = imageSpec.getRequest();
             request.clear();
             request = null;
@@ -210,19 +208,7 @@ public class AutoScaleImageView extends ImageView {
         return (int) (dp * getContext().getResources().getDisplayMetrics().density);
     }
 
-    public static boolean isRequestCancelled(Request request) {
-        return request == null || request.isCancelled();
-    }
-
-    public static boolean isValidateResource(Bitmap resource) {
-        return resource != null && !resource.isRecycled();
-    }
-
     private static class ImageSpec {
-        public enum Type {
-            MAX, HORIZONTAL, VERTICAL, LONG_HORIZONTAL, LONG_VERTICAL, SQUARE, SMALL
-        }
-
         private String url;
         private int width;
         private int height;
@@ -246,8 +232,16 @@ public class AutoScaleImageView extends ImageView {
             return width;
         }
 
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
         public int getHeight() {
             return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
         }
 
         public int getOrientation() {
@@ -256,14 +250,6 @@ public class AutoScaleImageView extends ImageView {
 
         public Request getRequest() {
             return request;
-        }
-
-        public void setWidth(int width) {
-            this.width = width;
-        }
-
-        public void setHeight(int height) {
-            this.height = height;
         }
 
         public void setRequest(Request request) {
@@ -288,6 +274,10 @@ public class AutoScaleImageView extends ImageView {
                     ", request=" + request +
                     ", type=" + type +
                     '}';
+        }
+
+        public enum Type {
+            MAX, HORIZONTAL, VERTICAL, LONG_HORIZONTAL, LONG_VERTICAL, SQUARE, SMALL
         }
     }
 
@@ -322,48 +312,20 @@ public class AutoScaleImageView extends ImageView {
                 }
             }
         }
-    }
 
-    private static class SizeSpecifiedTarget extends SimpleTarget<Bitmap> {
-
-        private ImageView imageView;
-
-        public SizeSpecifiedTarget(ImageView imageView, int width, int height) {
-            super(width, height);
-            this.imageView = imageView;
+        private boolean isRequestCancelled(Request request) {
+            return request == null || request.isCancelled();
         }
 
-        @Override
-        public void onLoadStarted(Drawable placeholder) {
-            imageView.setImageDrawable(placeholder);
+        private boolean isValidateResource(Bitmap resource) {
+            return resource != null && !resource.isRecycled();
         }
 
-        @Override
-        public void onLoadFailed(Exception e, Drawable errorDrawable) {
-            imageView.setImageDrawable(errorDrawable);
+        private RoundedBitmapDrawable getRoundedBitmapDrawable(Bitmap resource, float radius) {
+            Resources resources = JandiApplication.getContext().getResources();
+            RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(resources, resource);
+            roundedBitmapDrawable.setCornerRadius(radius);
+            return roundedBitmapDrawable;
         }
-
-        @Override
-        public void onLoadCleared(Drawable placeholder) {
-            imageView.setImageDrawable(placeholder);
-        }
-
-        @Override
-        public void onResourceReady(Bitmap resource,
-                                    GlideAnimation<? super Bitmap> glideAnimation) {
-            if (!isRequestCancelled(getRequest()) && isValidateResource(resource)) {
-                RoundedBitmapDrawable roundedBitmapDrawable = getRoundedBitmapDrawable(resource, 5);
-                imageView.setImageDrawable(roundedBitmapDrawable);
-//                imageView.setImageBitmap(resource);
-            }
-        }
-
-    }
-
-    public static RoundedBitmapDrawable getRoundedBitmapDrawable(Bitmap resource, float radius) {
-        Resources resources = JandiApplication.getContext().getResources();
-        RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(resources, resource);
-        roundedBitmapDrawable.setCornerRadius(radius);
-        return roundedBitmapDrawable;
     }
 }

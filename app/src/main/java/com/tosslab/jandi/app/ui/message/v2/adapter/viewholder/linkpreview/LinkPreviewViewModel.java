@@ -82,8 +82,8 @@ public class LinkPreviewViewModel {
         String imageUrl = linkPreview.imageUrl;
         BitmapUtil.loadCropBitmapByGlide(ivThumb,
                 imageUrl,
-                R.drawable.link_preview
-        );
+                R.drawable.link_preview,
+                R.drawable.image_no_preview);
     }
 
     private boolean useThumbnail(String imagUrl) {
