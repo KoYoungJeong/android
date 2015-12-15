@@ -14,9 +14,9 @@
         android:id="@+id/vg_easteregg_snow"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/space_messages_divider"
+        android:layout_above="@+id/v_messages_divider"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@+id/ll_messages_disable_alert" />
+        android:layout_below="@+id/vg_messages_disable_alert" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/lv_messages"
