@@ -78,7 +78,7 @@ public class SendMessageRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     public int deleteSendMessage(long id) {

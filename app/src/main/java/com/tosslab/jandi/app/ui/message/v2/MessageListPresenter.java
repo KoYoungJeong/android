@@ -1013,7 +1013,6 @@ public class MessageListPresenter {
         } else {
             messageAdapter = new MessageCursorListAdapter(activity);
         }
-        messageAdapter.setHasStableIds(true);
 
     }
 }

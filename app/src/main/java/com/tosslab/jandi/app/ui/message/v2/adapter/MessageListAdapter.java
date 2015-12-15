@@ -50,7 +50,7 @@ public class MessageListAdapter extends MessageAdapter {
         this.context = context;
         this.messageList = new ArrayList<>();
         oldMoreState = MoreState.Idle;
-
+        setHasStableIds(true);
     }
 
     @Override

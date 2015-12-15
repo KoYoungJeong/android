@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,11 +30,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
 public class MessageCursorListAdapter extends MessageAdapter {
-
     private Context context;
 
     private int lastMarker = -1;
@@ -46,16 +48,41 @@ public class MessageCursorListAdapter extends MessageAdapter {
     private MessageListAdapter.OnItemLongClickListener onItemLongClickListener;
 
     private int teamId;
-    private int roomId;
+    private int roomId = -1;
     private int entityId;
     private int lastReadLinkId = -1;
 
     private int firstCursorLinkId = -1;
 
+    private List<ResMessages.Link> links;
+
     public MessageCursorListAdapter(Context context) {
         this.context = context;
         oldMoreState = MoreState.Idle;
+        links = new CopyOnWriteArrayList<>();
+        setHasStableIds(true);
+        registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                links.clear();
 
+                if (roomId == -1 || firstCursorLinkId == -1) {
+                    return;
+                }
+
+                List<ResMessages.Link> messages = MessageRepository.getRepository().getMessages(roomId, firstCursorLinkId);
+                List<SendMessage> sendMessages = SendMessageRepository.getRepository().getSendMessage(roomId);
+
+                links.addAll(messages);
+                Observable.from(sendMessages)
+                        .map(sendMessage -> getDummyMessageLink(EntityManager.getInstance().getMe().getId(), sendMessage))
+                        .collect(() -> links, List::add)
+                        .onErrorResumeNext(throwable -> {
+                            return Observable.empty();
+                        })
+                        .subscribe();
+            }
+        });
     }
 
     @Override
@@ -163,13 +190,7 @@ public class MessageCursorListAdapter extends MessageAdapter {
 
     @Override
     public ResMessages.Link getItem(int position) {
-        int messagesCount = getMessagesCount();
-        if (position < messagesCount) {
-            return MessageRepository.getRepository().getMessage(roomId, position, firstCursorLinkId);
-        } else {
-            SendMessage sendMessage = SendMessageRepository.getRepository().getSendMessage(roomId, position - messagesCount);
-            return getDummyMessageLink(EntityManager.getInstance().getMe().getId(), sendMessage);
-        }
+        return links.get(position);
     }
 
     private DummyMessageLink getDummyMessageLink(int id, SendMessage link) {
@@ -214,26 +235,22 @@ public class MessageCursorListAdapter extends MessageAdapter {
 
     @Override
     public int getItemCount() {
-        if (firstCursorLinkId < 0) {
-            return 0;
-        }
-        int messagesCount = getMessagesCount();
-        int dummyCount = getDummyCount(roomId);
-        return messagesCount + dummyCount;
-    }
-
-    private int getDummyCount(int roomId) {
-        return SendMessageRepository.getRepository().getMessagesCount(roomId);
-    }
-
-    private int getMessagesCount() {
-        return MessageRepository.getRepository().getMessagesCount(roomId, firstCursorLinkId);
+        return links.size();
     }
 
     @Override
     public int getDummyMessageCount() {
 
-        return getDummyCount(roomId);
+        int total = 0;
+        for (int idx = links.size() - 1; idx >= 0; idx--) {
+            if (links.get(idx) instanceof DummyMessageLink) {
+                ++total;
+            } else {
+                break;
+            }
+        }
+
+        return total;
     }
 
     @Override
@@ -284,26 +301,6 @@ public class MessageCursorListAdapter extends MessageAdapter {
             }
         }
         return -1;
-    }
-
-    private int getDummyMessagePositionByMessageId(int messageId) {
-
-        int size = getItemCount();
-
-        for (int idx = size - 1; idx >= 0; --idx) {
-            ResMessages.Link link = getItem(idx);
-
-            if (link instanceof DummyMessageLink) {
-                DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
-                if (dummyMessageLink.getMessageId() == messageId) {
-                    return idx;
-                }
-            } else {
-                return -1;
-            }
-        }
-        return -1;
-
     }
 
     @Override
@@ -399,6 +396,7 @@ public class MessageCursorListAdapter extends MessageAdapter {
 //        messageList.get(position).message.isStarred = isStarred;
 //        notifyItemChanged(position);
     }
+
 
     private enum MoreState {
         Idle, Loading, Nope

@@ -402,4 +402,23 @@ public class MessageRepository {
         return null;
     }
 
+    public List<ResMessages.Link> getMessages(int roomId, int firstCursorLinkId) {
+        try {
+            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            return helper.getDao(ResMessages.Link.class)
+                    .queryBuilder()
+                    .orderBy("time", true)
+                    .where()
+                    .eq("teamId", teamId)
+                    .and()
+                    .eq("roomId", roomId)
+                    .and()
+                    .ge("id", firstCursorLinkId)
+                    .query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>(0);
+    }
+
 }
