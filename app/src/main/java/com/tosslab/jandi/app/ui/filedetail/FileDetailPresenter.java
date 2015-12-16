@@ -458,6 +458,19 @@ public class FileDetailPresenter {
 
             ReadyComment readyComment = ReadyCommentRepository.getRepository().getReadyComment(fileMessage.id);
             mentionControlViewModel.setUpMention(readyComment.getText());
+            mentionControlViewModel.setOnMentionShowingListener(isShowing -> {
+                if (isShowing) {
+                    view.dismissMentionButton();
+                } else {
+                    view.showMentionButton();
+                }
+            });
+
+            if (mentionControlViewModel.getAllSelectableMembers().size() == 0) {
+                view.dismissMentionButton();
+            } else {
+                view.showMentionButton();
+            }
             registClipboardListenerforMention();
         }
     }
@@ -711,5 +724,9 @@ public class FileDetailPresenter {
         void exportIntentFile(File result, String type);
 
         void setFileMessage(ResMessages.FileMessage fileMessage2);
+
+        void dismissMentionButton();
+
+        void showMentionButton();
     }
 }

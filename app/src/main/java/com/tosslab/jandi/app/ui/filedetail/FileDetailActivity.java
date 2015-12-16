@@ -21,12 +21,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -163,6 +165,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     RecyclerView rvListSearchMembers;
     @ViewById(R.id.vg_option_space)
     ViewGroup vgOptionSpace;
+
+    @ViewById(R.id.btn_show_mention)
+    View ivMention;
 
     @Bean
     StickerViewModel stickerViewModel;
@@ -781,6 +786,17 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
     }
 
+    @Click(R.id.btn_show_mention)
+    void onMentionClick() {
+        BaseInputConnection inputConnection = new BaseInputConnection(etComment, true);
+        inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_AT));
+
+        if (stickerViewModel.isShow()) {
+            stickerViewModel.dismissStickerWindow();
+        }
+
+    }
+
     @UiThread(propagation = Propagation.REUSE)
     @Override
     public void showStickerPreview() {
@@ -973,6 +989,18 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void setFileMessage(ResMessages.FileMessage fileMessage) {
         this.fileMessage = fileMessage;
+    }
+
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
+    public void dismissMentionButton() {
+        ivMention.setVisibility(View.GONE);
+    }
+
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
+    public void showMentionButton() {
+        ivMention.setVisibility(View.VISIBLE);
     }
 
     public void showDeleteFileDialog(int fileId) {
