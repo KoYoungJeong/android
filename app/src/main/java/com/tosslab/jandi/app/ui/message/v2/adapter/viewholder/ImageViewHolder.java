@@ -283,6 +283,7 @@ public class ImageViewHolder implements BodyViewHolder {
                     .setResizeOptions(needToResize
                             ? new ResizeOptions(layoutParams.width, layoutParams.height)
                             : new ResizeOptions(maximumBitmapSize, maximumBitmapSize))
+                    .setAutoRotateEnabled(true)
                     .build();
 
             DraweeController controller = Fresco.newDraweeControllerBuilder()
