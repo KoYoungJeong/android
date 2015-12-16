@@ -70,6 +70,7 @@ import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
+import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
@@ -660,9 +661,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Background
     void sendInitMessage() {
         if (roomId <= 0) {
-            boolean user = EntityManager.getInstance().getEntityById(entityId).isUser();
+            FormattedEntity entityById = EntityManager.getInstance().getEntityById(entityId);
+            boolean topic = !entityById.isUser() && !(entityById instanceof BotEntity);
 
-            if (!user) {
+            if (topic) {
                 roomId = entityId;
             } else if (NetworkCheckUtil.isConnected()) {
 
@@ -672,6 +674,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                     this.roomId = roomId;
                 }
             }
+        }
+
+        if (this.roomId <= 0) {
+            messageListPresenter.showFailToast(getString(R.string.err_messages_invaild_entity));
+            messageListPresenter.finish();
+            return;
         }
 
         int savedLastLinkId = messageListModel.getLastReadLinkId(roomId, messageListModel.getMyId());
