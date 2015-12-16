@@ -5,10 +5,10 @@
     android:orientation="vertical">
 
     <ListView
-        android:id="@+id/list_messages"
+        android:id="@+id/lv_messages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/space_messages_divider"
+        android:layout_above="@+id/v_messages_divider"
         android:layout_alignParentTop="true"
         android:layout_weight="1"
         android:choiceMode="singleChoice"
@@ -19,14 +19,14 @@
 
     <!-- Message Input Layout -->
     <View
-        android:id="@+id/space_messages_divider"
+        android:id="@+id/v_messages_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_above="@+id/ll_messages"
+        android:layout_above="@+id/vg_messages_input"
         android:background="@color/jandi_border_gray" />
 
     <LinearLayout
-        android:id="@+id/ll_messages"
+        android:id="@+id/vg_messages_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

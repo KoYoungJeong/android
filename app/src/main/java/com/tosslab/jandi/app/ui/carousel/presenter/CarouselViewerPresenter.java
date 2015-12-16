@@ -1,11 +1,7 @@
-package com.tosslab.jandi.app.ui.carousel;
-
-import android.app.ProgressDialog;
-import android.content.Context;
+package com.tosslab.jandi.app.ui.carousel.presenter;
 
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -15,11 +11,11 @@ public interface CarouselViewerPresenter {
 
     void setView(View view);
 
-    void onInitImageFiles(Context context);
+    void onInitImageFiles();
 
-    void onBeforeImageFiles(Context context, int fileLinkId, int count);
+    void onBeforeImageFiles(int fileLinkId, int count);
 
-    void onAfterImageFiles(Context context, int fileLinkId, int count);
+    void onAfterImageFiles(int fileLinkId, int count);
 
     void onFileDownload(CarouselFileInfo fileInfo);
 

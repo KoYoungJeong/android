@@ -49,6 +49,7 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
         JandiSocketService.startServiceIfNeed(this);
 
         initViews();
+
     }
 
     @Override

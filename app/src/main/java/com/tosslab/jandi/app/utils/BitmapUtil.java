@@ -5,13 +5,19 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -22,6 +28,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.local.orm.repositories.UploadedFileInfoRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.transform.glide.GlideCircleTransform;
 import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
@@ -276,7 +283,6 @@ public class BitmapUtil {
     }
 
     public static String getFileUrl(String url) {
-
         if (TextUtils.isEmpty(url)) {
             return url;
         }
@@ -483,13 +489,14 @@ public class BitmapUtil {
                 .into(imageView);
     }
 
-    public static void loadCropBitmapByGlide(ImageView imageView,
-                                             String url, int placeHolder) {
+    public static void loadCropBitmapByGlide(ImageView imageView, String url,
+                                             int placeHolder, int error) {
         Glide.with(JandiApplication.getContext())
                 .load(url)
                 .asBitmap()
                 .dontAnimate()
                 .placeholder(placeHolder)
+                .error(error)
                 .centerCrop()
                 .into(new BitmapImageViewTarget(imageView) {
                     @Override
@@ -498,7 +505,8 @@ public class BitmapUtil {
                     }
 
                     @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                    public void onResourceReady(Bitmap resource,
+                                                GlideAnimation<? super Bitmap> glideAnimation) {
                         if (resource != null && !resource.isRecycled()) {
                             setResource(resource);
                         }

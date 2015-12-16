@@ -1,9 +1,12 @@
 package com.tosslab.jandi.app.local.orm.dao;
 
+import android.text.TextUtils;
+
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
@@ -43,10 +46,19 @@ public class FileMessageDaoImpl extends BaseDaoImpl<ResMessages.FileMessage, Int
             }
         }
 
-        DaoManager.createDao(connectionSource, ResMessages.FileContent.class)
-                .createOrUpdate(fileMessage.content);
+        ResMessages.FileContent content = fileMessage.content;
+        if (content != null) {
 
-        DaoManager.createDao(connectionSource, ResMessages.ThumbnailUrls.class)
-                .createOrUpdate(fileMessage.content.extraInfo);
+            if (content.extraInfo != null) {
+                Dao<ResMessages.ThumbnailUrls, ?> thumbnailUrlsDao =
+                        DaoManager.createDao(connectionSource, ResMessages.ThumbnailUrls.class);
+                thumbnailUrlsDao.createOrUpdate(content.extraInfo);
+            }
+
+            DaoManager.createDao(connectionSource, ResMessages.FileContent.class)
+                    .createOrUpdate(content);
+
+        }
+
     }
 }

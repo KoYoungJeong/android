@@ -8,9 +8,10 @@
     android:paddingRight="8dp">
 
     <LinearLayout
+        android:id="@+id/vg_message_header_wrapper"
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:background="@color/white"
+        android:background="@color/jandi_text_white"
         android:foreground="?android:attr/selectableItemBackground"
         android:gravity="center"
         android:orientation="vertical"

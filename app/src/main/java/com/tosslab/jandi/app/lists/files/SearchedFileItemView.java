@@ -80,7 +80,8 @@ public class SearchedFileItemView extends RelativeLayout {
                         BitmapUtil.getThumbnailUrlOrOriginal(content, BitmapUtil.Thumbnails.SMALL);
                 BitmapUtil.loadCropBitmapByGlide(imageViewSearchedFileType,
                         thumbnailUrl,
-                        R.drawable.file_icon_img);
+                        R.drawable.file_icon_img,
+                        R.drawable.image_no_preview);
             } else {
                 imageViewSearchedFileType.setImageResource(R.drawable.file_icon_img);
             }

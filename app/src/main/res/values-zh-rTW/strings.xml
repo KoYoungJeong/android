@@ -54,13 +54,14 @@
 	<string name="fail_to_create_team">"团队未完成建立"</string>
 	<string name="file_upload_comment">"留言（非必要）"</string>
 	<string name="jadi_account_home">"帳號首頁"</string>
-	<string name="jandi_1_1_message">"直接傳訊"</string>
+	<string name="jandi_1_1_message">"私訊"</string>
+	<string name="jandi_91_apk_store">"91安卓下載"</string>
 	<string name="jandi_about">"有關"</string>
 	<string name="jandi_account">"帳號"</string>
 	<string name="jandi_account_home_help">"無限擴大你的聯絡網一組帳號可同時連接數個電子郵箱並隨意切換登入的電子郵箱確保與其他團隊成員的聯繫不斷線可針對每個團隊各別指定一個電子郵箱"</string>
 	<string name="jandi_action_create_team">"建立團隊"</string>
 	<string name="jandi_action_delete">"刪除"</string>
-	<string name="jandi_action_direct_message">"直接傳訊"</string>
+	<string name="jandi_action_direct_message">"私訊"</string>
 	<string name="jandi_action_download">"下載"</string>
 	<string name="jandi_action_invite">"邀請"</string>
 	<string name="jandi_action_leave">"離開"</string>
@@ -90,6 +91,7 @@
 	<string name="jandi_auto_join_explain">"邀請所有新成員至此議題"</string>
 	<string name="jandi_auto_join_title">"自動邀請"</string>
 	<string name="jandi_auto_join_title_wild">"自動邀請*"</string>
+	<string name="jandi_baidu_app_store">"百度手機助手"</string>
 	<string name="jandi_bot_role">"身為JANDI最強使者，肩負傳遞JANDI Connect和平台訊息通知的任務，絕對使命必達！"</string>
 	<string name="jandi_bot_status">"你好，我是Mr.J！"</string>
 	<string name="jandi_browse_other_topics">"瀏覽其他議題"</string>
@@ -101,10 +103,11 @@
 	<string name="jandi_cannot_find_search_result_old">"找不到符合條件的內容"</string>
 	<string name="jandi_change_passcode">"更改密碼"</string>
 	<string name="jandi_chat_detail">"聊天設定"</string>
+	<string name="jandi_choose_app_store">"選擇應用程式商鋪"</string>
 	<string name="jandi_choose_email">"選擇一個電子郵件"</string>
 	<string name="jandi_coach_mark_create_new_topics">"建立新議題"</string>
-	<string name="jandi_coach_mark_directmessage_choose_member">"選擇成員開始傳訊"</string>
-	<string name="jandi_coach_mark_directmessage_explain1">"在這裡找到直接傳訊"</string>
+	<string name="jandi_coach_mark_directmessage_choose_member">"選擇成員開始私訊"</string>
+	<string name="jandi_coach_mark_directmessage_explain1">"在這裡找到所有私訊"</string>
 	<string name="jandi_coach_mark_directmessage_explain2">"裡的訊息對話"</string>
 	<string name="jandi_coach_mark_filelist_explain1">"在JANDI檔案庫一次"</string>
 	<string name="jandi_coach_mark_filelist_explain2">"瀏覽所有檔案"</string>
@@ -149,6 +152,7 @@
 	<string name="jandi_disable_user_profile_explain">"此成員權限已被暫時關閉。\n欲知更多細節，請聯絡團隊管理員。"</string>
 	<string name="jandi_disabled_team">"你已被剔除%1$s。進一步訊息，請聯絡團隊管理員。"</string>
 	<string name="jandi_disabled_user">"此成員權限已被暫時關閉"</string>
+	<string name="jandi_domain_is_already_taken">"網域名稱已經被使用"</string>
 	<string name="jandi_duplicate_email">"這電子郵件已被註冊"</string>
 	<string name="jandi_empty">"None"</string>
 	<string name="jandi_enable_external_link">"建立共享連結"</string>
@@ -208,6 +212,7 @@
 	<string name="jandi_has_joined">"%s已加入"</string>
 	<string name="jandi_have_an_account_already">"已經有團隊註冊了嗎?"</string>
 	<string name="jandi_help">"説明"</string>
+	<string name="jandi_hi_apk_store">"安卓市場"</string>
 	<string name="jandi_image_too_big">"圖像過大無法載入"</string>
 	<string name="jandi_incorrect_passcode">"密碼不吻合"</string>
 	<string name="jandi_input_password">"請爲選擇的團隊輸入您的密碼"</string>
@@ -244,7 +249,7 @@
 	<string name="jandi_member_invite_popup_1">"現在就邀請您所有的團隊成員！"</string>
 	<string name="jandi_member_invite_popup_2">"JANDI是一個群組導向的平台，因此您可以在工作流程中與您全部團隊一同找到最棒的經驗。"</string>
 	<string name="jandi_member_profile_call">"通話"</string>
-	<string name="jandi_member_profile_dm">"直接傳訊"</string>
+	<string name="jandi_member_profile_dm">"私訊"</string>
 	<string name="jandi_member_profile_edit">"編輯簡介"</string>
 	<string name="jandi_member_profile_email">"電子郵件"</string>
 	<string name="jandi_member_profile_mention">"我的提及列表"</string>
@@ -304,6 +309,7 @@
 	<string name="jandi_password_strength_too_short">"必須至少八個字符"</string>
 	<string name="jandi_password_strength_weak">"必須含有至少一個數字、 大寫字母或特殊字符。"</string>
 	<string name="jandi_phone_led">"鎖屏通知"</string>
+	<string name="jandi_play_store">"Google Play"</string>
 	<string name="jandi_plz_input_topic_description">"說明 (選項)"</string>
 	<string name="jandi_preview_message_contents">"預覽訊息內容"</string>
 	<string name="jandi_privacy_policy">"隱私權條款"</string>
@@ -343,7 +349,7 @@
 	<string name="jandi_sdcard_storage_unmounted">"解除連接記憶卡"</string>
 	<string name="jandi_search_ing">"<![CDATA[搜尋 <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>與 <b><font color=#404040>%2$d</font></b>符合]]>"</string>
-	<string name="jandi_select_direct_messages">"選擇直接傳訊。"</string>
+	<string name="jandi_select_direct_messages">"選擇私訊"</string>
 	<string name="jandi_select_gallery">"選擇照片"</string>
 	<string name="jandi_select_maximum_10">"一次可上傳10張照片"</string>
 	<string name="jandi_select_team">"選擇您的團隊"</string>
@@ -397,7 +403,7 @@
 	<string name="jandi_starred_unstar">"取消標示"</string>
 	<string name="jandi_starred_unstar_from_item">"你確定要取消標示嗎？"</string>
 	<string name="jandi_starred_unstarred">"已取消標示"</string>
-	<string name="jandi_start_direct_messages_1">"<b>您所有直接傳訊的訊息現在是隱藏的。</b>"</string>
+	<string name="jandi_start_direct_messages_1">"<b>您所有私訊的訊息現在是隱藏的。</b>"</string>
 	<string name="jandi_start_direct_messages_2">"點擊以下按鍵以開始或重新打開一個對話。"</string>
 	<string name="jandi_success_copy_clipboard_external_link">"共享連結已複製至到剪貼簿"</string>
 	<string name="jandi_success_disable_external_link">"共享連結已被刪除"</string>
@@ -406,7 +412,7 @@
 	<string name="jandi_success_web_token">"登入成功"</string>
 	<string name="jandi_switch_team">"更換團隊"</string>
 	<string name="jandi_tab_chat">"對話"</string>
-	<string name="jandi_tab_direct_message">"直接傳訊"</string>
+	<string name="jandi_tab_direct_message">"私訊"</string>
 	<string name="jandi_tab_file">"檔案"</string>
 	<string name="jandi_tab_more">"更多"</string>
 	<string name="jandi_tab_private_group">"私人議題"</string>
@@ -447,7 +453,7 @@
 	<string name="jandi_tutorial_file">"簡單的幾個點擊上傳檔案"</string>
 	<string name="jandi_tutorial_file_message">"零時間、空間限制，隨時從行動裝置分享文件、簡報、視頻及任何檔案給所有團隊成員。"</string>
 	<string name="jandi_tutorial_topic">"JANDI在一起"</string>
-	<string name="jandi_tutorial_topic_message">"在您選擇的議題跟組織裏的同仁聯絡，無論是專案上的協作或僅是閑談。當您需要更多隱私，就邀請特定成員到私人議題及直接傳訊裏面繼續對話。"</string>
+	<string name="jandi_tutorial_topic_message">"在您選擇的議題跟團隊裏的同仁聯絡，無論是專案上的協作或僅是閑談。當您需要更多隱私，就邀請特定成員到私人議題或直接私訊成員。"</string>
 	<string name="jandi_tutorial_welcome">"歡迎使用"</string>
 	<string name="jandi_tutorial_welcome_message">"JANDI讓工作變簡單、愉快。我們將你對通訊軟體的要求與雲端存儲的需求結合，並放在你的手掌上。"</string>
 	<string name="jandi_unpinned_message">"已取消標示"</string>

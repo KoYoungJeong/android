@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.sticker;
+package com.tosslab.jandi.app.ui.commonviewmodels.sticker;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -167,6 +168,22 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
         // 기기에 백키/홈키가 있다면 네비게이션바가 없는 기기로 간주...
         return KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
                 && KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_HOME);
+    }
+
+    public void hideKeyboard() {
+        View view = activity.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    public void showKeyboard() {
+        View view = activity.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(view, 0);
+        }
     }
 
     public interface OnKeyboardCaptureListener {

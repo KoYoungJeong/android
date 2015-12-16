@@ -218,8 +218,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 vFileImageRound.setVisibility(View.VISIBLE);
                                 BitmapUtil.loadCropBitmapByGlide(ivFileImage,
                                         thumbnailUrl,
-                                        R.drawable.file_icon_img
-                                );
+                                        R.drawable.file_icon_img,
+                                        R.drawable.image_no_preview);
                                 break;
                         }
                     } else {

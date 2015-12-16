@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.services.socket.to;
 
+import com.tosslab.jandi.app.services.socket.annotations.Version;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -8,10 +10,22 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@Version(1)
 public class SocketTopicEvent {
+    private int version;
     private String event;
     private int teamId;
     private TopicInfo topic;
+
+    @Override
+    public String toString() {
+        return "SocketTopicEvent{" +
+                "version=" + version +
+                ", event='" + event + '\'' +
+                ", teamId=" + teamId +
+                ", topic=" + topic +
+                '}';
+    }
 
     public String getEvent() {
         return event;
@@ -35,6 +49,14 @@ public class SocketTopicEvent {
 
     public void setTeamId(int teamId) {
         this.teamId = teamId;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

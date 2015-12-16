@@ -9,16 +9,14 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.text.TextUtils;
-import android.util.Pair;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-//import android.provider.DocumentsContract;
 
 public class ImageFilePath {
     private static final String TEMP_PHOTO_FILE = "temp.jpg";   // 임시 저장파일
@@ -58,14 +56,12 @@ public class ImageFilePath {
     }
 
     /**
-     * SD카드가 마운트 되어 있는지 확인
+     * SD카드가 마운트 되어 있는지 확
      */
     private static boolean isSDCARDMOUNTED() {
         String status = Environment.getExternalStorageState();
-        if (status.equals(Environment.MEDIA_MOUNTED))
-            return true;
+        return status.equals(Environment.MEDIA_MOUNTED);
 
-        return false;
     }
 
     /**
@@ -132,14 +128,17 @@ public class ImageFilePath {
             // Return the remote address
             if (isGoogleOldPhotosUri(uri)) {
                 return uri.getLastPathSegment();
-            } else if (isGoogleNewPhotosUri(uri)) {
-                Pair<String, String> fileInfo = getGoogleFileInfo(context, uri);
-                return copyFileFromGoogleImage(context, uri, fileInfo);
             } else if (isPicasaPhotoUri(uri)) {
                 return copyFile(context, uri);
             }
-
-            return getDataColumn(context, uri, null, null);
+            String fileName = getGoogleFileInfo(context, uri);
+            if (!TextUtils.isEmpty(fileName)) {
+                // Standard FileProvide Resolver
+                // Ref : https://developer.android.com/intl/ko/training/secure-file-sharing/retrieve-info.html
+                return copyFileFromGoogleImage(context, uri, fileName);
+            } else {
+                return getDataColumn(context, uri, null, null);
+            }
         }
         // File
         else if ("file".equalsIgnoreCase(uri.getScheme())) {
@@ -149,30 +148,28 @@ public class ImageFilePath {
         return null;
     }
 
-    private static Pair<String, String> getGoogleFileInfo(Context context, Uri uri) {
+
+    private static String getGoogleFileInfo(Context context, Uri uri) {
 
         Cursor cursor = null;
-        final String displayNameCol = "_display_name";
-        final String mimeTypeCol = "mime_type";
-        final String[] projection = {displayNameCol, mimeTypeCol};
+        final String displayNameCol = OpenableColumns.DISPLAY_NAME;
+        final String[] projection = {displayNameCol};
 
         try {
             cursor = context.getContentResolver().query(uri, projection, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                String displayName = cursor.getString(0);
-                String mimeType = cursor.getString(1);
-                return new Pair<>(displayName, mimeType);
+                return cursor.getString(0);
             }
 
         } catch (Exception e) {
-            return new Pair<>("", "");
+            return "";
         } finally {
             if (cursor != null) {
                 cursor.close();
             }
         }
 
-        return new Pair<>("", "");
+        return "";
     }
 
     private static String copyFile(Context context, Uri uri) {
@@ -217,50 +214,14 @@ public class ImageFilePath {
         return filePath;
     }
 
-    private static String copyFileFromGoogleImage(Context context, Uri uri, Pair<String, String> fileInfo) {
+    private static String copyFileFromGoogleImage(Context context, Uri uri, String fileInfo) {
 
-        String fileName = null;
-        String fileExt = null;
-
-        if (fileInfo != null) {
-            String fileNameInfo = fileInfo.first;
-            if (!TextUtils.isEmpty(fileNameInfo)) {
-                int splitIndex = fileNameInfo.lastIndexOf(".");
-                if (splitIndex > 0) {
-                    fileName = fileNameInfo.substring(0, splitIndex);
-                    String tempFileExt = fileNameInfo.substring(splitIndex + 1, fileNameInfo.length());
-                    if (!TextUtils.isEmpty(tempFileExt)) {
-                        fileExt = tempFileExt;
-                    }
-                } else {
-                    fileName = fileNameInfo;
-                }
-            }
-
-            String fileExtInfo = fileInfo.second;
-            if (TextUtils.isEmpty(fileExt) && !TextUtils.isEmpty(fileExtInfo)) {
-                String[] split = fileExtInfo.split("/");
-                if (split.length == 2) {
-                    fileExt = split[1];
-                }
-            }
-        }
-
-        if (TextUtils.isEmpty(fileName)) {
-            fileName = GoogleImagePickerUtil.getWebImageNameOnly();
-        } else {
-            fileName = GoogleImagePickerUtil.getWebImageNameOnly() + "_" + fileName;
-        }
-
-        if (TextUtils.isEmpty(fileExt)) {
-            fileExt = "jpg";
-        }
+        String fileName = fileInfo;
 
         StringBuilder filePathBuilder = new StringBuilder();
         filePathBuilder.append(GoogleImagePickerUtil.getDownloadPath())
                 .append("/")
-                .append(fileName)
-                .append(".").append(fileExt);
+                .append(fileName);
 
         String filePath;
         InputStream inputStream = null;
@@ -374,7 +335,4 @@ public class ImageFilePath {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
-    public static boolean isGoogleNewPhotosUri(Uri uri) {
-        return "com.google.android.apps.photos.contentprovider".equals(uri.getAuthority());
-    }
 }

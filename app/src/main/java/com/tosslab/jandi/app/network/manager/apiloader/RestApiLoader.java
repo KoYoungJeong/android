@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.network.client.settings.IAccountProfileApiLoader;
 import com.tosslab.jandi.app.network.client.settings.IStarredEntityApiLoader;
 import com.tosslab.jandi.app.network.client.sticker.IStickerApiLoader;
 import com.tosslab.jandi.app.network.client.teams.ITeamApiLoader;
+import com.tosslab.jandi.app.network.client.validation.ValidationApiLoader;
 import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
 import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedAuthRestApiClient;
 import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
@@ -90,6 +91,7 @@ import com.tosslab.jandi.app.network.models.ResUpdateFolder;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
+import com.tosslab.jandi.app.network.models.validation.ResValidation;
 
 import java.util.List;
 
@@ -100,7 +102,7 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
         IDirectMessageApiLoader, IInvitationApiLoader, IMainRestApiLoader, ICommentsApiLoader, IMessageSearchApiLoader,
         IMessagesApiLoader, IGroupMessageApiLoader, IGroupApiLoader, IProfileApiLoader, IChannelMessageApiLoader, IChannelApiLoader,
         IRoomsApiLoader, IAccountProfileApiLoader, IStarredEntityApiLoader, IStickerApiLoader, ITeamApiLoader, IFileApiLoader, IPlatformApiLoader,
-        IEventsApiLoader {
+        IEventsApiLoader, ValidationApiLoader {
 
     JacksonConvertedAuthRestApiClient authRestApiClient = new JacksonConvertedAuthRestApiClient();
 
@@ -720,8 +722,22 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
+    public IExecutor<ResMessages.FileMessage> loadEnableFileExternalLink(int teamId, int fileId) {
+        return () -> authRestApiClient.enableFileExternalLink(teamId, fileId);
+    }
+
+    @Override
+    public IExecutor<ResMessages.FileMessage> loadDisableFileExternalLink(int teamId, int fileId) {
+        return () -> authRestApiClient.disableFileExternalLink(teamId, fileId);
+    }
+
+    @Override
     public IExecutor<ResEventHistory> loadGetEventHistory(long ts, Integer memberId, String eventType, Integer size) {
         return () -> authRestApiClient.getEventHistory(ts, memberId, eventType, size);
     }
 
+    @Override
+    public IExecutor<ResValidation> loadValidDomain(String domain) {
+        return () -> authRestApiClient.validDomain(domain);
+    }
 }

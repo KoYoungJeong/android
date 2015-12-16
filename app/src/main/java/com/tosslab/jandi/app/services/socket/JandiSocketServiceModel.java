@@ -38,6 +38,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
+import com.tosslab.jandi.app.services.socket.annotations.Version;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
@@ -64,7 +65,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
@@ -75,9 +76,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
-/**
- * Created by Steve SeongUg Jung on 15. 4. 6..
- */
 public class JandiSocketServiceModel {
     public static final String TAG = JandiSocketServiceModel.class.getSimpleName();
 
@@ -152,12 +150,12 @@ public class JandiSocketServiceModel {
     public void deleteFile(Object object) {
         try {
             SocketFileEvent socketFileEvent =
-                    objectMapper.readValue(object.toString(), SocketFileDeleteEvent.class);
+                    getObject(object.toString(), SocketFileDeleteEvent.class);
 
             MessageRepository.getRepository().updateStatus(socketFileEvent.getFile().getId(), "archived");
 
             postEvent(new DeleteFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -165,13 +163,13 @@ public class JandiSocketServiceModel {
     public void refreshFileComment(Object object) {
         try {
             SocketFileCommentEvent socketFileEvent =
-                    objectMapper.readValue(object.toString(), SocketFileCommentEvent.class);
+                    getObject(object.toString(), SocketFileCommentEvent.class);
             postEvent(
                     new FileCommentRefreshEvent(socketFileEvent.getEvent(),
                             socketFileEvent.getFile().getId(),
                             socketFileEvent.getComment().getId()
                     ));
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -180,7 +178,7 @@ public class JandiSocketServiceModel {
         try {
             String content = object.toString();
             SocketMessageEvent socketMessageEvent =
-                    objectMapper.readValue(content, SocketMessageEvent.class);
+                    getObject(content, SocketMessageEvent.class);
 
             String messageType = socketMessageEvent.getMessageType();
             if (TextUtils.equals(messageType, "topic_leave")
@@ -192,7 +190,7 @@ public class JandiSocketServiceModel {
             }
 
             messagePublishSubject.onNext(socketMessageEvent);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -200,9 +198,9 @@ public class JandiSocketServiceModel {
     public void refreshTopicState(Object object) {
         try {
             SocketTopicEvent socketTopicEvent =
-                    objectMapper.readValue(object.toString(), SocketTopicEvent.class);
+                    getObject(object.toString(), SocketTopicEvent.class);
             refreshEntity(new TopicInfoUpdateEvent(socketTopicEvent.getTopic().getId()), false);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -214,12 +212,12 @@ public class JandiSocketServiceModel {
     public void refreshMemberProfile(Object object) {
         try {
             SocketMemberProfileEvent socketTopicEvent =
-                    objectMapper.readValue(object.toString(), SocketMemberProfileEvent.class);
+                    getObject(object.toString(), SocketMemberProfileEvent.class);
 
             ResLeftSideMenu.User member = socketTopicEvent.getMember();
 
             refreshEntity(new ProfileChangeEvent(member), false);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -228,10 +226,10 @@ public class JandiSocketServiceModel {
     public void refreshTopicDelete(Object object) {
         try {
             SocketTopicEvent socketTopicEvent =
-                    objectMapper.readValue(object.toString(), SocketTopicEvent.class);
+                    getObject(object.toString(), SocketTopicEvent.class);
 
             refreshEntity(new TopicDeleteEvent(socketTopicEvent.getTeamId(), socketTopicEvent.getTopic().getId()), true);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -239,9 +237,9 @@ public class JandiSocketServiceModel {
     public void refreshMemberStarred(Object object) {
         try {
             SocketMemberEvent socketMemberEvent =
-                    objectMapper.readValue(object.toString(), SocketMemberEvent.class);
+                    getObject(object.toString(), SocketMemberEvent.class);
             refreshEntity(new MemberStarredEvent(socketMemberEvent.getMember().getId()), false);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -249,7 +247,7 @@ public class JandiSocketServiceModel {
     public void unshareFile(Object object) {
         try {
             SocketFileUnsharedEvent socketFileEvent =
-                    objectMapper.readValue(object.toString(), SocketFileUnsharedEvent.class);
+                    getObject(object.toString(), SocketFileUnsharedEvent.class);
 
             int fileId = socketFileEvent.getFile().getId();
             int roomId = socketFileEvent.room.id;
@@ -258,7 +256,7 @@ public class JandiSocketServiceModel {
             MessageRepository.getRepository().updateUnshared(fileId, roomId);
 
             postEvent(new UnshareFileEvent(roomId, fileId));
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -266,7 +264,7 @@ public class JandiSocketServiceModel {
     public void updateMarker(Object object) {
         try {
             SocketRoomMarkerEvent socketRoomMarkerEvent =
-                    objectMapper.readValue(object.toString(), SocketRoomMarkerEvent.class);
+                    getObject(object.toString(), SocketRoomMarkerEvent.class);
             postEvent(socketRoomMarkerEvent);
             if (EntityManager.getInstance().getMe().getId()
                     == socketRoomMarkerEvent.getMarker().getMemberId()) {
@@ -284,7 +282,7 @@ public class JandiSocketServiceModel {
     private void retrieveAndUpdateLinkPreview(Object object) {
         try {
             SocketLinkPreviewMessageEvent socketLinkPreviewMessageEvent =
-                    objectMapper.readValue(object.toString(), SocketLinkPreviewMessageEvent.class);
+                    getObject(object.toString(), SocketLinkPreviewMessageEvent.class);
 
             int teamId = socketLinkPreviewMessageEvent.getTeamId();
             if (AccountRepository.getRepository().getSelectedTeamId() != teamId) {
@@ -308,7 +306,7 @@ public class JandiSocketServiceModel {
     private void updateLinkPreview(Object object) {
         try {
             SocketLinkPreviewThumbnailEvent socketLinkPreviewMessageEvent =
-                    objectMapper.readValue(object.toString(), SocketLinkPreviewThumbnailEvent.class);
+                    getObject(object.toString(), SocketLinkPreviewThumbnailEvent.class);
 
             SocketLinkPreviewThumbnailEvent.Data data = socketLinkPreviewMessageEvent.getData();
             ResMessages.LinkPreview linkPreview = data.getLinkPreview();
@@ -353,7 +351,7 @@ public class JandiSocketServiceModel {
             EntityManager.getInstance().refreshEntity();
 
             SocketAnnouncementEvent socketAnnouncementEvent =
-                    objectMapper.readValue(object.toString(), SocketAnnouncementEvent.class);
+                    getObject(object.toString(), SocketAnnouncementEvent.class);
 
             postEvent(socketAnnouncementEvent);
         } catch (RetrofitError e) {
@@ -371,7 +369,7 @@ public class JandiSocketServiceModel {
             EntityManager.getInstance().refreshEntity();
 
             SocketTopicPushEvent socketTopicPushEvent =
-                    objectMapper.readValue(object.toString(), SocketTopicPushEvent.class);
+                    getObject(object.toString(), SocketTopicPushEvent.class);
 
             postEvent(socketTopicPushEvent);
         } catch (RetrofitError e) {
@@ -462,9 +460,9 @@ public class JandiSocketServiceModel {
     public void createFile(Object object) {
         try {
             SocketFileEvent socketFileEvent =
-                    objectMapper.readValue(object.toString(), SocketFileEvent.class);
+                    getObject(object.toString(), SocketFileEvent.class);
             postEvent(new CreateFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -476,14 +474,14 @@ public class JandiSocketServiceModel {
     public void refreshUnstarredMessage(Object object) {
         try {
             SocketMessageStarredEvent socketFileEvent
-                    = objectMapper.readValue(object.toString(), SocketMessageStarredEvent.class);
+                    = getObject(object.toString(), SocketMessageStarredEvent.class);
 
             MessageRepository.getRepository().updateStarred(socketFileEvent.getStarredInfo()
                     .getMessageId(), false);
 
             postEvent(new SocketMessageStarEvent(socketFileEvent.getStarredInfo().getMessageId(), false));
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -491,14 +489,14 @@ public class JandiSocketServiceModel {
     public void refreshStarredMessage(Object object) {
         try {
             SocketMessageStarredEvent socketFileEvent
-                    = objectMapper.readValue(object.toString(), SocketMessageStarredEvent.class);
+                    = getObject(object.toString(), SocketMessageStarredEvent.class);
 
             MessageRepository.getRepository().updateStarred(socketFileEvent.getStarredInfo()
                     .getMessageId(), true);
 
             postEvent(new SocketMessageStarEvent(socketFileEvent.getStarredInfo().getMessageId(), true));
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -508,7 +506,7 @@ public class JandiSocketServiceModel {
     public void refreshTopicFolder(Object object) {
         try {
             SocketTopicFolderEvent socketTopicFolderEvent
-                    = objectMapper.readValue(object.toString(), SocketTopicFolderEvent.class);
+                    = getObject(object.toString(), SocketTopicFolderEvent.class);
 
             postEvent(socketTopicFolderEvent);
 
@@ -528,14 +526,14 @@ public class JandiSocketServiceModel {
 //
 //            }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void refreshLeaveMember(Object object) {
         try {
-            SocketTeamLeaveEvent socketTeamLeaveEvent = objectMapper.readValue(object.toString(), SocketTeamLeaveEvent.class);
+            SocketTeamLeaveEvent socketTeamLeaveEvent = getObject(object.toString(), SocketTeamLeaveEvent.class);
             TeamLeaveEvent teamLeaveEvent = new TeamLeaveEvent(socketTeamLeaveEvent.getTeam().getId(), socketTeamLeaveEvent.getMember().getId());
 
             int leaveMemberId = socketTeamLeaveEvent.getMember().getId();
@@ -556,7 +554,7 @@ public class JandiSocketServiceModel {
                         .start();
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -564,14 +562,67 @@ public class JandiSocketServiceModel {
     public void refreshKickedOut(Object object) {
         try {
             SocketTopicKickedoutEvent event =
-                    objectMapper.readValue(object.toString(), SocketTopicKickedoutEvent.class);
+                    getObject(object.toString(), SocketTopicKickedoutEvent.class);
 
             SocketTopicKickedoutEvent.Data data = event.getData();
 
             refreshEntity(new TopicKickedoutEvent(data.getRoomId(), data.getTeamId()), true);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private <T> T getObject(Object object, Class<T> clazz) throws Exception {
+        T t = objectMapper.readValue(object.toString(), clazz);
+        throwExceptionIfInvaildVersion(t);
+        return t;
+    }
+
+    void throwExceptionIfInvaildVersion(Object object) throws Exception {
+        if (!validVersion(object)) {
+            throw new Exception("Invalid Version : " + object.getClass().getName());
+        }
+    }
+
+    boolean validVersion(Object object) {
+        Version annotation = object.getClass().getAnnotation(Version.class);
+        if (annotation == null) {
+            return false;
+        } else {
+            try {
+                Field version = null;
+
+                Class<?> clazz = object.getClass();
+                while (version == null && clazz != null && clazz != Object.class) {
+
+                    try {
+                        version = clazz.getDeclaredField("version");
+                        LogUtil.d("Find Version Field : " + clazz.getName());
+                    } catch (NoSuchFieldException e) {
+                        clazz = clazz.getSuperclass();
+                    }
+
+                }
+
+
+                if (version == null) {
+                    return false;
+                }
+                version.setAccessible(true);
+
+                int versionValue = version.getInt(object);
+                version.setAccessible(false);
+
+                if (annotation.value() == versionValue) {
+                    return true;
+                }
+
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+            return false;
         }
     }
 }
