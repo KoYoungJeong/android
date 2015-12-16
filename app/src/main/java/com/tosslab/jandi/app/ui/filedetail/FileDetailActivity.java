@@ -414,6 +414,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                         }).check();
                 break;
             case R.id.action_file_detail_enable_external_link:
+                etComment.setSelection(etComment.getSelectionEnd());
                 fileDetailPresenter.onCopyExternLink(fileMessage, isExternalShared);
                 break;
             case R.id.action_file_detail_disable_external_link:
