@@ -168,7 +168,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                             default:
                                 vFileImageRound.setVisibility(View.VISIBLE);
                                 Resources resources = context.getResources();
-                                Drawable placeHolder = resources.getDrawable(R.drawable.file_icon_img);
+                                Drawable placeHolder = resources.getDrawable(R.drawable.image_preview_download);
                                 hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_XY);
                                 Drawable failure = resources.getDrawable(R.drawable.image_no_preview);
                                 hierarchy.setFailureImage(failure, ScalingUtils.ScaleType.FIT_XY);
