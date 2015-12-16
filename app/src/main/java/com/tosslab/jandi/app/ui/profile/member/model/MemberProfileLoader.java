@@ -2,19 +2,26 @@ package com.tosslab.jandi.app.ui.profile.member.model;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
+import com.tosslab.jandi.app.utils.image.BaseOnResourceReadyCallback;
+import com.tosslab.jandi.app.utils.image.ClosableAttachStateChangeListener;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import uk.co.senab.photoview.PhotoView;
 
 public class MemberProfileLoader implements ProfileLoader {
@@ -48,23 +55,38 @@ public class MemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void loadSmallThumb(ImageView ivProfileImageSmall, FormattedEntity member) {
+    public void loadSmallThumb(SimpleDraweeView ivProfileImageSmall, FormattedEntity member) {
         String profileImageUrlMedium = member.getUserMediumProfileUrl();
-        Ion.with(ivProfileImageSmall)
-                .placeholder(R.drawable.profile_img)
-                .error(R.drawable.profile_img)
-                .fitCenter()
-                .transform(new IonCircleTransform())
-                .load(profileImageUrlMedium);
+        ImageUtil.loadCircleImageByFresco(
+                ivProfileImageSmall, profileImageUrlMedium, R.drawable.profile_img);
+
     }
 
     @Override
-    public void loadFullThumb(PhotoView ivProfileImageFull, String uri) {
-        Ion.with(ivProfileImageFull)
-                .placeholder(R.drawable.profile_img)
-                .error(R.drawable.profile_img)
-                .fitCenter()
-                .load(uri);
+    public void loadFullThumb(PhotoView ivProfileImageFull, String uriString) {
+        Uri uri = Uri.parse(uriString);
+
+        ImageUtil.loadDrawable(uri, new BaseOnResourceReadyCallback() {
+            @Override
+            public void onReady(Drawable drawable, CloseableReference reference) {
+                Observable.empty()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(o -> {
+                            setImageResource(ivProfileImageFull, drawable, reference);
+                        });
+            }
+
+            @Override
+            public void onFail(Throwable cause) {
+                LogUtil.e(Log.getStackTraceString(cause));
+            }
+        });
+    }
+
+    void setImageResource(PhotoView ivProfileImageFull, Drawable drawable, CloseableReference reference) {
+        ivProfileImageFull.setImageDrawable(drawable);
+        ivProfileImageFull.addOnAttachStateChangeListener(
+                new ClosableAttachStateChangeListener(reference));
     }
 
     @Override

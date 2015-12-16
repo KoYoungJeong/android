@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration;
 
 import android.content.Context;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.view.View;
@@ -9,9 +8,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.BotEntity;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.markdown.MarkdownLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.UnreadCountUtil;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.util.IntegrationBotUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
@@ -24,7 +27,6 @@ public class CollapseIntegrationBotViewHolder implements BodyViewHolder {
     private TextView tvMessage;
     private View vConnectLine;
     private LinearLayout vgConnectInfo;
-    //    private ImageView ivConnectImage;
     private View vLastRead;
 
     @Override
@@ -33,7 +35,6 @@ public class CollapseIntegrationBotViewHolder implements BodyViewHolder {
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         vConnectLine = rootView.findViewById(R.id.v_message_sub_menu_connect_color);
         vgConnectInfo = ((LinearLayout) rootView.findViewById(R.id.vg_message_sub_menu));
-//        ivConnectImage = ((ImageView) rootView.findViewById(R.id.iv_message_sub_menu_connect_image));
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);
 
 
@@ -42,13 +43,13 @@ public class CollapseIntegrationBotViewHolder implements BodyViewHolder {
     @Override
     public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
 
-//        int fromEntityId = link.fromEntity;
-//
-//        EntityManager entityManager = EntityManager.getInstance();
-//        FormattedEntity entity = entityManager.getEntityById(fromEntityId);
-//        if (!(entity instanceof BotEntity)) {
-//            return;
-//        }
+        int fromEntityId = link.fromEntity;
+
+        EntityManager entityManager = EntityManager.getInstance();
+        FormattedEntity entity = entityManager.getEntityById(fromEntityId);
+        if (!(entity instanceof BotEntity)) {
+            return;
+        }
 
         ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
         String message = textMessage.content.body;
@@ -56,12 +57,8 @@ public class CollapseIntegrationBotViewHolder implements BodyViewHolder {
         SpannableStringBuilder builder = MarkdownLookUp.text(message).lookUp(tvMessage.getContext());
         Context context = tvMessage.getContext();
 
-        boolean hasLink = LinkifyUtil.addLinks(context, builder);
-//        if (hasLink) {
-        Spannable linkSpannable = Spannable.Factory.getInstance().newSpannable(builder);
-        builder.setSpan(linkSpannable, 0, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        LinkifyUtil.addLinks(context, builder);
         LinkifyUtil.setOnLinkClick(tvMessage);
-//        }
 
         builder.append(" ");
 
@@ -74,9 +71,8 @@ public class CollapseIntegrationBotViewHolder implements BodyViewHolder {
                         DateTransformator.getTimeStringForSimple(link.message.createTime));
         builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        int unreadCount = 99;
-        // UnreadCountUtil.getUnreadCount(teamId, roomId,
-        // link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
+        int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
 
         if (unreadCount > 0) {
             NameSpannable unreadCountSpannable =
@@ -89,11 +85,6 @@ public class CollapseIntegrationBotViewHolder implements BodyViewHolder {
                     .setSpan(unreadCountSpannable, beforeLength, builder.length(),
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
-
-//        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-//                tvMessage, builder, textMessage.mentions,
-//                EntityManager.getInstance().getMe().getId());
-//        builder = generateMentionMessageUtil.generate(true);
 
         tvMessage.setText(builder);
 

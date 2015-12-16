@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -18,11 +19,13 @@
         android:paddingTop="10dp"
         android:visibility="visible">
         <!-- 사용자 프로필 사진 -->
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/iv_message_user_profile"
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
-            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
+            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
+            fresco:backgroundImage="@color/black"
+            fresco:roundAsCircle="true" />
         <!-- 기본 표시 레이어 -->
 
         <TextView

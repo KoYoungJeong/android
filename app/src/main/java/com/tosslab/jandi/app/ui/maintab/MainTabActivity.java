@@ -586,28 +586,4 @@ public class MainTabActivity extends BaseAppCompatActivity {
         }
     }
 
-    @Click(value = {
-            R.id.btn_integration_bot_github,
-            R.id.btn_integration_bot_google_calendar,
-            R.id.btn_integration_bot_trello
-    })
-    void onSampleIntegrationClick(View view) {
-        String service = "github";
-        switch (view.getId()) {
-            case R.id.btn_integration_bot_github:
-                service = "github";
-                break;
-            case R.id.btn_integration_bot_google_calendar:
-                service = "google_calendar";
-                break;
-            case R.id.btn_integration_bot_trello:
-                service = "trello";
-                break;
-        }
-        Intent intent = new Intent(MainTabActivity.this, DemoActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra("service", service);
-        startActivity(intent);
-    }
-
 }

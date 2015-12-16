@@ -50,31 +50,4 @@
         android:layout_below="@id/sliding_tabs"
         android:background="@drawable/menu_shadow" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
-
-        <Button
-            android:id="@+id/btn_integration_bot_github"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Github" />
-
-        <Button
-            android:id="@+id/btn_integration_bot_trello"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="trello" />
-
-        <Button
-            android:id="@+id/btn_integration_bot_google_calendar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="calendar" />
-    </LinearLayout>
-
 </RelativeLayout>

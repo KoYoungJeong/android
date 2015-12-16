@@ -6,10 +6,10 @@ import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.BotEntity;
@@ -38,7 +38,7 @@ public class JandiBotProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void loadSmallThumb(ImageView ivProfileImageSmall, FormattedEntity member) {
+    public void loadSmallThumb(SimpleDraweeView ivProfileImageSmall, FormattedEntity member) {
         RelativeLayout.LayoutParams layoutParams =
                 ((RelativeLayout.LayoutParams) ivProfileImageSmall.getLayoutParams());
         layoutParams.height = (int) TypedValue.applyDimension(

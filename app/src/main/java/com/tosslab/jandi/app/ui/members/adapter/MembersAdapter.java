@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.members.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +16,9 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -207,8 +208,14 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
 
             if (!item.isBot()) {
+                ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
+                layoutParams.height = ivIcon.getResources().getDimensionPixelSize(R.dimen.jandi_entity_item_icon);
+                ivIcon.setLayoutParams(layoutParams);
                 ImageUtil.loadCircleImageByFresco(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
             } else {
+                ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
+                layoutParams.height = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 54f, ivIcon.getResources().getDisplayMetrics()));
+                ivIcon.setLayoutParams(layoutParams);
                 ivIcon.setImageResource(R.drawable.bot_43x54);
             }
 

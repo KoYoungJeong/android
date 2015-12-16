@@ -8,7 +8,6 @@
 
     <application>
         <activity android:name="com.tosslab.jandi.app.ui.base.BaseAppCompatActivity" />
-        <activity android:name="com.tosslab.jandi.app.ui.maintab.DemoActivity" />
     </application>
 
 
