@@ -47,38 +47,40 @@ public class FileHeadManager {
     AppCompatActivity activity;
 
     // in File Detail Header
-    private SimpleDraweeView imageViewUserProfile;
-    private TextView textViewUserName;
-    private TextView textViewFileCreateDate;
-    private TextView textViewFileContentInfo;
-    private TextView textViewFileSharedCdp;
-    private View disableLineThroughView;
-    private View disableCoverView;
+    private SimpleDraweeView ivUserProfile;
+    private TextView tvUserName;
+    private TextView tvFileCreateDate;
+    private TextView tvFileContentInfo;
+    private TextView tvSharedCdp;
+    private View vDisableLineThrough;
+    private View vDisableCover;
 
     private ImageView btnFileDetailStarred;
-    private SimpleDraweeView imageViewPhotoFile;
+    private ViewGroup vgTapToViewOriginal;
+    private SimpleDraweeView ivPhotoFile;
     private ViewGroup vgDetailPhoto;
-    private ImageView iconFileType;
-    private LinearLayout fileInfoLayout;
+    private ImageView ivFileType;
+    private LinearLayout vgFileInfo;
     private int roomId;
     private View vgDeleted;
     private TextView tvDeletedDate;
 
     public View getHeaderView() {
         View header = LayoutInflater.from(activity).inflate(R.layout.activity_file_detail_header, null, false);
-        imageViewUserProfile = (SimpleDraweeView) header.findViewById(R.id.img_file_detail_user_profile);
-        textViewUserName = (TextView) header.findViewById(R.id.txt_file_detail_user_name);
-        textViewFileCreateDate = (TextView) header.findViewById(R.id.txt_file_detail_create_date);
-        textViewFileContentInfo = (TextView) header.findViewById(R.id.txt_file_detail_file_info);
-        textViewFileSharedCdp = (TextView) header.findViewById(R.id.txt_file_detail_shared_cdp);
-        imageViewPhotoFile = (SimpleDraweeView) header.findViewById(R.id.img_file_detail_photo);
+        ivUserProfile = (SimpleDraweeView) header.findViewById(R.id.img_file_detail_user_profile);
+        tvUserName = (TextView) header.findViewById(R.id.txt_file_detail_user_name);
+        tvFileCreateDate = (TextView) header.findViewById(R.id.txt_file_detail_create_date);
+        tvFileContentInfo = (TextView) header.findViewById(R.id.txt_file_detail_file_info);
+        tvSharedCdp = (TextView) header.findViewById(R.id.txt_file_detail_shared_cdp);
+        ivPhotoFile = (SimpleDraweeView) header.findViewById(R.id.img_file_detail_photo);
         vgDetailPhoto = (ViewGroup) header.findViewById(R.id.vg_file_detail_photo);
-        fileInfoLayout = (LinearLayout) header.findViewById(R.id.ly_file_detail_info);
-        iconFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
-        disableLineThroughView = header.findViewById(R.id.iv_entity_listitem_line_through);
-        disableCoverView = header.findViewById(R.id.v_entity_listitem_warning);
+        vgFileInfo = (LinearLayout) header.findViewById(R.id.ly_file_detail_info);
+        ivFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
+        vDisableLineThrough = header.findViewById(R.id.iv_entity_listitem_line_through);
+        vDisableCover = header.findViewById(R.id.v_entity_listitem_warning);
         btnFileDetailStarred = (ImageView) header.findViewById(R.id.bt_file_detail_starred);
 
+        vgTapToViewOriginal = (ViewGroup) header.findViewById(R.id.vg_file_detail_tap_to_view);
         vgDeleted = header.findViewById(R.id.vg_file_detail_deleted);
         tvDeletedDate = ((TextView) header.findViewById(R.id.tv_file_detail_deleted_date));
         return header;
@@ -86,12 +88,12 @@ public class FileHeadManager {
 
     public void drawFileWriterState(boolean isEnabled) {
         if (isEnabled) {
-            disableCoverView.setVisibility(View.GONE);
-            disableLineThroughView.setVisibility(View.GONE);
+            vDisableCover.setVisibility(View.GONE);
+            vDisableLineThrough.setVisibility(View.GONE);
         } else {
-            disableCoverView.setVisibility(View.VISIBLE);
-            disableLineThroughView.setVisibility(View.VISIBLE);
-            textViewUserName.setTextColor(activity.getResources().getColor(R.color.deactivate_text_color));
+            vDisableCover.setVisibility(View.VISIBLE);
+            vDisableLineThrough.setVisibility(View.VISIBLE);
+            tvUserName.setTextColor(activity.getResources().getColor(R.color.deactivate_text_color));
         }
     }
 
@@ -146,10 +148,10 @@ public class FileHeadManager {
                                 length + formattedEntity2.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }, Throwable::printStackTrace);
 
-            textViewFileSharedCdp.setMovementMethod(LinkMovementMethod.getInstance());
-            textViewFileSharedCdp.setText(spannableStringBuilder, TextView.BufferType.SPANNABLE);
+            tvSharedCdp.setMovementMethod(LinkMovementMethod.getInstance());
+            tvSharedCdp.setText(spannableStringBuilder, TextView.BufferType.SPANNABLE);
         } else {
-            textViewFileSharedCdp.setText(R.string.jandi_nowhere_shared_file);
+            tvSharedCdp.setText(R.string.jandi_nowhere_shared_file);
         }
 
     }
@@ -160,16 +162,16 @@ public class FileHeadManager {
 
         String profileUrl = writer.getUserSmallProfileUrl();
 
-        ImageUtil.loadCircleImageByFresco(imageViewUserProfile, profileUrl, R.drawable.profile_img);
+        ImageUtil.loadCircleImageByFresco(ivUserProfile, profileUrl, R.drawable.profile_img);
 
         String userName = writer.getName();
-        textViewUserName.setText(userName);
+        tvUserName.setText(userName);
 
-        imageViewUserProfile.setOnClickListener(v -> {
+        ivUserProfile.setOnClickListener(v -> {
             EventBus.getDefault().post(new ShowProfileEvent(writer.getId(), ShowProfileEvent.From.Image));
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewProfile);
         });
-        textViewUserName.setOnClickListener(v -> {
+        tvUserName.setOnClickListener(v -> {
             EventBus.getDefault().post(new ShowProfileEvent(writer.getId(), ShowProfileEvent.From.Name));
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewProfile);
         });
@@ -178,12 +180,12 @@ public class FileHeadManager {
 
         // 파일
         String createTime = DateTransformator.getTimeString(fileMessage.createTime);
-        textViewFileCreateDate.setText(createTime);
+        tvFileCreateDate.setText(createTime);
         // if Deleted File
         if (TextUtils.equals(fileMessage.status, "archived")) {
-            imageViewPhotoFile.setOnClickListener(null);
-            imageViewPhotoFile.setVisibility(View.GONE);
-            fileInfoLayout.setVisibility(View.GONE);
+            ivPhotoFile.setOnClickListener(null);
+            ivPhotoFile.setVisibility(View.GONE);
+            vgFileInfo.setVisibility(View.GONE);
 
             vgDeleted.setVisibility(View.VISIBLE);
             String timeString = DateTransformator.getTimeString(fileMessage.updateTime, DateTransformator.FORMAT_YYYYMMDD_HHMM_A);
@@ -204,11 +206,11 @@ public class FileHeadManager {
             switch (sourceType) {
 
                 case S3:
-                    textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.ext);
+                    tvFileContentInfo.setText(fileSizeString + " " + fileMessage.content.ext);
                     break;
                 case Google:
                 case Dropbox:
-                    textViewFileContentInfo.setText(fileMessage.content.ext);
+                    tvFileContentInfo.setText(fileMessage.content.ext);
                     break;
             }
 
@@ -219,9 +221,10 @@ public class FileHeadManager {
 
                 FileThumbLoader thumbLoader;
                 if (fileMessage.content.type.startsWith("image")) {
-                    thumbLoader = new ImageThumbLoader(iconFileType, vgDetailPhoto, imageViewPhotoFile, roomId);
+                    thumbLoader = new ImageThumbLoader(
+                            ivFileType, vgDetailPhoto, ivPhotoFile, vgTapToViewOriginal, roomId);
                 } else {
-                    thumbLoader = new NormalThumbLoader(iconFileType, imageViewPhotoFile);
+                    thumbLoader = new NormalThumbLoader(ivFileType, ivPhotoFile);
                 }
 
                 thumbLoader.loadThumb(fileMessage);

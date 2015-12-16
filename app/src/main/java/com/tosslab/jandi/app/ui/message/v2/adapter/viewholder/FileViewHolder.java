@@ -156,6 +156,7 @@ public class FileViewHolder implements BodyViewHolder {
                 }
             }
 
+            ivFileImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
             int fileNameTextSizePX;
             if (TextUtils.equals(link.message.status, "archived")) {
 

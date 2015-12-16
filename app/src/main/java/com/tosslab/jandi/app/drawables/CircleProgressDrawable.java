@@ -24,13 +24,15 @@ public class CircleProgressDrawable extends Drawable {
     public static final int DEFAULT_INDICATOR_TEXT_COLOR = 10;
     public static final String DEFAULT_INDICATOR_TEXT = "Downloading...";
 
+    public static final int DEFAULT_BG_COLOR = Color.TRANSPARENT;
     public static final int DEFAULT_BG_STROKE_WIDTH = 1;
     public static final int DEFAULT_PROGRESS_STROKE_WIDTH = 2;
-    public static final int DEFAULT_BG_COLOR = Color.GRAY;
+    public static final int DEFAULT_BG_PROGRESS_COLOR = Color.GRAY;
     public static final int DEFAULT_PROGRESS_COLOR = Color.BLUE;
     public static final int MAX_PROGRESS = 10000;
 
     private Paint bgPaint;
+    private Paint bgProgressPaint;
     private Paint progressPaint;
 
     private Paint textPaint;
@@ -48,15 +50,17 @@ public class CircleProgressDrawable extends Drawable {
     private int indicatorTextMargin;
     private String indicatorText;
 
+    private int backgroundColor = DEFAULT_BG_COLOR;
     private int bgStrokeWidth;
     private int progressStrokeWidth;
-    private int bgColor = DEFAULT_BG_COLOR;
+    private int bgProgressColor = DEFAULT_BG_PROGRESS_COLOR;
     private int progressColor = DEFAULT_PROGRESS_COLOR;
 
     private int progress = 0;
 
     public CircleProgressDrawable(Context context) {
         bgPaint = new Paint();
+        bgProgressPaint = new Paint();
         progressPaint = new Paint();
 
         textPaint = new Paint();
@@ -87,6 +91,10 @@ public class CircleProgressDrawable extends Drawable {
         int canvasWidth = canvas.getWidth();
         int canvasHeight = canvas.getHeight();
 
+        bgPaint.setStyle(Paint.Style.FILL);
+        bgPaint.setColor(backgroundColor);
+        canvas.drawRect(0, 0, canvasWidth, canvasHeight, bgPaint);
+
         if (progressWidth >= canvasWidth) {
             progressWidth = canvasWidth;
         }
@@ -96,13 +104,13 @@ public class CircleProgressDrawable extends Drawable {
         int halfOfCanvasWidth = canvasWidth / 2;
         int halfOfCanvasHeight = canvasHeight / 2;
 
-        bgPaint.setStyle(Paint.Style.STROKE);
-        bgPaint.setColor(bgColor);
-        bgPaint.setFlags(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
-        bgPaint.setStrokeWidth(bgStrokeWidth);
+        bgProgressPaint.setStyle(Paint.Style.STROKE);
+        bgProgressPaint.setColor(bgProgressColor);
+        bgProgressPaint.setFlags(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
+        bgProgressPaint.setStrokeWidth(bgStrokeWidth);
 
-        int radius = halfOfWidth - (bgStrokeWidth / 2);
-        canvas.drawCircle(halfOfCanvasWidth - (bgStrokeWidth / 2), halfOfCanvasHeight - (bgStrokeWidth / 2), radius, bgPaint);
+        int radius = halfOfWidth;
+        canvas.drawCircle(halfOfCanvasWidth, halfOfCanvasHeight, radius, bgProgressPaint);
 
         progressPaint.setStyle(Paint.Style.STROKE);
         progressPaint.setColor(progressColor);
@@ -158,6 +166,14 @@ public class CircleProgressDrawable extends Drawable {
         }
     }
 
+    public int getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(int backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
     public void setBgStrokeWidth(int bgStrokeWidth) {
         if (this.bgStrokeWidth == bgStrokeWidth) {
             return;
@@ -174,11 +190,11 @@ public class CircleProgressDrawable extends Drawable {
         invalidateSelf();
     }
 
-    public void setBgColor(int bgColor) {
-        if (this.bgColor == bgColor) {
+    public void setBgProgressColor(int bgProgressColor) {
+        if (this.bgProgressColor == bgProgressColor) {
             return;
         }
-        this.bgColor = bgColor;
+        this.bgProgressColor = bgProgressColor;
         invalidateSelf();
     }
 

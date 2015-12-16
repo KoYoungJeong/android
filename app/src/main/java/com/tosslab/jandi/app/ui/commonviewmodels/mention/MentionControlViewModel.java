@@ -360,11 +360,11 @@ public class MentionControlViewModel {
                 .append(searchedItemVO.getName())
                 .append("\u2063")
                 .append(searchedItemVO.getId())
-                .append("\u2063");
+                .append("\u2063 ");
 
         ssb.replace(startIndex, selectionIndex, convertedTextBuilder);
 
-        ssb.setSpan(spannable, startIndex - 1, startIndex + convertedTextBuilder.length(),
+        ssb.setSpan(spannable, startIndex - 1, startIndex + convertedTextBuilder.length() - 1,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         etMessage.setText(ssb, TextView.BufferType.SPANNABLE);

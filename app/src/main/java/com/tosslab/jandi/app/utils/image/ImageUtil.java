@@ -357,6 +357,32 @@ public class ImageUtil {
         }
     }
 
+    public static String getThumbnailUrl(ResMessages.ThumbnailUrls extraInfo,
+                                         Thumbnails thumbnails) {
+        if (extraInfo == null) {
+            return null;
+        }
+
+        String targetUrl = null;
+
+        switch (thumbnails) {
+            case SMALL:
+                targetUrl = extraInfo.smallThumbnailUrl;
+                break;
+            case MEDIUM:
+                targetUrl = extraInfo.mediumThumbnailUrl;
+                break;
+            case LARGE:
+                targetUrl = extraInfo.largeThumbnailUrl;
+                break;
+            case THUMB:
+            default:
+                targetUrl = extraInfo.thumbnailUrl;
+                break;
+        }
+        return targetUrl;
+    }
+
     public static String getThumbnailUrlOrOriginal(ResMessages.FileContent content,
                                                    Thumbnails thumbnails) {
         if (content == null) {
@@ -379,6 +405,9 @@ public class ImageUtil {
                 break;
             case LARGE:
                 targetUrl = extraInfo.largeThumbnailUrl;
+                break;
+            case THUMB:
+                targetUrl = extraInfo.thumbnailUrl;
                 break;
             case ORIGINAL:
                 targetUrl = original;
@@ -550,7 +579,7 @@ public class ImageUtil {
     }
 
     public enum Thumbnails {
-        SMALL, MEDIUM, LARGE, ORIGINAL
+        SMALL, MEDIUM, LARGE, THUMB, ORIGINAL
     }
 
     public static class BitmapDataSubscriber

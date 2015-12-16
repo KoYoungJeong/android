@@ -57,7 +57,7 @@
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_centerInParent="true"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp" />
 
         <ImageView
             android:id="@+id/iv_file_detail_preview_sticker_close"
@@ -97,7 +97,18 @@
                 style="@style/JandiChat.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_vertical" />
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/btn_show_mention"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="9dp"
+                android:paddingRight="9dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/chat_mention"
+                android:visibility="gone" />
         </LinearLayout>
 
         <ImageView

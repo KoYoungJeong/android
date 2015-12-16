@@ -142,6 +142,8 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
 
                 String fileType = content.icon;
                 GenericDraweeHierarchy hierarchy = ivFileImage.getHierarchy();
+                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+
                 if (TextUtils.equals(fileType, "image")) {
 
                     if (ImageUtil.hasImageUrl(content)) {
@@ -152,7 +154,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                         switch (sourceType) {
                             case Google:
                             case Dropbox:
-                                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
                                 ivFileImage.setHierarchy(hierarchy);
                                 int mimeTypeIconImage =
                                         MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
@@ -168,7 +169,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                             default:
                                 vFileImageRound.setVisibility(View.VISIBLE);
                                 Resources resources = context.getResources();
-                                Drawable placeHolder = resources.getDrawable(R.drawable.file_icon_img);
+                                Drawable placeHolder = resources.getDrawable(R.drawable.image_preview_download);
                                 hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_XY);
                                 Drawable failure = resources.getDrawable(R.drawable.image_no_preview);
                                 hierarchy.setFailureImage(failure, ScalingUtils.ScaleType.FIT_XY);
@@ -179,14 +180,12 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                         }
 
                     } else {
-                        hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
                         ivFileImage.setHierarchy(hierarchy);
                         int mimeTypeIconImage =
                                 MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
                         ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));
                     }
                 } else {
-                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
                     ivFileImage.setHierarchy(hierarchy);
                     int mimeTypeIconImage =
                             MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
