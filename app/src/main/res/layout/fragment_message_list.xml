@@ -195,7 +195,7 @@
         android:layout_height="1dp"
         android:layout_above="@+id/vg_messages_input"
         android:layout_alignWithParentIfMissing="true"
-        android:background="@color/jandi_border_gray" />
+        android:background="@color/deactivate_text_color" />
 
     <RelativeLayout
         android:id="@+id/vg_messages_input"

@@ -157,12 +157,11 @@
 
     <TextView
         android:id="@+id/tv_topic_sticker_guide"
-        android:layout_width="wrap_content"
+        android:layout_width="158.4dp"
         android:layout_height="18dp"
         android:layout_above="@id/iv_topic_sticker_guide_icon"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="4dp"
-        android:layout_marginRight="54dp"
         android:gravity="center"
         android:shadowColor="@color/jandi_coach_mark_text_shadow"
         android:shadowDy="1"
