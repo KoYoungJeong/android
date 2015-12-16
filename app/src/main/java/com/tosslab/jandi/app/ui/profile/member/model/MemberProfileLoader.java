@@ -110,8 +110,8 @@ public class MemberProfileLoader implements ProfileLoader {
 
     @Override
     public void setBlurBackgroundColor(View vProfileImageLargeOverlay) {
-        Drawable defaultColor = context.getResources().getDrawable(R.color.jandi_member_profile_img_overlay_default);
-        vProfileImageLargeOverlay.setBackground(defaultColor);
+        int defaultColor = context.getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
+        vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
     }
 
     private boolean isMe(int memberId) {

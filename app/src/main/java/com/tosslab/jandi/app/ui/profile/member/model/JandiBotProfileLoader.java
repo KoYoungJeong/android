@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.profile.member.model;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,8 +79,8 @@ public class JandiBotProfileLoader implements ProfileLoader {
 
     @Override
     public void setBlurBackgroundColor(View vProfileImageLargeOverlay) {
-        Drawable defaultColor = context.getResources().getDrawable(R.color.jandi_primary_color);
-        vProfileImageLargeOverlay.setBackground(defaultColor);
+        int defaultColor = context.getResources().getColor(R.color.jandi_primary_color);
+        vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
     }
 
     private boolean isLandscape() {

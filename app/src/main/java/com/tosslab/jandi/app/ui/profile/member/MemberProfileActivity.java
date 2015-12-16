@@ -179,6 +179,10 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
         initSwipeLayout(hasChangedProfileImage);
 
+        if (!hasChangedProfileImage) {
+            profileLoader.setBlurBackgroundColor(vProfileImageLargeOverlay);
+        }
+
         initLargeImageSize(profileImageUrlLarge);
 
         boolean isDisableUser = !profileLoader.isEnabled(member);
@@ -303,12 +307,11 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     private void loadLargeImage(String profileImageUrlLarge) {
-        int defaultColor = getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
         if (!hasChangedProfileImage) {
-            vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
             return;
         }
 
+        int defaultColor = getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
         Drawable placeHolder = new ColorDrawable(defaultColor);
 
         GenericDraweeHierarchy hierarchy = ivProfileImageLarge.getHierarchy();
