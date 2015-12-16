@@ -58,7 +58,6 @@ public class IntegrationBotUtil {
         for (int idx = 0; idx < viewChildGroupCount; ++idx) {
             viewChildIdx = idx * 2;
 
-
             tvTitle = (TextView) vgConnectInfo.getChildAt(viewChildIdx);
             tvDescription = (TextView) vgConnectInfo.getChildAt(viewChildIdx + 1);
 
@@ -66,7 +65,6 @@ public class IntegrationBotUtil {
             description.clear();
 
             if (iterator.hasNext()) {
-
 
                 info = iterator.next();
                 if (!TextUtils.isEmpty(info.title)) {
@@ -83,34 +81,34 @@ public class IntegrationBotUtil {
                     descriptionVisible = View.GONE;
                 }
 
+                tvTitle.setText(title);
+                tvDescription.setText(description);
+
+                if (titleVisible == View.GONE && descriptionVisible == View.VISIBLE) {
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) tvDescription.getLayoutParams();
+                    if (idx == 0) {
+                        layoutParams.topMargin = 0;
+                    } else {
+                        DisplayMetrics displayMetrics = tvDescription.getResources().getDisplayMetrics();
+                        layoutParams.topMargin = (int) TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP,
+                                11f,
+                                displayMetrics);
+                    }
+
+                    tvDescription.setLayoutParams(layoutParams);
+                }
+
+                LinkifyUtil.setOnLinkClick(tvTitle);
+                LinkifyUtil.setOnLinkClick(tvDescription);
             } else {
                 titleVisible = View.GONE;
                 descriptionVisible = View.GONE;
             }
 
-            tvTitle.setText(title);
-            tvDescription.setText(description);
-
             tvTitle.setVisibility(titleVisible);
             tvDescription.setVisibility(descriptionVisible);
 
-            if (titleVisible == View.GONE && descriptionVisible == View.VISIBLE) {
-                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) tvDescription.getLayoutParams();
-                if (idx == 0) {
-                    layoutParams.topMargin = 0;
-                } else {
-                    DisplayMetrics displayMetrics = tvDescription.getResources().getDisplayMetrics();
-                    layoutParams.topMargin = (int) TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_DIP,
-                            11f,
-                            displayMetrics);
-                }
-
-                tvDescription.setLayoutParams(layoutParams);
-            }
-
-            LinkifyUtil.setOnLinkClick(tvTitle);
-            LinkifyUtil.setOnLinkClick(tvDescription);
         }
     }
 }

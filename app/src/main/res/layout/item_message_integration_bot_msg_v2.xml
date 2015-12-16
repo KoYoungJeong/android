@@ -24,7 +24,6 @@
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
             android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-            fresco:backgroundImage="@color/black"
             fresco:roundAsCircle="true" />
         <!-- 기본 표시 레이어 -->
 
