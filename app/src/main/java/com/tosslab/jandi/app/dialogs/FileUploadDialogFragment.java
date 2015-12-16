@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -11,11 +12,9 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -63,19 +62,12 @@ public class FileUploadDialogFragment extends DialogFragment {
             editTextInputName.setText(fileName);
         }
 
-        ImageView imageView = (ImageView) mainView.findViewById(R.id.img_upload_image);
+        SimpleDraweeView imageView = (SimpleDraweeView) mainView.findViewById(R.id.img_upload_image);
         if (fileName.endsWith("jpg") || fileName.endsWith("jpeg") || fileName.endsWith("png")) {
-            Glide.with(getActivity())
-                    .load(uploadFile)
-                    .crossFade()
-                    .centerCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
-                    .into(imageView);
+            imageView.setImageURI(Uri.fromFile(uploadFile));
         } else {
             imageView.setVisibility(View.GONE);
         }
-
 
         // CDP
         final Spinner spinner = (Spinner) mainView.findViewById(R.id.spinner_cdps);

@@ -9,6 +9,7 @@ import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
@@ -99,6 +100,9 @@ public class JandiApplication extends MultiDexApplication {
         registerActivityLifecycleCallbacks();
 
         registerScreenOffReceiver();
+
+        // Fresco
+        Fresco.initialize(context);
     }
 
     /**

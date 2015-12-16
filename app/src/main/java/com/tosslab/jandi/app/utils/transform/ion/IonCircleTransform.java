@@ -2,13 +2,13 @@ package com.tosslab.jandi.app.utils.transform.ion;
 
 import android.graphics.Bitmap;
 
-import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.transform.TransformConfig;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 11..
  */
-public class IonCircleTransform implements com.koushikdutta.ion.bitmap.Transform {
+class IonCircleTransform implements com.koushikdutta.ion.bitmap.Transform {
     private float lineWidth;
     private int lineColor;
     private int bgColor;
@@ -29,7 +29,7 @@ public class IonCircleTransform implements com.koushikdutta.ion.bitmap.Transform
 
     @Override
     public Bitmap transform(Bitmap source) {
-        return BitmapUtil.getCircularBitmap(source, lineWidth, lineColor, bgColor);
+        return ImageUtil.getCircularBitmap(source, lineWidth, lineColor, bgColor);
     }
 
     @Override

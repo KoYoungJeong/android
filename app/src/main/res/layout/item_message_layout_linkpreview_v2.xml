@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:freco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -9,11 +10,11 @@
         android:layout_height="110dp"
         android:padding="1dp">
 
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/iv_linkpreview_thumb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/jandi_linkpreview_thumb_background" />
+            freco:backgroundImage="@color/jandi_linkpreview_thumb_background"/>
 
         <View
             android:layout_width="wrap_content"

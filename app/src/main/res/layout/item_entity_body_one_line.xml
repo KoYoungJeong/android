@@ -4,14 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="48dp">
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/iv_entity_listitem_icon"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="17dp"
-        android:src="@drawable/topiclist_icon_topic" />
+        android:layout_marginRight="17dp" />
 
     <ImageView
         android:id="@+id/iv_entity_listitem_fav"

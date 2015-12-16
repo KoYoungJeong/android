@@ -30,7 +30,7 @@ public class DummyPureViewHolder implements BodyViewHolder {
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
-        ivSticker = ((ImageView) rootView.findViewById(R.id.iv_message_sticker));
+        ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_sticker);
         ivStickerStatus = (ImageView) rootView.findViewById(R.id.iv_message_send_status);
     }
 

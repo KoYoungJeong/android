@@ -10,14 +10,14 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,7 +126,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     static class MemberChoiceViewHolder extends RecyclerView.ViewHolder {
-        private ImageView ivIcon;
+        private SimpleDraweeView ivIcon;
         private ImageView ivFavorite;
         private TextView tvName;
         private View vDisableLineThrough;
@@ -136,7 +136,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public MemberChoiceViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.tv_entity_listitem_name);
-            ivIcon = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_icon);
+            ivIcon = (SimpleDraweeView) itemView.findViewById(R.id.iv_entity_listitem_icon);
             ivFavorite = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_fav);
             vDisableLineThrough = itemView.findViewById(R.id.iv_entity_listitem_line_through);
             vDisableCover = itemView.findViewById(R.id.v_entity_listitem_warning);
@@ -151,11 +151,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             vDisableLineThrough.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
             vDisableCover.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
 
-            Ion.with(ivIcon)
-                    .placeholder(R.drawable.profile_img)
-                    .error(R.drawable.profile_img)
-                    .transform(new IonCircleTransform())
-                    .load(item.getPhotoUrl());
+            ImageUtil.loadCircleImageByFresco(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
 
             cbChoose.setChecked(item.isChooseItem());
             itemView.setOnClickListener(v -> {
@@ -172,7 +168,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     static class MemberViewHolder extends RecyclerView.ViewHolder {
-        private ImageView ivIcon;
+        private SimpleDraweeView ivIcon;
         private ImageView ivFavorite;
         private TextView tvName;
         private TextView tvAdditional;
@@ -184,7 +180,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.tv_entity_listitem_name);
             tvAdditional = (TextView) itemView.findViewById(R.id.tv_entity_listitem_user_count);
-            ivIcon = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_icon);
+            ivIcon = (SimpleDraweeView) itemView.findViewById(R.id.iv_entity_listitem_icon);
             ivFavorite = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_fav);
             vDisableLineThrough = itemView.findViewById(R.id.iv_entity_listitem_line_through);
             vDisableCover = itemView.findViewById(R.id.v_entity_listitem_warning);
@@ -211,12 +207,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
 
             if (!item.isBot()) {
-
-                Ion.with(ivIcon)
-                        .placeholder(R.drawable.profile_img)
-                        .error(R.drawable.profile_img)
-                        .transform(new IonCircleTransform())
-                        .load(item.getPhotoUrl());
+                ImageUtil.loadCircleImageByFresco(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
             } else {
                 ivIcon.setImageResource(R.drawable.bot_43x54);
             }

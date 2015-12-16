@@ -34,7 +34,7 @@ public class MentionMessageSpannable extends ReplacementSpan {
         this.backgroundColor = backgroundColor;
         this.drawText = this.name;
         DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
-        defaultMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, displayMetrics);
+        defaultMargin = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, displayMetrics));
     }
 
     public void setViewMaxWidthSize(int px) {
@@ -66,8 +66,7 @@ public class MentionMessageSpannable extends ReplacementSpan {
             }
 
         }
-
-        textRect.right = textRect.right + defaultMargin;
+        textRect.right += defaultMargin;
         return textRect;
     }
 
