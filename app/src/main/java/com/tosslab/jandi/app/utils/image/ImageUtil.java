@@ -492,6 +492,7 @@ public class ImageUtil {
         draweeView.setHierarchy(hierarchy);
 
         ImageDecodeOptions imageDecodeOptions = ImageDecodeOptions.newBuilder()
+                .setDecodePreviewFrame(true)
                 .setBackgroundColor(Color.BLACK)
                 .build();
 
@@ -499,8 +500,10 @@ public class ImageUtil {
         ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
                 .setImageDecodeOptions(imageDecodeOptions)
                 .setResizeOptions(new ResizeOptions(layoutParams.width, layoutParams.height))
+                .setAutoRotateEnabled(true)
                 .build();
         DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setAutoPlayAnimations(false)
                 .setImageRequest(imageRequest)
                 .setOldController(draweeView.getController())
                 .build();
@@ -604,6 +607,7 @@ public class ImageUtil {
                     onResourceReadyCallback.onReady(drawable, imageReference);
                 } else {
                     onResourceReadyCallback.onFail(new NullPointerException("Drawable is empty."));
+                    CloseableReference.closeSafely(imageReference);
                 }
             } else {
                 onResourceReadyCallback.onFail(new NullPointerException("ImageReference is empty."));

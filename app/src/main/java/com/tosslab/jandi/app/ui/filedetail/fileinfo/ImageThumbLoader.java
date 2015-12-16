@@ -7,18 +7,22 @@ import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ImageDecodeOptions;
+import com.facebook.imagepipeline.common.ImageDecodeOptionsBuilder;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
@@ -75,6 +79,9 @@ public class ImageThumbLoader implements FileThumbLoader {
         boolean hasImageUrl = ImageUtil.hasImageUrl(content);
         ivFilePhoto.setEnabled(hasImageUrl);
 
+        final String originalUrl =
+                ImageUtil.getThumbnailUrlOrOriginal(content, ImageUtil.Thumbnails.ORIGINAL);
+
         if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
             int resourceId = sourceType == MimeTypeUtil.SourceType.Google
                     ? R.drawable.jandi_down_placeholder_google
@@ -83,8 +90,6 @@ public class ImageThumbLoader implements FileThumbLoader {
 
             if (hasImageUrl) {
                 ivFilePhoto.setOnClickListener(view -> {
-                    String originalUrl =
-                            ImageUtil.getThumbnailUrlOrOriginal(content, ImageUtil.Thumbnails.ORIGINAL);
                     context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(originalUrl)));
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewPhoto);
                 });
@@ -118,29 +123,26 @@ public class ImageThumbLoader implements FileThumbLoader {
             loadImage(uri, hierarchy, view -> moveToPhotoViewer(fileMessageId, content));
         } else {
             ResMessages.ThumbnailUrls extraInfo = content.extraInfo;
-            final String originalUrl = content.fileUrl;
+            Uri originalUri = Uri.parse(originalUrl);
+
+            DataSource<Boolean> inDiskCache = Fresco.getImagePipeline().isInDiskCache(originalUri);
+            boolean isInDiskCache = inDiskCache.getResult() != null && inDiskCache.getResult();
+            if (isInDiskCache || Fresco.getImagePipeline().isInBitmapMemoryCache(originalUri)) {
+                Drawable placeHolder = resources.getDrawable(R.drawable.file_messageview_downloading);
+                hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_CENTER);
+                loadImage(originalUri, hierarchy, (v) -> {
+                    moveToPhotoViewer(fileMessageId, content);
+                });
+                return;
+            }
+
             if (extraInfo == null || TextUtils.isEmpty(extraInfo.largeThumbnailUrl)) {
                 vgTapToViewOriginal.setVisibility(View.VISIBLE);
                 vgTapToViewOriginal.setOnClickListener(v -> {
                     vgTapToViewOriginal.setVisibility(View.GONE);
-                    CircleProgressDrawable progressDrawable = new CircleProgressDrawable(context);
-                    float density = resources.getDisplayMetrics().density;
-                    int progressWidth = (int) (density * 3);
-                    progressDrawable.setBackgroundColor(resources.getColor(R.color.jandi_file_detail_tab_to_view_bg));
-                    progressDrawable.setBgStrokeWidth(progressWidth);
-                    progressDrawable.setProgressStrokeWidth(progressWidth);
-                    progressDrawable.setBgProgressColor(resources.getColor(R.color.white));
-                    progressDrawable.setProgressColor(resources.getColor(R.color.jandi_accent_color));
-                    progressDrawable.setTextColor(Color.WHITE);
-                    float scaledDensity = resources.getDisplayMetrics().scaledDensity;
-                    progressDrawable.setTextSize((int) (scaledDensity * 14));
-                    progressDrawable.setIndicatorTextColor(resources.getColor(R.color.jandi_text_light));
-                    progressDrawable.setIndicatorTextSize((int) (scaledDensity * 14));
-                    progressDrawable.setIndicatorTextMargin((int) (density * 10));
-                    progressDrawable.setProgressWidth((int) (density * 58));
+                    CircleProgressDrawable progressDrawable = getCircleProgressDrawable(resources);
                     hierarchy.setProgressBarImage(progressDrawable, ScalingUtils.ScaleType.CENTER);
-
-                    loadImage(Uri.parse(originalUrl), hierarchy, v1 -> {
+                    loadImage(originalUri, hierarchy, v1 -> {
                         moveToPhotoViewer(fileMessageId, content);
                     });
                 });
@@ -155,68 +157,26 @@ public class ImageThumbLoader implements FileThumbLoader {
                 });
             }
         }
-//        if (hasImageUrl) {
-//
-//            switch (sourceType) {
-//                case Google:
-//                    ivFilePhoto.setImageURI(UriFactory.getResourceUri(R.drawable.jandi_down_placeholder_google));
-//                    break;
-//                case Dropbox:
-//                    ivFilePhoto.setImageURI(UriFactory.getResourceUri(R.drawable.jandi_down_placeholder_dropbox));
-//                    break;
-//                default:
-//                    loadImage(fileMessage.id, content);
-//                    break;
-//            }
-//
-//            switch (sourceType) {
-//                case Google:
-//                case Dropbox:
-//                    ivFilePhoto.setOnClickListener(view -> {
-//                        String originalUrl =
-//                                ImageUtil.getThumbnailUrlOrOriginal(
-//                                        content, ImageUtil.Thumbnails.ORIGINAL);
-//                        context.startActivity(
-//                                new Intent(Intent.ACTION_VIEW, Uri.parse(originalUrl)));
-//                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewPhoto);
-//                    });
-//                    break;
-//                default:
-//                    ivFilePhoto.setOnClickListener(view -> {
-//                        if (roomId > 0) {
-//                            CarouselViewerActivity_.intent(context)
-//                                    .roomId(roomId)
-//                                    .startLinkId(fileMessage.id)
-//                                    .start();
-//                        } else {
-//                            String optimizedImageUrl = ImageUtil.getOptimizedImageUrl(content);
-//                            PhotoViewActivity_
-//                                    .intent(context)
-//                                    .imageUrl(optimizedImageUrl)
-//                                    .imageName(content.name)
-//                                    .imageType(content.type)
-//                                    .start();
-//                        }
-//                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewPhoto);
-//                    });
-//                    break;
-//            }
-//
-//        } else {
-//            ivFilePhoto.setEnabled(false);
-//
-//            switch (sourceType) {
-//                case Google:
-//                    ivFilePhoto.setImageURI(UriFactory.getResourceUri(R.drawable.jandi_down_placeholder_google));
-//                    break;
-//                case Dropbox:
-//                    ivFilePhoto.setImageURI(UriFactory.getResourceUri(R.drawable.jandi_down_placeholder_dropbox));
-//                    break;
-//                default:
-//                    ivFilePhoto.setImageURI(UriFactory.getResourceUri(R.drawable.file_down_img_disable));
-//                    break;
-//            }
-//        }
+    }
+
+    @NonNull
+    private CircleProgressDrawable getCircleProgressDrawable(Resources resources) {
+        CircleProgressDrawable progressDrawable = new CircleProgressDrawable(context);
+        float density = resources.getDisplayMetrics().density;
+        int progressWidth = (int) (density * 3);
+        progressDrawable.setBackgroundColor(resources.getColor(R.color.jandi_file_detail_tab_to_view_bg));
+        progressDrawable.setBgStrokeWidth(progressWidth);
+        progressDrawable.setProgressStrokeWidth(progressWidth);
+        progressDrawable.setBgProgressColor(resources.getColor(R.color.white));
+        progressDrawable.setProgressColor(resources.getColor(R.color.jandi_accent_color));
+        progressDrawable.setTextColor(Color.WHITE);
+        float scaledDensity = resources.getDisplayMetrics().scaledDensity;
+        progressDrawable.setTextSize((int) (scaledDensity * 14));
+        progressDrawable.setIndicatorTextColor(resources.getColor(R.color.jandi_text_light));
+        progressDrawable.setIndicatorTextSize((int) (scaledDensity * 14));
+        progressDrawable.setIndicatorTextMargin((int) (density * 10));
+        progressDrawable.setProgressWidth((int) (density * 58));
+        return progressDrawable;
     }
 
     private void loadImage(Uri uri,
@@ -227,6 +187,7 @@ public class ImageThumbLoader implements FileThumbLoader {
         int displayWidth = ApplicationUtil.getDisplaySize(false);
         int displayHeight = ApplicationUtil.getDisplaySize(true);
         ResizeOptions resizeOptions = new ResizeOptions(displayWidth, displayHeight);
+
         ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
                 .setResizeOptions(resizeOptions)
                 .setAutoRotateEnabled(true)

@@ -31,7 +31,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -152,11 +151,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @ViewById(R.id.lv_file_detail_comments)
     ListView lvFileDetailComments;
     @ViewById(R.id.vg_file_detail_input_comment)
-    RelativeLayout vgCommentLayout;
+    ViewGroup vgCommentLayout;
     @ViewById(R.id.et_message)
     BackpressEditText etComment;
     @ViewById(R.id.btn_send_message)
-    Button btnSend;
+    View btnSend;
     @ViewById(R.id.vg_file_detail_preview_sticker)
     ViewGroup vgStickerPreview;
     @ViewById(R.id.iv_file_detail_preview_sticker_image)

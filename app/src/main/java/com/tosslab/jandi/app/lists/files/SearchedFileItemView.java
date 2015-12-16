@@ -4,13 +4,19 @@ import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -83,10 +89,25 @@ public class SearchedFileItemView extends RelativeLayout {
                 hierarchy.setPlaceholderImage(R.drawable.file_icon_img);
                 hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
                 imageViewSearchedFileType.setHierarchy(hierarchy);
+
                 // 썸네일
                 String thumbnailUrl =
                         ImageUtil.getThumbnailUrlOrOriginal(content, ImageUtil.Thumbnails.SMALL);
-                imageViewSearchedFileType.setImageURI(Uri.parse(thumbnailUrl));
+
+                ViewGroup.LayoutParams params = imageViewSearchedFileType.getLayoutParams();
+                ResizeOptions resizeOptions = new ResizeOptions(params.width, params.height);
+
+                ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(thumbnailUrl))
+                        .setResizeOptions(resizeOptions)
+                        .setAutoRotateEnabled(true)
+                        .build();
+
+                DraweeController controller = Fresco.newDraweeControllerBuilder()
+                        .setImageRequest(imageRequest)
+                        .setOldController(imageViewSearchedFileType.getController())
+                        .build();
+
+                imageViewSearchedFileType.setController(controller);
             } else {
                 imageViewSearchedFileType.setHierarchy(hierarchy);
                 imageViewSearchedFileType.setImageURI(UriFactory.getResourceUri(R.drawable.file_icon_img));
