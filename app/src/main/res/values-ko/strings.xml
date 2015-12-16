@@ -456,11 +456,9 @@
 	<string name="jandi_tutorial_topic">"토픽을 통한 좀 더 유연하고개방적인 커뮤니케이션"</string>
 	<string name="jandi_tutorial_topic_message">"토픽이란 파일 공유가 가능한단체대화방이라고 할 수 있는새로운 개념의 업무 공간입니다.토픽을 이용해 업무의 개방성과 유연성을높이면서도 기존 메신저처럼 비공개 토픽 또는1:1 메시지를 통해서 독립성 또한 보장됩니다."</string>
 	<string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
-	<string name="jandi_tutorial_welcome_message">"지금까지 업무 파일을 클라우드에 업로드한 뒤,
-파일 주소를 이메일로 보내고
-확인을 부탁한다는 메시지를 모바일로 보내셨나요?
-잔디는 이 모든 것을 한 번에 해결해주는
-완전히 새로운 업무용 메신저입니다."</string>
+	<string name="jandi_tutorial_welcome_message">"지금까지 업무 파일을 클라우드에 업로드한 뒤, 파일 주소를 이메일로 보내고 확인을 부탁한다는 메시지를 모바일로 보내셨나요?
+
+잔디는 이 모든 것을 한 번에 해결해주는 완전히 새로운 업무용 메신저입니다."</string>
 	<string name="jandi_unpinned_message">"즐겨찾기 해제됨"</string>
 	<string name="jandi_unread_messages_below">"여기까지 읽었습니다."</string>
 	<string name="jandi_unshare_succeed">"%s 공유가 해제되었습니다."</string>
