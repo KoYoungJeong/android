@@ -11,8 +11,8 @@ import android.view.View;
 /**
  * Created by tonyjs on 15. 6. 8..
  */
-public class CircleProgress extends View {
-    public static final String TAG = "CircleProgress";
+public class CircleProgressBar extends View {
+    public static final String TAG = CircleProgressBar.class.getSimpleName();
     public static final int DEFAULT_BG_STROKE_WIDTH = 1;
     public static final int DEFAULT_PROGRESS_STROKE_WIDTH = 2;
     public static final int DEFAULT_BG_COLOR = Color.GRAY;
@@ -32,15 +32,15 @@ public class CircleProgress extends View {
     private int max = 100;
     private int progress = 0;
 
-    public CircleProgress(Context context) {
+    public CircleProgressBar(Context context) {
         this(context, null);
     }
 
-    public CircleProgress(Context context, AttributeSet attrs) {
+    public CircleProgressBar(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public CircleProgress(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CircleProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -115,6 +115,10 @@ public class CircleProgress extends View {
             this.progress = progress;
             invalidate();
         }
+    }
+
+    public int getProgress() {
+        return progress;
     }
 
     public void setBgStrokeWidth(int bgStrokeWidth) {

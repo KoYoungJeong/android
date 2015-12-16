@@ -15,7 +15,7 @@ import com.facebook.imagepipeline.animated.base.AnimatableDrawable;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
-import com.tosslab.jandi.app.ui.photo.widget.CircleProgress;
+import com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.image.BaseOnResourceReadyCallback;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -52,7 +52,7 @@ public class PhotoViewFragment extends Fragment {
     PhotoView photoView;
 
     @ViewById(R.id.progress_photoview)
-    CircleProgress progressBar;
+    CircleProgressBar progressBar;
 
     @ViewById(R.id.tv_photoview_percentage)
     TextView tvPercentage;
@@ -105,11 +105,15 @@ public class PhotoViewFragment extends Fragment {
         progressBar.setProgressStrokeWidth(progressWidth);
         progressBar.setBgColor(getResources().getColor(R.color.jandi_primary_color));
         progressBar.setProgressColor(getResources().getColor(R.color.jandi_accent_color));
+        progressBar.setMax(100);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateProgress(float progress) {
-        progressBar.setMax(100);
+        if (progressBar.getProgress() == 100) {
+            return;
+        }
+
         int percentage = (int) (progress * 100);
         progressBar.setProgress(percentage);
         tvPercentage.setText(percentage + "%");
@@ -155,7 +159,6 @@ public class PhotoViewFragment extends Fragment {
 
             @Override
             public void onProgressUpdate(float progress) {
-                LogUtil.i(TAG, "progressBar = " + progress);
                 updateProgress(progress);
             }
         });

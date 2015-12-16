@@ -22,7 +22,7 @@
             android:layout_height="85dp"
             android:layout_gravity="center">
 
-            <com.tosslab.jandi.app.ui.photo.widget.CircleProgress
+            <com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar
                 android:id="@+id/progress_photoview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
