@@ -145,15 +145,17 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 }
             }
 
-            ivFileImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            GenericDraweeHierarchy hierarchy = ivFileImage.getHierarchy();
+            hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+
             vFileImageRound.setVisibility(View.GONE);
             tvFileName.setTypeface(null, Typeface.BOLD);
 
             if (TextUtils.equals(link.feedback.status, "archived")) {
                 tvFileOwner.setVisibility(View.GONE);
                 tvFileName.setText(R.string.jandi_deleted_file);
-                tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
-                        .jandi_text_light));
+                tvFileName.setTextColor(tvFileName.getResources().getColor(R.color.jandi_text_light));
+                ivFileImage.setHierarchy(hierarchy);
                 ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.jandi_fl_icon_deleted));
                 ivFileImage.setOnClickListener(null);
             } else if (!isSharedFile) {
@@ -179,6 +181,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 tvFileName.setTextSize(TypedValue.COMPLEX_UNIT_PX, TextSizePX);
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color.jandi_text_light));
 
+                ivFileImage.setHierarchy(hierarchy);
                 if (isPublicTopic) {
                     int mimeTypeIconImage =
                             MimeTypeUtil.getMimeTypeIconImage(
@@ -198,7 +201,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 tvFileOwner.setVisibility(View.VISIBLE);
 
                 String fileType = content.icon;
-                GenericDraweeHierarchy hierarchy = ivFileImage.getHierarchy();
                 if (TextUtils.equals(fileType, "image")) {
                     if (ImageUtil.hasImageUrl(content)) {
                         String thumbnailUrl = ImageUtil.getThumbnailUrlOrOriginal(
@@ -208,7 +210,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
                         switch (sourceType) {
                             case Google:
                             case Dropbox:
-                                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
                                 ivFileImage.setHierarchy(hierarchy);
                                 int mimeTypeIconImage =
                                         MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
@@ -234,14 +235,12 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 break;
                         }
                     } else {
-                        hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
                         ivFileImage.setHierarchy(hierarchy);
                         int mimeTypeIconImage =
                                 MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
                         ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));
                     }
                 } else {
-                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
                     ivFileImage.setHierarchy(hierarchy);
                     int mimeTypeIconImage =
                             MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);

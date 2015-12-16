@@ -273,11 +273,10 @@ public class ImageViewHolder implements BodyViewHolder {
             ivFileImage.setLayoutParams(layoutParams);
             ivFileImage.requestLayout();
 
-            Uri uri = isFromLocalFilePath
-                    ? UriFactory.getFileUri(thumbPath) : Uri.parse(thumbPath);
+            Uri uri = isFromLocalFilePath ? UriFactory.getFileUri(thumbPath) : Uri.parse(thumbPath);
 
-            LogUtil.e(TAG, String.format("width=%s, height=%s, needToResize=%b",
-                    layoutParams.width, layoutParams.height, needToResize));
+//            LogUtil.e(TAG, String.format("width=%s, height=%s, needToResize=%b",
+//                    layoutParams.width, layoutParams.height, needToResize));
 
             int maximumBitmapSize = ImageUtil.getMaximumBitmapSize();
             ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)

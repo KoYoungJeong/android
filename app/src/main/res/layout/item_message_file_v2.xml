@@ -113,6 +113,7 @@
 
             <ImageView
                 android:id="@+id/iv_message_common_file"
+                android:scaleType="fitCenter"
                 android:layout_width="@dimen/jandi_messages_image_size"
                 android:layout_height="@dimen/jandi_messages_image_size"
                 android:layout_centerVertical="true" />
