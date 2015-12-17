@@ -992,6 +992,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
 
         dismissStickerSelectorIfShow();
+        dismissUploadSelectorIfShow();
 
         super.onPause();
     }
