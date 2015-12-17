@@ -780,14 +780,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage(), mentions);
         }
         if (linkId > 0) {
-            messageListPresenter.updateDummyMessageState(data.getLocalId(), SendMessage.Status.COMPLETE);
             if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
                 // 소켓이 안 붙어 있으면 임의로 갱신 요청
                 EventBus.getDefault().post(new RefreshNewMessageEvent());
             }
-        } else {
-            messageListPresenter.updateDummyMessageState(data.getLocalId(), SendMessage.Status.FAIL);
         }
+        messageListPresenter.refreshAll();
     }
 
     private void getAnnouncement() {
@@ -1163,7 +1161,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         long localId = messageListModel.insertSendingMessageIfCan(entityId, roomId, stickerInfo);
         if (localId > 0) {
             FormattedEntity me = EntityManager.getInstance().getMe();
-            messageListPresenter.insertSendingMessage(localId, me.getName(), me.getUserLargeProfileUrl(), stickerInfo);
+            messageListPresenter.refreshAll();
+            messageListPresenter.moveLastPage();
 
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, "", new StickerInfo(stickerInfo), new ArrayList<>())));
             AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_Send);
@@ -1176,7 +1175,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (localId > 0) {
             FormattedEntity me = EntityManager.getInstance().getMe();
             // insert to ui
-            messageListPresenter.insertSendingMessage(localId, message, mentions);
+            messageListPresenter.refreshAll();
+            messageListPresenter.moveLastPage();
             // networking...
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, reqSendMessage)));
 
@@ -1207,14 +1207,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!isForeground) {
             return;
         }
-        messageListPresenter.updateMessageIdAtSendingMessage(event.getLocalId(), event.getId());
     }
 
     public void onEvent(SendFailEvent event) {
         if (!isForeground) {
             return;
         }
-        messageListPresenter.updateDummyMessageState(event.getLocalId(), SendMessage.Status.FAIL);
+        messageListPresenter.refreshAll();
     }
 
     public void onEventMainThread(ChatModeChangeEvent event) {
@@ -1479,7 +1478,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
         DummyMessageLink dummyMessage = messageListPresenter.getDummyMessage(event.getLocalId());
         messageListModel.deleteDummyMessageAtDatabase(dummyMessage.getLocalId());
-        messageListPresenter.deleteDummyMessageAtList(event.getLocalId());
+        messageListPresenter.refreshAll();
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {

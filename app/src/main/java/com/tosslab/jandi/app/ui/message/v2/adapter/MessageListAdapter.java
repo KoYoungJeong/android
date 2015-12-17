@@ -86,22 +86,6 @@ public class MessageListAdapter extends MessageAdapter {
         links.clear();
     }
 
-    @Override
-    public void addDummyMessage(DummyMessageLink dummyMessageLink) {
-        links.add(dummyMessageLink);
-    }
-
-    @Override
-    public void updateMessageId(long localId, int id) {
-
-        int dummeMessagePosition = getDummeMessagePositionByLocalId(localId);
-
-        if (dummeMessagePosition >= 0) {
-            ResMessages.Link item = getItem(dummeMessagePosition);
-            item.messageId = id;
-        }
-    }
-
     private int getDummyMessagePositionByMessageId(int messageId) {
 
         int size = getItemCount();
@@ -120,14 +104,6 @@ public class MessageListAdapter extends MessageAdapter {
         }
         return -1;
 
-    }
-
-    @Override
-    public void updateDummyMessageState(long localId, SendMessage.Status state) {
-        int dummeMessagePositionByLocalId = getDummeMessagePositionByLocalId(localId);
-        if (dummeMessagePositionByLocalId >= 0) {
-            ((DummyMessageLink) getItem(dummeMessagePositionByLocalId)).setStatus(state.name());
-        }
     }
 
     @Override

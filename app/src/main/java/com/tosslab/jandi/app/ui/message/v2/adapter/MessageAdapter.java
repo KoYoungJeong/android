@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
-import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
@@ -186,12 +185,6 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
 
         return indexList;
     }
-
-    public abstract void updateMessageId(long localId, int messageId);
-
-    public abstract void addDummyMessage(DummyMessageLink dummyMessageLink);
-
-    public abstract void updateDummyMessageState(long localId, SendMessage.Status state);
 
     public int getDummeMessagePositionByLocalId(long localId) {
         if (localId <= 0) {

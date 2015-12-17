@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.net.Uri;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -30,10 +31,8 @@ import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
@@ -52,7 +51,6 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -441,49 +439,6 @@ public class MessageListPresenter {
         link.message = message;
     }
 
-    public void updateMessageIdAtSendingMessage(long localId, int messageId) {
-        if (!hasMessage(messageId)) {
-            messageAdapter.updateMessageId(localId, messageId);
-        } else {
-//            deleteLocalMessage(localId);
-        }
-    }
-
-    private void deleteLocalMessage(long localId) {
-        deleteDummyMessageAtList(localId);
-    }
-
-    private boolean hasMessage(int messageId) {
-        int idx = messageAdapter.indexByMessageId(messageId);
-        return idx >= 0;
-    }
-
-    public void insertSendingMessage(long localId, String message, List<MentionObject> mentions) {
-        DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, message, SendMessage
-                .Status.SENDING.name(), mentions);
-        dummyMessageLink.message.writerId = EntityManager.getInstance().getMe().getId();
-        dummyMessageLink.message.createTime = new Date();
-        dummyMessageLink.message.updateTime = new Date();
-
-        messageAdapter.addDummyMessage(dummyMessageLink);
-        messageAdapter.notifyDataSetChanged();
-
-        lvMessages.getLayoutManager().scrollToPosition(messageAdapter.getItemCount() - 1);
-    }
-
-    public void updateDummyMessageState(long localId, SendMessage.Status state) {
-        messageAdapter.updateDummyMessageState(localId, state);
-        justRefresh();
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void addDummyMessages(List<ResMessages.Link> dummyMessages) {
-        for (ResMessages.Link dummyMessage : dummyMessages) {
-            messageAdapter.addDummyMessage(((DummyMessageLink) dummyMessage));
-        }
-        messageAdapter.notifyDataSetChanged();
-    }
-
     public void showDummyMessageDialog(long localId) {
         DummyMessageDialog_.builder()
                 .localId(localId)
@@ -497,9 +452,7 @@ public class MessageListPresenter {
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void deleteDummyMessageAtList(long localId) {
-        int position = messageAdapter.getDummeMessagePositionByLocalId(localId);
-        messageAdapter.remove(position);
+    public void refreshAll() {
         messageAdapter.notifyDataSetChanged();
     }
 
@@ -974,19 +927,6 @@ public class MessageListPresenter {
         sendLayoutVisibleGone();
         vDisabledUser.setVisibility(View.VISIBLE);
         setPreviewVisibleGone();
-    }
-
-    public void insertSendingMessage(long localId, String name, String userLargeProfileUrl, StickerInfo stickerInfo) {
-        DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, SendMessage
-                .Status.SENDING.name(), stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
-        dummyMessageLink.message.writerId = EntityManager.getInstance().getMe().getId();
-        dummyMessageLink.message.createTime = new Date();
-        dummyMessageLink.message.updateTime = new Date();
-
-        messageAdapter.addDummyMessage(dummyMessageLink);
-        messageAdapter.notifyDataSetChanged();
-
-        lvMessages.getLayoutManager().scrollToPosition(messageAdapter.getItemCount() - 1);
     }
 
     public void setListTouchListener(View.OnTouchListener touchListener) {

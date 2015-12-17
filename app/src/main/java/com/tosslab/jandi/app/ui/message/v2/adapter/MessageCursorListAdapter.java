@@ -161,18 +161,6 @@ public class MessageCursorListAdapter extends MessageAdapter {
     }
 
     @Override
-    public void addDummyMessage(DummyMessageLink dummyMessageLink) {
-    }
-
-    @Override
-    public void updateMessageId(long localId, int id) {
-    }
-
-    @Override
-    public void updateDummyMessageState(long localId, SendMessage.Status state) {
-    }
-
-    @Override
     public void remove(int position) {
     }
 
