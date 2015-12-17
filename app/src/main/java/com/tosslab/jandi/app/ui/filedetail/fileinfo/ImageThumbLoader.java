@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
@@ -38,6 +39,7 @@ import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
@@ -115,53 +117,75 @@ public class ImageThumbLoader implements FileThumbLoader {
         Drawable error = resources.getDrawable(R.drawable.file_messageview_noimage);
         hierarchy.setFailureImage(error, ScalingUtils.ScaleType.FIT_CENTER);
 
+        ResMessages.ThumbnailUrls extraInfo = content.extraInfo;
+
+        boolean hasThumbnailUrl = extraInfo != null && !TextUtils.isEmpty(extraInfo.largeThumbnailUrl);
+
+        boolean hasSizeInfo = extraInfo != null && extraInfo.width > 0 && extraInfo.height > 0;
+
+        ivFilePhoto.setOnClickListener(view -> moveToPhotoViewer(fileMessageId, content));
+
         if (!TextUtils.isEmpty(localFilePath)) {
+            if (hasSizeInfo) {
+                updateViewSize(extraInfo.width, extraInfo.height, extraInfo.orientation);
+            }
+
             Drawable placeHolder = resources.getDrawable(R.drawable.file_messageview_downloading);
             hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_CENTER);
 
             Uri uri = UriFactory.getFileUri(localFilePath);
-            loadImage(uri, hierarchy, view -> moveToPhotoViewer(fileMessageId, content));
+            loadImage(uri, hierarchy, hasSizeInfo);
+
         } else {
-            ResMessages.ThumbnailUrls extraInfo = content.extraInfo;
-            Uri originalUri = Uri.parse(originalUrl);
-
-            DataSource<Boolean> inDiskCache = Fresco.getImagePipeline().isInDiskCache(originalUri);
-            boolean isInDiskCache = inDiskCache.getResult() != null && inDiskCache.getResult();
-            if (isInDiskCache || Fresco.getImagePipeline().isInBitmapMemoryCache(originalUri)) {
-                Drawable placeHolder = resources.getDrawable(R.drawable.file_messageview_downloading);
-                hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_CENTER);
-                loadImage(originalUri, hierarchy, (v) -> {
-                    moveToPhotoViewer(fileMessageId, content);
-                });
-                return;
-            }
-
-            if (extraInfo == null || TextUtils.isEmpty(extraInfo.largeThumbnailUrl)) {
-                vgTapToViewOriginal.setVisibility(View.VISIBLE);
-                vgTapToViewOriginal.setOnClickListener(v -> {
-                    vgTapToViewOriginal.setVisibility(View.GONE);
-                    CircleProgressDrawable progressDrawable = getCircleProgressDrawable(resources);
-                    hierarchy.setProgressBarImage(progressDrawable, ScalingUtils.ScaleType.CENTER);
-                    loadImage(originalUri, hierarchy, v1 -> {
-                        moveToPhotoViewer(fileMessageId, content);
-                    });
-                });
-            } else {
+            if (hasThumbnailUrl) {
+                if (hasSizeInfo) {
+                    updateViewSize(extraInfo.width, extraInfo.height, extraInfo.orientation);
+                }
                 Uri uri = Uri.parse(extraInfo.largeThumbnailUrl);
 
                 Drawable placeHolder = resources.getDrawable(R.drawable.file_messageview_downloading);
                 hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_CENTER);
 
-                loadImage(uri, hierarchy, v -> {
-                    moveToPhotoViewer(fileMessageId, content);
-                });
+                loadImage(uri, hierarchy, hasSizeInfo);
+                return;
             }
+
+            Uri originalUri = Uri.parse(originalUrl);
+
+            if (hasCache(originalUri)) {
+                if (hasSizeInfo) {
+                    updateViewSize(extraInfo.width, extraInfo.height, extraInfo.orientation);
+                }
+                Drawable placeHolder = resources.getDrawable(R.drawable.file_messageview_downloading);
+                hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_CENTER);
+                loadImage(originalUri, hierarchy, hasSizeInfo);
+                return;
+            }
+
+            vgTapToViewOriginal.setVisibility(View.VISIBLE);
+
+            ivFilePhoto.setOnClickListener(null);
+
+            vgTapToViewOriginal.setOnClickListener(v -> {
+                vgTapToViewOriginal.setVisibility(View.GONE);
+                CircleProgressDrawable progressDrawable = getCircleProgressDrawable(resources);
+                hierarchy.setProgressBarImage(progressDrawable, ScalingUtils.ScaleType.CENTER);
+                loadImage(originalUri, hierarchy, false);
+                ivFilePhoto.setOnClickListener(view -> moveToPhotoViewer(fileMessageId, content));
+            });
         }
+    }
+
+    private boolean hasCache(Uri originalUri) {
+        DataSource<Boolean> dataSource = Fresco.getImagePipeline().isInDiskCache(originalUri);
+        boolean isInDiskCache = dataSource.getResult() != null && dataSource.getResult();
+        return isInDiskCache || Fresco.getImagePipeline().isInBitmapMemoryCache(originalUri);
     }
 
     @NonNull
     private CircleProgressDrawable getCircleProgressDrawable(Resources resources) {
         CircleProgressDrawable progressDrawable = new CircleProgressDrawable(context);
+
         float density = resources.getDisplayMetrics().density;
         int progressWidth = (int) (density * 3);
         progressDrawable.setBackgroundColor(resources.getColor(R.color.jandi_file_detail_tab_to_view_bg));
@@ -170,18 +194,19 @@ public class ImageThumbLoader implements FileThumbLoader {
         progressDrawable.setBgProgressColor(resources.getColor(R.color.white));
         progressDrawable.setProgressColor(resources.getColor(R.color.jandi_accent_color));
         progressDrawable.setTextColor(Color.WHITE);
+
         float scaledDensity = resources.getDisplayMetrics().scaledDensity;
         progressDrawable.setTextSize((int) (scaledDensity * 14));
         progressDrawable.setIndicatorTextColor(resources.getColor(R.color.jandi_text_light));
         progressDrawable.setIndicatorTextSize((int) (scaledDensity * 14));
         progressDrawable.setIndicatorTextMargin((int) (density * 10));
         progressDrawable.setProgressWidth((int) (density * 58));
+
         return progressDrawable;
     }
 
-    private void loadImage(Uri uri,
-                           GenericDraweeHierarchy hierarchy,
-                           View.OnClickListener onClickListener) {
+    private void loadImage(Uri uri, GenericDraweeHierarchy hierarchy,
+                           boolean hasUpdateViewSizeBefore) {
         ivFilePhoto.setHierarchy(hierarchy);
 
         int displayWidth = ApplicationUtil.getDisplaySize(false);
@@ -192,46 +217,57 @@ public class ImageThumbLoader implements FileThumbLoader {
                 .setResizeOptions(resizeOptions)
                 .setAutoRotateEnabled(true)
                 .build();
-
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setImageRequest(imageRequest)
-                .setControllerListener(new BaseControllerListener<ImageInfo>() {
-                    @Override
-                    public void onFinalImageSet(String id, ImageInfo imageInfo,
-                                                Animatable animatable) {
-                        updateViewSize(imageInfo.getWidth(), imageInfo.getHeight());
-                    }
-                })
+        PipelineDraweeControllerBuilder draweeControllerBuilder = Fresco.newDraweeControllerBuilder()
                 .setAutoPlayAnimations(true)
-                .build();
-        ivFilePhoto.setController(controller);
+                .setImageRequest(imageRequest);
+        if (!hasUpdateViewSizeBefore) {
+            draweeControllerBuilder.setControllerListener(new BaseControllerListener<ImageInfo>() {
+                @Override
+                public void onFinalImageSet(String id, ImageInfo imageInfo,
+                                            Animatable animatable) {
+                    LogUtil.i("tony", String.format("%s, %s", imageInfo.getWidth(), imageInfo.getHeight()));
+                    updateViewSize(imageInfo.getWidth(), imageInfo.getHeight());
+                }
+            });
+        }
 
-        ivFilePhoto.setOnClickListener(onClickListener);
+        ivFilePhoto.setController(draweeControllerBuilder.build());
+    }
+
+    private void updateViewSize(int imageWidth, int imageHeight, int orientation) {
+        if (imageWidth <= 0 || imageHeight <= 0) {
+            return;
+        }
+
+        if (ImageUtil.isVerticalPhoto(orientation)) {
+            int temp = imageHeight;
+            imageHeight = imageWidth;
+            imageWidth = temp;
+        }
+
+        updateViewSize(imageWidth, imageHeight);
     }
 
     private void updateViewSize(int imageWidth, int imageHeight) {
+        LogUtil.e("tony", String.format("%s, %s", imageWidth, imageHeight));
+
         int displayWidth = ApplicationUtil.getDisplaySize(false);
         int displayHeight = ApplicationUtil.getDisplaySize(true);
 
         ViewGroup.LayoutParams layoutParams = vgDetailPhoto.getLayoutParams();
-        if (imageWidth <= 0 || imageHeight <= 0) {
-            imageWidth = displayWidth;
-            imageHeight = displayWidth;
-            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        }
 
+        int viewWidth = vgDetailPhoto.getMeasuredWidth();
         if (imageWidth > imageHeight) {
-            int viewWidth = vgDetailPhoto.getMeasuredWidth();
-            float ratio = (viewWidth * 10f) / (imageWidth * 10f);
+            float ratio = imageHeight / (float) imageWidth;
 
-            layoutParams.width = (int) (imageWidth * ratio);
-            layoutParams.height = (int) (imageHeight * ratio);
+            layoutParams.width = viewWidth;
+            layoutParams.height = (int) (viewWidth * ratio);
         } else {
-            DisplayMetrics metrics = JandiApplication.getContext().getResources().getDisplayMetrics();
-            int photoWidth = (int) (Math.min(displayWidth, displayHeight) - (metrics.density * 22));
-            layoutParams.width = photoWidth;
-            layoutParams.height = photoWidth;
+//            DisplayMetrics metrics = JandiApplication.getContext().getResources().getDisplayMetrics();
+//            int photoWidth = (int) (Math.min(displayWidth, displayHeight) - (metrics.density * 22));
+            layoutParams.height = viewWidth;
         }
+
         vgDetailPhoto.setLayoutParams(layoutParams);
     }
 

@@ -88,12 +88,13 @@
 
         <TextView
             android:id="@+id/tv_img_file_uploader"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/vg_message_common_file"
             android:layout_below="@+id/tv_message_user_name"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="4dp"
+            android:layout_marginRight="30dp"
             android:ellipsize="end"
             android:singleLine="true"
             android:text="Shared Andrew's file"
@@ -113,10 +114,10 @@
 
             <ImageView
                 android:id="@+id/iv_message_common_file"
-                android:scaleType="fitCenter"
                 android:layout_width="@dimen/jandi_messages_image_size"
                 android:layout_height="@dimen/jandi_messages_image_size"
-                android:layout_centerVertical="true" />
+                android:layout_centerVertical="true"
+                android:scaleType="fitCenter" />
 
 
             <LinearLayout

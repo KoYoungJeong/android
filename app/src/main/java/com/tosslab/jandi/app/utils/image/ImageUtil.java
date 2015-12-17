@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -564,6 +565,11 @@ public class ImageUtil {
                 JandiApplication.getContext().getResources().getDisplayMetrics();
 
         return (int) (minimum * Math.pow(2, displayMetrics.density));
+    }
+
+    public static boolean isVerticalPhoto(int orientation) {
+        return orientation == ExifInterface.ORIENTATION_ROTATE_90
+                || orientation == ExifInterface.ORIENTATION_ROTATE_270;
     }
 
     public static Bitmap getBitmapFromDrawable(Drawable drawable) {

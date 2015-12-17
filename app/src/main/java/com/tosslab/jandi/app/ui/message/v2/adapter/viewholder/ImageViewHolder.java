@@ -2,9 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -15,14 +13,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.R;
@@ -299,7 +295,7 @@ public class ImageViewHolder implements BodyViewHolder {
 
     private ImageSpec getImageSpec(int width, int height, int orientation) {
         // Vertical Image.
-        if (isVerticalPhoto(orientation)) {
+        if (ImageUtil.isVerticalPhoto(orientation)) {
             int temp = height;
             height = width;
             width = temp;
@@ -352,11 +348,6 @@ public class ImageViewHolder implements BodyViewHolder {
     private boolean isSmallSize(int width, int height) {
         return width <= getPixelFromDp(SMALL_SIZE)
                 && height <= getPixelFromDp(SMALL_SIZE);
-    }
-
-    private boolean isVerticalPhoto(int orientation) {
-        return orientation == ExifInterface.ORIENTATION_ROTATE_90
-                || orientation == ExifInterface.ORIENTATION_ROTATE_270;
     }
 
     private int getPixelFromDp(int dp) {

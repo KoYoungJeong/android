@@ -82,6 +82,7 @@ public class JandiApplication extends MultiDexApplication {
         if (BuildConfig.DEBUG) {
             Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
         }
+
         Parse.initialize(this,
                 JandiConstantsForFlavors.PARSE_APPLICATION_ID,
                 JandiConstantsForFlavors.PARSE_CLIENT_KEY);

@@ -9,6 +9,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
+import com.tosslab.jandi.app.utils.logger.LogUtil;
+
 /**
  * Created by tonyjs on 15. 12. 16..
  */
@@ -29,7 +31,7 @@ public class CircleProgressDrawable extends Drawable {
     public static final int DEFAULT_PROGRESS_STROKE_WIDTH = 2;
     public static final int DEFAULT_BG_PROGRESS_COLOR = Color.GRAY;
     public static final int DEFAULT_PROGRESS_COLOR = Color.BLUE;
-    public static final int MAX_PROGRESS = 10000;
+    public static final float MAX_PROGRESS = 10000;
 
     private Paint bgPaint;
     private Paint bgProgressPaint;
@@ -124,14 +126,18 @@ public class CircleProgressDrawable extends Drawable {
         rectF.right = left + progressWidth;
         rectF.bottom = top + progressWidth;
 
-        final float angle = (progress / (float) MAX_PROGRESS) * 360;
+        float percentage = progress / MAX_PROGRESS;
+
+        final float angle = percentage * 360;
         canvas.drawArc(rectF, -90, angle, false, progressPaint);
 
         textPaint.setColor(textColor);
         textPaint.setTextSize(textSize);
         textPaint.setFlags(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
 
-        String progressText = (progress / 100) + "%";
+        LogUtil.d("tony", "progress = " + progress + " percent = " + percentage);
+        String progressText = ((int) percentage * 100) + "%";
+        LogUtil.e("tony", progressText);
 
         Rect bounds = new Rect();
         textPaint.getTextBounds(progressText, 0, progressText.length(), bounds);
@@ -278,9 +284,10 @@ public class CircleProgressDrawable extends Drawable {
 
     @Override
     protected boolean onLevelChange(int level) {
+        LogUtil.d("tony", "level = " + level);
         progress = level;
-        invalidateSelf();
-        return super.onLevelChange(level);
+//        invalidateSelf();
+        return true;
     }
 
 }

@@ -33,7 +33,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -151,7 +150,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @ViewById(R.id.lv_file_detail_comments)
     ListView lvFileDetailComments;
     @ViewById(R.id.vg_file_detail_input_comment)
-    ViewGroup vgCommentLayout;
+    View vgCommentLayout;
     @ViewById(R.id.et_message)
     BackpressEditText etComment;
     @ViewById(R.id.btn_send_message)
