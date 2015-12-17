@@ -2,10 +2,13 @@ package com.tosslab.jandi.app.ui.message.v2;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -129,6 +132,7 @@ import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -181,7 +185,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public static final String EXTRA_FILE_DELETE = "file_delete";
     public static final String EXTRA_FILE_ID = "file_id";
     public static final String EXTRA_NEW_PHOTO_FILE = "new_photo_file";
-    public static final int REQ_STORAGE_PERMISSION = 101;
+    private static final int REQ_STORAGE_PERMISSION = 101;
+    private static final int REQ_WINDOW_PERMISSION = 102;
     private static final StickerInfo NULL_STICKER = new StickerInfo();
     // EASTER EGG SNOW
     public static boolean SNOWING_EASTEREGG_STARTED = false;
@@ -447,17 +452,39 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     private void showStickerSelectorIfNotShow(int height) {
         if (!stickerViewModel.isShow()) {
-            stickerViewModel.showStickerSelector(height);
-            Observable.just(1)
-                    .delay(100, TimeUnit.MILLISECONDS)
-                    .subscribe(i -> {
-                        if (uploadMenuViewModel.isShow()) {
-                            uploadMenuViewModel.dismissUploadSelector(false);
-                        }
-                    });
-            buttonAction = ButtonAction.STICKER;
-            setActionButtons();
+            if (isCanDrawWindowOverlay()) {
+                stickerViewModel.showStickerSelector(height);
+                Observable.just(1)
+                        .delay(100, TimeUnit.MILLISECONDS)
+                        .subscribe(i -> {
+                            if (uploadMenuViewModel.isShow()) {
+                                uploadMenuViewModel.dismissUploadSelector(false);
+                            }
+                        });
+                buttonAction = ButtonAction.STICKER;
+                setActionButtons();
+            } else {
+                // Android M (23) 부터 적용되는 시나리오
+                requestWindowPermission();
+            }
         }
+    }
+
+    private boolean isCanDrawWindowOverlay() {
+        boolean canDraw;
+        if (SdkUtils.isMarshmallow()) {
+            canDraw = Settings.canDrawOverlays(getActivity());
+        } else {
+            canDraw = true;
+        }
+        return canDraw;
+    }
+
+    private void requestWindowPermission() {
+        String packageName = JandiApplication.getContext().getPackageName();
+        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + packageName));
+        startActivityForResult(intent, REQ_WINDOW_PERMISSION);
+
     }
 
     private void dismissStickerSelectorIfShow() {
@@ -470,16 +497,20 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     private void showUploadMenuSelectorIfNotShow(int height) {
         if (!uploadMenuViewModel.isShow()) {
-            uploadMenuViewModel.showUploadSelector(height);
-            Observable.just(1)
-                    .delay(100, TimeUnit.MILLISECONDS)
-                    .subscribe(i -> {
-                        if (stickerViewModel.isShow()) {
-                            stickerViewModel.dismissStickerSelector(false);
-                        }
-                    });
-            buttonAction = ButtonAction.UPLOAD;
-            setActionButtons();
+            if (isCanDrawWindowOverlay()) {
+                uploadMenuViewModel.showUploadSelector(height);
+                Observable.just(1)
+                        .delay(100, TimeUnit.MILLISECONDS)
+                        .subscribe(i -> {
+                            if (stickerViewModel.isShow()) {
+                                stickerViewModel.dismissStickerSelector(false);
+                            }
+                        });
+                buttonAction = ButtonAction.UPLOAD;
+                setActionButtons();
+            } else {
+                requestWindowPermission();
+            }
         }
     }
 
@@ -966,6 +997,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
 
         dismissStickerSelectorIfShow();
+        dismissUploadSelectorIfShow();
 
         super.onPause();
     }
@@ -1007,7 +1039,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                                 .delay(300, TimeUnit.MILLISECONDS)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(integer -> {
-                                    filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
+                                    Context context = getActivity().getApplicationContext();
+                                    int keyboardHeight = JandiPreference.getKeyboardHeight(context);
+                                    showUploadMenuSelectorIfNotShow(keyboardHeight);
                                 }, Throwable::printStackTrace))
                 .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
     }
@@ -1200,7 +1234,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
 
-        filePickerViewModel.selectFileSelector(event.type, MessageListFragment.this, entityId);
+        openUploadPanel(event.type);
 
         AnalyticsValue.Action action;
         switch (event.type) {
@@ -1973,12 +2007,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         return false;
     }
 
-    //FIXME 업로드 레이아웃 열기
-    void openUploadPanel() {
+    void openUploadPanel(int type) {
         Permissions.getChecker()
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .hasPermission(() -> {
-                    filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
+                    filePickerViewModel.selectFileSelector(type, MessageListFragment.this, entityId);
+
                     AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Upload);
                 })
                 .noPermission(() -> {

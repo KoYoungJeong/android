@@ -9,6 +9,7 @@ import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
@@ -78,6 +79,7 @@ public class JandiApplication extends MultiDexApplication {
         if (BuildConfig.DEBUG) {
             Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
         }
+
         Parse.initialize(this,
                 JandiConstantsForFlavors.PARSE_APPLICATION_ID,
                 JandiConstantsForFlavors.PARSE_CLIENT_KEY);
@@ -99,6 +101,9 @@ public class JandiApplication extends MultiDexApplication {
         registerActivityLifecycleCallbacks();
 
         registerScreenOffReceiver();
+
+        // Fresco
+        Fresco.initialize(context);
     }
 
     /**

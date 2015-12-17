@@ -15,6 +15,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
@@ -26,6 +27,8 @@ public class SnowView extends View {
     public static final int BACKGROUND_COLOR = Color.parseColor("#e1e9ec");
 
     private Drawable[] snows;
+
+    private int previousOrientation;
 
     public SnowView(Context context) {
         super(context);
@@ -45,6 +48,8 @@ public class SnowView extends View {
     private void init() {
         setWillNotDraw(false);
         setBackgroundColor(BACKGROUND_COLOR);
+
+        previousOrientation = getContext().getResources().getConfiguration().orientation;
     }
 
     @Override
@@ -56,8 +61,8 @@ public class SnowView extends View {
 
         int displayHeight = getContext().getResources().getDisplayMetrics().heightPixels;
 
-        int size = displayHeight / 20;
-        snows = new SnowAnimationDrawable[size];
+        int arrLength = displayHeight / 17;
+        snows = new SnowAnimationDrawable[arrLength];
         Interpolator interpolator = new LinearInterpolator();
         for (int i = 0; i < snows.length; i++) {
             float fromX = (float) (Math.random() * width);
@@ -83,7 +88,7 @@ public class SnowView extends View {
             animationSet.addAnimation(animation);
 
             Drawable drawable = getContext().getResources().getDrawable(R.drawable.snow_02);
-            int intrinsicWidth = drawable.getIntrinsicWidth();
+            int intrinsicWidth = (int) (drawable.getIntrinsicWidth() * 1.5);
             int r = (int) (Math.random() * intrinsicWidth);
             drawable.setBounds(0, 0, r, r);
 
@@ -106,6 +111,17 @@ public class SnowView extends View {
         }
 
         invalidate();
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (previousOrientation != newConfig.orientation) {
+            if (snows != null) {
+                snows = null;
+            }
+            previousOrientation = newConfig.orientation;
+        }
     }
 
     @Override

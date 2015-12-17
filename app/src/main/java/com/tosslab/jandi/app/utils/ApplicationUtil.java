@@ -1,8 +1,12 @@
 package com.tosslab.jandi.app.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.DisplayMetrics;
+
+import com.tosslab.jandi.app.JandiApplication;
 
 /**
  * Created by tonyjs on 15. 8. 3..
@@ -22,4 +26,8 @@ public class ApplicationUtil {
         }
     }
 
+    public static int getDisplaySize(boolean isHeight) {
+        DisplayMetrics metrics = JandiApplication.getContext().getResources().getDisplayMetrics();
+        return isHeight ? metrics.heightPixels : metrics.widthPixels;
+    }
 }

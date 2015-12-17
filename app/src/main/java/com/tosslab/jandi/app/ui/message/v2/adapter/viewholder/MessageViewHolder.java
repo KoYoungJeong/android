@@ -6,9 +6,9 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -16,7 +16,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
-import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
@@ -31,7 +31,7 @@ import de.greenrobot.event.EventBus;
 public class MessageViewHolder implements BodyViewHolder {
 
     protected Context context;
-    private ImageView ivProfile;
+    private SimpleDraweeView ivProfile;
     private TextView tvName;
     private TextView tvMessage;
     private View vDisableCover;
@@ -43,7 +43,7 @@ public class MessageViewHolder implements BodyViewHolder {
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
-        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+        ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
@@ -65,11 +65,7 @@ public class MessageViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
-                profileUrl,
-                R.drawable.profile_img,
-                R.drawable.profile_img
-        );
+        ImageUtil.loadCircleImageByFresco(ivProfile, profileUrl, R.drawable.profile_img);
 
         if (fromEntity != null && TextUtils.equals(fromEntity.status, "enabled")) {
             tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));

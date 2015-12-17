@@ -11,6 +11,8 @@ import java.util.List;
 public interface ImageAlbumPresenter {
     void onLoadImageAlbum(int buckerId);
 
+    void onLoadMorePhotos(int bucketId, int imageId);
+
     void setView(View view);
 
     void onSetupActionbar(int buckerId);
@@ -20,10 +22,15 @@ public interface ImageAlbumPresenter {
     void onSelectAlbum(ImageAlbum item);
 
     interface View {
+        void showProgress();
+
+        void hideProgress();
 
         void showDefaultAlbumList(List<ImageAlbum> defaultAlbumList);
 
         void showPhotoList(List<ImagePicture> photoList);
+
+        void addPhotoList(List<ImagePicture> photoList);
 
         void setActinbarTitle(String bucketTitle);
 

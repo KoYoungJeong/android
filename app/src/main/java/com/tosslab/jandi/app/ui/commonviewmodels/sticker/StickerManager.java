@@ -1,25 +1,26 @@
 package com.tosslab.jandi.app.ui.commonviewmodels.sticker;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.StateSet;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 
-import com.bumptech.glide.DrawableTypeRequest;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.tosslab.jandi.app.JandiApplication;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.image.BaseOnResourceReadyCallback;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.ClosableAttachStateChangeListener;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.HashSet;
@@ -32,18 +33,23 @@ import rx.Observable;
  */
 public class StickerManager {
 
-    public static final String ASSET_SCHEMA = "file:///android_asset/";
+    //    public static final String ASSET_SCHEMA = "file:///android_asset/";
+    public static final String ASSET_SCHEMA = "asset:///";
     public static final String STICKER_ASSET_PATH = "stickers/default";
     private static final LoadOptions DEFAULT_OPTIONS = new LoadOptions();
     private static StickerManager stickerManager;
 
     private HashSet<Integer> localStickerGroupIds;
 
+    private Handler uiHandler;
+
     private StickerManager() {
         this.localStickerGroupIds = new HashSet<Integer>();
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_MOZZI);
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DAY);
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DAY_ZH_TW);
+
+        uiHandler = new Handler(Looper.getMainLooper());
     }
 
     public static StickerManager getInstance() {
@@ -68,10 +74,10 @@ public class StickerManager {
         loadSticker(view, groupId, stickerId, loadOptions);
     }
 
-    public void loadSticker(ImageView view, int groupId, String stickerId, LoadOptions options) {
+    public void loadSticker(ImageView view,
+                            int groupId, String stickerId, LoadOptions options) {
 
         String stickerAssetPath = null;
-
         if (isLocalSticker(groupId)) {
             stickerAssetPath = getStickerAssetPath(groupId, stickerId);
         } else {
@@ -83,38 +89,49 @@ public class StickerManager {
             Uri uri = Uri.parse(stickerAssetPath);
             AlphaAnimation animation = new AlphaAnimation(0f, 1f);
             animation.setDuration(300);
-            Context context = JandiApplication.getContext();
-            DrawableTypeRequest<Uri> glideRequestor = Glide.with(context)
-                    .load(uri);
-
-            final ImageView.ScaleType scaleType = options.scaleType;
-            glideRequestor.asBitmap()
-                    .into(new BitmapImageViewTarget(view) {
-                        @Override
-                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-
-                            view.setScaleType(scaleType);
-
-                            if (options.isClickImage) {
-                                StateListDrawable stateListDrawable = new StateListDrawable();
-                                BitmapDrawable drawable = new BitmapDrawable(context.getResources(), resource);
-                                drawable.setAlpha(153);
-                                stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, drawable);
-                                stateListDrawable.addState(StateSet.WILD_CARD, new BitmapDrawable(context.getResources(), resource));
-                                view.setImageDrawable(stateListDrawable);
-                            } else {
-                                view.setImageDrawable(new GlideBitmapDrawable(context.getResources(), resource));
-                            }
-
-                            if (options.isFadeAnimation) {
-                                AlphaAnimation animation1 = new AlphaAnimation(0f, 1f);
-                                animation1.setDuration(300);
-                                view.startAnimation(animation1);
-                            }
-
-                        }
-                    });
+            loadSticker(uri, view, options);
         }
+    }
+
+    private void loadSticker(Uri uri, final ImageView view, final LoadOptions options) {
+        ImageUtil.loadDrawable(uri, new BaseOnResourceReadyCallback() {
+            @Override
+            public void onReady(Drawable drawable, CloseableReference reference) {
+                setStickerResource(view, options, drawable, reference);
+            }
+
+            @Override
+            public void onFail(Throwable cause) {
+                LogUtil.e("StickerManager", Log.getStackTraceString(cause));
+            }
+        });
+    }
+
+    private void setStickerResource(final ImageView view,
+                                    final LoadOptions options,
+                                    final Drawable drawable,
+                                    final CloseableReference reference) {
+        uiHandler.post(() -> {
+            if (options.isClickImage) {
+                StateListDrawable stateListDrawable = new StateListDrawable();
+                drawable.setAlpha(153);
+                stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, drawable);
+                stateListDrawable.addState(StateSet.WILD_CARD,
+                        new BitmapDrawable(view.getResources(),
+                                ImageUtil.getBitmapFromDrawable(drawable)));
+                view.setImageDrawable(stateListDrawable);
+            } else {
+                view.setImageDrawable(drawable);
+            }
+
+            if (options.isFadeAnimation) {
+                AlphaAnimation animation1 = new AlphaAnimation(0f, 1f);
+                animation1.setDuration(300);
+                view.startAnimation(animation1);
+            }
+
+            view.addOnAttachStateChangeListener(new ClosableAttachStateChangeListener(reference));
+        });
     }
 
     private boolean isLocalSticker(int groupId) {
@@ -166,11 +183,10 @@ public class StickerManager {
         return group;
     }
 
-
     public static class LoadOptions {
         public boolean isFadeAnimation = true;
         public boolean isClickImage;
-        public ImageView.ScaleType scaleType = ImageView.ScaleType.FIT_CENTER;
+        public ScalingUtils.ScaleType scaleType = ScalingUtils.ScaleType.FIT_CENTER;
     }
 
 }
