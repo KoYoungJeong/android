@@ -103,7 +103,9 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:lineSpacingExtra="2dp"
-                android:minHeight="36dp" />
+                android:minHeight="36dp"
+                android:paddingBottom="2dp"
+                android:paddingTop="2dp" />
 
             <ImageView
                 android:id="@+id/btn_show_mention"
