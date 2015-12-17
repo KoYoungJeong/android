@@ -30,24 +30,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp">
+            android:layout_marginTop="1dp"
+            android:gravity="center_vertical">
 
             <EditText
                 android:id="@+id/et_team_detail_info_team_domain"
                 style="@style/JandiTeam.EditText"
                 android:layout_width="wrap_content"
-                android:hint="@string/url"
-                android:minEms="5" />
+                android:maxWidth="220dp"
+                android:hint="@string/jandi_choose_your_domain" />
 
             <TextView
-                style="@style/JandiTeam.EditText"
                 android:layout_width="wrap_content"
-                android:layout_weight="1"
+                android:layout_height="40dp"
+                android:background="@color/jandi_intro_edittext_bg"
                 android:enabled="false"
-                android:gravity="left"
+                android:gravity="left|center_vertical"
                 android:paddingLeft="3dp"
+                android:paddingRight="16dp"
                 android:text=".jandi.com"
-                android:textColor="@color/jandi_text" />
+                android:textColor="@color/jandi_text"
+                android:textSize="@dimen/jandi_text_size_large" />
 
         </LinearLayout>
 

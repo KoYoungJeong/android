@@ -97,6 +97,7 @@
 	<string name="jandi_browse_other_topics">"참여하지 않은 토픽 목록 보기"</string>
 	<string name="jandi_cancel">"취소"</string>
 	<string name="jandi_canceled">"취소됨"</string>
+	<string name="jandi_cannot_connect_service_try_again">"일시적으로 서비스 접속이 되지 않습니다. 잠시 후 다시 시도해주세요."</string>
 	<string name="jandi_cannot_find_messages">"검색 결과가 없습니다:"</string>
 	<string name="jandi_cannot_find_search_result_1">"파일 서랍에 아직 파일이 없습니다."</string>
 	<string name="jandi_cannot_find_search_result_2">"토픽 또는 1:1메시지에서 파일을 업로드하실 수 있습니다."</string>
@@ -105,6 +106,7 @@
 	<string name="jandi_chat_detail">"대화창 설정"</string>
 	<string name="jandi_choose_app_store">"앱 마켓을 선택해주세요."</string>
 	<string name="jandi_choose_email">"이메일 선택"</string>
+	<string name="jandi_choose_your_domain">"도메인명"</string>
 	<string name="jandi_coach_mark_create_new_topics">"토픽 만들기"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"1:1 메시지를 보낼 멤버 찾기"</string>
 	<string name="jandi_coach_mark_directmessage_explain1">"팀 멤버에게 1:1로 보낸 메시지는"</string>
@@ -338,6 +340,7 @@
 	<string name="jandi_push_preview_all_message">"모든 메시지"</string>
 	<string name="jandi_push_preview_public_only">"공개 토픽만"</string>
 	<string name="jandi_question_team_create">"아직 잔디 사용자가 아니세요?"</string>
+	<string name="jandi_r_u_sure_to_delete_email">"정말 이 이메일 주소를 삭제하시겠습니까?"</string>
 	<string name="jandi_retry_voice_search">"음성 검색을 다시 시도해주십시요."</string>
 	<string name="jandi_save">"저장"</string>
 	<string name="jandi_screen_auto">"자동"</string>
