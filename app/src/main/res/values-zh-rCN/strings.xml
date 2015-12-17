@@ -97,6 +97,7 @@
 	<string name="jandi_browse_other_topics">"浏览其他议题"</string>
 	<string name="jandi_cancel">"取消"</string>
 	<string name="jandi_canceled">"取消了"</string>
+	<string name="jandi_cannot_connect_service_try_again">"非常抱歉！ JANDI暂时无法运作，先喝杯茶稍后再试！"</string>
 	<string name="jandi_cannot_find_messages">"搜寻没有结果:"</string>
 	<string name="jandi_cannot_find_search_result_1">"您的文件夹是空的。"</string>
 	<string name="jandi_cannot_find_search_result_2">"直接上传及分享文件到任何对话当中"</string>
@@ -105,6 +106,7 @@
 	<string name="jandi_chat_detail">"聊天设置"</string>
 	<string name="jandi_choose_app_store">"选择应用程序商铺"</string>
 	<string name="jandi_choose_email">"选择一个电子邮件"</string>
+	<string name="jandi_choose_your_domain">"请输入团队的域名"</string>
 	<string name="jandi_coach_mark_create_new_topics">"建立新议题"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"选择成员开始私信"</string>
 	<string name="jandi_coach_mark_directmessage_explain1">"在这里找到所有私信"</string>
@@ -338,6 +340,7 @@
 	<string name="jandi_push_preview_all_message">"所有信息"</string>
 	<string name="jandi_push_preview_public_only">"仅限公开议题"</string>
 	<string name="jandi_question_team_create">"您的团队还未使用JANDI吗？"</string>
+	<string name="jandi_r_u_sure_to_delete_email">"你确认要删除这个电子邮件地址？"</string>
 	<string name="jandi_retry_voice_search">"没有接收清楚您刚才说的，麻烦再说一次"</string>
 	<string name="jandi_save">"储存"</string>
 	<string name="jandi_screen_auto">"自动调整"</string>

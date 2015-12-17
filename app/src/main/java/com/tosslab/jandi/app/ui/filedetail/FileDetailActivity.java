@@ -173,8 +173,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     KeyboardHeightModel keyboardHeightModel;
     @SystemService
     InputMethodManager inputMethodManager;
-    @SystemService
-    ClipboardManager clipboardManager;
 
     private EntityManager entityManager;
     private boolean isMyFile;
@@ -957,7 +955,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         if (TextUtils.isEmpty(contentString)) {
             contentString = "";
         }
-        ClipData clipData = ClipData.newPlainText("", contentString);
+
+        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clipData = ClipData.newPlainText(null, contentString);
         clipboardManager.setPrimaryClip(clipData);
     }
 
