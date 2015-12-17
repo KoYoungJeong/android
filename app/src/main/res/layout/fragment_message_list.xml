@@ -146,7 +146,7 @@
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
             android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-            fresco:placeholderImage="@drawable/profile_img"/>
+            fresco:placeholderImage="@drawable/profile_img" />
 
         <!-- 기본 표시 레이어 -->
         <TextView
@@ -197,7 +197,7 @@
         android:layout_alignWithParentIfMissing="true"
         android:background="@color/deactivate_text_color" />
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/vg_messages_input"
         style="@style/JandiChat.Wrapper"
         android:layout_above="@+id/vg_option_space"
@@ -205,32 +205,35 @@
 
         <ImageView
             android:id="@+id/btn_message_action_button_1"
-            style="@style/JandiChat.ActionButton.Upload" />
+            style="@style/JandiChat.ActionButton.Upload"
+            android:layout_gravity="bottom" />
 
         <ImageView
             android:id="@+id/btn_message_action_button_2"
             style="@style/JandiChat.ActionButton.Sticker"
-            android:layout_toRightOf="@id/btn_message_action_button_1" />
+            android:layout_gravity="bottom" />
 
         <LinearLayout
             android:id="@+id/vg_message_input_wrapper"
             style="@style/JandiChat.InputWrapper"
-            android:layout_toLeftOf="@+id/btn_send_message"
-            android:layout_toRightOf="@+id/btn_message_action_button_2"
             android:orientation="horizontal">
 
             <com.tosslab.jandi.app.utils.extracomponent.BackpressEditText
                 android:id="@+id/et_message"
                 style="@style/JandiChat.EditText"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:lineSpacingExtra="2dp"
+                android:minHeight="36dp"
+                android:paddingBottom="2dp"
+                android:paddingTop="2dp" />
 
             <ImageView
                 android:id="@+id/btn_show_mention"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="36dp"
+                android:layout_gravity="bottom"
                 android:paddingLeft="9dp"
                 android:paddingRight="9dp"
                 android:scaleType="centerInside"
@@ -238,16 +241,14 @@
                 android:visibility="gone" />
         </LinearLayout>
 
-        <Button
+        <TextView
             android:id="@+id/btn_send_message"
             style="@style/JandiChat.Button"
-            android:layout_alignBottom="@+id/vg_message_input_wrapper"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/vg_message_input_wrapper"
-            android:layout_centerVertical="true"
-            android:text="@string/jandi_message_send" />
+            android:gravity="center"
+            android:text="@string/jandi_message_send"
+            android:textSize="@dimen/jandi_text_size_large" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/vg_messages_go_to_latest"

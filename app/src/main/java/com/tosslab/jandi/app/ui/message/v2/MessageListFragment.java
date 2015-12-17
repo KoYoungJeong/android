@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
@@ -1034,7 +1035,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                                 .delay(300, TimeUnit.MILLISECONDS)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(integer -> {
-                                    filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
+                                    Context context = getActivity().getApplicationContext();
+                                    int keyboardHeight = JandiPreference.getKeyboardHeight(context);
+                                    showUploadMenuSelectorIfNotShow(keyboardHeight);
                                 }, Throwable::printStackTrace))
                 .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
     }
@@ -1227,7 +1230,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
 
-        filePickerViewModel.selectFileSelector(event.type, MessageListFragment.this, entityId);
+        openUploadPanel(event.type);
 
         AnalyticsValue.Action action;
         switch (event.type) {
@@ -2000,12 +2003,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         return false;
     }
 
-    //FIXME 업로드 레이아웃 열기
-    void openUploadPanel() {
+    void openUploadPanel(int type) {
         Permissions.getChecker()
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .hasPermission(() -> {
-                    filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
+                    filePickerViewModel.selectFileSelector(type, MessageListFragment.this, entityId);
+
                     AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Upload);
                 })
                 .noPermission(() -> {
