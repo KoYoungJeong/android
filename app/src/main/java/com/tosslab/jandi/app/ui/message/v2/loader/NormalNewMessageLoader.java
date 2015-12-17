@@ -120,7 +120,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
             messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), lastLinkId);
             updateMarker(roomId);
 
-            messageListPresenter.setUpNewMessage(messages, messageListModel.getMyId(), linkId, moveToLinkId);
+            messageListPresenter.setUpNewMessage(messages, messageListModel.getMyId(), moveToLinkId);
             firstLoad = false;
 
             messageListPresenter.showEmptyViewIfNeed();

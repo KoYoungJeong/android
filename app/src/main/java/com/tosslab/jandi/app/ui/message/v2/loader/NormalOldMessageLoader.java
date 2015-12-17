@@ -77,7 +77,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                         oldMessage.records.get(oldMessage.records.size() - 1).id);
             }
 
-            messageListPresenter.setUpOldMessage(linkId, oldMessage.records, currentItemCount, isFirstMessage);
+            messageListPresenter.setUpOldMessage(oldMessage.records, currentItemCount, isFirstMessage);
 
         } catch (RetrofitError e) {
             e.printStackTrace();

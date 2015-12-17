@@ -421,7 +421,7 @@ public class MessageListPresenter {
 
         if (position >= 0 || commentIndexes.size() > 0) {
 
-            messageAdapter.notifyDataSetChanged();
+            messageAdapter.notifyItemRangeChanged(0, messageAdapter.getItemCount());
         }
     }
 
@@ -748,7 +748,7 @@ public class MessageListPresenter {
     }
 
     @UiThread
-    public void setUpOldMessage(int lastReadLinkId, List<ResMessages.Link> linkList,
+    public void setUpOldMessage(List<ResMessages.Link> linkList,
                                 int currentItemCount, boolean isFirstMessage) {
         if (currentItemCount == 0) {
             // 첫 로드라면...
@@ -778,16 +778,17 @@ public class MessageListPresenter {
     }
 
     @UiThread
-    public void setUpNewMessage(List<ResMessages.Link> linkList, int myId, int lastLinkId, boolean firstLoad) {
-        int visibleLastItemPosition = getLastVisibleItemPosition();
-        int lastItemPosition = getLastItemPosition();
-
-        addAll(lastItemPosition, linkList);
+    public void setUpNewMessage(List<ResMessages.Link> linkList, int myId, boolean firstLoad) {
 
         int location = linkList.size() - 1;
         if (location < 0) {
             return;
         }
+
+        int visibleLastItemPosition = getLastVisibleItemPosition();
+        int lastItemPosition = getLastItemPosition();
+
+        addAll(lastItemPosition, linkList);
 
         ResMessages.Link lastUpdatedMessage = linkList.get(location);
         if (!firstLoad
