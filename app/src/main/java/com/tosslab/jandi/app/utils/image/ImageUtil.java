@@ -357,6 +357,33 @@ public class ImageUtil {
         }
     }
 
+    public static String getThumbnailUrl(ResMessages.ThumbnailUrls extraInfo,
+                                         Thumbnails thumbnails) {
+        if (extraInfo == null) {
+            return null;
+        }
+
+        String targetUrl = null;
+
+        switch (thumbnails) {
+            case SMALL:
+                targetUrl = extraInfo.smallThumbnailUrl;
+                break;
+            case MEDIUM:
+                targetUrl = extraInfo.mediumThumbnailUrl;
+                break;
+            case LARGE:
+                targetUrl = extraInfo.largeThumbnailUrl;
+                break;
+            case THUMB:
+            default:
+                targetUrl = extraInfo.thumbnailUrl;
+                break;
+        }
+
+        return getFileUrl(targetUrl);
+    }
+
     public static String getThumbnailUrlOrOriginal(ResMessages.FileContent content,
                                                    Thumbnails thumbnails) {
         if (content == null) {
@@ -380,6 +407,9 @@ public class ImageUtil {
             case LARGE:
                 targetUrl = extraInfo.largeThumbnailUrl;
                 break;
+            case THUMB:
+                targetUrl = extraInfo.thumbnailUrl;
+                break;
             case ORIGINAL:
                 targetUrl = original;
                 break;
@@ -388,6 +418,7 @@ public class ImageUtil {
         if (TextUtils.isEmpty(targetUrl)) {
             return getFileUrl(original);
         }
+
         return getFileUrl(targetUrl);
     }
 
@@ -463,6 +494,7 @@ public class ImageUtil {
         draweeView.setHierarchy(hierarchy);
 
         ImageDecodeOptions imageDecodeOptions = ImageDecodeOptions.newBuilder()
+                .setDecodePreviewFrame(true)
                 .setBackgroundColor(Color.BLACK)
                 .build();
 
@@ -470,8 +502,10 @@ public class ImageUtil {
         ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
                 .setImageDecodeOptions(imageDecodeOptions)
                 .setResizeOptions(new ResizeOptions(layoutParams.width, layoutParams.height))
+                .setAutoRotateEnabled(true)
                 .build();
         DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setAutoPlayAnimations(false)
                 .setImageRequest(imageRequest)
                 .setOldController(draweeView.getController())
                 .build();
@@ -550,7 +584,7 @@ public class ImageUtil {
     }
 
     public enum Thumbnails {
-        SMALL, MEDIUM, LARGE, ORIGINAL
+        SMALL, MEDIUM, LARGE, THUMB, ORIGINAL
     }
 
     public static class BitmapDataSubscriber
@@ -575,6 +609,7 @@ public class ImageUtil {
                     onResourceReadyCallback.onReady(drawable, imageReference);
                 } else {
                     onResourceReadyCallback.onFail(new NullPointerException("Drawable is empty."));
+                    CloseableReference.closeSafely(imageReference);
                 }
             } else {
                 onResourceReadyCallback.onFail(new NullPointerException("ImageReference is empty."));
