@@ -97,6 +97,7 @@
 	<string name="jandi_browse_other_topics">"Browse other topics"</string>
 	<string name="jandi_cancel">"Cancel"</string>
 	<string name="jandi_canceled">"Canceled"</string>
+	<string name="jandi_cannot_connect_service_try_again">"JANDI appears to be currently unavailable. Please try again soon. Sorry for any inconvenience!"</string>
 	<string name="jandi_cannot_find_messages">"No messages found matching:"</string>
 	<string name="jandi_cannot_find_search_result_1">"Your file drawer is empty."</string>
 	<string name="jandi_cannot_find_search_result_2">"Upload and share files directly into any conversation."</string>
@@ -105,6 +106,7 @@
 	<string name="jandi_chat_detail">"Chat setting"</string>
 	<string name="jandi_choose_app_store">"Choose an app market."</string>
 	<string name="jandi_choose_email">"Choose an email"</string>
+	<string name="jandi_choose_your_domain">"Choose your domain"</string>
 	<string name="jandi_coach_mark_create_new_topics">"Create new topics"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"Choose a team member\nto start messaging"</string>
 	<string name="jandi_coach_mark_directmessage_explain1">"You can find all of"</string>
@@ -338,6 +340,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_push_preview_all_message">"All messages"</string>
 	<string name="jandi_push_preview_public_only">"Public topics only"</string>
 	<string name="jandi_question_team_create">"Don't have a team on JANDI yet?"</string>
+	<string name="jandi_r_u_sure_to_delete_email">"Are you sure you want to delete this email address?"</string>
 	<string name="jandi_retry_voice_search">"Didn\'t catch that, try speaking again"</string>
 	<string name="jandi_save">"Save"</string>
 	<string name="jandi_screen_auto">"Auto"</string>

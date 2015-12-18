@@ -97,6 +97,7 @@
 	<string name="jandi_browse_other_topics">"未参加のトピック一覧"</string>
 	<string name="jandi_cancel">"戻る"</string>
 	<string name="jandi_canceled">"キャンセルされました"</string>
+	<string name="jandi_cannot_connect_service_try_again">"JANDIに接続できません。後で再起動してください。"</string>
 	<string name="jandi_cannot_find_messages">"一致するメッセージがありません:"</string>
 	<string name="jandi_cannot_find_search_result_1">"ファイルがありません。"</string>
 	<string name="jandi_cannot_find_search_result_2">"アップロードして、会話の中で共有しましょう"</string>
@@ -105,6 +106,7 @@
 	<string name="jandi_chat_detail">"トピック設定"</string>
 	<string name="jandi_choose_app_store">"アプリストアを選択してください"</string>
 	<string name="jandi_choose_email">"メールアドレスを選択"</string>
+	<string name="jandi_choose_your_domain">"ドメイン名(英数字)を入力"</string>
 	<string name="jandi_coach_mark_create_new_topics">"トピック作成"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"ダイレクトメッセージを\n送るメンバー検索"</string>
 	<string name="jandi_coach_mark_directmessage_explain1">"ここからメンバー達に送ったダイレク"</string>
@@ -338,6 +340,7 @@
 	<string name="jandi_push_preview_all_message">"全メッセージ"</string>
 	<string name="jandi_push_preview_public_only">"公開トピックのみ"</string>
 	<string name="jandi_question_team_create">"JANDIにチームを作成していない方はこちら"</string>
+	<string name="jandi_r_u_sure_to_delete_email">"プライマリアドレスは削除できません"</string>
 	<string name="jandi_retry_voice_search">"言葉を認識できませんでした。もう一度お試し下さい"</string>
 	<string name="jandi_save">"保存"</string>
 	<string name="jandi_screen_auto">"自動回転"</string>

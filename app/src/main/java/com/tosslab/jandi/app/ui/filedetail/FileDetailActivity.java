@@ -33,7 +33,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -151,7 +150,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @ViewById(R.id.lv_file_detail_comments)
     ListView lvFileDetailComments;
     @ViewById(R.id.vg_file_detail_input_comment)
-    RelativeLayout vgCommentLayout;
+    View vgCommentLayout;
     @ViewById(R.id.et_message)
     BackpressEditText etComment;
     @ViewById(R.id.btn_send_message)
@@ -174,8 +173,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     KeyboardHeightModel keyboardHeightModel;
     @SystemService
     InputMethodManager inputMethodManager;
-    @SystemService
-    ClipboardManager clipboardManager;
 
     private EntityManager entityManager;
     private boolean isMyFile;
@@ -958,7 +955,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         if (TextUtils.isEmpty(contentString)) {
             contentString = "";
         }
-        ClipData clipData = ClipData.newPlainText("", contentString);
+
+        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clipData = ClipData.newPlainText(null, contentString);
         clipboardManager.setPrimaryClip(clipData);
     }
 
