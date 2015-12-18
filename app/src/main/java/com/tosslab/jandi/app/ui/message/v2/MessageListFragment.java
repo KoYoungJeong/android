@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.message.v2;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
@@ -494,16 +493,27 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     private void showUploadMenuSelectorIfNotShow(int height) {
         if (!uploadMenuViewModel.isShow()) {
             if (isCanDrawWindowOverlay()) {
-                uploadMenuViewModel.showUploadSelector(height);
-                Observable.just(1)
-                        .delay(100, TimeUnit.MILLISECONDS)
-                        .subscribe(i -> {
-                            if (stickerViewModel.isShow()) {
-                                stickerViewModel.dismissStickerSelector(false);
-                            }
-                        });
-                buttonAction = ButtonAction.UPLOAD;
-                setActionButtons();
+                Permissions.getChecker()
+                        .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .hasPermission(() -> {
+                            uploadMenuViewModel.showUploadSelector(height);
+                            Observable.just(1)
+                                    .delay(100, TimeUnit.MILLISECONDS)
+                                    .subscribe(i -> {
+                                        if (stickerViewModel.isShow()) {
+                                            stickerViewModel.dismissStickerSelector(false);
+                                        }
+                                    });
+                            buttonAction = ButtonAction.UPLOAD;
+                            setActionButtons();
+                            AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Upload);
+                        })
+                        .noPermission(() -> {
+                            String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                            MessageListFragment.this.requestPermissions(permissions,
+                                    REQ_STORAGE_PERMISSION);
+                        })
+                        .check();
             } else {
                 requestWindowPermission();
             }
@@ -1026,6 +1036,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.moveLastPage();
     }
 
+    //todo
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
@@ -1035,8 +1046,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                                 .delay(300, TimeUnit.MILLISECONDS)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(integer -> {
-                                    Context context = getActivity().getApplicationContext();
-                                    int keyboardHeight = JandiPreference.getKeyboardHeight(context);
+                                    int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity().getApplicationContext());
                                     showUploadMenuSelectorIfNotShow(keyboardHeight);
                                 }, Throwable::printStackTrace))
                 .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
@@ -1230,7 +1240,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
 
-        openUploadPanel(event.type);
+        filePickerViewModel.selectFileSelector(event.type, MessageListFragment.this, entityId);
 
         AnalyticsValue.Action action;
         switch (event.type) {
@@ -1801,12 +1811,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.showProgressWheel();
         try {
             messageListModel.modifyTopicName(entityType, entityId, event.inputName);
-
             modifyEntitySucceed(event.inputName);
-
             messageListModel.trackChangingEntityName(entityType);
             EntityManager.getInstance().getEntityById(entityId).getEntity().name = event.inputName;
-
         } catch (RetrofitError e) {
             if (e.getResponse() != null && e.getResponse().getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
                 messageListPresenter.showFailToast(getString(R.string.err_entity_duplicated_name));
@@ -2003,21 +2010,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         return false;
     }
 
-    void openUploadPanel(int type) {
-        Permissions.getChecker()
-                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .hasPermission(() -> {
-                    filePickerViewModel.selectFileSelector(type, MessageListFragment.this, entityId);
-
-                    AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Upload);
-                })
-                .noPermission(() -> {
-                    String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                    MessageListFragment.this.requestPermissions(permissions,
-                            REQ_STORAGE_PERMISSION);
-                })
-                .check();
-    }
 
     @Click(R.id.btn_message_action_button_1)
     public void handleActionButton1() {

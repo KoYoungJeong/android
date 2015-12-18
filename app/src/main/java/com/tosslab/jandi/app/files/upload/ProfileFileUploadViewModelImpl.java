@@ -39,11 +39,6 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
     private ProgressWheel progressWheel;
 
     @Override
-    public void showFileUploadTypeDialog(FragmentManager fragmentManager) {
-
-    }
-
-    @Override
     public void selectFileSelector(int type, Fragment fragment, int entityId) {
 
     }
