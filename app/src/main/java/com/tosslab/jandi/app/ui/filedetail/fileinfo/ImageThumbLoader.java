@@ -2,16 +2,33 @@ package com.tosslab.jandi.app.ui.filedetail.fileinfo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.image.ImageInfo;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
 import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
-import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
+import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -22,18 +39,18 @@ import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
  */
 public class ImageThumbLoader implements FileThumbLoader {
 
-    private final ImageView iconFileType;
+    private final ImageView ivFileType;
     private final ViewGroup vgDetailPhoto;
-    private final ImageView imageViewPhotoFile;
+    private final SimpleDraweeView ivFile;
     private final int roomId;
     private Context context;
 
-    public ImageThumbLoader(ImageView iconFileType, ViewGroup vgDetailPhoto, ImageView imageViewPhotoFile, int roomId) {
-        this.iconFileType = iconFileType;
+    public ImageThumbLoader(ImageView ivFileType, ViewGroup vgDetailPhoto, SimpleDraweeView ivFile, int roomId) {
+        this.ivFileType = ivFileType;
         this.vgDetailPhoto = vgDetailPhoto;
-        this.imageViewPhotoFile = imageViewPhotoFile;
+        this.ivFile = ivFile;
         this.roomId = roomId;
-        context = imageViewPhotoFile.getContext();
+        context = ivFile.getContext();
     }
 
     @Override
@@ -41,61 +58,45 @@ public class ImageThumbLoader implements FileThumbLoader {
 
         ResMessages.FileContent content = fileMessage.content;
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(content.serverUrl);
-        iconFileType.setImageResource(
+        ivFileType.setImageResource(
                 MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon));
 
-
-        if (BitmapUtil.hasImageUrl(content)) {
-            imageViewPhotoFile.setEnabled(true);
+        if (ImageUtil.hasImageUrl(content)) {
+            ivFile.setEnabled(true);
 
             switch (sourceType) {
                 case Google:
-                    imageViewPhotoFile.setImageResource(R.drawable.jandi_down_placeholder_google);
+                    ivFile.setImageURI(UriFactory.getResourceUri(R.drawable.jandi_down_placeholder_google));
                     break;
                 case Dropbox:
-                    imageViewPhotoFile.setImageResource(R.drawable.jandi_down_placeholder_dropbox);
+                    ivFile.setImageURI(UriFactory.getResourceUri(R.drawable.jandi_down_placeholder_dropbox));
                     break;
                 default:
-                    String localFilePath = BitmapUtil.getLocalFilePath(fileMessage.id);
-                    String thumbnailPhotoUrl;
-                    if (!TextUtils.isEmpty(localFilePath)) {
-                        thumbnailPhotoUrl = localFilePath;
-                    } else {
-                        thumbnailPhotoUrl = BitmapUtil.getThumbnailUrlOrOriginal(content, BitmapUtil.Thumbnails.LARGE);
-                    }
-
-                    imageViewPhotoFile.setBackgroundResource(R.color.jandi_messages_image_bg);
-                    BitmapUtil.loadImageByGlideOrIonWhenGif(
-                            imageViewPhotoFile, thumbnailPhotoUrl,
-                            R.drawable.file_messageview_downloading, R.drawable.file_messageview_noimage,
-                            (width, height) -> {
-                                updateViewSize(width, height);
-                            });
+                    loadImage(fileMessage.id, content);
                     break;
             }
 
             switch (sourceType) {
                 case Google:
                 case Dropbox:
-                    imageViewPhotoFile.setOnClickListener(view -> {
+                    ivFile.setOnClickListener(view -> {
                         String originalUrl =
-                                BitmapUtil.getThumbnailUrlOrOriginal(
-                                        content, BitmapUtil.Thumbnails.ORIGINAL);
+                                ImageUtil.getThumbnailUrlOrOriginal(
+                                        content, ImageUtil.Thumbnails.ORIGINAL);
                         context.startActivity(
                                 new Intent(Intent.ACTION_VIEW, Uri.parse(originalUrl)));
                         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewPhoto);
                     });
                     break;
                 default:
-                    imageViewPhotoFile.setOnClickListener(view -> {
-
+                    ivFile.setOnClickListener(view -> {
                         if (roomId > 0) {
                             CarouselViewerActivity_.intent(context)
                                     .roomId(roomId)
                                     .startLinkId(fileMessage.id)
                                     .start();
                         } else {
-                            String optimizedImageUrl = BitmapUtil.getOptimizedImageUrl(content);
+                            String optimizedImageUrl = ImageUtil.getOptimizedImageUrl(content);
                             PhotoViewActivity_
                                     .intent(context)
                                     .imageUrl(optimizedImageUrl)
@@ -109,37 +110,92 @@ public class ImageThumbLoader implements FileThumbLoader {
             }
 
         } else {
-            imageViewPhotoFile.setEnabled(false);
+            ivFile.setEnabled(false);
 
             switch (sourceType) {
                 case Google:
-                    imageViewPhotoFile.setImageResource(R.drawable.jandi_down_placeholder_google);
+                    ivFile.setImageURI(UriFactory.getResourceUri(R.drawable.jandi_down_placeholder_google));
                     break;
                 case Dropbox:
-                    imageViewPhotoFile.setImageResource(R.drawable.jandi_down_placeholder_dropbox);
+                    ivFile.setImageURI(UriFactory.getResourceUri(R.drawable.jandi_down_placeholder_dropbox));
                     break;
                 default:
-                    imageViewPhotoFile.setImageResource(R.drawable.file_down_img_disable);
+                    ivFile.setImageURI(UriFactory.getResourceUri(R.drawable.file_down_img_disable));
                     break;
             }
         }
     }
 
+    private void loadImage(int fileId, ResMessages.FileContent content) {
+        String localFilePath = ImageUtil.getLocalFilePath(fileId);
+
+        boolean isFromLocalFilePath = !TextUtils.isEmpty(localFilePath);
+
+        String thumbnailPhotoUrl = isFromLocalFilePath
+                ? localFilePath
+                : ImageUtil.getThumbnailUrlOrOriginal(content, ImageUtil.Thumbnails.LARGE);
+
+        Resources resources = context.getResources();
+
+        GenericDraweeHierarchy hierarchy = ivFile.getHierarchy();
+        hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+
+        Drawable placeHolder = resources.getDrawable(R.drawable.file_messageview_downloading);
+        hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_CENTER);
+
+        Drawable error = resources.getDrawable(R.drawable.file_messageview_noimage);
+        hierarchy.setFailureImage(error, ScalingUtils.ScaleType.FIT_CENTER);
+
+        ivFile.setHierarchy(hierarchy);
+
+        Uri uri = isFromLocalFilePath
+                ? UriFactory.getFileUri(thumbnailPhotoUrl)
+                : Uri.parse(thumbnailPhotoUrl);
+
+        int displayWidth = ApplicationUtil.getDisplaySize(false);
+        int displayHeight = ApplicationUtil.getDisplaySize(true);
+        ResizeOptions resizeOptions = new ResizeOptions(displayWidth, displayHeight);
+        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
+                .setResizeOptions(resizeOptions)
+                .setAutoRotateEnabled(true)
+                .build();
+
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setImageRequest(imageRequest)
+                .setControllerListener(new BaseControllerListener<ImageInfo>() {
+                    @Override
+                    public void onFinalImageSet(String id, ImageInfo imageInfo,
+                                                Animatable animatable) {
+                        updateViewSize(imageInfo.getWidth(), imageInfo.getHeight());
+                    }
+                })
+                .setAutoPlayAnimations(true)
+                .build();
+        ivFile.setController(controller);
+    }
+
     private void updateViewSize(int imageWidth, int imageHeight) {
+        int displayWidth = ApplicationUtil.getDisplaySize(false);
+        int displayHeight = ApplicationUtil.getDisplaySize(true);
 
         ViewGroup.LayoutParams layoutParams = vgDetailPhoto.getLayoutParams();
-        if (imageWidth > imageHeight) {
+        if (imageWidth <= 0 || imageHeight <= 0) {
+            imageWidth = displayWidth;
+            imageHeight = displayWidth;
+            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
 
+        if (imageWidth > imageHeight) {
             int viewWidth = vgDetailPhoto.getMeasuredWidth();
             float ratio = (viewWidth * 10f) / (imageWidth * 10f);
 
             layoutParams.width = (int) (imageWidth * ratio);
             layoutParams.height = (int) (imageHeight * ratio);
         } else {
-            int photoWidth = vgDetailPhoto.getMeasuredWidth();
+            DisplayMetrics metrics = JandiApplication.getContext().getResources().getDisplayMetrics();
+            int photoWidth = (int) (Math.min(displayWidth, displayHeight) - (metrics.density * 22));
             layoutParams.width = photoWidth;
             layoutParams.height = photoWidth;
-
         }
         vgDetailPhoto.setLayoutParams(layoutParams);
     }

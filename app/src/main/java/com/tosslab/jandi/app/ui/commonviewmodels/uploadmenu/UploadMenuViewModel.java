@@ -41,12 +41,10 @@ public class UploadMenuViewModel {
 
     @Bean
     KeyboardHeightModel keyboardHeightModel;
-
+    ImageView ivUploadImage;
+    ImageView ivUploadCamera;
+    ImageView ivUploadFile;
     private FrameLayout vgUploadMenuSelector;
-    private ImageView ivUploadImage;
-    private ImageView ivUploadCamera;
-    private ImageView ivUploadFile;
-
     private WindowManager windowManager;
 
     private boolean isShow = false;
@@ -68,7 +66,7 @@ public class UploadMenuViewModel {
         initClickEvent();
     }
 
-    private void initClickEvent() {
+    void initClickEvent() {
         ivUploadImage.setOnClickListener(v -> {
             EventBus.getDefault().post(new RequestFileUploadEvent(FilePickerViewModel.TYPE_UPLOAD_GALLERY));
             dismissUploadSelector(true);

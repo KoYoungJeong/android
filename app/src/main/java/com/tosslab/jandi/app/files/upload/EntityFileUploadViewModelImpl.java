@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentManager;
 import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
-import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.ui.album.ImageAlbumActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
@@ -42,13 +41,6 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
     FilePickerModel filePickerModel;
 
     private File filePath;
-
-    @Override
-    public void showFileUploadTypeDialog(FragmentManager fragmentManager) {
-        DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
-        fileUploadTypeDialog.show(fragmentManager, "dialog");
-    }
-
 
     @Override
     public void selectFileSelector(int type, Fragment fragment, int entityId) {

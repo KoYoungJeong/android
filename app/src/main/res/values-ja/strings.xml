@@ -55,6 +55,7 @@
 	<string name="file_upload_comment">"コメント(任意)"</string>
 	<string name="jadi_account_home">"ホームに戻る"</string>
 	<string name="jandi_1_1_message">"ダイレクトメッセージ"</string>
+	<string name="jandi_91_apk_store">"91 Apkストア"</string>
 	<string name="jandi_about">"JANDIについて"</string>
 	<string name="jandi_account">"アカウント"</string>
 	<string name="jandi_account_home_help">"1つのアカウントで複数のチームを利用できます1つのアカウントで複数のメールアドレスを登録することができますチームごとに自分のメールアドレスを1つ選んでください。プロファイルに表示されます"</string>
@@ -90,16 +91,22 @@
 	<string name="jandi_auto_join_explain">"新しいメンバー全員をこのトピックに招待する"</string>
 	<string name="jandi_auto_join_title">"自動招待"</string>
 	<string name="jandi_auto_join_title_wild">"自動招待*"</string>
+	<string name="jandi_baidu_app_store">"百度アプリストア"</string>
+	<string name="jandi_bot_role">"僕はJANDIの利用中必ず必要なメッセージや、JANDIコネクトのメッセージをお送りします。"</string>
+	<string name="jandi_bot_status">"こんにちは、ミスターJと言います。"</string>
 	<string name="jandi_browse_other_topics">"未参加のトピック一覧"</string>
 	<string name="jandi_cancel">"戻る"</string>
 	<string name="jandi_canceled">"キャンセルされました"</string>
+	<string name="jandi_cannot_connect_service_try_again">"JANDIに接続できません。後で再起動してください。"</string>
 	<string name="jandi_cannot_find_messages">"一致するメッセージがありません:"</string>
 	<string name="jandi_cannot_find_search_result_1">"ファイルがありません。"</string>
 	<string name="jandi_cannot_find_search_result_2">"アップロードして、会話の中で共有しましょう"</string>
 	<string name="jandi_cannot_find_search_result_old">"ファイルが見つかりません"</string>
 	<string name="jandi_change_passcode">"パスコード変更"</string>
 	<string name="jandi_chat_detail">"トピック設定"</string>
+	<string name="jandi_choose_app_store">"アプリストアを選択してください"</string>
 	<string name="jandi_choose_email">"メールアドレスを選択"</string>
+	<string name="jandi_choose_your_domain">"ドメイン名(英数字)を入力"</string>
 	<string name="jandi_coach_mark_create_new_topics">"トピック作成"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"ダイレクトメッセージを\n送るメンバー検索"</string>
 	<string name="jandi_coach_mark_directmessage_explain1">"ここからメンバー達に送ったダイレク"</string>
@@ -147,6 +154,7 @@
 	<string name="jandi_disable_user_profile_explain">"このメンバーは現在無効化されています。\n詳細はチーム管理者にお問い合わせ下さい"</string>
 	<string name="jandi_disabled_team">"%1$sから無効化されました。チーム管理者にお問い合わせ下さい"</string>
 	<string name="jandi_disabled_user">"このメンバーは現在無効化されています"</string>
+	<string name="jandi_domain_is_already_taken">"ドメイン名が既に使用されています"</string>
 	<string name="jandi_duplicate_email">"そのメールアドレスは既に使用されています"</string>
 	<string name="jandi_empty">"None"</string>
 	<string name="jandi_enable_external_link">"共有用リンクを作成する"</string>
@@ -206,6 +214,7 @@
 	<string name="jandi_has_joined">"%sさんが参加しました"</string>
 	<string name="jandi_have_an_account_already">"すでにJANDIに登録済みの方はこちら"</string>
 	<string name="jandi_help">"ヘルプ"</string>
+	<string name="jandi_hi_apk_store">"Hi Apkストア"</string>
 	<string name="jandi_image_too_big">"画像が大きすぎです"</string>
 	<string name="jandi_incorrect_passcode">"パスコードが間違っています。"</string>
 	<string name="jandi_input_password">"選択したチームのパスワードを入力してください"</string>
@@ -302,6 +311,7 @@
 	<string name="jandi_password_strength_too_short">"8文字以上入力してください"</string>
 	<string name="jandi_password_strength_weak">"最低1文字の数字または大文字または記号を含めてください"</string>
 	<string name="jandi_phone_led">"携帯の通知ランプ"</string>
+	<string name="jandi_play_store">"Google Playストア"</string>
 	<string name="jandi_plz_input_topic_description">"トピックの説明（選択）"</string>
 	<string name="jandi_preview_message_contents">"メッセージプレビュー"</string>
 	<string name="jandi_privacy_policy">"プライバシーポリシー"</string>
@@ -330,6 +340,7 @@
 	<string name="jandi_push_preview_all_message">"全メッセージ"</string>
 	<string name="jandi_push_preview_public_only">"公開トピックのみ"</string>
 	<string name="jandi_question_team_create">"JANDIにチームを作成していない方はこちら"</string>
+	<string name="jandi_r_u_sure_to_delete_email">"プライマリアドレスは削除できません"</string>
 	<string name="jandi_retry_voice_search">"言葉を認識できませんでした。もう一度お試し下さい"</string>
 	<string name="jandi_save">"保存"</string>
 	<string name="jandi_screen_auto">"自動回転"</string>

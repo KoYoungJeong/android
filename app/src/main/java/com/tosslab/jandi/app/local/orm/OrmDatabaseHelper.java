@@ -51,7 +51,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ADD_TOKEN_TABLE = 6;
     private static final int DATABASE_VERSION_ADD_READY_COMMENT = 7;
     private static final int DATABASE_VERSION_SHARE_ENTITY_RESET = 8;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_SHARE_ENTITY_RESET;
+    private static final int DATABASE_VERSION_FILE_SHARE_INFO = 9;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_FILE_SHARE_INFO;
+
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -179,6 +181,15 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, ReadyComment.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_SHARE_ENTITY_RESET, () -> {
+                        MessageRepository.getRepository().deleteAllLink();
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_FILE_SHARE_INFO, () -> {
+                        dropTable(connectionSource, ResMessages.FileContent.class);
+                        dropTable(connectionSource, ResMessages.ThumbnailUrls.class);
+
+                        createTable(connectionSource, ResMessages.FileContent.class);
+                        createTable(connectionSource, ResMessages.ThumbnailUrls.class);
+
                         MessageRepository.getRepository().deleteAllLink();
                     }));
 

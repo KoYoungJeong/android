@@ -55,6 +55,7 @@
 	<string name="file_upload_comment">"댓글 (선택 사항)"</string>
 	<string name="jadi_account_home">"잔디 메인"</string>
 	<string name="jandi_1_1_message">"1:1 메시지"</string>
+	<string name="jandi_91_apk_store">"91 Apk 스토어"</string>
 	<string name="jandi_about">"About"</string>
 	<string name="jandi_account">"계정"</string>
 	<string name="jandi_account_home_help">"하나의 메일 주소로 여러 개의 팀을 생성하거나 참여할 수 있습니다.여러 개의 메일 주소를 추가하여 업무 용도와 개인 용도의 팀을 분리해서 사용할 수 있습니다.특정 팀과 연동된 메일 주소는 언제든 바꿀 수 있습니다."</string>
@@ -90,16 +91,22 @@
 	<string name="jandi_auto_join_explain">"새로 팀에 참여하는 모든 멤버를 이 토픽에 초대합니다."</string>
 	<string name="jandi_auto_join_title">"자동 초대"</string>
 	<string name="jandi_auto_join_title_wild">"자동 초대*"</string>
+	<string name="jandi_baidu_app_store">"바이두 앱 스토어"</string>
+	<string name="jandi_bot_role">"저는 잔디 사용에 꼭 필요한 메시지나, 잔디 Connect 메시지를 전달합니다."</string>
+	<string name="jandi_bot_status">"안녕하세요? Mr.J입니다. "</string>
 	<string name="jandi_browse_other_topics">"참여하지 않은 토픽 목록 보기"</string>
 	<string name="jandi_cancel">"취소"</string>
 	<string name="jandi_canceled">"취소됨"</string>
+	<string name="jandi_cannot_connect_service_try_again">"일시적으로 서비스 접속이 되지 않습니다. 잠시 후 다시 시도해주세요."</string>
 	<string name="jandi_cannot_find_messages">"검색 결과가 없습니다:"</string>
 	<string name="jandi_cannot_find_search_result_1">"파일 서랍에 아직 파일이 없습니다."</string>
 	<string name="jandi_cannot_find_search_result_2">"토픽 또는 1:1메시지에서 파일을 업로드하실 수 있습니다."</string>
 	<string name="jandi_cannot_find_search_result_old">"검색된 파일이 없습니다."</string>
 	<string name="jandi_change_passcode">"비밀번호 변경"</string>
 	<string name="jandi_chat_detail">"대화창 설정"</string>
+	<string name="jandi_choose_app_store">"앱 마켓을 선택해주세요."</string>
 	<string name="jandi_choose_email">"이메일 선택"</string>
+	<string name="jandi_choose_your_domain">"도메인명"</string>
 	<string name="jandi_coach_mark_create_new_topics">"토픽 만들기"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"1:1 메시지를 보낼 멤버 찾기"</string>
 	<string name="jandi_coach_mark_directmessage_explain1">"팀 멤버에게 1:1로 보낸 메시지는"</string>
@@ -147,6 +154,7 @@
 	<string name="jandi_disable_user_profile_explain">"차단된 멤버입니다.\n궁금하신 사항은 팀 관리자에게 문의하세요."</string>
 	<string name="jandi_disabled_team">"%1$s에서 차단된 멤버입니다. 팀 관리자에게 문의하세요."</string>
 	<string name="jandi_disabled_user">"차단된 멤버입니다"</string>
+	<string name="jandi_domain_is_already_taken">"이미 사용중인 도메인 입니다"</string>
 	<string name="jandi_duplicate_email">"이미 사용중인 이메일입니다"</string>
 	<string name="jandi_empty">"None"</string>
 	<string name="jandi_enable_external_link">"외부 공유용 링크 생성"</string>
@@ -206,6 +214,7 @@
 	<string name="jandi_has_joined">"%s님이 참여하였습니다"</string>
 	<string name="jandi_have_an_account_already">"이미 계정이 있으신가요?"</string>
 	<string name="jandi_help">"도움말"</string>
+	<string name="jandi_hi_apk_store">"Hi Apk 스토어"</string>
 	<string name="jandi_image_too_big">"이미지가 너무 큽니다."</string>
 	<string name="jandi_incorrect_passcode">"비밀번호가 일치하지 않습니다."</string>
 	<string name="jandi_input_password">"선택한 팀 계정의 비밀번호를 입력하세요"</string>
@@ -302,6 +311,7 @@
 	<string name="jandi_password_strength_too_short">"8자 이상 입력해주세요"</string>
 	<string name="jandi_password_strength_weak">"숫자, 특수문자, 또는 영어 대문자 중 최소한 1자 이상이 포함되어야 합니다"</string>
 	<string name="jandi_phone_led">"휴대전화 LED"</string>
+	<string name="jandi_play_store">"구글 플레이 스토어"</string>
 	<string name="jandi_plz_input_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_preview_message_contents">"메시지 내용 미리보기"</string>
 	<string name="jandi_privacy_policy">"개인정보 취급방침"</string>
@@ -330,6 +340,7 @@
 	<string name="jandi_push_preview_all_message">"모든 메시지"</string>
 	<string name="jandi_push_preview_public_only">"공개 토픽만"</string>
 	<string name="jandi_question_team_create">"아직 잔디 사용자가 아니세요?"</string>
+	<string name="jandi_r_u_sure_to_delete_email">"정말 이 이메일 주소를 삭제하시겠습니까?"</string>
 	<string name="jandi_retry_voice_search">"음성 검색을 다시 시도해주십시요."</string>
 	<string name="jandi_save">"저장"</string>
 	<string name="jandi_screen_auto">"자동"</string>
@@ -443,16 +454,13 @@
 	<string name="jandi_topic_was_removed">"이미 나갔거나 삭제된 토픽이므로 원본을 확인할 수 없습니다."</string>
 	<string name="jandi_tos_and_pp">"이용 약관 및 개인정보 취급방침"</string>
 	<string name="jandi_try_again">"다시 시도하기"</string>
-	<string name="jandi_tutorial_file">"파일 업로드, 공유, 검색을메신저에서 한 번에"</string>
-	<string name="jandi_tutorial_file_message">"사진과 동영상 뿐 아니라 PPT, 엑셀, PDF 등다양한 포맷의 업무 파일을 직접 업로드하여토픽이나 개인과 공유할 수 있습니다.또한 업로드한 파일들은 계속 보관되며강력한 검색 기능 또한 지원하기 때문에굳이 클라우드 서비스를 사용할 필요가 없습니다."</string>
-	<string name="jandi_tutorial_topic">"토픽을 통한 좀 더 유연하고개방적인 커뮤니케이션"</string>
-	<string name="jandi_tutorial_topic_message">"토픽이란 파일 공유가 가능한단체대화방이라고 할 수 있는새로운 개념의 업무 공간입니다.토픽을 이용해 업무의 개방성과 유연성을높이면서도 기존 메신저처럼 비공개 토픽 또는1:1 메시지를 통해서 독립성 또한 보장됩니다."</string>
+	<string name="jandi_tutorial_file">"파일 업로드, 공유, 검색을 메신저에서 한 번에"</string>
+	<string name="jandi_tutorial_file_message">"사진과 동영상 뿐 아니라 PPT, 엑셀, PDF 등 다양한 포맷의 업무 파일을 직접 업로드하여 토픽이나 개인과 공유할 수 있습니다. 또한 업로드한 파일들은 계속 보관되며 강력한 검색 기능 또한 지원하기 때문에 굳이 클라우드 서비스를 사용할 필요가 없습니다."</string>
+	<string name="jandi_tutorial_topic">"토픽을 통한 좀 더 유연하고 개방적인 커뮤니케이션"</string>
+	<string name="jandi_tutorial_topic_message">"토픽이란 파일 공유가 가능한 단체 대화방이라고 할 수 있는 새로운 개념의 업무 공간입니다. 토픽을 이용해 업무의 개방성과 유연성을 높이면서도 기존 메신저처럼 비공개 토픽 또는1:1 메시지를 통해서 독립성 또한 보장됩니다."</string>
 	<string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
-	<string name="jandi_tutorial_welcome_message">"지금까지 업무 파일을 클라우드에 업로드한 뒤,
-파일 주소를 이메일로 보내고
-확인을 부탁한다는 메시지를 모바일로 보내셨나요?
-잔디는 이 모든 것을 한 번에 해결해주는
-완전히 새로운 업무용 메신저입니다."</string>
+	<string name="jandi_tutorial_welcome_message">"지금까지 업무 파일을 클라우드에 업로드한 뒤, 파일 주소를 이메일로 보내고 확인을 부탁한다는 메시지를 모바일로 보내셨나요?
+잔디는 이 모든 것을 한 번에 해결해주는 완전히 새로운 업무용 메신저입니다."</string>
 	<string name="jandi_unpinned_message">"즐겨찾기 해제됨"</string>
 	<string name="jandi_unread_messages_below">"여기까지 읽었습니다."</string>
 	<string name="jandi_unshare_succeed">"%s 공유가 해제되었습니다."</string>

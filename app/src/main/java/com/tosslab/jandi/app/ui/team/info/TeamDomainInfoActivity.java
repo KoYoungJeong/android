@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.validation.ResValidation;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -19,6 +20,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -132,8 +134,20 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity {
     void createTeam(String teamName, String teamDomain, String myName, String myEmail) {
         teamDomainInfoPresenter.showProgressWheel();
 
+        if (!NetworkCheckUtil.isConnected()) {
+            teamDomainInfoPresenter.showFailToast(getString(R.string.err_network));
+            return;
+        }
+
         // Team Creation
         try {
+            ResValidation validation = teamDomainInfoModel.validDomain(teamDomain);
+            if (!validation.isValidate()) {
+                teamDomainInfoPresenter.showFailToast(getString(R.string.jandi_domain_is_already_taken));
+                teamDomainInfoPresenter.dismissProgressWheel();
+                return;
+            }
+
             ResTeamDetailInfo newTeam = teamDomainInfoModel.createNewTeam(teamName, teamDomain);
 
             int teamId = newTeam.getInviteTeam().getTeamId();

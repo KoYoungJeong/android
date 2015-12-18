@@ -3,18 +3,19 @@ package com.tosslab.jandi.app.ui.share;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.tosslab.jandi.app.JandiApplication;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
@@ -31,6 +32,7 @@ import com.tosslab.jandi.app.ui.share.presenter.SharePresenter;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
@@ -74,7 +76,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     int mode;
 
     @ViewById(R.id.iv_share_image)
-    ImageView ivShareImage;
+    SimpleDraweeView ivShareImage;
 
     @ViewById(R.id.tv_share_image_title)
     TextView tvTitle;
@@ -92,7 +94,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     LinearLayout vgFileIcon;
 
     @ViewById(R.id.iv_share_file_icon)
-    ImageView ivShareFileIcon;
+    SimpleDraweeView ivShareFileIcon;
 
     @ViewById(R.id.tv_team_name)
     TextView tvTeamName;
@@ -175,20 +177,21 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
                 FileExtensionsUtil.Extensions.IMAGE) {
             vgFileIcon.setVisibility(View.GONE);
             ivShareImage.setVisibility(View.VISIBLE);
-            Glide.with(JandiApplication.getContext())
-                    .load(filePath)
-                    .fitCenter()
-                    .crossFade()
-                    .into(ivShareImage);
+            GenericDraweeHierarchy hierarchy = ivShareImage.getHierarchy();
+            hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+            ivShareImage.setHierarchy(hierarchy);
+            ivShareImage.setImageURI(Uri.fromFile(filePath));
         } else {
             vgFileIcon.setVisibility(View.VISIBLE);
             tvShareFileType.setText(FileExtensionsUtil.getFileTypeText(filePath.getName()));
             ivShareImage.setVisibility(View.GONE);
-            Glide.with(JandiApplication.getContext())
-                    .load(FileExtensionsUtil.getFileTypeBigImageResource(filePath.getName()))
-                    .fitCenter()
-                    .crossFade()
-                    .into(ivShareFileIcon);
+
+            GenericDraweeHierarchy hierarchy = ivShareFileIcon.getHierarchy();
+            hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+            ivShareFileIcon.setHierarchy(hierarchy);
+
+            int resId = FileExtensionsUtil.getFileTypeBigImageResource(filePath.getName());
+            ivShareFileIcon.setImageURI(UriFactory.getResourceUri(resId));
         }
     }
 
@@ -375,6 +378,14 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
         }
 
         mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(), etComment, teamId, Arrays.asList(roomId), getMentionType(mode));
+    }
+
+    @UiThread
+    @Override
+    public void dismissDialog(ProgressDialog uploadProgress) {
+        if (uploadProgress != null && uploadProgress.isShowing()) {
+            uploadProgress.dismiss();
+        }
     }
 
 

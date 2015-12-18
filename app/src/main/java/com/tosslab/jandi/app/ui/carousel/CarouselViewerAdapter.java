@@ -20,7 +20,6 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
     private List<CarouselFileInfo> carouselFileInfos;
 
     private WeakHashMap<Integer, Fragment> weakHashMap;
-    private boolean isModified;
     private CarouselViewerActivity.OnCarouselImageClickListener carouselImageClickListener;
 
     public CarouselViewerAdapter(FragmentManager fm) {
@@ -46,6 +45,7 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
             fragment = weakHashMap.get(fileLinkId);
         } else {
             fragment = PhotoViewFragment_.builder()
+                    .fromCarousel(true)
                     .imageType(fileInfo.getFileType())
                     .imageUrl(fileInfo.getFileThumbUrl())
                     .build();
@@ -70,17 +70,14 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
     }
 
     public void addAll(List<CarouselFileInfo> fileInfos) {
-        isModified = true;
         carouselFileInfos.addAll(fileInfos);
     }
 
     public void addAll(int position, List<CarouselFileInfo> imageFiles) {
-        isModified = true;
         carouselFileInfos.addAll(position, imageFiles);
     }
 
     public void add(CarouselFileInfo fileInfo) {
-        isModified = true;
         carouselFileInfos.add(fileInfo);
     }
 

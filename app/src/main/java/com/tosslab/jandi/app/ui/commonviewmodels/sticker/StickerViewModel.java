@@ -98,7 +98,7 @@ public class StickerViewModel {
         vgNoItemsLayout = (ViewGroup) vgStickerSelector.findViewById(R.id.vg_sticker_default_items_no_item);
         ivNoItems = (ImageView) vgStickerSelector.findViewById(R.id.iv_sticker_default_items_no_item);
         viewPagerIndicator = (ViewPagerIndicator) vgStickerSelector.findViewById(R.id.indicator_sticker_default_items_page_indicator);
-        windowManager = (WindowManager) context.getSystemService(context.WINDOW_SERVICE);  //윈도우 매니저
+        windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);  //윈도우 매니저
         initClicks();
         registKetboardCallback();
     }
@@ -311,7 +311,9 @@ public class StickerViewModel {
     }
 
     public void dismissStickerWindow() {
-        windowManager.removeView(vgStickerSelector);
+        if (vgStickerSelector != null && vgStickerSelector.getParent() != null) {
+            windowManager.removeView(vgStickerSelector);
+        }
     }
 
     @UiThread

@@ -102,7 +102,8 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 messageListPresenter.showEmptyViewIfNeed();
 
                 if (firstLoad) {
-                    messageListPresenter.setLastReadLinkId(-1);
+                    messageListPresenter.setUpLastReadLinkIdIfPosition();
+                    messageListPresenter.moveLastReadLink();
                     messageListPresenter.justRefresh();
                 }
                 return;

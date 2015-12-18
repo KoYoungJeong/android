@@ -11,12 +11,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.MemoryCategory;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
+import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenter;
+import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenterImpl;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
@@ -63,11 +63,9 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @Extra
     int roomId = -1;
 
-    @Bean
-    CarouselViewerModel carouselViewerModel;
     @Bean(CarouselViewerPresenterImpl.class)
     CarouselViewerPresenter carouselViewerPresenter;
-    private CarouselViewerAdapter carouselViewerAdapter;
+    CarouselViewerAdapter carouselViewerAdapter;
     private boolean isFullScreen = false;
 
     @AfterInject
@@ -81,9 +79,8 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @AfterViews
     public void initViews() {
 
-        Glide.get(getApplicationContext()).clearMemory();
-        Glide.get(getApplicationContext()).setMemoryCategory(MemoryCategory.HIGH);
-
+//        Glide.get(getApplicationContext()).clearMemory();
+//        Glide.get(getApplicationContext()).setMemoryCategory(MemoryCategory.HIGH);
 
         if (roomId <= 0) {
             finish();
@@ -118,11 +115,11 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
                 tvFileCreateTime.setText(fileInfo.getFileCreateTime());
 
                 if (position == 0) {
-                    carouselViewerPresenter.onBeforeImageFiles(getApplicationContext(), fileInfo
+                    carouselViewerPresenter.onBeforeImageFiles(fileInfo
                             .getFileLinkId(), count);
                 } else {
                     if (position == count - 1) {
-                        carouselViewerPresenter.onAfterImageFiles(getApplicationContext(), fileInfo
+                        carouselViewerPresenter.onAfterImageFiles(fileInfo
                                 .getFileLinkId(), count);
                     }
                 }
@@ -131,7 +128,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         });
 
 
-        carouselViewerPresenter.onInitImageFiles(getApplicationContext());
+        carouselViewerPresenter.onInitImageFiles();
 
     }
 
@@ -274,7 +271,6 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
         Permissions.getResult()
                 .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::onFileDownload)

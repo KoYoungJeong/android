@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.services.socket.to;
 
+import com.tosslab.jandi.app.services.socket.annotations.Version;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -10,15 +12,36 @@ import java.util.List;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@Version(1)
 public class SocketLinkPreviewMessageEvent {
+    private int version;
     private int teamId;
     private String event;
     private String messageType;
-
     private MessageRoom room;
     private Writer writer;
-
     private Message message;
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    @Override
+    public String toString() {
+        return "SocketLinkPreviewMessageEvent{" +
+                "version=" + version +
+                ", teamId=" + teamId +
+                ", event='" + event + '\'' +
+                ", messageType='" + messageType + '\'' +
+                ", room=" + room +
+                ", writer=" + writer +
+                ", message=" + message +
+                '}';
+    }
 
     public MessageRoom getRoom() {
         return room;
@@ -66,18 +89,6 @@ public class SocketLinkPreviewMessageEvent {
 
     public void setMessage(Message message) {
         this.message = message;
-    }
-
-    @Override
-    public String toString() {
-        return "SocketLinkPreviewMessageEvent{" +
-                "teamId='" + teamId + '\'' +
-                ", event='" + event + '\'' +
-                ", messageType='" + messageType + '\'' +
-                ", room=" + room +
-                ", writer=" + writer +
-                ", message=" + message +
-                '}';
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

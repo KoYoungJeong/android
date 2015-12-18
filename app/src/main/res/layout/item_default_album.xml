@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/btn_rect_white"
     android:paddingBottom="1dp">
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/iv_item_default_album_sample"
         android:layout_width="83dp"
         android:layout_height="83dp"
+        fresco:failureImage="@drawable/upload_icon_list_thumbnail"
+        fresco:failureImageScaleType="centerInside"
         android:layout_centerVertical="true" />
 
     <TextView

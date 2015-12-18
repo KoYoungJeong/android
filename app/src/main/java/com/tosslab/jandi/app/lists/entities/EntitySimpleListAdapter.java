@@ -5,13 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
+import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_select_cdp, viewGroup, false);
             holder = new ViewHolder();
             holder.textView = (TextView) convertView.findViewById(R.id.txt_select_cdp_name);
-            holder.imageView = (ImageView) convertView.findViewById(R.id.img_select_cdp_icon);
+            holder.imageView = (SimpleDraweeView) convertView.findViewById(R.id.img_select_cdp_icon);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -69,17 +69,15 @@ public class EntitySimpleListAdapter extends BaseAdapter {
             holder.textView.setText(entity.getName());
         }
 
-        holder.imageView.clearColorFilter();
+        SimpleDraweeView imageView = holder.imageView;
+        imageView.clearColorFilter();
         // user 는 개별 프로필 사진이 존재하기에 별도로 가져온다.
         if (entity.isUser()) {
             // 프로필 사진
-            Ion.with(holder.imageView)
-                    .placeholder(R.drawable.profile_img_comment)
-                    .error(R.drawable.profile_img_comment)
-                    .transform(new IonCircleTransform())
-                    .load(entity.getUserSmallProfileUrl());
+            ImageUtil.loadCircleImageByFresco(imageView,
+                    entity.getUserSmallProfileUrl(), R.drawable.profile_img_comment);
         } else {
-            holder.imageView.setImageResource(entity.getIconImageResId());
+            imageView.setImageURI(UriFactory.getResourceUri(entity.getIconImageResId()));
         }
 
         return convertView;
@@ -87,6 +85,6 @@ public class EntitySimpleListAdapter extends BaseAdapter {
 
     static class ViewHolder {
         TextView textView;
-        ImageView imageView;
+        SimpleDraweeView imageView;
     }
 }

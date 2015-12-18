@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -23,11 +24,11 @@
             android:paddingRight="14dp"
             android:paddingTop="14dp">
 
-            <ImageView
+            <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/iv_announcement_user"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/profile_img" />
+                fresco:placeholderImage="@drawable/profile_img" />
 
             <TextView
                 android:id="@+id/tv_announcement_info"

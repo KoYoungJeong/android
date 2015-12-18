@@ -5,18 +5,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.share.views.domain.ExpandRoomData;
-import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +49,8 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             RoomViewHolder viewHolder = new RoomViewHolder(itemView);
 
             viewHolder.tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
-            viewHolder.ivIcon = (ImageView) itemView.findViewById(R.id.iv_room_selector_item_icon);
+            viewHolder.ivIcon =
+                    (SimpleDraweeView) itemView.findViewById(R.id.iv_room_selector_item_icon);
             viewHolder.vLine = itemView.findViewById(R.id.v_line_use_for_first_no_folder_item);
 
             return viewHolder;
@@ -99,32 +98,27 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             roomholder.vLine.setVisibility(View.GONE);
         }
 
+        SimpleDraweeView ivIcon = roomholder.ivIcon;
         if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-            roomholder.ivIcon.setImageResource(R.drawable.icon_search_all);
+            ivIcon.setImageURI(UriFactory.getResourceUri(R.drawable.icon_search_all));
             roomholder.tvName.setText(R.string.jandi_file_category_everywhere);
         } else if (item.isUser()) {
-            Ion.with(roomholder.ivIcon)
-                    .placeholder(R.drawable.profile_img_comment)
-                    .error(R.drawable.profile_img_comment)
-                    .fitCenter()
-                    .transform(new IonCircleTransform())
-                    .crossfade(true)
-                    .load(BitmapUtil.getFileUrl(item.getProfileUrl()));
-
+            String fileUrl = ImageUtil.getFileUrl(item.getProfileUrl());
+            ImageUtil.loadCircleImageByFresco(ivIcon, fileUrl, R.drawable.profile_img_comment);
             roomholder.tvName.setText(item.getName());
         } else if (item.isPublicTopic()) {
-            if (item.isStarred()) {
-                roomholder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic_fav);
-            } else {
-                roomholder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic);
+            int resId  =R.drawable.topiclist_icon_topic_fav;
+            if (!item.isStarred()) {
+                resId = R.drawable.topiclist_icon_topic;
             }
+            ivIcon.setImageURI(UriFactory.getResourceUri(resId));
             roomholder.tvName.setText(item.getName());
         } else {
-            if (item.isStarred()) {
-                roomholder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic_private_fav);
-            } else {
-                roomholder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic_private);
+            int resId  =R.drawable.topiclist_icon_topic_private_fav;
+            if (!item.isStarred()) {
+                resId = R.drawable.topiclist_icon_topic_private;
             }
+            ivIcon.setImageURI(UriFactory.getResourceUri(resId));
             roomholder.tvName.setText(item.getName());
         }
 
@@ -179,7 +173,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     static class RoomViewHolder extends RecyclerView.ViewHolder {
 
         private TextView tvName;
-        private ImageView ivIcon;
+        private SimpleDraweeView ivIcon;
         private View vLine;
 
         public RoomViewHolder(View itemView) {

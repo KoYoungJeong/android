@@ -81,4 +81,6 @@ public interface ITeamApiLoader {
 
     IExecutor<ResCommon> loadKickUserFromTopic(int teamId, int topicId, ReqMember member);
 
+    IExecutor<ResMessages.FileMessage> loadEnableFileExternalLink(int teamId, int fileId);
+    IExecutor<ResMessages.FileMessage> loadDisableFileExternalLink(int teamId, int fileId);
 }

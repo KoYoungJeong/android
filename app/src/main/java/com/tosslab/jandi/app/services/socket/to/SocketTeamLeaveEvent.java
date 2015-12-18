@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.services.socket.to;
 
+import com.tosslab.jandi.app.services.socket.annotations.Version;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -8,14 +10,25 @@ import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@Version(1)
 public class SocketTeamLeaveEvent {
     private String event;
     private int version;
     @JsonProperty("ts")
     private Date time;
-
     private Team team;
     private Member member;
+
+    @Override
+    public String toString() {
+        return "SocketTeamLeaveEvent{" +
+                "event='" + event + '\'' +
+                ", version=" + version +
+                ", time=" + time +
+                ", team=" + team +
+                ", member=" + member +
+                '}';
+    }
 
     public String getEvent() {
         return event;

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -10,7 +11,9 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -18,17 +21,18 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -77,6 +81,7 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -122,6 +127,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public static final int INTENT_RETURN_TYPE_SHARE = 0;
     public static final int INTENT_RETURN_TYPE_UNSHARE = 1;
     public static final int REQ_STORAGE_PERMISSION = 101;
+    public static final int REQ_STORAGE_PERMISSION_EXPORT = 102;
+    private static final int REQ_WINDOW_PERMISSION = 103;
     private static final StickerInfo NULL_STICKER = new StickerInfo();
     public static
 
@@ -143,11 +150,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @ViewById(R.id.lv_file_detail_comments)
     ListView lvFileDetailComments;
     @ViewById(R.id.vg_file_detail_input_comment)
-    RelativeLayout vgCommentLayout;
+    View vgCommentLayout;
     @ViewById(R.id.et_message)
     BackpressEditText etComment;
     @ViewById(R.id.btn_send_message)
-    Button btnSend;
+    View btnSend;
     @ViewById(R.id.vg_file_detail_preview_sticker)
     ViewGroup vgStickerPreview;
     @ViewById(R.id.iv_file_detail_preview_sticker_image)
@@ -157,14 +164,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @ViewById(R.id.vg_option_space)
     ViewGroup vgOptionSpace;
 
+    @ViewById(R.id.btn_show_mention)
+    View ivMention;
+
     @Bean
     StickerViewModel stickerViewModel;
     @Bean
     KeyboardHeightModel keyboardHeightModel;
     @SystemService
     InputMethodManager inputMethodManager;
-    @SystemService
-    ClipboardManager clipboardManager;
 
     private EntityManager entityManager;
     private boolean isMyFile;
@@ -176,6 +184,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     private StickerInfo stickerInfo = NULL_STICKER;
     private MixpanelAnalytics mixpanelAnalytics;
     private Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities;
+    private boolean isExternalShared;
+    private ResMessages.FileMessage fileMessage;
 
     @AfterViews
     public void initForm() {
@@ -212,7 +222,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                     || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
                 loadSticker(stickerInfo);
             }
-            setSendButtonSelected(true);
+            setSendButtonSelected();
 
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Select);
         });
@@ -300,6 +310,14 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             getMenuInflater().inflate(R.menu.file_detail_activity_menu, menu);
         }
 
+        SubMenu subMenu = menu.findItem(R.id.menu_overflow).getSubMenu();
+        if (isExternalShared) {
+            MenuItem miEnableExternalLink = subMenu.findItem(R.id.action_file_detail_enable_external_link);
+            miEnableExternalLink.setTitle(R.string.jandi_copy_link);
+        } else {
+            subMenu.removeItem(R.id.action_file_detail_disable_external_link);
+        }
+
         return true;
     }
 
@@ -319,7 +337,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     void onStickerPreviewClose() {
         FileDetailActivity.this.stickerInfo = NULL_STICKER;
         dismissStickerPreview();
-        setSendButtonSelected(false);
+        setSendButtonSelected();
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_cancel);
     }
@@ -383,10 +401,34 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             case R.id.menu_overflow:
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.FileSubMenu);
                 return true;
+            case R.id.action_file_detail_export:
+                Permissions.getChecker()
+                        .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .hasPermission(() -> onExportFile(fileMessage))
+                        .noPermission(() -> {
+                            requestPermission(REQ_STORAGE_PERMISSION_EXPORT, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                        }).check();
+                break;
+            case R.id.action_file_detail_enable_external_link:
+                etComment.setSelection(etComment.getSelectionEnd());
+                fileDetailPresenter.onCopyExternLink(fileMessage, isExternalShared);
+                break;
+            case R.id.action_file_detail_disable_external_link:
+                fileDetailPresenter.onDisableExternLink(fileMessage);
+                break;
 
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void onExportFile(ResMessages.FileMessage fileMessage) {
+        ProgressDialog progressDialog = new ProgressDialog(FileDetailActivity.this);
+        progressDialog.setMax(100);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+        fileDetailPresenter.onExportFile(fileMessage, progressDialog);
     }
 
     @Override
@@ -431,8 +473,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @AfterTextChange(R.id.et_message)
     void onCommentTextChange(Editable editable) {
-        int inputLength = editable.length();
-        setSendButtonSelected(inputLength > 0);
+        setSendButtonSelected();
     }
 
     @Click(R.id.et_message)
@@ -450,7 +491,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void loadSuccess(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages,
                             boolean isSendAction, int selectMessageId) {
-
+        this.fileMessage = fileMessage;
         shareEntities = fileMessage.shareEntities;
 
         drawFileDetail(fileMessage, commentMessages, isSendAction);
@@ -719,11 +760,38 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             stickerViewModel.dismissStickerSelector(true);
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker);
         } else {
-            int keyboardHeight =
-                    JandiPreference.getKeyboardHeight(getApplicationContext());
-            stickerViewModel.showStickerSelector(keyboardHeight);
+
+            boolean canDraw;
+            if (SdkUtils.isMarshmallow()) {
+                canDraw = Settings.canDrawOverlays(FileDetailActivity.this);
+            } else {
+                canDraw = true;
+            }
+
+            if (canDraw) {
+                int keyboardHeight =
+                        JandiPreference.getKeyboardHeight(getApplicationContext());
+                stickerViewModel.showStickerSelector(keyboardHeight);
+            } else {
+                // Android M (23) 부터 적용되는 시나리오
+                String packageName = JandiApplication.getContext().getPackageName();
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + packageName));
+                startActivityForResult(intent, REQ_WINDOW_PERMISSION);
+            }
+
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker);
         }
+    }
+
+    @Click(R.id.btn_show_mention)
+    void onMentionClick() {
+        BaseInputConnection inputConnection = new BaseInputConnection(etComment, true);
+        inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_AT));
+
+        if (stickerViewModel.isShow()) {
+            stickerViewModel.dismissStickerWindow();
+        }
+
     }
 
     @UiThread(propagation = Propagation.REUSE)
@@ -881,9 +949,57 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 .start();
     }
 
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
     public void copyToClipboard(String contentString) {
-        ClipData clipData = ClipData.newPlainText("", contentString);
+        if (TextUtils.isEmpty(contentString)) {
+            contentString = "";
+        }
+
+        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clipData = ClipData.newPlainText(null, contentString);
         clipboardManager.setPrimaryClip(clipData);
+    }
+
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
+    public void setExternalShared(boolean externalShared) {
+        this.isExternalShared = externalShared;
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public void exportIntentFile(File result, String mimeType) {
+        Intent target = new Intent(Intent.ACTION_SEND);
+        Uri parse = Uri.parse(result.getAbsolutePath());
+        target.setDataAndType(parse, mimeType);
+        Bundle extras = new Bundle();
+        extras.putParcelable(Intent.EXTRA_STREAM, Uri.fromFile(result));
+        target.putExtras(extras);
+        try {
+            Intent chooser = Intent.createChooser(target, getString(R.string.jandi_export_to_app));
+            startActivity(chooser);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+            showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
+        }
+    }
+
+    @Override
+    public void setFileMessage(ResMessages.FileMessage fileMessage) {
+        this.fileMessage = fileMessage;
+    }
+
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
+    public void dismissMentionButton() {
+        ivMention.setVisibility(View.GONE);
+    }
+
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
+    public void showMentionButton() {
+        ivMention.setVisibility(View.VISIBLE);
     }
 
     public void showDeleteFileDialog(int fileId) {
@@ -920,6 +1036,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         isMyFile = fileMessage.writerId == EntityManager.getInstance().getMe().getId() ||
                 fileDetailPresenter.isTeamOwner();
 
+        isExternalShared = fileMessage.content.externalShared;
+
         invalidateOptionsMenu();
 
         fileDetailCommentListAdapter.clear();
@@ -950,27 +1068,24 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @UiThread(propagation = Propagation.REUSE)
     @Override
-    public void setSendButtonSelected(boolean selected) {
-        btnSend.setSelected(selected);
+    public void setSendButtonSelected() {
+        boolean visible = vgStickerPreview.getVisibility() == View.VISIBLE || etComment.length() > 0;
+        btnSend.setEnabled(visible);
     }
 
-    @UiThread
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void showProgress() {
-        if (progressWheel == null || progressWheel.isShowing()) {
-            return;
-        }
-
+        dismissProgress();
         progressWheel.show();
     }
 
-    @UiThread
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void dismissProgress() {
-        if (progressWheel == null || !progressWheel.isShowing()) {
-            return;
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
         }
-        progressWheel.dismiss();
     }
 
     @Override
@@ -991,7 +1106,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         fileDetailCommentListAdapter.clear();
     }
 
-    @UiThread
+    @UiThread(propagation = Propagation.REUSE)
     @Override
     public void showToast(String message) {
         ColoredToast.show(this, message);
@@ -1062,6 +1177,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         ColoredToast.showError(FileDetailActivity.this, getString(R.string.jandi_unshared_message));
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     @UiThread(propagation = Propagation.REUSE)
     @Override
     public void requestPermission(int requestCode, String... permissions) {
@@ -1072,7 +1188,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
                 .addRequestCode(REQ_STORAGE_PERMISSION)
-                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, () -> download())
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::download)
+                .addRequestCode(REQ_STORAGE_PERMISSION_EXPORT)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, () -> onExportFile(fileMessage))
                 .resultPermission(Permissions.createPermissionResult(requestCode,
                         permissions,
                         grantResults));
@@ -1098,4 +1216,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             }
         });
     }
+
+
 }
