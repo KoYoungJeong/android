@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ReadyMessageRepository;
@@ -41,7 +42,6 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
-import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
@@ -146,14 +146,26 @@ public class MessageListModel {
         return (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) ? true : false;
     }
 
-    public MenuCommand getMenuCommand(Fragment fragmet, ChattingInfomations
-            chattingInfomations, MenuItem item) {
+    public MenuCommand getMenuCommand(Fragment fragmet, int teamId, int entityId, MenuItem item) {
         return MenuCommandBuilder.init(activity)
                 .with(fragmet)
-                .with(entityClientManager)
-                .with(chattingInfomations)
+                .teamId(teamId)
+                .entityId(entityId)
                 .build(item);
     }
+
+    public int initRoomId() {
+        try {
+            ResMessages oldMessage = getOldMessage(-1, 1);
+            return oldMessage.entityId;
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+        }
+
+
+        return -1;
+    }
+
 
     public int sendMessage(long localId, String message, List<MentionObject> mentions) {
 
@@ -599,5 +611,9 @@ public class MessageListModel {
 
     public String getTopicName(int entityId) {
         return EntityManager.getInstance().getEntityNameById(entityId);
+    }
+
+    public int getRoomIdByUserId(int entityId) {
+        return ChatRepository.getRepository().getChat(entityId).getEntityId();
     }
 }

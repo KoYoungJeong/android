@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
@@ -8,8 +7,8 @@ import android.view.Menu;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
-import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.message.v2.search.view.MessageSearchListFragment_;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -22,6 +21,7 @@ import org.androidannotations.annotations.Extra;
 @EActivity
 public class MessageListV2Activity extends BaseAppCompatActivity {
 
+    public static final String TAG_LIST = "list";
     @Extra
     int entityType;
     @Extra
@@ -64,23 +64,34 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
         }
 
         Fragment messageListFragment = getSupportFragmentManager()
-                .findFragmentByTag(MessageListFragment.class.getName());
+                .findFragmentByTag(TAG_LIST);
 
         if (messageListFragment == null) {
-            messageListFragment = MessageListFragment_.builder()
-                    .entityId(entityId)
-                    .roomId(roomId)
-                    .entityType(entityType)
-                    .isFavorite(isFavorite)
-                    .isFromPush(isFromPush)
-                    .teamId(teamId)
-                    .lastMarker(lastMarker)
-                    .isFromSearch(isFromSearch)
-                    .build();
+            if (!isFromSearch) {
+
+                messageListFragment = MessageListFragment_.builder()
+                        .entityId(entityId)
+                        .roomId(roomId)
+                        .entityType(entityType)
+                        .isFavorite(isFavorite)
+                        .isFromPush(isFromPush)
+                        .teamId(teamId)
+                        .lastMarker(lastMarker)
+                        .build();
+            } else {
+                messageListFragment = MessageSearchListFragment_.builder()
+                        .entityId(entityId)
+                        .roomId(roomId)
+                        .entityType(entityType)
+                        .isFavorite(isFavorite)
+                        .teamId(teamId)
+                        .lastMarker(lastMarker)
+                        .build();
+            }
             getSupportFragmentManager().beginTransaction()
                     .add(android.R.id.content,
                             messageListFragment,
-                            MessageListFragment.class.getName())
+                            TAG_LIST)
                     .commit();
         }
 

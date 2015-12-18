@@ -8,20 +8,16 @@ import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-
 /**
  * Created by Steve SeongUg Jung on 15. 7. 1..
  */
-@EBean
 public class SearchMenuCommand implements MenuCommand {
 
-    @RootContext
-    Context context;
-    private int entityId;
+    private final Context context;
+    private final int entityId;
 
-    public void setEntityId(int entityId) {
+    public SearchMenuCommand(Context context, int entityId) {
+        this.context = context;
         this.entityId = entityId;
     }
 
