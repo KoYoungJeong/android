@@ -15,9 +15,6 @@ public interface FilePickerViewModel {
     int TYPE_UPLOAD_GALLERY = 0x00;
     int TYPE_UPLOAD_TAKE_PHOTO = 0x01;
     int TYPE_UPLOAD_EXPLORER = 0x02;
-    int TYPE_PICK_GALLERY = 0x03;
-
-    void showFileUploadTypeDialog(FragmentManager fragmentManager);
 
     void selectFileSelector(int type, Fragment fragment, int entityId);
 
