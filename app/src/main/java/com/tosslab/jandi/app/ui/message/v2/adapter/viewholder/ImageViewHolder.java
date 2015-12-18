@@ -229,7 +229,7 @@ public class ImageViewHolder implements BodyViewHolder {
 
             // Local File Path 도 없고 Thumbnail Path 도 없는 경우
             if (!isFromLocalFilePath && TextUtils.isEmpty(remoteFilePth)) {
-                LogUtil.i(TAG, "Thumbnail is empty.");
+                LogUtil.i(TAG, "Thumbnail's are empty.");
                 String originalImageUrl = ImageUtil.getImageFileUrl(fileContent.fileUrl);
                 final boolean hasCache = ImageUtil.hasCache(Uri.parse(originalImageUrl));
 

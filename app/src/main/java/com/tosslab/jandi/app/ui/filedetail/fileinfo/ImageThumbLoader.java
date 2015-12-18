@@ -104,7 +104,12 @@ public class ImageThumbLoader implements FileThumbLoader {
 
         String localFilePath = ImageUtil.getLocalFilePath(fileMessage.id);
         Resources resources = context.getResources();
+
         GenericDraweeHierarchy hierarchy = ivFilePhoto.getHierarchy();
+
+        Drawable placeHolder = resources.getDrawable(R.drawable.file_messageview_downloading);
+        hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_CENTER);
+
         hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
 
         Drawable error = resources.getDrawable(R.drawable.file_messageview_noimage);
@@ -118,55 +123,33 @@ public class ImageThumbLoader implements FileThumbLoader {
 
         ivFilePhoto.setOnClickListener(view -> moveToPhotoViewer(fileMessageId, content));
 
-        if (!TextUtils.isEmpty(localFilePath)) {
-            if (hasSizeInfo) {
-                updateViewSize(extraInfo.width, extraInfo.height, extraInfo.orientation);
-            }
-
-            Drawable placeHolder = resources.getDrawable(R.drawable.file_messageview_downloading);
-            hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_CENTER);
-
-            Uri uri = UriFactory.getFileUri(localFilePath);
-            loadImage(uri, hierarchy, hasSizeInfo);
-
-        } else {
-            if (hasThumbnailUrl) {
-                if (hasSizeInfo) {
-                    updateViewSize(extraInfo.width, extraInfo.height, extraInfo.orientation);
-                }
-                Uri uri = Uri.parse(extraInfo.largeThumbnailUrl);
-
-                Drawable placeHolder = resources.getDrawable(R.drawable.file_messageview_downloading);
-                hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_CENTER);
-
-                loadImage(uri, hierarchy, hasSizeInfo);
-                return;
-            }
-
-            Uri originalUri = Uri.parse(ImageUtil.getImageFileUrl(originalUrl));
-
-            if (ImageUtil.hasCache(originalUri)) {
-                if (hasSizeInfo) {
-                    updateViewSize(extraInfo.width, extraInfo.height, extraInfo.orientation);
-                }
-
-                Drawable placeHolder = resources.getDrawable(R.drawable.file_messageview_downloading);
-                hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_CENTER);
-                loadImage(originalUri, hierarchy, hasSizeInfo);
-                return;
-            }
-
+        Uri originalUri = Uri.parse(ImageUtil.getImageFileUrl(originalUrl));
+        if (TextUtils.isEmpty(localFilePath)
+                && !hasThumbnailUrl
+                && !ImageUtil.hasCache(originalUri)) {
             vgTapToViewOriginal.setVisibility(View.VISIBLE);
 
             ivFilePhoto.setOnClickListener(null);
 
             vgTapToViewOriginal.setOnClickListener(v -> {
                 vgTapToViewOriginal.setVisibility(View.GONE);
+                hierarchy.setPlaceholderImage(null);
                 CircleProgressDrawable progressDrawable = getCircleProgressDrawable(resources);
                 hierarchy.setProgressBarImage(progressDrawable, ScalingUtils.ScaleType.CENTER);
                 loadImage(originalUri, hierarchy, false);
                 ivFilePhoto.setOnClickListener(view -> moveToPhotoViewer(fileMessageId, content));
             });
+        } else {
+            Uri uri = !TextUtils.isEmpty(localFilePath)
+                    ? UriFactory.getFileUri(localFilePath)
+                    : hasThumbnailUrl
+                    ? Uri.parse(extraInfo.largeThumbnailUrl) : originalUri;
+
+            if (hasSizeInfo) {
+                updateViewSize(extraInfo.width, extraInfo.height, extraInfo.orientation);
+            }
+
+            loadImage(uri, hierarchy, hasSizeInfo);
         }
     }
 
