@@ -47,5 +47,37 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/vg_photoview_tap_to_view"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/jandi_image_too_big"
+            android:textColor="@color/white"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/jandi_tab_to_view_original"
+            android:textColor="@color/white"
+            android:textSize="15sp"/>
+
+        <View
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:layout_marginTop="11dp"
+            android:background="@drawable/file_icon_download_image"/>
+
+    </LinearLayout>
+
 </RelativeLayout>
 

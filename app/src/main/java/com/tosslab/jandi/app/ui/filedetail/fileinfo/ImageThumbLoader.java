@@ -9,26 +9,22 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ImageDecodeOptions;
-import com.facebook.imagepipeline.common.ImageDecodeOptionsBuilder;
+import com.facebook.imageformat.ImageFormat;
+import com.facebook.imageformat.ImageFormatChecker;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.drawables.CircleProgressDrawable;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -52,7 +48,6 @@ public class ImageThumbLoader implements FileThumbLoader {
     private final ViewGroup vgDetailPhoto;
     private final SimpleDraweeView ivFilePhoto;
     private final ViewGroup vgTapToViewOriginal;
-    private final View btnTapToViewOriginal;
 
     private final int roomId;
     private Context context;
@@ -64,8 +59,6 @@ public class ImageThumbLoader implements FileThumbLoader {
         this.ivFilePhoto = ivFilePhoto;
         this.roomId = roomId;
         this.vgTapToViewOriginal = vgTapToViewOriginal;
-
-        btnTapToViewOriginal = vgTapToViewOriginal.findViewById(R.id.vg_file_detail_tap_to_view_description);
 
         context = ivFilePhoto.getContext();
     }
@@ -150,12 +143,13 @@ public class ImageThumbLoader implements FileThumbLoader {
                 return;
             }
 
-            Uri originalUri = Uri.parse(originalUrl);
+            Uri originalUri = Uri.parse(ImageUtil.getImageFileUrl(originalUrl));
 
-            if (hasCache(originalUri)) {
+            if (ImageUtil.hasCache(originalUri)) {
                 if (hasSizeInfo) {
                     updateViewSize(extraInfo.width, extraInfo.height, extraInfo.orientation);
                 }
+
                 Drawable placeHolder = resources.getDrawable(R.drawable.file_messageview_downloading);
                 hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_CENTER);
                 loadImage(originalUri, hierarchy, hasSizeInfo);
@@ -174,12 +168,6 @@ public class ImageThumbLoader implements FileThumbLoader {
                 ivFilePhoto.setOnClickListener(view -> moveToPhotoViewer(fileMessageId, content));
             });
         }
-    }
-
-    private boolean hasCache(Uri originalUri) {
-        DataSource<Boolean> dataSource = Fresco.getImagePipeline().isInDiskCache(originalUri);
-        boolean isInDiskCache = dataSource.getResult() != null && dataSource.getResult();
-        return isInDiskCache || Fresco.getImagePipeline().isInBitmapMemoryCache(originalUri);
     }
 
     @NonNull
@@ -278,10 +266,11 @@ public class ImageThumbLoader implements FileThumbLoader {
                     .startLinkId(fileMessageId)
                     .start();
         } else {
-            String optimizedImageUrl = ImageUtil.getOptimizedImageUrl(content);
+            String thumbUrl = ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.THUMB);
             PhotoViewActivity_
                     .intent(context)
-                    .imageUrl(optimizedImageUrl)
+                    .thumbUrl(thumbUrl)
+                    .originalUrl(content.fileUrl)
                     .imageName(content.name)
                     .imageType(content.type)
                     .start();

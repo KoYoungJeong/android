@@ -295,7 +295,13 @@ public class ImageUtil {
         return bitmap;
     }
 
-    public static String getFileUrl(String url) {
+    public static boolean hasCache(Uri originalUri) {
+        DataSource<Boolean> dataSource = Fresco.getImagePipeline().isInDiskCache(originalUri);
+        boolean isInDiskCache = dataSource.getResult() != null && dataSource.getResult();
+        return isInDiskCache || Fresco.getImagePipeline().isInBitmapMemoryCache(originalUri);
+    }
+
+    public static String getImageFileUrl(String url) {
         if (TextUtils.isEmpty(url)) {
             return url;
         }
@@ -381,7 +387,8 @@ public class ImageUtil {
                 targetUrl = extraInfo.thumbnailUrl;
                 break;
         }
-        return targetUrl;
+
+        return getImageFileUrl(targetUrl);
     }
 
     public static String getThumbnailUrlOrOriginal(ResMessages.FileContent content,
@@ -393,7 +400,7 @@ public class ImageUtil {
         String original = content.fileUrl;
         ResMessages.ThumbnailUrls extraInfo = content.extraInfo;
         if (extraInfo == null) {
-            return getFileUrl(original);
+            return getImageFileUrl(original);
         }
 
         String targetUrl = null;
@@ -416,9 +423,10 @@ public class ImageUtil {
         }
 
         if (TextUtils.isEmpty(targetUrl)) {
-            return getFileUrl(original);
+            return getImageFileUrl(original);
         }
-        return getFileUrl(targetUrl);
+
+        return getImageFileUrl(targetUrl);
     }
 
     public static boolean hasImageUrl(ResMessages.FileContent fileContent) {
@@ -449,10 +457,10 @@ public class ImageUtil {
         int dpi = resources.getDisplayMetrics().densityDpi;
         // XXHDPI 이상인 기기에서만 오리지널 파일을 로드
         if (dpi > DisplayMetrics.DENSITY_XHIGH) {
-            return !TextUtils.isEmpty(original) ? getFileUrl(original) : getFileUrl(extraImageUrl);
+            return !TextUtils.isEmpty(original) ? getImageFileUrl(original) : getImageFileUrl(extraImageUrl);
         }
 
-        return getFileUrl(extraImageUrl);
+        return getImageFileUrl(extraImageUrl);
     }
 
     private static String getImageUrl(String small, String medium, String large, String original) {

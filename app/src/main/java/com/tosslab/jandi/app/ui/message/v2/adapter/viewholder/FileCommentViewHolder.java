@@ -127,6 +127,47 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
         tvDate.setText(DateTransformator.getTimeStringForSimple(link.time));
 
+        if (link.message instanceof ResMessages.CommentMessage) {
+            ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
+
+            SpannableStringBuilder builder = new SpannableStringBuilder();
+            builder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
+            builder.append(" ");
+
+            boolean hasLink = LinkifyUtil.addLinks(context, builder);
+
+            int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
+                    link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
+
+            tvUnread.setText(String.valueOf(unreadCount));
+
+            if (unreadCount > 0) {
+                tvUnread.setVisibility(View.VISIBLE);
+            } else {
+                tvUnread.setVisibility(View.GONE);
+            }
+
+
+            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                    tvComment, builder, commentMessage.mentions, entityManager.getMe().getId())
+                    .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
+            builder = generateMentionMessageUtil.generate(true);
+
+
+            if (hasLink) {
+                tvComment.setText(
+                        Spannable.Factory.getInstance().newSpannable(builder));
+
+                LinkifyUtil.setOnLinkClick(tvComment);
+            } else {
+                tvComment.setText(builder);
+            }
+
+        }
+
+        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
+        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
+
         if (link.feedback instanceof ResMessages.FileMessage) {
 
             ResMessages.FileMessage feedbackFileMessage = link.feedback;
@@ -205,8 +246,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 String fileType = content.icon;
                 if (TextUtils.equals(fileType, "image")) {
                     if (ImageUtil.hasImageUrl(content)) {
-                        String thumbnailUrl = ImageUtil.getThumbnailUrlOrOriginal(
-                                content, ImageUtil.Thumbnails.SMALL);
                         MimeTypeUtil.SourceType sourceType =
                                 SourceTypeUtil.getSourceType(content.serverUrl);
                         switch (sourceType) {
@@ -226,6 +265,19 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 break;
                             default:
                                 vFileImageRound.setVisibility(View.VISIBLE);
+
+                                String thumbnailUrl = ImageUtil.getThumbnailUrl(
+                                        content.extraInfo, ImageUtil.Thumbnails.SMALL);
+
+                                if (TextUtils.isEmpty(thumbnailUrl)) {
+                                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
+                                    ivFileImage.setHierarchy(hierarchy);
+
+                                    ivFileImage.setImageURI(
+                                            UriFactory.getResourceUri(R.drawable.image_no_preview));
+
+                                    return;
+                                }
 
                                 Resources resources = context.getResources();
                                 Drawable placeHolder = resources.getDrawable(R.drawable.comment_image_preview_download);
@@ -253,47 +305,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
             }
 
         }
-
-        if (link.message instanceof ResMessages.CommentMessage) {
-            ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
-
-            SpannableStringBuilder builder = new SpannableStringBuilder();
-            builder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
-            builder.append(" ");
-
-            boolean hasLink = LinkifyUtil.addLinks(context, builder);
-
-            int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                    link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
-
-            tvUnread.setText(String.valueOf(unreadCount));
-
-            if (unreadCount > 0) {
-                tvUnread.setVisibility(View.VISIBLE);
-            } else {
-                tvUnread.setVisibility(View.GONE);
-            }
-
-
-            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                    tvComment, builder, commentMessage.mentions, entityManager.getMe().getId())
-                    .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
-            builder = generateMentionMessageUtil.generate(true);
-
-
-            if (hasLink) {
-                tvComment.setText(
-                        Spannable.Factory.getInstance().newSpannable(builder));
-
-                LinkifyUtil.setOnLinkClick(tvComment);
-            } else {
-                tvComment.setText(builder);
-            }
-
-        }
-
-        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
-        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
     }
 
     private void loadImage(String thumbnailUrl) {

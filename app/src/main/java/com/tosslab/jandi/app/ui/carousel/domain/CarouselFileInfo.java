@@ -13,10 +13,11 @@ public class CarouselFileInfo {
     private final int size;
     private final String fileLinkUrl;
     private final String fileThumbUrl;
+    private final String fileOriginalUrl;
     private final String fileCreateTime;
     private final String fileWriter;
 
-    private CarouselFileInfo(int entityId, int fileLinkId, String fileName, String fileType, String ext, int size, String fileLinkUrl, String fileThumbUrl, String fileCreateTime, String fileWriter) {
+    private CarouselFileInfo(int entityId, int fileLinkId, String fileName, String fileType, String ext, int size, String fileLinkUrl, String fileThumbUrl, String fileOriginalUrl, String fileCreateTime, String fileWriter) {
         this.entityId = entityId;
         this.fileLinkId = fileLinkId;
         this.fileName = fileName;
@@ -25,6 +26,7 @@ public class CarouselFileInfo {
         this.size = size;
         this.fileLinkUrl = fileLinkUrl;
         this.fileThumbUrl = fileThumbUrl;
+        this.fileOriginalUrl = fileOriginalUrl;
         this.fileCreateTime = fileCreateTime;
         this.fileWriter = fileWriter;
     }
@@ -69,6 +71,10 @@ public class CarouselFileInfo {
         return fileThumbUrl;
     }
 
+    public String getFileOriginalUrl() {
+        return fileOriginalUrl;
+    }
+
     public static class Builder {
         private int entityId;
         private int fileLinkId;
@@ -80,6 +86,7 @@ public class CarouselFileInfo {
         private String fileCreateTime;
         private String fileWriter;
         private String fileThumbUrl;
+        private String fileOriginalUrl;
 
         public Builder fileWriter(String fileWriter) {
             this.fileWriter = fileWriter;
@@ -127,13 +134,18 @@ public class CarouselFileInfo {
             return this;
         }
 
-        public CarouselFileInfo create() {
-            return new CarouselFileInfo(entityId, fileLinkId, fileName, fileType, ext, size, fileLinkUrl, fileThumbUrl, fileCreateTime, fileWriter);
-        }
-
         public Builder fileThumbUrl(String fileThumbUrl) {
             this.fileThumbUrl = fileThumbUrl;
             return this;
+        }
+
+        public Builder fileOriginalUrl(String fileOriginalUrl) {
+            this.fileOriginalUrl = fileOriginalUrl;
+            return this;
+        }
+
+        public CarouselFileInfo create() {
+            return new CarouselFileInfo(entityId, fileLinkId, fileName, fileType, ext, size, fileLinkUrl, fileThumbUrl, fileOriginalUrl, fileCreateTime, fileWriter);
         }
     }
 }

@@ -136,7 +136,7 @@ public class CircleProgressDrawable extends Drawable {
         textPaint.setFlags(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
 
         LogUtil.d("tony", "progress = " + progress + " percent = " + percentage);
-        String progressText = ((int) percentage * 100) + "%";
+        String progressText = (int) (percentage * 100) + "%";
         LogUtil.e("tony", progressText);
 
         Rect bounds = new Rect();
@@ -286,7 +286,7 @@ public class CircleProgressDrawable extends Drawable {
     protected boolean onLevelChange(int level) {
         LogUtil.d("tony", "level = " + level);
         progress = level;
-//        invalidateSelf();
+        invalidateSelf();
         return true;
     }
 

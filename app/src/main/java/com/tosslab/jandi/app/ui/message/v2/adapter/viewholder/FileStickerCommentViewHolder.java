@@ -122,6 +122,18 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
 
         tvDate.setText(DateTransformator.getTimeStringForSimple(link.time));
 
+        if (link.message instanceof ResMessages.CommentStickerMessage) {
+            ResMessages.CommentStickerMessage commentSticker =
+                    (ResMessages.CommentStickerMessage) link.message;
+            ResMessages.StickerContent content = commentSticker.content;
+
+            StickerManager.getInstance()
+                    .loadStickerNoOption(ivSticker, content.groupId, content.stickerId);
+        }
+
+        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
+        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
+
         if (link.feedback instanceof ResMessages.FileMessage) {
             ResMessages.FileMessage feedbackFileMessage = link.feedback;
             if (TextUtils.equals(link.feedback.status, "archived")) {
@@ -147,8 +159,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                 if (TextUtils.equals(fileType, "image")) {
 
                     if (ImageUtil.hasImageUrl(content)) {
-                        String thumbnailUrl = ImageUtil.getThumbnailUrlOrOriginal(
-                                content, ImageUtil.Thumbnails.SMALL);
                         MimeTypeUtil.SourceType sourceType =
                                 SourceTypeUtil.getSourceType(content.serverUrl);
                         switch (sourceType) {
@@ -168,6 +178,18 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                                 break;
                             default:
                                 vFileImageRound.setVisibility(View.VISIBLE);
+
+                                String thumbnailUrl = ImageUtil.getThumbnailUrl(
+                                        content.extraInfo, ImageUtil.Thumbnails.SMALL);
+
+                                if (TextUtils.isEmpty(thumbnailUrl)) {
+                                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
+                                    ivFileImage.setHierarchy(hierarchy);
+
+                                    ivFileImage.setImageURI(
+                                            UriFactory.getResourceUri(R.drawable.image_no_preview));
+                                    return;
+                                }
 
                                 Resources resources = context.getResources();
                                 Drawable placeHolder = resources.getDrawable(R.drawable.comment_image_preview_download);
@@ -195,18 +217,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
             }
 
         }
-
-        if (link.message instanceof ResMessages.CommentStickerMessage) {
-            ResMessages.CommentStickerMessage commentSticker =
-                    (ResMessages.CommentStickerMessage) link.message;
-            ResMessages.StickerContent content = commentSticker.content;
-
-            StickerManager.getInstance()
-                    .loadStickerNoOption(ivSticker, content.groupId, content.stickerId);
-        }
-
-        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
-        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
     }
 
     private void loadImage(String thumbnailUrl) {

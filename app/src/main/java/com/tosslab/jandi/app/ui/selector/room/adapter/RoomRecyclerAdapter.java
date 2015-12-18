@@ -98,7 +98,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             roomholder.tvName.setText(R.string.jandi_file_category_everywhere);
 
         } else if (item.isUser()) {
-            String fileUrl = ImageUtil.getFileUrl(item.getProfileUrl());
+            String fileUrl = ImageUtil.getImageFileUrl(item.getProfileUrl());
             ImageUtil.loadCircleImageByFresco(ivIcon, fileUrl, R.drawable.profile_img_comment);
             roomholder.tvName.setText(item.getName());
         } else if (item.isPublicTopic()) {

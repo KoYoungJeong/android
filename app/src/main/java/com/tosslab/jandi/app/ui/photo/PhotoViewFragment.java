@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -43,7 +44,10 @@ public class PhotoViewFragment extends Fragment {
     boolean fromCarousel = false;
 
     @FragmentArg
-    String imageUrl;
+    String thumbUrl;
+
+    @FragmentArg
+    String originalUrl;
 
     @FragmentArg
     String imageType;
@@ -59,6 +63,9 @@ public class PhotoViewFragment extends Fragment {
 
     @ViewById(R.id.vg_photoview_progress)
     LinearLayout vgProgress;
+
+    @ViewById(R.id.vg_photoview_tap_to_view)
+    View btnTapToViewOriginal;
 
     private CarouselViewerActivity.OnCarouselImageClickListener carouselImageClickListener;
 
@@ -96,7 +103,28 @@ public class PhotoViewFragment extends Fragment {
             return true;
         });
 
-        loadImage(Uri.parse(imageUrl));
+        if (TextUtils.isEmpty(thumbUrl) && TextUtils.isEmpty(originalUrl)) {
+            //FIXME
+            LogUtil.e(TAG, "Url is empty.");
+            return;
+        }
+
+        if (!TextUtils.isEmpty(thumbUrl)) {
+            loadImage(Uri.parse(thumbUrl));
+        } else {
+            final Uri originalUri = Uri.parse(originalUrl);
+            if (ImageUtil.hasCache(originalUri)) {
+                loadImage(originalUri);
+            } else {
+                vgProgress.setVisibility(View.GONE);
+                btnTapToViewOriginal.setVisibility(View.VISIBLE);
+                btnTapToViewOriginal.setOnClickListener(v -> {
+                    btnTapToViewOriginal.setVisibility(View.GONE);
+                    vgProgress.setVisibility(View.VISIBLE);
+                    loadImage(originalUri);
+                });
+            }
+        }
     }
 
     private void setupProgress() {
@@ -136,12 +164,14 @@ public class PhotoViewFragment extends Fragment {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void loadImage(Uri uri) {
-        int width = ApplicationUtil.getDisplaySize(false);
-        int height = ApplicationUtil.getDisplaySize(true);
+        int width = fromCarousel
+                ? ApplicationUtil.getDisplaySize(false)
+                : ImageUtil.getMaximumBitmapSize();
+        int height = fromCarousel
+                ? ApplicationUtil.getDisplaySize(true)
+                : ImageUtil.getMaximumBitmapSize();
 
-        ResizeOptions resizeOptions = fromCarousel
-                ? new ResizeOptions(width, height)
-                : new ResizeOptions(ImageUtil.getMaximumBitmapSize(), ImageUtil.getMaximumBitmapSize());
+        ResizeOptions resizeOptions = new ResizeOptions(width, height);
 
         ImageUtil.loadDrawable(uri, resizeOptions, new BaseOnResourceReadyCallback() {
             @Override

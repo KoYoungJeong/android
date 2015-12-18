@@ -48,8 +48,9 @@ public class CarouselViewerModel {
                         .fileLinkId(fileMessage.id)
                         .fileName(fileMessage.content.name)
                         .fileType(fileMessage.content.type)
-                        .fileLinkUrl(ImageUtil.getFileUrl(fileMessage.content.fileUrl))
-                        .fileThumbUrl(ImageUtil.getOptimizedImageUrl(fileMessage.content))
+                        .fileLinkUrl(ImageUtil.getImageFileUrl(fileMessage.content.fileUrl))
+                        .fileThumbUrl(ImageUtil.getThumbnailUrl(fileMessage.content.extraInfo, ImageUtil.Thumbnails.THUMB))
+                        .fileOriginalUrl(ImageUtil.getImageFileUrl(fileMessage.content.fileUrl))
                         .ext(fileMessage.content.ext)
                         .size(fileMessage.content.size)
                         .fileCreateTime(
