@@ -20,9 +20,9 @@ public class LinkAnalysis implements RuleAnalysis {
         int color = context.getResources().getColor(R.color.jandi_accent_color);
         while (matcher.find()) {
             // 노출되는 텍스트 영역
-            String replaceText = matcher.group(1);
+            String replaceText = matcher.group(2);
             // 링크
-            String link = matcher.group(2);
+            String link = matcher.group(4);
             // -->[blahblah](http://blahblah)
             int start = matcher.start();
             // [blahblah](http://blahblah)<--
