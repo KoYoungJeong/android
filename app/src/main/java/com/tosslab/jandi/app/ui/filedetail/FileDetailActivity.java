@@ -13,6 +13,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -20,18 +21,18 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -80,6 +81,7 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -126,6 +128,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public static final int INTENT_RETURN_TYPE_UNSHARE = 1;
     public static final int REQ_STORAGE_PERMISSION = 101;
     public static final int REQ_STORAGE_PERMISSION_EXPORT = 102;
+    private static final int REQ_WINDOW_PERMISSION = 103;
     private static final StickerInfo NULL_STICKER = new StickerInfo();
     public static
 
@@ -147,11 +150,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @ViewById(R.id.lv_file_detail_comments)
     ListView lvFileDetailComments;
     @ViewById(R.id.vg_file_detail_input_comment)
-    RelativeLayout vgCommentLayout;
+    View vgCommentLayout;
     @ViewById(R.id.et_message)
     BackpressEditText etComment;
     @ViewById(R.id.btn_send_message)
-    Button btnSend;
+    View btnSend;
     @ViewById(R.id.vg_file_detail_preview_sticker)
     ViewGroup vgStickerPreview;
     @ViewById(R.id.iv_file_detail_preview_sticker_image)
@@ -161,14 +164,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @ViewById(R.id.vg_option_space)
     ViewGroup vgOptionSpace;
 
+    @ViewById(R.id.btn_show_mention)
+    View ivMention;
+
     @Bean
     StickerViewModel stickerViewModel;
     @Bean
     KeyboardHeightModel keyboardHeightModel;
     @SystemService
     InputMethodManager inputMethodManager;
-    @SystemService
-    ClipboardManager clipboardManager;
 
     private EntityManager entityManager;
     private boolean isMyFile;
@@ -406,6 +410,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                         }).check();
                 break;
             case R.id.action_file_detail_enable_external_link:
+                etComment.setSelection(etComment.getSelectionEnd());
                 fileDetailPresenter.onCopyExternLink(fileMessage, isExternalShared);
                 break;
             case R.id.action_file_detail_disable_external_link:
@@ -755,11 +760,38 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             stickerViewModel.dismissStickerSelector(true);
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker);
         } else {
-            int keyboardHeight =
-                    JandiPreference.getKeyboardHeight(getApplicationContext());
-            stickerViewModel.showStickerSelector(keyboardHeight);
+
+            boolean canDraw;
+            if (SdkUtils.isMarshmallow()) {
+                canDraw = Settings.canDrawOverlays(FileDetailActivity.this);
+            } else {
+                canDraw = true;
+            }
+
+            if (canDraw) {
+                int keyboardHeight =
+                        JandiPreference.getKeyboardHeight(getApplicationContext());
+                stickerViewModel.showStickerSelector(keyboardHeight);
+            } else {
+                // Android M (23) 부터 적용되는 시나리오
+                String packageName = JandiApplication.getContext().getPackageName();
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + packageName));
+                startActivityForResult(intent, REQ_WINDOW_PERMISSION);
+            }
+
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker);
         }
+    }
+
+    @Click(R.id.btn_show_mention)
+    void onMentionClick() {
+        BaseInputConnection inputConnection = new BaseInputConnection(etComment, true);
+        inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_AT));
+
+        if (stickerViewModel.isShow()) {
+            stickerViewModel.dismissStickerWindow();
+        }
+
     }
 
     @UiThread(propagation = Propagation.REUSE)
@@ -923,7 +955,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         if (TextUtils.isEmpty(contentString)) {
             contentString = "";
         }
-        ClipData clipData = ClipData.newPlainText("", contentString);
+
+        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clipData = ClipData.newPlainText(null, contentString);
         clipboardManager.setPrimaryClip(clipData);
     }
 
@@ -954,6 +988,18 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void setFileMessage(ResMessages.FileMessage fileMessage) {
         this.fileMessage = fileMessage;
+    }
+
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
+    public void dismissMentionButton() {
+        ivMention.setVisibility(View.GONE);
+    }
+
+    @UiThread(propagation = Propagation.REUSE)
+    @Override
+    public void showMentionButton() {
+        ivMention.setVisibility(View.VISIBLE);
     }
 
     public void showDeleteFileDialog(int fileId) {

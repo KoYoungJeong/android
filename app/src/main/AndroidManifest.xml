@@ -35,13 +35,13 @@
         <activity
             android:name=".ui.signup.verify.SignUpVerifyActivity_"
             android:label="@string/jandi_signup_verify_title"
-
             android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".ui.intro.IntroActivity_"
             android:label="@string/app_name"
-            android:logo="@drawable/jandi_symbol_launcher">
+            android:logo="@drawable/jandi_symbol_launcher"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -51,19 +51,16 @@
         <activity
             android:name=".ui.login.IntroMainActivity_"
             android:label="@string/app_name"
-
             android:windowSoftInputMode="stateAlwaysHidden|adjustUnspecified" />
 
         <activity
             android:name=".ui.account.AccountHomeActivity_"
             android:label="@string/jandi_select_team"
-
             android:windowSoftInputMode="adjustUnspecified" />
 
         <activity
             android:name=".ui.team.info.TeamDomainInfoActivity_"
             android:label="@string/team_info"
-
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
@@ -74,7 +71,6 @@
             android:name=".ui.message.v2.MessageListV2Activity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
@@ -109,24 +105,20 @@
         <activity
             android:name=".ui.invites.email.InviteEmailActivity_"
             android:label="@string/menu_entity_invite"
-
             android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name=".ui.entities.EntityChooseActivity_"
-
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".ui.carousel.CarouselViewerActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-
             android:theme="@style/JandiTheme.ActionBarOverlay" />
 
         <activity
             android:name=".ui.photo.PhotoViewActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-
             android:theme="@style/JandiTheme.ActionBarOverlay" />
 
         <activity android:name=".ui.term.TermActivity_" />
@@ -135,13 +127,11 @@
             android:name=".ui.maintab.topic.views.create.TopicCreateActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_create_channel"
-
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".ui.message.detail.edit.TopicDescriptionEditActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
@@ -191,12 +181,6 @@
 
         <service android:name="com.parse.PushService" />
 
-        <receiver android:name="com.parse.ParseBroadcastReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-            </intent-filter>
-        </receiver>
         <receiver
             android:name="com.parse.ParsePushBroadcastReceiver"
             android:exported="false">
@@ -206,11 +190,13 @@
                 <action android:name="com.parse.push.intent.DELETE" />
             </intent-filter>
         </receiver>
+
         <receiver android:name=".push.receiver.JandiBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.tosslab.jandi.app.Push" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name="com.parse.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
@@ -342,6 +328,13 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".JandiReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_RESTARTED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
         <receiver
             android:name=".utils.network.NetworkStateBroadcastReceiver"
             android:enabled="true"
@@ -363,11 +356,6 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="24a73214fd9000841e8d34390de55bdfd4150668" />
-
-        <!-- Glide -->
-        <meta-data
-            android:name="com.tosslab.jandi.app.utils.GlideQualityModule"
-            android:value="GlideModule" />
 
         <!-- Push Intent Service -->
         <service android:name=".push.receiver.JandiPushIntentService" />

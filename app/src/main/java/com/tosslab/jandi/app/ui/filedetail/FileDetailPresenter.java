@@ -31,7 +31,7 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.filedetail.domain.FileStarredInfo;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.placeholder.PlaceholderUtil;
@@ -401,12 +401,12 @@ public class FileDetailPresenter {
         switch (placeholderType) {
             case Google:
             case Dropbox:
-                String photoUrl = BitmapUtil.getFileUrl(content.fileUrl);
+                String photoUrl = ImageUtil.getFileUrl(content.fileUrl);
                 view.startGoogleOrDropboxFileActivity(photoUrl);
                 return;
         }
 
-        downloadFile(BitmapUtil.getFileUrl(content.fileUrl),
+        downloadFile(ImageUtil.getFileUrl(content.fileUrl),
                 content.title,
                 content.type,
                 content.ext,
@@ -458,6 +458,19 @@ public class FileDetailPresenter {
 
             ReadyComment readyComment = ReadyCommentRepository.getRepository().getReadyComment(fileMessage.id);
             mentionControlViewModel.setUpMention(readyComment.getText());
+            mentionControlViewModel.setOnMentionShowingListener(isShowing -> {
+                if (isShowing) {
+                    view.dismissMentionButton();
+                } else {
+                    view.showMentionButton();
+                }
+            });
+
+            if (mentionControlViewModel.getAllSelectableMembers().size() == 0) {
+                view.dismissMentionButton();
+            } else {
+                view.showMentionButton();
+            }
             registClipboardListenerforMention();
         }
     }
@@ -588,9 +601,11 @@ public class FileDetailPresenter {
         } else {
             // 클립보드에 바로 복사 처리
 
+            removeClipboardListenerforMention();
             StringBuffer externalLink = new StringBuffer(JandiConstantsForFlavors.SERVICE_BASE_URL).append("file/").append(fileMessage.content.externalCode);
             view.copyToClipboard(externalLink.toString());
             view.showToast(JandiApplication.getContext().getResources().getString(R.string.jandi_success_copy_clipboard_external_link));
+            registClipboardListenerforMention();
         }
     }
 
@@ -711,5 +726,9 @@ public class FileDetailPresenter {
         void exportIntentFile(File result, String type);
 
         void setFileMessage(ResMessages.FileMessage fileMessage2);
+
+        void dismissMentionButton();
+
+        void showMentionButton();
     }
 }

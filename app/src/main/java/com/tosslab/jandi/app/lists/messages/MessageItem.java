@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.FormatConverter;
 
 import java.util.Date;
@@ -146,7 +146,7 @@ public class MessageItem {
             if (message.content.extraInfo == null) {
                 return null;
             }
-            return BitmapUtil.getFileUrl(message.content.extraInfo.smallThumbnailUrl);
+            return ImageUtil.getFileUrl(message.content.extraInfo.smallThumbnailUrl);
         }
         return null;
     }

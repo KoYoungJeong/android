@@ -7,12 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.viewholder.MentionMemberListViewHolder;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
+import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import java.util.List;
 
@@ -61,19 +63,17 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
     public void onBindViewHolder(MentionMemberListViewHolder holder, int position) {
         SearchedItemVO item = getItem(position);
 
-        if (item.getName().equals("All") && item.getType().equals("room")) {
-            Ion.with(holder.getIvIcon())
-                    .placeholder(R.drawable.thum_all_member)
-                    .transform(new IonCircleTransform())
-                    .load(null);
+        SimpleDraweeView ivIcon = holder.getIvIcon();
+        GenericDraweeHierarchy hierarchy = ivIcon.getHierarchy();
 
+        if (item.getName().equals("All") && item.getType().equals("room")) {
+            ivIcon.setHierarchy(hierarchy);
+            ivIcon.setImageURI(UriFactory.getResourceUri(R.drawable.thum_all_member));
             holder.getTvName().setText(item.getName() + " (of topic member)");
         } else {
-            Ion.with(holder.getIvIcon())
-                    .placeholder(R.drawable.profile_img)
-                    .error(R.drawable.profile_img)
-                    .transform(new IonCircleTransform())
-                    .load(item.getSmallProfileImageUrl());
+            ImageUtil.loadCircleImageByFresco(ivIcon,
+                    item.getSmallProfileImageUrl(), R.drawable.profile_img);
+
             holder.getTvName().setText(item.getName());
         }
         holder.getConvertView().setOnClickListener(v -> {

@@ -5,14 +5,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
-import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
 import de.greenrobot.event.EventBus;
@@ -22,7 +23,7 @@ import de.greenrobot.event.EventBus;
  */
 public class StickerViewHolder implements BodyViewHolder {
 
-    private ImageView ivProfile;
+    private SimpleDraweeView ivProfile;
     private TextView tvName;
     private ImageView ivSticker;
     private View vDisableCover;
@@ -36,7 +37,7 @@ public class StickerViewHolder implements BodyViewHolder {
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
-        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+        ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvDate = (TextView) rootView.findViewById(R.id.tv_message_create_date);
         tvUnread = (TextView) rootView.findViewById(R.id.tv_entity_listitem_unread);
@@ -55,11 +56,7 @@ public class StickerViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
-                profileUrl,
-                R.drawable.profile_img,
-                R.drawable.profile_img
-        );
+        ImageUtil.loadCircleImageByFresco(ivProfile, profileUrl, R.drawable.profile_img);
 
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);

@@ -18,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,7 +25,8 @@ import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
@@ -57,9 +57,9 @@ import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -85,7 +85,7 @@ public class MessageListPresenter {
     RecyclerView lvMessages;
 
     @ViewById(R.id.btn_send_message)
-    Button sendButton;
+    View sendButton;
 
     @ViewById(R.id.et_message)
     EditText etMessage;
@@ -106,7 +106,7 @@ public class MessageListPresenter {
     View vgPreview;
 
     @ViewById(R.id.iv_message_preview_user_profile)
-    ImageView ivPreviewProfile;
+    SimpleDraweeView ivPreviewProfile;
 
     @ViewById(R.id.tv_message_preview_user_name)
     TextView tvPreviewUserName;
@@ -569,9 +569,9 @@ public class MessageListPresenter {
                 user.u_photoThumbnailUrl != null && !(TextUtils.isEmpty(user.u_photoThumbnailUrl.smallThumbnailUrl));
         String url = hasSmallThumbnailUrl
                 ? user.u_photoThumbnailUrl.smallThumbnailUrl : user.u_photoUrl;
-        Ion.with(ivPreviewProfile)
-                .transform(new IonCircleTransform())
-                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + url);
+
+        Uri uri = Uri.parse(JandiConstantsForFlavors.SERVICE_ROOT_URL + url);
+        ImageUtil.loadCircleImageByFresco(ivPreviewProfile, uri, R.drawable.profile_img);
 
         if (item.message instanceof ResMessages.FileMessage) {
             tvPreviewContent.setText(((ResMessages.FileMessage) item.message).content.title);
@@ -794,7 +794,7 @@ public class MessageListPresenter {
 
     public void loadSticker(StickerInfo stickerInfo) {
         StickerManager.LoadOptions loadOption = new StickerManager.LoadOptions();
-        loadOption.scaleType = ImageView.ScaleType.CENTER_CROP;
+        loadOption.scaleType = ScalingUtils.ScaleType.CENTER_CROP;
         StickerManager.getInstance().loadSticker(imgStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), loadOption);
     }
 

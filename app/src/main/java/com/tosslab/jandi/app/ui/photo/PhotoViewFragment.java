@@ -2,33 +2,33 @@ package com.tosslab.jandi.app.ui.photo;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.koushikdutta.ion.Ion;
-import com.tosslab.jandi.app.JandiApplication;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.imagepipeline.animated.base.AnimatableDrawable;
+import com.facebook.imagepipeline.common.ResizeOptions;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
-import com.tosslab.jandi.app.ui.photo.presenter.PhotoViewPresenter;
 import com.tosslab.jandi.app.ui.photo.widget.CircleProgress;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
+import com.tosslab.jandi.app.utils.image.BaseOnResourceReadyCallback;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
+import com.tosslab.jandi.app.utils.image.ClosableAttachStateChangeListener;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-
-import java.io.File;
 
 import uk.co.senab.photoview.PhotoView;
 
@@ -36,8 +36,11 @@ import uk.co.senab.photoview.PhotoView;
  * Created by Steve SeongUg Jung on 14. 12. 9..
  */
 @EFragment(R.layout.fragment_photo_view)
-public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.View {
-    public static final String TASK_ID_ACTIONBAR_HIDE = "actionbar_hide";
+public class PhotoViewFragment extends Fragment {
+    public static final String TAG = PhotoViewFragment.class.getSimpleName();
+
+    @FragmentArg
+    boolean fromCarousel = false;
 
     @FragmentArg
     String imageUrl;
@@ -49,7 +52,7 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
     PhotoView photoView;
 
     @ViewById(R.id.progress_photoview)
-    CircleProgress progress;
+    CircleProgress progressBar;
 
     @ViewById(R.id.tv_photoview_percentage)
     TextView tvPercentage;
@@ -57,10 +60,7 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
     @ViewById(R.id.vg_photoview_progress)
     LinearLayout vgProgress;
 
-    @Bean
-    PhotoViewPresenter presenter;
     private CarouselViewerActivity.OnCarouselImageClickListener carouselImageClickListener;
-    private boolean isForeground = true;
 
     private OnSwipeExitListener onSwipeExitListener;
 
@@ -74,15 +74,7 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
 
     @AfterViews
     void initView() {
-        // 캐러셀 이미지 처리를 위해 상위 액티비티로 전환
-//        Glide.get(getActivity().getApplicationContext()).clearMemory();
-//        Glide.get(getActivity().getApplicationContext()).setMemoryCategory(MemoryCategory.HIGH);
-
         setupProgress();
-
-        presenter.setView(this);
-        presenter.loadImage(imageUrl, imageType,
-                (downloaded, total) -> updateProgress(total, downloaded));
 
         photoView.setOnPhotoTapListener((view, x, y) -> {
             if (carouselImageClickListener != null) {
@@ -103,67 +95,27 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
                     ? OnSwipeExitListener.DIRECTION_TO_BOTTOM : OnSwipeExitListener.DIRECTION_TO_TOP);
             return true;
         });
+
+        loadImage(Uri.parse(imageUrl));
     }
 
     private void setupProgress() {
         int progressWidth = (int) (getResources().getDisplayMetrics().density * 4);
-        progress.setBgStrokeWidth(progressWidth);
-        progress.setProgressStrokeWidth(progressWidth);
-        progress.setBgColor(getResources().getColor(R.color.jandi_primary_color));
-        progress.setProgressColor(getResources().getColor(R.color.jandi_accent_color));
+        progressBar.setBgStrokeWidth(progressWidth);
+        progressBar.setProgressStrokeWidth(progressWidth);
+        progressBar.setBgColor(getResources().getColor(R.color.jandi_primary_color));
+        progressBar.setProgressColor(getResources().getColor(R.color.jandi_accent_color));
     }
 
-    // Gif 일 때는 Ion 이용.(다운로드 불필요)
-    @UiThread
-    @Override
-    public void loadImageGif(File file) {
-
-        if (getActivity() == null) {
-            return;
-        }
-
-        Ion.with(getActivity())
-                .load(file)
-                .intoImageView(photoView)
-                .setCallback((e, result) -> {
-                    hideProgress();
-                    if (e != null) {
-                        e.printStackTrace();
-                        if (result != null) {
-                            result.setImageResource(R.drawable.jandi_fl_icon_deleted);
-                        }
-                    }
-                });
-    }
-
-    @Override
-    public boolean isForeground() {
-        return isForeground;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        isForeground = true;
-    }
-
-    @Override
-    public void onStop() {
-        isForeground = false;
-        super.onStop();
-    }
-
-    @UiThread
-    @Override
-    public void updateProgress(long total, long downloaded) {
-        progress.setMax((int) total);
-        progress.setProgress((int) downloaded);
-        int percentage = (int) ((downloaded / (float) total) * 100);
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void updateProgress(float progress) {
+        progressBar.setMax(100);
+        int percentage = (int) (progress * 100);
+        progressBar.setProgress(percentage);
         tvPercentage.setText(percentage + "%");
     }
 
-    @UiThread
-    @Override
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void hideProgress() {
         vgProgress.animate()
                 .alpha(0.0f)
@@ -178,44 +130,50 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
                 });
     }
 
-    @UiThread
-    @Override
-    public <T> void loadImage(T target) {
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void loadImage(Uri uri) {
+        int width = ApplicationUtil.getDisplaySize(false);
+        int height = ApplicationUtil.getDisplaySize(true);
 
-        if (getActivity() == null) {
-            return;
-        }
+        ResizeOptions resizeOptions = fromCarousel
+                ? new ResizeOptions(width, height)
+                : new ResizeOptions(ImageUtil.getMaximumBitmapSize(), ImageUtil.getMaximumBitmapSize());
 
-        Glide.with(JandiApplication.getContext())
-                .load(target)
-                .fitCenter()
-                .sizeMultiplier(1f)
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .error(R.drawable.jandi_fl_icon_deleted)
-                .listener(new RequestListener<T, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, T model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        if (e != null) {
-                            e.printStackTrace();
-                        }
-                        hideProgress();
-                        return false;
-                    }
+        ImageUtil.loadDrawable(uri, resizeOptions, new BaseOnResourceReadyCallback() {
+            @Override
+            public void onReady(Drawable drawable, CloseableReference reference) {
+                hideProgress();
 
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, T model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        hideProgress();
+                setImageResource(drawable, reference);
+            }
 
-                        return false;
-                    }
-                })
-                .into(photoView);
+            @Override
+            public void onFail(Throwable cause) {
+                LogUtil.e(TAG, Log.getStackTraceString(cause));
+                hideProgress();
+            }
+
+            @Override
+            public void onProgressUpdate(float progress) {
+                LogUtil.i(TAG, "progressBar = " + progress);
+                updateProgress(progress);
+            }
+        });
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void setImageResource(Drawable drawable, CloseableReference reference) {
+        photoView.setImageDrawable(drawable);
 
-    public void setOnCarouselImageClickListener(CarouselViewerActivity.OnCarouselImageClickListener carouselImageClickListener) {
+        if (drawable instanceof AnimatableDrawable) {
+            ((AnimatableDrawable) drawable).start();
+        }
 
+        photoView.addOnAttachStateChangeListener(new ClosableAttachStateChangeListener(reference));
+    }
+
+    public void setOnCarouselImageClickListener(
+            CarouselViewerActivity.OnCarouselImageClickListener carouselImageClickListener) {
         this.carouselImageClickListener = carouselImageClickListener;
     }
 }

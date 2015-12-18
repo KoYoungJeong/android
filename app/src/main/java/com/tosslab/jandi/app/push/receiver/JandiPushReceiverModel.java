@@ -71,7 +71,6 @@ public class JandiPushReceiverModel {
 
         Intent intent = intentBuilder.get();
 
-
         // 노티피케이션은 해제 됐지만 PendingIntent 가 살아있는 경우가 있어 cancel 을 호출해줌.
         PendingIntent.getActivity(context,
                 PENDING_INTENT_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT)

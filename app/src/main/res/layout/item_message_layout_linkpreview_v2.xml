@@ -1,27 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:freco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <RelativeLayout
         android:id="@+id/vg_linkpreview_thumb"
         android:layout_width="@dimen/jandi_messages_link_preview_thumb_max_width"
-        android:layout_height="110dp"
-        android:padding="1dp">
+        android:layout_height="110dp">
 
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/iv_linkpreview_thumb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/jandi_linkpreview_thumb_background" />
+            freco:backgroundImage="@color/jandi_linkpreview_thumb_background"/>
 
         <View
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/iv_linkpreview_thumb"
-            android:layout_alignLeft="@+id/iv_linkpreview_thumb"
-            android:layout_alignRight="@+id/iv_linkpreview_thumb"
-            android:layout_alignTop="@+id/iv_linkpreview_thumb"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:background="@drawable/bg_rect_gray" />
     </RelativeLayout>
 
@@ -32,7 +28,7 @@
         android:layout_alignBottom="@+id/vg_snippet_summary"
         android:layout_alignTop="@+id/vg_snippet_summary"
         android:layout_below="@id/vg_linkpreview_thumb"
-        android:background="@color/jandi_linkpreview_divider" />
+        android:background="@color/jandi_light_gray_border" />
 
     <LinearLayout
         android:id="@+id/vg_snippet_summary"

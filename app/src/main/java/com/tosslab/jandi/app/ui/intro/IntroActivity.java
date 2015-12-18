@@ -50,12 +50,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         presenter.checkNewVersion(getApplicationContext(), startForInvite);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ActivityHelper.setOrientation(this);
-    }
-
     @UiThread
     @Override
     public void moveTeamSelectActivity() {

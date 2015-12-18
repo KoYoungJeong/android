@@ -5,16 +5,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
-import com.tosslab.jandi.app.utils.BitmapUtil;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
+import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import java.util.ArrayList;
@@ -45,7 +46,8 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     .inflate(R.layout.item_room_select, parent, false);
             RoomViewHolder viewHolder = new RoomViewHolder(itemView);
             viewHolder.tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
-            viewHolder.ivIcon = (ImageView) itemView.findViewById(R.id.iv_room_selector_item_icon);
+            viewHolder.ivIcon =
+                    (SimpleDraweeView) itemView.findViewById(R.id.iv_room_selector_item_icon);
             viewHolder.vgLine = itemView.findViewById(R.id.v_line_use_for_first_no_folder_item);
             viewHolder.vgContent = (LinearLayout) itemView.findViewById(R.id.vg_room_selector_content);
             return viewHolder;
@@ -85,37 +87,33 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             roomholder.vgLine.setVisibility(View.GONE);
         }
 
+        SimpleDraweeView ivIcon = roomholder.ivIcon;
         if (!item.isUser()) {
-            roomholder.ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            GenericDraweeHierarchy hierarchy = ivIcon.getHierarchy();
+            hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
         }
 
         if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-            roomholder.ivIcon.setImageResource(R.drawable.icon_search_all_rooms);
+            ivIcon.setImageURI(UriFactory.getResourceUri(R.drawable.icon_search_all_rooms));
             roomholder.tvName.setText(R.string.jandi_file_category_everywhere);
 
         } else if (item.isUser()) {
-            Ion.with(roomholder.ivIcon)
-                    .placeholder(R.drawable.profile_img_comment)
-                    .error(R.drawable.profile_img_comment)
-                    .fitCenter()
-                    .transform(new IonCircleTransform())
-                    .crossfade(true)
-                    .load(BitmapUtil.getFileUrl(item.getProfileUrl()));
-
+            String fileUrl = ImageUtil.getFileUrl(item.getProfileUrl());
+            ImageUtil.loadCircleImageByFresco(ivIcon, fileUrl, R.drawable.profile_img_comment);
             roomholder.tvName.setText(item.getName());
         } else if (item.isPublicTopic()) {
-            if (item.isStarred()) {
-                roomholder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic_fav);
-            } else {
-                roomholder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic);
+            int resId  =R.drawable.topiclist_icon_topic_fav;
+            if (!item.isStarred()) {
+                resId = R.drawable.topiclist_icon_topic;
             }
+            ivIcon.setImageURI(UriFactory.getResourceUri(resId));
             roomholder.tvName.setText(item.getName());
         } else {
-            if (item.isStarred()) {
-                roomholder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic_private_fav);
-            } else {
-                roomholder.ivIcon.setImageResource(R.drawable.topiclist_icon_topic_private);
+            int resId  =R.drawable.topiclist_icon_topic_private_fav;
+            if (!item.isStarred()) {
+                resId = R.drawable.topiclist_icon_topic_private;
             }
+            ivIcon.setImageURI(UriFactory.getResourceUri(resId));
             roomholder.tvName.setText(item.getName());
         }
 
@@ -157,7 +155,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private static class RoomViewHolder extends RecyclerView.ViewHolder {
         private TextView tvName;
-        private ImageView ivIcon;
+        private SimpleDraweeView ivIcon;
         private View vgLine;
         private LinearLayout vgContent;
 

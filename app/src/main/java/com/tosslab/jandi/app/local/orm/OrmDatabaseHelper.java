@@ -53,6 +53,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_SHARE_ENTITY_RESET = 8;
     private static final int DATABASE_VERSION_FILE_SHARE_INFO = 9;
     private static final int DATABASE_VERSION = DATABASE_VERSION_FILE_SHARE_INFO;
+
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {

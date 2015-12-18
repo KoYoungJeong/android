@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/iv_member_profile_img_large"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
@@ -37,14 +37,13 @@
                 android:layout_above="@+id/vg_member_profile_bottoms"
                 android:orientation="vertical">
 
-                <ImageView
+                <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/iv_member_profile_img_small"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_above="@+id/tv_member_profile_name"
                     android:layout_marginBottom="18dp"
-                    android:layout_marginLeft="30dp"
-                    android:scaleType="fitXY"/>
+                    android:layout_marginLeft="30dp"/>
 
                 <TextView
                     android:id="@+id/tv_member_profile_name"

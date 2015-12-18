@@ -5,7 +5,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
-import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
 import org.androidannotations.annotations.EBean;
@@ -48,8 +48,8 @@ public class CarouselViewerModel {
                         .fileLinkId(fileMessage.id)
                         .fileName(fileMessage.content.name)
                         .fileType(fileMessage.content.type)
-                        .fileLinkUrl(BitmapUtil.getFileUrl(fileMessage.content.fileUrl))
-                        .fileThumbUrl(BitmapUtil.getOptimizedImageUrl(fileMessage.content))
+                        .fileLinkUrl(ImageUtil.getFileUrl(fileMessage.content.fileUrl))
+                        .fileThumbUrl(ImageUtil.getOptimizedImageUrl(fileMessage.content))
                         .ext(fileMessage.content.ext)
                         .size(fileMessage.content.size)
                         .fileCreateTime(

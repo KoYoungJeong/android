@@ -97,6 +97,7 @@
 	<string name="jandi_browse_other_topics">"참여하지 않은 토픽 목록 보기"</string>
 	<string name="jandi_cancel">"취소"</string>
 	<string name="jandi_canceled">"취소됨"</string>
+	<string name="jandi_cannot_connect_service_try_again">"일시적으로 서비스 접속이 되지 않습니다. 잠시 후 다시 시도해주세요."</string>
 	<string name="jandi_cannot_find_messages">"검색 결과가 없습니다:"</string>
 	<string name="jandi_cannot_find_search_result_1">"파일 서랍에 아직 파일이 없습니다."</string>
 	<string name="jandi_cannot_find_search_result_2">"토픽 또는 1:1메시지에서 파일을 업로드하실 수 있습니다."</string>
@@ -105,6 +106,7 @@
 	<string name="jandi_chat_detail">"대화창 설정"</string>
 	<string name="jandi_choose_app_store">"앱 마켓을 선택해주세요."</string>
 	<string name="jandi_choose_email">"이메일 선택"</string>
+	<string name="jandi_choose_your_domain">"도메인명"</string>
 	<string name="jandi_coach_mark_create_new_topics">"토픽 만들기"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"1:1 메시지를 보낼 멤버 찾기"</string>
 	<string name="jandi_coach_mark_directmessage_explain1">"팀 멤버에게 1:1로 보낸 메시지는"</string>
@@ -338,6 +340,7 @@
 	<string name="jandi_push_preview_all_message">"모든 메시지"</string>
 	<string name="jandi_push_preview_public_only">"공개 토픽만"</string>
 	<string name="jandi_question_team_create">"아직 잔디 사용자가 아니세요?"</string>
+	<string name="jandi_r_u_sure_to_delete_email">"정말 이 이메일 주소를 삭제하시겠습니까?"</string>
 	<string name="jandi_retry_voice_search">"음성 검색을 다시 시도해주십시요."</string>
 	<string name="jandi_save">"저장"</string>
 	<string name="jandi_screen_auto">"자동"</string>
@@ -451,16 +454,13 @@
 	<string name="jandi_topic_was_removed">"이미 나갔거나 삭제된 토픽이므로 원본을 확인할 수 없습니다."</string>
 	<string name="jandi_tos_and_pp">"이용 약관 및 개인정보 취급방침"</string>
 	<string name="jandi_try_again">"다시 시도하기"</string>
-	<string name="jandi_tutorial_file">"파일 업로드, 공유, 검색을메신저에서 한 번에"</string>
-	<string name="jandi_tutorial_file_message">"사진과 동영상 뿐 아니라 PPT, 엑셀, PDF 등다양한 포맷의 업무 파일을 직접 업로드하여토픽이나 개인과 공유할 수 있습니다.또한 업로드한 파일들은 계속 보관되며강력한 검색 기능 또한 지원하기 때문에굳이 클라우드 서비스를 사용할 필요가 없습니다."</string>
-	<string name="jandi_tutorial_topic">"토픽을 통한 좀 더 유연하고개방적인 커뮤니케이션"</string>
-	<string name="jandi_tutorial_topic_message">"토픽이란 파일 공유가 가능한단체대화방이라고 할 수 있는새로운 개념의 업무 공간입니다.토픽을 이용해 업무의 개방성과 유연성을높이면서도 기존 메신저처럼 비공개 토픽 또는1:1 메시지를 통해서 독립성 또한 보장됩니다."</string>
+	<string name="jandi_tutorial_file">"파일 업로드, 공유, 검색을 메신저에서 한 번에"</string>
+	<string name="jandi_tutorial_file_message">"사진과 동영상 뿐 아니라 PPT, 엑셀, PDF 등 다양한 포맷의 업무 파일을 직접 업로드하여 토픽이나 개인과 공유할 수 있습니다. 또한 업로드한 파일들은 계속 보관되며 강력한 검색 기능 또한 지원하기 때문에 굳이 클라우드 서비스를 사용할 필요가 없습니다."</string>
+	<string name="jandi_tutorial_topic">"토픽을 통한 좀 더 유연하고 개방적인 커뮤니케이션"</string>
+	<string name="jandi_tutorial_topic_message">"토픽이란 파일 공유가 가능한 단체 대화방이라고 할 수 있는 새로운 개념의 업무 공간입니다. 토픽을 이용해 업무의 개방성과 유연성을 높이면서도 기존 메신저처럼 비공개 토픽 또는1:1 메시지를 통해서 독립성 또한 보장됩니다."</string>
 	<string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
-	<string name="jandi_tutorial_welcome_message">"지금까지 업무 파일을 클라우드에 업로드한 뒤,
-파일 주소를 이메일로 보내고
-확인을 부탁한다는 메시지를 모바일로 보내셨나요?
-잔디는 이 모든 것을 한 번에 해결해주는
-완전히 새로운 업무용 메신저입니다."</string>
+	<string name="jandi_tutorial_welcome_message">"지금까지 업무 파일을 클라우드에 업로드한 뒤, 파일 주소를 이메일로 보내고 확인을 부탁한다는 메시지를 모바일로 보내셨나요?
+잔디는 이 모든 것을 한 번에 해결해주는 완전히 새로운 업무용 메신저입니다."</string>
 	<string name="jandi_unpinned_message">"즐겨찾기 해제됨"</string>
 	<string name="jandi_unread_messages_below">"여기까지 읽었습니다."</string>
 	<string name="jandi_unshare_succeed">"%s 공유가 해제되었습니다."</string>
