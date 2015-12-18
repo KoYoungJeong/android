@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -27,6 +28,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
+import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -109,7 +111,6 @@ public class JandiPushReceiverModel {
                 break;
             }
         }
-
         return isTopicPushOn;
     }
 
@@ -151,6 +152,14 @@ public class JandiPushReceiverModel {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void convertPlainMarkdownContent(PushTO pushTO) {
+        String content = pushTO.getInfo().getMessageContent();
+        SpannableStringBuilder contentWrapper = new SpannableStringBuilder(content);
+        MarkdownViewModel markdownViewModel = new MarkdownViewModel(contentWrapper, true);
+        markdownViewModel.execute();
+        pushTO.getInfo().setMessageContent(contentWrapper.toString());
     }
 
     public ResLeftSideMenu getLeftSideMenuFromDB(int teamId) {

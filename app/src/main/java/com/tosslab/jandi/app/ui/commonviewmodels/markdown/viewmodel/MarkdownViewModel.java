@@ -28,6 +28,11 @@ public class MarkdownViewModel {
         this.isPlainText = isPlainText;
     }
 
+    public MarkdownViewModel(SpannableStringBuilder messageStringBuilder, Boolean isPlainText) {
+        this.messageStringBuilder = messageStringBuilder;
+        this.isPlainText = isPlainText;
+    }
+
     public void execute() {
         if (messageStringBuilder == null) {
             return;
