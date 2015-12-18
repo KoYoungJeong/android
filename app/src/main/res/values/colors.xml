@@ -108,7 +108,7 @@
     <color name="jandi_messages_file_name">#00a6e9</color>
     <color name="jandi_messages_item_click">#EEEEEE</color>
     <color name="jandi_announcement_divider">#FFD0D0D0</color>
-    <color name="jandi_linkpreview_divider">#FFE6E6E6</color>
+    <color name="jandi_light_gray_border">#FFE6E6E6</color>
     <color name="jandi_linkpreview_thumb_background">#FFF4F4F4</color>
     <color name="jandi_messages_file_writer">#000000</color>
     <color name="jandi_messages_file_content">#353535</color>

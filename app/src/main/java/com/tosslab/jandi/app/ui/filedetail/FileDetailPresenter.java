@@ -601,9 +601,11 @@ public class FileDetailPresenter {
         } else {
             // 클립보드에 바로 복사 처리
 
+            removeClipboardListenerforMention();
             StringBuffer externalLink = new StringBuffer(JandiConstantsForFlavors.SERVICE_BASE_URL).append("file/").append(fileMessage.content.externalCode);
             view.copyToClipboard(externalLink.toString());
             view.showToast(JandiApplication.getContext().getResources().getString(R.string.jandi_success_copy_clipboard_external_link));
+            registClipboardListenerforMention();
         }
     }
 
