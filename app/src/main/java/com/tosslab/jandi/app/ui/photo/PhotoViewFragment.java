@@ -143,12 +143,19 @@ public class PhotoViewFragment extends Fragment {
         }
 
         int percentage = (int) (progress * 100);
+        percentage = Math.min(percentage, 99);
+
         progressBar.setProgress(percentage);
         tvPercentage.setText(percentage + "%");
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void hideProgress() {
+        if (vgProgress.getVisibility() == View.VISIBLE) {
+            progressBar.setProgress(100);
+            tvPercentage.setText(100 + "%");
+        }
+
         vgProgress.animate()
                 .alpha(0.0f)
                 .setDuration(300)
@@ -165,11 +172,9 @@ public class PhotoViewFragment extends Fragment {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void loadImage(Uri uri) {
         int width = fromCarousel
-                ? ApplicationUtil.getDisplaySize(false)
-                : ImageUtil.getMaximumBitmapSize();
+                ? ApplicationUtil.getDisplaySize(false) : ImageUtil.STANDARD_IMAGE_SIZE;
         int height = fromCarousel
-                ? ApplicationUtil.getDisplaySize(true)
-                : ImageUtil.getMaximumBitmapSize();
+                ? ApplicationUtil.getDisplaySize(true) : ImageUtil.STANDARD_IMAGE_SIZE;
 
         ResizeOptions resizeOptions = new ResizeOptions(width, height);
 

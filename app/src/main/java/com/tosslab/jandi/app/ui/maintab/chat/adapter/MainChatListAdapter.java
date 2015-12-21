@@ -18,6 +18,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -135,18 +136,8 @@ public class MainChatListAdapter extends BaseAdapter {
 
         SimpleDraweeView ivIcon = viewHolder.ivIcon;
         ivIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
-        ivIcon.setImageResource(R.drawable.profile_img);
 
-        GenericDraweeHierarchy hierarchy = ivIcon.getHierarchy();
-        hierarchy.setPlaceholderImage(R.drawable.profile_img);
-
-        RoundingParams roundingParams = hierarchy.getRoundingParams() == null
-                ? new RoundingParams() : hierarchy.getRoundingParams();
-        roundingParams.setRoundAsCircle(true);
-        hierarchy.setRoundingParams(roundingParams);
-
-        ivIcon.setHierarchy(hierarchy);
-        ivIcon.setImageURI(Uri.parse(item.getPhoto()));
+        ImageUtil.loadCircleImageByFresco(ivIcon, Uri.parse(item.getPhoto()), R.drawable.profile_img);
 
         return convertView;
     }

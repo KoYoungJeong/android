@@ -230,28 +230,16 @@ public class ImageViewHolder implements BodyViewHolder {
             // Local File Path 도 없고 Thumbnail Path 도 없는 경우
             if (!isFromLocalFilePath && TextUtils.isEmpty(remoteFilePth)) {
                 LogUtil.i(TAG, "Thumbnail's are empty.");
-                String originalImageUrl = ImageUtil.getImageFileUrl(fileContent.fileUrl);
-                final boolean hasCache = ImageUtil.hasCache(Uri.parse(originalImageUrl));
-
-                int width = hasCache ? getPixelFromDp(MAX_WIDTH) : getPixelFromDp(SMALL_SIZE);
-                int height = hasCache ? getPixelFromDp(MAX_HEIGHT) : getPixelFromDp(SMALL_SIZE);
-
-                layoutParams.width = width;
-                layoutParams.height = height;
+                layoutParams.width = getPixelFromDp(SMALL_SIZE);
+                layoutParams.height = getPixelFromDp(SMALL_SIZE);
 
                 ivFileImage.setLayoutParams(layoutParams);
                 ivFileImage.requestLayout();
 
                 hierarchy.setRoundingParams(null);
-                if (hasCache) {
-                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                    Uri uri = Uri.parse(originalImageUrl);
-                    loadImage(uri, width, height, true);
-                } else {
-                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
-                    ivFileImage.setHierarchy(hierarchy);
-                    ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.image_no_preview));
-                }
+                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
+
+                ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.image_no_preview));
                 return;
             }
 
@@ -285,13 +273,11 @@ public class ImageViewHolder implements BodyViewHolder {
                         hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
                         break;
                 }
-                ivFileImage.setHierarchy(hierarchy);
 
                 width = imageSpec.getWidth();
                 height = imageSpec.getHeight();
             } else {
                 hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                ivFileImage.setHierarchy(hierarchy);
 
                 width = getPixelFromDp(MAX_WIDTH);
                 height = getPixelFromDp(MAX_HEIGHT);
@@ -309,11 +295,11 @@ public class ImageViewHolder implements BodyViewHolder {
     }
 
     private void loadImage(Uri uri, int width, int height, boolean needToResize) {
-        int maximumBitmapSize = ImageUtil.getMaximumBitmapSize();
+        final int maxsize = ImageUtil.STANDARD_IMAGE_SIZE;
         ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
                 .setResizeOptions(needToResize
                         ? new ResizeOptions(width, height)
-                        : new ResizeOptions(maximumBitmapSize, maximumBitmapSize))
+                        : new ResizeOptions(maxsize, maxsize))
                 .setAutoRotateEnabled(true)
                 .build();
 
@@ -321,6 +307,7 @@ public class ImageViewHolder implements BodyViewHolder {
                 .setImageRequest(request)
                 .setOldController(ivFileImage.getController())
                 .build();
+
         ivFileImage.setController(controller);
     }
 

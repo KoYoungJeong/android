@@ -51,6 +51,8 @@ import java.util.concurrent.ExecutorService;
 public class ImageUtil {
     public static final String TAG = ImageUtil.class.getSimpleName();
 
+    public static final int STANDARD_IMAGE_SIZE = 2048;
+
     public static Bitmap getBlurBitmap(Bitmap bitmap, int radius) {
         Bitmap result;
         if (bitmap.getConfig() == null) {
@@ -295,10 +297,17 @@ public class ImageUtil {
         return bitmap;
     }
 
-    public static boolean hasCache(Uri originalUri) {
-        DataSource<Boolean> dataSource = Fresco.getImagePipeline().isInDiskCache(originalUri);
+    public static boolean hasCache(Uri uri) {
+        final boolean isInMemoryCache = Fresco.getImagePipeline().isInBitmapMemoryCache(uri);
+        LogUtil.i(TAG, "isInMemoryCache - " + isInMemoryCache);
+        return isInMemoryCache || isInDiskCache(uri);
+    }
+
+    public static boolean isInDiskCache(Uri uri) {
+        DataSource<Boolean> dataSource = Fresco.getImagePipeline().isInDiskCache(uri);
         boolean isInDiskCache = dataSource.getResult() != null && dataSource.getResult();
-        return isInDiskCache || Fresco.getImagePipeline().isInBitmapMemoryCache(originalUri);
+        LogUtil.d(TAG, "isInDiskCache - " + isInDiskCache);
+        return isInDiskCache;
     }
 
     public static String getImageFileUrl(String url) {
@@ -529,11 +538,6 @@ public class ImageUtil {
         loadDrawable(uri, null, false, onResourceReadyCallback);
     }
 
-    public static void loadDrawable(Uri uri, boolean executeIntoCallerThread,
-                                    final OnResourceReadyCallback onResourceReadyCallback) {
-        loadDrawable(uri, null, executeIntoCallerThread, onResourceReadyCallback);
-    }
-
     public static void loadDrawable(Uri uri,
                                     ResizeOptions resizeOptions,
                                     final OnResourceReadyCallback onResourceReadyCallback) {
@@ -544,6 +548,9 @@ public class ImageUtil {
                                     ResizeOptions resizeOptions,
                                     boolean executeIntoCallerThread,
                                     final OnResourceReadyCallback onResourceReadyCallback) {
+        if (resizeOptions == null) {
+            resizeOptions = new ResizeOptions(STANDARD_IMAGE_SIZE, STANDARD_IMAGE_SIZE);
+        }
         ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
                 .setAutoRotateEnabled(true)
                 .setResizeOptions(resizeOptions)
@@ -564,15 +571,6 @@ public class ImageUtil {
         String localPath = UploadedFileInfoRepository.getRepository()
                 .getUploadedFileInfo(messageId).getLocalPath();
         return new File(localPath).exists() ? localPath : "";
-    }
-
-    public static int getMaximumBitmapSize() {
-        int minimum = 512;
-
-        DisplayMetrics displayMetrics =
-                JandiApplication.getContext().getResources().getDisplayMetrics();
-
-        return (int) (minimum * Math.pow(2, displayMetrics.density));
     }
 
     public static boolean isVerticalPhoto(int orientation) {
@@ -638,7 +636,7 @@ public class ImageUtil {
         }
 
         private Drawable getAnimatedDrawable(CloseableAnimatedImage animatedImage) {
-            LogUtil.i(TAG, "animatableImage loaded");
+            LogUtil.i(TAG, "AnimatedImage loaded");
             AnimatedDrawableFactory animatedDrawableFactory =
                     Fresco.getImagePipelineFactory().getAnimatedDrawableFactory();
             return animatedDrawableFactory.create(animatedImage.getImageResult());

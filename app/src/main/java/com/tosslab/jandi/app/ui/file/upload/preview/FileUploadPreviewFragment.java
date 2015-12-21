@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -60,8 +61,8 @@ public class FileUploadPreviewFragment extends Fragment {
 
             Uri uri = UriFactory.getFileUri(realFilePath);
 
-            int width = ApplicationUtil.getDisplaySize(false);
-            int height = ApplicationUtil.getDisplaySize(true);
+            int width = ImageUtil.STANDARD_IMAGE_SIZE;
+            int height = ImageUtil.STANDARD_IMAGE_SIZE;
 
             ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
                     .setAutoRotateEnabled(true)

@@ -42,6 +42,7 @@ import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -188,8 +189,8 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
             hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
             ivShareImage.setHierarchy(hierarchy);
 
-            int width = ApplicationUtil.getDisplaySize(false);
-            int height = ApplicationUtil.getDisplaySize(true);
+            int width = ImageUtil.STANDARD_IMAGE_SIZE;
+            int height = ImageUtil.STANDARD_IMAGE_SIZE;
 
             ImageRequest imageRequest =
                     ImageRequestBuilder.newBuilderWithSource(Uri.fromFile(file))
