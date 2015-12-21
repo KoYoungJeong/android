@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
@@ -69,6 +70,9 @@ public class FileDetailCollapseCommentView implements CommentViewHolder {
         spannableStringBuilder.setSpan(spannable,
                 startIndex, endIndex,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        MarkdownViewModel markdownViewModel = new MarkdownViewModel(textViewCommentContent, spannableStringBuilder, false);
+        markdownViewModel.execute();
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 textViewCommentContent, spannableStringBuilder, commentMessage.mentions,

@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -65,6 +66,9 @@ public class DummyViewHolder implements BodyViewHolder {
             tvMessage.setVisibility(View.VISIBLE);
 
             setTextSendingStatus(dummyMessageLink, builder);
+
+            MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvMessage, builder, false);
+            markdownViewModel.execute();
 
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                     tvMessage, builder, ((DummyMessageLink) link).getMentions(),
