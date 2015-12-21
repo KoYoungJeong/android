@@ -181,12 +181,16 @@ public class FileCommentViewHolder implements BodyViewHolder {
             // ArrayList로 나오는 경우 아직 DB에 기록되지 않은 경우 - object가 자동갱신되지 않는 문제 해결
             if (shareEntities instanceof ArrayList) {
                 ResMessages.FileMessage file = MessageRepository.getRepository().getFileMessage(feedbackFileMessage.id);
-                shareEntities = file.shareEntities;
+                if (file != null && file.shareEntities != null) {
+                    shareEntities = file.shareEntities;
+                }
             }
 
-            for (ResMessages.OriginalMessage.IntegerWrapper e : shareEntities) {
-                if (e.getShareEntity() == roomId) {
-                    isSharedFile = true;
+            if (shareEntities != null) {
+                for (ResMessages.OriginalMessage.IntegerWrapper e : shareEntities) {
+                    if (e.getShareEntity() == roomId) {
+                        isSharedFile = true;
+                    }
                 }
             }
 
