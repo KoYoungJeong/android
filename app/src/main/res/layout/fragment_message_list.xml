@@ -177,17 +177,6 @@
             android:textSize="@dimen/jandi_messages_content" />
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/lv_list_search_members"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/v_messages_divider"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@+id/vg_messages_disable_alert"
-        android:background="@color/white"
-        android:scrollbars="vertical"
-        android:visibility="invisible" />
-
     <!-- Message Input Layout -->
     <View
         android:id="@+id/v_messages_divider"

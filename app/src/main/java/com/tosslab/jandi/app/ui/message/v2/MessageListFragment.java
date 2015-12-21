@@ -217,8 +217,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     BackpressEditText etMessage;
     @ViewById(R.id.vg_option_space)
     ViewGroup vgOptionSpace;
-    @ViewById(R.id.lv_list_search_members)
-    RecyclerView rvListSearchMembers;
     @ViewById(R.id.vg_easteregg_snow)
     FrameLayout vgEasterEggSnow;
     @Bean

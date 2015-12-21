@@ -90,9 +90,6 @@ public class MessageListPresenter {
     @ViewById(R.id.et_message)
     EditText etMessage;
 
-    @ViewById(R.id.lv_list_search_members)
-    RecyclerView lvSearchMembers;
-
     @RootContext
     AppCompatActivity activity;
 
@@ -830,10 +827,6 @@ public class MessageListPresenter {
                 return false;
             }
         });
-    }
-
-    public RecyclerView getLvSearchMembers() {
-        return lvSearchMembers;
     }
 
     public void setLastReadLinkId(int lastReadLinkId) {
