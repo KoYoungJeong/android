@@ -158,7 +158,7 @@ public class EmailChoosePresenter {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(R.string.jandi_action_delete)
-                .setMessage(R.string.jandi_message_ask_about_deleting)
+                .setMessage(R.string.jandi_r_u_sure_to_delete_email)
                 .setNegativeButton(R.string.jandi_cancel, null)
                 .setPositiveButton(R.string.jandi_confirm, new DialogInterface.OnClickListener() {
                     @Override
