@@ -2,10 +2,10 @@ package com.tosslab.jandi.app.ui.settings;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -42,6 +42,8 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 
+import java.util.Arrays;
+
 import de.greenrobot.event.EventBus;
 
 /**
@@ -74,27 +76,18 @@ public class SettingsFragment extends PreferenceFragment {
 
         addPreferencesFromResource(R.xml.pref_setting);
 
-        ListPreference settingOrientation = ((ListPreference) getPreferenceManager().findPreference
-                ("setting_orientation"));
-        String value = settingOrientation.getValue();
 
-        if (TextUtils.isEmpty(value)) {
-            settingOrientation.setValue("0");
-        }
+        Preference settingOrientation = getPreferenceManager().findPreference("setting_orientation");
+        String value = getPreferenceManager().getSharedPreferences().getString("setting_orientation", "0");
+        setUpOrientation(settingOrientation, value);
 
-        settingOrientation.setSummary(SettingsModel.getOrientationSummary(value));
+    }
 
-        settingOrientation.setOnPreferenceChangeListener((preference, newValue) -> {
+    private void setUpOrientation(Preference preference, String value1) {
+        int orientation = SettingsModel.getOrientationValue(value1);
+        getActivity().setRequestedOrientation(orientation);
 
-            String value1 = newValue.toString();
-
-            int orientation = SettingsModel.getOrientationValue(value1);
-            getActivity().setRequestedOrientation(orientation);
-
-            preference.setSummary(SettingsModel.getOrientationSummary(value1));
-            return true;
-        });
-
+        preference.setSummary(SettingsModel.getOrientationSummary(value1));
     }
 
     @Override
@@ -141,8 +134,34 @@ public class SettingsFragment extends PreferenceFragment {
             }
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.SignOut);
 
+        } else if (TextUtils.equals(preference.getKey(), "setting_orientation")) {
+
+            showOrientationDialog(preference);
         }
         return false;
+    }
+
+    private void showOrientationDialog(Preference preference) {
+        String value = getPreferenceManager().getSharedPreferences().getString("setting_orientation", "0");
+        String[] values = getResources().getStringArray(R.array.jandi_pref_orientation_values);
+        int preselect = Math.max(0, Arrays.asList(values).indexOf(value));
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_280)
+                .setTitle(R.string.jandi_screen_orientation)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setSingleChoiceItems(R.array.jandi_pref_orientation, preselect, (dialog, which) -> {
+                    if (which >= 0 && values != null) {
+                        String selectedValue = values[which];
+                        getPreferenceManager().getSharedPreferences().edit()
+                                .putString("setting_orientation", selectedValue)
+                                .commit();
+
+                        setUpOrientation(preference, selectedValue);
+                    }
+                    dialog.dismiss();
+                });
+
+        builder.create().show();
     }
 
     public void onEvent(SignOutEvent event) {
