@@ -38,6 +38,9 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
     int lastMarker = -1;
     @Extra
     int roomId;
+    @Extra
+    int firstCursorLinkId = -1;
+
 
     private OnBackPressedListener onBackPressedListener;
     private OnKeyPressListener onKeyPressListener;
@@ -77,6 +80,7 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
                         .isFromPush(isFromPush)
                         .teamId(teamId)
                         .lastMarker(lastMarker)
+                        .firstCursorLinkId(firstCursorLinkId)
                         .build();
             } else {
                 messageListFragment = MessageSearchListFragment_.builder()

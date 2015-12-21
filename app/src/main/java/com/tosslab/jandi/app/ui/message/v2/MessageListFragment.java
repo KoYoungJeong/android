@@ -198,6 +198,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     int lastMarker = -1;
     @FragmentArg
     int roomId;
+    @FragmentArg
+    int firstCursorLinkId = -1;
     @ViewById(R.id.lv_messages)
     RecyclerView messageListView;
     @ViewById(R.id.btn_message_action_button_1)
@@ -250,6 +252,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         SendMessageRepository.getRepository().deleteAllOfCompletedMessages();
 
         messageListPresenter.initAdapter(false);
+        messageListPresenter.setFirstCursorLinkId(firstCursorLinkId);
         SNOWING_EASTEREGG_STARTED = false;
 
         messageState = new MessageState();

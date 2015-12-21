@@ -364,12 +364,18 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @Click(R.id.vg_messages_go_to_latest)
     void onGotoLatestClick() {
+        int itemCount = messageListPresenter.getItemCount();
+        int firstCursorLinkId = -1;
+        if (itemCount > 0) {
+            firstCursorLinkId = messageListPresenter.getItem(0).id;
+        }
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .entityType(entityType)
                 .entityId(entityId)
                 .teamId(teamId)
                 .roomId(roomId)
+                .firstCursorLinkId(firstCursorLinkId)
                 .lastMarker(EntityManager.getInstance().getEntityById(entityId).lastLinkId)
                 .start();
 

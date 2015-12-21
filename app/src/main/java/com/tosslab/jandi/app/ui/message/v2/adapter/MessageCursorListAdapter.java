@@ -138,7 +138,12 @@ public class MessageCursorListAdapter extends MessageAdapter {
     public void addAll(int position, List<ResMessages.Link> links) {
 
         if (position == 0 && links != null && !links.isEmpty()) {
-            firstCursorLinkId = links.get(0).id;
+            int firstItemLinkId = links.get(0).id;
+            if (firstCursorLinkId > 0) {
+                firstCursorLinkId = Math.min(firstItemLinkId, firstCursorLinkId);
+            } else {
+                firstCursorLinkId = firstItemLinkId;
+            }
         } else {
             Observable.from(links)
                     .filter(link -> TextUtils.equals(link.status, "archived"))
@@ -158,6 +163,10 @@ public class MessageCursorListAdapter extends MessageAdapter {
                     });
         }
 
+    }
+
+    public void setFirstCursorLinkId(int firstCursorLinkId) {
+        this.firstCursorLinkId = firstCursorLinkId;
     }
 
     @Override

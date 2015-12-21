@@ -960,6 +960,11 @@ public class MessageListPresenter {
     }
 
 
+    public void setFirstCursorLinkId(int firstCursorLinkId) {
+        if (messageAdapter instanceof MessageCursorListAdapter) {
+            ((MessageCursorListAdapter) messageAdapter).setFirstCursorLinkId(firstCursorLinkId);
+        }
+    }
 }
 
 
