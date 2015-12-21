@@ -19,8 +19,6 @@ import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imageformat.ImageFormat;
-import com.facebook.imageformat.ImageFormatChecker;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
@@ -35,7 +33,6 @@ import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
@@ -196,7 +193,6 @@ public class ImageThumbLoader implements FileThumbLoader {
                 @Override
                 public void onFinalImageSet(String id, ImageInfo imageInfo,
                                             Animatable animatable) {
-                    LogUtil.i("tony", String.format("%s, %s", imageInfo.getWidth(), imageInfo.getHeight()));
                     updateViewSize(imageInfo.getWidth(), imageInfo.getHeight());
                 }
             });
@@ -220,11 +216,6 @@ public class ImageThumbLoader implements FileThumbLoader {
     }
 
     private void updateViewSize(int imageWidth, int imageHeight) {
-        LogUtil.e("tony", String.format("%s, %s", imageWidth, imageHeight));
-
-        int displayWidth = ApplicationUtil.getDisplaySize(false);
-        int displayHeight = ApplicationUtil.getDisplaySize(true);
-
         ViewGroup.LayoutParams layoutParams = vgDetailPhoto.getLayoutParams();
 
         int viewWidth = vgDetailPhoto.getMeasuredWidth();
@@ -234,8 +225,6 @@ public class ImageThumbLoader implements FileThumbLoader {
             layoutParams.width = viewWidth;
             layoutParams.height = (int) (viewWidth * ratio);
         } else {
-//            DisplayMetrics metrics = JandiApplication.getContext().getResources().getDisplayMetrics();
-//            int photoWidth = (int) (Math.min(displayWidth, displayHeight) - (metrics.density * 22));
             layoutParams.height = viewWidth;
         }
 
