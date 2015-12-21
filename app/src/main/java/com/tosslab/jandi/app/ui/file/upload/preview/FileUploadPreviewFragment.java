@@ -112,6 +112,9 @@ public class FileUploadPreviewFragment extends Fragment {
             case HWP:
                 resource = R.drawable.file_icon_hwp_198;
                 break;
+            case ZIP:
+                resource = R.drawable.file_icon_zip_198;
+                break;
             case ETC:
                 resource = R.drawable.file_icon_etc_198;
                 break;

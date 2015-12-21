@@ -2,7 +2,9 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -13,12 +15,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.R;
@@ -27,6 +31,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.image.ImageLoader;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UriFactory;
@@ -223,44 +228,17 @@ public class ImageViewHolder implements BodyViewHolder {
             String remoteFilePth =
                     ImageUtil.getThumbnailUrl(extraInfo, ImageUtil.Thumbnails.LARGE);
 
-            ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
+            final ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
 
-            GenericDraweeHierarchy hierarchy = ivFileImage.getHierarchy();
+            ImageLoader.Builder imageRequestBuilder = new ImageLoader.Builder();
+            imageRequestBuilder.error(R.drawable.image_no_preview, ScalingUtils.ScaleType.FIT_XY);
 
             // Local File Path 도 없고 Thumbnail Path 도 없는 경우
             if (!isFromLocalFilePath && TextUtils.isEmpty(remoteFilePth)) {
                 LogUtil.i(TAG, "Thumbnail's are empty.");
-                String originalImageUrl = ImageUtil.getImageFileUrl(fileContent.fileUrl);
-                final boolean hasCache = ImageUtil.hasCache(Uri.parse(originalImageUrl));
-
-                int width = hasCache ? getPixelFromDp(MAX_WIDTH) : getPixelFromDp(SMALL_SIZE);
-                int height = hasCache ? getPixelFromDp(MAX_HEIGHT) : getPixelFromDp(SMALL_SIZE);
-
-                layoutParams.width = width;
-                layoutParams.height = height;
-
-                ivFileImage.setLayoutParams(layoutParams);
-                ivFileImage.requestLayout();
-
-                hierarchy.setRoundingParams(null);
-                if (hasCache) {
-                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                    Uri uri = Uri.parse(originalImageUrl);
-                    loadImage(uri, width, height, true);
-                } else {
-                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
-                    ivFileImage.setHierarchy(hierarchy);
-                    ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.image_no_preview));
-                }
+                setImageCacheOrDefaultIcon(fileContent.fileUrl, layoutParams, imageRequestBuilder);
                 return;
             }
-
-            String thumbPath = isFromLocalFilePath ? localFilePath : remoteFilePth;
-
-            LogUtil.i(TAG, thumbPath);
-
-            Drawable failure = context.getResources().getDrawable(R.drawable.image_no_preview);
-            hierarchy.setFailureImage(failure, ScalingUtils.ScaleType.FIT_XY);
 
             boolean needToResize = true;
 
@@ -272,27 +250,20 @@ public class ImageViewHolder implements BodyViewHolder {
                         extraInfo.width, extraInfo.height, extraInfo.orientation);
                 switch (imageSpec.getType()) {
                     case SMALL:
-                        hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+                        imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
                         needToResize = false;
-                        hierarchy.setRoundingParams(null);
                         break;
                     default:
-                        RoundingParams roundingParams = hierarchy.getRoundingParams();
-                        if (roundingParams == null) {
-                            roundingParams = RoundingParams.fromCornersRadius(getPixelFromDp(2));
-                        }
-                        hierarchy.setRoundingParams(roundingParams);
-                        hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+                        imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+                        RoundingParams roundingParams =
+                                RoundingParams.fromCornersRadius(getPixelFromDp(2));
+                        imageRequestBuilder.roundingParams(roundingParams);
                         break;
                 }
-                ivFileImage.setHierarchy(hierarchy);
-
                 width = imageSpec.getWidth();
                 height = imageSpec.getHeight();
             } else {
-                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                ivFileImage.setHierarchy(hierarchy);
-
+                imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
                 width = getPixelFromDp(MAX_WIDTH);
                 height = getPixelFromDp(MAX_HEIGHT);
             }
@@ -302,26 +273,43 @@ public class ImageViewHolder implements BodyViewHolder {
             ivFileImage.setLayoutParams(layoutParams);
             ivFileImage.requestLayout();
 
-            Uri uri = isFromLocalFilePath ? UriFactory.getFileUri(thumbPath) : Uri.parse(thumbPath);
+            Uri uri = isFromLocalFilePath
+                    ? UriFactory.getFileUri(localFilePath) : Uri.parse(remoteFilePth);
 
-            loadImage(uri, width, height, needToResize);
+            if (needToResize) {
+                imageRequestBuilder.resize(width, height);
+            }
+            imageRequestBuilder.uri(uri).load(ivFileImage);
         }
     }
 
-    private void loadImage(Uri uri, int width, int height, boolean needToResize) {
-        int maximumBitmapSize = ImageUtil.getMaximumBitmapSize();
-        ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
-                .setResizeOptions(needToResize
-                        ? new ResizeOptions(width, height)
-                        : new ResizeOptions(maximumBitmapSize, maximumBitmapSize))
-                .setAutoRotateEnabled(true)
-                .build();
+    private void setImageCacheOrDefaultIcon(String url,
+                                            ViewGroup.LayoutParams layoutParams,
+                                            ImageLoader.Builder imageRequestBuilder) {
+        String originalImageUrl = ImageUtil.getImageFileUrl(url);
+        final boolean hasCache = ImageUtil.hasCache(Uri.parse(originalImageUrl));
 
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setImageRequest(request)
-                .setOldController(ivFileImage.getController())
-                .build();
-        ivFileImage.setController(controller);
+        int width = hasCache ? getPixelFromDp(MAX_WIDTH) : getPixelFromDp(SMALL_SIZE);
+        int height = hasCache ? getPixelFromDp(MAX_HEIGHT) : getPixelFromDp(SMALL_SIZE);
+
+        layoutParams.width = width;
+        layoutParams.height = height;
+
+        ivFileImage.setLayoutParams(layoutParams);
+        ivFileImage.requestLayout();
+
+        if (hasCache) {
+            Uri uri = Uri.parse(originalImageUrl);
+            imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+            imageRequestBuilder.resize(width, height);
+            imageRequestBuilder.uri(uri)
+                    .load(ivFileImage);
+        } else {
+            Uri uri = UriFactory.getResourceUri(R.drawable.image_no_preview);
+            imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.FIT_XY);
+            imageRequestBuilder.uri(uri)
+                    .load(ivFileImage);
+        }
     }
 
     private ImageSpec getImageSpec(int width, int height, int orientation) {

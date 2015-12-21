@@ -38,6 +38,6 @@ public class MimeTypeUtil {
     }
 
     public enum PlaceholderType {
-        Audio, Image, Video, Pdf, Document, SpreadSheet, Presentation, Hwp, Etc, Google, Dropbox
+        Audio, Image, Video, Pdf, Document, SpreadSheet, Presentation, Hwp, Etc, Google, Dropbox, ZIP
     }
 }
