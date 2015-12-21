@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -19,7 +18,6 @@ import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ImageDecodeOptions;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
@@ -48,7 +46,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.App;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
@@ -296,11 +293,11 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     @Override
     public void moveEntity(int teamId, int entityId, int entityType) {
 
-        MainTabActivity_.intent(getActivity())
+        MainTabActivity_.intent(MainShareFragment.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
 
-        MessageListV2Activity_.intent(getActivity())
+        MessageListV2Activity_.intent(MainShareFragment.this)
                 .teamId(teamId)
                 .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : -1)
                 .entityId(entityId)

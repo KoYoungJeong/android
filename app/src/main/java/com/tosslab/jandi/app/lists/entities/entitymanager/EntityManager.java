@@ -278,7 +278,7 @@ public class EntityManager {
                     .subscribe();
         }
 
-        if (mSortedUsersWithoutMe == null) {
+        if (mSortedUsersWithoutMe == null && mUsers != null) {
 
             List<FormattedEntity> tempEntities = new ArrayList<FormattedEntity>();
 

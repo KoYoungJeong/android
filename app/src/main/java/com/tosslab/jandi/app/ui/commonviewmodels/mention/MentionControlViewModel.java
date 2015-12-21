@@ -594,7 +594,7 @@ public class MentionControlViewModel {
             CharSequence pasteData = "";
             ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
             pasteData = item.getText();
-            if (et.contains(pasteData.toString())) {
+            if (!TextUtils.isEmpty(pasteData) && et.contains(pasteData.toString())) {
                 String convertedMessage = null;
                 if (isCut) {
                     convertedMessage =
