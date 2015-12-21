@@ -131,7 +131,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
-        if (selectedTeamInfo == null) {
+        if (selectedTeamInfo != null) {
             setupActionBar(selectedTeamInfo.getName());
         } else {
             finish();
