@@ -23,7 +23,6 @@ import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
@@ -536,30 +535,10 @@ public class MessageListPresenter {
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void addAndMove(List<ResMessages.Link> records, boolean firstLoad) {
-        int firstVisibleItemLinkId = getFirstVisibleItemLinkId();
-        int firstVisibleItemTop = getFirstVisibleItemTop();
-        int lastItemPosition = getLastItemPosition();
-
-        addAll(lastItemPosition, records);
-        if (!firstLoad && firstVisibleItemLinkId > 0) {
-            moveToMessage(firstVisibleItemLinkId, firstVisibleItemTop);
-        }
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setGotoLatestLayoutVisible() {
         gotoLatestLayoutVisible = true;
         if (vgMoveToLatest != null) {
             vgMoveToLatest.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void setGotoLatestLayoutVisibleGone() {
-        gotoLatestLayoutVisible = false;
-        if (vgMoveToLatest != null) {
-            vgMoveToLatest.setVisibility(View.GONE);
         }
     }
 
@@ -569,12 +548,6 @@ public class MessageListPresenter {
 
     public void setOnItemLongClickListener(MessageAdapter.OnItemLongClickListener onItemLongClickListener) {
         messageAdapter.setOnItemLongClickListener(onItemLongClickListener);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void setGotoLatestLayoutShowProgress() {
-        vMoveToLatest.setVisibility(View.GONE);
-        progressGoToLatestView.setVisibility(View.VISIBLE);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -654,11 +627,6 @@ public class MessageListPresenter {
         return itemCount;
     }
 
-    @UiThread
-    public void dismissEmptyView() {
-        layoutEmpty.setVisibility(View.GONE);
-    }
-
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void clearEmptyMessageLayout() {
         if (layoutEmpty != null) {
@@ -736,15 +704,6 @@ public class MessageListPresenter {
             lvMessages.getLayoutManager().scrollToPosition(messageAdapter.getItemCount() - 1);
         }
 
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void moveToLink(int linkId) {
-        int position = messageAdapter.indexOfLinkId(linkId);
-
-        if (position > 0) {
-            lvMessages.smoothScrollToPosition(position);
-        }
     }
 
     @UiThread
@@ -834,52 +793,6 @@ public class MessageListPresenter {
             }
         }
 
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void updateMarkerMessage(int linkId, ResMessages oldMessage, boolean isCallByMarker, boolean isFirstMessage, int latestVisibleMessageId, int firstVisibleItemTop) {
-        addAll(0, oldMessage.records);
-
-        if (latestVisibleMessageId > 0) {
-            moveToMessage(latestVisibleMessageId, firstVisibleItemTop);
-        } else {
-            // if has no first item...
-
-            int messageId = -1;
-            for (ResMessages.Link record : oldMessage.records) {
-                if (record.id == linkId) {
-                    messageId = record.messageId;
-                }
-            }
-            if (messageId > 0) {
-                int yPosition = JandiApplication.getContext()
-                        .getResources()
-                        .getDisplayMetrics().heightPixels * 2 / 5;
-                moveToMessage(messageId, yPosition);
-            } else {
-                moveToMessage(oldMessage.records.get(oldMessage.records.size() - 1).messageId, firstVisibleItemTop);
-            }
-        }
-
-        if (!isFirstMessage) {
-            setOldLoadingComplete();
-        } else {
-            setOldNoMoreLoading();
-        }
-
-        if (!isCallByMarker) {
-            dismissLoadingView();
-        }
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void updateMarkerNewMessage(ResMessages newMessage, boolean isLastLinkId, boolean firstLoad) {
-        addAndMove(newMessage.records, firstLoad);
-        if (!isLastLinkId) {
-            setNewLoadingComplete();
-        } else {
-            setNewNoMoreLoading();
-        }
     }
 
     public void updateMessageStarred(int messageId, boolean starred) {
