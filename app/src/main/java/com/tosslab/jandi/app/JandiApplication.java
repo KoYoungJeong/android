@@ -106,9 +106,6 @@ public class JandiApplication extends MultiDexApplication {
         registerScreenOffReceiver();
 
         // Fresco
-//        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
-//                .setDownsampleEnabled(true)
-//                .build();
         Fresco.initialize(context);
     }
 
