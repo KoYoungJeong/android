@@ -1,10 +1,12 @@
 package com.tosslab.jandi.app.ui.message.v2.search.view;
 
+import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,10 +22,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
+import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
@@ -53,15 +58,22 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
-import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
+import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
+import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenterImpl;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
+import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.AlertUtil;
+import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -81,6 +93,9 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+
+import java.util.Date;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -156,9 +171,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     View vgOffline;
 
     @Bean
-    MessageListPresenter messageListPresenter;
-
-    @Bean
     AnnouncementViewModel announcementViewModel;
 
     @Bean(MessageSearchListPresenterImpl.class)
@@ -166,6 +178,9 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     private boolean isForeground;
     private boolean isRoomInit;
+    private MessageListAdapter messageAdapter;
+    private OfflineLayer offlineLayer;
+    private ProgressWheel progressWheelForAction;
 
     @AfterInject
     void initObject() {
@@ -175,14 +190,13 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
         SendMessageRepository.getRepository().deleteAllOfCompletedMessages();
 
-        messageListPresenter.initAdapter(true);
+        messageAdapter = new MessageListAdapter(getActivity());
 
-        messageListPresenter.setMarker(lastMarker);
-        messageListPresenter.setMoreNewFromAdapter(true);
-        messageListPresenter.setGotoLatestLayoutVisible();
+        messageAdapter.setMarker(lastMarker);
+        messageAdapter.setMoreFromNew(true);
+        messageAdapter.setEntityId(entityId);
 
-
-        messageListPresenter.setEntityInfo(entityId);
+        progressWheelForAction = new ProgressWheel(getActivity());
     }
 
     @AfterViews
@@ -201,7 +215,14 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         setUpActionbar();
         setHasOptionsMenu(true);
 
+        showGotoLatestView();
+
         initMessageList();
+
+        offlineLayer = new OfflineLayer(vgOffline);
+        if (!NetworkCheckUtil.isConnected()) {
+            offlineLayer.showOfflineView();
+        }
 
         messageSearchListPresenter.checkEnabledUser(entityId);
         messageSearchListPresenter.onInitRoomInfo();
@@ -223,6 +244,12 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     }
 
+    private void showGotoLatestView() {
+        if (vgMoveToLatest != null) {
+            vgMoveToLatest.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Override
     public AnalyticsValue.Screen getScreen(int entityId) {
         return EntityManager
@@ -232,17 +259,24 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @Override
     public void showMessageMenuDialog(boolean isDirectMessage, boolean isMyMessage, ResMessages.TextMessage textMessage) {
-        messageListPresenter.showMessageMenuDialog(isDirectMessage, isMyMessage, textMessage);
+        DialogFragment newFragment = ManipulateMessageDialogFragment
+                .newInstanceByTextMessage(textMessage, isMyMessage, isDirectMessage);
+        newFragment.show(getFragmentManager(), "dioalog");
     }
 
     @Override
-    public void showMessageMenuDialog(ResMessages.CommentMessage message) {
-        messageListPresenter.showMessageMenuDialog(message);
+    public void showMessageMenuDialog(ResMessages.CommentMessage commentMessage) {
+        DialogFragment newFragment = ManipulateMessageDialogFragment
+                .newInstanceByCommentMessage(commentMessage, false);
+        newFragment.show(getFragmentManager(), "dioalog");
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void deleteLinkByMessageId(int messageId) {
-        messageListPresenter.deleteLinkByMessageId(messageId);
+        int position = messageAdapter.indexByMessageId(messageId);
+        messageAdapter.remove(position);
+        messageAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -278,11 +312,22 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         }
 
         if (NetworkCheckUtil.isConnected()) {
-            messageListPresenter.dismissOfflineLayer();
+            dismissOfflineLayer();
         } else {
-            messageListPresenter.showOfflineLayer();
+            showOfflineLayer();
         }
     }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void dismissOfflineLayer() {
+        offlineLayer.dismissOfflineView();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void showOfflineLayer() {
+        offlineLayer.showOfflineView();
+    }
+
 
     @Override
     public void onPause() {
@@ -295,12 +340,34 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
     private void initMessageList() {
-        messageListPresenter.setOnItemClickListener((adapter, position) -> {
+
+        vgProgressForMessageList.setAlpha(0f);
+        vgProgressForMessageList.animate()
+                .alpha(1.0f)
+                .setDuration(150);
+
+        lvMessages.setAdapter(messageAdapter);
+        lvMessages.setItemAnimator(null);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        layoutManager.setStackFromEnd(true);
+        layoutManager.setSmoothScrollbarEnabled(true);
+        lvMessages.setLayoutManager(layoutManager);
+
+        MessageListHeaderAdapter messageListHeaderAdapter = new MessageListHeaderAdapter(getActivity(), messageAdapter);
+
+        StickyHeadersItemDecoration stickyHeadersItemDecoration = new StickyHeadersBuilder()
+                .setAdapter(messageAdapter)
+                .setRecyclerView(lvMessages)
+                .setStickyHeadersAdapter(messageListHeaderAdapter, false)
+                .build();
+
+        lvMessages.addItemDecoration(stickyHeadersItemDecoration);
+
+        messageAdapter.setOnItemClickListener((adapter, position) -> {
             try {
-                messageListPresenter.hideKeyboard();
-                messageSearchListPresenter.onMessageItemClick(MessageSearchListFragment.this, messageListPresenter.getItem(position), entityId);
+                hideKeyboard();
+                messageSearchListPresenter.onMessageItemClick(MessageSearchListFragment.this, messageAdapter.getItem(position), entityId);
             } catch (Exception e) {
-                messageListPresenter.justRefresh();
             }
 
             int itemViewType = adapter.getItemViewType(position);
@@ -323,11 +390,10 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             }
         });
 
-        messageListPresenter.setOnItemLongClickListener((adapter, position) -> {
+        messageAdapter.setOnItemLongClickListener((adapter, position) -> {
             try {
-                messageSearchListPresenter.onMessageItemLongClick(messageListPresenter.getItem(position));
+                messageSearchListPresenter.onMessageItemLongClick(messageAdapter.getItem(position));
             } catch (Exception e) {
-                messageListPresenter.justRefresh();
             }
             AnalyticsUtil.sendEvent(getScreen(entityId), AnalyticsValue.Action.MsgLongTap);
 
@@ -340,7 +406,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
                 super.onScrolled(recyclerView, dx, dy);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 if (layoutManager.findLastVisibleItemPosition() == recyclerView.getAdapter().getItemCount() - 1) {
-                    messageListPresenter.setPreviewVisibleGone();
+                    setPreviewVisibleGone();
 
                 }
             }
@@ -364,10 +430,10 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @Click(R.id.vg_messages_go_to_latest)
     void onGotoLatestClick() {
-        int itemCount = messageListPresenter.getItemCount();
+        int itemCount = messageAdapter.getItemCount();
         int firstCursorLinkId = -1;
         if (itemCount > 0) {
-            firstCursorLinkId = messageListPresenter.getItem(0).id;
+            firstCursorLinkId = messageAdapter.getItem(0).id;
         }
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -396,12 +462,25 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         if (!isForeground) {
             return;
         }
-        messageListPresenter.copyToClipboard(event.contentString);
+        copyToClipboard(event.contentString);
         AnalyticsUtil.sendEvent(getScreen(entityId), AnalyticsValue.Action.MsgLongTap_Copy);
     }
 
+    private void copyToClipboard(String contentString) {
+        final ClipData clipData = ClipData.newPlainText("", contentString);
+        clipboardManager.setPrimaryClip(clipData);
+    }
+
     public void onEvent(ProfileChangeEvent event) {
-        messageListPresenter.justRefresh();
+        justRefresh();
+    }
+
+    private void justRefresh() {
+        int itemCount = messageAdapter.getItemCount();
+        if (itemCount > 0) {
+            messageAdapter.notifyItemRangeChanged(0, itemCount);
+        }
+
     }
 
     public void onEvent(ConfirmModifyTopicEvent event) {
@@ -434,7 +513,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
     public void onEvent(UnshareFileEvent event) {
-        messageListPresenter.justRefresh();
+        justRefresh();
     }
 
     public void onEventMainThread(ChatCloseEvent event) {
@@ -454,7 +533,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             getActivity().finish();
             CharSequence topicName = ((AppCompatActivity) getActivity()).getSupportActionBar().getTitle();
             String msg = JandiApplication.getContext().getString(R.string.jandi_kicked_message, topicName);
-            messageListPresenter.showFailToast(msg);
+            showFailToast(msg);
         }
     }
 
@@ -502,8 +581,34 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
     public void onEvent(DeleteFileEvent event) {
-        messageListPresenter.changeToArchive(event.getId());
+        changeToArchive(event.getId());
     }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void changeToArchive(int messageId) {
+        int position = messageAdapter.indexByMessageId(messageId);
+        String archivedStatus = "archived";
+        if (position > 0) {
+            ResMessages.Link item = messageAdapter.getItem(position);
+            item.message.status = archivedStatus;
+            item.message.createTime = new Date();
+
+        }
+
+        List<Integer> commentIndexes = messageAdapter.indexByFeedbackId(messageId);
+
+        for (Integer commentIndex : commentIndexes) {
+            ResMessages.Link item = messageAdapter.getItem(commentIndex);
+            item.feedback.status = archivedStatus;
+            item.feedback.createTime = new Date();
+        }
+
+        if (position >= 0 || commentIndexes.size() > 0) {
+
+            messageAdapter.notifyItemRangeChanged(0, messageAdapter.getItemCount());
+        }
+    }
+
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void refreshActionbar() {
@@ -535,7 +640,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         if (!isForeground) {
             return;
         }
-        messageListPresenter.justRefresh();
+        justRefresh();
     }
 
     public void onEvent(SocketRoomMarkerEvent event) {
@@ -547,7 +652,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             SocketRoomMarkerEvent.Marker marker = event.getMarker();
             MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, marker.getMemberId(), marker
                     .getLastLinkId());
-            messageListPresenter.justRefresh();
+            justRefresh();
         }
     }
 
@@ -570,7 +675,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     public void onEvent(NetworkConnectEvent event) {
         if (event.isConnected()) {
-            if (messageListPresenter.getItemCount() <= 0) {
+            if (messageAdapter.getItemCount() <= 0) {
                 // roomId 설정 후...
                 messageSearchListPresenter.onInitRoomInfo();
             } else {
@@ -579,19 +684,23 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
                 }
             }
 
-            messageListPresenter.dismissOfflineLayer();
+            dismissOfflineLayer();
 
         } else {
 
-            messageListPresenter.showOfflineLayer();
+            showOfflineLayer();
 
             if (isForeground) {
-                messageListPresenter.showGrayToast(JandiApplication.getContext().getString(R.string.jandi_msg_network_offline_warn));
+                showGrayToast(JandiApplication.getContext().getString(R.string.jandi_msg_network_offline_warn));
             }
 
         }
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void showGrayToast(String message) {
+        ColoredToast.showGray(getActivity(), message);
+    }
 
     @UiThread
     @Override
@@ -599,31 +708,30 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(changedEntityName);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showFailToast(String message) {
-        messageListPresenter.showFailToast(message);
+        showFailToast(message);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showSuccessToast(String message) {
-        messageListPresenter.showSuccessToast(message);
+        showSuccessToast(message);
     }
 
     @Override
     public void modifyStarredInfo(int messageId, boolean starred) {
-        messageListPresenter.modifyStarredInfo(messageId, starred);
+        int position = messageAdapter.indexByMessageId(messageId);
+        messageAdapter.modifyStarredStateByPosition(position, starred);
     }
 
     @Override
     public void showLeavedMemberDialog(int entityId) {
-        messageListPresenter.showLeavedMemberDialog(entityId);
-    }
+        String name = EntityManager.getInstance().getEntityNameById(entityId);
+        String msg = JandiApplication.getContext().getString(R.string.jandi_no_long_team_member, name);
 
-    @Override
-    public void setDisableUser() {
-        messageListPresenter.setDisableUser();
+        AlertUtil.showConfirmDialog(getActivity(), msg, null, false);
     }
 
     @Override
@@ -636,12 +744,14 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     @Override
     public void setRoomId(int roomId) {
         this.roomId = roomId;
-        messageListPresenter.setMarkerInfo(teamId, roomId);
+        messageAdapter.setTeamId(teamId);
+        messageAdapter.setRoomId(roomId);
+        messageAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void setLastReadLinkId(int realLastLinkId) {
-        messageListPresenter.setLastReadLinkId(realLastLinkId);
+        messageAdapter.setLastReadLinkId(realLastLinkId);
     }
 
     @Override
@@ -654,9 +764,12 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         return isForeground;
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissProgressWheel() {
-        messageListPresenter.dismissProgressWheel();
+        if (progressWheelForAction != null && progressWheelForAction.isShowing()) {
+            progressWheelForAction.dismiss();
+        }
     }
 
     @Override
@@ -678,51 +791,134 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgressWheel() {
-        messageListPresenter.showProgressWheel();
+        dismissProgressWheel();
+
+        if (progressWheelForAction != null) {
+            progressWheelForAction.show();
+        }
+
     }
 
+    @UiThread
     @Override
     public void updateMarkerNewMessage(ResMessages newMessage, boolean isLastLinkId, boolean firstLoad) {
-        messageListPresenter.updateMarkerNewMessage(newMessage, isLastLinkId, firstLoad);
+        int firstVisibleItemLinkId = getFirstVisibleItemLinkId();
+        int firstVisibleItemTop = getFirstVisibleItemTop();
+        int lastItemPosition = messageAdapter.getItemCount();
+
+        messageAdapter.addAll(lastItemPosition, newMessage.records);
+        if (!firstLoad && firstVisibleItemLinkId > 0) {
+            moveToMessage(firstVisibleItemLinkId, firstVisibleItemTop);
+        }
+        if (!isLastLinkId) {
+            messageAdapter.setNewLoadingComplete();
+        } else {
+            messageAdapter.setNewNoMoreLoading();
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void moveToMessage(int messageId, int firstVisibleItemTop) {
+        int itemPosition = messageAdapter.indexByMessageId(messageId);
+        ((LinearLayoutManager) lvMessages.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
     @Override
     public int getFirstVisibleItemLinkId() {
-        return messageListPresenter.getFirstVisibleItemLinkId();
+        if (messageAdapter.getItemCount() > 0) {
+            int firstVisibleItemPosition = ((LinearLayoutManager) lvMessages.getLayoutManager()).findFirstVisibleItemPosition();
+            if (firstVisibleItemPosition >= 0) {
+                return messageAdapter.getItem(firstVisibleItemPosition).messageId;
+            } else {
+                return -1;
+            }
+        } else {
+            return -1;
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return messageListPresenter.getItemCount();
+        return messageAdapter.getItemCount();
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissLoadingView() {
-        messageListPresenter.dismissLoadingView();
+        vgProgressForMessageList.animate()
+                .alpha(0f)
+                .setDuration(250);
     }
 
     @Override
     public int getFirstVisibleItemTop() {
-        return messageListPresenter.getFirstVisibleItemTop();
+        View childAt = lvMessages.getLayoutManager().getChildAt(0);
+        if (childAt != null) {
+            return childAt.getTop();
+        } else {
+            return 0;
+        }
     }
 
+    @UiThread
     @Override
     public void updateMarkerMessage(int linkId, ResMessages oldMessage, boolean noFirstLoad,
                                     boolean isFirstMessage, int latestVisibleMessageId,
                                     int firstVisibleItemTop) {
-        messageListPresenter.updateMarkerMessage(linkId, oldMessage, noFirstLoad,
-                isFirstMessage, latestVisibleMessageId,
-                firstVisibleItemTop);
+        messageAdapter.addAll(0, oldMessage.records);
+
+        if (latestVisibleMessageId > 0) {
+            moveToMessage(latestVisibleMessageId, firstVisibleItemTop);
+        } else {
+            // if has no first item...
+
+            int messageId = -1;
+            for (ResMessages.Link record : oldMessage.records) {
+                if (record.id == linkId) {
+                    messageId = record.messageId;
+                }
+            }
+            if (messageId > 0) {
+                int yPosition = JandiApplication.getContext()
+                        .getResources()
+                        .getDisplayMetrics().heightPixels * 2 / 5;
+                moveToMessage(messageId, yPosition);
+            } else {
+                moveToMessage(oldMessage.records.get(oldMessage.records.size() - 1).messageId, firstVisibleItemTop);
+            }
+        }
+
+        if (!isFirstMessage) {
+            messageAdapter.setOldLoadingComplete();
+        } else {
+            messageAdapter.setOldNoMoreLoading();
+        }
+
+        if (!noFirstLoad) {
+            dismissLoadingView();
+        }
     }
 
     @Override
     public void showDummyMessageDialog(long localId) {
-        messageListPresenter.showDummyMessageDialog(localId);
+        DummyMessageDialog_.builder()
+                .localId(localId)
+                .build()
+                .show(getActivity().getFragmentManager(), "dialog");
+
     }
 
     @Override
     public void moveFileDetailActivity(Fragment fragment, int messageId, int roomId, int selectedMessageId) {
-        messageListPresenter.moveFileDetailActivity(fragment, messageId, roomId, selectedMessageId);
+        FileDetailActivity_
+                .intent(fragment)
+                .fileId(messageId)
+                .roomId(roomId)
+                .selectMessageId(selectedMessageId)
+                .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+        getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+
     }
 
     public void sendLayoutVisibleGone() {
@@ -731,7 +927,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         }
     }
 
-    public void setPreviewVisibleGone() {
+    private void setPreviewVisibleGone() {
         if (vgPreview != null) {
             vgPreview.setVisibility(View.GONE);
         }
@@ -762,6 +958,12 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             case DELETE:
                 messageSearchListPresenter.onDeleteAnnouncement();
                 break;
+        }
+    }
+
+    void hideKeyboard() {
+        if (inputMethodManager.isAcceptingText()) {
+            inputMethodManager.hideSoftInputFromWindow(etMessage.getWindowToken(), 0);
         }
     }
 

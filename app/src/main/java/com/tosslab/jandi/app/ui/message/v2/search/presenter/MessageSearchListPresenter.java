@@ -53,8 +53,6 @@ public interface MessageSearchListPresenter {
 
     void onRequestOldMessage();
 
-    void onGotoLatestMessage();
-
     interface View {
 
         void setDisabledUser();
@@ -111,6 +109,5 @@ public interface MessageSearchListPresenter {
 
         void showLeavedMemberDialog(int entityId);
 
-        void setDisableUser();
     }
 }

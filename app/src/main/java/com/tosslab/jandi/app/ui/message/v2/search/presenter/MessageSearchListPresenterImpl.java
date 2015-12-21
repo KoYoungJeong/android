@@ -443,7 +443,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
         if (memberId == entityId) {
             view.showLeavedMemberDialog(entityId);
-            view.setDisableUser();
+            view.setDisabledUser();
         }
     }
 
@@ -452,11 +452,6 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
         if (!messageState.isFirstMessage()) {
             sendMessagePublisherEvent(new OldMessageQueue(messageState));
         }
-    }
-
-    @Override
-    public void onGotoLatestMessage() {
-
     }
 
 
