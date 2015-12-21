@@ -199,6 +199,31 @@ public class MainTabActivity extends BaseAppCompatActivity {
         }
 
         updateMoreBadge();
+
+        updateTopicBadge();
+        updateChatBadge();
+    }
+
+    private void updateChatBadge() {
+        EntityManager entityManager = EntityManager.getInstance();
+        final int[] total = {0};
+        Observable.from(entityManager.getFormattedUsers())
+                .subscribe(formattedEntity -> {
+                    total[0] += formattedEntity.alarmCount;
+                });
+        mMainTabPagerAdapter.updateTopicBadge(total[0]);
+
+    }
+
+    private void updateTopicBadge() {
+        EntityManager entityManager = EntityManager.getInstance();
+        final int[] total = {0};
+        Observable.merge(Observable.from(entityManager.getJoinedChannels()), Observable.from(entityManager.getGroups()))
+                .subscribe(formattedEntity -> {
+                    total[0] += formattedEntity.alarmCount;
+                });
+        mMainTabPagerAdapter.updateTopicBadge(total[0]);
+
     }
 
     private void showInvitePopup(DialogInterface.OnDismissListener onDismissListener) {
