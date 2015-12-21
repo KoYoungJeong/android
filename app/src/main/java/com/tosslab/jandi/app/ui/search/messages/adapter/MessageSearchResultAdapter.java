@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.search.MoreSearchRequestEvent;
+import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
@@ -47,17 +48,13 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         if (viewType == 1) {
-
             View view = LayoutInflater.from(context).inflate(R.layout.item_message_search, parent, false);
-
             return new MessageSearchViewHolder(view);
         } else {
             View view = LayoutInflater.from(context).inflate(R.layout.item_message_search_header, parent, false);
             return new SearchHeaderViewHolder(view);
         }
-
     }
 
     @Override
@@ -71,7 +68,6 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
         if (position > 0) {
 
             SearchResult item = getItem(position);
@@ -83,22 +79,32 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
 
             if (!TextUtils.isEmpty(item.getPreviewText())) {
                 viewHolder.prevTextView.setVisibility(View.VISIBLE);
+                MarkdownViewModel markdownViewModel =
+                        new MarkdownViewModel(viewHolder.prevTextView, item.getPreviewText(), true);
+                markdownViewModel.execute();
                 viewHolder.prevTextView.setText(item.getPreviewText());
             } else {
                 viewHolder.prevTextView.setVisibility(View.GONE);
             }
 
             if (!(TextUtils.isEmpty(item.getCurrentText()))) {
+                MarkdownViewModel markdownViewModel =
+                        new MarkdownViewModel(viewHolder.currentTextView, item.getCurrentText(), true);
+                markdownViewModel.execute();
                 viewHolder.dateTextView.setText(DateTransformator.getTimeString(item.getDate()));
                 viewHolder.currentTextView.setText(item.getCurrentText());
             }
 
             if (!TextUtils.isEmpty(item.getNextText())) {
+                MarkdownViewModel markdownViewModel =
+                        new MarkdownViewModel(viewHolder.nextTextView, item.getNextText(), true);
+                markdownViewModel.execute();
                 viewHolder.nextTextView.setVisibility(View.VISIBLE);
                 viewHolder.nextTextView.setText(item.getNextText());
             } else {
                 viewHolder.nextTextView.setVisibility(View.GONE);
             }
+
         } else {
             SearchHeaderViewHolder searchHeaderViewHolder = (SearchHeaderViewHolder) holder;
             HeaderItem item = (HeaderItem) getItem(position);
@@ -107,7 +113,6 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
                 searchHeaderViewHolder.progressBar.setVisibility(View.VISIBLE);
             } else if (item.getCount() < 1) {
                 SpannableStringBuilder builder = getNofoundMessage(item.getQuery());
-
                 searchHeaderViewHolder.textView.setText(builder);
                 searchHeaderViewHolder.progressBar.setVisibility(View.GONE);
             } else {
@@ -115,6 +120,7 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
                 searchHeaderViewHolder.progressBar.setVisibility(View.GONE);
             }
         }
+
 
         holder.itemView.setOnClickListener(v -> {
             if (onRecyclerItemClickListener != null) {

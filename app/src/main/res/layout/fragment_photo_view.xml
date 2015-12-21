@@ -74,7 +74,7 @@
         <View
             android:layout_width="27dp"
             android:layout_height="27dp"
-            android:layout_marginTop="11dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/file_icon_download_image"/>
 
     </LinearLayout>

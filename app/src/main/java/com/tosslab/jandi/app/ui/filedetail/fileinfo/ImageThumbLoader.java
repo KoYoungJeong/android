@@ -170,6 +170,8 @@ public class ImageThumbLoader implements FileThumbLoader {
         progressDrawable.setIndicatorTextMargin((int) (density * 10));
         progressDrawable.setProgressWidth((int) (density * 58));
 
+        progressDrawable.setTopMargin((int) (density * 21));
+
         return progressDrawable;
     }
 

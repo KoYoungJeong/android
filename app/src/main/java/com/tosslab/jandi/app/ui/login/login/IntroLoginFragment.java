@@ -4,6 +4,8 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.view.MotionEvent;
+import android.view.View;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -36,6 +38,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.Touch;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
@@ -187,6 +190,20 @@ public class IntroLoginFragment extends Fragment implements IntroMainActivity.Ke
 
     }
 
+    @Touch(R.id.sv_intro_login_root)
+    boolean onTouchRoot(View v, MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_UP:
+                return true;
+            case MotionEvent.ACTION_DOWN:
+                hideKeyboard();
+            case MotionEvent.ACTION_MOVE:
+                return false;
+        }
+
+        return false;
+    }
+
     @Click(R.id.txt_intro_login_forgot_password)
     void onClickForgotPassword() {
         DialogFragment dialogFragment =
@@ -219,4 +236,6 @@ public class IntroLoginFragment extends Fragment implements IntroMainActivity.Ke
 
         introLoginViewModel.hideKeypad();
     }
+
+
 }

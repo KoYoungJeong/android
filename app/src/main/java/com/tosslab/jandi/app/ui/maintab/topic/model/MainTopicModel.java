@@ -115,6 +115,11 @@ public class MainTopicModel {
     // 리스트에 보여 줄 Data Provider 가져오기
     public TopicFolderListDataProvider getDataProvider(List<ResFolder> topicFolders, List<ResFolderItem> topicFolderItems) {
 
+        if (topicFolders == null || topicFolderItems == null) {
+            return new TopicFolderListDataProvider(new LinkedList<>());
+        }
+
+
         final List<ResFolder> orderedFolders = new ArrayList<>();
 
         Observable.from(topicFolders)
