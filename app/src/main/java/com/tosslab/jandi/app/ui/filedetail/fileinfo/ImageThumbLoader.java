@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
 import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.controller.ControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -33,6 +34,7 @@ import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
@@ -41,6 +43,7 @@ import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
  */
 public class ImageThumbLoader implements FileThumbLoader {
 
+    public static final String TAG = ImageThumbLoader.class.getSimpleName();
     private final ImageView ivFileTypeIcon;
     private final ViewGroup vgDetailPhoto;
     private final SimpleDraweeView ivFilePhoto;
@@ -176,7 +179,7 @@ public class ImageThumbLoader implements FileThumbLoader {
     }
 
     private void loadImage(Uri uri, GenericDraweeHierarchy hierarchy,
-                           boolean hasUpdateViewSizeBefore) {
+                           final boolean hasUpdateViewSizeBefore) {
         ivFilePhoto.setHierarchy(hierarchy);
 
         int displayWidth = ApplicationUtil.getDisplaySize(false);
@@ -190,15 +193,42 @@ public class ImageThumbLoader implements FileThumbLoader {
         PipelineDraweeControllerBuilder draweeControllerBuilder = Fresco.newDraweeControllerBuilder()
                 .setAutoPlayAnimations(true)
                 .setImageRequest(imageRequest);
-        if (!hasUpdateViewSizeBefore) {
-            draweeControllerBuilder.setControllerListener(new BaseControllerListener<ImageInfo>() {
-                @Override
-                public void onFinalImageSet(String id, ImageInfo imageInfo,
-                                            Animatable animatable) {
+        draweeControllerBuilder.setControllerListener(new BaseControllerListener<ImageInfo>() {
+
+            @Override
+            public void onSubmit(String id, Object callerContext) {
+                LogUtil.d(TAG, "onSubmit");
+            }
+
+            @Override
+            public void onRelease(String id) {
+                LogUtil.i(TAG, "onRelease");
+            }
+
+            @Override
+            public void onIntermediateImageFailed(String id, Throwable throwable) {
+                LogUtil.e(TAG, "onIntermediateImageFailed");
+            }
+
+            @Override
+            public void onFailure(String id, Throwable throwable) {
+                LogUtil.e(TAG, "onFailure");
+            }
+
+            @Override
+            public void onIntermediateImageSet(String id, ImageInfo imageInfo) {
+                LogUtil.d(TAG, "onIntermediateImageSet");
+            }
+
+            @Override
+            public void onFinalImageSet(String id, ImageInfo imageInfo,
+                                        Animatable animatable) {
+                LogUtil.i(TAG, "onFinalImageSet");
+                if (!hasUpdateViewSizeBefore) {
                     updateViewSize(imageInfo.getWidth(), imageInfo.getHeight());
                 }
-            });
-        }
+            }
+        });
 
         ivFilePhoto.setController(draweeControllerBuilder.build());
     }
