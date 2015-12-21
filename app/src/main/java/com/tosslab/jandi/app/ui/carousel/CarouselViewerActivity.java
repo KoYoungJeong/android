@@ -223,14 +223,17 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     public void moveToFileDatail() {
         CarouselFileInfo fileInfo = getCarouselFileInfo();
 
-        FileDetailActivity_
-                .intent(CarouselViewerActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .roomId(roomId)
-                .fileId(fileInfo.getFileLinkId())
-                .start();
+        if (fileInfo != null) {
 
-        finish();
+            FileDetailActivity_
+                    .intent(CarouselViewerActivity.this)
+                    .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    .roomId(roomId)
+                    .fileId(fileInfo.getFileLinkId())
+                    .start();
+
+            finish();
+        }
     }
 
     private void setUpToolbar() {
@@ -257,16 +260,18 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @Click(R.id.iv_file_download)
     void onFileDownload() {
         CarouselFileInfo fileInfo = getCarouselFileInfo();
+        if (fileInfo != null) {
 
-        Permissions.getChecker()
-                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .hasPermission(() -> {
-                    carouselViewerPresenter.onFileDownload(fileInfo);
-                })
-                .noPermission(() -> {
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            REQ_STORAGE_PERMISSION);
-                }).check();
+            Permissions.getChecker()
+                    .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    .hasPermission(() -> {
+                        carouselViewerPresenter.onFileDownload(fileInfo);
+                    })
+                    .noPermission(() -> {
+                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                REQ_STORAGE_PERMISSION);
+                    }).check();
+        }
     }
 
     @Override
