@@ -925,17 +925,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable(EXTRA_NEW_PHOTO_FILE, photoFileByCamera);
-    }
-
-    @Override
     public void onDestroy() {
         messageSubscription.unsubscribe();
         EventBus.getDefault().unregister(this);
         super.onDestroy();
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(EXTRA_NEW_PHOTO_FILE, photoFileByCamera);
     }
 
     @Override
@@ -983,6 +983,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         } else {
             messageListPresenter.showOfflineLayer();
         }
+
     }
 
     @Override
