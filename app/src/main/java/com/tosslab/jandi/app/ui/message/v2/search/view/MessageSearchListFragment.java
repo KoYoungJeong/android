@@ -216,6 +216,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         setHasOptionsMenu(true);
 
         showGotoLatestView();
+        setPreviewVisibleGone();
 
         initMessageList();
 
@@ -400,14 +401,14 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             return true;
         });
 
-        lvMessages.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        lvMessages.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (layoutManager.findLastVisibleItemPosition() == recyclerView.getAdapter().getItemCount() - 1) {
-                    setPreviewVisibleGone();
-
+                if (layoutManager.findLastVisibleItemPosition() == messageAdapter.getItemCount() - 1) {
+                    if (messageAdapter.isEndOfLoad()) {
+                        onGotoLatestClick();
+                    }
                 }
             }
         });
@@ -738,7 +739,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     public void setDisabledUser() {
         sendLayoutVisibleGone();
         vDisabledUser.setVisibility(View.VISIBLE);
-        setPreviewVisibleGone();
     }
 
     @Override

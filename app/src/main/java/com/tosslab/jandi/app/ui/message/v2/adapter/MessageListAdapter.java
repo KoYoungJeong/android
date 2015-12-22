@@ -111,4 +111,7 @@ public class MessageListAdapter extends MessageAdapter {
         links.remove(position);
     }
 
+    public boolean isEndOfLoad() {
+        return newMoreState == MoreState.Nope;
+    }
 }

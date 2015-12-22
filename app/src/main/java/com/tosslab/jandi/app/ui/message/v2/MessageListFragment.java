@@ -604,7 +604,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return true;
         });
 
-        ((RecyclerView) getView().findViewById(R.id.lv_messages)).setOnScrollListener(new RecyclerView.OnScrollListener() {
+        messageListView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
