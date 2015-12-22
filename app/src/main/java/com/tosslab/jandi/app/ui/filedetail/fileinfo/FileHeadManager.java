@@ -162,7 +162,7 @@ public class FileHeadManager {
 
         String profileUrl = writer.getUserSmallProfileUrl();
 
-        ImageUtil.loadCircleImageByFresco(ivUserProfile, profileUrl, R.drawable.profile_img);
+        ImageUtil.loadProfileImage(ivUserProfile, profileUrl, R.drawable.profile_img);
 
         String userName = writer.getName();
         tvUserName.setText(userName);

@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
@@ -72,7 +73,7 @@ public class FileDetailCommentView implements CommentViewHolder {
             tvCommentUserName.setTextColor(tvCommentUserName.getContext().getResources().getColor(R.color.deactivate_text_color));
         }
 
-        ImageUtil.loadCircleImageByFresco(
+        ImageUtil.loadProfileImage(
                 ivCommentUserProfile, profileUrl, R.drawable.profile_img_comment);
 
         ivCommentUserProfile.setOnClickListener(v ->
@@ -110,6 +111,9 @@ public class FileDetailCommentView implements CommentViewHolder {
         spannableStringBuilder.setSpan(spannable,
                 startIndex, endIndex,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvCommentContent, spannableStringBuilder, false);
+        markdownViewModel.execute();
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 tvCommentContent, spannableStringBuilder, commentMessage.mentions, entityManager.getMe().getId())

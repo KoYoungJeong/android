@@ -7,18 +7,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
-import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -54,24 +49,15 @@ public class FileUploadPreviewFragment extends Fragment {
         FileExtensionsUtil.Extensions extensions = FileExtensionsUtil.getExtensions(realFilePath);
 
         if (extensions == FileExtensionsUtil.Extensions.IMAGE) {
-            GenericDraweeHierarchy hierarchy = ivFileImage.getHierarchy();
-            hierarchy.setPlaceholderImage(R.drawable.file_icon_img_198);
-            ivFileImage.setHierarchy(hierarchy);
-
             Uri uri = UriFactory.getFileUri(realFilePath);
 
-            int width = ApplicationUtil.getDisplaySize(false);
-            int height = ApplicationUtil.getDisplaySize(true);
+            int width = ImageUtil.STANDARD_IMAGE_SIZE;
+            int height = ImageUtil.STANDARD_IMAGE_SIZE;
 
-            ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
-                    .setAutoRotateEnabled(true)
-                    .setResizeOptions(new ResizeOptions(width, height))
-                    .build();
-            DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setImageRequest(imageRequest)
-                    .setOldController(ivFileImage.getController())
-                    .build();
-            ivFileImage.setController(controller);
+            ImageLoader.newBuilder()
+                    .resize(width, height)
+                    .load(uri)
+                    .into(ivFileImage);
         } else {
             ivFileImage.setVisibility(View.GONE);
             vgFileExtensions.setVisibility(View.VISIBLE);

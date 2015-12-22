@@ -2,9 +2,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Animatable;
-import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -14,24 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.RoundingParams;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.image.ImageInfo;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.image.ImageLoader;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UriFactory;
@@ -124,7 +113,7 @@ public class ImageViewHolder implements BodyViewHolder {
     }
 
     private void bindUser(ResLeftSideMenu.User user, String userProfileUrl) {
-        ImageUtil.loadCircleImageByFresco(ivProfile, userProfileUrl, R.drawable.profile_img);
+        ImageUtil.loadProfileImage(ivProfile, userProfileUrl, R.drawable.profile_img);
 
         tvName.setText(user != null ? user.name : "");
 
@@ -230,13 +219,23 @@ public class ImageViewHolder implements BodyViewHolder {
 
             final ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
 
-            ImageLoader.Builder imageRequestBuilder = new ImageLoader.Builder();
+            ImageLoader.Builder imageRequestBuilder = ImageLoader.newBuilder();
             imageRequestBuilder.error(R.drawable.image_no_preview, ScalingUtils.ScaleType.FIT_XY);
 
             // Local File Path 도 없고 Thumbnail Path 도 없는 경우
             if (!isFromLocalFilePath && TextUtils.isEmpty(remoteFilePth)) {
                 LogUtil.i(TAG, "Thumbnail's are empty.");
-                setImageCacheOrDefaultIcon(fileContent.fileUrl, layoutParams, imageRequestBuilder);
+                layoutParams.width = getPixelFromDp(SMALL_SIZE);
+                layoutParams.height = getPixelFromDp(SMALL_SIZE);
+
+                ivFileImage.setLayoutParams(layoutParams);
+                ivFileImage.requestLayout();
+
+                imageRequestBuilder.roundingParams(null);
+                imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.FIT_XY);
+
+                imageRequestBuilder.load(R.drawable.image_no_preview)
+                        .into(ivFileImage);
                 return;
             }
 
@@ -279,36 +278,8 @@ public class ImageViewHolder implements BodyViewHolder {
             if (needToResize) {
                 imageRequestBuilder.resize(width, height);
             }
-            imageRequestBuilder.uri(uri).load(ivFileImage);
-        }
-    }
-
-    private void setImageCacheOrDefaultIcon(String url,
-                                            ViewGroup.LayoutParams layoutParams,
-                                            ImageLoader.Builder imageRequestBuilder) {
-        String originalImageUrl = ImageUtil.getImageFileUrl(url);
-        final boolean hasCache = ImageUtil.hasCache(Uri.parse(originalImageUrl));
-
-        int width = hasCache ? getPixelFromDp(MAX_WIDTH) : getPixelFromDp(SMALL_SIZE);
-        int height = hasCache ? getPixelFromDp(MAX_HEIGHT) : getPixelFromDp(SMALL_SIZE);
-
-        layoutParams.width = width;
-        layoutParams.height = height;
-
-        ivFileImage.setLayoutParams(layoutParams);
-        ivFileImage.requestLayout();
-
-        if (hasCache) {
-            Uri uri = Uri.parse(originalImageUrl);
-            imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-            imageRequestBuilder.resize(width, height);
-            imageRequestBuilder.uri(uri)
-                    .load(ivFileImage);
-        } else {
-            Uri uri = UriFactory.getResourceUri(R.drawable.image_no_preview);
-            imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.FIT_XY);
-            imageRequestBuilder.uri(uri)
-                    .load(ivFileImage);
+            imageRequestBuilder.load(uri)
+                    .into(ivFileImage);
         }
     }
 

@@ -18,10 +18,11 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
-import com.tosslab.jandi.app.utils.image.BaseOnResourceReadyCallback;
+import com.tosslab.jandi.app.utils.image.listener.BaseOnResourceReadyCallback;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
-import com.tosslab.jandi.app.utils.image.ClosableAttachStateChangeListener;
+import com.tosslab.jandi.app.utils.image.listener.ClosableAttachStateChangeListener;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
@@ -143,12 +144,19 @@ public class PhotoViewFragment extends Fragment {
         }
 
         int percentage = (int) (progress * 100);
+        percentage = Math.min(percentage, 99);
+
         progressBar.setProgress(percentage);
         tvPercentage.setText(percentage + "%");
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void hideProgress() {
+        if (vgProgress.getVisibility() == View.VISIBLE) {
+            progressBar.setProgress(100);
+            tvPercentage.setText(100 + "%");
+        }
+
         vgProgress.animate()
                 .alpha(0.0f)
                 .setDuration(300)
@@ -165,15 +173,13 @@ public class PhotoViewFragment extends Fragment {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void loadImage(Uri uri) {
         int width = fromCarousel
-                ? ApplicationUtil.getDisplaySize(false)
-                : ImageUtil.getMaximumBitmapSize();
+                ? ApplicationUtil.getDisplaySize(false) : ImageUtil.STANDARD_IMAGE_SIZE;
         int height = fromCarousel
-                ? ApplicationUtil.getDisplaySize(true)
-                : ImageUtil.getMaximumBitmapSize();
+                ? ApplicationUtil.getDisplaySize(true) : ImageUtil.STANDARD_IMAGE_SIZE;
 
         ResizeOptions resizeOptions = new ResizeOptions(width, height);
 
-        ImageUtil.loadDrawable(uri, resizeOptions, new BaseOnResourceReadyCallback() {
+        ImageLoader.loadWithCallback(uri, resizeOptions, new BaseOnResourceReadyCallback() {
             @Override
             public void onReady(Drawable drawable, CloseableReference reference) {
                 hideProgress();

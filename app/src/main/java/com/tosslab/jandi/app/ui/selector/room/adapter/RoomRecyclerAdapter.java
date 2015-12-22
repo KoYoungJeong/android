@@ -99,7 +99,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         } else if (item.isUser()) {
             String fileUrl = ImageUtil.getImageFileUrl(item.getProfileUrl());
-            ImageUtil.loadCircleImageByFresco(ivIcon, fileUrl, R.drawable.profile_img_comment);
+            ImageUtil.loadProfileImage(ivIcon, fileUrl, R.drawable.profile_img_comment);
             roomholder.tvName.setText(item.getName());
         } else if (item.isPublicTopic()) {
             int resId  =R.drawable.topiclist_icon_topic_fav;

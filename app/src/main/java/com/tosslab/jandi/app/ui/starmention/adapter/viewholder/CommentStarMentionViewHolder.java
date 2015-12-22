@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 
@@ -37,6 +38,9 @@ public class CommentStarMentionViewHolder extends CommonStarMentionViewHolder {
         super.bindView(starMentionVO);
         tvFileName.setText(starMentionVO.getFileName());
         SpannableStringBuilder commentStringBuilder = new SpannableStringBuilder(starMentionVO.getBody());
+
+        MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvFileName, commentStringBuilder, true);
+        markdownViewModel.execute();
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 tvComment, commentStringBuilder, starMentionVO.getMentions(),

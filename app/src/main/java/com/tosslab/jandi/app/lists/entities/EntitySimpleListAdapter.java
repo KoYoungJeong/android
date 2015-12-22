@@ -74,7 +74,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
         // user 는 개별 프로필 사진이 존재하기에 별도로 가져온다.
         if (entity.isUser()) {
             // 프로필 사진
-            ImageUtil.loadCircleImageByFresco(imageView,
+            ImageUtil.loadProfileImage(imageView,
                     entity.getUserSmallProfileUrl(), R.drawable.profile_img_comment);
         } else {
             imageView.setImageURI(UriFactory.getResourceUri(entity.getIconImageResId()));

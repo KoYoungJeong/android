@@ -131,7 +131,12 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
-        setupActionBar(selectedTeamInfo.getName());
+        if (selectedTeamInfo != null) {
+            setupActionBar(selectedTeamInfo.getName());
+        } else {
+            finish();
+            return;
+        }
 
         selectedEntity = PushInterfaceActivity.selectedEntityId;
 
@@ -199,6 +204,31 @@ public class MainTabActivity extends BaseAppCompatActivity {
         }
 
         updateMoreBadge();
+
+        updateTopicBadge();
+        updateChatBadge();
+    }
+
+    private void updateChatBadge() {
+        EntityManager entityManager = EntityManager.getInstance();
+        final int[] total = {0};
+        Observable.from(entityManager.getFormattedUsers())
+                .subscribe(formattedEntity -> {
+                    total[0] += formattedEntity.alarmCount;
+                });
+        mMainTabPagerAdapter.updateTopicBadge(total[0]);
+
+    }
+
+    private void updateTopicBadge() {
+        EntityManager entityManager = EntityManager.getInstance();
+        final int[] total = {0};
+        Observable.merge(Observable.from(entityManager.getJoinedChannels()), Observable.from(entityManager.getGroups()))
+                .subscribe(formattedEntity -> {
+                    total[0] += formattedEntity.alarmCount;
+                });
+        mMainTabPagerAdapter.updateTopicBadge(total[0]);
+
     }
 
     private void showInvitePopup(DialogInterface.OnDismissListener onDismissListener) {
@@ -279,7 +309,12 @@ public class MainTabActivity extends BaseAppCompatActivity {
         EventBus.getDefault().register(this);
 
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
-        setupActionBar(selectedTeamInfo.getName());
+        if (selectedTeamInfo != null) {
+            setupActionBar(selectedTeamInfo.getName());
+        } else {
+            finish();
+            return;
+        }
 
         if (NetworkCheckUtil.isConnected()) {
             offlineLayer.dismissOfflineView();
@@ -422,9 +457,13 @@ public class MainTabActivity extends BaseAppCompatActivity {
         return messageCount[0];
     }
 
-    public void onEvent(TeamInfoChangeEvent event) {
+    public void onEventMainThread(TeamInfoChangeEvent event) {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
-        setupActionBar(selectedTeamInfo.getName());
+        if (selectedTeamInfo != null) {
+            setupActionBar(selectedTeamInfo.getName());
+        } else {
+            return;
+        }
 
     }
 
@@ -478,7 +517,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
             return;
 
         ResConfig configInfo = getConfigInfo();
-        if (configInfo != null &&
+        if (configInfo != null && configInfo.latestVersions != null &&
                 (getCurrentAppVersionCode() < configInfo.latestVersions.android)) {
             final long oneDayMillis = 1000 * 60 * 60 * 24;
             long timeFromLastPopup = System.currentTimeMillis() - JandiPreference.getVersionPopupLastTime();

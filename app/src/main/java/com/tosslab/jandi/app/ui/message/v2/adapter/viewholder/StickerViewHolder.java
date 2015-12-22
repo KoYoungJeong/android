@@ -56,7 +56,7 @@ public class StickerViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        ImageUtil.loadCircleImageByFresco(ivProfile, profileUrl, R.drawable.profile_img);
+        ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
 
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);

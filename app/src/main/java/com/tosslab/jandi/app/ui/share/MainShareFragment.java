@@ -8,13 +8,13 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -31,11 +31,14 @@ import com.tosslab.jandi.app.ui.share.model.ScrollViewHelper;
 import com.tosslab.jandi.app.ui.share.presenter.SharePresenter;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -94,7 +97,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     LinearLayout vgFileIcon;
 
     @ViewById(R.id.iv_share_file_icon)
-    SimpleDraweeView ivShareFileIcon;
+    ImageView ivShareFileIcon;
 
     @ViewById(R.id.tv_team_name)
     TextView tvTeamName;
@@ -169,29 +172,30 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
 
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void bindImage(File filePath) {
-        tvTitle.setText(filePath.getName());
-        if (FileExtensionsUtil.getExtensions(filePath.getName()) ==
-                FileExtensionsUtil.Extensions.IMAGE) {
+    public void bindImage(File file) {
+        final String fileName = file.getName();
+        tvTitle.setText(fileName);
+        if (FileExtensionsUtil.getExtensions(fileName) == FileExtensionsUtil.Extensions.IMAGE) {
             vgFileIcon.setVisibility(View.GONE);
             ivShareImage.setVisibility(View.VISIBLE);
-            GenericDraweeHierarchy hierarchy = ivShareImage.getHierarchy();
-            hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-            ivShareImage.setHierarchy(hierarchy);
-            ivShareImage.setImageURI(Uri.fromFile(filePath));
+
+            int width = ImageUtil.STANDARD_IMAGE_SIZE;
+            int height = ImageUtil.STANDARD_IMAGE_SIZE;
+
+            ImageLoader.newBuilder()
+                    .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                    .resize(width, height)
+                    .load(Uri.fromFile(file))
+                    .into(ivShareImage);
         } else {
             vgFileIcon.setVisibility(View.VISIBLE);
-            tvShareFileType.setText(FileExtensionsUtil.getFileTypeText(filePath.getName()));
+            tvShareFileType.setText(FileExtensionsUtil.getFileTypeText(fileName));
             ivShareImage.setVisibility(View.GONE);
 
-            GenericDraweeHierarchy hierarchy = ivShareFileIcon.getHierarchy();
-            hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-            ivShareFileIcon.setHierarchy(hierarchy);
-
-            int resId = FileExtensionsUtil.getFileTypeBigImageResource(filePath.getName());
-            ivShareFileIcon.setImageURI(UriFactory.getResourceUri(resId));
+            int resId = FileExtensionsUtil.getFileTypeBigImageResource(fileName);
+            ivShareFileIcon.setImageResource(resId);
         }
     }
 
@@ -270,11 +274,11 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     @Override
     public void moveEntity(int teamId, int entityId, int entityType) {
 
-        MainTabActivity_.intent(getActivity())
+        MainTabActivity_.intent(MainShareFragment.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
 
-        MessageListV2Activity_.intent(getActivity())
+        MessageListV2Activity_.intent(MainShareFragment.this)
                 .teamId(teamId)
                 .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : -1)
                 .entityId(entityId)

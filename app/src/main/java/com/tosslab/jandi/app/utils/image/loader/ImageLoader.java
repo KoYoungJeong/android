@@ -1,11 +1,19 @@
-package com.tosslab.jandi.app.utils.image;
+package com.tosslab.jandi.app.utils.image.loader;
 
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.util.Log;
 import android.view.ViewGroup;
 
+import com.facebook.common.executors.CallerThreadExecutor;
+import com.facebook.common.executors.UiThreadExecutorService;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.BaseDataSubscriber;
+import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.ControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
@@ -13,28 +21,83 @@ import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.GenericDraweeView;
+import com.facebook.imagepipeline.animated.factory.AnimatedDrawableFactory;
 import com.facebook.imagepipeline.common.ImageDecodeOptions;
 import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.image.CloseableAnimatedImage;
+import com.facebook.imagepipeline.image.CloseableBitmap;
+import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.imagepipeline.request.Postprocessor;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.listener.ClosableAttachStateChangeListener;
+import com.tosslab.jandi.app.utils.image.listener.OnResourceReadyCallback;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
+
+import java.util.concurrent.ExecutorService;
 
 /**
  * Created by tonyjs on 15. 12. 21..
  */
 public class ImageLoader {
 
-    public static final int STANDARD_IMAGE_SIZE = 2048;
+    public static final String TAG = ImageLoader.class.getSimpleName();
 
     private Builder builder;
 
-    private ImageLoader(Builder builder) {
+    ImageLoader(Builder builder) {
         this.builder = builder;
     }
 
-    public ImageLoader load(GenericDraweeView draweeView) {
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    public static void loadWithCallback(Uri uri, final OnResourceReadyCallback onResourceReadyCallback) {
+        loadWithCallback(uri, null, false, onResourceReadyCallback);
+    }
+
+    public static void loadWithCallback(Uri uri,
+                                        ResizeOptions resizeOptions,
+                                        final OnResourceReadyCallback onResourceReadyCallback) {
+        loadWithCallback(uri, resizeOptions, false, onResourceReadyCallback);
+    }
+
+    public static void loadWithCallback(Uri uri,
+                                        ResizeOptions resizeOptions,
+                                        boolean executeIntoCallerThread,
+                                        final OnResourceReadyCallback onResourceReadyCallback) {
+        if (resizeOptions == null) {
+            final int maximumSize = ImageUtil.STANDARD_IMAGE_SIZE;
+            resizeOptions = new ResizeOptions(maximumSize, maximumSize);
+        }
+
+        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
+                .setAutoRotateEnabled(true)
+                .setResizeOptions(resizeOptions)
+                .build();
+
+        loadWithPipeline(imageRequest, executeIntoCallerThread, onResourceReadyCallback);
+    }
+
+    private static void loadWithPipeline(ImageRequest imageRequest, boolean executeIntoCallerThread,
+                                         OnResourceReadyCallback onResourceReadyCallback) {
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        DataSource<CloseableReference<CloseableImage>> dataSource =
+                imagePipeline.fetchDecodedImage(imageRequest, JandiApplication.getContext());
+
+        ExecutorService executorService = executeIntoCallerThread
+                ? CallerThreadExecutor.getInstance()
+                : UiThreadExecutorService.getInstance();
+
+        dataSource.subscribe(new BitmapDataSubscriber(onResourceReadyCallback), executorService);
+    }
+
+    public ImageLoader into(GenericDraweeView draweeView) {
         draweeView.setAspectRatio(builder.getAspectRatio());
 
         setHierarchy(draweeView.getHierarchy());
@@ -44,13 +107,41 @@ public class ImageLoader {
         DraweeController controller = getController(imageRequest, draweeView.getController());
 
         draweeView.setController(controller);
+
+//        OnResourceReadyCallback callback = builder.getCallback();
+//        if (callback == null) {
+//            callback = new OnResourceReadyCallback() {
+//                @Override
+//                public void onReady(Drawable drawable, CloseableReference reference) {
+//                    draweeView.getHierarchy().setImage(drawable, 1f, false);
+//
+//                    draweeView.addOnAttachStateChangeListener(
+//                            new ClosableAttachStateChangeListener(reference));
+//                }
+//
+//                @Override
+//                public void onFail(Throwable cause) {
+//                    LogUtil.e(TAG, Log.getStackTraceString(cause));
+//
+//                    draweeView.getHierarchy().setFailure(cause);
+//                }
+//
+//                @Override
+//                public void onProgressUpdate(float progress) {
+//
+//                }
+//            };
+//        }
+//        loadWithPipeline(imageRequest, false, callback);
         return this;
     }
 
     private void setHierarchy(GenericDraweeHierarchy hierarchy) {
         final Resources resources = JandiApplication.getContext().getResources();
 
-        hierarchy.setActualImageScaleType(getScaleType(builder.getActualImageScaleType()));
+        ScalingUtils.ScaleType actualScaleType =
+                getScaleType(builder.getActualImageScaleType(), ScalingUtils.ScaleType.CENTER_CROP);
+        hierarchy.setActualImageScaleType(actualScaleType);
 
         final int placeHolder = builder.getPlaceHolder();
         final Drawable placeHolderDrawable = builder.getPlaceHolderDrawable();
@@ -106,6 +197,7 @@ public class ImageLoader {
 
             requestBuilder = ImageRequestBuilder.newBuilderWithSource(requestUri);
         }
+
         requestBuilder.setAutoRotateEnabled(true);
         requestBuilder.setLocalThumbnailPreviewsEnabled(true);
         requestBuilder.setPostprocessor(builder.getProcessor());
@@ -121,7 +213,8 @@ public class ImageLoader {
 
         int resizeWidth = builder.getResizeWidth();
         if (resizeWidth <= 0) {
-            resizeWidth = layoutParams.width > 0 ? layoutParams.width : STANDARD_IMAGE_SIZE;
+            resizeWidth = layoutParams.width > 0
+                    ? layoutParams.width : ImageUtil.STANDARD_IMAGE_SIZE;
         }
         int resizeHeight = builder.getResizeHeight();
         if (resizeHeight <= 0) {
@@ -129,7 +222,8 @@ public class ImageLoader {
             if (aspectRatio > 0) {
                 resizeHeight = (int) (resizeWidth * aspectRatio);
             } else {
-                resizeHeight = layoutParams.height > 0 ? layoutParams.height : STANDARD_IMAGE_SIZE;
+                resizeHeight = layoutParams.height > 0
+                        ? layoutParams.height : ImageUtil.STANDARD_IMAGE_SIZE;
             }
         }
 
@@ -145,7 +239,7 @@ public class ImageLoader {
                 .setAutoPlayAnimations(true)
                 .setImageRequest(imageRequest)
                 .setOldController(oldController)
-                .setControllerListener(builder.getListener())
+                .setControllerListener(builder.getControllerListener())
                 .build();
     }
 
@@ -158,7 +252,7 @@ public class ImageLoader {
         return scaleType != null ? scaleType : defaultScaleType;
     }
 
-    public static class Builder {
+    public static final class Builder {
         private int placeHolder;
         private Drawable placeHolderDrawable;
         private ScalingUtils.ScaleType placeHolderScaleType;
@@ -182,13 +276,18 @@ public class ImageLoader {
 
         private Postprocessor processor;
 
-        private ControllerListener listener;
+        private OnResourceReadyCallback callback;
+        private ControllerListener controllerListener;
 
         private Uri uri;
 
         private int actualImageResourceId;
         private String path;
         private boolean fromFile;
+
+        Builder() {
+
+        }
 
         public Builder placeHolder(int resId, ScalingUtils.ScaleType scaleType) {
             this.placeHolder = resId;
@@ -251,23 +350,28 @@ public class ImageLoader {
             return this;
         }
 
-        public Builder listener(ControllerListener controllerListener) {
-            this.listener = controllerListener;
+        public Builder callback(OnResourceReadyCallback callback) {
+            this.callback = callback;
             return this;
         }
 
-        public ImageLoader uri(Uri uri) {
+        public Builder controllerListener(ControllerListener listener) {
+            this.controllerListener = listener;
+            return this;
+        }
+
+        public ImageLoader load(Uri uri) {
             this.uri = uri;
             return new ImageLoader(this);
         }
 
-        public ImageLoader path(String path, boolean fromFile) {
+        public ImageLoader load(String path, boolean fromFile) {
             this.path = path;
             this.fromFile = fromFile;
             return new ImageLoader(this);
         }
 
-        public ImageLoader resource(int resId) {
+        public ImageLoader load(int resId) {
             this.actualImageResourceId = resId;
             return new ImageLoader(this);
         }
@@ -332,8 +436,12 @@ public class ImageLoader {
             return processor;
         }
 
-        public ControllerListener getListener() {
-            return listener;
+        public OnResourceReadyCallback getCallback() {
+            return callback;
+        }
+
+        public ControllerListener getControllerListener() {
+            return controllerListener;
         }
 
         public Uri getUri() {
@@ -350,6 +458,81 @@ public class ImageLoader {
 
         public boolean isFromFile() {
             return fromFile;
+        }
+
+    }
+
+    public static class BitmapDataSubscriber
+            extends BaseDataSubscriber<CloseableReference<CloseableImage>> {
+
+        private OnResourceReadyCallback onResourceReadyCallback;
+
+        public BitmapDataSubscriber(OnResourceReadyCallback onResourceReadyCallback) {
+            this.onResourceReadyCallback = onResourceReadyCallback;
+        }
+
+        @Override
+        public void onNewResultImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
+            if (!dataSource.isFinished() || onResourceReadyCallback == null) {
+                return;
+            }
+            CloseableReference<CloseableImage> imageReference = dataSource.getResult();
+            if (imageReference != null) {
+                CloseableImage closeableImage = imageReference.get();
+                Drawable drawable = getDrawable(closeableImage);
+                if (drawable != null) {
+                    onResourceReadyCallback.onReady(drawable, imageReference);
+                } else {
+                    onResourceReadyCallback.onFail(new NullPointerException("Drawable is empty."));
+                    CloseableReference.closeSafely(imageReference);
+                }
+            } else {
+                onResourceReadyCallback.onFail(new NullPointerException("ImageReference is empty."));
+            }
+        }
+
+        private Drawable getDrawable(CloseableImage closeableImage) {
+            if (closeableImage instanceof CloseableBitmap) {
+                return getBitmapDrawable((CloseableBitmap) closeableImage);
+            } else if (closeableImage instanceof CloseableAnimatedImage) {
+                return getAnimatedDrawable((CloseableAnimatedImage) closeableImage);
+            }
+            return null;
+        }
+
+        private Drawable getAnimatedDrawable(CloseableAnimatedImage animatedImage) {
+            LogUtil.i(TAG, "AnimatedImage loaded");
+            AnimatedDrawableFactory animatedDrawableFactory =
+                    Fresco.getImagePipelineFactory().getAnimatedDrawableFactory();
+            return animatedDrawableFactory.create(animatedImage.getImageResult());
+        }
+
+        private Drawable getBitmapDrawable(CloseableBitmap closeableBitmap) {
+            Bitmap underlyingBitmap = closeableBitmap.getUnderlyingBitmap();
+            if (isValidateBitmap(underlyingBitmap)) {
+                return new BitmapDrawable(
+                        JandiApplication.getContext().getResources(), underlyingBitmap);
+            }
+            return null;
+        }
+
+        private boolean isValidateBitmap(Bitmap bitmap) {
+            return bitmap != null && !bitmap.isRecycled();
+        }
+
+        @Override
+        public void onFailureImpl(DataSource dataSource) {
+            // handle failure
+            if (onResourceReadyCallback != null) {
+                onResourceReadyCallback.onFail(dataSource.getFailureCause());
+            }
+        }
+
+        @Override
+        public void onProgressUpdate(DataSource<CloseableReference<CloseableImage>> dataSource) {
+            if (!dataSource.isFinished() && onResourceReadyCallback != null) {
+                onResourceReadyCallback.onProgressUpdate(dataSource.getProgress());
+            }
         }
     }
 }

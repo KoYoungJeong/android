@@ -29,7 +29,7 @@
                 android:orientation="vertical"
                 android:visibility="visible">
 
-                <com.facebook.drawee.view.SimpleDraweeView
+                <ImageView
                     android:id="@+id/iv_share_file_icon"
                     android:layout_width="66dp"
                     android:layout_height="79dp"

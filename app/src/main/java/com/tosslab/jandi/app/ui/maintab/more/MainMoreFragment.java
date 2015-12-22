@@ -183,7 +183,7 @@ public class MainMoreFragment extends Fragment {
             SimpleDraweeView imageView = profileIconView.getImageView();
             Uri uri = Uri.parse(me.getUserSmallProfileUrl());
 
-            ImageUtil.loadCircleImageByFresco(imageView, uri, R.drawable.profile_img);
+            ImageUtil.loadProfileImage(imageView, uri, R.drawable.profile_img);
         }
     }
 

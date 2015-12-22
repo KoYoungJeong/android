@@ -11,14 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.FileUploadProgressEvent;
@@ -27,6 +21,7 @@ import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.WebLoadingBar;
 
 import org.androidannotations.annotations.AfterViews;
@@ -171,29 +166,24 @@ public class FileUploadStateViewModel {
             FileUploadDTO item = uploadInfos.get(position);
             FileExtensionsUtil.Extensions fileExtType = FileExtensionsUtil.getExtensions(item.getFilePath());
             SimpleDraweeView ivPhoto = holder.ivPhoto;
-            GenericDraweeHierarchy hierarchy = ivPhoto.getHierarchy();
 
             if (fileExtType == FileExtensionsUtil.Extensions.IMAGE) {
-                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                ivPhoto.setHierarchy(hierarchy);
                 ViewGroup.LayoutParams layoutParams = ivPhoto.getLayoutParams();
                 int width = layoutParams.width;
                 int height = layoutParams.height;
                 Uri uri = UriFactory.getFileUri(item.getFilePath());
-                ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
-                        .setAutoRotateEnabled(true)
-                        .setResizeOptions(new ResizeOptions(width, height))
-                        .build();
-                DraweeController controller = Fresco.newDraweeControllerBuilder()
-                        .setImageRequest(imageRequest)
-                        .setOldController(ivPhoto.getController())
-                        .build();
-                ivPhoto.setController(controller);
+
+                ImageLoader.newBuilder()
+                        .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
+                        .resize(width, height)
+                        .load(uri)
+                        .into(ivPhoto);
             } else {
-                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
-                ivPhoto.setHierarchy(hierarchy);
                 int resId = FileExtensionsUtil.getTypeResourceId(fileExtType);
-                ivPhoto.setImageURI(UriFactory.getResourceUri(resId));
+                ImageLoader.newBuilder()
+                        .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                        .load(resId)
+                        .into(ivPhoto);
             }
 
             switch (item.getUploadState()) {

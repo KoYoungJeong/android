@@ -1,6 +1,5 @@
-package com.tosslab.jandi.app.utils.image;
+package com.tosslab.jandi.app.utils.image.listener;
 
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import com.facebook.common.references.CloseableReference;

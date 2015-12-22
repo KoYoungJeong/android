@@ -83,6 +83,9 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
     }
 
     public CarouselFileInfo getFileInfo(int position) {
+        if (position >= carouselFileInfos.size()) {
+            return null;
+        }
         return carouselFileInfos.get(position);
     }
 

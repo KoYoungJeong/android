@@ -395,7 +395,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     void displayProfileImage(String profileImageUrlPath) {
         if (!TextUtils.isEmpty(profileImageUrlPath) && !isFinishing()) {
-            ImageUtil.loadCircleImageByFresco(ivProfilePhoto, profileImageUrlPath, R.drawable.profile_img);
+            ImageUtil.loadProfileImage(ivProfilePhoto, profileImageUrlPath, R.drawable.profile_img);
         }
     }
 
@@ -445,7 +445,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateLocalProfileImage(File tempPhotoFile) {
-        ImageUtil.loadCircleImageByFresco(ivProfilePhoto,
+        ImageUtil.loadProfileImage(ivProfilePhoto,
                 Uri.fromFile(tempPhotoFile), R.drawable.profile_img);
     }
 

@@ -58,6 +58,8 @@ public class CircleProgressDrawable extends Drawable {
     private int bgProgressColor = DEFAULT_BG_PROGRESS_COLOR;
     private int progressColor = DEFAULT_PROGRESS_COLOR;
 
+    private int topMargin;
+
     private int progress = 0;
 
     public CircleProgressDrawable(Context context) {
@@ -103,8 +105,8 @@ public class CircleProgressDrawable extends Drawable {
 
         int halfOfWidth = progressWidth / 2;
 
-        int halfOfCanvasWidth = canvasWidth / 2;
-        int halfOfCanvasHeight = canvasHeight / 2;
+        int centerX = canvasWidth / 2;
+        int centerY = topMargin > 0 ? topMargin + halfOfWidth : canvasHeight / 2;
 
         bgProgressPaint.setStyle(Paint.Style.STROKE);
         bgProgressPaint.setColor(bgProgressColor);
@@ -112,16 +114,16 @@ public class CircleProgressDrawable extends Drawable {
         bgProgressPaint.setStrokeWidth(bgStrokeWidth);
 
         int radius = halfOfWidth;
-        canvas.drawCircle(halfOfCanvasWidth, halfOfCanvasHeight, radius, bgProgressPaint);
+        canvas.drawCircle(centerX, centerY, radius, bgProgressPaint);
 
         progressPaint.setStyle(Paint.Style.STROKE);
         progressPaint.setColor(progressColor);
         progressPaint.setFlags(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
         progressPaint.setStrokeWidth(progressStrokeWidth);
 
-        int left = (halfOfCanvasWidth - halfOfWidth);
+        int left = (centerX - halfOfWidth);
         rectF.left = left;
-        int top = (halfOfCanvasHeight - halfOfWidth);
+        int top = (centerY - halfOfWidth);
         rectF.top = top;
         rectF.right = left + progressWidth;
         rectF.bottom = top + progressWidth;
@@ -140,19 +142,19 @@ public class CircleProgressDrawable extends Drawable {
         Rect bounds = new Rect();
         textPaint.getTextBounds(progressText, 0, progressText.length(), bounds);
 
-        int startX = halfOfCanvasWidth - (bounds.width() / 2);
-        int endY = halfOfCanvasHeight + (bounds.height() / 2);
+        int startX = centerX - (bounds.width() / 2);
+        int endY = centerY + (bounds.height() / 2);
 
         canvas.drawText(progressText, startX, endY, textPaint);
 
-        indicatorTextPaint.setColor(textColor);
-        indicatorTextPaint.setTextSize(textSize);
+        indicatorTextPaint.setColor(indicatorTextColor);
+        indicatorTextPaint.setTextSize(indicatorTextSize);
         indicatorTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
 
         indicatorTextPaint.getTextBounds(indicatorText, 0, indicatorText.length(), bounds);
 
-        startX = halfOfCanvasWidth - (bounds.width() / 2);
-        endY = halfOfCanvasHeight + radius + indicatorTextMargin + (bounds.height() / 2);
+        startX = centerX - (bounds.width() / 2);
+        endY = centerY + radius + indicatorTextMargin + (bounds.height() / 2);
 
         canvas.drawText(indicatorText, startX, endY, indicatorTextPaint);
 
@@ -208,6 +210,10 @@ public class CircleProgressDrawable extends Drawable {
         }
         this.progressColor = progressColor;
         invalidateSelf();
+    }
+
+    public void setTopMargin(int topMargin) {
+        this.topMargin = topMargin;
     }
 
     public int getProgressWidth() {
