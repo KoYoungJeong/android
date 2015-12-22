@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.members.kick;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -11,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -40,7 +38,7 @@ public class KickDialogFragment extends DialogFragment {
                 (SimpleDraweeView) view.findViewById(R.id.iv_kick_user_topic_profile);
         TextView tvName = (TextView) view.findViewById(R.id.tv_kick_user_topic_name);
 
-        ImageUtil.loadCircleImageByFresco(ivProfile, profileUrl, R.drawable.profile_img);
+        ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
 
         tvName.setText(userName);
 

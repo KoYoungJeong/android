@@ -8,17 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.album.fragment.ImageAlbumFragment;
 import com.tosslab.jandi.app.ui.album.fragment.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.fragment.vo.SelectPictures;
 import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import java.util.List;
@@ -86,19 +83,11 @@ public class DefaultAlbumAdapter extends RecyclerView.Adapter {
         SimpleDraweeView ivSample = viewHolder.ivSample;
 
         ViewGroup.LayoutParams layoutParams = ivSample.getLayoutParams();
-        ResizeOptions options = new ResizeOptions(layoutParams.width, layoutParams.height);
-        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
-                .setAutoRotateEnabled(true)
-                .setResizeOptions(options)
-                .build();
-
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setImageRequest(imageRequest)
-                .setAutoPlayAnimations(true)
-                .setOldController(ivSample.getController())
-                .build();
-
-        ivSample.setController(controller);
+        ImageLoader.newBuilder()
+                .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
+                .resize(layoutParams.width, layoutParams.height)
+                .load(uri)
+                .into(ivSample);
 
         viewHolder.itemView.setOnClickListener(v -> {
             if (onRecyclerItemClickListener != null) {

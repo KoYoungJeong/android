@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.utils.image;
+package com.tosslab.jandi.app.utils.image.listener;
 
 import android.graphics.drawable.Drawable;
 

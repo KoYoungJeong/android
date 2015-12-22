@@ -8,7 +8,6 @@ import android.view.View;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
@@ -24,7 +23,10 @@ import org.androidannotations.annotations.OptionsItem;
 public class PhotoViewActivity extends BaseAppCompatActivity implements OnSwipeExitListener {
 
     @Extra
-    String imageUrl;
+    String thumbUrl;
+
+    @Extra
+    String originalUrl;
 
     @Extra
     String imageType;
@@ -37,7 +39,8 @@ public class PhotoViewActivity extends BaseAppCompatActivity implements OnSwipeE
     void initViews() {
         PhotoViewFragment fragment = PhotoViewFragment_.builder()
                 .imageType(imageType)
-                .imageUrl(imageUrl)
+                .originalUrl(thumbUrl)
+                .thumbUrl(originalUrl)
                 .build();
 
         getSupportFragmentManager()
@@ -47,12 +50,9 @@ public class PhotoViewActivity extends BaseAppCompatActivity implements OnSwipeE
 
         setUpActionbar();
 
-        fragment.setOnCarouselImageClickListener(new CarouselViewerActivity.OnCarouselImageClickListener() {
-            @Override
-            public void onCarouselImageClick() {
-                isFullScreen = !isFullScreen;
-                setUpFullScreen(isFullScreen);
-            }
+        fragment.setOnCarouselImageClickListener(() -> {
+            isFullScreen = !isFullScreen;
+            setUpFullScreen(isFullScreen);
         });
     }
 

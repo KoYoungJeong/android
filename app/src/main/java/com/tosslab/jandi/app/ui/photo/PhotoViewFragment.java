@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -15,12 +16,13 @@ import com.facebook.imagepipeline.animated.base.AnimatableDrawable;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
-import com.tosslab.jandi.app.ui.photo.widget.CircleProgress;
+import com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
-import com.tosslab.jandi.app.utils.image.BaseOnResourceReadyCallback;
+import com.tosslab.jandi.app.utils.image.listener.BaseOnResourceReadyCallback;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
-import com.tosslab.jandi.app.utils.image.ClosableAttachStateChangeListener;
+import com.tosslab.jandi.app.utils.image.listener.ClosableAttachStateChangeListener;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
@@ -43,7 +45,10 @@ public class PhotoViewFragment extends Fragment {
     boolean fromCarousel = false;
 
     @FragmentArg
-    String imageUrl;
+    String thumbUrl;
+
+    @FragmentArg
+    String originalUrl;
 
     @FragmentArg
     String imageType;
@@ -52,13 +57,16 @@ public class PhotoViewFragment extends Fragment {
     PhotoView photoView;
 
     @ViewById(R.id.progress_photoview)
-    CircleProgress progressBar;
+    CircleProgressBar progressBar;
 
     @ViewById(R.id.tv_photoview_percentage)
     TextView tvPercentage;
 
     @ViewById(R.id.vg_photoview_progress)
     LinearLayout vgProgress;
+
+    @ViewById(R.id.vg_photoview_tap_to_view)
+    View btnTapToViewOriginal;
 
     private CarouselViewerActivity.OnCarouselImageClickListener carouselImageClickListener;
 
@@ -96,7 +104,28 @@ public class PhotoViewFragment extends Fragment {
             return true;
         });
 
-        loadImage(Uri.parse(imageUrl));
+        if (TextUtils.isEmpty(thumbUrl) && TextUtils.isEmpty(originalUrl)) {
+            //FIXME
+            LogUtil.e(TAG, "Url is empty.");
+            return;
+        }
+
+        if (!TextUtils.isEmpty(thumbUrl)) {
+            loadImage(Uri.parse(thumbUrl));
+        } else {
+            final Uri originalUri = Uri.parse(originalUrl);
+            if (ImageUtil.hasCache(originalUri)) {
+                loadImage(originalUri);
+            } else {
+                vgProgress.setVisibility(View.GONE);
+                btnTapToViewOriginal.setVisibility(View.VISIBLE);
+                btnTapToViewOriginal.setOnClickListener(v -> {
+                    btnTapToViewOriginal.setVisibility(View.GONE);
+                    vgProgress.setVisibility(View.VISIBLE);
+                    loadImage(originalUri);
+                });
+            }
+        }
     }
 
     private void setupProgress() {
@@ -105,18 +134,29 @@ public class PhotoViewFragment extends Fragment {
         progressBar.setProgressStrokeWidth(progressWidth);
         progressBar.setBgColor(getResources().getColor(R.color.jandi_primary_color));
         progressBar.setProgressColor(getResources().getColor(R.color.jandi_accent_color));
+        progressBar.setMax(100);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateProgress(float progress) {
-        progressBar.setMax(100);
+        if (progressBar.getProgress() == 100) {
+            return;
+        }
+
         int percentage = (int) (progress * 100);
+        percentage = Math.min(percentage, 99);
+
         progressBar.setProgress(percentage);
         tvPercentage.setText(percentage + "%");
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void hideProgress() {
+        if (vgProgress.getVisibility() == View.VISIBLE) {
+            progressBar.setProgress(100);
+            tvPercentage.setText(100 + "%");
+        }
+
         vgProgress.animate()
                 .alpha(0.0f)
                 .setDuration(300)
@@ -132,14 +172,14 @@ public class PhotoViewFragment extends Fragment {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void loadImage(Uri uri) {
-        int width = ApplicationUtil.getDisplaySize(false);
-        int height = ApplicationUtil.getDisplaySize(true);
+        int width = fromCarousel
+                ? ApplicationUtil.getDisplaySize(false) : ImageUtil.STANDARD_IMAGE_SIZE;
+        int height = fromCarousel
+                ? ApplicationUtil.getDisplaySize(true) : ImageUtil.STANDARD_IMAGE_SIZE;
 
-        ResizeOptions resizeOptions = fromCarousel
-                ? new ResizeOptions(width, height)
-                : new ResizeOptions(ImageUtil.getMaximumBitmapSize(), ImageUtil.getMaximumBitmapSize());
+        ResizeOptions resizeOptions = new ResizeOptions(width, height);
 
-        ImageUtil.loadDrawable(uri, resizeOptions, new BaseOnResourceReadyCallback() {
+        ImageLoader.loadWithCallback(uri, resizeOptions, new BaseOnResourceReadyCallback() {
             @Override
             public void onReady(Drawable drawable, CloseableReference reference) {
                 hideProgress();
@@ -155,7 +195,6 @@ public class PhotoViewFragment extends Fragment {
 
             @Override
             public void onProgressUpdate(float progress) {
-                LogUtil.i(TAG, "progressBar = " + progress);
                 updateProgress(progress);
             }
         });

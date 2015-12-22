@@ -66,7 +66,7 @@ public class MessageViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        ImageUtil.loadCircleImageByFresco(ivProfile, profileUrl, R.drawable.profile_img);
+        ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
 
         if (fromEntity != null && TextUtils.equals(fromEntity.status, "enabled")) {
             tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));

@@ -181,6 +181,7 @@
 	<string name="jandi_file_category_presentation">"简报"</string>
 	<string name="jandi_file_category_spreadsheet">"表单"</string>
 	<string name="jandi_file_category_video">"视频"</string>
+	<string name="jandi_file_category_zip">"压缩文件"</string>
 	<string name="jandi_file_delete_message">"您确定要删除此文件？ 请注意留言的部分不会被删除。"</string>
 	<string name="jandi_file_deleted_with_date">"%s 文件已删除"</string>
 	<string name="jandi_file_downloaded_into">"文件下载至 %s"</string>

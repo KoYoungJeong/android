@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.ui.album.fragment.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,13 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.album.fragment.model.ImageAlbumModel;
@@ -24,6 +17,7 @@ import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
 import com.tosslab.jandi.app.ui.album.fragment.vo.SelectPictures;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import java.util.List;
@@ -138,27 +132,13 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
     }
 
     private void setImage(SimpleDraweeView ivPicture, Uri uri) {
-        GenericDraweeHierarchy hierarchy = ivPicture.getHierarchy();
-        hierarchy.setPlaceholderImage(new ColorDrawable(Color.TRANSPARENT));
-
         int size = ApplicationUtil.getDisplaySize(false) / column;
-        ResizeOptions options = new ResizeOptions(size, size);
-
-        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
-                .setLocalThumbnailPreviewsEnabled(true)
-                .setAutoRotateEnabled(true)
-                .setResizeOptions(options)
-                .build();
-
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setImageRequest(imageRequest)
-                .setAutoPlayAnimations(true)
-                .setOldController(ivPicture.getController())
-                .build();
-
-        ivPicture.setAspectRatio(1.0f);
-        ivPicture.setHierarchy(hierarchy);
-        ivPicture.setController(controller);
+        ImageLoader.newBuilder()
+                .aspectRatio(1.0f)
+                .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
+                .resize(size, size)
+                .load(uri)
+                .into(ivPicture);
     }
 
     public ImagePicture getItem(int position) {

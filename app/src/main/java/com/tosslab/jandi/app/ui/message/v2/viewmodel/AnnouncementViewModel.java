@@ -27,7 +27,6 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -115,7 +114,7 @@ public class AnnouncementViewModel {
 
         String profileUrl = fromEntity.getUserLargeProfileUrl();
 
-        ImageUtil.loadCircleImageByFresco(ivAnnouncementUser, profileUrl, R.drawable.profile_img);
+        ImageUtil.loadProfileImage(ivAnnouncementUser, profileUrl, R.drawable.profile_img);
         ivAnnouncementUser.setOnClickListener(v -> {
             ShowProfileEvent event = new ShowProfileEvent(writerId, ShowProfileEvent.From.Image);
             EventBus.getDefault().post(event);

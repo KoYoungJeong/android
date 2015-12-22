@@ -8,19 +8,14 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
@@ -42,6 +37,8 @@ import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -100,7 +97,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     LinearLayout vgFileIcon;
 
     @ViewById(R.id.iv_share_file_icon)
-    SimpleDraweeView ivShareFileIcon;
+    ImageView ivShareFileIcon;
 
     @ViewById(R.id.tv_team_name)
     TextView tvTeamName;
@@ -184,37 +181,21 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
             vgFileIcon.setVisibility(View.GONE);
             ivShareImage.setVisibility(View.VISIBLE);
 
-            GenericDraweeHierarchy hierarchy = ivShareImage.getHierarchy();
-            hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-            ivShareImage.setHierarchy(hierarchy);
+            int width = ImageUtil.STANDARD_IMAGE_SIZE;
+            int height = ImageUtil.STANDARD_IMAGE_SIZE;
 
-            int width = ApplicationUtil.getDisplaySize(false);
-            int height = ApplicationUtil.getDisplaySize(true);
-
-            ImageRequest imageRequest =
-                    ImageRequestBuilder.newBuilderWithSource(Uri.fromFile(file))
-                            .setResizeOptions(new ResizeOptions(width, height))
-                            .setAutoRotateEnabled(true)
-                            .build();
-
-            DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setImageRequest(imageRequest)
-                    .setAutoPlayAnimations(true)
-                    .setOldController(ivShareImage.getController())
-                    .build();
-
-            ivShareImage.setController(controller);
+            ImageLoader.newBuilder()
+                    .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                    .resize(width, height)
+                    .load(Uri.fromFile(file))
+                    .into(ivShareImage);
         } else {
             vgFileIcon.setVisibility(View.VISIBLE);
             tvShareFileType.setText(FileExtensionsUtil.getFileTypeText(fileName));
             ivShareImage.setVisibility(View.GONE);
 
-            GenericDraweeHierarchy hierarchy = ivShareFileIcon.getHierarchy();
-            hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-            ivShareFileIcon.setHierarchy(hierarchy);
-
             int resId = FileExtensionsUtil.getFileTypeBigImageResource(fileName);
-            ivShareFileIcon.setImageURI(UriFactory.getResourceUri(resId));
+            ivShareFileIcon.setImageResource(resId);
         }
     }
 

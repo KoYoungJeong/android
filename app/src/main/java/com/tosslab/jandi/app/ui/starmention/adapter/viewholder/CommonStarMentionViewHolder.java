@@ -41,7 +41,7 @@ public class CommonStarMentionViewHolder extends RecyclerView.ViewHolder {
 
     public void bindView(StarMentionVO starMentionVO) {
         Uri uri = Uri.parse(starMentionVO.getWriterPictureUrl());
-        ImageUtil.loadCircleImageByFresco(ivProfile, uri, R.drawable.profile_img);
+        ImageUtil.loadProfileImage(ivProfile, uri, R.drawable.profile_img);
 
         tvWriter.setText(starMentionVO.getWriterName());
         String updateTime = DateTransformator.getTimeString(starMentionVO.getUpdatedAt());

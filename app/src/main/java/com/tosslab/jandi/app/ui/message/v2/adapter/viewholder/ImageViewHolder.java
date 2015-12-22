@@ -2,9 +2,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Animatable;
-import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -14,23 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.RoundingParams;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.image.ImageInfo;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UriFactory;
@@ -123,7 +113,7 @@ public class ImageViewHolder implements BodyViewHolder {
     }
 
     private void bindUser(ResLeftSideMenu.User user, String userProfileUrl) {
-        ImageUtil.loadCircleImageByFresco(ivProfile, userProfileUrl, R.drawable.profile_img);
+        ImageUtil.loadProfileImage(ivProfile, userProfileUrl, R.drawable.profile_img);
 
         tvName.setText(user != null ? user.name : "");
 
@@ -227,33 +217,27 @@ public class ImageViewHolder implements BodyViewHolder {
             String remoteFilePth =
                     ImageUtil.getThumbnailUrl(extraInfo, ImageUtil.Thumbnails.LARGE);
 
-            ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
+            final ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
 
-            GenericDraweeHierarchy hierarchy = ivFileImage.getHierarchy();
+            ImageLoader.Builder imageRequestBuilder = ImageLoader.newBuilder();
+            imageRequestBuilder.error(R.drawable.image_no_preview, ScalingUtils.ScaleType.FIT_XY);
 
             // Local File Path 도 없고 Thumbnail Path 도 없는 경우
             if (!isFromLocalFilePath && TextUtils.isEmpty(remoteFilePth)) {
-                LogUtil.i(TAG, "Url is empty.");
+                LogUtil.i(TAG, "Thumbnail's are empty.");
                 layoutParams.width = getPixelFromDp(SMALL_SIZE);
                 layoutParams.height = getPixelFromDp(SMALL_SIZE);
 
                 ivFileImage.setLayoutParams(layoutParams);
                 ivFileImage.requestLayout();
 
-                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
-                hierarchy.setRoundingParams(null);
-                ivFileImage.setHierarchy(hierarchy);
+                imageRequestBuilder.roundingParams(null);
+                imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.FIT_XY);
 
-                ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.image_no_preview));
+                imageRequestBuilder.load(R.drawable.image_no_preview)
+                        .into(ivFileImage);
                 return;
             }
-
-            String thumbPath = isFromLocalFilePath ? localFilePath : remoteFilePth;
-
-            LogUtil.i(TAG, thumbPath);
-
-            Drawable failure = context.getResources().getDrawable(R.drawable.image_no_preview);
-            hierarchy.setFailureImage(failure, ScalingUtils.ScaleType.FIT_XY);
 
             boolean needToResize = true;
 
@@ -265,27 +249,20 @@ public class ImageViewHolder implements BodyViewHolder {
                         extraInfo.width, extraInfo.height, extraInfo.orientation);
                 switch (imageSpec.getType()) {
                     case SMALL:
-                        hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+                        imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
                         needToResize = false;
-                        hierarchy.setRoundingParams(null);
                         break;
                     default:
-                        RoundingParams roundingParams = hierarchy.getRoundingParams();
-                        if (roundingParams == null) {
-                            roundingParams = RoundingParams.fromCornersRadius(getPixelFromDp(2));
-                        }
-                        hierarchy.setRoundingParams(roundingParams);
-                        hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+                        imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+                        RoundingParams roundingParams =
+                                RoundingParams.fromCornersRadius(getPixelFromDp(2));
+                        imageRequestBuilder.roundingParams(roundingParams);
                         break;
                 }
-                ivFileImage.setHierarchy(hierarchy);
-
                 width = imageSpec.getWidth();
                 height = imageSpec.getHeight();
             } else {
-                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                ivFileImage.setHierarchy(hierarchy);
-
+                imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
                 width = getPixelFromDp(MAX_WIDTH);
                 height = getPixelFromDp(MAX_HEIGHT);
             }
@@ -295,27 +272,20 @@ public class ImageViewHolder implements BodyViewHolder {
             ivFileImage.setLayoutParams(layoutParams);
             ivFileImage.requestLayout();
 
-            Uri uri = isFromLocalFilePath ? UriFactory.getFileUri(thumbPath) : Uri.parse(thumbPath);
+            Uri uri = isFromLocalFilePath
+                    ? UriFactory.getFileUri(localFilePath) : Uri.parse(remoteFilePth);
 
-            int maximumBitmapSize = ImageUtil.getMaximumBitmapSize();
-            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
-                    .setResizeOptions(needToResize
-                            ? new ResizeOptions(layoutParams.width, layoutParams.height)
-                            : new ResizeOptions(maximumBitmapSize, maximumBitmapSize))
-                    .setAutoRotateEnabled(true)
-                    .build();
-
-            DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setImageRequest(request)
-                    .setOldController(ivFileImage.getController())
-                    .build();
-            ivFileImage.setController(controller);
+            if (needToResize) {
+                imageRequestBuilder.resize(width, height);
+            }
+            imageRequestBuilder.load(uri)
+                    .into(ivFileImage);
         }
     }
 
     private ImageSpec getImageSpec(int width, int height, int orientation) {
         // Vertical Image.
-        if (isVerticalPhoto(orientation)) {
+        if (ImageUtil.isVerticalPhoto(orientation)) {
             int temp = height;
             height = width;
             width = temp;
@@ -368,11 +338,6 @@ public class ImageViewHolder implements BodyViewHolder {
     private boolean isSmallSize(int width, int height) {
         return width <= getPixelFromDp(SMALL_SIZE)
                 && height <= getPixelFromDp(SMALL_SIZE);
-    }
-
-    private boolean isVerticalPhoto(int orientation) {
-        return orientation == ExifInterface.ORIENTATION_ROTATE_90
-                || orientation == ExifInterface.ORIENTATION_ROTATE_270;
     }
 
     private int getPixelFromDp(int dp) {

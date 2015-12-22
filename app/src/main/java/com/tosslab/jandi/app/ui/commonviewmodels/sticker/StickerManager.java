@@ -18,9 +18,10 @@ import com.facebook.drawee.drawable.ScalingUtils;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.image.BaseOnResourceReadyCallback;
+import com.tosslab.jandi.app.utils.image.listener.BaseOnResourceReadyCallback;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.ClosableAttachStateChangeListener;
+import com.tosslab.jandi.app.utils.image.listener.ClosableAttachStateChangeListener;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.HashSet;
@@ -94,7 +95,7 @@ public class StickerManager {
     }
 
     private void loadSticker(Uri uri, final ImageView view, final LoadOptions options) {
-        ImageUtil.loadDrawable(uri, new BaseOnResourceReadyCallback() {
+        ImageLoader.loadWithCallback(uri, new BaseOnResourceReadyCallback() {
             @Override
             public void onReady(Drawable drawable, CloseableReference reference) {
                 setStickerResource(view, options, drawable, reference);

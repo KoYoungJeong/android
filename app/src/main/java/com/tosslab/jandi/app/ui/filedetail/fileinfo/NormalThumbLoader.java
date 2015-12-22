@@ -33,7 +33,7 @@ public class NormalThumbLoader implements FileThumbLoader {
         ResMessages.FileContent content = fileMessage.content;
 
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(content.serverUrl);
-        String photoUrl = ImageUtil.getFileUrl(content.fileUrl);
+        String photoUrl = ImageUtil.getImageFileUrl(content.fileUrl);
 
         iconFileType.setImageResource(MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon));
         int mimeTypePlaceholderImage = MimeTypeUtil.getMimeTypePlaceholderImage(content.serverUrl, content.icon);
@@ -56,7 +56,7 @@ public class NormalThumbLoader implements FileThumbLoader {
                 break;
             default:
                 imageViewPhotoFile.setOnClickListener(view -> EventBus.getDefault().post(new
-                        FileDownloadStartEvent(ImageUtil.getFileUrl(content.fileUrl)
+                        FileDownloadStartEvent(ImageUtil.getImageFileUrl(content.fileUrl)
                         , content.title, content.type, content.ext)));
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewFile);
                 break;

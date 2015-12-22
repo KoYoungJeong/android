@@ -24,6 +24,10 @@ public class MimeTypeUtil {
         return PlaceholderUtil.getPlaceholderImage(placeholderType);
     }
 
+    public static boolean isFileFromGoogleOrDropbox(MimeTypeUtil.SourceType sourceType) {
+        return sourceType == MimeTypeUtil.SourceType.Google
+                || sourceType == MimeTypeUtil.SourceType.Dropbox;
+    }
 
     public enum FilterType {
         Audio, Image, Video, Pdf, Document, SpreadSheet, Presentation, Hwp, GoogleDocument, GoogleSpreadSheet, GooglePresentation, Etc
@@ -34,6 +38,6 @@ public class MimeTypeUtil {
     }
 
     public enum PlaceholderType {
-        Audio, Image, Video, Pdf, Document, SpreadSheet, Presentation, Hwp, Etc, Google, Dropbox
+        Audio, Image, Video, Pdf, Document, SpreadSheet, Presentation, Hwp, Etc, Google, Dropbox, ZIP
     }
 }

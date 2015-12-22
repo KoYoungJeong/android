@@ -151,7 +151,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             vDisableLineThrough.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
             vDisableCover.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
 
-            ImageUtil.loadCircleImageByFresco(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
+            ImageUtil.loadProfileImage(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
 
             cbChoose.setChecked(item.isChooseItem());
             itemView.setOnClickListener(v -> {
@@ -206,7 +206,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 ivKick.setOnClickListener(null);
             }
 
-            ImageUtil.loadCircleImageByFresco(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
+            ImageUtil.loadProfileImage(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
 
             itemView.setOnClickListener(v ->
                     EventBus.getDefault().post(new ShowProfileEvent(item.getEntityId())));
