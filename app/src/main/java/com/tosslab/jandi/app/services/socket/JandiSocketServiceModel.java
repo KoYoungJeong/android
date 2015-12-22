@@ -598,7 +598,6 @@ public class JandiSocketServiceModel {
 
                     try {
                         version = clazz.getDeclaredField("version");
-                        LogUtil.d("Find Version Field : " + clazz.getName());
                     } catch (NoSuchFieldException e) {
                         clazz = clazz.getSuperclass();
                     }
