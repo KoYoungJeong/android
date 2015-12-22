@@ -80,9 +80,6 @@ public class MessageListPresenter {
     @ViewById(R.id.et_message)
     EditText etMessage;
 
-    @ViewById(R.id.lv_list_search_members)
-    RecyclerView lvSearchMembers;
-
     @RootContext
     AppCompatActivity activity;
 
@@ -674,6 +671,26 @@ public class MessageListPresenter {
     public void modifyStarredInfo(int messageId, boolean isStarred) {
         int position = messageAdapter.indexByMessageId(messageId);
         messageAdapter.modifyStarredStateByPosition(position, isStarred);
+    }
+
+    private void setEditTextKeyListener() {
+
+        etMessage.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() != KeyEvent.ACTION_DOWN) {
+                    //We only look at ACTION_DOWN in this code, assuming that ACTION_UP is redundant.
+                    // If not, adjust accordingly.
+                    return false;
+                } else if (event.getUnicodeChar() ==
+                        (int) EditableAccomodatingLatinIMETypeNullIssues.ONE_UNPROCESSED_CHARACTER.charAt(0)) {
+                    //We are ignoring this character, and we want everyone else to ignore it, too, so
+                    // we return true indicating that we have handled it (by ignoring it).
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     public void setLastReadLinkId(int lastReadLinkId) {
