@@ -70,7 +70,11 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
 
     @AfterInject
     void initObject() {
-        checkNewVersion();
+        if (!jandiInterfaceModel.hasBackStackActivity()) {
+            checkNewVersion();
+        } else {
+            checkTeamAndMoveToNextActivity();
+        }
     }
 
     @Override
@@ -192,7 +196,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
                 .entityId(targetEntityId)
                 .entityType(entityType)
                 .isFromPush(true)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .get();
 
         UnLockPassCodeManager.getInstance().unLockPassCodeFirstIfNeed(this, intent);

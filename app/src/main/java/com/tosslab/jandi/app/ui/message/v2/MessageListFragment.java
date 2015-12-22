@@ -932,9 +932,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         messageSubscription.unsubscribe();
         EventBus.getDefault().unregister(this);
+        super.onDestroy();
 
     }
 
