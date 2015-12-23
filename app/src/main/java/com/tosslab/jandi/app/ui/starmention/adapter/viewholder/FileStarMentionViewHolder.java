@@ -42,20 +42,15 @@ public class FileStarMentionViewHolder extends CommonStarMentionViewHolder {
         MimeTypeUtil.FilterType filterType = IconFilterUtil.getMimeType(icon);
         GenericDraweeHierarchy hierarchy = ivFile.getHierarchy();
         if (filterType == MimeTypeUtil.FilterType.Image) {
-            String thumbnailUrl = !TextUtils.isEmpty(content.smallThumbnailUrl)
-                    ? content.smallThumbnailUrl
-                    : !TextUtils.isEmpty(content.mediumThumbnailUrl)
-                    ? content.mediumThumbnailUrl
-                    : !TextUtils.isEmpty(content.largeThumbnailUrl)
-                    ? content.largeThumbnailUrl
-                    : content.fileUrl;
+            String thumbnailUrl = content.extraInfo != null
+                    ? content.extraInfo.smallThumbnailUrl : null;
             if (!TextUtils.isEmpty(thumbnailUrl)) {
                 hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
                 hierarchy.setPlaceholderImage(R.drawable.file_icon_img);
-                ivFile.setHierarchy(hierarchy);
                 ivFile.setImageURI(Uri.parse(thumbnailUrl));
                 vFileRound.setVisibility(View.VISIBLE);
             } else {
+                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
                 ivFile.setImageURI(UriFactory.getResourceUri(R.drawable.file_icon_img));
                 vFileRound.setVisibility(View.GONE);
             }

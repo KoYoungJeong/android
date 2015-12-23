@@ -146,8 +146,6 @@ public class ImageThumbLoader implements FileThumbLoader {
         Drawable error = resources.getDrawable(R.drawable.file_messageview_noimage);
         hierarchy.setFailureImage(error, ScalingUtils.ScaleType.FIT_CENTER);
 
-        ivFile.setHierarchy(hierarchy);
-
         Uri uri = isFromLocalFilePath
                 ? UriFactory.getFileUri(thumbnailPhotoUrl)
                 : Uri.parse(thumbnailPhotoUrl);

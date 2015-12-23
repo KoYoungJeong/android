@@ -77,7 +77,6 @@ public class LinkPreviewViewModel {
         Drawable placeHolder = context.getResources().getDrawable(R.drawable.link_preview);
         hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.CENTER_INSIDE);
         hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-        ivThumb.setHierarchy(hierarchy);
         if (!useThumbnail) {
             ivThumb.setImageURI(null);
             vgThumb.setVisibility(View.GONE);
