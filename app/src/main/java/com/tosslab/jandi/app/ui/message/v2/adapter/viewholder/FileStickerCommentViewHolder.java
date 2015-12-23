@@ -164,7 +164,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                         switch (sourceType) {
                             case Google:
                             case Dropbox:
-                                ivFileImage.setHierarchy(hierarchy);
                                 int mimeTypeIconImage =
                                         MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
                                 ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));
@@ -184,7 +183,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
 
                                 if (TextUtils.isEmpty(thumbnailUrl)) {
                                     hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
-                                    ivFileImage.setHierarchy(hierarchy);
 
                                     ivFileImage.setImageURI(
                                             UriFactory.getResourceUri(R.drawable.image_no_preview));
@@ -197,19 +195,16 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                                 Drawable failure = resources.getDrawable(R.drawable.file_icon_img);
                                 hierarchy.setFailureImage(failure, ScalingUtils.ScaleType.FIT_CENTER);
                                 hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                                ivFileImage.setHierarchy(hierarchy);
                                 loadImage(thumbnailUrl);
                                 break;
                         }
 
                     } else {
-                        ivFileImage.setHierarchy(hierarchy);
                         int mimeTypeIconImage =
                                 MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
                         ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));
                     }
                 } else {
-                    ivFileImage.setHierarchy(hierarchy);
                     int mimeTypeIconImage =
                             MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
                     ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));

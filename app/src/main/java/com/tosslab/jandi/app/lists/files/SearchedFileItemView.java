@@ -82,18 +82,21 @@ public class SearchedFileItemView extends RelativeLayout {
             if (ImageUtil.hasImageUrl(content)) {
                 hierarchy.setPlaceholderImage(R.drawable.file_icon_img);
                 hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                imageViewSearchedFileType.setHierarchy(hierarchy);
                 // 썸네일
                 String thumbnailUrl =
-                        ImageUtil.getThumbnailUrlOrOriginal(content, ImageUtil.Thumbnails.SMALL);
-                imageViewSearchedFileType.setImageURI(Uri.parse(thumbnailUrl));
+                        ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
+                if (TextUtils.isEmpty(thumbnailUrl)) {
+                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
+                    Uri uri = UriFactory.getResourceUri(R.drawable.image_no_preview);
+                    imageViewSearchedFileType.setImageURI(uri);
+                } else {
+                    imageViewSearchedFileType.setImageURI(Uri.parse(thumbnailUrl));
+                }
             } else {
-                imageViewSearchedFileType.setHierarchy(hierarchy);
                 imageViewSearchedFileType.setImageURI(UriFactory.getResourceUri(R.drawable.file_icon_img));
             }
         } else {
             // 파일 타입에 해당하는 아이콘 연결
-            imageViewSearchedFileType.setHierarchy(hierarchy);
             int mimeTypeResource = MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, icon);
             imageViewSearchedFileType.setImageURI(UriFactory.getResourceUri(mimeTypeResource));
         }
