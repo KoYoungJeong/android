@@ -784,8 +784,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @Click(R.id.btn_show_mention)
     void onMentionClick() {
-        BaseInputConnection inputConnection = new BaseInputConnection(etComment, true);
-        inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_AT));
+        etComment.requestFocus();
+        fileDetailPresenter.onMentionClick(etComment.getSelectionStart(), etComment.getText().toString());
 
         if (stickerViewModel.isShow()) {
             stickerViewModel.dismissStickerWindow();
@@ -999,6 +999,13 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void showMentionButton() {
         ivMention.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void inputText(int keycodeSpace) {
+        BaseInputConnection inputConnection = new BaseInputConnection(etComment, true);
+        inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, keycodeSpace));
+
     }
 
     public void showDeleteFileDialog(int fileId) {

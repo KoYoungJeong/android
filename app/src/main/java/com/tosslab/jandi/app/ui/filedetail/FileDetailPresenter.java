@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.filedetail;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.view.KeyEvent;
 import android.widget.EditText;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -649,6 +650,13 @@ public class FileDetailPresenter {
         }
     }
 
+    public void onMentionClick(int selectionStart, String message) {
+        if (fileDetailModel.needSpace(selectionStart, message)) {
+            view.inputText(KeyEvent.KEYCODE_SPACE);
+        }
+        view.inputText(KeyEvent.KEYCODE_AT);
+    }
+
     public interface View {
         void drawFileWriterState(boolean isEnabled);
 
@@ -730,5 +738,7 @@ public class FileDetailPresenter {
         void dismissMentionButton();
 
         void showMentionButton();
+
+        void inputText(int keycodeSpace);
     }
 }
