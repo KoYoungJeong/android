@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.download.model.DownloadModel;
+import com.tosslab.jandi.app.services.download.receiver.DownloadStopProxyBroadcastReceiver;
 import com.tosslab.jandi.app.utils.ColoredToast;
 
 /**
@@ -29,6 +30,7 @@ public class DownloadService extends IntentService implements DownloadController
     public static final int NONE_FILE_ID = -1;
     public static final String ACTION_DOWNLOAD_SERVICE = "com.tosslab.jandi.app.download.service";
     public static final String EXTRA_STOP = "stop";
+    public static final String EXTRA_NOTIFICATION_ID = "notification_id";
     private static final String ACTION_CONNECTIVITY_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
     private DownloadController downloadController;
     private NotificationManager notificationManager;
@@ -64,6 +66,7 @@ public class DownloadService extends IntentService implements DownloadController
         public void onReceive(Context context, Intent intent) {
             if (downloadController != null) {
                 downloadController.cancelDownload();
+                abortBroadcast();
             }
         }
     };
@@ -124,6 +127,7 @@ public class DownloadService extends IntentService implements DownloadController
         registerReceiver(networkChangeBroadcastReceiver, filter);
 
         IntentFilter stopFilter = new IntentFilter(ACTION_DOWNLOAD_SERVICE);
+        stopFilter.setPriority(1);
         registerReceiver(stopReceiver, stopFilter);
     }
 
@@ -143,11 +147,12 @@ public class DownloadService extends IntentService implements DownloadController
     }
 
     @Override
-    public NotificationCompat.Builder getProgressNotificationBuilder(String fileName) {
+    public NotificationCompat.Builder getProgressNotificationBuilder(int notificationId, String fileName) {
         NotificationCompat.Builder progressNotificationBuilder = new NotificationCompat.Builder(this);
         Context context = JandiApplication.getContext();
-        Intent intent = new Intent(ACTION_DOWNLOAD_SERVICE);
+        Intent intent = new Intent(DownloadStopProxyBroadcastReceiver.ACTION);
         intent.putExtra(EXTRA_STOP, true);
+        intent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
         PendingIntent actionCancelIntent = PendingIntent.getBroadcast(context, 121, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         progressNotificationBuilder
                 .setWhen(System.currentTimeMillis())

@@ -107,7 +107,7 @@ public class DownloadController {
 
 
         NotificationCompat.Builder progressNotificationBuilder
-                = view.getProgressNotificationBuilder(downloadFileInfo.getFileName());
+                = view.getProgressNotificationBuilder(notificationId, downloadFileInfo.getFileName());
 
         try {
             File file = downloadFileAndGet(downloadTargetFile,
@@ -200,7 +200,7 @@ public class DownloadController {
 
         void unRegisterNetworkChangeReceiver();
 
-        NotificationCompat.Builder getProgressNotificationBuilder(String fileName);
+        NotificationCompat.Builder getProgressNotificationBuilder(int notificationId, String fileName);
 
         void notifyProgress(long downloaded, long total,
                             int notificationId, NotificationCompat.Builder progressNotificationBuilder);

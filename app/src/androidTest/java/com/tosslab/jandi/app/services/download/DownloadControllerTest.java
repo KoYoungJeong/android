@@ -105,7 +105,7 @@ public class DownloadControllerTest {
         Context context = InstrumentationRegistry.getContext();
 
         DownloadController.View view = mock(DownloadController.View.class);
-        when(view.getProgressNotificationBuilder(anyString()))
+        when(view.getProgressNotificationBuilder(notificationId, anyString()))
                 .thenReturn(new NotificationCompat.Builder(context));
         DownloadController downloadController = new DownloadController(view);
 
