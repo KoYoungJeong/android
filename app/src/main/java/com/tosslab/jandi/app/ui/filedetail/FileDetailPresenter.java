@@ -51,6 +51,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
+import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -84,18 +85,22 @@ public class FileDetailPresenter {
                 }, Throwable::printStackTrace);
     }
 
-    public List<Integer> getSharedTopicIds(ResMessages.OriginalMessage fileDetail) {
+    protected List<Integer> getSharedTopicIds(ResMessages.OriginalMessage fileDetail) {
         List<Integer> sharedTopicIds = new ArrayList<>();
 
         EntityManager entityManager = EntityManager.getInstance();
 
+
         ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
-        for (ResMessages.OriginalMessage.IntegerWrapper entity : fileMessage.shareEntities) {
-            FormattedEntity formattedEntity = entityManager.getEntityById(entity.getShareEntity());
-            if (formattedEntity != EntityManager.UNKNOWN_USER_ENTITY && !formattedEntity.isUser()) {
-                sharedTopicIds.add(formattedEntity.getId());
-            }
-        }
+        Observable.from(fileMessage.shareEntities)
+                .map(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
+                .filter(shareEntity -> {
+                    FormattedEntity entity = entityManager.getEntityById(shareEntity);
+                    return entity != EntityManager.UNKNOWN_USER_ENTITY && !entity.isUser();
+                })
+                .collect(() -> sharedTopicIds, List::add)
+                .subscribe();
+
         return sharedTopicIds;
     }
 
@@ -467,13 +472,16 @@ public class FileDetailPresenter {
                 }
             });
 
-            if (mentionControlViewModel.getAllSelectableMembers().size() == 0) {
-                view.dismissMentionButton();
-            } else {
-                view.showMentionButton();
-            }
-            registClipboardListenerforMention();
+        } else {
+            mentionControlViewModel.refreshMembers(sharedTopicIds);
         }
+
+        if (mentionControlViewModel.getAllSelectableMembers().size() == 0) {
+            view.dismissMentionButton();
+        } else {
+            view.showMentionButton();
+        }
+        registClipboardListenerforMention();
     }
 
     public void registClipboardListenerforMention() {
