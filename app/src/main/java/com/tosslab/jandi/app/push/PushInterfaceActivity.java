@@ -185,12 +185,10 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
     @UiThread
     void moveMessageListActivity(int roomId, int targetEntityId) {
 
-        if (!jandiInterfaceModel.hasBackStackActivity()) {
-            MainTabActivity_.intent(PushInterfaceActivity.this)
-                    .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    .fromPush(true)
-                    .start();
-        }
+        MainTabActivity_.intent(PushInterfaceActivity.this)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+                .fromPush(true)
+                .start();
 
         Intent intent = MessageListV2Activity_.intent(PushInterfaceActivity.this)
                 .teamId(teamId)
@@ -198,7 +196,6 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
                 .entityId(targetEntityId)
                 .entityType(entityType)
                 .isFromPush(true)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .get();
 
         UnLockPassCodeManager.getInstance().unLockPassCodeFirstIfNeed(this, intent);

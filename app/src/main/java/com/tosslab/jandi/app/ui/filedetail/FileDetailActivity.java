@@ -449,6 +449,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     protected void onPause() {
         isForeground = false;
         fileDetailPresenter.removeClipboardListenerforMention();
+        stickerViewModel.dismissStickerSelector(true);
         ReadyCommentRepository.getRepository().upsertReadyComment(new ReadyComment(fileId, etComment.getText().toString()));
         super.onPause();
     }
@@ -714,8 +715,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
      */
     @Click(R.id.btn_send_message)
     void sendComment() {
-        CharSequence text = etComment.getText();
-        String comment = TextUtils.isEmpty(text) ? "" : text.toString().trim();
         hideSoftKeyboard();
 
         ResultMentionsVO mentions = fileDetailPresenter.getMentionInfo();
@@ -727,12 +726,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
             fileDetailPresenter.sendCommentWithSticker(
                     fileId, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(),
-                    mentions.getMessage(), mentions.getMentions());
+                    mentions.getMessage().trim(), mentions.getMentions());
             stickerInfo = NULL_STICKER;
 
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Send);
         } else {
-            fileDetailPresenter.sendComment(fileId, mentions.getMessage(), mentions.getMentions());
+            fileDetailPresenter.sendComment(fileId, mentions.getMessage().trim(), mentions.getMentions());
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Send);
         }
 
@@ -1069,7 +1068,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread(propagation = Propagation.REUSE)
     @Override
     public void setSendButtonSelected() {
-        boolean visible = vgStickerPreview.getVisibility() == View.VISIBLE || etComment.length() > 0;
+        boolean visible = vgStickerPreview.getVisibility() == View.VISIBLE || etComment.getText().toString().trim().length() > 0;
         btnSend.setEnabled(visible);
     }
 
