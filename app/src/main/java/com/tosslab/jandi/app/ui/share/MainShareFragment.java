@@ -186,7 +186,6 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
 
             GenericDraweeHierarchy hierarchy = ivShareImage.getHierarchy();
             hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-            ivShareImage.setHierarchy(hierarchy);
 
             int width = ApplicationUtil.getDisplaySize(false);
             int height = ApplicationUtil.getDisplaySize(true);
@@ -211,7 +210,6 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
 
             GenericDraweeHierarchy hierarchy = ivShareFileIcon.getHierarchy();
             hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-            ivShareFileIcon.setHierarchy(hierarchy);
 
             int resId = FileExtensionsUtil.getFileTypeBigImageResource(fileName);
             ivShareFileIcon.setImageURI(UriFactory.getResourceUri(resId));
