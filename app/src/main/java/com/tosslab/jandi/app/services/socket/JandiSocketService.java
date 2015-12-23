@@ -223,9 +223,11 @@ public class JandiSocketService extends Service {
         eventHashMap.put("connect_team", objects -> {
             LogUtil.d(TAG, "connect_team");
             jandiSocketManager.sendByJson("ping", "");
+        });
+        eventHashMap.put("pong", objects -> {
+            LogUtil.d(TAG, "pong");
             updateEventHistory();
         });
-        eventHashMap.put("pong", objects -> LogUtil.d(TAG, "pong"));
         eventHashMap.put("error_connect_team", objects -> {
             LogUtil.e(TAG, "Get Error - error_connect_team");
             sendBroadcastForRestart();
@@ -280,10 +282,11 @@ public class JandiSocketService extends Service {
     }
 
     // 확장성 생각하여 추후 모듈로 빼내야 함.
-    private void updateEventHistory() {
+    protected void updateEventHistory() {
         long ts = JandiPreference.getSocketConnectedLastTime();
         EntityManager entityManager = EntityManager.getInstance();
         int userId = entityManager.getMe().getId();
+        LogUtil.e("ts", ts + "");
         if (ts > -1) {
             try {
                 ResEventHistory eventHistory =

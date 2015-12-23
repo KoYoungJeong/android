@@ -36,7 +36,6 @@ public class MembersListPresenterImplTest {
         presenter = MembersListPresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = Mockito.mock(MembersListPresenter.View.class);
         presenter.setView(mockView);
-
     }
 
     @After

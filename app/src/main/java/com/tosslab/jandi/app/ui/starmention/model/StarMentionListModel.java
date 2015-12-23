@@ -26,76 +26,77 @@ public class StarMentionListModel {
 
     public static final int DEFAULT_COUNT = 20;
 
-    List<StarMentionVO> starMentionList;
-    private boolean isFirstDatas = true;
-    private int lastId = 0;
-    private boolean hasMore = false;
-    private boolean isEmpty = false;
+    protected int lastId = 0;
+    protected boolean isFirstDatas = true;
+    protected boolean hasMore = false;
+    protected boolean isEmpty = false;
 
-    public ResStarMentioned getMentionRawDatas(Integer messageId, int count) throws RetrofitError {
-        int teamId = getTeamId();
-        return RequestApiManager.getInstance().getMentionedMessagesByTeamApi(teamId, messageId, count);
-    }
+    public List<StarMentionVO> getStarMentionedMessages(String categoryType, int count) throws RetrofitError {
+        int requestCount = Math.max(count, DEFAULT_COUNT);
 
-    public ResStarMentioned getStarredRawDatas(String categoryType, Integer starredId,
-                                               int count) throws RetrofitError {
-        int teamId = getTeamId();
+        ResStarMentioned resStarMentioned = getRawDatas(categoryType, requestCount);
 
-        if (categoryType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
-            return RequestApiManager.getInstance().getStarredMessagesByTeamApi(
-                    teamId, starredId, count, "file");
-        }
+        List<StarMentionedMessageObject> starMentionedMessageObjectList = resStarMentioned.getRecords();
 
-        return RequestApiManager.getInstance().getStarredMessagesByTeamApi(
-                teamId, starredId, count, null);
+        List<StarMentionVO> starMentionList = makeStarMentionList(categoryType, starMentionedMessageObjectList);
 
+        setFlags(starMentionList.size());
+
+        hasMore = resStarMentioned.hasMore();
+
+        return starMentionList;
     }
 
     public void unregistStarredMessage(int teamId, int messageId) throws RetrofitError {
         try {
-            RequestApiManager.getInstance()
-                    .unregistStarredMessageByTeamApi(teamId, messageId);
+            RequestApiManager.getInstance().unregistStarredMessageByTeamApi(teamId, messageId);
         } catch (RetrofitError e) {
             e.printStackTrace();
         }
     }
 
-    public List<StarMentionVO> getStarMentionedMessages(String categoryType, int count) throws RetrofitError {
+    protected ResStarMentioned getMentionRawDatas(Integer messageId, int count) throws RetrofitError {
+        int teamId = getTeamId();
+        return RequestApiManager.getInstance().getMentionedMessagesByTeamApi(teamId, messageId, count);
+    }
 
-        starMentionList = new ArrayList<>();
+    protected ResStarMentioned getStarredRawDatas(String categoryType, Integer starredId,
+                                                  int count) throws RetrofitError {
+        int teamId = getTeamId();
+        if (categoryType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
+            return RequestApiManager.getInstance().getStarredMessagesByTeamApi(
+                    teamId, starredId, count, "file");
+        }
+        return RequestApiManager.getInstance().getStarredMessagesByTeamApi(
+                teamId, starredId, count, null);
+    }
 
-        ResStarMentioned resStarMentioned = null;
-
-        int requestCount = Math.max(count, DEFAULT_COUNT);
-
+    protected ResStarMentioned getRawDatas(String categoryType, int count) {
+        ResStarMentioned resStarMentioned;
         if (categoryType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
             if (isFirstDatas) {
-                resStarMentioned = getMentionRawDatas(null, requestCount);
+                resStarMentioned = getMentionRawDatas(null, count);
             } else {
-                resStarMentioned = getMentionRawDatas(lastId, requestCount);
+                resStarMentioned = getMentionRawDatas(lastId, count);
             }
         } else {
             if (isFirstDatas) {
-                resStarMentioned = getStarredRawDatas(categoryType, null, requestCount);
+                resStarMentioned = getStarredRawDatas(categoryType, null, count);
             } else {
-                resStarMentioned = getStarredRawDatas(categoryType, lastId, requestCount);
+                resStarMentioned = getStarredRawDatas(categoryType, lastId, count);
             }
         }
+        return resStarMentioned;
+    }
 
-        hasMore = resStarMentioned.isHasMore();
-
-        List<StarMentionedMessageObject> starMentionedMessageObjectList = resStarMentioned.getRecords();
+    protected List<StarMentionVO> makeStarMentionList(String categoryType,
+                                                      List<StarMentionedMessageObject> starMentionedMessageObjectList) {
+        List<StarMentionVO> starMentionList = new ArrayList<>();
         for (StarMentionedMessageObject starMentionedMessageObject : starMentionedMessageObjectList) {
-
             StarMentionVO starMentionVO = new StarMentionVO();
             String type = starMentionedMessageObject.getMessage().contentType;
-            int messageId = 0;
 
-            if (categoryType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
-                messageId = starMentionedMessageObject.getMessage().id;
-            } else {
-                messageId = starMentionedMessageObject.getStarredId();
-            }
+            int messageId = getMessageId(categoryType, starMentionedMessageObject);
 
             FormattedEntity entity = EntityManager.getInstance()
                     .getEntityById(starMentionedMessageObject.getMessage().writerId);
@@ -103,11 +104,8 @@ public class StarMentionListModel {
             starMentionVO.setWriterPictureUrl(entity.getUserSmallProfileUrl());
             starMentionVO.setTeamId(starMentionedMessageObject.getTeamId());
             starMentionVO.setMessageId(starMentionedMessageObject.getMessage().id);
-            if (categoryType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
-                lastId = messageId;
-            } else {
-                lastId = starMentionedMessageObject.getStarredId();
-            }
+
+            setLastMessageId(categoryType, starMentionedMessageObject, messageId);
 
             if (type.equals("text")) {
                 starMentionVO.setContentType(StarMentionVO.Type.Text.getValue());
@@ -128,45 +126,54 @@ public class StarMentionListModel {
                             getEntityById(Integer.valueOf(userId)).getName());
                     starMentionVO.setRoomId(Integer.valueOf(userId));
                 }
+                starMentionVO.setBody(starMentionedMessageObject.getMessage().content.body);
+                starMentionVO.setMentions(starMentionedMessageObject.getMessage().mentions);
                 starMentionVO.setLinkId(starMentionedMessageObject.getLinkId());
-            }
-
-
-            if (type.equals("comment")) {
+            } else if (type.equals("comment")) {
                 starMentionVO.setContentType(StarMentionVO.Type.Comment.getValue());
                 starMentionVO.setFileName(starMentionedMessageObject.getMessage().feedbackTitle);
                 starMentionVO.setFileId(starMentionedMessageObject.getMessage().feedbackId);
-            }
-
-            if (!type.equals("file")) {
                 starMentionVO.setBody(starMentionedMessageObject.getMessage().content.body);
                 starMentionVO.setMentions(starMentionedMessageObject.getMessage().mentions);
-
-            }
-
-            if (type.equals("file")) {
+            } else if (type.equals("file")) {
                 starMentionVO.setContentType(StarMentionVO.Type.File.getValue());
                 starMentionVO.setFileName(starMentionedMessageObject.getMessage().content.title);
                 starMentionVO.setFileId(starMentionedMessageObject.getMessage().id);
                 starMentionVO.setContent(starMentionedMessageObject.getMessage().content);
             }
-
             starMentionVO.setUpdatedAt(starMentionedMessageObject.getMessage().createdAt);
             starMentionList.add(starMentionVO);
         }
 
-        if (isFirstDatas && starMentionList.size() == 0) {
+        return starMentionList;
+    }
+
+    protected void setFlags(int listSize) {
+        if (isFirstDatas && listSize == 0) {
             isEmpty = true;
         }
-
         isFirstDatas = false;
+    }
 
-        return starMentionList;
+    protected void setLastMessageId(String categoryType, StarMentionedMessageObject starMentionedMessageObject, int messageId) {
+        if (categoryType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
+            lastId = messageId;
+        } else {
+            lastId = starMentionedMessageObject.getStarredId();
+        }
+    }
 
+    protected int getMessageId(String categoryType, StarMentionedMessageObject starMentionedMessageObject) {
+        int messageId;
+        if (categoryType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
+            messageId = starMentionedMessageObject.getMessage().id;
+        } else {
+            messageId = starMentionedMessageObject.getStarredId();
+        }
+        return messageId;
     }
 
     public void refreshList() throws RetrofitError {
-        starMentionList = null;
         isFirstDatas = true;
         lastId = 0;
         hasMore = false;

@@ -48,7 +48,6 @@ public class ModifyProfileModelTest {
 
     @Test
     public void testGetProfile() throws Exception {
-
         ResLeftSideMenu.User profile = modifyProfileModel.getProfile();
 
         assertThat(user.u_email, is(equalTo(profile.u_email)));
@@ -139,13 +138,10 @@ public class ModifyProfileModelTest {
         assertThat(newProfile.name, is(not(equalTo(user.name))));
 
         modifyProfileModel.updateProfileName(new ReqProfileName(user.name));
-
-
     }
 
     @Test
     public void testGetAccountEmails() throws Exception {
-
         String[] accountEmails = modifyProfileModel.getAccountEmails();
 
         TestSubscriber<String> subscriber = new TestSubscriber<>();
@@ -180,7 +176,6 @@ public class ModifyProfileModelTest {
     @Test
     public void testGetSavedProfile() throws Exception {
         ResLeftSideMenu.User savedProfile = modifyProfileModel.getSavedProfile();
-
         assertThat(savedProfile.u_email, is(equalTo(user.u_email)));
         assertThat(savedProfile.u_extraData.department, is(equalTo(user.u_extraData.department)));
         assertThat(savedProfile.u_extraData.phoneNumber, is(equalTo(user.u_extraData.phoneNumber)));

@@ -18,7 +18,7 @@ public class ResStarMentioned {
 
     private List<StarMentionedMessageObject> records;
 
-    public boolean isHasMore() {
+    public boolean hasMore() {
         return hasMore;
     }
 
