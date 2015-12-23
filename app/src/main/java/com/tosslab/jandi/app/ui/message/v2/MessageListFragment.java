@@ -1074,6 +1074,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             mentions = new ArrayList<>();
         }
 
+        message = message.trim();
         ReqSendMessageV3 reqSendMessage = null;
 
         if (!TextUtils.isEmpty(message)) {
