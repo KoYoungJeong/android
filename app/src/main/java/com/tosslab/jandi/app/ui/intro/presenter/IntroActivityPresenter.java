@@ -3,9 +3,7 @@ package com.tosslab.jandi.app.ui.intro.presenter;
 import android.content.Context;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -83,7 +81,7 @@ public class IntroActivityPresenter {
                 if (!model.isNeedLogin()) {
                     if (model.hasMigration()) {
                         try {
-                            refreshAccountInfo(context);
+                            refreshAccountInfo();
                             moveNextActivity(context, initTime, startForInvite);
                         } catch (RetrofitError retrofitError) {
                             retrofitError.printStackTrace();
@@ -159,7 +157,7 @@ public class IntroActivityPresenter {
 
     }
 
-    void refreshAccountInfo(Context context) throws RetrofitError {
+    void refreshAccountInfo() throws RetrofitError {
         model.refreshAccountInfo();
     }
 

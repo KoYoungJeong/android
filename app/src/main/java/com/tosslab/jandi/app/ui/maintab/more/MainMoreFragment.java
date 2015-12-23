@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -39,7 +40,6 @@ import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.IconWithTextView;
 
@@ -109,14 +109,12 @@ public class MainMoreFragment extends Fragment {
 
     @AfterInject
     void init() {
-        LogUtil.d("MainMoreFragment");
         mContext = getActivity();
         mEntityManager = EntityManager.getInstance();
     }
 
     @AfterViews
     void initView() {
-        LogUtil.d("initView MainMoreFragment");
         showJandiVersion();
         showOtherTeamMessageCount();
         showTeamMember();
@@ -170,8 +168,19 @@ public class MainMoreFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
+    @Override
     public void onResume() {
-        LogUtil.d("MainMoreFragment onResume");
         super.onResume();
         showUserProfile();
     }
@@ -241,7 +250,6 @@ public class MainMoreFragment extends Fragment {
 
         long shouldShowHappyNewYearTime = shouldShowHappyNewYearDate.getTime();
 
-        LogUtil.i("EasterEgg", String.format("%d %d", currentTime, shouldShowHappyNewYearTime));
 
         return currentTime >= shouldShowHappyNewYearTime;
     }

@@ -203,10 +203,6 @@ public class MainTabActivity extends BaseAppCompatActivity {
             getEntities();
         }
 
-        updateMoreBadge();
-
-        updateTopicBadge();
-        updateChatBadge();
     }
 
     private void updateChatBadge() {
@@ -216,7 +212,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
                 .subscribe(formattedEntity -> {
                     total[0] += formattedEntity.alarmCount;
                 });
-        mMainTabPagerAdapter.updateTopicBadge(total[0]);
+        mMainTabPagerAdapter.updateChatBadge(total[0]);
 
     }
 
@@ -323,12 +319,17 @@ public class MainTabActivity extends BaseAppCompatActivity {
         }
 
         fromPush = false;
+
+        updateMoreBadge();
+
+        updateTopicBadge();
+        updateChatBadge();
     }
 
     @Override
     public void onPause() {
-        super.onPause();
         EventBus.getDefault().unregister(this);
+        super.onPause();
     }
 
     @Override
