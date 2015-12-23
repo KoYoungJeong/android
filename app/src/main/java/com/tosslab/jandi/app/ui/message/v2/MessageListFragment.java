@@ -684,9 +684,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
 
         int savedLastLinkId = messageListModel.getLastReadLinkId(roomId, messageListModel.getMyId());
-        int realLastLinkId = Math.max(savedLastLinkId, lastMarker);
         if (!isFromSearch) {
-            messageState.setFirstItemId(realLastLinkId);
+            messageState.setFirstItemId(savedLastLinkId);
 
             ResMessages.Link lastMessage = MessageRepository.getRepository().getLastMessage(roomId);
 
@@ -709,7 +708,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListModel.updateMarkerInfo(teamId, roomId);
         messageListModel.setRoomId(roomId);
 
-        messageListPresenter.setLastReadLinkId(realLastLinkId);
+        messageListPresenter.setLastReadLinkId(lastMarker);
 
         sendMessagePublisherEvent(new CheckAnnouncementQueue());
         sendMessagePublisherEvent(new OldMessageQueue(messageState));
