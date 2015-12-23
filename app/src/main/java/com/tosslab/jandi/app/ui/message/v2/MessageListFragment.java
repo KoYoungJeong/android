@@ -711,7 +711,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListModel.updateMarkerInfo(teamId, roomId);
         messageListModel.setRoomId(roomId);
 
-        messageListPresenter.setLastReadLinkId(realLastLinkId);
+        messageListPresenter.setLastReadLinkId(lastMarker);
 
         sendMessagePublisherEvent(new CheckAnnouncementQueue());
         sendMessagePublisherEvent(new OldMessageQueue(messageState));
