@@ -9,6 +9,8 @@ import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 
 import com.jayway.awaitility.Awaitility;
+import com.tosslab.jandi.app.services.download.domain.DownloadFileInfo;
+import com.tosslab.jandi.app.services.download.model.DownloadModel;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,9 +18,10 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.util.concurrent.Callable;
 
-import static org.junit.Assert.*;
-
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by tonyjs on 15. 11. 19..
@@ -32,8 +35,8 @@ public class DownloadControllerTest {
         DownloadController downloadController = new DownloadController(view);
 
         // When
-        boolean isValidArguments = downloadController.isValidateArguments(
-                DownloadService.NONE_FILE_ID, anyString(), anyString(), anyString(), anyString());
+        boolean isValidArguments = DownloadModel.isValidateArguments(
+                new DownloadFileInfo(DownloadService.NONE_FILE_ID, anyString(), anyString(), anyString(), anyString()));
 
         // Then
         assertEquals(false, isValidArguments);
@@ -61,7 +64,7 @@ public class DownloadControllerTest {
             }
         });
 
-        boolean isConnected = downloadController.isNetworkConnected();
+        boolean isConnected = DownloadModel.isNetworkConnected();
 
         // Then
         assertEquals(false, isConnected);
@@ -74,7 +77,7 @@ public class DownloadControllerTest {
         DownloadController downloadController = new DownloadController(view);
 
         // When
-        File dir = downloadController.makeDirIfNotExistsAndGet();
+        File dir = DownloadModel.makeDirIfNotExistsAndGet();
 
         File dirForCheck = Environment.getExternalStoragePublicDirectory("/Jandi");
 
@@ -90,7 +93,7 @@ public class DownloadControllerTest {
 
         // When
         String url = "http://www.nave.com";
-        String downloadUrl = downloadController.getDownloadUrl(url);
+        String downloadUrl = DownloadModel.getDownloadUrl(url);
 
         // Then
         assertEquals(true, (!TextUtils.isEmpty(downloadUrl) && downloadUrl.lastIndexOf("/download") > 0));
@@ -106,16 +109,16 @@ public class DownloadControllerTest {
                 .thenReturn(new NotificationCompat.Builder(context));
         DownloadController downloadController = new DownloadController(view);
 
-        File dir = downloadController.makeDirIfNotExistsAndGet();
+        File dir = DownloadModel.makeDirIfNotExistsAndGet();
 
         String fileName = "heh_heh_redo__by_a_dawg13-d5acuoq.gif";
-        File downloadTargetFile = downloadController.getDownloadTargetFile(dir, fileName, "gif");
+        File downloadTargetFile = DownloadModel.getDownloadTargetFile(dir, fileName, "gif");
 
         String downloadUrl =
                 "http://orig05.deviantart.net/89a2/f/2012/220/7/2/heh_heh_redo__by_a_dawg13-d5acuoq.gif";
 
         File file = downloadController.downloadFileAndGet(downloadTargetFile, downloadUrl,
-                downloadController.getNotificationId(), view.getProgressNotificationBuilder(fileName));
+                null);
         assertEquals(true, (file != null && file.exists()));
     }
 
@@ -125,7 +128,7 @@ public class DownloadControllerTest {
         DownloadController.View view = mock(DownloadController.View.class);
         DownloadController downloadController = new DownloadController(view);
 
-        File dir = downloadController.makeDirIfNotExistsAndGet();
+        File dir = DownloadModel.makeDirIfNotExistsAndGet();
         String fileName = "heh_heh_redo__by_a_dawg13-d5acuoq.gif";
         File testFile = new File(dir, fileName);
         testFile.createNewFile();
@@ -139,7 +142,7 @@ public class DownloadControllerTest {
 //        testFile.createNewFile();
 
         // When
-        File downloadTargetFile = downloadController.getDownloadTargetFile(dir, fileName, "gif");
+        File downloadTargetFile = DownloadModel.getDownloadTargetFile(dir, fileName, "gif");
 
         // Then
         System.out.println(downloadTargetFile.getName());

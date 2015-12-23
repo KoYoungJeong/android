@@ -4,9 +4,19 @@ import android.app.Application;
 import android.content.Intent;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.ApplicationTestCase;
+
+import com.tosslab.jandi.app.services.download.model.DownloadModel;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Mockito.*;
+
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by tonyjs on 15. 11. 18..
@@ -49,7 +59,7 @@ public class DownloadServiceTest extends ApplicationTestCase<Application> {
         downloadController.setView(view);
 
         DownloadController mock = spy(downloadController);
-        when(mock.isNetworkConnected()).thenReturn(false);
+        when(DownloadModel.isNetworkConnected()).thenReturn(false);
 
         // When
         downloadController.onHandleIntent(any(Intent.class));
@@ -66,7 +76,7 @@ public class DownloadServiceTest extends ApplicationTestCase<Application> {
         downloadController.setView(view);
 
         DownloadController mock = spy(downloadController);
-        when(mock.getDownloadUrl(anyString())).thenReturn("http://orig05.deviantart.net/89a2/f/2012/220/7/2/heh_heh_redo__by_a_dawg13-d5acuoq.gif");
+        when(DownloadModel.getDownloadUrl(anyString())).thenReturn("http://orig05.deviantart.net/89a2/f/2012/220/7/2/heh_heh_redo__by_a_dawg13-d5acuoq.gif");
 //        when(mock.downloadFileAndGet(any(File.class), anyString(), anyInt(), any(NotificationCompat.Builder.class))).thenThrow(any(Exception.class));
 
         Intent mockIntent = mock(Intent.class);

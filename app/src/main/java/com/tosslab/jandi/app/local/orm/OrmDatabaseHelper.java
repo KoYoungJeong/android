@@ -11,6 +11,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.domain.BadgeCount;
+import com.tosslab.jandi.app.local.orm.domain.DownloadInfo;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.domain.LeftSideMenu;
@@ -52,7 +53,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ADD_READY_COMMENT = 7;
     private static final int DATABASE_VERSION_SHARE_ENTITY_RESET = 8;
     private static final int DATABASE_VERSION_FILE_SHARE_INFO = 9;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_FILE_SHARE_INFO;
+    private static final int DATABASE_VERSION_DOWNLOAD_INFO = 10;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_DOWNLOAD_INFO;
 
     public OrmLiteSqliteOpenHelper helper;
 
@@ -128,6 +130,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, BadgeCount.class);
 
             createTable(connectionSource, ResAccessToken.class);
+
+            createTable(connectionSource, DownloadInfo.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -191,77 +195,15 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, ResMessages.ThumbnailUrls.class);
 
                         MessageRepository.getRepository().deleteAllLink();
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_DOWNLOAD_INFO, () -> {
+                        createTable(connectionSource, DownloadInfo.class);
                     }));
 
             Observable.from(upgradeCheckers)
                     .subscribe(upgradeChecker -> upgradeChecker.run(oldVersion));
 
             return;
-        }
-
-        try {
-            // ResAccountInfo.java
-            dropTable(connectionSource, ResAccountInfo.ThumbnailInfo.class);
-            dropTable(connectionSource, ResAccountInfo.ThumbnailInfo.class);
-            dropTable(connectionSource, ResAccountInfo.UserDevice.class);
-            dropTable(connectionSource, ResAccountInfo.UserEmail.class);
-            dropTable(connectionSource, ResAccountInfo.UserTeam.class);
-            dropTable(connectionSource, ResAccountInfo.class);
-            dropTable(connectionSource, SelectedTeam.class);
-
-            dropTable(connectionSource, LeftSideMenu.class);
-
-            dropTable(connectionSource, ResMessages.Link.class);
-            dropTable(connectionSource, ResMessages.OriginalMessage.IntegerWrapper.class);
-            dropTable(connectionSource, ResMessages.CreateEvent.class);
-            dropTable(connectionSource, ResMessages.PublicCreateInfo.class);
-            dropTable(connectionSource, ResMessages.PublicCreateInfo.IntegerWrapper.class);
-            dropTable(connectionSource, ResMessages.JoinEvent.class);
-            dropTable(connectionSource, ResMessages.InviteEvent.class);
-            dropTable(connectionSource, ResMessages.InviteEvent.IntegerWrapper.class);
-            dropTable(connectionSource, ResMessages.LeaveEvent.class);
-            dropTable(connectionSource, ResMessages.AnnouncementCreateEvent.class);
-            dropTable(connectionSource, ResMessages.AnnouncementCreateEvent.Info.class);
-            dropTable(connectionSource, ResMessages.AnnouncementUpdateEvent.class);
-            dropTable(connectionSource, ResMessages.AnnouncementUpdateEvent.Info.class);
-            dropTable(connectionSource, ResMessages.AnnouncementDeleteEvent.class);
-
-            dropTable(connectionSource, ResMessages.TextMessage.class);
-            dropTable(connectionSource, ResMessages.TextContent.class);
-            dropTable(connectionSource, ResMessages.LinkPreview.class);
-            dropTable(connectionSource, ResMessages.FileMessage.class);
-            dropTable(connectionSource, ResMessages.FileContent.class);
-            dropTable(connectionSource, ResMessages.ThumbnailUrls.class);
-            dropTable(connectionSource, ResMessages.StickerMessage.class);
-            dropTable(connectionSource, ResMessages.StickerContent.class);
-            dropTable(connectionSource, RecentSticker.class);
-            dropTable(connectionSource, ResMessages.CommentStickerMessage.class);
-            dropTable(connectionSource, ResMessages.CommentStickerMessage.class);
-            dropTable(connectionSource, ResMessages.CommentMessage.class);
-
-            dropTable(connectionSource, MentionObject.class);
-
-            dropTable(connectionSource, ResChat.class);
-
-            dropTable(connectionSource, ResRoomInfo.class);
-            dropTable(connectionSource, ResRoomInfo.MarkerInfo.class);
-
-            dropTable(connectionSource, ResAnnouncement.class);
-
-            dropTable(connectionSource, FileDetail.class);
-
-            dropTable(connectionSource, UploadedFileInfo.class);
-
-            dropTable(connectionSource, ResFolder.class);
-            dropTable(connectionSource, ResFolderItem.class);
-            dropTable(connectionSource, FolderExpand.class);
-
-            dropTable(connectionSource, BadgeCount.class);
-
-            onCreate(database, connectionSource);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
