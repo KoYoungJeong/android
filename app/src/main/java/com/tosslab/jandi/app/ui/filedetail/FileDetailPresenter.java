@@ -2,9 +2,12 @@ package com.tosslab.jandi.app.ui.filedetail;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.widget.EditText;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -28,16 +31,16 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.filedetail.domain.FileStarredInfo;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.placeholder.PlaceholderUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,9 +58,6 @@ import rx.subjects.PublishSubject;
  */
 @EBean
 public class FileDetailPresenter {
-
-    @RootContext
-    Activity activity;
 
     @Bean
     FileDetailModel fileDetailModel;
@@ -177,16 +177,16 @@ public class FileDetailPresenter {
                 view.showUnsharedFileToast();
             } else {
                 if (e.getCause() instanceof ConnectionNotFoundException) {
-                    errorMessage = activity.getResources().getString(R.string.err_network);
+                    errorMessage = JandiApplication.getContext().getResources().getString(R.string.err_network);
                 } else {
-                    errorMessage = activity.getResources().getString(R.string.err_file_detail);
+                    errorMessage = JandiApplication.getContext().getResources().getString(R.string.err_file_detail);
                 }
                 view.showToast(errorMessage);
             }
             view.finishOnMainThread();
         } catch (Exception e) {
             view.dismissProgress();
-            view.showToast(activity.getResources().getString(R.string.err_file_detail));
+            view.showToast(JandiApplication.getContext().getResources().getString(R.string.err_file_detail));
             view.finishOnMainThread();
         }
 
@@ -217,12 +217,12 @@ public class FileDetailPresenter {
             int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
             fileDetailModel.trackFileShareFail(errorCode);
             view.dismissProgress();
-            view.showErrorToast(activity.getResources().getString(R.string.err_share));
+            view.showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_share));
         } catch (Exception e) {
             LogUtil.e("fail to send message", e);
             fileDetailModel.trackFileShareFail(-1);
             view.dismissProgress();
-            view.showErrorToast(activity.getResources().getString(R.string.err_share));
+            view.showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_share));
         }
     }
 
@@ -245,12 +245,12 @@ public class FileDetailPresenter {
             int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
             fileDetailModel.trackFileUnShareFail(errorCode);
             view.dismissProgress();
-            view.showErrorToast(activity.getResources().getString(R.string.err_unshare));
+            view.showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_unshare));
         } catch (Exception e) {
             LogUtil.e("fail to send message", e);
             fileDetailModel.trackFileUnShareFail(-1);
             view.dismissProgress();
-            view.showErrorToast(activity.getResources().getString(R.string.err_unshare));
+            view.showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_unshare));
         }
     }
 
@@ -263,7 +263,7 @@ public class FileDetailPresenter {
             fileDetailModel.joinEntity(entityId);
 
             MixpanelMemberAnalyticsClient
-                    .getInstance(activity, entityManager.getDistictId())
+                    .getInstance(JandiApplication.getContext(), entityManager.getDistictId())
                     .trackJoinChannel();
 
             int entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
@@ -401,12 +401,12 @@ public class FileDetailPresenter {
         switch (placeholderType) {
             case Google:
             case Dropbox:
-                String photoUrl = BitmapUtil.getFileUrl(content.fileUrl);
+                String photoUrl = ImageUtil.getFileUrl(content.fileUrl);
                 view.startGoogleOrDropboxFileActivity(photoUrl);
                 return;
         }
 
-        downloadFile(BitmapUtil.getFileUrl(content.fileUrl),
+        downloadFile(ImageUtil.getFileUrl(content.fileUrl),
                 content.title,
                 content.type,
                 content.ext,
@@ -458,6 +458,19 @@ public class FileDetailPresenter {
 
             ReadyComment readyComment = ReadyCommentRepository.getRepository().getReadyComment(fileMessage.id);
             mentionControlViewModel.setUpMention(readyComment.getText());
+            mentionControlViewModel.setOnMentionShowingListener(isShowing -> {
+                if (isShowing) {
+                    view.dismissMentionButton();
+                } else {
+                    view.showMentionButton();
+                }
+            });
+
+            if (mentionControlViewModel.getAllSelectableMembers().size() == 0) {
+                view.dismissMentionButton();
+            } else {
+                view.showMentionButton();
+            }
             registClipboardListenerforMention();
         }
     }
@@ -493,7 +506,7 @@ public class FileDetailPresenter {
             int teamId = AccountRepository.getRepository().getSelectedTeamId();
             fileDetailModel.registStarredMessage(teamId, messageId);
             MessageRepository.getRepository().updateStarred(messageId, true);
-            view.showToast(activity.getString(R.string.jandi_message_starred));
+            view.showToast(JandiApplication.getContext().getString(R.string.jandi_message_starred));
             view.modifyStarredInfo(messageId, true);
             EventBus.getDefault().post(new StarredInfoChangeEvent());
 
@@ -510,7 +523,7 @@ public class FileDetailPresenter {
             MessageRepository.getRepository().updateStarred(messageId, false);
 
             view.modifyStarredInfo(messageId, false);
-            view.showToast(activity.getString(R.string.jandi_unpinned_message));
+            view.showToast(JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
             EventBus.getDefault().post(new StarredInfoChangeEvent());
 
         } catch (RetrofitError retrofitError) {
@@ -527,7 +540,7 @@ public class FileDetailPresenter {
             MessageRepository.getRepository().updateStarred(fileId, false);
 
             view.updateFileStarred(false);
-            view.showToast(activity.getString(R.string.jandi_unpinned_message));
+            view.showToast(JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
             EventBus.getDefault().post(new StarredInfoChangeEvent());
         } catch (RetrofitError retrofitError) {
             retrofitError.printStackTrace();
@@ -540,7 +553,7 @@ public class FileDetailPresenter {
             int teamId = AccountRepository.getRepository().getSelectedTeamId();
             fileDetailModel.registStarredMessage(teamId, fileId);
             view.updateFileStarred(true);
-            view.showToast(activity.getString(R.string.jandi_message_starred));
+            view.showToast(JandiApplication.getContext().getString(R.string.jandi_message_starred));
             MessageRepository.getRepository().updateStarred(fileId, true);
         } catch (RetrofitError retrofitError) {
             retrofitError.printStackTrace();
@@ -559,6 +572,81 @@ public class FileDetailPresenter {
 
     public void onConfigurationChanged() {
         mentionControlViewModel.onConfigurationChanged();
+    }
+
+    public void onExportFile(ResMessages.FileMessage fileMessage, ProgressDialog progressDialog) {
+        String downloadFilePath = fileDetailModel.getDownloadFilePath(fileMessage.content.title);
+        String downloadUrl = fileDetailModel.getDownloadUrl(fileMessage.content.fileUrl);
+
+        fileDetailModel.downloadFile(downloadUrl, downloadFilePath, (downloaded, total) -> {
+            progressDialog.setProgress((int) (downloaded * 100 / total));
+        }, (e, result) -> {
+            progressDialog.dismiss();
+
+            if (e == null && result != null) {
+                view.exportIntentFile(result, fileMessage.content.type);
+            } else {
+                view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
+            }
+        });
+    }
+
+    public void onCopyExternLink(ResMessages.FileMessage fileMessage, boolean isExternalShared) {
+        if (!isExternalShared) {
+            if (NetworkCheckUtil.isConnected()) {
+                enableExternalLink(fileMessage);
+            } else {
+                view.showCheckNetworkDialog();
+            }
+        } else {
+            // 클립보드에 바로 복사 처리
+
+            removeClipboardListenerforMention();
+            StringBuffer externalLink = new StringBuffer(JandiConstantsForFlavors.SERVICE_BASE_URL).append("file/").append(fileMessage.content.externalCode);
+            view.copyToClipboard(externalLink.toString());
+            view.showToast(JandiApplication.getContext().getResources().getString(R.string.jandi_success_copy_clipboard_external_link));
+            registClipboardListenerforMention();
+        }
+    }
+
+    @Background
+    void enableExternalLink(ResMessages.FileMessage fileMessage) {
+        try {
+            view.showProgress();
+            int teamId = fileDetailModel.getTeamId();
+            ResMessages.FileMessage fileMessage2 = fileDetailModel.enableExternalLink(teamId, fileMessage.id);
+            ResMessages.FileContent content = fileMessage2.content;
+            fileDetailModel.updateExternalLink(content.fileUrl, content.externalShared, content.externalUrl, content.externalCode);
+            view.setExternalShared(content.externalShared);
+            view.setFileMessage(fileMessage2);
+            StringBuffer externalLink = new StringBuffer(JandiConstantsForFlavors.SERVICE_BASE_URL).append("file/").append(content.externalCode);
+            view.copyToClipboard(externalLink.toString());
+            view.showToast(JandiApplication.getContext().getResources().getString(R.string.jandi_success_copy_clipboard_external_link));
+            view.dismissProgress();
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
+            view.dismissProgress();
+        }
+    }
+
+    @Background
+    public void onDisableExternLink(ResMessages.FileMessage fileMessage) {
+        try {
+            view.showProgress();
+            int teamId = fileDetailModel.getTeamId();
+            ResMessages.FileMessage fileMessage2 = fileDetailModel.disableExternalLink(teamId, fileMessage.id);
+            ResMessages.FileContent content = fileMessage2.content;
+            fileDetailModel.updateExternalLink(content.fileUrl, content.externalShared, content.externalUrl, content.externalCode);
+            view.setExternalShared(content.externalShared);
+            view.setFileMessage(fileMessage2);
+            view.showToast(JandiApplication.getContext().getResources().getString(R.string.jandi_success_disable_external_link));
+            view.dismissProgress();
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
+            view.dismissProgress();
+        }
     }
 
     public interface View {
@@ -591,7 +679,7 @@ public class FileDetailPresenter {
 
         void onGetProfileFailed();
 
-        void setSendButtonSelected(boolean selected);
+        void setSendButtonSelected();
 
         void showProgress();
 
@@ -630,5 +718,17 @@ public class FileDetailPresenter {
         void showUnsharedFileToast();
 
         void requestPermission(int requestCode, String... permission);
+
+        void copyToClipboard(String externalUrl);
+
+        void setExternalShared(boolean externalShared);
+
+        void exportIntentFile(File result, String type);
+
+        void setFileMessage(ResMessages.FileMessage fileMessage2);
+
+        void dismissMentionButton();
+
+        void showMentionButton();
     }
 }

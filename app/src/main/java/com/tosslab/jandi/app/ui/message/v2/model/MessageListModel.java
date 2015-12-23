@@ -73,7 +73,6 @@ import java.util.concurrent.ExecutionException;
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -210,7 +209,7 @@ public class MessageListModel {
     @Deprecated
     public JsonObject uploadFile(ConfirmFileUploadEvent event, ProgressDialog progressDialog, boolean isPublicTopic) throws ExecutionException, InterruptedException {
         File uploadFile = new File(event.realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/file";
+        String requestURL = JandiConstantsForFlavors.SERVICE_FILE_UPLOAD_URL + "inner-api/file";
         String permissionCode = (isPublicTopic) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion
@@ -498,8 +497,6 @@ public class MessageListModel {
 
     public void upsertMessages(ResMessages messages) {
         Observable.from(messages.records)
-                .onBackpressureBuffer()
-                .observeOn(Schedulers.io())
                 .subscribe(link -> {
                     link.roomId = messages.entityId;
                     MessageRepository.getRepository().upsertMessage(link);

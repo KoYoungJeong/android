@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.client.account.password.IAccountPasswordApi
 import com.tosslab.jandi.app.network.client.account.password.IAccountPasswordApiSimple;
 import com.tosslab.jandi.app.network.client.chat.IChatApiAuth;
 import com.tosslab.jandi.app.network.client.direct.message.IDirectMessageApiAuth;
+import com.tosslab.jandi.app.network.client.events.IEventsApiAuth;
 import com.tosslab.jandi.app.network.client.file.IFileApiAuth;
 import com.tosslab.jandi.app.network.client.invitation.IInvitationApiAuth;
 import com.tosslab.jandi.app.network.client.main.IMainRestApiAuth;
@@ -24,6 +25,7 @@ import com.tosslab.jandi.app.network.client.settings.IAccountProfileApiAuth;
 import com.tosslab.jandi.app.network.client.settings.IStarredEntityApiAuth;
 import com.tosslab.jandi.app.network.client.sticker.IStickerApiAuth;
 import com.tosslab.jandi.app.network.client.teams.ITeamApiAuth;
+import com.tosslab.jandi.app.network.client.validation.ValidationApiAuth;
 import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
 import com.tosslab.jandi.app.network.manager.apiloader.RestApiLoader;
@@ -72,6 +74,7 @@ import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResCreateFolder;
+import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
@@ -90,6 +93,7 @@ import com.tosslab.jandi.app.network.models.ResUpdateFolder;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
+import com.tosslab.jandi.app.network.models.validation.ResValidation;
 
 import java.util.List;
 
@@ -103,7 +107,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
         IChatApiAuth, IDirectMessageApiAuth, IInvitationApiAuth, IMainRestApiAuth, ICommentsApiAuth, IMessageSearchApiAuth,
         IMessagesApiAuth, IGroupMessageApiAuth, IGroupApiAuth, IProfileApiAuth, IChannelMessageApiAuth, IChannelApiAuth,
         IRoomsApiAuth, IAccountProfileApiAuth, IStarredEntityApiAuth, IStickerApiAuth, ITeamApiAuth, IAccountPasswordApiSimple,
-        IMainRestApiSimple, IFileApiAuth, IPlatformApiAuth {
+        IMainRestApiSimple, IFileApiAuth, IPlatformApiAuth, IEventsApiAuth, ValidationApiAuth {
 
     private static final RequestApiManager requestApiManager = new RequestApiManager();
 
@@ -689,5 +693,25 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     @Override
     public ResCommon kickUserFromTopic(int teamId, int topicId, ReqMember member) {
         return requestApiExecute(RestApiLoader.getInstance().loadKickUserFromTopic(teamId, topicId, member));
+    }
+
+    @Override
+    public ResMessages.FileMessage enableFileExternalLink(int teamId, int fileId) {
+        return requestApiExecute(RestApiLoader.getInstance().loadEnableFileExternalLink(teamId, fileId));
+    }
+
+    @Override
+    public ResMessages.FileMessage disableFileExternalLink(int teamId, int fileId) {
+        return requestApiExecute(RestApiLoader.getInstance().loadDisableFileExternalLink(teamId, fileId));
+    }
+
+    @Override
+    public ResEventHistory getEventHistory(long ts, Integer memberId, String eventType, Integer size) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadGetEventHistory(ts, memberId, eventType, size));
+    }
+
+    @Override
+    public ResValidation validDomain(String domain) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadValidDomain(domain));
     }
 }

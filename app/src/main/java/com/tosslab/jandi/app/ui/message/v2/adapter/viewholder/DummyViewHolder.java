@@ -8,14 +8,16 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
-import com.tosslab.jandi.app.ui.sticker.StickerManager;
-import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 
 /**
@@ -23,7 +25,7 @@ import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
  */
 public class DummyViewHolder implements BodyViewHolder {
 
-    private ImageView ivProfile;
+    private SimpleDraweeView ivProfile;
     private TextView tvName;
     private TextView tvMessage;
     private View contentView;
@@ -33,10 +35,10 @@ public class DummyViewHolder implements BodyViewHolder {
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
-        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+        ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
-        ivSticker = ((ImageView) rootView.findViewById(R.id.iv_message_sticker));
+        ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_sticker);
         ivStickerStatus = (ImageView) rootView.findViewById(R.id.iv_message_send_status);
     }
 
@@ -50,11 +52,7 @@ public class DummyViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        BitmapUtil.loadCropCircleImageByGlideBitmap(ivProfile,
-                profileUrl,
-                R.drawable.profile_img,
-                R.drawable.profile_img
-        );
+        ImageUtil.loadCircleImageByFresco(ivProfile, profileUrl, R.drawable.profile_img);
 
         tvName.setText(entity.getName());
 
@@ -68,6 +66,9 @@ public class DummyViewHolder implements BodyViewHolder {
             tvMessage.setVisibility(View.VISIBLE);
 
             setTextSendingStatus(dummyMessageLink, builder);
+
+            MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvMessage, builder, false);
+            markdownViewModel.execute();
 
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                     tvMessage, builder, ((DummyMessageLink) link).getMentions(),

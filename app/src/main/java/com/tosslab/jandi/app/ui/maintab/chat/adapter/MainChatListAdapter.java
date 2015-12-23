@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +12,13 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.RoundingParams;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -63,7 +66,7 @@ public class MainChatListAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.selector = convertView.findViewById(R.id.v_entity_listitem_selector);
             viewHolder.tvName = (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
-            viewHolder.ivIcon = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_icon);
+            viewHolder.ivIcon = (SimpleDraweeView) convertView.findViewById(R.id.iv_entity_listitem_icon);
             viewHolder.ivFavorite = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_fav);
             viewHolder.tvAdditional = (TextView) convertView.findViewById(R.id.tv_entity_listitem_user_count);
             viewHolder.tvBadgeCount = (TextView) convertView.findViewById(R.id.tv_entity_listitem_badge);
@@ -131,13 +134,10 @@ public class MainChatListAdapter extends BaseAdapter {
             colorAnimation.start();
         }
 
-        viewHolder.ivIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
-        viewHolder.ivIcon.setImageResource(R.drawable.profile_img);
-        Ion.with(viewHolder.ivIcon)
-                .placeholder(R.drawable.profile_img)
-                .error(R.drawable.profile_img)
-                .transform(new IonCircleTransform())
-                .load(item.getPhoto());
+        SimpleDraweeView ivIcon = viewHolder.ivIcon;
+        ivIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
+
+        ImageUtil.loadCircleImageByFresco(ivIcon, Uri.parse(item.getPhoto()), R.drawable.profile_img);
 
         return convertView;
     }
@@ -174,7 +174,7 @@ public class MainChatListAdapter extends BaseAdapter {
 
     static class ViewHolder {
         public Context context;
-        public ImageView ivIcon;
+        public SimpleDraweeView ivIcon;
         public ImageView ivFavorite;
         public TextView tvName;
         public TextView tvAdditional;

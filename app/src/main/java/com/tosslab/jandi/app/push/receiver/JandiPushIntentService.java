@@ -55,6 +55,8 @@ public class JandiPushIntentService extends IntentService {
             return;
         }
 
+        jandiPushReceiverModel.convertPlainMarkdownContent(pushTO);
+
         LogUtil.i(TAG, pushTO.toString());
 
         PushTO.PushInfo pushTOInfo = pushTO.getInfo();

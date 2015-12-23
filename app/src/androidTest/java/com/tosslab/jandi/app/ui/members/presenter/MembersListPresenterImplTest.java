@@ -1,0 +1,122 @@
+package com.tosslab.jandi.app.ui.members.presenter;
+
+import android.support.test.runner.AndroidJUnit4;
+
+import com.jayway.awaitility.Awaitility;
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import setup.BaseInitUtil;
+
+import static junit.framework.Assert.assertEquals;
+
+@RunWith(AndroidJUnit4.class)
+public class MembersListPresenterImplTest {
+
+    private MembersListPresenterImpl presenter;
+    private MembersListPresenterImpl.View mockView;
+    private int topicId;
+
+    @Before
+    public void setUp() throws Exception {
+        BaseInitUtil.createDummyTopic();
+        BaseInitUtil.inviteDummyMembers();
+
+        topicId = BaseInitUtil.tempTopicId;
+
+        presenter = MembersListPresenterImpl_.getInstance_(JandiApplication.getContext());
+        mockView = Mockito.mock(MembersListPresenter.View.class);
+        presenter.setView(mockView);
+
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.deleteDummyTopic();
+    }
+
+    @Test
+    public void testOnKickUser() throws Exception {
+        int entityId = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL);
+        {
+            final boolean[] finish = {false};
+            Mockito.doAnswer(invocationOnMock -> {
+                finish[0] = true;
+                return invocationOnMock;
+            }).when(mockView).dismissProgressWheel();
+
+            presenter.onKickUser(topicId, entityId);
+
+            Awaitility.await().until(() -> finish[0]);
+
+            Mockito.verify(mockView).showProgressWheel();
+            Mockito.verify(mockView).showKickSuccessToast();
+            Mockito.verify(mockView).removeUser(Mockito.eq(entityId));
+        }
+
+        {
+            final boolean[] finish = {false};
+            Mockito.doAnswer(invocationOnMock -> {
+                finish[0] = true;
+                return invocationOnMock;
+            }).when(mockView).dismissProgressWheel();
+
+            presenter.onKickUser(topicId, -1);
+            Awaitility.await().until(() -> finish[0]);
+
+            Mockito.verify(mockView).refreshMemberList();
+            Mockito.verify(mockView).showKickFailToast();
+        }
+
+        {
+            Mockito.reset(mockView);
+            BaseInitUtil.disconnectWifi();
+
+            final boolean[] finish = {false};
+            Mockito.doAnswer(invocationOnMock -> {
+                finish[0] = true;
+                return invocationOnMock;
+            }).when(mockView).showKickFailToast();
+
+            presenter.onKickUser(topicId, entityId);
+            Awaitility.await().until(() -> finish[0]);
+
+            BaseInitUtil.restoreContext();
+            Mockito.verify(mockView).showKickFailToast();
+
+        }
+    }
+
+    @Test
+    public void testGetFilteredChatChooseItems() throws Exception {
+
+        List<ChatChooseItem> members = new ArrayList<>();
+
+        ChatChooseItem chatChooseItem1 = new ChatChooseItem();
+        ChatChooseItem chatChooseItem2 = new ChatChooseItem();
+        ChatChooseItem chatChooseItem3 = new ChatChooseItem();
+
+        chatChooseItem1.name("abc");
+        chatChooseItem2.name("bcd");
+        chatChooseItem3.name("cde");
+
+        members.add(chatChooseItem1);
+        members.add(chatChooseItem2);
+        members.add(chatChooseItem3);
+
+        List<ChatChooseItem> resultList = presenter.getFilteredChatChooseItems("bc", members);
+        assertEquals(resultList.size(), 2);
+        assertEquals(resultList.get(0), chatChooseItem1);
+
+    }
+
+}

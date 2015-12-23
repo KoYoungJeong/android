@@ -10,6 +10,8 @@ import com.tosslab.jandi.app.network.client.chat.ChatApiV2Client;
 import com.tosslab.jandi.app.network.client.chat.IChatApiAuth;
 import com.tosslab.jandi.app.network.client.direct.message.DirectMessageApiV2Client;
 import com.tosslab.jandi.app.network.client.direct.message.IDirectMessageApiAuth;
+import com.tosslab.jandi.app.network.client.events.EventsApiV2Client;
+import com.tosslab.jandi.app.network.client.events.IEventsApiAuth;
 import com.tosslab.jandi.app.network.client.file.FileApiV2Client;
 import com.tosslab.jandi.app.network.client.file.IFileApiAuth;
 import com.tosslab.jandi.app.network.client.invitation.IInvitationApiAuth;
@@ -44,6 +46,8 @@ import com.tosslab.jandi.app.network.client.sticker.IStickerApiAuth;
 import com.tosslab.jandi.app.network.client.sticker.StickerApiV2Client;
 import com.tosslab.jandi.app.network.client.teams.ITeamApiAuth;
 import com.tosslab.jandi.app.network.client.teams.TeamApiV2Client;
+import com.tosslab.jandi.app.network.client.validation.ValidationApi;
+import com.tosslab.jandi.app.network.client.validation.ValidationApiAuth;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RestAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqChangePassword;
@@ -84,6 +88,7 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResCreateFolder;
+import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
@@ -101,6 +106,7 @@ import com.tosslab.jandi.app.network.models.ResUpdateFolder;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
+import com.tosslab.jandi.app.network.models.validation.ResValidation;
 
 import java.util.List;
 
@@ -112,7 +118,8 @@ import retrofit.RetrofitError;
 public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth, IAccountEmailsApiAuth, IAccountPasswordApiAuth,
         IChatApiAuth, IDirectMessageApiAuth, IInvitationApiAuth, IMainRestApiAuth, ICommentsApiAuth, IMessageSearchApiAuth,
         IMessagesApiAuth, IGroupMessageApiAuth, IGroupApiAuth, IProfileApiAuth, IChannelMessageApiAuth, IChannelApiAuth,
-        IRoomsApiAuth, IAccountProfileApiAuth, IStarredEntityApiAuth, IStickerApiAuth, ITeamApiAuth, IFileApiAuth, IPlatformApiAuth {
+        IRoomsApiAuth, IAccountProfileApiAuth, IStarredEntityApiAuth, IStickerApiAuth, ITeamApiAuth, IFileApiAuth, IPlatformApiAuth,
+        IEventsApiAuth, ValidationApiAuth {
 
     @Override
     public ResAccountInfo registerNotificationTokenByAccountDeviceApi(ReqNotificationRegister reqNotificationRegister) throws RetrofitError {
@@ -647,5 +654,25 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     @Override
     public ResCommon kickUserFromTopic(int teamId, int topicId, ReqMember member) {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().kickUserFromTopic(teamId, topicId, member);
+    }
+
+    @Override
+    public ResMessages.FileMessage enableFileExternalLink(int teamId, int fileId) {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().enableFileExternalLink(teamId, fileId, new ReqNull());
+    }
+
+    @Override
+    public ResMessages.FileMessage disableFileExternalLink(int teamId, int fileId) {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().disableFileExternalLink(teamId, fileId);
+    }
+
+    @Override
+    public ResEventHistory getEventHistory(long ts, Integer memberId, String eventType, Integer size) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(EventsApiV2Client.class).create().getEventHistory(ts, memberId, eventType, size);
+    }
+
+    @Override
+    public ResValidation validDomain(String domain) {
+        return RestAdapterBuilder.newInstance(ValidationApi.class).create().validDomain(domain);
     }
 }

@@ -113,7 +113,7 @@ public interface TeamApiV2Client {
     @PUT("/teams/{teamId}/folders/{folderId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResUpdateFolder updateFolder(@Path("teamId") int teamId, @Path("folderId") int folderId,
-                           @Body ReqUpdateFolder reqUpdateFolder);
+                                 @Body ReqUpdateFolder reqUpdateFolder);
 
     @GET("/teams/{teamId}/folders")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
@@ -136,4 +136,9 @@ public interface TeamApiV2Client {
     @PUT("/teams/{teamId}/topics/{topicId}/kickout")
     ResCommon kickUserFromTopic(@Path("teamId") int teamId, @Path("topicId") int topicId, @Body ReqMember member);
 
+    @PUT("/teams/{teamId}/files/{fileId}/externalShared")
+    ResMessages.FileMessage enableFileExternalLink(@Path("teamId") int teamId, @Path("fileId") int fileId, @Body ReqNull reqNull);
+
+    @DELETE("/teams/{teamId}/files/{fileId}/externalShared")
+    ResMessages.FileMessage disableFileExternalLink(@Path("teamId") int teamId, @Path("fileId") int fileId);
 }

@@ -99,7 +99,7 @@ public class IntroLoginModelTest {
     @Test
     public void testSaveTokenInfo() throws Exception {
 
-        ResAccessToken accessToken = introLoginModel.login(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD);
+        ResAccessToken accessToken = introLoginModel.login(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD);
 
         boolean isSaved = introLoginModel.saveTokenInfo(accessToken);
         assertThat(isSaved, is(true));
@@ -116,7 +116,7 @@ public class IntroLoginModelTest {
     @Test
     public void testSaveAccountInfo() throws Exception {
         ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
-                ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
+                ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
         TokenUtil.saveTokenInfoByPassword(accessToken);
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
@@ -142,7 +142,7 @@ public class IntroLoginModelTest {
     public void testGetAccountInfo_Has_Token() throws Exception {
 
         ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
-                ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
+                ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
         TokenUtil.saveTokenInfoByPassword(accessToken);
 
@@ -204,7 +204,7 @@ public class IntroLoginModelTest {
 
     @Test
     public void testRequestPasswordReset() throws Exception {
-        ResCommon resCommon = introLoginModel.requestPasswordReset(BaseInitUtil.TEST_ID);
+        ResCommon resCommon = introLoginModel.requestPasswordReset(BaseInitUtil.TEST_EMAIL);
         assertThat(resCommon, is(notNullValue()));
     }
 }

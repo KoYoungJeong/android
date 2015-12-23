@@ -10,12 +10,12 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,14 +123,21 @@ public class ChatChooseAdapter extends BaseAdapter {
     private View setChatChooseView(int position, View convertView, ViewGroup parent) {
         ChatCHooseViewHolder chatCHooseViewHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body_two_line, parent, false);
+            convertView = LayoutInflater.from(context)
+                    .inflate(R.layout.item_entity_body_two_line, parent, false);
             chatCHooseViewHolder = new ChatCHooseViewHolder();
-            chatCHooseViewHolder.textViewName = (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
-            chatCHooseViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_icon);
-            chatCHooseViewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_fav);
-            chatCHooseViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.tv_entity_listitem_user_count);
-            chatCHooseViewHolder.disableLineThrouthView = convertView.findViewById(R.id.iv_entity_listitem_line_through);
-            chatCHooseViewHolder.disableCoverView = convertView.findViewById(R.id.v_entity_listitem_warning);
+            chatCHooseViewHolder.textViewName =
+                    (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
+            chatCHooseViewHolder.imageViewIcon =
+                    (SimpleDraweeView) convertView.findViewById(R.id.iv_entity_listitem_icon);
+            chatCHooseViewHolder.imageViewFavorite =
+                    (ImageView) convertView.findViewById(R.id.iv_entity_listitem_fav);
+            chatCHooseViewHolder.textViewAdditional =
+                    (TextView) convertView.findViewById(R.id.tv_entity_listitem_user_count);
+            chatCHooseViewHolder.disableLineThrouthView =
+                    convertView.findViewById(R.id.iv_entity_listitem_line_through);
+            chatCHooseViewHolder.disableCoverView =
+                    convertView.findViewById(R.id.v_entity_listitem_warning);
             chatCHooseViewHolder.ivKick = convertView.findViewById(R.id.iv_entity_listitem_user_kick);
 
 
@@ -166,14 +173,10 @@ public class ChatChooseAdapter extends BaseAdapter {
             chatCHooseViewHolder.disableCoverView.setVisibility(View.VISIBLE);
         }
 
-        chatCHooseViewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
-        chatCHooseViewHolder.imageViewIcon.setImageResource(R.drawable.profile_img);
+        SimpleDraweeView imageViewIcon = chatCHooseViewHolder.imageViewIcon;
+        imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
-        Ion.with(chatCHooseViewHolder.imageViewIcon)
-                .placeholder(R.drawable.profile_img)
-                .error(R.drawable.profile_img)
-                .transform(new IonCircleTransform())
-                .load(item.getPhotoUrl());
+        ImageUtil.loadCircleImageByFresco(imageViewIcon, item.getPhotoUrl(), R.drawable.profile_img);
         return convertView;
     }
 
@@ -211,7 +214,7 @@ public class ChatChooseAdapter extends BaseAdapter {
 
     static class ChatCHooseViewHolder {
         public Context context;
-        public ImageView imageViewIcon;
+        public SimpleDraweeView imageViewIcon;
         public ImageView imageViewFavorite;
         public TextView textViewName;
         public TextView textViewAdditional;

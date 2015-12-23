@@ -57,7 +57,7 @@ dependencies {
     }
 
     compile(name: 'photoview-expand-release_2015_1118_1108', ext: 'aar')
-    compile(name: 'sprinkler-android-release_2015_1118_1108', ext: 'aar')
+    compile(name: 'sprinkler-android-release_2015_1123_1820', ext: 'aar')
 
 //    compile project(':sprinkler-android')
 //    compile project(':photoview-expand')
@@ -93,8 +93,8 @@ dependencies {
     }
 
     // Cache
-    compile 'com.github.bumptech.glide:glide:3.6.1' // EXIF orientation 이슈 해결 된 것으로 보임.
     compile 'com.koushikdutta.ion:ion:2.1.+'
+    compile 'com.facebook.fresco:fresco:0.8.+'
 
     // Sliqte ORM
     compile 'com.j256.ormlite:ormlite-android:4.+'
@@ -121,6 +121,7 @@ dependencies {
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.1'
     androidTestCompile 'com.crittercism.dexmaker:dexmaker-mockito:1.4'
     androidTestCompile 'com.crittercism.dexmaker:dexmaker-dx:1.4'
     androidTestCompile 'com.jayway.awaitility:awaitility:1.6.5'
@@ -152,8 +153,8 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 81
-        versionName '1.6.2'
+        versionCode 91
+        versionName '1.7.0'
 
         // for Ui Testing
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -181,7 +182,7 @@ android {
         dev {       // demo version
             applicationId 'com.tosslab.jandi.app.dev'
             versionName(defaultConfig.versionName + ".dev." + inhouse_version)
-//            minSdkVersion 21
+            minSdkVersion 21
         }
 
         inhouse {
@@ -190,15 +191,6 @@ android {
             }
         }
 
-        landscapeDev {
-            applicationId('com.tosslab.jandi.app.landscapeDev')
-            versionName(defaultConfig.versionName + ".landscapeDev")
-        }
-
-        landscape {
-            applicationId('com.tosslab.jandi.app.landscape')
-            versionName(defaultConfig.versionName + ".landscape")
-        }
     }
 
     sourceSets {

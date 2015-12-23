@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.validation.ResValidation;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -41,6 +42,10 @@ public class TeamDomainInfoModel {
         ReqCreateNewTeam reqCreateNewTeam = new ReqCreateNewTeam(name, teamDomain);
         return RequestApiManager.getInstance().createNewTeamByTeamApi(reqCreateNewTeam);
 
+    }
+
+    public ResValidation validDomain(String domain) throws RetrofitError{
+        return RequestApiManager.getInstance().validDomain(domain);
     }
 
     public List<ResAccountInfo.UserEmail> initUserEmailInfo() {

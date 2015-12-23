@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
@@ -24,9 +24,9 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
 import com.tosslab.jandi.app.views.spannable.EntitySpannable;
 import com.tosslab.jandi.app.views.spannable.MessageSpannable;
 
@@ -34,9 +34,8 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 
-import java.util.Iterator;
-
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 29..
@@ -48,7 +47,7 @@ public class FileHeadManager {
     AppCompatActivity activity;
 
     // in File Detail Header
-    private ImageView imageViewUserProfile;
+    private SimpleDraweeView imageViewUserProfile;
     private TextView textViewUserName;
     private TextView textViewFileCreateDate;
     private TextView textViewFileContentInfo;
@@ -57,7 +56,7 @@ public class FileHeadManager {
     private View disableCoverView;
 
     private ImageView btnFileDetailStarred;
-    private ImageView imageViewPhotoFile;
+    private SimpleDraweeView imageViewPhotoFile;
     private ViewGroup vgDetailPhoto;
     private ImageView iconFileType;
     private LinearLayout fileInfoLayout;
@@ -67,12 +66,12 @@ public class FileHeadManager {
 
     public View getHeaderView() {
         View header = LayoutInflater.from(activity).inflate(R.layout.activity_file_detail_header, null, false);
-        imageViewUserProfile = (ImageView) header.findViewById(R.id.img_file_detail_user_profile);
+        imageViewUserProfile = (SimpleDraweeView) header.findViewById(R.id.img_file_detail_user_profile);
         textViewUserName = (TextView) header.findViewById(R.id.txt_file_detail_user_name);
         textViewFileCreateDate = (TextView) header.findViewById(R.id.txt_file_detail_create_date);
         textViewFileContentInfo = (TextView) header.findViewById(R.id.txt_file_detail_file_info);
         textViewFileSharedCdp = (TextView) header.findViewById(R.id.txt_file_detail_shared_cdp);
-        imageViewPhotoFile = (ImageView) header.findViewById(R.id.img_file_detail_photo);
+        imageViewPhotoFile = (SimpleDraweeView) header.findViewById(R.id.img_file_detail_photo);
         vgDetailPhoto = (ViewGroup) header.findViewById(R.id.vg_file_detail_photo);
         fileInfoLayout = (LinearLayout) header.findViewById(R.id.ly_file_detail_info);
         iconFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
@@ -118,38 +117,35 @@ public class FileHeadManager {
             spannableStringBuilder.append(" ");
             int firstLength = spannableStringBuilder.length();
 
-            Iterator<ResMessages.OriginalMessage.IntegerWrapper> iterator = resFileDetail.shareEntities.iterator();
-            while (iterator.hasNext()) {
-                FormattedEntity sharedEntity = mEntityManager.getEntityById(iterator.next().getShareEntity());
+            Observable.from(resFileDetail.shareEntities)
+                    .distinct(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
+                    .map(integerWrapper -> mEntityManager.getEntityById(integerWrapper.getShareEntity()))
+                    .filter(formattedEntity -> formattedEntity != EntityManager.UNKNOWN_USER_ENTITY)
+                    .doOnNext(formattedEntity1 -> {
+                        if (spannableStringBuilder.length() > firstLength) {
+                            spannableStringBuilder.append(", ");
+                        }
+                    })
+                    .subscribe(formattedEntity2 -> {
+                        int entityType;
+                        if (formattedEntity2.isPrivateGroup()) {
+                            entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
+                        } else if (formattedEntity2.isPublicTopic()) {
+                            entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
+                        } else {
+                            entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
 
-                if (sharedEntity == EntityManager.UNKNOWN_USER_ENTITY) {
-                    continue;
-                }
+                        }
 
-                if (spannableStringBuilder.length() > firstLength) {
-                    spannableStringBuilder.append(", ");
-                }
+                        EntitySpannable entitySpannable = new EntitySpannable(activity, teamId, formattedEntity2.getId(), entityType, formattedEntity2.isStarred);
 
-                int entityType;
-                if (sharedEntity.isPrivateGroup()) {
-                    entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
-                } else if (sharedEntity.isPublicTopic()) {
-                    entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
-                } else {
-                    entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
+                        int length = spannableStringBuilder.length();
+                        spannableStringBuilder.append(formattedEntity2.getName());
 
-                }
+                        spannableStringBuilder.setSpan(entitySpannable, length,
+                                length + formattedEntity2.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }, Throwable::printStackTrace);
 
-                EntitySpannable entitySpannable = new EntitySpannable(activity, teamId, sharedEntity.getId(), entityType, sharedEntity.isStarred);
-
-                int length = spannableStringBuilder.length();
-                spannableStringBuilder.append(sharedEntity.getName());
-
-                spannableStringBuilder.setSpan(entitySpannable, length,
-                        length + sharedEntity.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-
-            }
             textViewFileSharedCdp.setMovementMethod(LinkMovementMethod.getInstance());
             textViewFileSharedCdp.setText(spannableStringBuilder, TextView.BufferType.SPANNABLE);
         } else {
@@ -161,12 +157,11 @@ public class FileHeadManager {
     public void setFileInfo(ResMessages.FileMessage fileMessage) {
         // 사용자
         FormattedEntity writer = EntityManager.getInstance().getEntityById(fileMessage.writerId);
+
         String profileUrl = writer.getUserSmallProfileUrl();
-        Ion.with(imageViewUserProfile)
-                .placeholder(R.drawable.profile_img)
-                .error(R.drawable.profile_img)
-                .transform(new IonCircleTransform())
-                .load(profileUrl);
+
+        ImageUtil.loadCircleImageByFresco(imageViewUserProfile, profileUrl, R.drawable.profile_img);
+
         String userName = writer.getName();
         textViewUserName.setText(userName);
 
@@ -186,8 +181,6 @@ public class FileHeadManager {
         textViewFileCreateDate.setText(createTime);
         // if Deleted File
         if (TextUtils.equals(fileMessage.status, "archived")) {
-
-            imageViewPhotoFile.setImageResource(R.drawable.jandi_fl_icon_deleted);
             imageViewPhotoFile.setOnClickListener(null);
             imageViewPhotoFile.setVisibility(View.GONE);
             fileInfoLayout.setVisibility(View.GONE);
@@ -226,7 +219,7 @@ public class FileHeadManager {
 
                 FileThumbLoader thumbLoader;
                 if (fileMessage.content.type.startsWith("image")) {
-                    thumbLoader = new ImageThumbLoader(iconFileType, vgDetailPhoto,imageViewPhotoFile, roomId);
+                    thumbLoader = new ImageThumbLoader(iconFileType, vgDetailPhoto, imageViewPhotoFile, roomId);
                 } else {
                     thumbLoader = new NormalThumbLoader(iconFileType, imageViewPhotoFile);
                 }

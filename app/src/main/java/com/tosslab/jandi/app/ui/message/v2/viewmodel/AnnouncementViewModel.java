@@ -9,23 +9,25 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -49,7 +51,7 @@ public class AnnouncementViewModel {
     @ViewById(R.id.vg_announcement_action)
     ViewGroup vgAnnouncementAction;
     @ViewById(R.id.iv_announcement_user)
-    ImageView ivAnnouncementUser;
+    SimpleDraweeView ivAnnouncementUser;
     @ViewById(R.id.tv_announcement_info)
     TextView tvAnnouncementInfo;
     @ViewById(R.id.sv_announcement_message)
@@ -112,12 +114,12 @@ public class AnnouncementViewModel {
         vgAnnouncement.setVisibility(View.VISIBLE);
 
         String profileUrl = fromEntity.getUserLargeProfileUrl();
-        Ion.with(ivAnnouncementUser)
-                .placeholder(R.drawable.profile_img)
-                .error(R.drawable.profile_img)
-                .transform(new IonCircleTransform())
-                .crossfade(true)
-                .load(profileUrl);
+
+        ImageUtil.loadCircleImageByFresco(ivAnnouncementUser, profileUrl, R.drawable.profile_img);
+        ivAnnouncementUser.setOnClickListener(v -> {
+            ShowProfileEvent event = new ShowProfileEvent(writerId, ShowProfileEvent.From.Image);
+            EventBus.getDefault().post(event);
+        });
 
         ResLeftSideMenu.User user = fromEntity.getUser();
         String date = DateTransformator.getTimeStringFromISO(
@@ -135,6 +137,11 @@ public class AnnouncementViewModel {
                     0, content.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             LinkifyUtil.setOnLinkClick(tvAnnouncementMessage);
         }
+
+        MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvAnnouncementMessage,
+                messageStringBuilder, true);
+        markdownViewModel.execute();
+
         tvAnnouncementMessage.setText(messageStringBuilder);
 
         boolean isFullShowing = vgAnnouncementAction.getVisibility() == View.VISIBLE;

@@ -76,13 +76,15 @@ public class ShareModel {
                                  int teamId, int entityId, ProgressDialog progressDialog,
                                  boolean isPublicTopic, List<MentionObject> mentions) throws ExecutionException, InterruptedException {
         File uploadFile = new File(imageFile.getAbsolutePath());
-        String requestURL = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/file";
+        String requestURL = JandiConstantsForFlavors.SERVICE_FILE_UPLOAD_URL + "inner-api/file";
         String permissionCode = (isPublicTopic) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion
                 .with(context)
                 .load(requestURL)
-                .uploadProgressDialog(progressDialog)
+                .uploadProgressHandler((downloaded, total) -> {
+                    progressDialog.setProgress((int) (downloaded * 100 / total));
+                })
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
                 .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))

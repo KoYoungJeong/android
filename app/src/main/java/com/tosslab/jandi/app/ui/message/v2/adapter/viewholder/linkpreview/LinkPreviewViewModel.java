@@ -3,16 +3,19 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
-import com.tosslab.jandi.app.utils.BitmapUtil;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 18..
@@ -24,7 +27,7 @@ public class LinkPreviewViewModel {
     private TextView tvDomain;
     private TextView tvDescription;
     private View vgThumb;
-    private ImageView ivThumb;
+    private SimpleDraweeView ivThumb;
     private OnLinkPreviewClickListener onLinkPreviewClickListener;
 
     private Context context;
@@ -43,7 +46,7 @@ public class LinkPreviewViewModel {
         tvDomain = (TextView) rootView.findViewById(R.id.tv_linkpreview_domain);
         tvDescription = (TextView) rootView.findViewById(R.id.tv_linkpreview_description);
         vgThumb = rootView.findViewById(R.id.vg_linkpreview_thumb);
-        ivThumb = (ImageView) rootView.findViewById(R.id.iv_linkpreview_thumb);
+        ivThumb = (SimpleDraweeView) rootView.findViewById(R.id.iv_linkpreview_thumb);
     }
 
     public void bindData(ResMessages.Link link) {
@@ -70,20 +73,21 @@ public class LinkPreviewViewModel {
 
         boolean useThumbnail = useThumbnail(linkPreview.imageUrl);
 
+        GenericDraweeHierarchy hierarchy = ivThumb.getHierarchy();
+        Drawable placeHolder = context.getResources().getDrawable(R.drawable.link_preview);
+        hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.CENTER_INSIDE);
+        hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+        ivThumb.setHierarchy(hierarchy);
         if (!useThumbnail) {
-            ivThumb.setImageDrawable(null);
+            ivThumb.setImageURI(null);
             vgThumb.setVisibility(View.GONE);
             return;
         }
 
         vgThumb.setVisibility(View.VISIBLE);
-        ivThumb.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
         String imageUrl = linkPreview.imageUrl;
-        BitmapUtil.loadCropBitmapByGlide(ivThumb,
-                imageUrl,
-                R.drawable.link_preview
-        );
+        ivThumb.setImageURI(Uri.parse(imageUrl));
     }
 
     private boolean useThumbnail(String imagUrl) {

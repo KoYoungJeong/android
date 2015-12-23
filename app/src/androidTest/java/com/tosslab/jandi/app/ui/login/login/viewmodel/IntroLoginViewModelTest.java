@@ -37,7 +37,7 @@ import static org.hamcrest.Matchers.notNullValue;
 public class IntroLoginViewModelTest {
 
     @Rule
-    public ActivityTestRule<BaseAppCompatActivity> rule = new ActivityTestRule<BaseAppCompatActivity>(BaseAppCompatActivity.class);
+    public ActivityTestRule<BaseAppCompatActivity> rule = new ActivityTestRule<>(BaseAppCompatActivity.class);
     private IntroLoginViewModel introLoginViewModel;
 
     @Before
@@ -104,7 +104,7 @@ public class IntroLoginViewModelTest {
 
     @Test
     public void testLoginSuccess() throws Exception {
-        introLoginViewModel.loginSuccess(BaseInitUtil.TEST_ID);
+        introLoginViewModel.loginSuccess(BaseInitUtil.TEST_EMAIL);
 
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
@@ -115,7 +115,7 @@ public class IntroLoginViewModelTest {
 
     @Test
     public void testMoveToTeamSelectionActivity() throws Throwable {
-        rule.runOnUiThread(() -> introLoginViewModel.moveToTeamSelectionActivity(BaseInitUtil.TEST_ID));
+        rule.runOnUiThread(() -> introLoginViewModel.moveToTeamSelectionActivity(BaseInitUtil.TEST_EMAIL));
 
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 

@@ -1,6 +1,11 @@
 package com.tosslab.jandi.app.services.socket.to;
 
+import com.tosslab.jandi.app.network.models.ResEventHistory;
+import com.tosslab.jandi.app.services.socket.annotations.Version;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.JsonDeserializer;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
@@ -8,8 +13,12 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class SocketFileEvent {
+@JsonDeserialize(using = JsonDeserializer.None.class)
+@Version(1)
+public class SocketFileEvent extends ResEventHistory.EventHistoryInfo {
     private int teamId;
+    private long ts;
+    private int version;
     private EventFileInfo file;
     private String event;
 
@@ -37,6 +46,33 @@ public class SocketFileEvent {
         this.teamId = teamId;
     }
 
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    @Override
+    public String toString() {
+        return "SocketFileEvent{" +
+                "teamId=" + teamId +
+                ", ts=" + ts +
+                ", version=" + version +
+                ", file=" + file +
+                ", event='" + event + '\'' +
+                '}';
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class EventFileInfo {
@@ -48,6 +84,13 @@ public class SocketFileEvent {
 
         public void setId(int id) {
             this.id = id;
+        }
+
+        @Override
+        public String toString() {
+            return "EventFileInfo{" +
+                    "id=" + id +
+                    '}';
         }
     }
 }

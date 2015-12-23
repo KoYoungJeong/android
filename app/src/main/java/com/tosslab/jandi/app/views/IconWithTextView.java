@@ -8,10 +8,10 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 
 /**
@@ -25,7 +25,7 @@ public class IconWithTextView extends RelativeLayout {
             android.R.attr.textSize,
             android.R.attr.textColor
     };
-    private ImageView ivIcon;
+    private SimpleDraweeView ivIcon;
     private TextView tvTitle;
     private TextView tvBadge;
 
@@ -37,7 +37,7 @@ public class IconWithTextView extends RelativeLayout {
         super(context, attrs);
         LayoutInflater.from(context).inflate(R.layout.view_icon_with_text, this);
 
-        ivIcon = (ImageView) findViewById(R.id.img_icon_with_text);
+        ivIcon = (SimpleDraweeView) findViewById(R.id.img_icon_with_text);
         tvTitle = (TextView) findViewById(R.id.tv_icon_with_text);
         tvBadge = (TextView) findViewById(R.id.tv_icon_with_text_badge);
 
@@ -45,7 +45,7 @@ public class IconWithTextView extends RelativeLayout {
         setBadgeCount(0);
     }
 
-    public ImageView getImageView() {
+    public SimpleDraweeView getImageView() {
         return ivIcon;
     }
 
@@ -87,13 +87,13 @@ public class IconWithTextView extends RelativeLayout {
             int margin = a.getDimensionPixelSize(R.styleable.IconWithTextView_marginSrcText, UNDEFINED_VALUE);
             layoutParams.bottomMargin = margin;
         }
+
         ivIcon.setLayoutParams(layoutParams);
 
         if (a.hasValue(R.styleable.IconWithTextView_img)) {
             Drawable src = a.getDrawable(R.styleable.IconWithTextView_img);
             ivIcon.setImageDrawable(src);
         }
-
 
         a.recycle();
 

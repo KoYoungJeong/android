@@ -7,7 +7,7 @@ import android.widget.ImageView;
 
 import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -30,12 +30,14 @@ public class NormalThumbLoader implements FileThumbLoader {
 
     @Override
     public void loadThumb(ResMessages.FileMessage fileMessage) {
+        ResMessages.FileContent content = fileMessage.content;
 
-        MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
-        String photoUrl = BitmapUtil.getFileUrl(fileMessage.content.fileUrl);
+        MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(content.serverUrl);
+        String photoUrl = ImageUtil.getFileUrl(content.fileUrl);
 
-        iconFileType.setImageResource(MimeTypeUtil.getMimeTypeIconImage(fileMessage.content.serverUrl, fileMessage.content.icon));
-        imageViewPhotoFile.setImageResource(MimeTypeUtil.getMimeTypePlaceholderImage(fileMessage.content.serverUrl, fileMessage.content.icon));
+        iconFileType.setImageResource(MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon));
+        int mimeTypePlaceholderImage = MimeTypeUtil.getMimeTypePlaceholderImage(content.serverUrl, content.icon);
+        imageViewPhotoFile.setImageResource(mimeTypePlaceholderImage);
 
         if (TextUtils.isEmpty(photoUrl)) {
             imageViewPhotoFile.setEnabled(false);
@@ -54,9 +56,8 @@ public class NormalThumbLoader implements FileThumbLoader {
                 break;
             default:
                 imageViewPhotoFile.setOnClickListener(view -> EventBus.getDefault().post(new
-                        FileDownloadStartEvent(BitmapUtil.getFileUrl(fileMessage.content.fileUrl)
-                        , fileMessage.content.title, fileMessage.content.type, fileMessage
-                        .content.ext)));
+                        FileDownloadStartEvent(ImageUtil.getFileUrl(content.fileUrl)
+                        , content.title, content.type, content.ext)));
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewFile);
                 break;
         }

@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -48,12 +47,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     void startOn() {
         presenter.setView(this);
         presenter.checkNewVersion(getApplicationContext(), startForInvite);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ActivityHelper.setOrientation(this);
     }
 
     @UiThread
@@ -95,7 +88,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     @UiThread
     @Override
     public void showCheckNetworkDialog() {
-        AlertUtil.showCheckNetworkDialog(IntroActivity.this, (dialog, which) -> finish());
+        AlertUtil.showConfirmDialog(IntroActivity.this, R.string.jandi_cannot_connect_service_try_again, (dialog, which) -> finish(), false);
     }
 
     @UiThread

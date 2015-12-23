@@ -12,7 +12,7 @@
         android:paddingLeft="@dimen/jandi_file_detail_padding_sides"
         android:paddingRight="@dimen/jandi_file_detail_padding_sides">
 
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/img_file_detail_user_profile"
             android:layout_width="@dimen/jandi_file_detail_uploder_profile_size"
             android:layout_height="@dimen/jandi_file_detail_uploder_profile_size"
@@ -75,7 +75,7 @@
         android:layout_marginLeft="@dimen/jandi_file_detail_padding_sides"
         android:layout_marginRight="@dimen/jandi_file_detail_padding_sides">
 
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/img_file_detail_photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -139,7 +139,7 @@
 
             <TextView
                 android:id="@+id/txt_file_detail_shared_cdp"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/txt_file_detail_file_info"
                 android:layout_marginTop="2dp"

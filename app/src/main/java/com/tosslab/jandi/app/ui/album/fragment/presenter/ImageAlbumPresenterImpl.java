@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.ui.album.fragment.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
 import com.tosslab.jandi.app.ui.album.fragment.vo.SelectPictures;
 
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -26,18 +27,35 @@ public class ImageAlbumPresenterImpl implements ImageAlbumPresenter {
     ImageAlbumPresenter.View view;
 
     @Override
+    @Background
     public void onLoadImageAlbum(int buckerId) {
+        view.showProgress();
         if (imageAlbumModel.isFirstAlbumPage(buckerId)) {
             List<ImageAlbum> defaultAlbumList = imageAlbumModel.getDefaultAlbumList(context);
             ImageAlbum viewAllAlbum = imageAlbumModel.createViewAllAlbum(context);
             defaultAlbumList.add(0, viewAllAlbum);
             view.showDefaultAlbumList(defaultAlbumList);
         } else if (imageAlbumModel.isAllAlbum(buckerId)) {
-            List<ImagePicture> photoList = imageAlbumModel.getAllPhotoList(context);
+            List<ImagePicture> photoList = imageAlbumModel.getAllPhotoList(context, 0);
             view.showPhotoList(photoList);
         } else {
-            List<ImagePicture> photoList = imageAlbumModel.getPhotoList(context, buckerId);
+            List<ImagePicture> photoList = imageAlbumModel.getPhotoList(context, buckerId, 0);
             view.showPhotoList(photoList);
+        }
+        view.hideProgress();
+    }
+
+    @Background
+    @Override
+    public void onLoadMorePhotos(int bucketId, int imageId) {
+        List<ImagePicture> photoList;
+        if (imageAlbumModel.isAllAlbum(bucketId)) {
+            photoList = imageAlbumModel.getAllPhotoList(context, imageId);
+        } else {
+            photoList = imageAlbumModel.getPhotoList(context, bucketId, imageId);
+        }
+        if (photoList != null && !photoList.isEmpty()) {
+            view.addPhotoList(photoList);
         }
     }
 
@@ -48,8 +66,6 @@ public class ImageAlbumPresenterImpl implements ImageAlbumPresenter {
 
     @Override
     public void onSetupActionbar(int buckerId) {
-
-
         String title = context.getString(R.string.jandi_select_gallery);
         int selectedCount = imageAlbumModel.getSelectedImages();
 

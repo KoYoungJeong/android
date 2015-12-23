@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab;
 
+import android.content.ActivityNotFoundException;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -118,7 +119,6 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     @AfterViews
     void initView() {
-
         showDialogIfNotLastestVersion();
         ParseUpdateUtil.addChannelOnServer();
 
@@ -131,7 +131,12 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
-        setupActionBar(selectedTeamInfo.getName());
+        if (selectedTeamInfo != null) {
+            setupActionBar(selectedTeamInfo.getName());
+        } else {
+            finish();
+            return;
+        }
 
         selectedEntity = PushInterfaceActivity.selectedEntityId;
 
@@ -199,6 +204,31 @@ public class MainTabActivity extends BaseAppCompatActivity {
         }
 
         updateMoreBadge();
+
+        updateTopicBadge();
+        updateChatBadge();
+    }
+
+    private void updateChatBadge() {
+        EntityManager entityManager = EntityManager.getInstance();
+        final int[] total = {0};
+        Observable.from(entityManager.getFormattedUsers())
+                .subscribe(formattedEntity -> {
+                    total[0] += formattedEntity.alarmCount;
+                });
+        mMainTabPagerAdapter.updateTopicBadge(total[0]);
+
+    }
+
+    private void updateTopicBadge() {
+        EntityManager entityManager = EntityManager.getInstance();
+        final int[] total = {0};
+        Observable.merge(Observable.from(entityManager.getJoinedChannels()), Observable.from(entityManager.getGroups()))
+                .subscribe(formattedEntity -> {
+                    total[0] += formattedEntity.alarmCount;
+                });
+        mMainTabPagerAdapter.updateTopicBadge(total[0]);
+
     }
 
     private void showInvitePopup(DialogInterface.OnDismissListener onDismissListener) {
@@ -279,7 +309,12 @@ public class MainTabActivity extends BaseAppCompatActivity {
         EventBus.getDefault().register(this);
 
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
-        setupActionBar(selectedTeamInfo.getName());
+        if (selectedTeamInfo != null) {
+            setupActionBar(selectedTeamInfo.getName());
+        } else {
+            finish();
+            return;
+        }
 
         if (NetworkCheckUtil.isConnected()) {
             offlineLayer.dismissOfflineView();
@@ -422,9 +457,13 @@ public class MainTabActivity extends BaseAppCompatActivity {
         return messageCount[0];
     }
 
-    public void onEvent(TeamInfoChangeEvent event) {
+    public void onEventMainThread(TeamInfoChangeEvent event) {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
-        setupActionBar(selectedTeamInfo.getName());
+        if (selectedTeamInfo != null) {
+            setupActionBar(selectedTeamInfo.getName());
+        } else {
+            return;
+        }
 
     }
 
@@ -477,31 +516,32 @@ public class MainTabActivity extends BaseAppCompatActivity {
         if (!NetworkCheckUtil.isConnected())
             return;
 
-        if (getConfigInfo() != null &&
-                (getInstalledAppVersion() < getConfigInfo().latestVersions.android)) {
+        ResConfig configInfo = getConfigInfo();
+        if (configInfo != null && configInfo.latestVersions != null &&
+                (getCurrentAppVersionCode() < configInfo.latestVersions.android)) {
             final long oneDayMillis = 1000 * 60 * 60 * 24;
             long timeFromLastPopup = System.currentTimeMillis() - JandiPreference.getVersionPopupLastTime();
             if (timeFromLastPopup > oneDayMillis) {
-                showUpdateVersionDialog();
+                showUpdateVersionDialog(configInfo);
             }
         }
     }
 
     @UiThread
-    public void showUpdateVersionDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    public void showUpdateVersionDialog(ResConfig configInfo) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainTabActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(getString(R.string.jandi_update_title))
                 .setMessage(getString(R.string.jandi_update_message))
                 .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
-                    final String appPackageName = JandiApplication.getContext().getPackageName();
+                    String appPackageName = JandiApplication.getContext().getPackageName();
                     try {
                         startActivity(new Intent(Intent.ACTION_VIEW,
                                 Uri.parse("market://details?id=" + appPackageName)));
-                    } catch (android.content.ActivityNotFoundException anfe) {
-                        startActivity(new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
-                    } finally {
                         finish();   // 업데이트 안내를 확인하면 앱을 종료한다.
+                    } catch (ActivityNotFoundException anfe) {
+
+                        showChooseUpdateWebsiteDialog(appPackageName, configInfo.latestVersions);
+
                     }
                 })
                 .setNegativeButton(getString(R.string.jandi_cancel)
@@ -512,7 +552,57 @@ public class MainTabActivity extends BaseAppCompatActivity {
         builder.create().show();
     }
 
-    public ResConfig getConfigInfo() throws RetrofitError {
+    private void showChooseUpdateWebsiteDialog(String appPackageName, ResConfig.Versions latestVersions) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainTabActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_280);
+        String[] storeNames = getResources().getStringArray(R.array.jandi_markets);
+        builder.setTitle(R.string.jandi_choose_app_store)
+                .setItems(storeNames, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        StringBuilder urlBuilder = new StringBuilder();
+                        switch (which) {
+                            case 0:
+                                // 구글 스토어
+                                urlBuilder.append("http://play.google.com/store/apps/details?id=")
+                                        .append(appPackageName);
+                                break;
+                            case 1:
+                                // 바이두
+                                urlBuilder.append("http://shouji.baidu.com/soft/item?docid=8102225");
+                                break;
+                            case 2:
+                                // 91 apk
+                                urlBuilder.append("http://apk.91.com/Soft/Android/")
+                                        .append(appPackageName)
+                                        .append("-")
+                                        .append(latestVersions.android)
+                                        .append(".html");
+                                break;
+                            case 3:
+                                // Hi apk
+                                urlBuilder.append("http://apk.hiapk.com/appinfo/")
+                                        .append(appPackageName);
+                                break;
+                        }
+
+                        if (urlBuilder.length() > 0) {
+                            try {
+                                startActivity(new Intent(Intent.ACTION_VIEW,
+                                        Uri.parse(urlBuilder.toString())));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        finish();
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    public ResConfig getConfigInfo() {
         ResConfig resConfig = null;
         try {
             resConfig = RequestApiManager.getInstance().getConfigByMainRest();
@@ -522,7 +612,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
         return resConfig;
     }
 
-    public int getInstalledAppVersion() {
+    public int getCurrentAppVersionCode() {
         try {
             Context context = JandiApplication.getContext();
             PackageManager packageManager = context.getPackageManager();

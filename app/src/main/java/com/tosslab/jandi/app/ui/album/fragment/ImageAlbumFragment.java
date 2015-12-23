@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.ui.album.fragment.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
 import com.tosslab.jandi.app.utils.AnimationModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
@@ -61,18 +62,40 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
     @FragmentArg
     int mode;
 
+    private ProgressWheel progressWheel;
+    private ImagePictureAdapter imagePictureAdapter;
+
     @AfterInject
     void initObject() {
-        imageAlbumPresenter.setView(this);
         animationModel = new AnimationModel();
     }
 
     @AfterViews
     void initViews() {
+        progressWheel = new ProgressWheel(getActivity());
+
+        imageAlbumPresenter.setView(this);
         imageAlbumPresenter.onLoadImageAlbum(buckerId);
         imageAlbumPresenter.onSetupActionbar(buckerId);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showProgress() {
+        if (progressWheel != null && !progressWheel.isShowing()) {
+            progressWheel.show();
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void hideProgress() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showDefaultAlbumList(List<ImageAlbum> defaultAlbumList) {
 
@@ -93,9 +116,11 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
 
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showPhotoList(List<ImagePicture> photoList) {
         int displayWidth = getResources().getDisplayMetrics().widthPixels;
+        final int column = 3;
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),
                 GRID_ROW_COLUMN,
                 GridLayoutManager.VERTICAL,
@@ -110,14 +135,14 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
 
             @Override
             public RecyclerView.LayoutParams generateDefaultLayoutParams() {
-                return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, displayWidth / 3);
+                return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, displayWidth / column);
             }
         };
         recyclerView.setItemAnimator(null);
         recyclerView.setLayoutManager(layoutManager);
-        ImagePictureAdapter adapter = new ImagePictureAdapter(getActivity(), photoList);
-        adapter.setMode(mode);
-        adapter.setOnRecyclerItemCheckClickListener((view, adapter1, position) -> {
+        imagePictureAdapter = new ImagePictureAdapter(getActivity(), photoList, column);
+        imagePictureAdapter.setMode(mode);
+        imagePictureAdapter.setOnRecyclerItemCheckClickListener((view, adapter1, position) -> {
 
             ImagePicture item = ((ImagePictureAdapter) adapter1).getItem(position);
 
@@ -130,7 +155,7 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
 
         });
 
-        adapter.setOnRecyclerItemImageClickListener((view, adapter1, position) -> {
+        imagePictureAdapter.setOnRecyclerItemImageClickListener((view, adapter1, position) -> {
             ImagePicture item = ((ImagePictureAdapter) adapter1).getItem(position);
 
             if (mode == ImageAlbumActivity.EXTRA_MODE_UPLOAD) {
@@ -143,8 +168,19 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
             }
 
         });
-        recyclerView.setAdapter(adapter);
 
+        imagePictureAdapter.setOnLoadMoreCallback(imageId -> {
+            imageAlbumPresenter.onLoadMorePhotos(buckerId, imageId);
+        });
+
+        recyclerView.setAdapter(imagePictureAdapter);
+    }
+
+    @UiThread
+    @Override
+    public void addPhotoList(List<ImagePicture> photoList) {
+        imagePictureAdapter.addPhotoList(photoList);
+        imagePictureAdapter.notifyDataSetChanged();
     }
 
     private void callCropActivity(ImagePicture item) {

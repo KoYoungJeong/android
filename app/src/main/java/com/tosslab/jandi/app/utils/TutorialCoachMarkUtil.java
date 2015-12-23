@@ -6,13 +6,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.ImageView;
 
-import com.koushikdutta.ion.Ion;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.utils.transform.ion.IonCircleTransform;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 /**
  * Created by tee on 15. 7. 16..
@@ -25,7 +24,7 @@ public class TutorialCoachMarkUtil {
     private static final int COACH_MARK_MORE = 0x3;
     private static final int COACH_MARK_TOPIC = 0x4;
 
-    private static void showCoachMarkDialog(Context context, int coachMarkType) {
+    private static Dialog showCoachMarkDialog(Context context, int coachMarkType) {
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -50,34 +49,30 @@ public class TutorialCoachMarkUtil {
                 break;
             case COACH_MARK_TOPIC:
                 dialog.setContentView(R.layout.dialog_coach_mark_topic);
+                break;
         }
 
         View masterView = dialog.findViewById(R.id.coach_mark_master_view);
-        masterView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
+        masterView.setOnClickListener(view -> dialog.dismiss());
 
         EntityManager entityManager = EntityManager.getInstance();
 
         if (coachMarkType == COACH_MARK_MORE) {
-            ImageView profileImageView = (ImageView) masterView.findViewById(R.id.iv_profile_guide_image_icon);
+            SimpleDraweeView profileImageView =
+                    (SimpleDraweeView) masterView.findViewById(R.id.iv_profile_guide_image_icon);
             if (profileImageView != null) {
                 if (entityManager != null) {
                     FormattedEntity me = entityManager.getMe();
-                    Ion.with(profileImageView)
-                            .placeholder(R.drawable.profile_img)
-                            .error(R.drawable.profile_img)
-                            .transform(new IonCircleTransform())
-                            .load(me.getUserSmallProfileUrl());
+
+                    ImageUtil.loadCircleImageByFresco(
+                            profileImageView, me.getUserSmallProfileUrl(), R.drawable.profile_img);
                 }
             }
         }
 
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         dialog.show();
+        return dialog;
     }
 
     public static void showCoachMarkTopicListIfNotShown(Context context) {
@@ -104,9 +99,13 @@ public class TutorialCoachMarkUtil {
         }
     }
 
-    public static void showCoachMarkTopicIfNotShown(Context context) {
+    public static void showCoachMarkTopicIfNotShown(boolean user, Context context) {
         if (!JandiPreference.isAleadyShowCoachMarkTopic(context.getApplicationContext())) {
-            showCoachMarkDialog(context, COACH_MARK_TOPIC);
+            Dialog dialog = showCoachMarkDialog(context, COACH_MARK_TOPIC);
+            if (user) {
+                dialog.findViewById(R.id.tv_topic_sticker_guide).setVisibility(View.GONE);
+                dialog.findViewById(R.id.iv_topic_sticker_guide_icon).setVisibility(View.GONE);
+            }
         }
     }
 

@@ -14,12 +14,19 @@ public class JandiConstantsForFlavors {
     private static final String SERVICE_PROTOCOL = "https";
     private static final String SERVICE_DOMAIN = "i2.jandi.io";
     private static final String SERVICE_FILE_DOMAIN = "files.jandi.io";
+    private static final String SERVICE_BASE_DOMAIN = "www.jandi.io";
+    private static final String SERVICE_FILE_UPLOAD_DOMAIN = "upload.jandi.io";
     private static final String SERVICE_PORT = "443";
     public static final String SERVICE_ROOT_URL =
             SERVICE_PROTOCOL + "://" + SERVICE_DOMAIN + ":" + SERVICE_PORT + "/";
     public static final String SERVICE_INNER_API_URL = SERVICE_ROOT_URL + "inner-api";
     public static final String SERVICE_FILE_URL =
             SERVICE_PROTOCOL + "://" + SERVICE_FILE_DOMAIN + ":" + SERVICE_PORT + "/";
+    public static final String SERVICE_FILE_UPLOAD_URL =
+            SERVICE_PROTOCOL + "://" + SERVICE_FILE_UPLOAD_DOMAIN + ":" + SERVICE_PORT + "/";
+    public static final String SERVICE_BASE_URL =
+            SERVICE_PROTOCOL + "://" + SERVICE_BASE_DOMAIN + ":" + SERVICE_PORT + "/";
+
     private static final String SOCKET_PROTOCOL = "https";
     private static final String SOCKET_DOMAIN = "ws.jandi.io";
     private static final String SOCKET_PORT = "443";

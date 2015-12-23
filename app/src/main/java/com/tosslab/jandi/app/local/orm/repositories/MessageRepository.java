@@ -229,6 +229,20 @@ public class MessageRepository {
         }
     }
 
+    public void updateUnshared(int fileId, int roomId) {
+        lock.lock();
+        try {
+            Dao<ResMessages.OriginalMessage.IntegerWrapper, Integer> dao = helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class);
+            DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
+            deleteBuilder.where().eq("fileOf_id", fileId).and().eq("shareEntity", roomId);
+            deleteBuilder.delete();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+
     public void upsertFileMessage(ResMessages.FileMessage fileMessage) {
         lock.lock();
         try {

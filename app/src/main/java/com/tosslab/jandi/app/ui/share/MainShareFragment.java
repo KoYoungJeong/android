@@ -3,18 +3,24 @@ package com.tosslab.jandi.app.ui.share;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.tosslab.jandi.app.JandiApplication;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
@@ -30,7 +36,9 @@ import com.tosslab.jandi.app.ui.share.model.ScrollViewHelper;
 import com.tosslab.jandi.app.ui.share.presenter.SharePresenter;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
@@ -74,7 +82,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     int mode;
 
     @ViewById(R.id.iv_share_image)
-    ImageView ivShareImage;
+    SimpleDraweeView ivShareImage;
 
     @ViewById(R.id.tv_share_image_title)
     TextView tvTitle;
@@ -92,7 +100,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     LinearLayout vgFileIcon;
 
     @ViewById(R.id.iv_share_file_icon)
-    ImageView ivShareFileIcon;
+    SimpleDraweeView ivShareFileIcon;
 
     @ViewById(R.id.tv_team_name)
     TextView tvTeamName;
@@ -167,28 +175,46 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
 
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void bindImage(File filePath) {
-        tvTitle.setText(filePath.getName());
-        if (FileExtensionsUtil.getExtensions(filePath.getName()) ==
-                FileExtensionsUtil.Extensions.IMAGE) {
+    public void bindImage(File file) {
+        final String fileName = file.getName();
+        tvTitle.setText(fileName);
+        if (FileExtensionsUtil.getExtensions(fileName) == FileExtensionsUtil.Extensions.IMAGE) {
             vgFileIcon.setVisibility(View.GONE);
             ivShareImage.setVisibility(View.VISIBLE);
-            Glide.with(JandiApplication.getContext())
-                    .load(filePath)
-                    .fitCenter()
-                    .crossFade()
-                    .into(ivShareImage);
+
+            GenericDraweeHierarchy hierarchy = ivShareImage.getHierarchy();
+            hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+            ivShareImage.setHierarchy(hierarchy);
+
+            int width = ApplicationUtil.getDisplaySize(false);
+            int height = ApplicationUtil.getDisplaySize(true);
+
+            ImageRequest imageRequest =
+                    ImageRequestBuilder.newBuilderWithSource(Uri.fromFile(file))
+                            .setResizeOptions(new ResizeOptions(width, height))
+                            .setAutoRotateEnabled(true)
+                            .build();
+
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setImageRequest(imageRequest)
+                    .setAutoPlayAnimations(true)
+                    .setOldController(ivShareImage.getController())
+                    .build();
+
+            ivShareImage.setController(controller);
         } else {
             vgFileIcon.setVisibility(View.VISIBLE);
-            tvShareFileType.setText(FileExtensionsUtil.getFileTypeText(filePath.getName()));
+            tvShareFileType.setText(FileExtensionsUtil.getFileTypeText(fileName));
             ivShareImage.setVisibility(View.GONE);
-            Glide.with(JandiApplication.getContext())
-                    .load(FileExtensionsUtil.getFileTypeBigImageResource(filePath.getName()))
-                    .fitCenter()
-                    .crossFade()
-                    .into(ivShareFileIcon);
+
+            GenericDraweeHierarchy hierarchy = ivShareFileIcon.getHierarchy();
+            hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+            ivShareFileIcon.setHierarchy(hierarchy);
+
+            int resId = FileExtensionsUtil.getFileTypeBigImageResource(fileName);
+            ivShareFileIcon.setImageURI(UriFactory.getResourceUri(resId));
         }
     }
 
@@ -267,11 +293,11 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     @Override
     public void moveEntity(int teamId, int entityId, int entityType) {
 
-        MainTabActivity_.intent(getActivity())
+        MainTabActivity_.intent(MainShareFragment.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
 
-        MessageListV2Activity_.intent(getActivity())
+        MessageListV2Activity_.intent(MainShareFragment.this)
                 .teamId(teamId)
                 .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : -1)
                 .entityId(entityId)
@@ -375,6 +401,14 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
         }
 
         mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(), etComment, teamId, Arrays.asList(roomId), getMentionType(mode));
+    }
+
+    @UiThread
+    @Override
+    public void dismissDialog(ProgressDialog uploadProgress) {
+        if (uploadProgress != null && uploadProgress.isShowing()) {
+            uploadProgress.dismiss();
+        }
     }
 
 

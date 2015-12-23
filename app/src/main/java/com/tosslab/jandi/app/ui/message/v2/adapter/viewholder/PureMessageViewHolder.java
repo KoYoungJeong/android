@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
@@ -81,6 +82,9 @@ public class PureMessageViewHolder implements BodyViewHolder {
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
+        MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvMessage, builder, false);
+        markdownViewModel.execute();
+
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 tvMessage, builder, textMessage.mentions,
                 EntityManager.getInstance().getMe().getId());
@@ -90,7 +94,6 @@ public class PureMessageViewHolder implements BodyViewHolder {
 
 
         linkPreviewViewModel.bindData(link);
-
     }
 
     @Override

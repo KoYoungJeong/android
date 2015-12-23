@@ -83,7 +83,6 @@ public class ResMessages {
         public String status;
         @DatabaseField
         public int feedbackId;
-
         @DatabaseField(foreign = true)
         public EventInfo info; // How to convert other type
         @DatabaseField
@@ -247,6 +246,7 @@ public class ResMessages {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TextMessage extends OriginalMessage {
+
         @ForeignCollectionField(foreignFieldName = "textOf")
         public Collection<IntegerWrapper> shareEntities;
 
@@ -315,6 +315,15 @@ public class ResMessages {
 
         public FileMessage() {
             contentType = "file";
+        }
+
+        @Override
+        public String toString() {
+            return "FileMessage{" +
+                    "shareEntities=" + shareEntities +
+                    ", content=" + content +
+                    ", commentCount=" + commentCount +
+                    '}';
         }
     }
 
@@ -396,6 +405,14 @@ public class ResMessages {
         public String ext;
         @DatabaseField
         public int size;
+
+        @DatabaseField
+        public boolean externalShared;
+        @DatabaseField
+        public String externalUrl;
+        @DatabaseField
+        public String externalCode;
+
         @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public ThumbnailUrls extraInfo;
 
@@ -411,6 +428,9 @@ public class ResMessages {
                     ", fileUrl='" + fileUrl + '\'' +
                     ", ext='" + ext + '\'' +
                     ", size=" + size +
+                    ", externalShared=" + externalShared +
+                    ", externalUrl='" + externalUrl + '\'' +
+                    ", externalCode='" + externalCode + '\'' +
                     ", extraInfo=" + extraInfo +
                     '}';
         }
@@ -421,19 +441,36 @@ public class ResMessages {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ThumbnailUrls {
 
+        @DatabaseField(generatedId = true)
+        public long _id;
+
         @DatabaseField
         public String smallThumbnailUrl;
         @DatabaseField
         public String mediumThumbnailUrl;
-        @DatabaseField(id = true)
+        @DatabaseField
         public String largeThumbnailUrl;
+        @DatabaseField
+        public String thumbnailUrl;
+
+        @DatabaseField
+        public int width;
+        @DatabaseField
+        public int height;
+        @DatabaseField
+        public int orientation;
 
         @Override
         public String toString() {
             return "ThumbnailUrls{" +
-                    "smallThumbnailUrl='" + smallThumbnailUrl + '\'' +
+                    "_id=" + _id +
+                    ", smallThumbnailUrl='" + smallThumbnailUrl + '\'' +
                     ", mediumThumbnailUrl='" + mediumThumbnailUrl + '\'' +
                     ", largeThumbnailUrl='" + largeThumbnailUrl + '\'' +
+                    ", width=" + width +
+                    ", height=" + height +
+                    ", orientation=" + orientation +
+                    ", thumbnailUrl='" + thumbnailUrl + '\'' +
                     '}';
         }
     }

@@ -93,21 +93,20 @@
         <item name="android:textSize">14dp</item>
         <item name="android:background">@drawable/jandi_btn_dynamic_selector_v2</item>
     </style>
-    <!-- 튜토리얼 페이지 안의 이메일 주소 창 -->
-    <style name="JandiTutorial.EditText" parent="JandiTutorial">
-        <item name="android:layout_height">42dp</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:inputType">textEmailAddress</item>
-        <item name="android:hint">@string/jandi_profile_email</item>
-        <item name="android:background">@drawable/jandi_intro_edittext</item>
-        <item name="android:paddingBottom">11dp</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
-        <item name="android:paddingTop">11dp</item>
-        <item name="android:textColor">@color/jandi_sign_in_edit_text</item>
-        <item name="android:textColorHint">@color/jandi_sign_in_edit_text_hint_bg</item>
-        <item name="android:textSize">14dp</item>
-    </style>
+    <!-- 튜토리얼 페이지 안의 이메일 주소 창 --><style name="JandiTutorial.EditText" parent="JandiTutorial">
+    <item name="android:layout_height">42dp</item>
+    <item name="android:singleLine">true</item>
+    <item name="android:inputType">textEmailAddress</item>
+    <item name="android:hint">@string/jandi_profile_email</item>
+    <item name="android:background">@drawable/jandi_intro_edittext</item>
+    <item name="android:paddingBottom">11dp</item>
+    <item name="android:paddingLeft">8dp</item>
+    <item name="android:paddingRight">8dp</item>
+    <item name="android:paddingTop">11dp</item>
+    <item name="android:textColor">@color/jandi_sign_in_edit_text</item>
+    <item name="android:textColorHint">@color/jandi_sign_in_edit_text_hint_bg</item>
+    <item name="android:textSize">14dp</item>
+</style>
 
     <style name="JandiTutorial.EditText.Dialog" parent="JandiTutorial">
         <item name="android:layout_height">42dp</item>
@@ -116,15 +115,14 @@
         <item name="android:hint">@string/jandi_profile_email</item>
         <item name="android:background">@drawable/edtxt_messages_input</item>
     </style>
-    <!-- 튜토리얼 페이지의 아래에 위치한 버튼 스타일 -->
-    <style name="JandiToturial.Indicator" parent="JandiTutorial">
-        <item name="android:layout_width">6dp</item>
-        <item name="android:layout_height">6dp</item>
-        <item name="android:layout_margin">4dp</item>
-        <item name="android:layout_centerHorizontal">true</item>
-        <item name="android:layout_centerVertical">true</item>
-        <item name="android:background">@drawable/jandi_tutorial_bottom_button</item>
-    </style>
+    <!-- 튜토리얼 페이지의 아래에 위치한 버튼 스타일 --><style name="JandiToturial.Indicator" parent="JandiTutorial">
+    <item name="android:layout_width">6dp</item>
+    <item name="android:layout_height">6dp</item>
+    <item name="android:layout_margin">4dp</item>
+    <item name="android:layout_centerHorizontal">true</item>
+    <item name="android:layout_centerVertical">true</item>
+    <item name="android:background">@drawable/jandi_tutorial_bottom_button</item>
+</style>
 
     <style name="JandiTutorial.TitleText" parent="JandiTutorial">
         <item name="android:layout_width">match_parent</item>
@@ -195,20 +193,64 @@
 
     <style name="JandiChat"></style>
 
+    <style name="JandiChat.Wrapper">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:background">@android:color/white</item>
+    </style>
+
+    <style name="JandiChat.ActionButton">
+        <item name="android:layout_width">37.5dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:scaleType">center</item>
+    </style>
+
+    <style name="JandiChat.ActionButton.Sticker" parent="JandiChat.ActionButton">
+        <item name="android:src">@drawable/chat_icon_emoticon</item>
+    </style>
+
+    <style name="JandiChat.ActionButton.Mention" parent="JandiChat.ActionButton">
+        <item name="android:src">@drawable/chat_mention</item>
+    </style>
+
+    <style name="JandiChat.ActionButton.Upload" parent="JandiChat.ActionButton">
+        <item name="android:src">@drawable/chat_icon_upload</item>
+    </style>
+
+    <style name="JandiChat.InputWrapper">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/input_message</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
+
     <style name="JandiChat.EditText" parent="JandiChat">
-        <item name="android:minHeight">48dp</item>
-        <item name="android:layout_marginTop">7dp</item>
-        <item name="android:layout_marginBottom">7dp</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColorHint">@color/jandi_messages_input_hint</item>
         <item name="android:lines">4</item>
         <item name="android:minLines">1</item>
         <item name="android:scrollbars">none</item>
-        <item name="android:background">@drawable/edtxt_messages_input</item>
         <item name="android:inputType">textMultiLine|textCapSentences</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:completionThreshold">1</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:hint">@string/jandi_message_hint</item>
+        <item name="android:imeOptions">flagNoExtractUi</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:textCursorDrawable">@null</item>
     </style>
 
     <style name="JandiChat.Button" parent="JandiChat">
-        <item name="android:layout_width">87dp</item>
-        <item name="android:layout_height">42dp</item>
+        <item name="android:enabled">false</item>
+        <item name="android:layout_width">55dp</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:layout_height">match_parent</item>
         <item name="android:textColor">@color/text_color_white_all</item>
         <item name="android:textSize">14sp</item>
         <item name="android:background">@drawable/jandi_btn_dynamic_selector_v2</item>
@@ -269,6 +311,7 @@
     <style name="JandiTopic.Create.TextView.Input" parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">45dp</item>
         <item name="android:textColorHint">@color/jandi_text_hint</item>
         <item name="android:layout_marginRight">25dp</item>
         <item name="android:textSize">14dp</item>

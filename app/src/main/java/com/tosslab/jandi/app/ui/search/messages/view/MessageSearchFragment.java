@@ -360,7 +360,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                 .teamId(currentTeamId)
                 .entityId(entityId)
                 .entityType(entityType)
-                .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : entityType)
+                .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : -1)
                 .isFavorite(isStarred)
                 .isFromSearch(true)
                 .lastMarker(linkId)
