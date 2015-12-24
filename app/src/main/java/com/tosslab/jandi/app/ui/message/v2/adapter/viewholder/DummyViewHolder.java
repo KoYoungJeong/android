@@ -28,7 +28,7 @@ public class DummyViewHolder implements BodyViewHolder {
     private TextView tvName;
     private TextView tvMessage;
     private View contentView;
-    private ImageView ivSticker;
+    private SimpleDraweeView ivSticker;
     private ImageView ivStickerStatus;
 
     @Override
@@ -37,7 +37,7 @@ public class DummyViewHolder implements BodyViewHolder {
         ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
-        ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_sticker);
+        ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_sticker);
         ivStickerStatus = (ImageView) rootView.findViewById(R.id.iv_message_send_status);
     }
 

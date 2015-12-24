@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -18,11 +19,11 @@
         android:paddingTop="8dp"
         android:visibility="visible">
         <!-- 사용자 프로필 사진 -->
-        <com.facebook.drawee.view.SimpleDraweeView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_message_user_profile"
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
-            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
+            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"/>
         <!-- 기본 표시 레이어 -->
         <TextView
             android:id="@+id/tv_message_user_name"
@@ -37,7 +38,7 @@
             android:text="User name"
             android:textColor="@color/jandi_messages_name"
             android:textSize="@dimen/jandi_messages_user_name"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <!-- 실제 메시지 내용 -->
         <TextView
@@ -53,9 +54,9 @@
             android:text="Text"
             android:textColor="@color/jandi_messages_content"
             android:textSize="@dimen/jandi_messages_content"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
-        <ImageView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_message_sticker"
             android:layout_width="140dp"
             android:layout_height="140dp"
@@ -63,15 +64,15 @@
             android:layout_marginRight="14dp"
             android:layout_toRightOf="@+id/iv_message_user_profile"
             android:focusable="false"
-            android:visibility="visible" />
+            android:visibility="visible"/>
 
-        <ImageView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_message_send_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/iv_message_sticker"
-            android:src="@drawable/icon_message_sending"
-            android:layout_toRightOf="@+id/iv_message_sticker" />
+            android:layout_toRightOf="@+id/iv_message_sticker"
+            fresco:placeholderImage="@drawable/icon_message_sending"/>
 
 
     </RelativeLayout>

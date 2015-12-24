@@ -139,7 +139,7 @@ public class MessageListPresenter {
     ViewGroup vgStickerPreview;
 
     @ViewById(R.id.iv_messages_preview_sticker_image)
-    ImageView imgStickerPreview;
+    SimpleDraweeView ivSticker;
 
     @ViewById(R.id.vg_message_offline)
     View vgOffline;
@@ -795,7 +795,7 @@ public class MessageListPresenter {
     public void loadSticker(StickerInfo stickerInfo) {
         StickerManager.LoadOptions loadOption = new StickerManager.LoadOptions();
         loadOption.scaleType = ScalingUtils.ScaleType.CENTER_CROP;
-        StickerManager.getInstance().loadSticker(imgStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), loadOption);
+        StickerManager.getInstance().loadSticker(ivSticker, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), loadOption);
     }
 
     public void dismissStickerPreview() {

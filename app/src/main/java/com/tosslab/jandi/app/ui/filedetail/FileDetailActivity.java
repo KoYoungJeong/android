@@ -34,6 +34,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -158,7 +159,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @ViewById(R.id.vg_file_detail_preview_sticker)
     ViewGroup vgStickerPreview;
     @ViewById(R.id.iv_file_detail_preview_sticker_image)
-    ImageView ivStickerPreview;
+    SimpleDraweeView ivStickerPreview;
     @ViewById(R.id.lv_list_search_members)
     RecyclerView rvListSearchMembers;
     @ViewById(R.id.vg_option_space)
