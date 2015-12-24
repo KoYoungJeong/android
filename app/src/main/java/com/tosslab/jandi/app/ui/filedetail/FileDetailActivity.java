@@ -716,7 +716,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Click(R.id.btn_send_message)
     void sendComment() {
         hideSoftKeyboard();
-
+        stickerViewModel.dismissStickerSelector(true);
         ResultMentionsVO mentions = fileDetailPresenter.getMentionInfo();
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
