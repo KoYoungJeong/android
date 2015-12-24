@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Animatable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.CountDownTimer;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.View;
@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.common.references.CloseableReference;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -24,8 +23,6 @@ import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
 import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar;
 import com.tosslab.jandi.app.utils.UriFactory;
-import com.tosslab.jandi.app.utils.image.listener.BaseOnResourceReadyCallback;
-import com.tosslab.jandi.app.utils.image.listener.ClosableAttachStateChangeListener;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -51,6 +48,7 @@ public class ImageThumbLoader implements FileThumbLoader {
 
     private final int roomId;
     private Context context;
+    private CountDownTimer progressTimer;
 
     public ImageThumbLoader(ImageView ivFileTypeIcon, ViewGroup vgDetailPhoto, SimpleDraweeView ivFilePhoto,
                             ViewGroup vgTapToViewOriginal, int roomId) {
@@ -189,31 +187,52 @@ public class ImageThumbLoader implements FileThumbLoader {
     }
 
     private void loadImageWithCallback(Uri uri) {
-        ImageLoader.loadWithCallback(uri, new BaseOnResourceReadyCallback() {
+        final int millisInFuture = 6000;
+        progressTimer = new CountDownTimer(millisInFuture, 120) {
             @Override
-            public void onReady(Drawable drawable, CloseableReference reference) {
-                progressBar.setProgress(100);
-                tvPercentage.setText(100 + "%");
-                vgProgressBar.setVisibility(View.GONE);
+            public void onTick(long millisUntilFinished) {
+                if (progressBar == null) {
+                    progressTimer.cancel();
+                    return;
+                }
 
-                updateViewSize(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+                int gap = (int) (millisInFuture - millisUntilFinished);
 
-                ivFilePhoto.getHierarchy().setImage(drawable, 1f, false);
-
-                ivFilePhoto.addOnAttachStateChangeListener(
-                        new ClosableAttachStateChangeListener(reference));
-            }
-
-            @Override
-            public void onProgressUpdate(float progress) {
-                int percentage = (int) (progress * 100);
-                LogUtil.i(TAG, "onProgressUpdate = " + percentage);
+                int percentage = (int) ((gap / (float) millisInFuture) * 100);
                 percentage = Math.min(percentage, 99);
-
                 progressBar.setProgress(percentage);
                 tvPercentage.setText(percentage + "%");
             }
+
+            @Override
+            public void onFinish() {
+                if (progressBar == null || tvPercentage == null) {
+                    return;
+                }
+                progressBar.setProgress(99);
+                tvPercentage.setText(99 + "%");
+            }
+        };
+
+        ImageLoader.Builder builder = ImageLoader.newBuilder();
+        builder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+        builder.error(R.drawable.file_messageview_noimage, ScalingUtils.ScaleType.FIT_CENTER);
+        builder.controllerListener(new BaseControllerListener<ImageInfo>() {
+            @Override
+            public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
+                vgProgressBar.setVisibility(View.GONE);
+
+                progressTimer.cancel();
+
+                progressBar.setProgress(100);
+                tvPercentage.setText(100 + "%");
+
+                updateViewSize(imageInfo.getWidth(), imageInfo.getHeight());
+            }
         });
+
+        builder.load(uri).into(ivFilePhoto);
+        progressTimer.start();
     }
 
     private Pair<Integer, Integer> updateViewSize(int imageWidth, int imageHeight, int orientation) {

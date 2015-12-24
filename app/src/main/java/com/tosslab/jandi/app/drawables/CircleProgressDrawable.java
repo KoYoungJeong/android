@@ -15,6 +15,11 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
  * Created by tonyjs on 15. 12. 16..
  */
 public class CircleProgressDrawable extends Drawable {
+
+    public interface OnFinishListener {
+        void onFinish();
+    }
+
     public static final String TAG = CircleProgressDrawable.class.getSimpleName();
     public static final int DEFAULT_PROGRESS_WIDTH_DP = 48;
 
@@ -61,6 +66,8 @@ public class CircleProgressDrawable extends Drawable {
     private int topMargin;
 
     private int progress = 0;
+
+    private OnFinishListener onFinishListener;
 
     public CircleProgressDrawable(Context context) {
         bgPaint = new Paint();
@@ -129,7 +136,6 @@ public class CircleProgressDrawable extends Drawable {
         rectF.bottom = top + progressWidth;
 
         float percentage = progress / MAX_PROGRESS;
-
         final float angle = percentage * 360;
         canvas.drawArc(rectF, -90, angle, false, progressPaint);
 
@@ -290,7 +296,13 @@ public class CircleProgressDrawable extends Drawable {
     protected boolean onLevelChange(int level) {
         progress = level;
         invalidateSelf();
+        if (onFinishListener != null && level >= MAX_PROGRESS) {
+            onFinishListener.onFinish();
+        }
         return true;
     }
 
+    public void setOnFinishListener(OnFinishListener onFinishListener) {
+        this.onFinishListener = onFinishListener;
+    }
 }

@@ -169,7 +169,7 @@ public class ImageLoader {
         if (progressDrawable != null) {
             ScalingUtils.ScaleType scaleType = getScaleType(
                     builder.getPlaceHolderScaleType(), ScalingUtils.ScaleType.CENTER);
-            hierarchy.setPlaceholderImage(progressDrawable, scaleType);
+            hierarchy.setProgressBarImage(progressDrawable, scaleType);
         } else {
             hierarchy.setProgressBarImage(null);
         }
