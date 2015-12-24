@@ -32,7 +32,7 @@ public class FileDetailCommentStickerView implements CommentViewHolder {
     SimpleDraweeView ivCommentUserProfile;
     TextView tvCommentUserName;
     TextView tvCommentFileCreateDate;
-    ImageView ivCommentSticker;
+    SimpleDraweeView ivCommentSticker;
 
     View vDisableLineThrough;
     View vDisableCover;
@@ -44,7 +44,7 @@ public class FileDetailCommentStickerView implements CommentViewHolder {
                 (SimpleDraweeView) rootView.findViewById(R.id.iv_file_detail_comment_user_profile);
         tvCommentUserName = (TextView) rootView.findViewById(R.id.tv_file_detail_comment_user_name);
         tvCommentFileCreateDate = (TextView) rootView.findViewById(R.id.tv_file_detail_comment_create_date);
-        ivCommentSticker = (ImageView) rootView.findViewById(R.id.iv_file_detail_comment_sticker);
+        ivCommentSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_file_detail_comment_sticker);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
         selectedView = rootView.findViewById(R.id.v_file_detail_comment_anim);

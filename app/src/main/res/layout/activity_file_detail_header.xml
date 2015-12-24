@@ -12,7 +12,7 @@
         android:paddingLeft="@dimen/jandi_file_detail_padding_sides"
         android:paddingRight="@dimen/jandi_file_detail_padding_sides">
 
-        <com.facebook.drawee.view.SimpleDraweeView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/img_file_detail_user_profile"
             android:layout_width="@dimen/jandi_file_detail_uploder_profile_size"
             android:layout_height="@dimen/jandi_file_detail_uploder_profile_size"
@@ -75,7 +75,7 @@
         android:layout_marginLeft="@dimen/jandi_file_detail_padding_sides"
         android:layout_marginRight="@dimen/jandi_file_detail_padding_sides">
 
-        <com.facebook.drawee.view.SimpleDraweeView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/img_file_detail_photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>

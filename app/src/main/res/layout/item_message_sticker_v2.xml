@@ -18,7 +18,7 @@
         android:paddingTop="10dp"
         android:visibility="visible">
         <!-- 사용자 프로필 사진 -->
-        <com.facebook.drawee.view.SimpleDraweeView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_message_user_profile"
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
@@ -64,7 +64,7 @@
             android:visibility="visible" />
 
         <!-- 실제 메시지 내용 -->
-        <ImageView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_message_sticker"
             android:layout_width="140dp"
             android:layout_height="140dp"

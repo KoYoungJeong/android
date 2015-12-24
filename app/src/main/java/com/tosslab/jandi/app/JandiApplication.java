@@ -10,9 +10,9 @@ import android.text.TextUtils;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.cache.DefaultBitmapMemoryCacheParamsSupplier;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.facebook.imagepipeline.core.ImagePipelineFactory;
-import com.facebook.imagepipeline.decoder.ProgressiveJpegConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.utils.ApplicationActivateDetector;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
+import com.tosslab.jandi.app.utils.image.BitmapMemoryCacheSupplier;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -106,7 +107,11 @@ public class JandiApplication extends MultiDexApplication {
         registerScreenOffReceiver();
 
         // Fresco
-        Fresco.initialize(context);
+        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
+                .setBitmapMemoryCacheParamsSupplier(new BitmapMemoryCacheSupplier(this))
+                .build();
+
+        Fresco.initialize(context, config);
     }
 
     /**
