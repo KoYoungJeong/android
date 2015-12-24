@@ -93,7 +93,7 @@ public class StarMentionListModelTest {
     }
 
     @Test
-    public void testmakeStarMentionList() {
+    public void testMakeStarMentionList() {
         try {
             ResStarMentioned resStarMentioned = starMentionListModel.getMentionRawDatas(null, 10);
 
