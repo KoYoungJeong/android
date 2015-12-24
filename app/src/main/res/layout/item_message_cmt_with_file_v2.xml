@@ -17,7 +17,7 @@
         android:paddingRight="@dimen/jandi_messages_padding_right"
         android:paddingTop="10dp">
         <!-- 사용자 프로필 사진 -->
-        <com.facebook.drawee.view.SimpleDraweeView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_message_user_profile"
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
@@ -105,7 +105,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="8dp">
 
-                <com.facebook.drawee.view.SimpleDraweeView
+                <com.tosslab.jandi.app.views.FrescoImageView
                     android:id="@+id/iv_message_commented_photo"
                     android:layout_width="@dimen/jandi_messages_image_size"
                     android:layout_height="@dimen/jandi_messages_image_size"/>

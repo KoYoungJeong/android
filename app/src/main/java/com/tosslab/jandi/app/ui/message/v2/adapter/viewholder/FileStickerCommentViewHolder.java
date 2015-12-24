@@ -46,7 +46,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
     private TextView tvDate;
     private TextView tvFileOwner;
     private TextView tvFileName;
-    private ImageView ivSticker;
+    private SimpleDraweeView ivSticker;
     private SimpleDraweeView ivFileImage;
     private View vDisableCover;
     private View vDisableLineThrough;
@@ -65,7 +65,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
 
         tvFileOwner = (TextView) rootView.findViewById(R.id.tv_message_commented_owner);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_message_commented_file_name);
-        ivSticker = (ImageView) rootView.findViewById(R.id.iv_sticker_message_commented_content);
+        ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_sticker_message_commented_content);
 
         ivFileImage = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_commented_photo);
         vFileImageRound = rootView.findViewById(R.id.iv_message_commented_photo_round);

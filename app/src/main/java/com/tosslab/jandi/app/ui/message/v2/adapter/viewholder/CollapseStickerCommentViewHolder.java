@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -15,7 +16,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
  */
 public class CollapseStickerCommentViewHolder implements BodyViewHolder {
 
-    private ImageView ivSticker;
+    private SimpleDraweeView ivSticker;
     private TextView tvCreatedTime;
     private TextView tvUnreadCount;
     private View vLastRead;
@@ -24,7 +25,7 @@ public class CollapseStickerCommentViewHolder implements BodyViewHolder {
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
-        ivSticker = (ImageView) rootView.findViewById(R.id.iv_pure_sticker_comment_content);
+        ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_pure_sticker_comment_content);
         tvCreatedTime = (TextView) rootView.findViewById(R.id.tv_pure_sticker_comment_create_date);
         tvUnreadCount = (TextView) rootView.findViewById(R.id.tv_pure_sticker_comment_unread);
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);
