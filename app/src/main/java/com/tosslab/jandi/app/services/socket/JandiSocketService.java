@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.network.socket.events.EventListener;
 import com.tosslab.jandi.app.services.SignOutService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketServiceStopEvent;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
@@ -86,6 +88,17 @@ public class JandiSocketService extends Service {
         context.startService(intent);
     }
 
+    /**
+     * use to be careful!!!
+     *
+     * @param context
+     */
+    public static void startServiceForcily(Context context) {
+
+        Intent intent = new Intent(context, JandiSocketService.class);
+        context.startService(intent);
+    }
+
     private static boolean isServiceRunning(Context context) {
         ActivityManager activityManager =
                 (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -132,6 +145,7 @@ public class JandiSocketService extends Service {
         setStopForcibly(isStopForcibly);
         if (isStopForcibly) {
             stopSelf();
+            EventBus.getDefault().post(new SocketServiceStopEvent());
             return START_NOT_STICKY;
         }
 

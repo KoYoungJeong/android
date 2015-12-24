@@ -186,7 +186,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
     void moveMessageListActivity(int roomId, int targetEntityId) {
 
         MainTabActivity_.intent(PushInterfaceActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .fromPush(true)
                 .start();
 
@@ -196,6 +196,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
                 .entityId(targetEntityId)
                 .entityType(entityType)
                 .isFromPush(true)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .get();
 
         UnLockPassCodeManager.getInstance().unLockPassCodeFirstIfNeed(this, intent);
