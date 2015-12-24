@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.network.models.commonobject;
 
+import com.tosslab.jandi.app.network.models.ResMessages;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -144,9 +146,7 @@ public class StarMentionedMessageObject {
             public String ext;
             public String serverUrl;
             public String fileUrl;
-            public String smallThumbnailUrl;
-            public String mediumThumbnailUrl;
-            public String largeThumbnailUrl;
+            public ResMessages.ThumbnailUrls extraInfo;
 
             public Content() {
 
@@ -166,9 +166,7 @@ public class StarMentionedMessageObject {
                         ", ext='" + ext + '\'' +
                         ", serverUrl='" + serverUrl + '\'' +
                         ", fileUrl='" + fileUrl + '\'' +
-                        ", smallThumbnailUrl='" + smallThumbnailUrl + '\'' +
-                        ", mediumThumbnailUrl='" + mediumThumbnailUrl + '\'' +
-                        ", largeThumbnailUrl='" + largeThumbnailUrl + '\'' +
+                        ", extraInfo=" + extraInfo +
                         '}';
             }
         }

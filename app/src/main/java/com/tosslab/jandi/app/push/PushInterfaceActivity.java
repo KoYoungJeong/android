@@ -70,7 +70,11 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
 
     @AfterInject
     void initObject() {
-        checkNewVersion();
+        if (!jandiInterfaceModel.hasBackStackActivity()) {
+            checkNewVersion();
+        } else {
+            checkTeamAndMoveToNextActivity();
+        }
     }
 
     @Override
@@ -153,7 +157,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
         if (jandiInterfaceModel.setupSelectedTeam(teamId)) {
 
             int roomId = entityId;
-            int targetEntityId = jandiInterfaceModel.getEntityId(teamId, entityId,roomType);
+            int targetEntityId = jandiInterfaceModel.getEntityId(teamId, entityId, roomType);
 
             if (targetEntityId > 0) {
 

@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
@@ -15,13 +16,13 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 
 public class FileDetailCollapseStickerCommentView implements CommentViewHolder {
 
-    ImageView ivStickerContent;
+    SimpleDraweeView ivStickerContent;
     TextView tvCreatedTime;
     private View selectedView;
 
     @Override
     public void init(View rootView) {
-        ivStickerContent = (ImageView) rootView.findViewById(R.id.iv_file_detail_collapse_comment_content);
+        ivStickerContent = (SimpleDraweeView) rootView.findViewById(R.id.iv_file_detail_collapse_comment_content);
         tvCreatedTime = (TextView) rootView.findViewById(R.id.tv_file_detail_collapse_comment_create_date);
         selectedView = rootView.findViewById(R.id.v_file_detail_comment_anim);
     }

@@ -23,9 +23,6 @@ public class FileDatailDaoImpl extends BaseDaoImpl<FileDetail, Long> {
     @Override
     public int create(FileDetail data) throws SQLException {
 
-        DaoManager.createDao(getConnectionSource(), ResMessages.FileMessage.class)
-                .createOrUpdate(data.getFile());
-
         if (data.getComment() != null) {
             data.setCommentType(FileDetail.CommentType.TEXT.name());
 
@@ -79,9 +76,6 @@ public class FileDatailDaoImpl extends BaseDaoImpl<FileDetail, Long> {
 
     @Override
     public int update(FileDetail data) throws SQLException {
-
-        DaoManager.createDao(getConnectionSource(), ResMessages.FileMessage.class)
-                .createOrUpdate(data.getFile());
 
         if (data.getComment() != null) {
             data.setCommentType(FileDetail.CommentType.TEXT.name());

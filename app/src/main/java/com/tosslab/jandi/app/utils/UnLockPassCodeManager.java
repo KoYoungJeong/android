@@ -55,17 +55,13 @@ public class UnLockPassCodeManager {
     public void unLockPassCodeFirstIfNeed(Context context, Intent intent) {
         String passCode = JandiPreference.getPassCode(JandiApplication.getContext());
         if (TextUtils.isEmpty(passCode)) {
-            if (!(context instanceof Activity)) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            }
+            addFlagOfNewTask(context, intent);
             context.startActivity(intent);
             return;
         }
 
         if (hasUnLocked()) {
-            if (!(context instanceof Activity)) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            }
+            addFlagOfNewTask(context, intent);
             context.startActivity(intent);
             return;
         }
@@ -80,10 +76,14 @@ public class UnLockPassCodeManager {
             ((Activity) context).overridePendingTransition(0, 0);
         }
 
+        addFlagOfNewTask(context, intent);
+        context.startActivity(intent);
+    }
+
+    private void addFlagOfNewTask(Context context, Intent intent) {
         if (!(context instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
-        context.startActivity(intent);
     }
 
     public synchronized boolean hasUnLocked() {

@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.commonviewmodels.sticker;
 
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
@@ -14,7 +15,13 @@ import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 
 import com.facebook.common.references.CloseableReference;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.image.ImageInfo;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -41,15 +48,11 @@ public class StickerManager {
 
     private HashSet<Integer> localStickerGroupIds;
 
-    private Handler uiHandler;
-
     private StickerManager() {
         this.localStickerGroupIds = new HashSet<Integer>();
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_MOZZI);
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DAY);
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DAY_ZH_TW);
-
-        uiHandler = new Handler(Looper.getMainLooper());
     }
 
     public static StickerManager getInstance() {
@@ -60,12 +63,12 @@ public class StickerManager {
         return stickerManager;
     }
 
-    public void loadStickerDefaultOption(ImageView view, int groupId, String stickerId) {
+    public void loadStickerDefaultOption(SimpleDraweeView view, int groupId, String stickerId) {
 
         loadSticker(view, groupId, stickerId, DEFAULT_OPTIONS);
     }
 
-    public void loadStickerNoOption(ImageView view, int groupId, String stickerId) {
+    public void loadStickerNoOption(SimpleDraweeView view, int groupId, String stickerId) {
 
         LoadOptions loadOptions = new LoadOptions();
         loadOptions.isClickImage = false;
@@ -74,7 +77,7 @@ public class StickerManager {
         loadSticker(view, groupId, stickerId, loadOptions);
     }
 
-    public void loadSticker(ImageView view,
+    public void loadSticker(SimpleDraweeView view,
                             int groupId, String stickerId, LoadOptions options) {
 
         String stickerAssetPath = null;
@@ -87,51 +90,31 @@ public class StickerManager {
 
         if (!TextUtils.isEmpty(stickerAssetPath)) {
             Uri uri = Uri.parse(stickerAssetPath);
-            AlphaAnimation animation = new AlphaAnimation(0f, 1f);
-            animation.setDuration(300);
             loadSticker(uri, view, options);
         }
     }
 
-    private void loadSticker(Uri uri, final ImageView view, final LoadOptions options) {
-        ImageUtil.loadDrawable(uri, new BaseOnResourceReadyCallback() {
-            @Override
-            public void onReady(Drawable drawable, CloseableReference reference) {
-                setStickerResource(view, options, drawable, reference);
-            }
+    private void loadSticker(Uri uri, final SimpleDraweeView view, final LoadOptions options) {
+        GenericDraweeHierarchy hierarchy = view.getHierarchy();
+        hierarchy.setActualImageScaleType(options.scaleType);
 
-            @Override
-            public void onFail(Throwable cause) {
-                LogUtil.e("StickerManager", Log.getStackTraceString(cause));
-            }
-        });
-    }
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setOldController(view.getController())
+                .setUri(uri)
+                .setControllerListener(new BaseControllerListener<ImageInfo>() {
+                    @Override
+                    public void onFinalImageSet(String id,
+                                                ImageInfo imageInfo, Animatable animatable) {
+                        if (options.isFadeAnimation) {
+                            AlphaAnimation animation = new AlphaAnimation(0f, 1f);
+                            animation.setDuration(300);
+                            view.startAnimation(animation);
+                        }
+                    }
+                })
+                .build();
 
-    private void setStickerResource(final ImageView view,
-                                    final LoadOptions options,
-                                    final Drawable drawable,
-                                    final CloseableReference reference) {
-        uiHandler.post(() -> {
-            if (options.isClickImage) {
-                StateListDrawable stateListDrawable = new StateListDrawable();
-                drawable.setAlpha(153);
-                stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, drawable);
-                stateListDrawable.addState(StateSet.WILD_CARD,
-                        new BitmapDrawable(view.getResources(),
-                                ImageUtil.getBitmapFromDrawable(drawable)));
-                view.setImageDrawable(stateListDrawable);
-            } else {
-                view.setImageDrawable(drawable);
-            }
-
-            if (options.isFadeAnimation) {
-                AlphaAnimation animation1 = new AlphaAnimation(0f, 1f);
-                animation1.setDuration(300);
-                view.startAnimation(animation1);
-            }
-
-            view.addOnAttachStateChangeListener(new ClosableAttachStateChangeListener(reference));
-        });
+        view.setController(controller);
     }
 
     private boolean isLocalSticker(int groupId) {

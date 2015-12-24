@@ -242,7 +242,6 @@ public class ImageViewHolder implements BodyViewHolder {
 
                 hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
                 hierarchy.setRoundingParams(null);
-                ivFileImage.setHierarchy(hierarchy);
 
                 ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.image_no_preview));
                 return;
@@ -278,13 +277,11 @@ public class ImageViewHolder implements BodyViewHolder {
                         hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
                         break;
                 }
-                ivFileImage.setHierarchy(hierarchy);
 
                 width = imageSpec.getWidth();
                 height = imageSpec.getHeight();
             } else {
                 hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                ivFileImage.setHierarchy(hierarchy);
 
                 width = getPixelFromDp(MAX_WIDTH);
                 height = getPixelFromDp(MAX_HEIGHT);
@@ -297,11 +294,12 @@ public class ImageViewHolder implements BodyViewHolder {
 
             Uri uri = isFromLocalFilePath ? UriFactory.getFileUri(thumbPath) : Uri.parse(thumbPath);
 
-            int maximumBitmapSize = ImageUtil.getMaximumBitmapSize();
+            int maxWidth = getPixelFromDp(MAX_WIDTH);
+            int maxHeight = getPixelFromDp(MAX_HEIGHT);
             ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
                     .setResizeOptions(needToResize
                             ? new ResizeOptions(layoutParams.width, layoutParams.height)
-                            : new ResizeOptions(maximumBitmapSize, maximumBitmapSize))
+                            : new ResizeOptions(maxWidth, maxHeight))
                     .setAutoRotateEnabled(true)
                     .build();
 

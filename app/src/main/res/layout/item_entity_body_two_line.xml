@@ -4,7 +4,7 @@
     android:layout_height="@dimen/jandi_entity_item_title_margin_left"
     android:orientation="horizontal">
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <com.tosslab.jandi.app.views.FrescoImageView
         android:id="@+id/iv_entity_listitem_icon"
         android:layout_width="@dimen/jandi_entity_item_icon"
         android:layout_height="@dimen/jandi_entity_item_icon"
