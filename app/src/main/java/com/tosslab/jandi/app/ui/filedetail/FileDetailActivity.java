@@ -230,7 +230,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         lvFileDetailComments.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 hideSoftKeyboard();
-                stickerViewModel.dismissStickerSelector(false);
+                stickerViewModel.dismissStickerSelector(true);
             }
             return false;
         });
@@ -330,7 +330,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @ItemClick(R.id.lv_file_detail_comments)
     void onCommentClick(ResMessages.OriginalMessage item) {
         hideSoftKeyboard();
-        stickerViewModel.dismissStickerSelector(false);
+        stickerViewModel.dismissStickerSelector(true);
     }
 
     @Click(R.id.iv_file_detail_preview_sticker_close)
