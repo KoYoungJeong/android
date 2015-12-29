@@ -16,7 +16,7 @@
         android:paddingLeft="58dp"
         android:paddingTop="8dp">
 
-        <ImageView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_message_sticker"
             android:layout_width="140dp"
             android:layout_height="140dp"

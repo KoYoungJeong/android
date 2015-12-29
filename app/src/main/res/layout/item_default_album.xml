@@ -6,7 +6,7 @@
     android:background="@drawable/btn_rect_white"
     android:paddingBottom="1dp">
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <com.tosslab.jandi.app.views.FrescoImageView
         android:id="@+id/iv_item_default_album_sample"
         android:layout_width="83dp"
         android:layout_height="83dp"

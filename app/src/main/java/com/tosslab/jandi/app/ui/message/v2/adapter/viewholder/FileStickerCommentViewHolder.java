@@ -46,7 +46,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
     private TextView tvDate;
     private TextView tvFileOwner;
     private TextView tvFileName;
-    private ImageView ivSticker;
+    private SimpleDraweeView ivSticker;
     private SimpleDraweeView ivFileImage;
     private View vDisableCover;
     private View vDisableLineThrough;
@@ -65,7 +65,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
 
         tvFileOwner = (TextView) rootView.findViewById(R.id.tv_message_commented_owner);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_message_commented_file_name);
-        ivSticker = (ImageView) rootView.findViewById(R.id.iv_sticker_message_commented_content);
+        ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_sticker_message_commented_content);
 
         ivFileImage = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_commented_photo);
         vFileImageRound = rootView.findViewById(R.id.iv_message_commented_photo_round);
@@ -164,7 +164,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                         switch (sourceType) {
                             case Google:
                             case Dropbox:
-                                ivFileImage.setHierarchy(hierarchy);
                                 int mimeTypeIconImage =
                                         MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
                                 ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));
@@ -184,7 +183,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
 
                                 if (TextUtils.isEmpty(thumbnailUrl)) {
                                     hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
-                                    ivFileImage.setHierarchy(hierarchy);
 
                                     ivFileImage.setImageURI(
                                             UriFactory.getResourceUri(R.drawable.image_no_preview));
@@ -197,19 +195,16 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                                 Drawable failure = resources.getDrawable(R.drawable.file_icon_img);
                                 hierarchy.setFailureImage(failure, ScalingUtils.ScaleType.FIT_CENTER);
                                 hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                                ivFileImage.setHierarchy(hierarchy);
                                 loadImage(thumbnailUrl);
                                 break;
                         }
 
                     } else {
-                        ivFileImage.setHierarchy(hierarchy);
                         int mimeTypeIconImage =
                                 MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
                         ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));
                     }
                 } else {
-                    ivFileImage.setHierarchy(hierarchy);
                     int mimeTypeIconImage =
                             MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
                     ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));

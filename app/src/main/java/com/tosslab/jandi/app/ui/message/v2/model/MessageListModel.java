@@ -107,7 +107,7 @@ public class MessageListModel {
     }
 
     public boolean isEmpty(CharSequence text) {
-        return TextUtils.isEmpty(text);
+        return TextUtils.isEmpty(text.toString().trim());
     }
 
     public List<ResMessages.Link> getNewMessage(int linkId) throws RetrofitError {
