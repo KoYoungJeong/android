@@ -214,8 +214,8 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
 
-            tvAdditional.setVisibility(!TextUtils.isEmpty(item.getEmail()) ? View.VISIBLE : View.GONE);
-            tvAdditional.setText(item.getEmail());
+            tvAdditional.setVisibility(!TextUtils.isEmpty(item.getStatusMessage()) ? View.VISIBLE : View.GONE);
+            tvAdditional.setText(item.getStatusMessage());
 
             ivFavorite.setVisibility(item.isStarred() ? View.VISIBLE : View.GONE);
 

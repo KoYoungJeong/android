@@ -62,7 +62,7 @@ public class ChatChooseItem {
         return name;
     }
 
-    public String getEmail() {
+    public String getStatusMessage() {
         return email;
     }
 

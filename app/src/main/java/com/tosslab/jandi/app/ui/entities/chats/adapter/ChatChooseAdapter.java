@@ -158,12 +158,12 @@ public class ChatChooseAdapter extends BaseAdapter {
         chatCHooseViewHolder.tvOwnerBadge.setText(resources.getString(R.string.jandi_team_owner));
         chatCHooseViewHolder.tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
 
-        if (!TextUtils.isEmpty(item.getEmail())) {
+        if (!TextUtils.isEmpty(item.getStatusMessage())) {
             chatCHooseViewHolder.tvAdditional.setVisibility(View.VISIBLE);
         } else {
             chatCHooseViewHolder.tvAdditional.setVisibility(View.GONE);
         }
-        chatCHooseViewHolder.tvAdditional.setText(item.getEmail());
+        chatCHooseViewHolder.tvAdditional.setText(item.getStatusMessage());
 
         if (item.isStarred()) {
             chatCHooseViewHolder.ivFavorite.setVisibility(View.VISIBLE);

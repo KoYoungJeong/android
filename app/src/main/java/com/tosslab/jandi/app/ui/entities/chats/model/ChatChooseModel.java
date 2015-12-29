@@ -40,7 +40,7 @@ public class ChatChooseModel {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
 
                     chatChooseItem.entityId(formattedEntity.getId())
-                            .email(formattedEntity.getUserEmail())
+                            .email(formattedEntity.getUserStatusMessage())
                             .name(formattedEntity.getName())
                             .starred(formattedEntity.isStarred)
                             .enabled(true)
@@ -111,7 +111,7 @@ public class ChatChooseModel {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
 
                     chatChooseItem.entityId(formattedEntity.getId())
-                            .email(formattedEntity.getUserEmail())
+                            .email(formattedEntity.getUserStatusMessage())
                             .name(formattedEntity.getName())
                             .starred(formattedEntity.isStarred)
                             .enabled(TextUtils.equals(formattedEntity.getUser().status, "enabled"))
@@ -167,7 +167,7 @@ public class ChatChooseModel {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
 
                     chatChooseItem.entityId(formattedEntity.getId())
-                            .email(formattedEntity.getUserEmail())
+                            .email(formattedEntity.getUserStatusMessage())
                             .name(formattedEntity.getName())
                             .starred(formattedEntity.isStarred)
                             .enabled(false)
