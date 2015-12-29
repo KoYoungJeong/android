@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.search.main.model;
 
 import android.support.test.runner.AndroidJUnit4;
-import android.support.test.runner.AndroidJUnitRunner;
 import android.text.TextUtils;
 import android.util.Log;
 

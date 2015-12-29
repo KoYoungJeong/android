@@ -7,7 +7,6 @@ import android.speech.RecognizerIntent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
@@ -312,8 +311,6 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
             searchQueryAdapter.add(searchKeyword);
         }
         searchQueryAdapter.notifyDataSetChanged();
-
-        Log.d("Test", String.format("count %d", searchQueryAdapter.getCount()));
     }
 
     @Override
@@ -393,7 +390,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
     }
 
     @OnActivityResult(SPEECH_REQUEST_CODE)
-    void onVoidceSearchResult(int resultCode, Intent data) {
+    void onVoiceSearchResult(int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;
         }

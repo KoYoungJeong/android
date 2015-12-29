@@ -1,11 +1,8 @@
 package com.tosslab.jandi.app.ui.search.main.presenter;
 
-import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
-import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
@@ -15,12 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.concurrent.TimeUnit;
-
-import setup.BaseInitUtil;
-
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Created by tonyjs on 15. 11. 26..
@@ -36,7 +28,6 @@ public class SearchPresenterImplTest {
     @Before
     public void setup() throws Exception {
         activity = rule.getActivity();
-//        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
         presenter = SearchPresenterImpl_.getInstance_(JandiApplication.getContext());
         presenter.setView(activity);
@@ -56,27 +47,15 @@ public class SearchPresenterImplTest {
 
     @Test
     public void testOnSearchTextChange() throws Throwable {
+        String query = "가나다";
+        presenter.searchModel.upsertQuery(0, query);
+
         rule.runOnUiThread(() -> {
-            SearchPresenterImpl mock = spy(presenter);
-
-//            when(mock.publishNext(anyString())).thenReturn(mock.onSearchText(anyString()));
-
-            String query = "가나다";
-            presenter.searchModel.upsertQuery(0, query);
-
             // When
-            presenter.onSearchTextChange("가");
+            presenter.onSearchText("가");
 
-            long time = System.currentTimeMillis();
             // Then
-//            Awaitility.await().until(() -> {
-//                long gap = System.currentTimeMillis() - time;
-//                Log.d("Test", "gap - " + gap);
-//                return gap >= 3000;
-//            });
-
-            Log.i("Test", "assertion");
-//            assertTrue(activity.searchQueryAdapter.getCount() > 0);
+            assertTrue(activity.searchQueryAdapter.getCount() > 0);
         });
     }
 }

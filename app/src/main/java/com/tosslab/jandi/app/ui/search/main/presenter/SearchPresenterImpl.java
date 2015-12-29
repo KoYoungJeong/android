@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.search.main.presenter;
 
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.ui.search.main.model.SearchModel;
@@ -42,6 +43,7 @@ public class SearchPresenterImpl implements SearchPresenter {
         this.view = view;
     }
 
+    @VisibleForTesting
     void onSearchText(String text) {
         List<SearchKeyword> searchKeywords = searchModel.searchOldQuery(text);
         view.setOldQueries(searchKeywords);
