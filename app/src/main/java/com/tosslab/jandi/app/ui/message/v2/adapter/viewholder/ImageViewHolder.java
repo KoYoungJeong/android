@@ -292,6 +292,7 @@ public class ImageViewHolder implements BodyViewHolder {
 
             layoutParams.width = width;
             layoutParams.height = height;
+            ivFileImage.setLayoutParams(layoutParams);
 
             Uri uri = isFromLocalFilePath
                     ? UriFactory.getFileUri(localFilePath) : Uri.parse(remoteFilePth);
@@ -332,7 +333,7 @@ public class ImageViewHolder implements BodyViewHolder {
             width = Math.min(width, maxWidthPixel);
 
             int minSize = minimumSizePixel;
-            if (ratio <= (LONG_HORIZONTAL_RATIO)) {
+            if (ratio <= LONG_HORIZONTAL_RATIO) {
                 ImageSpec.Type type = ImageSpec.Type.LONG_HORIZONTAL;
                 height = minSize;
                 return new ImageSpec(width, height, orientation, type);
@@ -345,7 +346,7 @@ public class ImageViewHolder implements BodyViewHolder {
             height = Math.min(height, maxHeightPixelWhenVerticalImage);
 
             int minSize = minimumSizePixel;
-            if (ratio > (LONG_VERTICAL_RATIO)) {
+            if (ratio > LONG_VERTICAL_RATIO) {
                 ImageSpec.Type type = ImageSpec.Type.LONG_VERTICAL;
                 width = minSize;
                 return new ImageSpec(width, height, orientation, type);
