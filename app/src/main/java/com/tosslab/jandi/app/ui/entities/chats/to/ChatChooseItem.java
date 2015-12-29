@@ -11,6 +11,7 @@ public class ChatChooseItem {
     private boolean isStarred;
     private boolean isEnabled;
     private boolean isChooseItem = false;
+    private boolean isOwner = false;
 
     public ChatChooseItem name(String name) {
         this.name = name;
@@ -39,8 +40,18 @@ public class ChatChooseItem {
 
     }
 
+    public ChatChooseItem owner(boolean isOwner) {
+        this.isOwner = isOwner;
+        return this;
+
+    }
+
     public boolean isStarred() {
         return isStarred;
+    }
+
+    public boolean isOwner() {
+        return isOwner;
     }
 
     public int getEntityId() {

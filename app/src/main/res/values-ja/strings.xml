@@ -181,6 +181,7 @@
 	<string name="jandi_file_category_presentation">"プレゼンテーション"</string>
 	<string name="jandi_file_category_spreadsheet">"スプレッドシート"</string>
 	<string name="jandi_file_category_video">"動画"</string>
+	<string name="jandi_file_category_zip">"圧縮ファイル"</string>
 	<string name="jandi_file_delete_message">"ファイルを削除してよいですか？削除後もコメントは残ります"</string>
 	<string name="jandi_file_deleted_with_date">"%s に削除されました"</string>
 	<string name="jandi_file_downloaded_into">"ファイルが%sに保存されました。"</string>
@@ -425,6 +426,7 @@
 	<string name="jandi_team_info">"チーム"</string>
 	<string name="jandi_team_join_fail">"チーム参加の際にエラーが発生しました。もう一度お試しください"</string>
 	<string name="jandi_team_member">"チームメンバー"</string>
+	<string name="jandi_team_owner">"チームの管理者"</string>
 	<string name="jandi_team_select_accept">"接受"</string>
 	<string name="jandi_team_select_create_a_team">"チームを作成する"</string>
 	<string name="jandi_team_select_ignore">"無視"</string>
@@ -445,6 +447,7 @@
 	<string name="jandi_topic_no_member_1">"このトピックには他にメンバーがいません。"</string>
 	<string name="jandi_topic_no_member_2">"以下のボタンをタップしてメンバーを招待しましょう"</string>
 	<string name="jandi_topic_notification">"トピックからの通知"</string>
+	<string name="jandi_topic_owner">"トピックの管理者"</string>
 	<string name="jandi_topic_paricipants">"メンバー一覧"</string>
 	<string name="jandi_topic_private">"非公開"</string>
 	<string name="jandi_topic_public">"公開"</string>

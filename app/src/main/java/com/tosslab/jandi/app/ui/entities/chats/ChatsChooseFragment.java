@@ -54,7 +54,7 @@ import rx.subjects.PublishSubject;
 public class ChatsChooseFragment extends Fragment {
 
     @ViewById(R.id.list_chat_choose)
-    ListView chatListView;
+    ListView lvChatChoose;
 
     @ViewById(R.id.layout_member_empty)
     View emptyMemberView;
@@ -89,7 +89,7 @@ public class ChatsChooseFragment extends Fragment {
             }
         });
 
-        chatListView.setAdapter(chatChooseAdapter);
+        lvChatChoose.setAdapter(chatChooseAdapter);
 
         setUpMember();
 
@@ -168,7 +168,7 @@ public class ChatsChooseFragment extends Fragment {
             chatChooseAdapter.remove(chatChooseItem);
             chatChooseAdapter.notifyDataSetChanged();
 
-            chatListView.smoothScrollToPositionFromTop(position, chatListView.getChildAt(0).getHeight() / 2);
+            lvChatChoose.smoothScrollToPositionFromTop(position, lvChatChoose.getChildAt(0).getHeight() / 2);
 
         } else {
 

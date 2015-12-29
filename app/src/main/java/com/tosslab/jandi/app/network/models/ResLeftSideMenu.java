@@ -97,6 +97,10 @@ public class ResLeftSideMenu {
         public List<Integer> u_joinEntities;
         public List<Integer> u_starredMessages;
         public String status;
+
+        public boolean isTeamOwner() {
+            return "owner".equals(u_authority);
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

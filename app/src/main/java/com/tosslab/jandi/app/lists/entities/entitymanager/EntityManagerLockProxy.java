@@ -221,6 +221,16 @@ class EntityManagerLockProxy extends EntityManager {
     }
 
     @Override
+    public boolean isTopicOwner(int entityId, int userId) {
+        lock.lock();
+        try {
+            return super.isTopicOwner(entityId, userId);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
     public boolean isMe(int userId) {
         lock.lock();
         try {

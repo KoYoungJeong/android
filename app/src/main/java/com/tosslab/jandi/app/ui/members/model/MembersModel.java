@@ -26,11 +26,12 @@ import rx.Observable;
 public class MembersModel {
 
     public List<ChatChooseItem> getTopicMembers(int entityId) {
-        Collection<Integer> members = EntityManager.getInstance()
-                .getEntityById(entityId).getMembers();
-        List<FormattedEntity> formattedUsers = EntityManager.getInstance().getFormattedUsers();
-        List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
+        final EntityManager entityManager = EntityManager.getInstance();
 
+        Collection<Integer> members = entityManager.getEntityById(entityId).getMembers();
+        List<FormattedEntity> formattedUsers = entityManager.getFormattedUsers();
+
+        List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
         Observable.from(members)
                 .map(memberEntityId -> Observable.from(formattedUsers)
                         .filter(entity -> entity.getId() == memberEntityId)
@@ -42,6 +43,7 @@ public class MembersModel {
                                     .photoUrl(entity.getUserLargeProfileUrl())
                                     .starred(entity.isStarred)
                                     .enabled(TextUtils.equals(entity.getUser().status, "enabled"))
+                                    .owner(entityManager.isTopicOwner(entityId, entity.getId()))
                                     .name(entity.getName());
 
                         })
@@ -66,6 +68,7 @@ public class MembersModel {
                             .photoUrl(entity.getUserLargeProfileUrl())
                             .starred(entity.isStarred)
                             .enabled(TextUtils.equals(entity.getUser().status, "enabled"))
+                            .owner(entity.getUser().isTeamOwner())
                             .name(entity.getName());
                 })
                 .filter(ChatChooseItem::isEnabled)
@@ -81,8 +84,10 @@ public class MembersModel {
 
         FormattedEntity entity = entityManager.getEntityById(entityId);
 
-        int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity
-                .isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
+        int entityType = entity.isPublicTopic()
+                ? JandiConstants.TYPE_PUBLIC_TOPIC
+                : entity.isPrivateGroup()
+                ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
 
         List<FormattedEntity> unjoinedMembersOfEntity = entityManager.getUnjoinedMembersOfEntity(entityId, entityType);
 
@@ -96,6 +101,7 @@ public class MembersModel {
                             .photoUrl(unjoinedEntity.getUserLargeProfileUrl())
                             .starred(unjoinedEntity.isStarred)
                             .enabled(TextUtils.equals(unjoinedEntity.getUser().status, "enabled"))
+                            .owner(unjoinedEntity.getUser().isTeamOwner())
                             .name(unjoinedEntity.getName());
                 })
                 .filter(ChatChooseItem::isEnabled)
@@ -110,7 +116,7 @@ public class MembersModel {
     }
 
     public boolean isTeamOwner() {
-        return TextUtils.equals(EntityManager.getInstance().getMe().getUser().u_authority, "owner");
+        return EntityManager.getInstance().getMe().getUser().isTeamOwner();
     }
 
     public boolean isTopicOwner(int entityId) {

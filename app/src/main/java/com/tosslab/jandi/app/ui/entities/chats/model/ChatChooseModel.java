@@ -44,6 +44,7 @@ public class ChatChooseModel {
                             .name(formattedEntity.getName())
                             .starred(formattedEntity.isStarred)
                             .enabled(true)
+                            .owner(formattedEntity.getUser().isTeamOwner())
                             .photoUrl(formattedEntity.getUserLargeProfileUrl());
 
                     return chatChooseItem;

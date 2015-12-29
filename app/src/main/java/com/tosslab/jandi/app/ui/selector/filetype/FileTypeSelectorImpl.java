@@ -41,7 +41,6 @@ public class FileTypeSelectorImpl implements FileTypeSelector {
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_file_type_selector);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context));
 
         FileTypeRecyclerAdapter adapter = new FileTypeRecyclerAdapter(context);
 

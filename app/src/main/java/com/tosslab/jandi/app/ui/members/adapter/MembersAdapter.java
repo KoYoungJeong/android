@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.members.adapter;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -28,17 +29,22 @@ import de.greenrobot.event.EventBus;
  * Created by Steve SeongUg Jung on 15. 1. 14..
  */
 public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    public static final int OWNER_TYPE_TEAM = 0;
+    public static final int OWNER_TYPE_TOPIC = 1;
+
     private Context context;
 
     private List<ChatChooseItem> memberChooseItems;
 
     private boolean isCheckMode = false;
     private boolean kickMode;
+    private int ownerType = OWNER_TYPE_TEAM;
 
     private OnKickClickListener onKickClickListener;
 
-    public MembersAdapter(Context context) {
+    public MembersAdapter(Context context, int ownerType) {
         this.context = context;
+        this.ownerType = ownerType;
         memberChooseItems = new ArrayList<>();
     }
 
@@ -69,7 +75,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ((MemberChoiceViewHolder) holder).bindView(item);
         } else {
             int myId = EntityManager.getInstance().getMe().getId();
-            ((MemberViewHolder) holder).bindView(item, kickMode, myId, v -> {
+            ((MemberViewHolder) holder).bindView(item, ownerType, kickMode, myId, v -> {
                 if (onKickClickListener != null) {
                     onKickClickListener.onKickClick(MembersAdapter.this, holder, position);
                 }
@@ -132,6 +138,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private View vDisableLineThrough;
         private View vDisableCover;
         private CheckBox cbChoose;
+        private TextView tvOwnerBadge;
 
         public MemberChoiceViewHolder(View itemView) {
             super(itemView);
@@ -141,10 +148,17 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             vDisableLineThrough = itemView.findViewById(R.id.iv_entity_listitem_line_through);
             vDisableCover = itemView.findViewById(R.id.v_entity_listitem_warning);
             cbChoose = (CheckBox) itemView.findViewById(R.id.cb_user);
+            tvOwnerBadge = (TextView) itemView.findViewById(R.id.tv_owner_badge);
         }
 
         public void bindView(final ChatChooseItem item) {
             tvName.setText(item.getName());
+
+            Resources resources = tvOwnerBadge.getResources();
+            tvOwnerBadge.setText(resources.getString(R.string.jandi_team_owner));
+            tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
+
+            tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
 
             ivFavorite.setVisibility(item.isStarred() ? View.VISIBLE : View.GONE);
 
@@ -175,6 +189,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private View vDisableLineThrough;
         private View vDisableCover;
         private View ivKick;
+        private TextView tvOwnerBadge;
 
         public MemberViewHolder(View itemView) {
             super(itemView);
@@ -185,10 +200,19 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             vDisableLineThrough = itemView.findViewById(R.id.iv_entity_listitem_line_through);
             vDisableCover = itemView.findViewById(R.id.v_entity_listitem_warning);
             ivKick = itemView.findViewById(R.id.iv_entity_listitem_user_kick);
+            tvOwnerBadge = (TextView) itemView.findViewById(R.id.tv_owner_badge);
         }
 
-        public void bindView(ChatChooseItem item, boolean kickMode, int myId, View.OnClickListener onKickClickListener) {
+        public void bindView(ChatChooseItem item, int ownerType, boolean kickMode, int myId,
+                             View.OnClickListener onKickClickListener) {
             tvName.setText(item.getName());
+
+            Resources resources = tvOwnerBadge.getResources();
+            tvOwnerBadge.setText(ownerType == MembersAdapter.OWNER_TYPE_TEAM
+                    ? resources.getString(R.string.jandi_team_owner)
+                    : resources.getString(R.string.jandi_topic_owner));
+
+            tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
 
             tvAdditional.setVisibility(!TextUtils.isEmpty(item.getEmail()) ? View.VISIBLE : View.GONE);
             tvAdditional.setText(item.getEmail());

@@ -423,13 +423,17 @@ public class EntityManager {
     }
 
     public boolean isMyTopic(int entityId) {
-        FormattedEntity searchedTopic = searchPublicTopicById(entityId);
+        return isTopicOwner(entityId, mMe.id);
+    }
+
+    public boolean isTopicOwner(int topicId, int userId) {
+        FormattedEntity searchedTopic = searchPublicTopicById(topicId);
         if (searchedTopic != null) {
-            return searchedTopic.isMine(mMe.id);
+            return searchedTopic.isMine(userId);
         }
-        searchedTopic = searchPrivateTopicById(entityId);
+        searchedTopic = searchPrivateTopicById(topicId);
         if (searchedTopic != null) {
-            return searchedTopic.isMine(mMe.id);
+            return searchedTopic.isMine(userId);
         }
         return false;
     }
