@@ -64,6 +64,14 @@ public class ImageViewHolder implements BodyViewHolder {
     private View vLastRead;
     private View contentView;
 
+    private int smallSizePixel;
+    private int maxWidthPixelWhenVerticalImage;
+    private int maxHeightPixelWhenVerticalImage;
+    private int minimumSizePixel;
+    private int maxWidthPixel;
+    private int maxHeightPixel;
+    private int cornerRadiusPixel;
+
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
@@ -79,8 +87,23 @@ public class ImageViewHolder implements BodyViewHolder {
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
 
         tvUnread = (TextView) rootView.findViewById(R.id.tv_entity_listitem_unread);
-        context = rootView.getContext();
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);
+
+        context = rootView.getContext();
+
+        initVieSizes();
+    }
+
+    // 계속 계산하지 않도록
+    private void initVieSizes() {
+        smallSizePixel = getPixelFromDp(SMALL_SIZE);
+        minimumSizePixel = getPixelFromDp(MIN_SIZE);
+        maxWidthPixelWhenVerticalImage = getPixelFromDp(MAX_WIDTH_WHEN_VERTICAL_IMAGE);
+        maxHeightPixelWhenVerticalImage = getPixelFromDp(MAX_HEIGHT_WHEN_VERTICAL_IMAGE);
+        maxWidthPixel = getPixelFromDp(MAX_WIDTH);
+        maxHeightPixel = getPixelFromDp(MAX_HEIGHT);
+
+        cornerRadiusPixel = getPixelFromDp(2);
     }
 
     @Override
@@ -225,8 +248,8 @@ public class ImageViewHolder implements BodyViewHolder {
             // Local File Path 도 없고 Thumbnail Path 도 없는 경우
             if (!isFromLocalFilePath && TextUtils.isEmpty(remoteFilePth)) {
                 LogUtil.i(TAG, "Thumbnail's are empty.");
-                layoutParams.width = getPixelFromDp(SMALL_SIZE);
-                layoutParams.height = getPixelFromDp(SMALL_SIZE);
+                layoutParams.width = smallSizePixel;
+                layoutParams.height = smallSizePixel;
 
                 ivFileImage.setLayoutParams(layoutParams);
                 ivFileImage.requestLayout();
@@ -255,7 +278,7 @@ public class ImageViewHolder implements BodyViewHolder {
                     default:
                         imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
                         RoundingParams roundingParams =
-                                RoundingParams.fromCornersRadius(getPixelFromDp(2));
+                                RoundingParams.fromCornersRadius(cornerRadiusPixel);
                         imageRequestBuilder.roundingParams(roundingParams);
                         break;
                 }
@@ -263,14 +286,12 @@ public class ImageViewHolder implements BodyViewHolder {
                 height = imageSpec.getHeight();
             } else {
                 imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                width = getPixelFromDp(MAX_WIDTH);
-                height = getPixelFromDp(MAX_HEIGHT);
+                width = maxWidthPixel;
+                height = maxHeightPixel;
             }
 
             layoutParams.width = width;
             layoutParams.height = height;
-            ivFileImage.setLayoutParams(layoutParams);
-            ivFileImage.requestLayout();
 
             Uri uri = isFromLocalFilePath
                     ? UriFactory.getFileUri(localFilePath) : Uri.parse(remoteFilePth);
@@ -278,6 +299,7 @@ public class ImageViewHolder implements BodyViewHolder {
             if (needToResize) {
                 imageRequestBuilder.resize(width, height);
             }
+
             imageRequestBuilder.load(uri)
                     .into(ivFileImage);
         }
@@ -296,20 +318,20 @@ public class ImageViewHolder implements BodyViewHolder {
 
         if (isSmallSize(width, height)) {
             ImageSpec.Type type = ImageSpec.Type.SMALL;
-            int size = getPixelFromDp(SMALL_SIZE);
+            int size = smallSizePixel;
             return new ImageSpec(size, size, orientation, type);
         }
 
         if (width == height) {
             ImageSpec.Type type = ImageSpec.Type.SQUARE;
-            int size = Math.min(width, getPixelFromDp(MAX_WIDTH_WHEN_VERTICAL_IMAGE));
+            int size = Math.min(width, maxWidthPixelWhenVerticalImage);
             return new ImageSpec(size, size, orientation, type);
         }
 
         if (width > height) {
-            width = Math.min(width, getPixelFromDp(MAX_WIDTH));
+            width = Math.min(width, maxWidthPixel);
 
-            int minSize = getPixelFromDp(MIN_SIZE);
+            int minSize = minimumSizePixel;
             if (ratio <= (LONG_HORIZONTAL_RATIO)) {
                 ImageSpec.Type type = ImageSpec.Type.LONG_HORIZONTAL;
                 height = minSize;
@@ -320,9 +342,9 @@ public class ImageViewHolder implements BodyViewHolder {
             height = (int) (width * ratio);
             return new ImageSpec(width, height, orientation, type);
         } else {
-            height = Math.min(height, getPixelFromDp(MAX_HEIGHT_WHEN_VERTICAL_IMAGE));
+            height = Math.min(height, maxHeightPixelWhenVerticalImage);
 
-            int minSize = getPixelFromDp(MIN_SIZE);
+            int minSize = minimumSizePixel;
             if (ratio > (LONG_VERTICAL_RATIO)) {
                 ImageSpec.Type type = ImageSpec.Type.LONG_VERTICAL;
                 width = minSize;
@@ -330,14 +352,13 @@ public class ImageViewHolder implements BodyViewHolder {
             }
 
             ImageSpec.Type type = ImageSpec.Type.VERTICAL;
-            width = Math.min((int) (height / ratio), getPixelFromDp(MAX_WIDTH_WHEN_VERTICAL_IMAGE));
+            width = Math.min((int) (height / ratio), maxWidthPixelWhenVerticalImage);
             return new ImageSpec(width, height, orientation, type);
         }
     }
 
     private boolean isSmallSize(int width, int height) {
-        return width <= getPixelFromDp(SMALL_SIZE)
-                && height <= getPixelFromDp(SMALL_SIZE);
+        return width <= smallSizePixel && height <= smallSizePixel;
     }
 
     private int getPixelFromDp(int dp) {
