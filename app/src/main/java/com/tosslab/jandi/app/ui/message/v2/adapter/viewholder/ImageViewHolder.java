@@ -91,11 +91,11 @@ public class ImageViewHolder implements BodyViewHolder {
 
         context = rootView.getContext();
 
-        initVieSizes();
+        initViewSizes();
     }
 
     // 계속 계산하지 않도록
-    private void initVieSizes() {
+    private void initViewSizes() {
         smallSizePixel = getPixelFromDp(SMALL_SIZE);
         minimumSizePixel = getPixelFromDp(MIN_SIZE);
         maxWidthPixelWhenVerticalImage = getPixelFromDp(MAX_WIDTH_WHEN_VERTICAL_IMAGE);
