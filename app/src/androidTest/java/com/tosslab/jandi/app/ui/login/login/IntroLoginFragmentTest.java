@@ -48,7 +48,7 @@ public class IntroLoginFragmentTest {
         fragmentManager.beginTransaction()
                 .add(android.R.id.content, fragment)
                 .commit();
-
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
     }
 
 
