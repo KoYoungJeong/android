@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.account.presenter;
 
-import android.content.Context;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
@@ -65,7 +64,6 @@ public class AccountHomePresenterImplTest {
     public void testInitViews_Wifi_Off() throws Exception {
 
         // Given
-        Context tempContext = JandiApplication.getContext();
         BaseInitUtil.disconnectWifi();
         // When
         accountHomePresenter.initViews();
