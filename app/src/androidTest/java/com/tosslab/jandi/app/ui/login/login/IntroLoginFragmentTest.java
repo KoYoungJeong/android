@@ -92,7 +92,6 @@ public class IntroLoginFragmentTest {
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
         pressBack();
-
     }
 
     @Test

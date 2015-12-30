@@ -60,7 +60,6 @@ public class AccountHomeActivityTest {
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
         pressBack();
-
     }
 
     @Test
@@ -71,7 +70,6 @@ public class AccountHomeActivityTest {
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
         pressBack();
-
     }
 
     @Test
@@ -121,7 +119,6 @@ public class AccountHomeActivityTest {
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
         pressBack();
-
     }
 
     @Test
@@ -177,7 +174,6 @@ public class AccountHomeActivityTest {
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
         pressBack();
-
     }
 
     @Test
@@ -191,7 +187,6 @@ public class AccountHomeActivityTest {
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
         pressBack();
-
     }
 
     @Test

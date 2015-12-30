@@ -428,7 +428,7 @@ public class ResMessages {
         @DatabaseField
         public String ext;
         @DatabaseField
-        public int size;
+        public long size;
 
         @DatabaseField
         public boolean externalShared;
