@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -157,6 +158,7 @@ public class CarouselViewerActivityTest {
                 .check(matches(isDisplayed()));
     }
 
+    @Ignore
     @Test
     public void testMoveToFileDatail() throws Throwable {
         Intents.init();
