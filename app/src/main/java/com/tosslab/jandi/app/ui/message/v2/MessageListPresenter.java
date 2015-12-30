@@ -10,12 +10,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -50,6 +50,7 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -148,7 +149,6 @@ public class MessageListPresenter {
     private View.OnTouchListener listTouchListener;
 
     private MessageAdapter messageAdapter;
-    private boolean isFromSearch;
 
     @AfterInject
     void initObject() {
@@ -716,7 +716,7 @@ public class MessageListPresenter {
                                 activity.getResources().getDisplayMetrics());
             }
             ((LinearLayoutManager) lvMessages.getLayoutManager())
-                    .scrollToPositionWithOffset(Math.min(messageListAdapter.getCount() - 1, position + 1), measuredHeight);
+                    .scrollToPositionWithOffset(Math.min(messageAdapter.getItemCount() - 1, position + 1), measuredHeight);
         } else if (position < 0) {
             lvMessages.getLayoutManager().scrollToPosition(messageAdapter.getItemCount() - 1);
         }
@@ -879,7 +879,6 @@ public class MessageListPresenter {
     }
 
     public void initAdapter(boolean isFromSearch) {
-        this.isFromSearch = isFromSearch;
 
         if (isFromSearch) {
             messageAdapter = new MessageListAdapter(activity);
@@ -896,5 +895,3 @@ public class MessageListPresenter {
         }
     }
 }
-
-
