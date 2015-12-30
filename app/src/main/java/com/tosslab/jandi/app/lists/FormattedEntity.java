@@ -172,6 +172,15 @@ public class FormattedEntity {
                 : null;
     }
 
+    public boolean isEnabled() {
+        if (entity instanceof ResLeftSideMenu.User) {
+
+            return TextUtils.equals(((ResLeftSideMenu.User) entity).status, "enabled");
+        } else {
+            return false;
+        }
+    }
+
     public Collection<Integer> getMembers() {
         if (this.type == TYPE_REAL_CHANNEL) {
             return Observable.from(getChannel().ch_members)

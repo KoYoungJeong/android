@@ -22,6 +22,14 @@ public class IntegrationBotUtil {
 
     public static void setIntegrationSubUI(ResMessages.TextContent content, View vConnectLine, LinearLayout vgConnectInfo) {
         if (content.connectInfo != null && !content.connectInfo.isEmpty()) {
+
+            if (vConnectLine.getVisibility() != View.VISIBLE) {
+                vConnectLine.setVisibility(View.VISIBLE);
+            }
+            if (vgConnectInfo.getVisibility() != View.VISIBLE) {
+                vgConnectInfo.setVisibility(View.VISIBLE);
+            }
+
             updateSubInfoSideLine(content.connectColor, vConnectLine);
             updateSubInfo(content.connectInfo, vgConnectInfo);
         } else {
@@ -48,7 +56,6 @@ public class IntegrationBotUtil {
         int viewChildIdx;
         ResMessages.ConnectInfo info;
         Iterator<ResMessages.ConnectInfo> iterator = connectInfo.iterator();
-
 
         SpannableStringBuilder title = new SpannableStringBuilder();
         SpannableStringBuilder description = new SpannableStringBuilder();

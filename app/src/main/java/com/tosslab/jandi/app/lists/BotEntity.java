@@ -22,6 +22,7 @@ public class BotEntity extends FormattedEntity {
         return bot.botType;
     }
 
+    @Override
     public boolean isEnabled() {
         return TextUtils.equals(bot.status, "enabled");
     }
