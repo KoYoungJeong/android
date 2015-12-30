@@ -92,7 +92,7 @@ public class MembersListPresenterImplTest {
 
             BaseInitUtil.restoreContext();
             Mockito.verify(mockView).showKickFailToast();
-
+            BaseInitUtil.restoreContext();
         }
     }
 

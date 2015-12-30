@@ -18,7 +18,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import setup.BaseInitUtil;
-import setup.MockUtil;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -67,14 +66,14 @@ public class AccountHomePresenterImplTest {
 
         // Given
         Context tempContext = JandiApplication.getContext();
-        MockUtil.networkOff();
+        BaseInitUtil.disconnectWifi();
         // When
         accountHomePresenter.initViews();
 
         // Then
         Mockito.verify(viewMock).showCheckNetworkDialog();
 
-        JandiApplication.setContext(tempContext);
+        BaseInitUtil.restoreContext();
 
     }
 

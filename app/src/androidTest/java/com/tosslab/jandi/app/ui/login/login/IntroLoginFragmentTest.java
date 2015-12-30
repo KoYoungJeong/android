@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import setup.BaseInitUtil;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
@@ -41,7 +42,6 @@ public class IntroLoginFragmentTest {
 
     @Before
     public void setUp() throws Exception {
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
         android.app.FragmentManager fragmentManager = rule.getActivity().getFragmentManager();
         fragment = IntroLoginFragment_.builder().build();
@@ -49,7 +49,6 @@ public class IntroLoginFragmentTest {
                 .add(android.R.id.content, fragment)
                 .commit();
 
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
     }
 
 
@@ -92,6 +91,7 @@ public class IntroLoginFragmentTest {
         onView(withHint(R.string.jandi_user_id))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
 
     }
 

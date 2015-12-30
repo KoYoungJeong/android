@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.profile.modify.view;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.graphics.Color;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -21,6 +20,7 @@ import org.junit.runner.RunWith;
 import setup.BaseInitUtil;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
@@ -41,8 +41,6 @@ public class ModifyProfileActivityTest {
     public void setUp() throws Exception {
         BaseInitUtil.initData();
         rule.launchActivity(null);
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
-
         activity = rule.getActivity();
     }
 
@@ -52,6 +50,7 @@ public class ModifyProfileActivityTest {
         onView(withText(R.string.jandi_profile_status_message))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
     }
 
     @Test
@@ -60,6 +59,7 @@ public class ModifyProfileActivityTest {
         onView(withText(R.string.jandi_profile_phone_number))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
     }
 
     @Test
@@ -68,6 +68,7 @@ public class ModifyProfileActivityTest {
         onView(withText(R.string.jandi_title_name))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
     }
 
     @Test
@@ -76,6 +77,7 @@ public class ModifyProfileActivityTest {
         onView(withText(R.string.jandi_profile_division))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
     }
 
     @Test
@@ -84,6 +86,7 @@ public class ModifyProfileActivityTest {
         onView(withText(R.string.jandi_profile_position))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
     }
 
     @Test
@@ -92,6 +95,7 @@ public class ModifyProfileActivityTest {
         onView(withText(R.string.jandi_choose_email))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
     }
 
 
@@ -159,6 +163,7 @@ public class ModifyProfileActivityTest {
         onView(withText(R.string.jandi_confirm))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
     }
 
     @Test
@@ -171,6 +176,7 @@ public class ModifyProfileActivityTest {
         onView(withText(R.string.jandi_file_uploading))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
     }
 
     @Test
@@ -203,6 +209,7 @@ public class ModifyProfileActivityTest {
         onView(withText(email2))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
     }
 
     @Test
@@ -228,5 +235,6 @@ public class ModifyProfileActivityTest {
         onView(withText(R.string.jandi_confirm))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
     }
 }

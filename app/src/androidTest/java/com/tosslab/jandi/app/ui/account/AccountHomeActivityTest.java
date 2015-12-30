@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.account;
 
-import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -18,12 +17,11 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
-import setup.BaseInitUtil;
-
 import rx.Observable;
 import setup.BaseInitUtil;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
@@ -45,8 +43,6 @@ public class AccountHomeActivityTest {
         BaseInitUtil.initData();
         rule.launchActivity(null);
 
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
-
         activity = rule.getActivity();
     }
 
@@ -63,6 +59,8 @@ public class AccountHomeActivityTest {
         onView(withText(R.string.jandi_account_home_help))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
+
     }
 
     @Test
@@ -72,6 +70,7 @@ public class AccountHomeActivityTest {
         onView(withText(activity.tvAccountName.getText().toString()))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
 
     }
 
@@ -121,6 +120,7 @@ public class AccountHomeActivityTest {
         onView(withText(name))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
 
     }
 
@@ -176,6 +176,8 @@ public class AccountHomeActivityTest {
         onView(withText(R.string.jandi_confirm))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
+
     }
 
     @Test
@@ -188,6 +190,7 @@ public class AccountHomeActivityTest {
         onView(withText(msg))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
 
     }
 
@@ -203,6 +206,7 @@ public class AccountHomeActivityTest {
         onView(withText(R.string.err_network))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
     }
 
     private List<Team> getTeams() {

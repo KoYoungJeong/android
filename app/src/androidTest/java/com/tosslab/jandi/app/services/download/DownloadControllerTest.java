@@ -16,9 +16,10 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.util.concurrent.Callable;
 
-import static org.junit.Assert.*;
-
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by tonyjs on 15. 11. 19..
@@ -65,6 +66,7 @@ public class DownloadControllerTest {
 
         // Then
         assertEquals(false, isConnected);
+        wifiManager.setWifiEnabled(true);
     }
 
     @Test
