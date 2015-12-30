@@ -46,7 +46,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
     private TextView tvDate;
     private TextView tvFileOwner;
     private TextView tvFileName;
-    private ImageView ivSticker;
+    private SimpleDraweeView ivSticker;
     private SimpleDraweeView ivFileImage;
     private View vDisableCover;
     private View vDisableLineThrough;
@@ -65,7 +65,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
 
         tvFileOwner = (TextView) rootView.findViewById(R.id.tv_message_commented_owner);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_message_commented_file_name);
-        ivSticker = (ImageView) rootView.findViewById(R.id.iv_sticker_message_commented_content);
+        ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_sticker_message_commented_content);
 
         ivFileImage = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_commented_photo);
         vFileImageRound = rootView.findViewById(R.id.iv_message_commented_photo_round);
@@ -122,6 +122,18 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
 
         tvDate.setText(DateTransformator.getTimeStringForSimple(link.time));
 
+        if (link.message instanceof ResMessages.CommentStickerMessage) {
+            ResMessages.CommentStickerMessage commentSticker =
+                    (ResMessages.CommentStickerMessage) link.message;
+            ResMessages.StickerContent content = commentSticker.content;
+
+            StickerManager.getInstance()
+                    .loadStickerNoOption(ivSticker, content.groupId, content.stickerId);
+        }
+
+        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
+        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
+
         if (link.feedback instanceof ResMessages.FileMessage) {
             ResMessages.FileMessage feedbackFileMessage = link.feedback;
             if (TextUtils.equals(link.feedback.status, "archived")) {
@@ -147,14 +159,11 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                 if (TextUtils.equals(fileType, "image")) {
 
                     if (ImageUtil.hasImageUrl(content)) {
-                        String thumbnailUrl = ImageUtil.getThumbnailUrlOrOriginal(
-                                content, ImageUtil.Thumbnails.SMALL);
                         MimeTypeUtil.SourceType sourceType =
                                 SourceTypeUtil.getSourceType(content.serverUrl);
                         switch (sourceType) {
                             case Google:
                             case Dropbox:
-                                ivFileImage.setHierarchy(hierarchy);
                                 int mimeTypeIconImage =
                                         MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
                                 ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));
@@ -169,25 +178,33 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                             default:
                                 vFileImageRound.setVisibility(View.VISIBLE);
 
+                                String thumbnailUrl = ImageUtil.getThumbnailUrl(
+                                        content.extraInfo, ImageUtil.Thumbnails.SMALL);
+
+                                if (TextUtils.isEmpty(thumbnailUrl)) {
+                                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
+
+                                    ivFileImage.setImageURI(
+                                            UriFactory.getResourceUri(R.drawable.image_no_preview));
+                                    return;
+                                }
+
                                 Resources resources = context.getResources();
                                 Drawable placeHolder = resources.getDrawable(R.drawable.comment_image_preview_download);
                                 hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_XY);
                                 Drawable failure = resources.getDrawable(R.drawable.file_icon_img);
                                 hierarchy.setFailureImage(failure, ScalingUtils.ScaleType.FIT_CENTER);
                                 hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                                ivFileImage.setHierarchy(hierarchy);
                                 loadImage(thumbnailUrl);
                                 break;
                         }
 
                     } else {
-                        ivFileImage.setHierarchy(hierarchy);
                         int mimeTypeIconImage =
                                 MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
                         ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));
                     }
                 } else {
-                    ivFileImage.setHierarchy(hierarchy);
                     int mimeTypeIconImage =
                             MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
                     ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));
@@ -195,18 +212,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
             }
 
         }
-
-        if (link.message instanceof ResMessages.CommentStickerMessage) {
-            ResMessages.CommentStickerMessage commentSticker =
-                    (ResMessages.CommentStickerMessage) link.message;
-            ResMessages.StickerContent content = commentSticker.content;
-
-            StickerManager.getInstance()
-                    .loadStickerNoOption(ivSticker, content.groupId, content.stickerId);
-        }
-
-        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
-        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
     }
 
     private void loadImage(String thumbnailUrl) {

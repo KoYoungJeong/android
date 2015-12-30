@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -28,7 +29,7 @@ public class DummyViewHolder implements BodyViewHolder {
     private TextView tvName;
     private TextView tvMessage;
     private View contentView;
-    private ImageView ivSticker;
+    private SimpleDraweeView ivSticker;
     private ImageView ivStickerStatus;
 
     @Override
@@ -37,7 +38,7 @@ public class DummyViewHolder implements BodyViewHolder {
         ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
-        ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_sticker);
+        ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_sticker);
         ivStickerStatus = (ImageView) rootView.findViewById(R.id.iv_message_send_status);
     }
 
@@ -65,6 +66,9 @@ public class DummyViewHolder implements BodyViewHolder {
             tvMessage.setVisibility(View.VISIBLE);
 
             setTextSendingStatus(dummyMessageLink, builder);
+
+            MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvMessage, builder, false);
+            markdownViewModel.execute();
 
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                     tvMessage, builder, ((DummyMessageLink) link).getMentions(),

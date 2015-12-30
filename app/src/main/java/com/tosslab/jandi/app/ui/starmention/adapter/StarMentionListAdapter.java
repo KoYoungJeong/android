@@ -79,7 +79,7 @@ public class StarMentionListAdapter extends RecyclerView.Adapter<CommonStarMenti
     public void addStarMentionList(List<StarMentionVO> newStarMentionList) {
 
         if (this.starMentionList == null) {
-            this.starMentionList = new ArrayList<StarMentionVO>();
+            this.starMentionList = new ArrayList<>();
         }
 
         this.starMentionList.addAll(newStarMentionList);

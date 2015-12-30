@@ -111,13 +111,12 @@
         android:background="@color/jandi_black_89"
         android:visibility="gone">
 
-        <ImageView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_messages_preview_sticker_image"
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_centerInParent="true"
-            android:layout_marginTop="4dp"
-            android:scaleType="centerCrop" />
+            android:layout_marginTop="4dp" />
 
         <ImageView
             android:id="@+id/iv_messages_preview_sticker_close"
@@ -141,7 +140,7 @@
         android:paddingTop="5dp"
         android:visibility="gone">
 
-        <com.facebook.drawee.view.SimpleDraweeView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_message_preview_user_profile"
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
@@ -176,17 +175,6 @@
             android:textColor="@color/white"
             android:textSize="@dimen/jandi_messages_content" />
     </RelativeLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/lv_list_search_members"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/v_messages_divider"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@+id/vg_messages_disable_alert"
-        android:background="@color/white"
-        android:scrollbars="vertical"
-        android:visibility="invisible" />
 
     <!-- Message Input Layout -->
     <View

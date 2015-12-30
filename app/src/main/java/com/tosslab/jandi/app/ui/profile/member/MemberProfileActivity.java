@@ -328,7 +328,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .setOldController(ivProfileImageLarge.getController())
                 .build();
 
-        ivProfileImageLarge.setHierarchy(hierarchy);
         ivProfileImageLarge.setController(controller);
     }
 

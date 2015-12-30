@@ -18,9 +18,9 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.file.FileUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
@@ -150,9 +150,11 @@ public class FileViewHolder implements BodyViewHolder {
                 shareEntities = file != null ? file.shareEntities : shareEntities;
             }
 
-            for (ResMessages.OriginalMessage.IntegerWrapper e : shareEntities) {
-                if (e.getShareEntity() == roomId) {
-                    isSharedFile = true;
+            if (shareEntities != null) {
+                for (ResMessages.OriginalMessage.IntegerWrapper e : shareEntities) {
+                    if (e.getShareEntity() == roomId) {
+                        isSharedFile = true;
+                    }
                 }
             }
 

@@ -34,6 +34,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -158,7 +159,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @ViewById(R.id.vg_file_detail_preview_sticker)
     ViewGroup vgStickerPreview;
     @ViewById(R.id.iv_file_detail_preview_sticker_image)
-    ImageView ivStickerPreview;
+    SimpleDraweeView ivStickerPreview;
     @ViewById(R.id.lv_list_search_members)
     RecyclerView rvListSearchMembers;
     @ViewById(R.id.vg_option_space)
@@ -230,7 +231,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         lvFileDetailComments.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 hideSoftKeyboard();
-                stickerViewModel.dismissStickerSelector(false);
+                stickerViewModel.dismissStickerSelector(true);
             }
             return false;
         });
@@ -330,7 +331,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @ItemClick(R.id.lv_file_detail_comments)
     void onCommentClick(ResMessages.OriginalMessage item) {
         hideSoftKeyboard();
-        stickerViewModel.dismissStickerSelector(false);
+        stickerViewModel.dismissStickerSelector(true);
     }
 
     @Click(R.id.iv_file_detail_preview_sticker_close)
@@ -449,6 +450,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     protected void onPause() {
         isForeground = false;
         fileDetailPresenter.removeClipboardListenerforMention();
+        stickerViewModel.dismissStickerSelector(true);
         ReadyCommentRepository.getRepository().upsertReadyComment(new ReadyComment(fileId, etComment.getText().toString()));
         super.onPause();
     }
@@ -714,10 +716,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
      */
     @Click(R.id.btn_send_message)
     void sendComment() {
-        CharSequence text = etComment.getText();
-        String comment = TextUtils.isEmpty(text) ? "" : text.toString().trim();
         hideSoftKeyboard();
-
+        stickerViewModel.dismissStickerSelector(true);
         ResultMentionsVO mentions = fileDetailPresenter.getMentionInfo();
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
@@ -727,12 +727,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
             fileDetailPresenter.sendCommentWithSticker(
                     fileId, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(),
-                    mentions.getMessage(), mentions.getMentions());
+                    mentions.getMessage().trim(), mentions.getMentions());
             stickerInfo = NULL_STICKER;
 
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Send);
         } else {
-            fileDetailPresenter.sendComment(fileId, mentions.getMessage(), mentions.getMentions());
+            fileDetailPresenter.sendComment(fileId, mentions.getMessage().trim(), mentions.getMentions());
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Send);
         }
 
@@ -1069,7 +1069,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread(propagation = Propagation.REUSE)
     @Override
     public void setSendButtonSelected() {
-        boolean visible = vgStickerPreview.getVisibility() == View.VISIBLE || etComment.length() > 0;
+        boolean visible = vgStickerPreview.getVisibility() == View.VISIBLE || etComment.getText().toString().trim().length() > 0;
         btnSend.setEnabled(visible);
     }
 

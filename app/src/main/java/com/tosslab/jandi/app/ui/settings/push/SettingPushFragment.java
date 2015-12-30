@@ -3,10 +3,10 @@ package com.tosslab.jandi.app.ui.settings.push;
 import android.app.Activity;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 import com.parse.ParseInstallation;
@@ -21,6 +21,8 @@ import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
+
+import java.util.Arrays;
 
 /**
  * Created by tee on 15. 11. 5..
@@ -43,17 +45,9 @@ public class SettingPushFragment extends PreferenceFragment {
         boolean isPush = ((CheckBoxPreference) getPreferenceManager().findPreference("setting_push_auto_alarm")).isChecked();
         setPushSubState(isPush);
 
-        ListPreference settingPushPreview = ((ListPreference) getPreferenceManager().findPreference
-                ("setting_push_preview"));
-        String value = settingPushPreview.getValue();
-
+        Preference settingPushPreview = getPreferenceManager().findPreference("setting_push_preview");
+        String value = getPreferenceManager().getSharedPreferences().getString("setting_push_preview", "0");
         settingPushPreview.setSummary(SettingsModel.getPushPreviewSummary(value));
-
-        settingPushPreview.setOnPreferenceChangeListener((preference, newValue) -> {
-            String value1 = newValue.toString();
-            preference.setSummary(SettingsModel.getPushPreviewSummary(value1));
-            return true;
-        });
     }
 
     @Override
@@ -82,8 +76,31 @@ public class SettingPushFragment extends PreferenceFragment {
         } else if (preference.getKey().equals("setting_push_alarm_led")) {
             CheckBoxPreference pref = (CheckBoxPreference) preference;
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, pref.isChecked() ? AnalyticsValue.Action.PhoneLedOn : AnalyticsValue.Action.PhoneLedOff);
+        } else if (TextUtils.equals(preference.getKey(), "setting_push_preview")) {
+            setUpPushPreview(preference);
         }
         return false;
+    }
+
+    private void setUpPushPreview(Preference preference) {
+        String value = getPreferenceManager().getSharedPreferences().getString("setting_push_preview", "0");
+        String[] values = getResources().getStringArray(R.array.jandi_pref_push_preview_values);
+        int preselect = Math.max(0, Arrays.asList(values).indexOf(value));
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_280)
+                .setTitle(R.string.jandi_preview_message_contents)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setSingleChoiceItems(R.array.jandi_pref_push_preview, preselect, (dialog, which) -> {
+                    if (which >= 0 && values != null) {
+                        String selectedValue = values[which];
+                        getPreferenceManager().getSharedPreferences().edit()
+                                .putString("setting_push_preview", selectedValue)
+                                .commit();
+                        preference.setSummary(SettingsModel.getPushPreviewSummary(selectedValue));
+                    }
+                    dialog.dismiss();
+                });
+        builder.create().show();
     }
 
     private void setPushSubState(boolean isEnabled) {

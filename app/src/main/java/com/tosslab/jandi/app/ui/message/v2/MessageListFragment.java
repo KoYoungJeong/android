@@ -75,10 +75,12 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
+import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
@@ -86,9 +88,11 @@ import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
+import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketServiceStopEvent;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
@@ -218,8 +222,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     BackpressEditText etMessage;
     @ViewById(R.id.vg_option_space)
     ViewGroup vgOptionSpace;
-    @ViewById(R.id.lv_list_search_members)
-    RecyclerView rvListSearchMembers;
     @ViewById(R.id.vg_easteregg_snow)
     FrameLayout vgEasterEggSnow;
     @Bean
@@ -694,9 +696,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
 
         int savedLastLinkId = messageListModel.getLastReadLinkId(roomId, messageListModel.getMyId());
-        int realLastLinkId = Math.max(savedLastLinkId, lastMarker);
         if (!isFromSearch) {
-            messageState.setFirstItemId(realLastLinkId);
+            messageState.setFirstItemId(savedLastLinkId);
 
             ResMessages.Link lastMessage = MessageRepository.getRepository().getLastMessage(roomId);
 
@@ -715,11 +716,15 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             }
         }
 
-        messageListPresenter.setMarkerInfo(teamId, roomId);
-        messageListModel.updateMarkerInfo(teamId, roomId);
-        messageListModel.setRoomId(roomId);
+        if (roomId > 0) {
+            messageListPresenter.setMarkerInfo(teamId, roomId);
+            messageListModel.updateMarkerInfo(teamId, roomId);
+            messageListModel.setRoomId(roomId);
+            messageListPresenter.setLastReadLinkId(messageListModel.getLastReadLinkId(teamId, roomId));
+        } else {
+            messageListPresenter.setLastReadLinkId(lastMarker);
+        }
 
-        messageListPresenter.setLastReadLinkId(realLastLinkId);
 
         sendMessagePublisherEvent(new CheckAnnouncementQueue());
         sendMessagePublisherEvent(new OldMessageQueue(messageState));
@@ -933,17 +938,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable(EXTRA_NEW_PHOTO_FILE, photoFileByCamera);
+    public void onDestroy() {
+        messageSubscription.unsubscribe();
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        messageSubscription.unsubscribe();
-        EventBus.getDefault().unregister(this);
-
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(EXTRA_NEW_PHOTO_FILE, photoFileByCamera);
     }
 
     @Override
@@ -991,6 +996,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         } else {
             messageListPresenter.showOfflineLayer();
         }
+
     }
 
     @Override
@@ -1081,6 +1087,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             mentions = new ArrayList<>();
         }
 
+        message = message.trim();
         ReqSendMessageV3 reqSendMessage = null;
 
         if (!TextUtils.isEmpty(message)) {
@@ -1184,6 +1191,14 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             // networking...
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, reqSendMessage)));
 
+        }
+    }
+
+    public void onEvent(SocketServiceStopEvent event) {
+        ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
+        if (!TextUtils.isEmpty(accessToken.getRefreshToken())) {
+            // 토큰이 없으면 개망..-o-
+            JandiSocketService.startServiceForcily(getActivity());
         }
     }
 

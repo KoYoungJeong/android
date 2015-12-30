@@ -8,10 +8,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
@@ -23,14 +25,14 @@ public class DummyPureViewHolder implements BodyViewHolder {
 
     private TextView tvMessage;
     private View contentView;
-    private ImageView ivSticker;
+    private SimpleDraweeView ivSticker;
     private ImageView ivStickerStatus;
 
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
-        ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_sticker);
+        ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_sticker);
         ivStickerStatus = (ImageView) rootView.findViewById(R.id.iv_message_send_status);
     }
 
@@ -49,6 +51,8 @@ public class DummyPureViewHolder implements BodyViewHolder {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
             builder.append(textMessage.content.body);
             setTextSendingStatus(dummyMessageLink, builder);
+            MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvMessage, builder, false);
+            markdownViewModel.execute();
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                     tvMessage, builder, ((DummyMessageLink) link).getMentions(),
                     EntityManager.getInstance().getMe().getId());

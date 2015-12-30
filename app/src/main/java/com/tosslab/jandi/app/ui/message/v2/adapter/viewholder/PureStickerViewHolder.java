@@ -17,7 +17,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
  */
 public class PureStickerViewHolder implements BodyViewHolder {
 
-    private ImageView ivSticker;
+    private SimpleDraweeView ivSticker;
     private TextView tvDate;
     private TextView tvUnread;
     private View vLastRead;
@@ -26,7 +26,7 @@ public class PureStickerViewHolder implements BodyViewHolder {
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
-        ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_sticker);
+        ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_sticker);
         tvDate = (TextView) rootView.findViewById(R.id.tv_message_create_date);
         tvUnread = (TextView) rootView.findViewById(R.id.tv_entity_listitem_unread);
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);

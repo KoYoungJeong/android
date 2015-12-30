@@ -67,7 +67,9 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
         GenericDraweeHierarchy hierarchy = ivIcon.getHierarchy();
 
         if (item.getName().equals("All") && item.getType().equals("room")) {
-            ivIcon.setHierarchy(hierarchy);
+            hierarchy.setPlaceholderImage(null);
+            hierarchy.setRoundingParams(null);
+
             ivIcon.setImageURI(UriFactory.getResourceUri(R.drawable.thum_all_member));
             holder.getTvName().setText(item.getName() + " (of topic member)");
         } else if (item.isBot()) {
