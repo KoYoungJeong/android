@@ -388,9 +388,11 @@ public class FileDetailPresenter {
         }
     }
 
-    public void onClickDownload(int fileId) {
-        ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage(fileId);
+    public void onClickDownload(int fileId, ResMessages.FileMessage fileMessage) {
         if (fileMessage == null) {
+            LogUtil.e("FileDetailPresenter", "fileMessage is empty.");
+            view.showErrorToast(JandiApplication.getContext()
+                    .getResources().getString(R.string.err_download));
             return;
         }
 
