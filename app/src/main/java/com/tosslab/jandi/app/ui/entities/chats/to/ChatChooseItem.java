@@ -6,7 +6,7 @@ package com.tosslab.jandi.app.ui.entities.chats.to;
 public class ChatChooseItem {
     private int entityId;
     private String name;
-    private String email;
+    private String statusMessage;
     private String photoUrl;
     private boolean isStarred;
     private boolean isEnabled;
@@ -18,8 +18,8 @@ public class ChatChooseItem {
         return this;
     }
 
-    public ChatChooseItem email(String email) {
-        this.email = email;
+    public ChatChooseItem statusMessage(String email) {
+        this.statusMessage = email;
         return this;
     }
 
@@ -63,7 +63,7 @@ public class ChatChooseItem {
     }
 
     public String getStatusMessage() {
-        return email;
+        return statusMessage;
     }
 
     public String getPhotoUrl() {

@@ -40,11 +40,11 @@ public class ChatChooseModel {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
 
                     chatChooseItem.entityId(formattedEntity.getId())
-                            .email(formattedEntity.getUserStatusMessage())
+                            .statusMessage(formattedEntity.getUserStatusMessage())
                             .name(formattedEntity.getName())
                             .starred(formattedEntity.isStarred)
                             .enabled(true)
-                            .owner(formattedEntity.getUser().isTeamOwner())
+                            .owner(formattedEntity.isTeamOwner())
                             .photoUrl(formattedEntity.getUserLargeProfileUrl());
 
                     return chatChooseItem;
@@ -111,7 +111,7 @@ public class ChatChooseModel {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
 
                     chatChooseItem.entityId(formattedEntity.getId())
-                            .email(formattedEntity.getUserStatusMessage())
+                            .statusMessage(formattedEntity.getUserStatusMessage())
                             .name(formattedEntity.getName())
                             .starred(formattedEntity.isStarred)
                             .enabled(TextUtils.equals(formattedEntity.getUser().status, "enabled"))
@@ -167,7 +167,7 @@ public class ChatChooseModel {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
 
                     chatChooseItem.entityId(formattedEntity.getId())
-                            .email(formattedEntity.getUserStatusMessage())
+                            .statusMessage(formattedEntity.getUserStatusMessage())
                             .name(formattedEntity.getName())
                             .starred(formattedEntity.isStarred)
                             .enabled(false)

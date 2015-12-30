@@ -347,7 +347,7 @@ public class FileDetailModel {
     }
 
     public boolean isTeamOwner() {
-        return EntityManager.getInstance().getMe().getUser().isTeamOwner();
+        return EntityManager.getInstance().getMe().isTeamOwner();
     }
 
 

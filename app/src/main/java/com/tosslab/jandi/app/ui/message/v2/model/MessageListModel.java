@@ -541,7 +541,7 @@ public class MessageListModel {
 
 
     public boolean isTeamOwner() {
-        return EntityManager.getInstance().getMe().getUser().isTeamOwner();
+        return EntityManager.getInstance().getMe().isTeamOwner();
     }
 
     public boolean isCurrentTeam(int teamId) {

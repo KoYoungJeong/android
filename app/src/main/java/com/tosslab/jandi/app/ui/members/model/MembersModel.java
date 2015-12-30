@@ -39,7 +39,7 @@ public class MembersModel {
 
                             ChatChooseItem chatChooseItem = new ChatChooseItem();
                             return chatChooseItem.entityId(entity.getId())
-                                    .email(entity.getUserStatusMessage())
+                                    .statusMessage(entity.getUserStatusMessage())
                                     .photoUrl(entity.getUserLargeProfileUrl())
                                     .starred(entity.isStarred)
                                     .enabled(TextUtils.equals(entity.getUser().status, "enabled"))
@@ -64,11 +64,11 @@ public class MembersModel {
                 .map(entity -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
                     return chatChooseItem.entityId(entity.getId())
-                            .email(entity.getUserStatusMessage())
+                            .statusMessage(entity.getUserStatusMessage())
                             .photoUrl(entity.getUserLargeProfileUrl())
                             .starred(entity.isStarred)
                             .enabled(TextUtils.equals(entity.getUser().status, "enabled"))
-                            .owner(entity.getUser().isTeamOwner())
+                            .owner(entity.isTeamOwner())
                             .name(entity.getName());
                 })
                 .filter(ChatChooseItem::isEnabled)
@@ -97,11 +97,11 @@ public class MembersModel {
                 .map(unjoinedEntity -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
                     return chatChooseItem.entityId(unjoinedEntity.getId())
-                            .email(unjoinedEntity.getUserStatusMessage())
+                            .statusMessage(unjoinedEntity.getUserStatusMessage())
                             .photoUrl(unjoinedEntity.getUserLargeProfileUrl())
                             .starred(unjoinedEntity.isStarred)
                             .enabled(TextUtils.equals(unjoinedEntity.getUser().status, "enabled"))
-                            .owner(unjoinedEntity.getUser().isTeamOwner())
+                            .owner(unjoinedEntity.isTeamOwner())
                             .name(unjoinedEntity.getName());
                 })
                 .filter(ChatChooseItem::isEnabled)
@@ -116,7 +116,7 @@ public class MembersModel {
     }
 
     public boolean isTeamOwner() {
-        return EntityManager.getInstance().getMe().getUser().isTeamOwner();
+        return EntityManager.getInstance().getMe().isTeamOwner();
     }
 
     public boolean isTopicOwner(int entityId) {

@@ -97,10 +97,6 @@ public class ResLeftSideMenu {
         public List<Integer> u_joinEntities;
         public List<Integer> u_starredMessages;
         public String status;
-
-        public boolean isTeamOwner() {
-            return "owner".equals(u_authority);
-        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -111,7 +107,6 @@ public class ResLeftSideMenu {
         public List<Integer> pg_members;
         public String description;
         public boolean autoJoin;
-
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -140,6 +135,5 @@ public class ResLeftSideMenu {
         public int entityId;
         public int lastLinkId;
         public int alarmCount;
-
     }
 }
