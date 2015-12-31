@@ -181,6 +181,7 @@
 	<string name="jandi_file_category_presentation">"파워포인트"</string>
 	<string name="jandi_file_category_spreadsheet">"엑셀"</string>
 	<string name="jandi_file_category_video">"동영상"</string>
+	<string name="jandi_file_category_zip">"압축 파일"</string>
 	<string name="jandi_file_delete_message">"이 파일을 삭제하시겠습니까? 파일의 댓글은 삭제되지 않습니다."</string>
 	<string name="jandi_file_deleted_with_date">"%s에 삭제되었습니다."</string>
 	<string name="jandi_file_downloaded_into">"%s  에 저장되었습니다."</string>

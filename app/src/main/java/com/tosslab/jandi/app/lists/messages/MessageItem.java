@@ -146,7 +146,7 @@ public class MessageItem {
             if (message.content.extraInfo == null) {
                 return null;
             }
-            return ImageUtil.getFileUrl(message.content.extraInfo.smallThumbnailUrl);
+            return ImageUtil.getImageFileUrl(message.content.extraInfo.smallThumbnailUrl);
         }
         return null;
     }

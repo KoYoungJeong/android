@@ -40,6 +40,8 @@ public class FileExtensionsUtil {
                 return R.drawable.file_icon_txt;
             case PPT:
                 return R.drawable.file_icon_ppt;
+            case ZIP:
+                return R.drawable.file_icon_zip;
             default:
             case ETC:
                 return R.drawable.file_icon_etc;
@@ -68,6 +70,8 @@ public class FileExtensionsUtil {
                 return JandiApplication.getContext().getString(R.string.jandi_file_category_document);
             case PPT:
                 return JandiApplication.getContext().getString(R.string.jandi_file_category_presentation);
+            case ZIP:
+                return JandiApplication.getContext().getString(R.string.jandi_file_category_zip);
             default:
             case ETC:
                 return "ETC";
@@ -107,10 +111,11 @@ public class FileExtensionsUtil {
         AUDIO("mp3", "wma", "wav", "mid"),
         PDF("pdf"),
         TXT("txt"),
-        HWP("hwp"),
-        EXEL("xls", "xlsx"),
-        DOC("doc", "docx"),
-        PPT("ppt", "pptx"),
+        HWP("hwp", "hwpx", "hwt", "hml"),
+        EXEL("xls", "xlsx", "numbers", "csv", "cell", "xlt", "nxl", "nxt"),
+        DOC("doc", "docx", "pages", "rtf", "gui"),
+        PPT("ppt", "pptx", "key", "show", "pps", "hpt"),
+        ZIP("zip", "zipx", "alz", "rar", "egg", "7z", "tar", "tgz", "tar.gz", "tar.bz2", "tar.z"),
         ETC("");
 
         private final List<String> extensionList;

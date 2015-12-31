@@ -144,7 +144,7 @@ public class UserSelectorImpl implements UserSelector {
                 holder.tvName.setText(R.string.jandi_file_category_everyone);
                 ivIcon.setImageURI(UriFactory.getResourceUri(R.drawable.icon_search_all_members));
             } else {
-                ImageUtil.loadCircleImageByFresco(ivIcon,
+                ImageUtil.loadProfileImage(ivIcon,
                         item.getUserSmallProfileUrl(), R.drawable.profile_img_comment);
                 holder.tvName.setText(item.getName());
             }

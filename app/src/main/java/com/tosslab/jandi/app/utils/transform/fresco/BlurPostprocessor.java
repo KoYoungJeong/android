@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.utils.transform.fresco;
 import android.graphics.Bitmap;
 
 import com.facebook.imagepipeline.request.BasePostprocessor;
+import com.tosslab.jandi.app.utils.image.BitmapUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 /**
@@ -16,7 +17,7 @@ public class BlurPostprocessor extends BasePostprocessor {
 
     @Override
     public void process(Bitmap dest, Bitmap bitmap) {
-        bitmap = ImageUtil.getBlurBitmap(bitmap, 10);
+        bitmap = BitmapUtil.getBlurBitmap(bitmap, 10);
         super.process(dest, bitmap);
     }
 }

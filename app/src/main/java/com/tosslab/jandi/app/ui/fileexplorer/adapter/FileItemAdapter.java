@@ -41,7 +41,6 @@ public class FileItemAdapter extends ArrayAdapter<FileItem> {
             if (item.isDirectory()) {
                 iconImageView.setImageResource(R.drawable.tmp_directory_icon);
             } else {
-
                 iconImageView.setImageResource(FileExtensionsUtil.getFileTypeImageResource(item.getName()));
             }
 

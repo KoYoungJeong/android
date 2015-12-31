@@ -64,7 +64,7 @@ public class TutorialCoachMarkUtil {
                 if (entityManager != null) {
                     FormattedEntity me = entityManager.getMe();
 
-                    ImageUtil.loadCircleImageByFresco(
+                    ImageUtil.loadProfileImage(
                             profileImageView, me.getUserSmallProfileUrl(), R.drawable.profile_img);
                 }
             }

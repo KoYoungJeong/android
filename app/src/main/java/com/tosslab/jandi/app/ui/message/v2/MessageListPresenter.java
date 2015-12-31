@@ -568,7 +568,7 @@ public class MessageListPresenter {
                 ? user.u_photoThumbnailUrl.smallThumbnailUrl : user.u_photoUrl;
 
         Uri uri = Uri.parse(JandiConstantsForFlavors.SERVICE_ROOT_URL + url);
-        ImageUtil.loadCircleImageByFresco(ivPreviewProfile, uri, R.drawable.profile_img);
+        ImageUtil.loadProfileImage(ivPreviewProfile, uri, R.drawable.profile_img);
 
         if (item.message instanceof ResMessages.FileMessage) {
             tvPreviewContent.setText(((ResMessages.FileMessage) item.message).content.title);

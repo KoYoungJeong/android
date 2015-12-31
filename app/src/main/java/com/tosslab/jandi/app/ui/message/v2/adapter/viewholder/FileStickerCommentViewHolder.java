@@ -3,25 +3,15 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.Html;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.controller.BaseControllerListener;
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.image.ImageInfo;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -29,7 +19,6 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
-import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -88,7 +77,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        ImageUtil.loadCircleImageByFresco(ivProfile, profileUrl, R.drawable.profile_img);
+        ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
 
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
@@ -136,104 +125,52 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
 
         if (link.feedback instanceof ResMessages.FileMessage) {
             ResMessages.FileMessage feedbackFileMessage = link.feedback;
+
+            Resources resources = tvFileName.getResources();
             if (TextUtils.equals(link.feedback.status, "archived")) {
                 tvFileOwner.setVisibility(View.GONE);
 
                 tvFileName.setText(R.string.jandi_deleted_file);
-                tvFileName.setTextColor(tvFileName.getResources().getColor(R.color.jandi_text_light));
+                tvFileName.setTextColor(resources.getColor(R.color.jandi_text_light));
                 ivFileImage.setVisibility(View.VISIBLE);
                 ivFileImage.setOnClickListener(null);
             } else {
-                tvFileOwner.setText(Html.fromHtml(tvFileOwner.getResources().getString(R.string.jandi_commented_on, feedbackUser.name)));
-                tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
-                        .jandi_messages_file_name));
+                Spanned fileOwner = Html.fromHtml(
+                        resources.getString(R.string.jandi_commented_on, feedbackUser.name));
+                tvFileOwner.setText(fileOwner);
+                tvFileOwner.setVisibility(View.VISIBLE);
+
+                tvFileName.setTextColor(resources.getColor(R.color.jandi_messages_file_name));
+
                 ResMessages.FileContent content = feedbackFileMessage.content;
                 tvFileName.setText(content.title);
 
-                tvFileOwner.setVisibility(View.VISIBLE);
-
+                String serverUrl = content.serverUrl;
                 String fileType = content.icon;
-                GenericDraweeHierarchy hierarchy = ivFileImage.getHierarchy();
-                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+                String fileUrl = content.fileUrl;
+                String thumbnailUrl =
+                        ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
+                ImageUtil.setResourceIconOrLoadImage(
+                        ivFileImage, vFileImageRound,
+                        fileUrl, thumbnailUrl,
+                        serverUrl, fileType);
 
-                if (TextUtils.equals(fileType, "image")) {
+                MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
 
-                    if (ImageUtil.hasImageUrl(content)) {
-                        MimeTypeUtil.SourceType sourceType =
-                                SourceTypeUtil.getSourceType(content.serverUrl);
-                        switch (sourceType) {
-                            case Google:
-                            case Dropbox:
-                                int mimeTypeIconImage =
-                                        MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
-                                ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));
-                                ivFileImage.setOnClickListener(view -> {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW,
-                                            Uri.parse(
-                                                    ImageUtil.getThumbnailUrlOrOriginal(
-                                                            content, ImageUtil.Thumbnails.ORIGINAL)));
-                                    context.startActivity(intent);
-                                });
-                                break;
-                            default:
-                                vFileImageRound.setVisibility(View.VISIBLE);
+                if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
+                    ivFileImage.setOnClickListener(v -> {
+                        String imageUrl =
+                                ImageUtil.getThumbnailUrlOrOriginal(
+                                        content, ImageUtil.Thumbnails.ORIGINAL);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(imageUrl));
+                        context.startActivity(intent);
 
-                                String thumbnailUrl = ImageUtil.getThumbnailUrl(
-                                        content.extraInfo, ImageUtil.Thumbnails.SMALL);
-
-                                if (TextUtils.isEmpty(thumbnailUrl)) {
-                                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
-
-                                    ivFileImage.setImageURI(
-                                            UriFactory.getResourceUri(R.drawable.image_no_preview));
-                                    return;
-                                }
-
-                                Resources resources = context.getResources();
-                                Drawable placeHolder = resources.getDrawable(R.drawable.comment_image_preview_download);
-                                hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.FIT_XY);
-                                Drawable failure = resources.getDrawable(R.drawable.file_icon_img);
-                                hierarchy.setFailureImage(failure, ScalingUtils.ScaleType.FIT_CENTER);
-                                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                                loadImage(thumbnailUrl);
-                                break;
-                        }
-
-                    } else {
-                        int mimeTypeIconImage =
-                                MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
-                        ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));
-                    }
+                    });
                 } else {
-                    int mimeTypeIconImage =
-                            MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
-                    ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));
+                    ivFileImage.setOnClickListener(null);
                 }
             }
-
         }
-    }
-
-    private void loadImage(String thumbnailUrl) {
-        ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
-
-        ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(thumbnailUrl))
-                .setResizeOptions(new ResizeOptions(layoutParams.width, layoutParams.height))
-                .setAutoRotateEnabled(true)
-                .build();
-
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setImageRequest(request)
-                .setOldController(ivFileImage.getController())
-                .setControllerListener(new BaseControllerListener<ImageInfo>() {
-                    @Override
-                    public void onFailure(String id, Throwable throwable) {
-                        vFileImageRound.setVisibility(View.GONE);
-                    }
-                })
-                .build();
-
-        ivFileImage.setController(controller);
     }
 
     @Override

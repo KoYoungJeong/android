@@ -77,7 +77,7 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
             // 프로필 사진
             Uri uri = Uri.parse(entity.getUserSmallProfileUrl());
 
-            ImageUtil.loadCircleImageByFresco(holder.imageView, uri, R.drawable.profile_img);
+            ImageUtil.loadProfileImage(holder.imageView, uri, R.drawable.profile_img);
 
             holder.textView.setText(entity.getName());
             holder.checkBox.setTag(entity);

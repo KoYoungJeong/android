@@ -176,7 +176,7 @@ public class ChatChooseAdapter extends BaseAdapter {
         SimpleDraweeView imageViewIcon = chatCHooseViewHolder.imageViewIcon;
         imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
-        ImageUtil.loadCircleImageByFresco(imageViewIcon, item.getPhotoUrl(), R.drawable.profile_img);
+        ImageUtil.loadProfileImage(imageViewIcon, item.getPhotoUrl(), R.drawable.profile_img);
         return convertView;
     }
 

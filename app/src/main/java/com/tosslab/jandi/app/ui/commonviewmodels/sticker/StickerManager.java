@@ -1,33 +1,19 @@
 package com.tosslab.jandi.app.ui.commonviewmodels.sticker;
 
 import android.graphics.drawable.Animatable;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.StateSet;
 import android.view.animation.AlphaAnimation;
-import android.widget.ImageView;
 
-import com.facebook.common.references.CloseableReference;
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.image.ImageInfo;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.image.BaseOnResourceReadyCallback;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.ClosableAttachStateChangeListener;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.HashSet;
@@ -40,7 +26,6 @@ import rx.Observable;
  */
 public class StickerManager {
 
-    //    public static final String ASSET_SCHEMA = "file:///android_asset/";
     public static final String ASSET_SCHEMA = "asset:///";
     public static final String STICKER_ASSET_PATH = "stickers/default";
     private static final LoadOptions DEFAULT_OPTIONS = new LoadOptions();
@@ -95,13 +80,9 @@ public class StickerManager {
     }
 
     private void loadSticker(Uri uri, final SimpleDraweeView view, final LoadOptions options) {
-        GenericDraweeHierarchy hierarchy = view.getHierarchy();
-        hierarchy.setActualImageScaleType(options.scaleType);
-
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setOldController(view.getController())
-                .setUri(uri)
-                .setControllerListener(new BaseControllerListener<ImageInfo>() {
+        ImageLoader.newBuilder()
+                .actualScaleType(options.scaleType)
+                .controllerListener(new BaseControllerListener<ImageInfo>() {
                     @Override
                     public void onFinalImageSet(String id,
                                                 ImageInfo imageInfo, Animatable animatable) {
@@ -112,9 +93,8 @@ public class StickerManager {
                         }
                     }
                 })
-                .build();
-
-        view.setController(controller);
+                .load(uri)
+                .into(view);
     }
 
     private boolean isLocalSticker(int groupId) {

@@ -1,19 +1,14 @@
 package com.tosslab.jandi.app.ui.starmention.adapter.viewholder;
 
-import android.net.Uri;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
-import com.tosslab.jandi.app.utils.UriFactory;
-import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
-import com.tosslab.jandi.app.utils.mimetype.filter.IconFilterUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by tee on 15. 7. 29..
@@ -38,28 +33,17 @@ public class FileStarMentionViewHolder extends CommonStarMentionViewHolder {
 
         StarMentionedMessageObject.Message.Content content = starMentionVO.getContent();
 
-        String icon = content.icon;
-        MimeTypeUtil.FilterType filterType = IconFilterUtil.getMimeType(icon);
-        GenericDraweeHierarchy hierarchy = ivFile.getHierarchy();
-        if (filterType == MimeTypeUtil.FilterType.Image) {
-            String thumbnailUrl = content.extraInfo != null
-                    ? content.extraInfo.smallThumbnailUrl : null;
-            if (!TextUtils.isEmpty(thumbnailUrl)) {
-                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                hierarchy.setPlaceholderImage(R.drawable.file_icon_img);
-                ivFile.setImageURI(Uri.parse(thumbnailUrl));
-                vFileRound.setVisibility(View.VISIBLE);
-            } else {
-                hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-                ivFile.setImageURI(UriFactory.getResourceUri(R.drawable.file_icon_img));
-                vFileRound.setVisibility(View.GONE);
-            }
-        } else {
-            // 파일 타입에 해당하는 아이콘 연결
-            int mimeTypeResource = MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, icon);
-            ivFile.setImageURI(UriFactory.getResourceUri(mimeTypeResource));
-            vFileRound.setVisibility(View.GONE);
-        }
+        String serverUrl = content.serverUrl;
+        String fileType = content.icon;
+        String fileUrl = content.fileUrl;
+
+        String thumbnailUrl = content.extraInfo != null ?
+                content.extraInfo.smallThumbnailUrl : null;
+
+        ImageUtil.setResourceIconOrLoadImage(
+                ivFile, vFileRound,
+                fileUrl, thumbnailUrl,
+                serverUrl, fileType);
     }
 
     @Override

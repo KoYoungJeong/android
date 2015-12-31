@@ -70,7 +70,7 @@ public class FileDetailCommentStickerView implements CommentViewHolder {
                     tvCommentUserName.getContext().getResources().getColor(R.color.deactivate_text_color));
         }
 
-        ImageUtil.loadCircleImageByFresco(
+        ImageUtil.loadProfileImage(
                 ivCommentUserProfile, profileUrl, R.drawable.profile_img_comment);
 
         ivCommentUserProfile.setOnClickListener(v -> {

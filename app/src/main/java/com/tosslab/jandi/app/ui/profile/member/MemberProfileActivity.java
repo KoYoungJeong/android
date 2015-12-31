@@ -6,7 +6,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -21,14 +20,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.common.references.CloseableReference;
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.request.BasePostprocessor;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -41,12 +34,13 @@ import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
-import com.tosslab.jandi.app.utils.image.BaseOnResourceReadyCallback;
+import com.tosslab.jandi.app.utils.image.listener.BaseOnResourceReadyCallback;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.image.ClosableAttachStateChangeListener;
+import com.tosslab.jandi.app.utils.image.listener.ClosableAttachStateChangeListener;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.transform.fresco.BlurPostprocessor;
 import com.tosslab.jandi.app.views.SwipeExitLayout;
@@ -58,7 +52,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
-import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import uk.co.senab.photoview.PhotoView;
@@ -194,8 +187,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         }
 
         String profileImageUrlMedium = member.getUserMediumProfileUrl();
-        LogUtil.i("tony", profileImageUrlMedium);
-        ImageUtil.loadCircleImageByFresco(
+        ImageUtil.loadProfileImage(
                 ivProfileImageSmall, profileImageUrlMedium, R.drawable.profile_img);
 
         ivProfileImageFull.setOnViewTapListener((view, x, y) -> {
@@ -248,10 +240,12 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         LogUtil.d(TAG, profileImageUrlLarge);
         Uri uri = Uri.parse(profileImageUrlLarge);
 
-        ImageUtil.loadDrawable(uri, new BaseOnResourceReadyCallback() {
+        ImageLoader.loadWithCallback(uri, new BaseOnResourceReadyCallback() {
             @Override
             public void onReady(Drawable drawable, CloseableReference reference) {
-                setImageResource(drawable, reference);
+                ivProfileImageFull.setImageDrawable(drawable);
+                ivProfileImageFull.addOnAttachStateChangeListener(
+                        new ClosableAttachStateChangeListener(reference));
             }
 
             @Override
@@ -259,13 +253,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 LogUtil.e(TAG, Log.getStackTraceString(cause));
             }
         });
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    void setImageResource(Drawable drawable, CloseableReference reference) {
-        ivProfileImageFull.setImageDrawable(drawable);
-        ivProfileImageFull.addOnAttachStateChangeListener(
-                new ClosableAttachStateChangeListener(reference));
     }
 
     private void initSwipeLayout(boolean setViewToAlpha) {
@@ -341,23 +328,12 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             return;
         }
 
-        Drawable placeHolder = new ColorDrawable(defaultColor);
-
-        GenericDraweeHierarchy hierarchy = ivProfileImageLarge.getHierarchy();
-        hierarchy.setPlaceholderImage(placeHolder);
-        hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-
-        ImageRequest imageRequest =
-                ImageRequestBuilder.newBuilderWithSource(Uri.parse(profileImageUrlLarge))
-                        .setPostprocessor(new BlurPostprocessor())
-                        .build();
-
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setImageRequest(imageRequest)
-                .setOldController(ivProfileImageLarge.getController())
-                .build();
-
-        ivProfileImageLarge.setController(controller);
+        ImageLoader.newBuilder()
+                .placeHolder(new ColorDrawable(defaultColor), ScalingUtils.ScaleType.FIT_XY)
+                .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
+                .processor(new BlurPostprocessor())
+                .load(Uri.parse(profileImageUrlLarge))
+                .into(ivProfileImageLarge);
     }
 
     @Click(R.id.iv_member_profile_img_small)

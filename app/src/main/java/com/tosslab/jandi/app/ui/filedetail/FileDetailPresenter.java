@@ -401,12 +401,12 @@ public class FileDetailPresenter {
         switch (placeholderType) {
             case Google:
             case Dropbox:
-                String photoUrl = ImageUtil.getFileUrl(content.fileUrl);
+                String photoUrl = ImageUtil.getImageFileUrl(content.fileUrl);
                 view.startGoogleOrDropboxFileActivity(photoUrl);
                 return;
         }
 
-        downloadFile(ImageUtil.getFileUrl(content.fileUrl),
+        downloadFile(ImageUtil.getImageFileUrl(content.fileUrl),
                 content.title,
                 content.type,
                 content.ext,

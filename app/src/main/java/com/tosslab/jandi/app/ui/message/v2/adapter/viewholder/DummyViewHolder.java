@@ -52,7 +52,7 @@ public class DummyViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        ImageUtil.loadCircleImageByFresco(ivProfile, profileUrl, R.drawable.profile_img);
+        ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
 
         tvName.setText(entity.getName());
 
