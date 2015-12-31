@@ -88,7 +88,7 @@ public class DownloadServiceTest extends ApplicationTestCase<Application> {
         mock.onHandleIntent(mockIntent);
 
         // Then
-        verify(view).showErrorToast(anyInt());
+        verify(view).cancelNotification(anyInt());
     }
 
 }
