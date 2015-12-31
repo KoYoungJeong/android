@@ -31,7 +31,7 @@ public class FormatConverter {
             "application/vnd.ms-excel.sheet.macroEnabled.12"
     };
 
-    public static String formatFileSize(int byteSize) {
+    public static String formatFileSize(long byteSize) {
 
         if (byteSize > MB) {
             float f = (float) byteSize / MB;

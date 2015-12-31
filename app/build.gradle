@@ -269,7 +269,7 @@ android {
 }
 
 project.gradle.taskGraph.whenReady {
-    testDevDebugUnitTest {
+    connectedDevDebugAndroidTest {
         ignoreFailures = true
     }
 }
