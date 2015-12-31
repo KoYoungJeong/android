@@ -73,6 +73,7 @@ public class BaseInitUtil {
             wifiManager.setWifiEnabled(true);
             await().until(wifiManager::isWifiEnabled);
         }
+
     }
 
     public static void clear() {
