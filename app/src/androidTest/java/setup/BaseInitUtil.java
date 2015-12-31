@@ -2,6 +2,7 @@ package setup;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -40,6 +41,8 @@ import java.util.List;
 
 import retrofit.RetrofitError;
 
+import static com.jayway.awaitility.Awaitility.await;
+
 
 // email : androidtester1@gustr.com / androidtester2@gustr.com / androidtester3@gustr.com
 public class BaseInitUtil {
@@ -60,7 +63,16 @@ public class BaseInitUtil {
     private static Context ORIGIN_CONTEXT;
 
     public static void initData() {
+        turnOnWifi();
         userSignin();
+    }
+
+    public static void turnOnWifi() {
+        WifiManager wifiManager = (WifiManager) JandiApplication.getContext().getSystemService(Context.WIFI_SERVICE);
+        if (!wifiManager.isWifiEnabled()) {
+            wifiManager.setWifiEnabled(true);
+            await().until(wifiManager::isWifiEnabled);
+        }
     }
 
     public static void clear() {

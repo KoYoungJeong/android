@@ -10,7 +10,7 @@
         android:layout_height="match_parent">
 
 
-        <ImageView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_file_detail_collapse_comment_content"
             android:layout_width="140dp"
             android:layout_height="140dp"

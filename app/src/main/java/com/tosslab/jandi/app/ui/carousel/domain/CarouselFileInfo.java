@@ -10,13 +10,13 @@ public class CarouselFileInfo {
     private final String fileName;
     private final String fileType;
     private final String ext;
-    private final int size;
+    private final long size;
     private final String fileLinkUrl;
     private final String fileThumbUrl;
     private final String fileCreateTime;
     private final String fileWriter;
 
-    private CarouselFileInfo(int entityId, int fileLinkId, String fileName, String fileType, String ext, int size, String fileLinkUrl, String fileThumbUrl, String fileCreateTime, String fileWriter) {
+    private CarouselFileInfo(int entityId, int fileLinkId, String fileName, String fileType, String ext, long size, String fileLinkUrl, String fileThumbUrl, String fileCreateTime, String fileWriter) {
         this.entityId = entityId;
         this.fileLinkId = fileLinkId;
         this.fileName = fileName;
@@ -41,7 +41,7 @@ public class CarouselFileInfo {
         return ext;
     }
 
-    public int getSize() {
+    public long getSize() {
         return size;
     }
 
@@ -76,7 +76,7 @@ public class CarouselFileInfo {
         private String fileLinkUrl;
         private String fileType;
         private String ext;
-        private int size;
+        private long size;
         private String fileCreateTime;
         private String fileWriter;
         private String fileThumbUrl;
@@ -91,7 +91,7 @@ public class CarouselFileInfo {
             return this;
         }
 
-        public Builder size(int size) {
+        public Builder size(long size) {
             this.size = size;
             return this;
         }

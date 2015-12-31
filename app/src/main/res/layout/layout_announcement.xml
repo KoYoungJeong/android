@@ -24,7 +24,7 @@
             android:paddingRight="14dp"
             android:paddingTop="14dp">
 
-            <com.facebook.drawee.view.SimpleDraweeView
+            <com.tosslab.jandi.app.views.FrescoImageView
                 android:id="@+id/iv_announcement_user"
                 android:layout_width="32dp"
                 android:layout_height="32dp"

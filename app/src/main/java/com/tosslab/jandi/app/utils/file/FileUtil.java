@@ -9,9 +9,9 @@ import java.text.DecimalFormat;
  */
 public class FileUtil {
 
-    public static String fileSizeCalculation(int fileSize) {
+    public static String fileSizeCalculation(long fileSize) {
         String retFormat = "0";
-        int size = fileSize;
+        long size = fileSize;
         String[] s = {"bytes", "KB", "MB", "GB", "TB", "PB"};
 
         if (fileSize != 0) {

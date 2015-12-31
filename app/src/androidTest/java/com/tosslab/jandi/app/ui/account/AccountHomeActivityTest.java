@@ -18,12 +18,11 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
-import setup.BaseInitUtil;
-
 import rx.Observable;
 import setup.BaseInitUtil;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
@@ -63,6 +62,7 @@ public class AccountHomeActivityTest {
         onView(withText(R.string.jandi_account_home_help))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
     }
 
     @Test
@@ -72,7 +72,7 @@ public class AccountHomeActivityTest {
         onView(withText(activity.tvAccountName.getText().toString()))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
-
+        pressBack();
     }
 
     @Test
@@ -92,6 +92,8 @@ public class AccountHomeActivityTest {
         // When
         rule.runOnUiThread(() -> activity.setTeamInfo(teams, selectedTeamInfo));
 
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+
         // Then
         onView(withText(selectedTeamInfo.getName()))
                 .check(matches(isDisplayed()))
@@ -104,7 +106,7 @@ public class AccountHomeActivityTest {
     public void testLoadTeamCreateActivity() throws Throwable {
         rule.runOnUiThread(() -> activity.loadTeamCreateActivity());
 
-        onView(withText(R.string.team_create))
+        onView(withText(R.string.team_info))
                 .check(matches(isDisplayed()));
 
     }
@@ -121,7 +123,7 @@ public class AccountHomeActivityTest {
         onView(withText(name))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
-
+        pressBack();
     }
 
     @Test
@@ -176,6 +178,7 @@ public class AccountHomeActivityTest {
         onView(withText(R.string.jandi_confirm))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
     }
 
     @Test
@@ -188,7 +191,7 @@ public class AccountHomeActivityTest {
         onView(withText(msg))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
-
+        pressBack();
     }
 
     @Test
@@ -203,6 +206,7 @@ public class AccountHomeActivityTest {
         onView(withText(R.string.err_network))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
+        pressBack();
     }
 
     private List<Team> getTeams() {
@@ -210,7 +214,7 @@ public class AccountHomeActivityTest {
 
         Observable.from(AccountRepository.getRepository().getAccountTeams())
                 .map(Team::createTeam)
-                .collect(() -> teams, List::add);
+                .collect(() -> teams, List::add).subscribe();
 
         return teams;
     }
