@@ -2,6 +2,7 @@ package setup;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -60,7 +61,15 @@ public class BaseInitUtil {
     private static Context ORIGIN_CONTEXT;
 
     public static void initData() {
+        turnOnWifi();
         userSignin();
+    }
+
+    private static void turnOnWifi() {
+        WifiManager wifiManager = (WifiManager) JandiApplication.getContext().getSystemService(Context.WIFI_SERVICE);
+        if (!wifiManager.isWifiEnabled()) {
+            wifiManager.setWifiEnabled(true);
+        }
     }
 
     public static void clear() {
