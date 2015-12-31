@@ -22,6 +22,7 @@ import java.util.concurrent.Callable;
 import setup.BaseInitUtil;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -102,7 +103,7 @@ public class DownloadControllerTest {
         Context context = InstrumentationRegistry.getContext();
 
         DownloadController.View view = mock(DownloadController.View.class);
-        when(view.getProgressNotificationBuilder(10, anyString()))
+        when(view.getProgressNotificationBuilder(anyInt(), anyString()))
                 .thenReturn(new NotificationCompat.Builder(context));
         DownloadController downloadController = new DownloadController(view);
 
