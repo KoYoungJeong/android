@@ -100,7 +100,11 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                 })
                 .toSortedList((chatChooseItem, chatChooseItem2) -> {
                     int myId = EntityManager.getInstance().getMe().getId();
-                    if (chatChooseItem.getEntityId() == myId) {
+                    if (chatChooseItem.isBot()) {
+                        return -1;
+                    } else if (chatChooseItem2.isBot()) {
+                        return 1;
+                    } else if (chatChooseItem.getEntityId() == myId) {
                         return -1;
                     } else if (chatChooseItem2.getEntityId() == myId) {
                         return 1;

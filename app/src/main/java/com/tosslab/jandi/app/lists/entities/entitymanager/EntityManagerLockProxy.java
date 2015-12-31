@@ -229,4 +229,24 @@ class EntityManagerLockProxy extends EntityManager {
             lock.unlock();
         }
     }
+
+    @Override
+    public FormattedEntity getJandiBot() {
+        lock.lock();
+        try {
+            return super.getJandiBot();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public boolean hasJandiBot() {
+        lock.lock();
+        try{
+            return super.hasJandiBot();
+        }finally {
+            lock.unlock();
+        }
+    }
 }

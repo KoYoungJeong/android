@@ -72,7 +72,7 @@ public class MainChatListModel {
                             .starred(EntityManager.getInstance()
                                     .getEntityById(resChat.getCompanionId()).isStarred)
                             .unread(resChat.getUnread())
-                            .status(TextUtils.equals(userEntity.getUser().status, "enabled"))
+                            .status(userEntity.isEnabled())
                             .photo(userEntity.getUserLargeProfileUrl());
 
                     return chatItem;

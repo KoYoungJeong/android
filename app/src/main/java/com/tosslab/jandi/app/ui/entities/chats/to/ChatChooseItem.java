@@ -8,6 +8,7 @@ public class ChatChooseItem {
     private String name;
     private String email;
     private String photoUrl;
+    private boolean isBot = false;
     private boolean isStarred;
     private boolean isEnabled;
     private boolean isChooseItem = false;
@@ -74,5 +75,14 @@ public class ChatChooseItem {
 
     public void setIsChooseItem(boolean isChooseItem) {
         this.isChooseItem = isChooseItem;
+    }
+
+    public boolean isBot() {
+        return isBot;
+    }
+
+    public ChatChooseItem isBot(boolean isBot) {
+        this.isBot = isBot;
+        return this;
     }
 }

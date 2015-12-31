@@ -1,6 +1,9 @@
 package com.tosslab.jandi.app.lists.entities.entitymanager;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
@@ -77,6 +80,7 @@ public class EntityManager {
     private List<FormattedEntity> mSortedUsers = null;
     private List<FormattedEntity> mSortedUsersWithoutMe = null;
     private List<FormattedEntity> mSortedGroups = null;
+    private Map<Integer, BotEntity> bots = null;
 
     protected EntityManager() {
         ResLeftSideMenu resLeftSideMenu = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu();
@@ -111,7 +115,10 @@ public class EntityManager {
         for (ResLeftSideMenu.MessageMarker marker : mMe.u_messageMarkers) {
             mMarkers.put(marker.entityId, marker);
         }
+        bots = new HashMap<>();
+
         arrangeEntities(resLeftSideMenu);
+
     }
 
     public void refreshEntity() {
@@ -211,6 +218,12 @@ public class EntityManager {
             } else {
                 // DO NOTHING
             }
+        }
+
+        if (resLeftSideMenu.bots != null) {
+            Observable.from(resLeftSideMenu.bots)
+                    .collect(() -> bots, (botEntities, bot) -> botEntities.put(bot.id, new BotEntity(bot)))
+                    .subscribe();
         }
 
         // Sort 도 다시해야 하기 때문에 해당 List 들을 초기화
@@ -381,8 +394,16 @@ public class EntityManager {
         if (group != null) {
             return group;
         }
+        FormattedEntity bot = searchBotById(entityId);
+        if (bot != null) {
+            return bot;
+        }
 
         return UNKNOWN_USER_ENTITY;
+    }
+
+    private FormattedEntity searchBotById(int entityId) {
+        return this.bots.get(entityId);
     }
 
     public String getEntityNameById(int entityId) {
@@ -417,7 +438,8 @@ public class EntityManager {
                 .filter(formattedEntity -> !joinedMembers.contains(formattedEntity.getId()))
                 .collect(() -> ret, (formattedEntities
                         , formattedEntity1) -> formattedEntities.add(formattedEntity1))
-                .subscribe(formattedEntities1 -> {}, Throwable::printStackTrace);
+                .subscribe(formattedEntities1 -> {
+                }, Throwable::printStackTrace);
 
         return ret;
     }
@@ -484,4 +506,18 @@ public class EntityManager {
         return sortedEntities;
     }
 
+    public FormattedEntity getJandiBot() {
+        return Observable.from(bots.values())
+                .filter(botEntity -> TextUtils.equals(botEntity.getBotType(), "jandi_bot"))
+                .toBlocking()
+                .firstOrDefault(null);
+    }
+
+    public boolean hasJandiBot() {
+        return Observable.from(bots.values())
+                .filter(botEntity -> TextUtils.equals(botEntity.getBotType(), "jandi_bot"))
+                .map(botEntity1 -> true)
+                .toBlocking()
+                .firstOrDefault(false);
+    }
 }

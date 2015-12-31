@@ -8,8 +8,8 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 /**
  * Created by tee on 15. 8. 2..

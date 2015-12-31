@@ -11,7 +11,8 @@
     <com.tosslab.jandi.app.views.FrescoImageView
         android:id="@+id/img_member_item_icon"
         android:layout_width="@dimen/jandi_messages_profile_size"
-        android:layout_height="@dimen/jandi_messages_profile_size"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/jandi_messages_profile_size"
         android:layout_gravity="center_vertical"
         android:layout_marginRight="16dp"
         fresco:placeholderImage="@drawable/topiclist_icon_topic" />

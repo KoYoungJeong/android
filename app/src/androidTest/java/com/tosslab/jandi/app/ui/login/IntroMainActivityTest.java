@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.login;
 
-import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -25,7 +24,6 @@ public class IntroMainActivityTest {
     @Before
     public void setUp() throws Exception {
         activity = rule.getActivity();
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
     }
 
     @Test

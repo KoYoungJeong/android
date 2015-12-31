@@ -72,6 +72,9 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
 
             ivIcon.setImageURI(UriFactory.getResourceUri(R.drawable.thum_all_member));
             holder.getTvName().setText(item.getName() + " (of topic member)");
+        } else if (item.isBot()) {
+            holder.getIvIcon().setImageResource(R.drawable.bot_32x40);
+            holder.getTvName().setText(item.getName());
         } else {
             ImageUtil.loadProfileImage(ivIcon,
                     item.getSmallProfileImageUrl(), R.drawable.profile_img);

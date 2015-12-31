@@ -52,8 +52,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ADD_READY_COMMENT = 7;
     private static final int DATABASE_VERSION_SHARE_ENTITY_RESET = 8;
     private static final int DATABASE_VERSION_FILE_SHARE_INFO = 9;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_FILE_SHARE_INFO;
-
+    private static final int DATABASE_VERSION_ADD_INTEGRATION = 10;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_ADD_INTEGRATION;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -91,6 +91,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             createTable(connectionSource, ResMessages.TextMessage.class);
             createTable(connectionSource, ResMessages.TextContent.class);
+            createTable(connectionSource, ResMessages.ConnectInfo.class);
             createTable(connectionSource, ResMessages.LinkPreview.class);
             createTable(connectionSource, ResMessages.FileMessage.class);
             createTable(connectionSource, ResMessages.FileContent.class);
@@ -191,6 +192,12 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, ResMessages.ThumbnailUrls.class);
 
                         MessageRepository.getRepository().deleteAllLink();
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_ADD_INTEGRATION, () -> {
+                        Dao<ResMessages.TextContent, ?> dao = DaoManager.createDao(connectionSource, ResMessages.TextContent.class);
+                        dao.executeRawNoArgs("ALTER TABLE `message_text_content` ADD COLUMN connectType VARCHAR;");
+                        dao.executeRawNoArgs("ALTER TABLE `message_text_content` ADD COLUMN connectColor VARCHAR;");
+                        createTable(connectionSource, ResMessages.ConnectInfo.class);
                     }));
 
             Observable.from(upgradeCheckers)
@@ -228,6 +235,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             dropTable(connectionSource, ResMessages.TextMessage.class);
             dropTable(connectionSource, ResMessages.TextContent.class);
+            dropTable(connectionSource, ResMessages.ConnectInfo.class);
             dropTable(connectionSource, ResMessages.LinkPreview.class);
             dropTable(connectionSource, ResMessages.FileMessage.class);
             dropTable(connectionSource, ResMessages.FileContent.class);
@@ -301,6 +309,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         clearTable(getConnectionSource(), ResMessages.TextMessage.class);
         clearTable(getConnectionSource(), ResMessages.TextContent.class);
+        clearTable(getConnectionSource(), ResMessages.ConnectInfo.class);
         clearTable(getConnectionSource(), ResMessages.LinkPreview.class);
         clearTable(getConnectionSource(), ResMessages.FileMessage.class);
         clearTable(getConnectionSource(), ResMessages.FileContent.class);

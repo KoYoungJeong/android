@@ -4,9 +4,17 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.BotEntity;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.CollapseIntegrationBotViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.IntegrationBotViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.CollapseJandiBotViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.CollapseLinkPreviewJandiBotViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.JandiBotViewHolder;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
 
 import java.util.ArrayList;
@@ -121,6 +129,16 @@ public class BodyViewFactory {
                 return new PureLinkPreviewViewHolder();
             case Message:
                 return new MessageViewHolder();
+            case JandiBot:
+                return new JandiBotViewHolder();
+            case CollapseJandiBot:
+                return new CollapseJandiBotViewHolder();
+            case CollapseLinkPreviewJandiBot:
+                return new CollapseLinkPreviewJandiBotViewHolder();
+            case IntegrationBot:
+                return new IntegrationBotViewHolder();
+            case CollapseIntegrationBot:
+                return new CollapseIntegrationBotViewHolder();
             default:
                 return EMPTY_VIEW_HOLDER;
         }
@@ -134,7 +152,16 @@ public class BodyViewFactory {
             return BodyViewHolder.Type.Event;
         }
 
-        if (currentMessage instanceof ResMessages.TextMessage || currentMessage instanceof ResMessages.StickerMessage) {
+        boolean isText = currentMessage instanceof ResMessages.TextMessage;
+        if (isText || currentMessage instanceof ResMessages.StickerMessage) {
+            FormattedEntity entity = EntityManager.getInstance().getEntityById(currentMessage.writerId);
+            boolean isJandiBot = false;
+            boolean isIntregrationBot = false;
+            if (entity instanceof BotEntity) {
+                // 잔디 봇은 프로필 이미지가 달라 View Type 을 다르게 함
+                isJandiBot = TextUtils.equals(((BotEntity) entity).getBotType(), "jandi_bot");
+                isIntregrationBot = !isJandiBot;
+            }
 
             if (previousLink != null
                     &&
@@ -146,19 +173,35 @@ public class BodyViewFactory {
                 if (currentLink instanceof DummyMessageLink) {
                     return BodyViewHolder.Type.DummyPure;
                 } else {
-                    if (!(currentMessage instanceof ResMessages.TextMessage)) {
+                    if (!(isText)) {
                         return BodyViewHolder.Type.PureSticker;
                     }
 
                     boolean hasLinkPreviewBoth = currentLink.hasLinkPreview() && previousLink.hasLinkPreview();
 
-                    return hasLinkPreviewBoth ? BodyViewHolder.Type.PureLinkPreviewMessage : BodyViewHolder.Type.PureMessage;
+                    if (!isJandiBot) {
+                        if (!isIntregrationBot) {
+                            return hasLinkPreviewBoth ? BodyViewHolder.Type.PureLinkPreviewMessage : BodyViewHolder.Type.PureMessage;
+                        } else {
+                            return BodyViewHolder.Type.CollapseIntegrationBot;
+                        }
+                    } else {
+                        return hasLinkPreviewBoth ? BodyViewHolder.Type.CollapseLinkPreviewJandiBot : BodyViewHolder.Type.CollapseJandiBot;
+                    }
                 }
             } else {
                 if (currentLink instanceof DummyMessageLink) {
                     return BodyViewHolder.Type.Dummy;
                 } else {
-                    return currentMessage instanceof ResMessages.TextMessage ? BodyViewHolder.Type.Message : BodyViewHolder.Type.Sticker;
+                    if (!isJandiBot) {
+                        if (!isIntregrationBot) {
+                            return isText ? BodyViewHolder.Type.Message : BodyViewHolder.Type.Sticker;
+                        } else {
+                            return isText ? BodyViewHolder.Type.IntegrationBot : BodyViewHolder.Type.Empty;
+                        }
+                    } else {
+                        return isText ? BodyViewHolder.Type.JandiBot : BodyViewHolder.Type.Empty;
+                    }
                 }
             }
 

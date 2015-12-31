@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.network.manager.apiexecutor;
 
 import android.support.v4.util.Pools;
-import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
@@ -13,6 +12,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import retrofit.RetrofitError;
+import retrofit.mime.TypedByteArray;
 
 /**
  * Created by tee on 15. 6. 20..
@@ -50,10 +50,10 @@ public class PoolableRequestApiExecutor {
     }
 
     private <RESULT> RESULT handleException(RetrofitError e, IExecutor<RESULT> apiExecutor) {
-        LogUtil.e(Log.getStackTraceString(e));
 
         // 현재(2015/6) 시나리오엔 존재하지 않지만 Client측의 Network Connection에러를 UI단에 던지기 위한 코드 추가
         if (!isActiveNetwork()) {
+            LogUtil.e("Disconnect Network : " + e.getUrl());
             throw RetrofitError.unexpectedError(JandiConstantsForFlavors.SERVICE_INNER_API_URL,
                     new ConnectionNotFoundException());
         }
@@ -67,28 +67,31 @@ public class PoolableRequestApiExecutor {
                 throw e;
             }
         } else if (e.getKind() == RetrofitError.Kind.HTTP) {
+            if (e.getResponse().getBody() != null) {
+                LogUtil.e("HTTP Error : " + new String(((TypedByteArray) e.getResponse().getBody()).getBytes()));
+            }
             int status = e.getResponse().getStatus();
             if (status == JandiConstants.NetworkError.UNAUTHORIZED) {
-                LogUtil.e("UNAUTHORIZED");
+                LogUtil.e("UNAUTHORIZED : " + e.getUrl());
                 ResAccessToken accessToken = TokenRequestManager.getInstance().refreshToken();
                 if (accessToken != null) {
-                    LogUtil.i("Refresh Token Success");
+                    LogUtil.i("Refresh Token Success : " + e.getUrl());
                     try {
                         return apiExecutor.execute();
                     } catch (RetrofitError e1) {
                         // unknown exception
-                        LogUtil.e("Retry Fail");
+                        LogUtil.e("Retry Fail : " + e.getUrl());
                         throw e1;
                     }
                 } else {
                     // unauthorized exception
-                    LogUtil.e("Refresh Token Fail", e);
+                    LogUtil.e("Refresh Token Fail : " + e.getUrl());
                     SignOutService.start();
                     throw e;
                 }
             } else {
                 // exception, not unauthorized
-                LogUtil.e("Request Fail", e);
+                LogUtil.e("Request Fail : " + e.getUrl());
                 throw e;
             }
         } else {

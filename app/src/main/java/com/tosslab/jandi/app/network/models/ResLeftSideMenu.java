@@ -8,12 +8,6 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by justinygchoi on 2014. 6. 17..
- * 서버의 Rest 통신으로부터 왼쪽의 메뉴에 위치할 Channel, PrivateGroup, Users 의 목록을 받아온 결과
- * 사용자가 Join 된 Channel, PrivateGroup도 따로 가져온다.
- * Entity는 각각의 서브 클래스로 나뉘어진다.
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResLeftSideMenu {
@@ -25,6 +19,7 @@ public class ResLeftSideMenu {
     public List<Entity> joinEntities;
     public int alarmInfoCount;
     public List<AlarmInfo> alarmInfos;
+    public List<Bot> bots;
 
     @Override
     public String toString() {
@@ -37,6 +32,7 @@ public class ResLeftSideMenu {
                 ", joinEntities=" + joinEntities +
                 ", alarmInfoCount=" + alarmInfoCount +
                 ", alarmInfos=" + alarmInfos +
+                ", bots=" + bots +
                 '}';
     }
 
@@ -137,5 +133,17 @@ public class ResLeftSideMenu {
         public int lastLinkId;
         public int alarmCount;
 
+    }
+
+    public static class Bot {
+        public int id;
+        public int teamId;
+        public String botType;
+        public String name;
+        public Date updatedAt;
+        public Date createdAt;
+        public String thumbnailUrl;
+        public String status;
+        public String type;
     }
 }

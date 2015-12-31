@@ -64,8 +64,6 @@ public class CarouselViewerActivityTest {
         rule.launchActivity(startIntent);
         activity = rule.getActivity();
 
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
-
     }
 
     private int getLatestFileId() {

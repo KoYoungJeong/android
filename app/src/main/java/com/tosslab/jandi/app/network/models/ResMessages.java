@@ -341,12 +341,36 @@ public class ResMessages {
         @DatabaseField
         public String body;
 
+        @DatabaseField
+        public String connectType;
+        @DatabaseField
+        public String connectColor;
+        @ForeignCollectionField(foreignFieldName = "textContentOf")
+        public Collection<ConnectInfo> connectInfo;
+
         @Override
         public String toString() {
             return "TextContent{" +
                     "body='" + body + '\'' +
                     '}';
         }
+    }
+
+    @DatabaseTable(tableName = "message_text_content_connectInfo")
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class ConnectInfo {
+        @DatabaseField(generatedId = true)
+        public long _id;
+        @DatabaseField(foreign = true)
+        @JsonIgnore
+        public TextContent textContentOf;
+        @DatabaseField
+        public String event;
+        @DatabaseField
+        public String title;
+        @DatabaseField
+        public String description;
     }
 
     @DatabaseTable(tableName = "message_sticker")

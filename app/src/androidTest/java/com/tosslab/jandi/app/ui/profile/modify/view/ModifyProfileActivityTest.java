@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.profile.modify.view;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.graphics.Color;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -42,8 +41,6 @@ public class ModifyProfileActivityTest {
     public void setUp() throws Exception {
         BaseInitUtil.initData();
         rule.launchActivity(null);
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
-
         activity = rule.getActivity();
     }
 

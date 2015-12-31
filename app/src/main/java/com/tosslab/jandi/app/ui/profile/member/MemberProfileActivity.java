@@ -6,6 +6,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -19,32 +20,36 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.facebook.common.references.CloseableReference;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.profile.member.model.JandiBotProfileLoader;
+import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileLoader;
+import com.tosslab.jandi.app.ui.profile.member.model.ProfileLoader;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
-import com.tosslab.jandi.app.utils.image.listener.BaseOnResourceReadyCallback;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.image.listener.ClosableAttachStateChangeListener;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.transform.fresco.BlurPostprocessor;
 import com.tosslab.jandi.app.views.SwipeExitLayout;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -121,6 +126,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @ViewById(R.id.iv_member_profile_img_small)
     SimpleDraweeView ivProfileImageSmall;
 
+    ProfileLoader profileLoader;
+
     private boolean isFullSizeImageShowing = false;
     private boolean hasChangedProfileImage = true;
 
@@ -153,49 +160,47 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         outState.putBoolean(KEY_FULL_SIZE_IMAGE_SHOWING, ivProfileImageFull.isShown());
     }
 
+    @AfterInject
+    void initObject() {
+        FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
+        boolean isBot = isBot(member);
+        if (!isBot) {
+            profileLoader = new MemberProfileLoader();
+        } else {
+            profileLoader = new JandiBotProfileLoader();
+        }
+    }
+
     @OnActivityResult(ModifyProfileActivity.REQUEST_CODE)
     @AfterViews
     void initViews() {
         FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
-
         final String profileImageUrlLarge = member.getUserLargeProfileUrl();
 
-        hasChangedProfileImage = hasChangedProfileImage(profileImageUrlLarge);
+        hasChangedProfileImage = profileLoader.hasChangedProfileImage(member);
 
         initSwipeLayout(hasChangedProfileImage);
 
+        if (!hasChangedProfileImage) {
+            profileLoader.setBlurBackgroundColor(vProfileImageLargeOverlay);
+        }
+
         initLargeImageSize(profileImageUrlLarge);
 
-        boolean isDisableUser = !isEnableUser(member.getUser().status);
+        boolean isDisableUser = !profileLoader.isEnabled(member);
         vDisableIcon.setVisibility(isDisableUser ? View.VISIBLE : View.GONE);
-
-        String description = isDisableUser
-                ? getString(R.string.jandi_disable_user_profile_explain)
-                : member.getUserStatusMessage();
-
-        tvProfileDescription.setText(description);
 
         tvProfileName.setText(member.getName());
 
-        String userDivision = member.getUserDivision();
-        String userPosition = member.getUserPosition();
-        tvProfileDivision.setText(userDivision);
-        tvProfilePosition.setText(userPosition);
-
-        if (TextUtils.isEmpty(userDivision) && TextUtils.isEmpty(userPosition)) {
-            vgProfileTeamInfo.setVisibility(View.GONE);
-        }
-
-        String profileImageUrlMedium = member.getUserMediumProfileUrl();
-        ImageUtil.loadProfileImage(
-                ivProfileImageSmall, profileImageUrlMedium, R.drawable.profile_img);
+        profileLoader.setDescription(tvProfileDescription, member);
+        profileLoader.setProfileInfo(vgProfileTeamInfo, tvProfileDivision, tvProfilePosition, member);
+        profileLoader.loadSmallThumb(ivProfileImageSmall, member);
+        profileLoader.loadFullThumb(ivProfileImageFull, profileImageUrlLarge);
 
         ivProfileImageFull.setOnViewTapListener((view, x, y) -> {
             ivProfileImageFull.setScale(1.0f, true);
             hideFullImage(view);
         });
-
-        loadFullProfileImage(profileImageUrlLarge);
 
         if (isFullSizeImageShowing) {
             ivProfileImageFull.setAlpha(1.0f);
@@ -226,33 +231,15 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             tvProfilePhone.setVisibility(View.GONE);
         }
 
-        btnProfileStar.setSelected(member.isStarred);
-        btnProfileStar.setVisibility(isMe() ? View.INVISIBLE : View.VISIBLE);
-        btnProfileStar.setEnabled(!isMe());
+        profileLoader.setStarButton(btnProfileStar, member);
 
         addButtons(member);
 
         AnalyticsUtil.sendScreenName(getScreen());
     }
 
-    // PhotoView, Fresco 같이 쓰기 위함.
-    private void loadFullProfileImage(String profileImageUrlLarge) {
-        LogUtil.d(TAG, profileImageUrlLarge);
-        Uri uri = Uri.parse(profileImageUrlLarge);
-
-        ImageLoader.loadWithCallback(uri, new BaseOnResourceReadyCallback() {
-            @Override
-            public void onReady(Drawable drawable, CloseableReference reference) {
-                ivProfileImageFull.setImageDrawable(drawable);
-                ivProfileImageFull.addOnAttachStateChangeListener(
-                        new ClosableAttachStateChangeListener(reference));
-            }
-
-            @Override
-            public void onFail(Throwable cause) {
-                LogUtil.e(TAG, Log.getStackTraceString(cause));
-            }
-        });
+    private boolean isBot(FormattedEntity member) {
+        return member instanceof BotEntity;
     }
 
     private void initSwipeLayout(boolean setViewToAlpha) {
@@ -322,23 +309,33 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     private void loadLargeImage(String profileImageUrlLarge) {
-        int defaultColor = getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
         if (!hasChangedProfileImage) {
-            vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
             return;
         }
 
-        ImageLoader.newBuilder()
-                .placeHolder(new ColorDrawable(defaultColor), ScalingUtils.ScaleType.FIT_XY)
-                .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                .processor(new BlurPostprocessor())
-                .load(Uri.parse(profileImageUrlLarge))
-                .into(ivProfileImageLarge);
+        int defaultColor = getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
+        Drawable placeHolder = new ColorDrawable(defaultColor);
+
+        GenericDraweeHierarchy hierarchy = ivProfileImageLarge.getHierarchy();
+        hierarchy.setPlaceholderImage(placeHolder);
+        hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+
+        ImageRequest imageRequest =
+                ImageRequestBuilder.newBuilderWithSource(Uri.parse(profileImageUrlLarge))
+                        .setPostprocessor(new BlurPostprocessor())
+                        .build();
+
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setImageRequest(imageRequest)
+                .setOldController(ivProfileImageLarge.getController())
+                .build();
+
+        ivProfileImageLarge.setController(controller);
     }
 
     @Click(R.id.iv_member_profile_img_small)
     void showFullImage(View v) {
-        if (!hasChangedProfileImage) {
+        if (!hasChangedProfileImage || isBot(EntityManager.getInstance().getEntityById(memberId))) {
             return;
         }
 
@@ -423,10 +420,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         }
 
         EntityManager.getInstance().getEntityById(memberId).isStarred = star;
-    }
-
-    private boolean hasChangedProfileImage(String url) {
-        return !TextUtils.isEmpty(url) && url.contains("files-profile");
     }
 
     private void addButtons(final FormattedEntity member) {
@@ -577,10 +570,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     private boolean isMe() {
         return EntityManager.getInstance().isMe(memberId);
-    }
-
-    private boolean isEnableUser(String status) {
-        return "enabled".equals(status);
     }
 
     private boolean isLandscape() {

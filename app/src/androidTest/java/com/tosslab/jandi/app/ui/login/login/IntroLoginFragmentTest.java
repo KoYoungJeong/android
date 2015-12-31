@@ -42,14 +42,12 @@ public class IntroLoginFragmentTest {
 
     @Before
     public void setUp() throws Exception {
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
         android.app.FragmentManager fragmentManager = rule.getActivity().getFragmentManager();
         fragment = IntroLoginFragment_.builder().build();
         fragmentManager.beginTransaction()
                 .add(android.R.id.content, fragment)
                 .commit();
-
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
     }
 
