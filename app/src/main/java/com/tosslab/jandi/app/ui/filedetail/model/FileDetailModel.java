@@ -394,4 +394,19 @@ public class FileDetailModel {
         }
         return fileUrl;
     }
+
+    /**
+     * @param cursorPosition
+     * @param message
+     * @return
+     * @see com.tosslab.jandi.app.ui.message.v2.model.MessageListModel#needSpace(int, String)
+     */
+    public boolean needSpace(int cursorPosition, String message) {
+        int selectionStart = cursorPosition;
+        if (selectionStart > 0) {
+            CharSequence charSequence = message.substring(selectionStart - 1, selectionStart);
+            return !TextUtils.isEmpty(charSequence.toString().trim());
+        }
+        return false;
+    }
 }

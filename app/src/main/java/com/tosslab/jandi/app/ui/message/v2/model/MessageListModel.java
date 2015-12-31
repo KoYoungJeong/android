@@ -591,4 +591,19 @@ public class MessageListModel {
     public String getTopicName(int entityId) {
         return EntityManager.getInstance().getEntityNameById(entityId);
     }
+
+    /**
+     * @param cursorPosition
+     * @param message
+     * @return
+     * @see com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel#needSpace(int, String)
+     */
+    public boolean needSpace(int cursorPosition, String message) {
+        int selectionStart = cursorPosition;
+        if (selectionStart > 0) {
+            CharSequence charSequence = message.substring(selectionStart - 1, selectionStart);
+            return !TextUtils.isEmpty(charSequence.toString().trim());
+        }
+        return false;
+    }
 }

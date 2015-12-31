@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.filedetail;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.view.KeyEvent;
 import android.widget.EditText;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -50,6 +51,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
+import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -83,18 +85,22 @@ public class FileDetailPresenter {
                 }, Throwable::printStackTrace);
     }
 
-    public List<Integer> getSharedTopicIds(ResMessages.OriginalMessage fileDetail) {
+    protected List<Integer> getSharedTopicIds(ResMessages.OriginalMessage fileDetail) {
         List<Integer> sharedTopicIds = new ArrayList<>();
 
         EntityManager entityManager = EntityManager.getInstance();
 
+
         ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
-        for (ResMessages.OriginalMessage.IntegerWrapper entity : fileMessage.shareEntities) {
-            FormattedEntity formattedEntity = entityManager.getEntityById(entity.getShareEntity());
-            if (formattedEntity != EntityManager.UNKNOWN_USER_ENTITY && !formattedEntity.isUser()) {
-                sharedTopicIds.add(formattedEntity.getId());
-            }
-        }
+        Observable.from(fileMessage.shareEntities)
+                .map(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
+                .filter(shareEntity -> {
+                    FormattedEntity entity = entityManager.getEntityById(shareEntity);
+                    return entity != EntityManager.UNKNOWN_USER_ENTITY && !entity.isUser();
+                })
+                .collect(() -> sharedTopicIds, List::add)
+                .subscribe();
+
         return sharedTopicIds;
     }
 
@@ -466,13 +472,16 @@ public class FileDetailPresenter {
                 }
             });
 
-            if (mentionControlViewModel.getAllSelectableMembers().size() == 0) {
-                view.dismissMentionButton();
-            } else {
-                view.showMentionButton();
-            }
-            registClipboardListenerforMention();
+        } else {
+            mentionControlViewModel.refreshMembers(sharedTopicIds);
         }
+
+        if (mentionControlViewModel.getAllSelectableMembers().size() == 0) {
+            view.dismissMentionButton();
+        } else {
+            view.showMentionButton();
+        }
+        registClipboardListenerforMention();
     }
 
     public void registClipboardListenerforMention() {
@@ -649,6 +658,13 @@ public class FileDetailPresenter {
         }
     }
 
+    public void onMentionClick(int selectionStart, String message) {
+        if (fileDetailModel.needSpace(selectionStart, message)) {
+            view.inputText(KeyEvent.KEYCODE_SPACE);
+        }
+        view.inputText(KeyEvent.KEYCODE_AT);
+    }
+
     public interface View {
         void drawFileWriterState(boolean isEnabled);
 
@@ -730,5 +746,7 @@ public class FileDetailPresenter {
         void dismissMentionButton();
 
         void showMentionButton();
+
+        void inputText(int keycodeSpace);
     }
 }

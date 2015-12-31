@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -17,9 +18,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import setup.BaseInitUtil;
 
 import static com.jayway.awaitility.Awaitility.await;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
@@ -147,6 +154,39 @@ public class FileDetailPresenterTest {
         verify(mockView).setExternalShared(eq(false));
         verify(mockView).showToast(eq(JandiApplication.getContext().getResources().getString(R.string.jandi_success_copy_clipboard_external_link)));
         verify(mockView).dismissProgress();
+    }
+
+    @Test
+    public void testGetSharedTopicIds() throws Exception {
+        // Given
+        ResMessages.FileMessage fileMessage = new ResMessages.FileMessage();
+        fileMessage.shareEntities = getSharedEntities();
+
+        // When
+        List<Integer> sharedTopicIds = fileDetailPresenter.getSharedTopicIds(fileMessage);
+
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(sharedTopicIds.get(0));
+        // Then
+        assertThat(sharedTopicIds.size(), is(equalTo(1)));
+        assertThat(entity.isUser(), is(false));
+
+
+    }
+
+    private List<ResMessages.OriginalMessage.IntegerWrapper> getSharedEntities() {
+        List<ResMessages.OriginalMessage.IntegerWrapper> integerWrappers = new ArrayList<>();
+
+        FormattedEntity topic = EntityManager.getInstance().getJoinedChannels().get(0);
+        FormattedEntity user = EntityManager.getInstance().getFormattedUsers().get(0);
+
+        ResMessages.OriginalMessage.IntegerWrapper object = new ResMessages.OriginalMessage.IntegerWrapper();
+        object.setShareEntity(topic.getId());
+        integerWrappers.add(object);
+
+        ResMessages.OriginalMessage.IntegerWrapper object1 = new ResMessages.OriginalMessage.IntegerWrapper();
+        object1.setShareEntity(user.getId());
+        integerWrappers.add(object1);
+        return integerWrappers;
     }
 
     private ResMessages.FileMessage getFileMessage() {

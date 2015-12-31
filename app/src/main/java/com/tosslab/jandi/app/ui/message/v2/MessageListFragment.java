@@ -1123,7 +1123,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Click(R.id.btn_show_mention)
     void onMentionClick() {
+        etMessage.requestFocus();
         BaseInputConnection inputConnection = new BaseInputConnection(etMessage, true);
+        if (messageListModel.needSpace(etMessage.getSelectionStart(), etMessage.getText().toString())) {
+            inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SPACE));
+        }
+
         inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_AT));
         if (buttonAction != ButtonAction.KEYBOARD) {
             if (buttonAction == ButtonAction.STICKER || buttonAction == ButtonAction.UPLOAD) {
