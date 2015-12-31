@@ -290,13 +290,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
                 });
 
-        messageListView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
-            }
-        });
-
         if (isFromSearch) {
             MarkerNewMessageLoader newsMessageLoader = new MarkerNewMessageLoader(getActivity());
             newsMessageLoader.setMessageListModel(messageListModel);

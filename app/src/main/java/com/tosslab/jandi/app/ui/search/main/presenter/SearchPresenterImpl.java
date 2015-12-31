@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 
 /**
@@ -52,15 +51,11 @@ public class SearchPresenterImpl implements SearchPresenter {
     @Override
     public void onSearchTextChange(String text) {
         if (!TextUtils.isEmpty(text)) {
-            publishNext(text);
+            objectPublishSubject.onNext(text);
             view.setMicToClearImage();
         } else {
             view.setClearToMicImage();
         }
-    }
-
-    public void publishNext(String text) {
-        objectPublishSubject.onNext(text);
     }
 
     @Override
