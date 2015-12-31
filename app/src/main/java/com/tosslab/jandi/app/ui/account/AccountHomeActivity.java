@@ -234,7 +234,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
         ColoredToast.show(AccountHomeActivity.this, message);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setAccountName(String newName) {
         tvAccountName.setText(newName);

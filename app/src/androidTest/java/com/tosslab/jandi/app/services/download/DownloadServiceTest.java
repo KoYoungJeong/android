@@ -4,9 +4,18 @@ import android.app.Application;
 import android.content.Intent;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.ApplicationTestCase;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Mockito.*;
+
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by tonyjs on 15. 11. 18..
@@ -58,6 +67,7 @@ public class DownloadServiceTest extends ApplicationTestCase<Application> {
         verify(view).showErrorToast(anyInt());
     }
 
+    @Ignore
     @Test
     public void testOnHandleIntent() throws Exception {
         // Given
