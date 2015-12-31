@@ -99,7 +99,7 @@ public class AccountHomeActivityTest {
                 .check(matches(isDisplayed()))
                 .check(matches(isSelected()));
 
-        assertThat(activity.teamLayout.getChildCount(), is(teams.size() + 1));
+        assertThat(activity.teamLayout.getChildCount(), is(teams.size()));
     }
 
     @Test
@@ -159,6 +159,7 @@ public class AccountHomeActivityTest {
     @Test
     public void testMoveEmailEditClick() throws Throwable {
         rule.runOnUiThread(() -> activity.moveEmailEditClick());
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
         onView(withText(R.string.jandi_choose_email))
                 .check(matches(isDisplayed()));
 
