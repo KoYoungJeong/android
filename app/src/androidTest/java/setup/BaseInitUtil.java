@@ -41,6 +41,8 @@ import java.util.List;
 
 import retrofit.RetrofitError;
 
+import static com.jayway.awaitility.Awaitility.await;
+
 
 // email : androidtester1@gustr.com / androidtester2@gustr.com / androidtester3@gustr.com
 public class BaseInitUtil {
@@ -65,10 +67,11 @@ public class BaseInitUtil {
         userSignin();
     }
 
-    private static void turnOnWifi() {
+    public static void turnOnWifi() {
         WifiManager wifiManager = (WifiManager) JandiApplication.getContext().getSystemService(Context.WIFI_SERVICE);
         if (!wifiManager.isWifiEnabled()) {
             wifiManager.setWifiEnabled(true);
+            await().until(wifiManager::isWifiEnabled);
         }
     }
 

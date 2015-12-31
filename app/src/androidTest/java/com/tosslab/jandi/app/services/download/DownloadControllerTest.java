@@ -16,6 +16,8 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.util.concurrent.Callable;
 
+import setup.BaseInitUtil;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
@@ -66,7 +68,7 @@ public class DownloadControllerTest {
 
         // Then
         assertEquals(false, isConnected);
-        wifiManager.setWifiEnabled(true);
+        BaseInitUtil.turnOnWifi();
     }
 
     @Test
