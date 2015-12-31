@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.entities.chats.adapter;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -126,20 +127,21 @@ public class ChatChooseAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context)
                     .inflate(R.layout.item_entity_body_two_line, parent, false);
             chatCHooseViewHolder = new ChatCHooseViewHolder();
-            chatCHooseViewHolder.textViewName =
+            chatCHooseViewHolder.tvName =
                     (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
-            chatCHooseViewHolder.imageViewIcon =
+            chatCHooseViewHolder.ivIcon =
                     (SimpleDraweeView) convertView.findViewById(R.id.iv_entity_listitem_icon);
-            chatCHooseViewHolder.imageViewFavorite =
+            chatCHooseViewHolder.ivFavorite =
                     (ImageView) convertView.findViewById(R.id.iv_entity_listitem_fav);
-            chatCHooseViewHolder.textViewAdditional =
+            chatCHooseViewHolder.tvAdditional =
                     (TextView) convertView.findViewById(R.id.tv_entity_listitem_user_count);
-            chatCHooseViewHolder.disableLineThrouthView =
+            chatCHooseViewHolder.vDisableLineThrough =
                     convertView.findViewById(R.id.iv_entity_listitem_line_through);
-            chatCHooseViewHolder.disableCoverView =
+            chatCHooseViewHolder.vDisableCover =
                     convertView.findViewById(R.id.v_entity_listitem_warning);
             chatCHooseViewHolder.ivKick = convertView.findViewById(R.id.iv_entity_listitem_user_kick);
-
+            chatCHooseViewHolder.tvOwnerBadge =
+                    (TextView) convertView.findViewById(R.id.tv_owner_badge);
 
             convertView.setTag(R.id.chatchoose_item, chatCHooseViewHolder);
 
@@ -149,31 +151,35 @@ public class ChatChooseAdapter extends BaseAdapter {
 
         ChatChooseItem item = getItem(position);
 
-        chatCHooseViewHolder.textViewName.setText(item.getName());
+        chatCHooseViewHolder.tvName.setText(item.getName());
         chatCHooseViewHolder.ivKick.setVisibility(View.GONE);
 
-        if (!TextUtils.isEmpty(item.getEmail())) {
-            chatCHooseViewHolder.textViewAdditional.setVisibility(View.VISIBLE);
+        Resources resources = context.getResources();
+        chatCHooseViewHolder.tvOwnerBadge.setText(resources.getString(R.string.jandi_team_owner));
+        chatCHooseViewHolder.tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
+
+        if (!TextUtils.isEmpty(item.getStatusMessage())) {
+            chatCHooseViewHolder.tvAdditional.setVisibility(View.VISIBLE);
         } else {
-            chatCHooseViewHolder.textViewAdditional.setVisibility(View.GONE);
+            chatCHooseViewHolder.tvAdditional.setVisibility(View.GONE);
         }
-        chatCHooseViewHolder.textViewAdditional.setText(item.getEmail());
+        chatCHooseViewHolder.tvAdditional.setText(item.getStatusMessage());
 
         if (item.isStarred()) {
-            chatCHooseViewHolder.imageViewFavorite.setVisibility(View.VISIBLE);
+            chatCHooseViewHolder.ivFavorite.setVisibility(View.VISIBLE);
         } else {
-            chatCHooseViewHolder.imageViewFavorite.setVisibility(View.GONE);
+            chatCHooseViewHolder.ivFavorite.setVisibility(View.GONE);
         }
 
         if (item.isEnabled()) {
-            chatCHooseViewHolder.disableLineThrouthView.setVisibility(View.GONE);
-            chatCHooseViewHolder.disableCoverView.setVisibility(View.GONE);
+            chatCHooseViewHolder.vDisableLineThrough.setVisibility(View.GONE);
+            chatCHooseViewHolder.vDisableCover.setVisibility(View.GONE);
         } else {
-            chatCHooseViewHolder.disableLineThrouthView.setVisibility(View.VISIBLE);
-            chatCHooseViewHolder.disableCoverView.setVisibility(View.VISIBLE);
+            chatCHooseViewHolder.vDisableLineThrough.setVisibility(View.VISIBLE);
+            chatCHooseViewHolder.vDisableCover.setVisibility(View.VISIBLE);
         }
 
-        SimpleDraweeView imageViewIcon = chatCHooseViewHolder.imageViewIcon;
+        SimpleDraweeView imageViewIcon = chatCHooseViewHolder.ivIcon;
         imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
         ImageUtil.loadProfileImage(imageViewIcon, item.getPhotoUrl(), R.drawable.profile_img);
@@ -214,13 +220,14 @@ public class ChatChooseAdapter extends BaseAdapter {
 
     static class ChatCHooseViewHolder {
         public Context context;
-        public SimpleDraweeView imageViewIcon;
-        public ImageView imageViewFavorite;
-        public TextView textViewName;
-        public TextView textViewAdditional;
-        public View disableLineThrouthView;
-        public View disableCoverView;
+        public SimpleDraweeView ivIcon;
+        public ImageView ivFavorite;
+        public TextView tvName;
+        public TextView tvAdditional;
+        public View vDisableLineThrough;
+        public View vDisableCover;
         public View ivKick;
+        public TextView tvOwnerBadge;
     }
 
     static class DisableFoldingViewHolder {

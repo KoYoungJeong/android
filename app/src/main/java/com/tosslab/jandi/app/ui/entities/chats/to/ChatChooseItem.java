@@ -6,20 +6,21 @@ package com.tosslab.jandi.app.ui.entities.chats.to;
 public class ChatChooseItem {
     private int entityId;
     private String name;
-    private String email;
+    private String statusMessage;
     private String photoUrl;
     private boolean isBot = false;
     private boolean isStarred;
     private boolean isEnabled;
     private boolean isChooseItem = false;
+    private boolean isOwner = false;
 
     public ChatChooseItem name(String name) {
         this.name = name;
         return this;
     }
 
-    public ChatChooseItem email(String email) {
-        this.email = email;
+    public ChatChooseItem statusMessage(String email) {
+        this.statusMessage = email;
         return this;
     }
 
@@ -40,8 +41,18 @@ public class ChatChooseItem {
 
     }
 
+    public ChatChooseItem owner(boolean isOwner) {
+        this.isOwner = isOwner;
+        return this;
+
+    }
+
     public boolean isStarred() {
         return isStarred;
+    }
+
+    public boolean isOwner() {
+        return isOwner;
     }
 
     public int getEntityId() {
@@ -52,8 +63,8 @@ public class ChatChooseItem {
         return name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getStatusMessage() {
+        return statusMessage;
     }
 
     public String getPhotoUrl() {

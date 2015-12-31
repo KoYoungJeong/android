@@ -426,6 +426,7 @@
 	<string name="jandi_team_info">"團隊"</string>
 	<string name="jandi_team_join_fail">"處理過程中發生錯誤。請再試一次。"</string>
 	<string name="jandi_team_member">"團隊成員"</string>
+	<string name="jandi_team_owner">"團隊管理員"</string>
 	<string name="jandi_team_select_accept">"接受"</string>
 	<string name="jandi_team_select_create_a_team">"建立新的團隊"</string>
 	<string name="jandi_team_select_ignore">"不理會"</string>
@@ -446,6 +447,7 @@
 	<string name="jandi_topic_no_member_1">"此議題目前只有你一人"</string>
 	<string name="jandi_topic_no_member_2">"輕觸按鈕邀請其他成員加入。"</string>
 	<string name="jandi_topic_notification">"允許議題推播通知"</string>
+	<string name="jandi_topic_owner">"議題管理員"</string>
 	<string name="jandi_topic_paricipants">"議題參與成員"</string>
 	<string name="jandi_topic_private">"私人"</string>
 	<string name="jandi_topic_public">"公開"</string>

@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import uk.co.senab.photoview.PhotoView;
 
@@ -53,7 +54,8 @@ public class JandiBotProfileLoader implements ProfileLoader {
             layoutParams.topMargin = -margin;
         }
         ivProfileImageSmall.setLayoutParams(layoutParams);
-        ivProfileImageSmall.setImageResource(R.drawable.bot_80x100);
+
+        ImageLoader.newBuilder().load(R.drawable.bot_80x100);
     }
 
     @Override

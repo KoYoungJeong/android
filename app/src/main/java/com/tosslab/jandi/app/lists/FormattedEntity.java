@@ -98,6 +98,10 @@ public class FormattedEntity {
         return (type == FormattedEntity.TYPE_REAL_USER);
     }
 
+    public boolean isTeamOwner() {
+        return isUser() && "owner".equals(getUser().u_authority);
+    }
+
     public boolean isDummy() {
         return (!isPublicTopic() && !isPrivateGroup() && !isUser());
     }

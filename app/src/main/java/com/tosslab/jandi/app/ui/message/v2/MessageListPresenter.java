@@ -713,8 +713,7 @@ public class MessageListPresenter {
         List<FormattedEntity> users = EntityManager.getInstance().getFormattedUsers();
         FormattedEntity tempDefaultEntity = new FormattedEntity();
         FormattedEntity owner = Observable.from(users)
-                .filter(formattedEntity ->
-                        TextUtils.equals(formattedEntity.getUser().u_authority, "owner"))
+                .filter(formattedEntity -> formattedEntity.isTeamOwner())
                 .firstOrDefault(tempDefaultEntity)
                 .toBlocking()
                 .first();

@@ -421,12 +421,13 @@
 	<string name="jandi_tab_file">"파일"</string>
 	<string name="jandi_tab_more">"더보기"</string>
 	<string name="jandi_tab_private_group">"비공개 토픽"</string>
-	<string name="jandi_tab_to_view_original">"이곳을 탭하면 원본으로 불 수 있습니다."</string>
+	<string name="jandi_tab_to_view_original">"이곳을 탭하면 원본으로 볼 수 있습니다."</string>
 	<string name="jandi_tab_topic">"토픽"</string>
 	<string name="jandi_team_creation_succeed">"메일 전송 성공. 메일함을 확인하여 잔디 팀을 생성하세요."</string>
 	<string name="jandi_team_info">"팀 정보"</string>
 	<string name="jandi_team_join_fail">"팀 가입에 실패하였습니다."</string>
 	<string name="jandi_team_member">"팀 멤버"</string>
+	<string name="jandi_team_owner">"팀 관리자"</string>
 	<string name="jandi_team_select_accept">"수락"</string>
 	<string name="jandi_team_select_create_a_team">"팀 생성"</string>
 	<string name="jandi_team_select_ignore">"거부"</string>
@@ -447,6 +448,7 @@
 	<string name="jandi_topic_no_member_1">"아직 토픽에 초대된 멤버가 없습니다."</string>
 	<string name="jandi_topic_no_member_2">"여기를 터치하시고 토픽에 멤버를 초대해보세요."</string>
 	<string name="jandi_topic_notification">"알림"</string>
+	<string name="jandi_topic_owner">"토픽 관리자"</string>
 	<string name="jandi_topic_paricipants">"참여 멤버"</string>
 	<string name="jandi_topic_private">"비공개"</string>
 	<string name="jandi_topic_public">"공개"</string>

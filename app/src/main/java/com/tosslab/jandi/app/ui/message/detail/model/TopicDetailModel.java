@@ -220,7 +220,7 @@ public class TopicDetailModel {
     }
 
     public boolean isTeamOwner() {
-        return TextUtils.equals(EntityManager.getInstance().getMe().getUser().u_authority, "owner");
+        return EntityManager.getInstance().getMe().isTeamOwner();
     }
 
 

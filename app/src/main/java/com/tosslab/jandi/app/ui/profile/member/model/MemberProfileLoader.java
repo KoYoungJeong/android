@@ -15,13 +15,12 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.utils.image.BaseOnResourceReadyCallback;
-import com.tosslab.jandi.app.utils.image.ClosableAttachStateChangeListener;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.listener.BaseOnResourceReadyCallback;
+import com.tosslab.jandi.app.utils.image.listener.ClosableAttachStateChangeListener;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 import uk.co.senab.photoview.PhotoView;
 
 public class MemberProfileLoader implements ProfileLoader {
@@ -57,23 +56,24 @@ public class MemberProfileLoader implements ProfileLoader {
     @Override
     public void loadSmallThumb(SimpleDraweeView ivProfileImageSmall, FormattedEntity member) {
         String profileImageUrlMedium = member.getUserMediumProfileUrl();
-        ImageUtil.loadCircleImageByFresco(
+        ImageUtil.loadProfileImage(
                 ivProfileImageSmall, profileImageUrlMedium, R.drawable.profile_img);
-
     }
 
     @Override
     public void loadFullThumb(PhotoView ivProfileImageFull, String uriString) {
         Uri uri = Uri.parse(uriString);
 
-        ImageUtil.loadDrawable(uri, new BaseOnResourceReadyCallback() {
+        ImageLoader.loadWithCallback(uri, new BaseOnResourceReadyCallback() {
             @Override
             public void onReady(Drawable drawable, CloseableReference reference) {
-                Observable.empty()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(o -> {
-                            setImageResource(ivProfileImageFull, drawable, reference);
-                        });
+                if (ivProfileImageFull == null) {
+                    return;
+                }
+
+                ivProfileImageFull.setImageDrawable(drawable);
+                ivProfileImageFull.addOnAttachStateChangeListener(
+                        new ClosableAttachStateChangeListener(reference));
             }
 
             @Override
@@ -81,12 +81,6 @@ public class MemberProfileLoader implements ProfileLoader {
                 LogUtil.e(Log.getStackTraceString(cause));
             }
         });
-    }
-
-    void setImageResource(PhotoView ivProfileImageFull, Drawable drawable, CloseableReference reference) {
-        ivProfileImageFull.setImageDrawable(drawable);
-        ivProfileImageFull.addOnAttachStateChangeListener(
-                new ClosableAttachStateChangeListener(reference));
     }
 
     @Override

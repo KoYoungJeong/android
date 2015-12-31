@@ -103,7 +103,6 @@ public class ResLeftSideMenu {
         public List<Integer> pg_members;
         public String description;
         public boolean autoJoin;
-
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -132,7 +131,6 @@ public class ResLeftSideMenu {
         public int entityId;
         public int lastLinkId;
         public int alarmCount;
-
     }
 
     public static class Bot {

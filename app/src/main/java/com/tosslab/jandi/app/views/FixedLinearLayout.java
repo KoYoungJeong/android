@@ -25,6 +25,8 @@ public class FixedLinearLayout extends LinearLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
+        int width = MeasureSpec.getSize(widthMeasureSpec) - getPaddingLeft() - getPaddingRight();
+
         int childCount = getChildCount();
         if (childCount >= 2) {
             View firstChild = getChildAt(0);
@@ -35,6 +37,9 @@ public class FixedLinearLayout extends LinearLayout {
             int rightSideWidth = 0;
             for (int i = 1; i < childCount; i++) {
                 View child = getChildAt(i);
+                if (child.getVisibility() == View.GONE) {
+                    continue;
+                }
                 child.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
                 LinearLayout.LayoutParams childParams = (LayoutParams) child.getLayoutParams();
 
@@ -42,8 +47,8 @@ public class FixedLinearLayout extends LinearLayout {
                         child.getMeasuredWidth() + childParams.leftMargin + childParams.rightMargin;
             }
 
-            if (getMeasuredWidth() < (leftSideWidth + rightSideWidth)) {
-                leftSideWidth = getMeasuredWidth() - rightSideWidth;
+            if (width < (leftSideWidth + rightSideWidth)) {
+                leftSideWidth = width - rightSideWidth;
 
                 int firstChildWidth = leftSideWidth
                         - firstChildParams.leftMargin - firstChildParams.rightMargin;

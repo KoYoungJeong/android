@@ -50,7 +50,6 @@ public class UserSelectorImpl implements UserSelector {
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_user_selector);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context));
 
         UserRecyclerAdapter adapter = new UserRecyclerAdapter(context);
 

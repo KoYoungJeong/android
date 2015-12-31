@@ -142,7 +142,7 @@ public class InvitationDialogExecutor {
         FormattedEntity tempDefaultEntity = new FormattedEntity();
         FormattedEntity owner = Observable.from(users)
                 .filter(formattedEntity ->
-                        TextUtils.equals(formattedEntity.getUser().u_authority, "owner"))
+                        formattedEntity.isTeamOwner())
                 .firstOrDefault(tempDefaultEntity)
                 .toBlocking()
                 .first();

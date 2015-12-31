@@ -94,7 +94,9 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @AfterInject
     void initObject() {
-        topicMembersAdapter = new MembersAdapter(getBaseContext());
+        int ownerType = type == TYPE_MEMBERS_LIST_TOPIC
+                ? MembersAdapter.OWNER_TYPE_TOPIC : MembersAdapter.OWNER_TYPE_TEAM;
+        topicMembersAdapter = new MembersAdapter(getBaseContext(), ownerType);
         if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
             topicMembersAdapter.setCheckMode();
         }
@@ -138,27 +140,23 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         memberListView.setAdapter(topicMembersAdapter);
         initProgressWheel();
 
-        int scropMaxY = getActionbarHeight();
+        memberListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
-        if (scropMaxY > 0) {
-            memberListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    final int offset = (int) (dy * .66f);
+            private boolean initialize = true;
 
-
-                    final float futureScropViewPosY = vgSearchbar.getY() - offset;
-
-                    if (futureScropViewPosY <= 0) {
-                        vgSearchbar.setY(0);
-                    } else if (futureScropViewPosY >= scropMaxY) {
-                        vgSearchbar.setY(scropMaxY);
-                    } else {
-                        vgSearchbar.setY(futureScropViewPosY);
-                    }
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (initialize) {
+                    initialize = false;
+                    return;
                 }
-            });
-        }
+
+                final float translateY = vgSearchbar.getTranslationY() - dy;
+
+                float futureTranslateY = Math.max(-vgSearchbar.getMeasuredHeight(), translateY);
+                vgSearchbar.setTranslationY(Math.min(0, futureTranslateY));
+            }
+        });
 
         if (type == TYPE_MEMBERS_LIST_TOPIC) {
             membersListPresenter.initKickableMode(entityId);
@@ -192,9 +190,8 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         TypedValue typedValue = new TypedValue();
         getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true);
 
-        return TypedValue.complexToDimensionPixelOffset(typedValue.data, getResources()
-                .getDisplayMetrics());
-
+        return TypedValue.complexToDimensionPixelOffset(
+                typedValue.data, getResources().getDisplayMetrics());
     }
 
     void setupActionbar() {
