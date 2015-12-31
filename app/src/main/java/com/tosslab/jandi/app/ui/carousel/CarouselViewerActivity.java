@@ -207,7 +207,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         }
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setFileWriterName(String fileWriterName) {
         tvFileWriterName.setText(fileWriterName);
