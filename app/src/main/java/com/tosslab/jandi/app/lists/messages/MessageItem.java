@@ -167,7 +167,7 @@ public class MessageItem {
 
     public String getContentFileSize() {
         if (mMessage instanceof ResMessages.FileMessage) {
-            int byteSize = ((ResMessages.FileMessage) mMessage).content.size;
+            long byteSize = ((ResMessages.FileMessage) mMessage).content.size;
             return FormatConverter.formatFileSize(byteSize);
         }
 

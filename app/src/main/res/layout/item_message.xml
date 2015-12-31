@@ -39,7 +39,7 @@
         android:paddingTop="5dp"
         android:visibility="visible">
         <!-- 사용자 프로필 사진 -->
-        <com.facebook.drawee.view.SimpleDraweeView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_message_user_profile"
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"

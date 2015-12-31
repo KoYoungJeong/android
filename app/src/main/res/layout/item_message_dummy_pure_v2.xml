@@ -30,7 +30,7 @@
             android:textColor="@color/jandi_messages_content"
             android:textSize="@dimen/jandi_messages_content"/>
 
-        <ImageView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_message_sticker"
             android:layout_width="140dp"
             android:layout_height="140dp"

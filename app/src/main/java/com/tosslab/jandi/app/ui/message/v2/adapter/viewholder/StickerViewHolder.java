@@ -25,7 +25,7 @@ public class StickerViewHolder implements BodyViewHolder {
 
     private SimpleDraweeView ivProfile;
     private TextView tvName;
-    private ImageView ivSticker;
+    private SimpleDraweeView ivSticker;
     private View vDisableCover;
     private View vDisableLineThrough;
     private TextView tvUnread;
@@ -41,7 +41,7 @@ public class StickerViewHolder implements BodyViewHolder {
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvDate = (TextView) rootView.findViewById(R.id.tv_message_create_date);
         tvUnread = (TextView) rootView.findViewById(R.id.tv_entity_listitem_unread);
-        ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_sticker);
+        ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_sticker);
         vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);

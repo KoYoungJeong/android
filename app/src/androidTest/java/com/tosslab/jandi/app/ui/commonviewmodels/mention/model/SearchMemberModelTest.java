@@ -59,7 +59,7 @@ public class SearchMemberModelTest {
     @Test
     public void testRefreshSelectableMembers() throws Exception {
 
-        ResAccountInfo.UserTeam userTeam = AccountRepository.getRepository().getAccountTeams().get(1);
+        ResAccountInfo.UserTeam userTeam = AccountRepository.getRepository().getAccountTeams().get(0);
         ResLeftSideMenu leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(userTeam.getTeamId());
 
         LinkedHashMap<Integer, SearchedItemVO> searchedItemVOLinkedHashMap = searchMemberModel.refreshSelectableMembers(userTeam.getTeamId(), Arrays.asList(leftSideMenu.team.t_defaultChannelId), MentionControlViewModel.MENTION_TYPE_MESSAGE);
