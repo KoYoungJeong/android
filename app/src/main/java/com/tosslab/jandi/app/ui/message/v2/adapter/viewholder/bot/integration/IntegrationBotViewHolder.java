@@ -64,7 +64,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         BotEntity botEntity = (BotEntity) entity;
         ResLeftSideMenu.Bot bot = botEntity.getBot();
 
-        ImageUtil.loadCircleImageByFresco(ivProfile, botEntity.getUserLargeProfileUrl(), R.drawable.profile_img);
+        ImageUtil.loadProfileImage(ivProfile, botEntity.getUserLargeProfileUrl(), R.drawable.profile_img);
 
         tvName.setText(botEntity.getName());
 
