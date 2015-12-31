@@ -28,7 +28,7 @@ public class DownloadService extends IntentService implements DownloadController
     public static final String KEY_FILE_EXTENSIONS = "ext";
     public static final String KEY_FILE_TYPE = "file_type";
     public static final int NONE_FILE_ID = -1;
-    public static final String ACTION_DOWNLOAD_SERVICE = "com.tosslab.jandi.app.download.service";
+    public static final String ACTION_STOP_DOWNLOAD_SERVICE = "com.tosslab.jandi.app.download.service.stop";
     public static final String EXTRA_STOP = "stop";
     public static final String EXTRA_NOTIFICATION_ID = "notification_id";
     private static final String ACTION_CONNECTIVITY_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
@@ -126,7 +126,7 @@ public class DownloadService extends IntentService implements DownloadController
         IntentFilter filter = new IntentFilter(ACTION_CONNECTIVITY_CHANGE);
         registerReceiver(networkChangeBroadcastReceiver, filter);
 
-        IntentFilter stopFilter = new IntentFilter(ACTION_DOWNLOAD_SERVICE);
+        IntentFilter stopFilter = new IntentFilter(ACTION_STOP_DOWNLOAD_SERVICE);
         stopFilter.setPriority(1);
         registerReceiver(stopReceiver, stopFilter);
     }

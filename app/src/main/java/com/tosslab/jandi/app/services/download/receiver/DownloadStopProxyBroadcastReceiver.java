@@ -12,7 +12,7 @@ public class DownloadStopProxyBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent stopIntent = new Intent(DownloadService.ACTION_DOWNLOAD_SERVICE);
+        Intent stopIntent = new Intent(DownloadService.ACTION_STOP_DOWNLOAD_SERVICE);
         stopIntent.putExtra(DownloadService.EXTRA_NOTIFICATION_ID, intent.getIntExtra(DownloadService.EXTRA_NOTIFICATION_ID, -1));
         context.sendOrderedBroadcast(stopIntent, null);
     }

@@ -375,7 +375,7 @@
 
         <receiver android:name=".services.download.receiver.DownloadStopBroadcastReceiver">
             <intent-filter>
-                <action android:name="com.tosslab.jandi.app.download.service" />
+                <action android:name="com.tosslab.jandi.app.download.service.stop" />
             </intent-filter>
         </receiver>
 
