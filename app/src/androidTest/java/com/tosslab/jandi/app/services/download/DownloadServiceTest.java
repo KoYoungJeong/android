@@ -7,6 +7,8 @@ import android.test.ApplicationTestCase;
 
 import com.tosslab.jandi.app.services.download.model.DownloadModel;
 
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -68,6 +70,7 @@ public class DownloadServiceTest extends ApplicationTestCase<Application> {
         verify(view).showErrorToast(anyInt());
     }
 
+    @Ignore
     @Test
     public void testOnHandleIntent() throws Exception {
         // Given
