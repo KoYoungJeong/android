@@ -98,7 +98,7 @@ public class ModifyProfilePresenterImplTest {
             Mockito.doAnswer(invocationOnMock -> {
                 finish[0] = true;
                 return invocationOnMock;
-            }).when(mockView).dismissProgressWheel();
+            }).when(mockView).updateProfileFailed();
 
 
             presenter.onUploadEmail("hello@hello.com");
@@ -113,7 +113,7 @@ public class ModifyProfilePresenterImplTest {
             Mockito.doAnswer(invocationOnMock -> {
                 finish[0] = true;
                 return invocationOnMock;
-            }).when(mockView).dismissProgressWheel();
+            }).when(mockView).updateProfileSucceed();
 
             String userEmail = EntityManager.getInstance().getMe().getUserEmail();
             presenter.onUploadEmail(userEmail);
