@@ -44,27 +44,21 @@ public class TopicDetailFragmentTest {
     @Test
     public void testSetTopicAutoJoin() throws Throwable {
         rule.runOnUiThread(() -> fragment.setTopicAutoJoin(true, true, true, true));
-        assertThat(fragment.switchAutoJoin.isEnabled(), is(false));
         assertThat(fragment.switchAutoJoin.isChecked(), is(false));
 
         rule.runOnUiThread(() -> fragment.setTopicAutoJoin(false, true, true, false));
-        assertThat(fragment.switchAutoJoin.isEnabled(), is(false));
         assertThat(fragment.switchAutoJoin.isChecked(), is(true));
 
         rule.runOnUiThread(() -> fragment.setTopicAutoJoin(false, true, false, false));
-        assertThat(fragment.switchAutoJoin.isEnabled(), is(true));
         assertThat(fragment.switchAutoJoin.isChecked(), is(false));
 
         rule.runOnUiThread(() -> fragment.setTopicAutoJoin(true, true, false, false));
-        assertThat(fragment.switchAutoJoin.isEnabled(), is(true));
         assertThat(fragment.switchAutoJoin.isChecked(), is(true));
 
         rule.runOnUiThread(() -> fragment.setTopicAutoJoin(true, false, false, false));
-        assertThat(fragment.switchAutoJoin.isEnabled(), is(false));
         assertThat(fragment.switchAutoJoin.isChecked(), is(true));
 
         rule.runOnUiThread(() -> fragment.setTopicAutoJoin(false, false, false, false));
-        assertThat(fragment.switchAutoJoin.isEnabled(), is(false));
         assertThat(fragment.switchAutoJoin.isChecked(), is(false));
 
     }

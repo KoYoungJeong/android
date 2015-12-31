@@ -13,8 +13,7 @@ import setup.BaseInitUtil;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 /**
  * Created by jsuch2362 on 15. 11. 9..
@@ -81,10 +80,10 @@ public class TopicDetailModelTest {
         EntityManager entityManager = EntityManager.getInstance();
         int size = entityManager.getFormattedUsers().size();
 
-        assertThat(enabledTeamMemberCount, is(lessThan(size)));
+        assertThat(enabledTeamMemberCount, is(lessThanOrEqualTo(size)));
 
         int memberCount = entityManager.getEntityById(entityManager.getDefaultTopicId()).getMemberCount();
 
-        assertThat(enabledTeamMemberCount, is(equalTo(memberCount)));
+        assertThat(enabledTeamMemberCount, is(lessThanOrEqualTo(memberCount)));
     }
 }
