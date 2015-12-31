@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.account;
 
+import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 

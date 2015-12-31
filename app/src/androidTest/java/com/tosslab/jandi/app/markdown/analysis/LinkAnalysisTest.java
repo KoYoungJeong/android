@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.markdown.analysis;
 import android.support.test.runner.AndroidJUnit4;
 import android.text.SpannableStringBuilder;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.views.spannable.JandiURLSpan;
 
 import org.junit.Before;
@@ -37,7 +38,7 @@ public class LinkAnalysisTest {
     public void testAnalysis() throws Exception {
         for (String testMarkdown : TEST_MARKDOWNS) {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(testMarkdown);
-            analysis.analysis(null, spannableStringBuilder);
+            analysis.analysis(JandiApplication.getContext(), spannableStringBuilder);
 
             int length = spannableStringBuilder.length();
             boolean find = false;
@@ -51,7 +52,7 @@ public class LinkAnalysisTest {
 
         for (String testMarkdown : TEST_MARKDOWNS_2) {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(testMarkdown);
-            analysis.analysis(null, spannableStringBuilder);
+            analysis.analysis(JandiApplication.getContext(), spannableStringBuilder);
 
             int length = spannableStringBuilder.length();
             boolean find = false;
