@@ -7,6 +7,9 @@ import android.support.test.runner.AndroidJUnit4;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.services.download.domain.DownloadFileInfo;
+import com.tosslab.jandi.app.services.download.model.DownloadModel;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,10 +39,6 @@ public class DownloadControllerTest {
 
     @Test
     public void testMakeDirIfNotExistsAndGet() throws Exception {
-        // Given
-        DownloadController.View view = mock(DownloadController.View.class);
-        DownloadController downloadController = new DownloadController(view);
-
         // When
         File dir = DownloadModel.makeDirIfNotExistsAndGet();
 
@@ -85,9 +84,6 @@ public class DownloadControllerTest {
 
     @Test
     public void testGetDownloadTargetFileWhenDuplicated() throws Exception {
-        // Given
-        DownloadController.View view = mock(DownloadController.View.class);
-        DownloadController downloadController = new DownloadController(view);
 
         File dir = DownloadModel.makeDirIfNotExistsAndGet();
         for (File file : dir.listFiles()) {
