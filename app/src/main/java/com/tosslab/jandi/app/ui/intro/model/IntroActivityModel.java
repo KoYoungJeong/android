@@ -32,7 +32,10 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 
+import java.util.Collection;
+
 import retrofit.RetrofitError;
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 3..
@@ -66,6 +69,16 @@ public class IntroActivityModel {
 
         ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+
+        Collection<ResAccountInfo.UserTeam> teamList = resAccountInfo.getMemberships();
+
+        Observable.from(teamList)
+                .subscribe(team -> {
+                    BadgeCountRepository.getRepository()
+                            .upsertBadgeCount(team.getTeamId(), team.getUnread());
+                });
+
+        BadgeUtils.setBadge(JandiApplication.getContext(), BadgeCountRepository.getRepository().getTotalBadgeCount());
     }
 
     public void sleep(long initTime, long maxDelayMs) {

@@ -66,6 +66,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
@@ -140,6 +141,17 @@ public class JandiSocketServiceModel {
         try {
             ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
             AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+
+            Collection<ResAccountInfo.UserTeam> teamList = resAccountInfo.getMemberships();
+
+            Observable.from(teamList)
+                    .subscribe(team -> {
+                        BadgeCountRepository.getRepository()
+                                .upsertBadgeCount(team.getTeamId(), team.getUnread());
+                    });
+
+            BadgeUtils.setBadge(JandiApplication.getContext(), BadgeCountRepository.getRepository().getTotalBadgeCount());
+
             postEvent(new TeamInfoChangeEvent());
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -266,10 +278,7 @@ public class JandiSocketServiceModel {
             SocketRoomMarkerEvent socketRoomMarkerEvent =
                     getObject(object.toString(), SocketRoomMarkerEvent.class);
             postEvent(socketRoomMarkerEvent);
-            if (EntityManager.getInstance().getMe().getId()
-                    == socketRoomMarkerEvent.getMarker().getMemberId()) {
-                markerPublishSubject.onNext(socketRoomMarkerEvent);
-            }
+            markerPublishSubject.onNext(socketRoomMarkerEvent);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -390,19 +399,45 @@ public class JandiSocketServiceModel {
         markerPublishSubject = PublishSubject.create();
         markerSubscribe = markerPublishSubject.throttleWithTimeout(500, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
-                .subscribe(o -> {
-                    EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
+                .filter(event -> {
+                    int markingUserId = event.getMarker().getMemberId();
+                    return Observable.from(AccountRepository.getRepository().getAccountTeams())
+                            .filter(userTeam -> userTeam.getMemberId() == markingUserId)
+                            .map(userTeam1 -> true)
+                            .firstOrDefault(false)
+                            .toBlocking()
+                            .first();
+                })
+                .subscribe(event -> {
+
                     try {
-                        ResLeftSideMenu entitiesInfo = entityClientManager.getTotalEntitiesInfo();
-                        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entitiesInfo);
-                        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
-                        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-                        badgeCountRepository.upsertBadgeCount(entitiesInfo.team.id, totalUnreadCount);
-                        BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
+                        if (event.getTeamId() == EntityManager.getInstance().getTeamId()) {
+                            // 같은 팀의 내 마커가 갱신된 경우
+                            EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
+                            ResLeftSideMenu entitiesInfo = entityClientManager.getTotalEntitiesInfo();
+                            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entitiesInfo);
+                            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
+                            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+                            badgeCountRepository.upsertBadgeCount(entitiesInfo.team.id, totalUnreadCount);
+                            BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
 
-                        EntityManager.getInstance().refreshEntity();
+                            EntityManager.getInstance().refreshEntity();
 
-                        postEvent(new RetrieveTopicListEvent());
+                            postEvent(new RetrieveTopicListEvent());
+                        } else {
+                            // 다른 팀의 내 마커가 갱신된 경우
+                            ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+                            AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+
+                            Observable.from(resAccountInfo.getMemberships())
+                                    .subscribe(team -> {
+                                        BadgeCountRepository.getRepository()
+                                                .upsertBadgeCount(team.getTeamId(), team.getUnread());
+                                    });
+                            BadgeUtils.setBadge(context, BadgeCountRepository.getRepository().getTotalBadgeCount());
+
+                            postEvent(new MessageOfOtherTeamEvent());
+                        }
 
                     } catch (RetrofitError e) {
                         e.printStackTrace();
@@ -426,6 +461,14 @@ public class JandiSocketServiceModel {
                 .subscribe(event -> {
                     ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
                     AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+
+                    Observable.from(resAccountInfo.getMemberships())
+                            .subscribe(team -> {
+                                BadgeCountRepository.getRepository()
+                                        .upsertBadgeCount(team.getTeamId(), team.getUnread());
+                            });
+                    BadgeUtils.setBadge(context, BadgeCountRepository.getRepository().getTotalBadgeCount());
+
                     postEvent(new MessageOfOtherTeamEvent());
                 }, Throwable::printStackTrace);
     }
