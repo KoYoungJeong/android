@@ -1,23 +1,17 @@
 package com.tosslab.jandi.app.services.download;
 
 import android.content.Context;
-import android.net.wifi.WifiManager;
 import android.os.Environment;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 
-import com.jayway.awaitility.Awaitility;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.util.concurrent.Callable;
-
-import setup.BaseInitUtil;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.anyString;
@@ -41,35 +35,6 @@ public class DownloadControllerTest {
 
         // Then
         assertEquals(false, isValidArguments);
-    }
-
-    @Test
-    public void testIsNetworkConnected() throws Exception {
-        // Given
-        DownloadController.View view = mock(DownloadController.View.class);
-        DownloadController downloadController = new DownloadController(view);
-
-        // When
-        Context context = InstrumentationRegistry.getContext();
-        final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        wifiManager.setWifiEnabled(false);
-
-        int wifiState = wifiManager.getWifiState();
-        System.out.println("wifiState = " + wifiState);
-        Awaitility.await().until(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                int nextWifiState = wifiManager.getWifiState();
-                System.out.println("wait... " + nextWifiState);
-                return nextWifiState == WifiManager.WIFI_STATE_DISABLED;
-            }
-        });
-
-        boolean isConnected = downloadController.isNetworkConnected();
-
-        // Then
-        assertEquals(false, isConnected);
-        BaseInitUtil.turnOnWifi();
     }
 
     @Test
