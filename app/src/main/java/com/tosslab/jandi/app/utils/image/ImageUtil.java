@@ -50,6 +50,8 @@ import java.util.concurrent.ExecutorService;
 public class ImageUtil {
     public static final String TAG = ImageUtil.class.getSimpleName();
 
+    public static final int STANDARD_IMAGE_SIZE = 2048;
+
     public static Bitmap getBlurBitmap(Bitmap bitmap, int radius) {
         Bitmap result;
         if (bitmap.getConfig() == null) {
@@ -490,8 +492,6 @@ public class ImageUtil {
         Resources resources = draweeView.getResources();
         Drawable placeHolder = resources.getDrawable(placeHolderResId);
         hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.CENTER_CROP);
-
-        draweeView.setHierarchy(hierarchy);
 
         ImageDecodeOptions imageDecodeOptions = ImageDecodeOptions.newBuilder()
                 .setDecodePreviewFrame(true)

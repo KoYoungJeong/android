@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <com.tosslab.jandi.app.views.FrescoImageView
         android:id="@+id/img_select_cdp_icon"
         android:layout_width="30dp"
         android:layout_height="30dp"

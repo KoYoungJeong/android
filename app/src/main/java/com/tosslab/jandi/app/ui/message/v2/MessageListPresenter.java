@@ -136,7 +136,7 @@ public class MessageListPresenter {
     ViewGroup vgStickerPreview;
 
     @ViewById(R.id.iv_messages_preview_sticker_image)
-    ImageView imgStickerPreview;
+    SimpleDraweeView ivSticker;
 
     @ViewById(R.id.vg_message_offline)
     View vgOffline;
@@ -792,7 +792,7 @@ public class MessageListPresenter {
     public void loadSticker(StickerInfo stickerInfo) {
         StickerManager.LoadOptions loadOption = new StickerManager.LoadOptions();
         loadOption.scaleType = ScalingUtils.ScaleType.CENTER_CROP;
-        StickerManager.getInstance().loadSticker(imgStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), loadOption);
+        StickerManager.getInstance().loadSticker(ivSticker, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), loadOption);
     }
 
     public void dismissStickerPreview() {
@@ -852,7 +852,7 @@ public class MessageListPresenter {
                                 activity.getResources().getDisplayMetrics());
             }
             ((LinearLayoutManager) lvMessages.getLayoutManager())
-                    .scrollToPositionWithOffset(position + 1, measuredHeight);
+                    .scrollToPositionWithOffset(Math.min(messageListAdapter.getCount() - 1, position + 1), measuredHeight);
         } else if (position < 0) {
             lvMessages.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
         }
@@ -932,8 +932,8 @@ public class MessageListPresenter {
         } else {
             int messageId = lastUpdatedMessage.messageId;
             if (firstLoad) {
-                setUpLastReadLink(myId);
                 moveLastReadLink();
+                setUpLastReadLink(myId);
 
                 justRefresh();
             } else if (messageId <= 0) {

@@ -145,7 +145,6 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
         ResizeOptions options = new ResizeOptions(size, size);
 
         ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
-                .setLocalThumbnailPreviewsEnabled(true)
                 .setAutoRotateEnabled(true)
                 .setResizeOptions(options)
                 .build();
@@ -156,8 +155,6 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
                 .setOldController(ivPicture.getController())
                 .build();
 
-        ivPicture.setAspectRatio(1.0f);
-        ivPicture.setHierarchy(hierarchy);
         ivPicture.setController(controller);
     }
 

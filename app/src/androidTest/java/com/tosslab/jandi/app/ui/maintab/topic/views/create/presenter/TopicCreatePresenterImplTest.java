@@ -12,8 +12,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
+import java.util.Date;
+
 import setup.BaseInitUtil;
-import setup.MockUtil;
 
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
@@ -48,12 +49,13 @@ public class TopicCreatePresenterImplTest {
             finish[0] = true;
             return invocationOnMock;
         }).when(mockView).showCheckNetworkDialog();
-        MockUtil.networkOff();
+        BaseInitUtil.disconnectWifi();
         topicCreatePresenter.onCreateTopic("a", "", true, false);
 
         Awaitility.await().until(() -> finish[0]);
 
         verify(mockView, times(1)).showCheckNetworkDialog();
+        BaseInitUtil.restoreContext();
     }
 
     @Test
@@ -73,7 +75,7 @@ public class TopicCreatePresenterImplTest {
         }).when(mockView).createTopicSuccess(anyInt(), anyInt(), anyString(), anyBoolean());
 
         // when
-        String topicName = "aaaaa123zca";
+        String topicName = "aaaaa123zca" + new Date().toString();
         topicCreatePresenter.onCreateTopic(topicName, "", true, false);
 
         Awaitility.await().until(() -> finish[0]);

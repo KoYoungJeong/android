@@ -175,7 +175,6 @@ public class FileUploadStateViewModel {
 
             if (fileExtType == FileExtensionsUtil.Extensions.IMAGE) {
                 hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                ivPhoto.setHierarchy(hierarchy);
                 ViewGroup.LayoutParams layoutParams = ivPhoto.getLayoutParams();
                 int width = layoutParams.width;
                 int height = layoutParams.height;
@@ -191,7 +190,6 @@ public class FileUploadStateViewModel {
                 ivPhoto.setController(controller);
             } else {
                 hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
-                ivPhoto.setHierarchy(hierarchy);
                 int resId = FileExtensionsUtil.getTypeResourceId(fileExtType);
                 ivPhoto.setImageURI(UriFactory.getResourceUri(resId));
             }
