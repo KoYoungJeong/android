@@ -137,7 +137,7 @@ public class PhotoViewFragment extends Fragment {
 
         ResizeOptions resizeOptions = fromCarousel
                 ? new ResizeOptions(width, height)
-                : new ResizeOptions(ImageUtil.getMaximumBitmapSize(), ImageUtil.getMaximumBitmapSize());
+                : new ResizeOptions(ImageUtil.STANDARD_IMAGE_SIZE, ImageUtil.STANDARD_IMAGE_SIZE);
 
         ImageUtil.loadDrawable(uri, resizeOptions, new BaseOnResourceReadyCallback() {
             @Override

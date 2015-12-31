@@ -185,12 +185,10 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
     @UiThread
     void moveMessageListActivity(int roomId, int targetEntityId) {
 
-        if (!jandiInterfaceModel.hasBackStackActivity()) {
-            MainTabActivity_.intent(PushInterfaceActivity.this)
-                    .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    .fromPush(true)
-                    .start();
-        }
+        MainTabActivity_.intent(PushInterfaceActivity.this)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .fromPush(true)
+                .start();
 
         Intent intent = MessageListV2Activity_.intent(PushInterfaceActivity.this)
                 .teamId(teamId)

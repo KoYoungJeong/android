@@ -2,6 +2,12 @@ package com.tosslab.jandi.app.ui.commonviewmodels.sticker;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
+import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.view.Gravity;
 import android.view.View;
@@ -9,8 +15,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.views.FrescoImageView;
 
 import java.util.List;
 
@@ -74,7 +85,9 @@ class StickerViewPagerAdapter extends PagerAdapter {
         boolean isPortrait = stickerMax == STICKER_MAX_VIEW_PORTAIT;
         int columnCount = isPortrait ? STICKER_MAX_VIEW_PORTAIT / 2 : STICKER_MAX_VIEW_LANDSCAPE;
 
-        int padding = context.getResources().getDimensionPixelSize(R.dimen.jandi_sticker_view_pager_padding);
+        Resources resources = context.getResources();
+
+        int padding = resources.getDimensionPixelSize(R.dimen.jandi_sticker_view_pager_padding);
 
         LinearLayout linearLayout = new LinearLayout(context);
         linearLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -108,11 +121,17 @@ class StickerViewPagerAdapter extends PagerAdapter {
         layoutParams.leftMargin = padding / 2;
         layoutParams.rightMargin = padding / 2;
 
-        int maxWidth = context.getResources().getDimensionPixelSize(R.dimen.jandi_sticker_view_pager_items_max_width);
+        int maxWidth = resources.getDimensionPixelSize(R.dimen.jandi_sticker_view_pager_items_max_width);
 
+        Drawable pressedDrawable = new ColorDrawable(Color.parseColor("#45ffffff"));
 
         for (int idx = 0; idx < size; idx++) {
-            ImageView child = new ImageView(context);
+            GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(resources)
+                    .setActualImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .setPressedStateOverlay(pressedDrawable)
+                    .build();
+
+            SimpleDraweeView child = new FrescoImageView(context, hierarchy);
             child.setLayoutParams(layoutParams);
             child.setMaxWidth(maxWidth);
             child.setScaleType(ImageView.ScaleType.CENTER_INSIDE);

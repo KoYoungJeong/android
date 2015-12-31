@@ -16,7 +16,7 @@
         android:paddingRight="@dimen/jandi_messages_padding_right"
         android:paddingTop="5dp">
 
-        <ImageView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_pure_sticker_comment_content"
             android:layout_width="140dp"
             android:layout_height="140dp"

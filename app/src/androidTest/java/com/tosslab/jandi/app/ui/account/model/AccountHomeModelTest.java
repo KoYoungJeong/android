@@ -157,7 +157,7 @@ public class AccountHomeModelTest {
         // Then
         assertThat(entityManager, is(notNullValue()));
         assertThat(leftSideMenu.team.t_defaultChannelId, is(equalTo(entityManager.getDefaultTopicId())));
-        assertThat(leftSideMenu.joinEntityCount, is(equalTo(entityManager.getJoinedChannels().size())));
+        assertThat(leftSideMenu.joinEntityCount, is(equalTo(entityManager.getJoinedChannels().size() + entityManager.getGroups().size())));
 
     }
 

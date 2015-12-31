@@ -56,7 +56,6 @@ public class FileUploadPreviewFragment extends Fragment {
         if (extensions == FileExtensionsUtil.Extensions.IMAGE) {
             GenericDraweeHierarchy hierarchy = ivFileImage.getHierarchy();
             hierarchy.setPlaceholderImage(R.drawable.file_icon_img_198);
-            ivFileImage.setHierarchy(hierarchy);
 
             Uri uri = UriFactory.getFileUri(realFilePath);
 

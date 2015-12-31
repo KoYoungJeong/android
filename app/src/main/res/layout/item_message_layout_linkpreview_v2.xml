@@ -9,7 +9,7 @@
         android:layout_width="@dimen/jandi_messages_link_preview_thumb_max_width"
         android:layout_height="110dp">
 
-        <com.facebook.drawee.view.SimpleDraweeView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_linkpreview_thumb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

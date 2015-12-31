@@ -24,7 +24,7 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
 
     private TextView nameTextView;
     private TextView dateTextView;
-    private ImageView ivSticker;
+    private SimpleDraweeView ivSticker;
     private View disableLineThroughView;
     private TextView unreadTextView;
     private View lastReadView;
@@ -35,7 +35,7 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
         contentView = rootView.findViewById(R.id.vg_message_item);
         nameTextView = (TextView) rootView.findViewById(R.id.tv_message_nested_comment_user_name);
         dateTextView = (TextView) rootView.findViewById(R.id.tv_message_commented_create_date);
-        ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_nested_comment_content);
+        ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_nested_comment_content);
         disableLineThroughView = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         unreadTextView = (TextView) rootView.findViewById(R.id.tv_entity_listitem_unread);
         lastReadView = rootView.findViewById(R.id.vg_message_last_read);

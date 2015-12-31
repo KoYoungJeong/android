@@ -19,7 +19,7 @@
         android:paddingTop="10dp"
         android:visibility="visible">
         <!-- 사용자 프로필 사진 -->
-        <com.facebook.drawee.view.SimpleDraweeView
+        <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_message_user_profile"
             fresco:backgroundImage="@color/black"
             fresco:roundAsCircle="true"
@@ -114,7 +114,7 @@
                 cardview:cardUseCompatPadding="true"
                 cardview:contentPadding="0dp">
 
-                <com.facebook.drawee.view.SimpleDraweeView
+                <com.tosslab.jandi.app.views.FrescoImageView
                     android:id="@+id/iv_message_photo"
                     fresco:placeholderImage="@drawable/image_preview_download"
                     fresco:placeholderImageScaleType="fitXY"
