@@ -48,7 +48,6 @@ import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
-import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.DummyDeleteEvent;
 import com.tosslab.jandi.app.events.messages.DummyRetryEvent;
@@ -67,7 +66,6 @@ import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
-import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.BotEntity;
@@ -78,6 +76,7 @@ import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
@@ -107,7 +106,6 @@ import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel_;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
-import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
@@ -118,10 +116,7 @@ import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.UpdateLinkPreviewMessageQueue;
-import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
-import com.tosslab.jandi.app.ui.message.v2.loader.MarkerNewMessageLoader;
-import com.tosslab.jandi.app.ui.message.v2.loader.MarkerOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader_;
@@ -205,11 +200,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @FragmentArg
     int teamId;
     @FragmentArg
-    boolean isFromSearch = false;
-    @FragmentArg
     int lastMarker = -1;
     @FragmentArg
     int roomId;
+    @FragmentArg
+    int firstCursorLinkId = -1;
     @ViewById(R.id.lv_messages)
     RecyclerView messageListView;
     @ViewById(R.id.btn_message_action_button_1)
@@ -258,6 +253,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @AfterInject
     void initObject() {
+
+        SendMessageRepository.getRepository().deleteAllOfCompletedMessages();
+
+        messageListPresenter.initAdapter(false);
+        messageListPresenter.setFirstCursorLinkId(firstCursorLinkId);
         SNOWING_EASTEREGG_STARTED = false;
 
         messageState = new MessageState();
@@ -291,43 +291,21 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
                 });
 
-        if (isFromSearch) {
-            MarkerNewMessageLoader newsMessageLoader = new MarkerNewMessageLoader(getActivity());
-            newsMessageLoader.setMessageListModel(messageListModel);
-            newsMessageLoader.setMessageListPresenter(messageListPresenter);
-            newsMessageLoader.setMessageState(messageState);
+        NormalNewMessageLoader newsMessageLoader = NormalNewMessageLoader_.getInstance_(getActivity());
+        newsMessageLoader.setMessageListModel(messageListModel);
+        newsMessageLoader.setMessageListPresenter(messageListPresenter);
+        newsMessageLoader.setMessageState(messageState);
 
-            MarkerOldMessageLoader oldMessageLoader = new MarkerOldMessageLoader(getActivity());
-            oldMessageLoader.setMessageListModel(messageListModel);
-            oldMessageLoader.setMessageListPresenter(messageListPresenter);
-            oldMessageLoader.setMessageState(messageState);
+        NormalOldMessageLoader oldMessageLoader = NormalOldMessageLoader_.getInstance_(getActivity());
+        oldMessageLoader.setMessageListModel(messageListModel);
+        oldMessageLoader.setMessageListPresenter(messageListPresenter);
+        oldMessageLoader.setMessageState(messageState);
+        oldMessageLoader.setTeamId(teamId);
 
-            this.newsMessageLoader = newsMessageLoader;
-            this.oldMessageLoader = oldMessageLoader;
+        this.newsMessageLoader = newsMessageLoader;
+        this.oldMessageLoader = oldMessageLoader;
 
-            messageListPresenter.setMarker(lastMarker);
-            messageListPresenter.setMoreNewFromAdapter(true);
-            messageListPresenter.setGotoLatestLayoutVisible();
-
-            messageState.setFirstItemId(lastMarker);
-
-        } else {
-            NormalNewMessageLoader newsMessageLoader = NormalNewMessageLoader_.getInstance_(getActivity());
-            newsMessageLoader.setMessageListModel(messageListModel);
-            newsMessageLoader.setMessageListPresenter(messageListPresenter);
-            newsMessageLoader.setMessageState(messageState);
-
-            NormalOldMessageLoader oldMessageLoader = NormalOldMessageLoader_.getInstance_(getActivity());
-            oldMessageLoader.setMessageListModel(messageListModel);
-            oldMessageLoader.setMessageListPresenter(messageListPresenter);
-            oldMessageLoader.setMessageState(messageState);
-            oldMessageLoader.setTeamId(teamId);
-
-            this.newsMessageLoader = newsMessageLoader;
-            this.oldMessageLoader = oldMessageLoader;
-
-            messageState.setFirstItemId(lastMarker);
-        }
+        messageState.setFirstItemId(lastMarker);
 
         messageListPresenter.setEntityInfo(entityId);
         fileUploadStateViewModel.setEntityId(entityId);
@@ -631,12 +609,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return true;
         });
 
-        ((RecyclerView) getView().findViewById(R.id.lv_messages)).setOnScrollListener(new RecyclerView.OnScrollListener() {
+        messageListView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (layoutManager.findLastVisibleItemPosition() == ((MessageListAdapter) recyclerView.getAdapter()).getCount() - 1) {
+                if (layoutManager.findLastVisibleItemPosition() == recyclerView.getAdapter().getItemCount() - 1) {
                     messageListPresenter.setPreviewVisibleGone();
 
                 }
@@ -696,24 +674,22 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
 
         int savedLastLinkId = messageListModel.getLastReadLinkId(roomId, messageListModel.getMyId());
-        if (!isFromSearch) {
-            messageState.setFirstItemId(savedLastLinkId);
+        messageState.setFirstItemId(savedLastLinkId);
 
-            ResMessages.Link lastMessage = MessageRepository.getRepository().getLastMessage(roomId);
+        ResMessages.Link lastMessage = MessageRepository.getRepository().getLastMessage(roomId);
 
-            // 1. 처음 접근 하는 토픽/DM 인 경우
-            // 2. 오랜만에 접근 하는 토픽/DM 인 경우
-            if (lastMessage == null
-                    || lastMessage.id < 0
-                    || (lastMessage.id > 0 && messageListModel.isBefore30Days(lastMessage.time))) {
-                MessageRepository.getRepository().clearLinks(teamId, roomId);
-                if (newsMessageLoader instanceof NormalNewMessageLoader) {
-                    NormalNewMessageLoader newsMessageLoader = (NormalNewMessageLoader) this.newsMessageLoader;
-                    newsMessageLoader.setHistoryLoad(false);
-                }
-                messageListPresenter.setMoreNewFromAdapter(true);
-                messageListPresenter.setNewLoadingComplete();
+        // 1. 처음 접근 하는 토픽/DM 인 경우
+        // 2. 오랜만에 접근 하는 토픽/DM 인 경우
+        if (lastMessage == null
+                || lastMessage.id < 0
+                || (lastMessage.id > 0 && messageListModel.isBefore30Days(lastMessage.time))) {
+            MessageRepository.getRepository().clearLinks(teamId, roomId);
+            if (newsMessageLoader instanceof NormalNewMessageLoader) {
+                NormalNewMessageLoader newsMessageLoader = (NormalNewMessageLoader) this.newsMessageLoader;
+                newsMessageLoader.setHistoryLoad(false);
             }
+            messageListPresenter.setMoreNewFromAdapter(true);
+            messageListPresenter.setNewLoadingComplete();
         }
 
         if (roomId > 0) {
@@ -789,14 +765,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage(), mentions);
         }
         if (linkId > 0) {
-            messageListPresenter.updateDummyMessageState(data.getLocalId(), SendMessage.Status.COMPLETE);
             if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
                 // 소켓이 안 붙어 있으면 임의로 갱신 요청
                 EventBus.getDefault().post(new RefreshNewMessageEvent());
             }
-        } else {
-            messageListPresenter.updateDummyMessageState(data.getLocalId(), SendMessage.Status.FAIL);
         }
+        messageListPresenter.refreshAll();
     }
 
     private void getAnnouncement() {
@@ -818,7 +792,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
-        messageListPresenter.showStickerPreview(stickerInfo);
+        messageListPresenter.showStickerPreview();
         if (oldSticker.getStickerGroupId() != stickerInfo.getStickerGroupId()
                 || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
             messageListPresenter.loadSticker(stickerInfo);
@@ -899,10 +873,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         super.onPrepareOptionsMenu(menu);
         menu.clear();
 
-        if (isFromSearch) {
-            return;
-        }
-
         MenuInflater inflater = getActivity().getMenuInflater();
 
         inflater.inflate(R.menu.message_list_menu_basic, menu);
@@ -912,12 +882,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        boolean isStarred;
-        isStarred = entity != EntityManager.UNKNOWN_USER_ENTITY ? entity.isStarred : false;
-        ChattingInfomations infomations =
-                new ChattingInfomations(getActivity(), teamId, entityId, entityType, isFromPush, isStarred);
-        MenuCommand menuCommand = messageListModel.getMenuCommand(MessageListFragment.this,
-                infomations,
+        MenuCommand menuCommand = messageListModel.getMenuCommand(MessageListFragment.this, teamId, entityId,
                 item);
 
         if (menuCommand != null) {
@@ -1034,13 +999,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         } catch (Exception e) {
             e.printStackTrace();
             LogUtil.e("set marker failed", e);
-        }
-    }
-
-    @Click(R.id.vg_messages_go_to_latest)
-    void onGotoLatestClick() {
-        if (!(oldMessageLoader instanceof NormalOldMessageLoader)) {
-            EventBus.getDefault().post(new ChatModeChangeEvent(true));
         }
     }
 
@@ -1179,7 +1137,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         long localId = messageListModel.insertSendingMessageIfCan(entityId, roomId, stickerInfo);
         if (localId > 0) {
             FormattedEntity me = EntityManager.getInstance().getMe();
-            messageListPresenter.insertSendingMessage(localId, me.getName(), me.getUserLargeProfileUrl(), stickerInfo);
+            messageListPresenter.refreshAll();
+            messageListPresenter.moveLastPage();
 
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, "", new StickerInfo(stickerInfo), new ArrayList<>())));
             AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_Send);
@@ -1192,7 +1151,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (localId > 0) {
             FormattedEntity me = EntityManager.getInstance().getMe();
             // insert to ui
-            messageListPresenter.insertSendingMessage(localId, message, me.getName(), me.getUserLargeProfileUrl(), mentions);
+            messageListPresenter.refreshAll();
+            messageListPresenter.moveLastPage();
             // networking...
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, reqSendMessage)));
 
@@ -1231,36 +1191,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!isForeground) {
             return;
         }
-        messageListPresenter.updateMessageIdAtSendingMessage(event.getLocalId(), event.getId());
     }
 
     public void onEvent(SendFailEvent event) {
         if (!isForeground) {
             return;
         }
-        messageListPresenter.updateDummyMessageState(event.getLocalId(), SendMessage.Status.FAIL);
-    }
-
-    public void onEventMainThread(ChatModeChangeEvent event) {
-        if (!isForeground) {
-            return;
-        }
-
-        MessageListV2Activity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .entityType(entityType)
-                .entityId(entityId)
-                .teamId(teamId)
-                .roomId(roomId)
-                .lastMarker(EntityManager.getInstance().getEntityById(entityId).lastLinkId)
-                .isFavorite(isFavorite)
-                .start();
-    }
-
-    public void onEvent(TeamInvitationsEvent event) {
-        if (!isForeground) {
-            return;
-        }
+        messageListPresenter.refreshAll();
     }
 
     public void onEvent(RequestFileUploadEvent event) {
@@ -1446,8 +1383,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
             boolean isDirectMessage = messageListModel.isDirectMessage(entityType);
             boolean isOwner = messageListModel.isTeamOwner();
-            boolean isMyMessage = (messageListModel.isMyMessage(textMessage.writerId) || isOwner)
-                    && !isFromSearch;
+            boolean isMyMessage = (messageListModel.isMyMessage(textMessage.writerId) || isOwner);
             messageListPresenter.showMessageMenuDialog(isDirectMessage, isMyMessage, textMessage);
         } else if (messageListModel.isCommentType(link.message)) {
             messageListPresenter.showMessageMenuDialog(((ResMessages.CommentMessage) link.message));
@@ -1455,8 +1391,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         } else if (messageListModel.isStickerType(link.message)) {
             ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) link.message;
             boolean isOwner = messageListModel.isTeamOwner();
-            boolean isMyMessage = (messageListModel.isMyMessage(stickerMessage.writerId) || isOwner)
-                    && !isFromSearch;
+            boolean isMyMessage = (messageListModel.isMyMessage(stickerMessage.writerId) || isOwner);
 
             if (!isMyMessage) {
                 return;
@@ -1503,7 +1438,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
         DummyMessageLink dummyMessage = messageListPresenter.getDummyMessage(event.getLocalId());
         messageListModel.deleteDummyMessageAtDatabase(dummyMessage.getLocalId());
-        messageListPresenter.deleteDummyMessageAtList(event.getLocalId());
+        messageListPresenter.refreshAll();
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {
@@ -1595,8 +1530,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 messageListModel.deleteSticker(messageId, messageType);
                 LogUtil.d("deleteStickerInBackground : succeed");
             }
-            messageListPresenter.deleteLinkByMessageId(messageId);
             MessageRepository.getRepository().deleteLinkByMessageId(messageId);
+            messageListPresenter.deleteLinkByMessageId(messageId);
 
             messageListModel.trackMessageDeleteSuccess(messageId);
 
@@ -1664,9 +1599,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     public void onEvent(SocketMessageEvent event) {
-        if (isFromSearch) {
-            return;
-        }
         boolean isSameRoomId = false;
         String messageType = event.getMessageType();
 

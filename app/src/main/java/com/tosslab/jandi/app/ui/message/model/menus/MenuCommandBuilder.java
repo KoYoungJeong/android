@@ -5,8 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 10..
@@ -14,9 +12,9 @@ import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 public class MenuCommandBuilder {
 
     private AppCompatActivity activity;
-    private EntityClientManager mEntityClientManager;
-    private ChattingInfomations chattingInfomations;
     private Fragment fragment;
+    private int teamId;
+    private int entityId;
 
     public MenuCommandBuilder(AppCompatActivity activity) {
         this.activity = activity;
@@ -26,13 +24,13 @@ public class MenuCommandBuilder {
         return new MenuCommandBuilder(activity);
     }
 
-    public MenuCommandBuilder with(EntityClientManager entityClientManager) {
-        this.mEntityClientManager = entityClientManager;
+    public MenuCommandBuilder teamId(int teamId) {
+        this.teamId = teamId;
         return this;
     }
 
-    public MenuCommandBuilder with(ChattingInfomations chattingInfomations) {
-        this.chattingInfomations = chattingInfomations;
+    public MenuCommandBuilder entityId(int entityId) {
+        this.entityId = entityId;
         return this;
     }
 
@@ -42,13 +40,11 @@ public class MenuCommandBuilder {
             case android.R.id.home:
                 return new HomeMenuCommand(activity);
             case R.id.action_entity_move_file_list:
-                return new FileListCommand(activity, chattingInfomations);
+                return new FileListCommand(activity, entityId);
             case R.id.action_entity_search:
-                SearchMenuCommand command = SearchMenuCommand_.getInstance_(activity);
-                command.setEntityId(chattingInfomations.entityId);
-                return command;
+                return new SearchMenuCommand(activity, entityId);
             case R.id.action_entity_more:
-                return new TopicDetailCommand(fragment, chattingInfomations.teamId, chattingInfomations.entityId);
+                return new TopicDetailCommand(fragment, teamId, entityId);
         }
         return null;
     }

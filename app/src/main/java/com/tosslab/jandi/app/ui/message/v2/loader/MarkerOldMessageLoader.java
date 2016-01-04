@@ -1,12 +1,10 @@
 package com.tosslab.jandi.app.ui.message.v2.loader;
 
-import android.content.Context;
-
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
-import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
+import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenter;
 
 import java.util.Collections;
 
@@ -17,22 +15,12 @@ import retrofit.RetrofitError;
  */
 public class MarkerOldMessageLoader implements OldMessageLoader {
 
-    private final Context context;
     MessageListModel messageListModel;
-    MessageListPresenter messageListPresenter;
     private MessageState messageState;
-
-    public MarkerOldMessageLoader(Context context) {
-
-        this.context = context;
-    }
+    private MessageSearchListPresenter.View view;
 
     public void setMessageListModel(MessageListModel messageListModel) {
         this.messageListModel = messageListModel;
-    }
-
-    public void setMessageListPresenter(MessageListPresenter messageListPresenter) {
-        this.messageListPresenter = messageListPresenter;
     }
 
     public void setMessageState(MessageState messageState) {
@@ -44,11 +32,11 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
         ResMessages oldMessage = null;
         try {
 
-            boolean noFirstLoad = messageListPresenter.getFirstVisibleItemLinkId() > 0;
+            boolean noFirstLoad = view.getFirstVisibleItemLinkId() > 0;
             if (noFirstLoad) {
                 // 일반적인 Old Message 요청
                 int itemCount = Math.min(
-                        Math.max(MessageManipulator.NUMBER_OF_MESSAGES, messageListPresenter.getItemCount()),
+                        Math.max(MessageManipulator.NUMBER_OF_MESSAGES, view.getItemCount()),
                         MessageManipulator.MAX_OF_MESSAGES);
                 oldMessage = messageListModel.getOldMessage(linkId, itemCount);
             } else {
@@ -58,7 +46,7 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
 
 
             if (oldMessage.records == null || oldMessage.records.isEmpty()) {
-                messageListPresenter.dismissLoadingView();
+                view.dismissLoadingView();
                 return oldMessage;
             }
 
@@ -70,17 +58,17 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
 
             Collections.sort(oldMessage.records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
 
-            int latestVisibleMessageId = messageListPresenter.getFirstVisibleItemLinkId();
+            int latestVisibleMessageId = view.getFirstVisibleItemLinkId();
             int firstVisibleItemTop = 0;
             if (noFirstLoad) {
-                firstVisibleItemTop = messageListPresenter.getFirstVisibleItemTop();
+                firstVisibleItemTop = view.getFirstVisibleItemTop();
             } else {
                 // if has no first item...
                 messageState.setLastUpdateLinkId(lastLinkId);
             }
 
 
-            messageListPresenter.updateMarkerMessage(linkId, oldMessage, noFirstLoad,
+            view.updateMarkerMessage(linkId, oldMessage, noFirstLoad,
                     isFirstMessage, latestVisibleMessageId, firstVisibleItemTop);
 
         } catch (RetrofitError e) {
@@ -88,10 +76,13 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            messageListPresenter.dismissProgressWheel();
+            view.dismissProgressWheel();
         }
 
         return oldMessage;
     }
 
+    public void setView(MessageSearchListPresenter.View view) {
+        this.view = view;
+    }
 }

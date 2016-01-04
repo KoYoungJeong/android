@@ -1,41 +1,26 @@
 package com.tosslab.jandi.app.ui.message.v2.loader;
 
-import android.content.Context;
-
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
-import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
+import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenter;
 
 import retrofit.RetrofitError;
 
-/**
- * Created by Steve SeongUg Jung on 15. 3. 17..
- */
 public class MarkerNewMessageLoader implements NewsMessageLoader {
 
-    private final Context context;
     MessageListModel messageListModel;
-    MessageListPresenter messageListPresenter;
     private MessageState messageState;
 
     private boolean firstLoad = true;
-
-    public MarkerNewMessageLoader(Context context) {
-
-        this.context = context;
-    }
+    private MessageSearchListPresenter.View view;
 
     public void setMessageListModel(MessageListModel messageListModel) {
         this.messageListModel = messageListModel;
-    }
-
-    public void setMessageListPresenter(MessageListPresenter messageListPresenter) {
-        this.messageListPresenter = messageListPresenter;
     }
 
     public void setMessageState(MessageState messageState) {
@@ -75,7 +60,7 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
                 }
             }
 
-            messageListPresenter.updateMarkerNewMessage(newMessage, isLastLinkId, firstLoad);
+            view.updateMarkerNewMessage(newMessage, isLastLinkId, firstLoad);
 
             firstLoad = false;
 
@@ -86,5 +71,9 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
             e.printStackTrace();
         } finally {
         }
+    }
+
+    public void setView(MessageSearchListPresenter.View view) {
+        this.view = view;
     }
 }

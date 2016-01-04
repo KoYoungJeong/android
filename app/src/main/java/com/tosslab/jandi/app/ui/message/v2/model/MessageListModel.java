@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ReadyMessageRepository;
@@ -41,7 +42,6 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
-import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
@@ -146,14 +146,26 @@ public class MessageListModel {
         return (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) ? true : false;
     }
 
-    public MenuCommand getMenuCommand(Fragment fragmet, ChattingInfomations
-            chattingInfomations, MenuItem item) {
+    public MenuCommand getMenuCommand(Fragment fragmet, int teamId, int entityId, MenuItem item) {
         return MenuCommandBuilder.init(activity)
                 .with(fragmet)
-                .with(entityClientManager)
-                .with(chattingInfomations)
+                .teamId(teamId)
+                .entityId(entityId)
                 .build(item);
     }
+
+    public int initRoomId() {
+        try {
+            ResMessages oldMessage = getOldMessage(-1, 1);
+            return oldMessage.entityId;
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+        }
+
+
+        return -1;
+    }
+
 
     public int sendMessage(long localId, String message, List<MentionObject> mentions) {
 
@@ -161,7 +173,8 @@ public class MessageListModel {
         try {
             ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage(), sendingMessage.getMentions());
 
-            SendMessageRepository.getRepository().deleteSendMessage(sendingMessage.getLocalId());
+            SendMessageRepository.getRepository().updateSendMessageStatus(
+                    sendingMessage.getLocalId(), resCommon.id, SendMessage.Status.COMPLETE);
 
             trackMessagePostSuccess();
 
@@ -294,31 +307,36 @@ public class MessageListModel {
         List<ResMessages.Link> links = new ArrayList<>();
         for (SendMessage link : sendMessage) {
 
-            List<MentionObject> mentionObjects = new ArrayList<>();
-
-            Collection<MentionObject> savedMention = link.getMentionObjects();
-            if (savedMention != null) {
-                for (MentionObject mentionObject : savedMention) {
-                    mentionObjects.add(mentionObject);
-                }
-            }
-
-            if (link.getStickerGroupId() > 0 && !TextUtils.isEmpty(link.getStickerId())) {
-
-                DummyMessageLink dummyMessageLink = new DummyMessageLink(link.getId(), link.getStatus(),
-                        link.getStickerGroupId(), link.getStickerId());
-                dummyMessageLink.message.writerId = id;
-                dummyMessageLink.message.createTime = new Date();
-                links.add(dummyMessageLink);
-            } else {
-                DummyMessageLink dummyMessageLink = new DummyMessageLink(link.getId(), link.getMessage(),
-                        link.getStatus(), mentionObjects);
-                dummyMessageLink.message.writerId = id;
-                dummyMessageLink.message.createTime = new Date();
-                links.add(dummyMessageLink);
-            }
+            DummyMessageLink dummyMessageLink = getDummyMessageLink(id, link);
+            links.add(dummyMessageLink);
         }
         return links;
+    }
+
+    private DummyMessageLink getDummyMessageLink(int id, SendMessage link) {
+        List<MentionObject> mentionObjects = new ArrayList<>();
+
+        Collection<MentionObject> savedMention = link.getMentionObjects();
+        if (savedMention != null) {
+            for (MentionObject mentionObject : savedMention) {
+                mentionObjects.add(mentionObject);
+            }
+        }
+
+        DummyMessageLink dummyMessageLink;
+        if (link.getStickerGroupId() > 0 && !TextUtils.isEmpty(link.getStickerId())) {
+
+            dummyMessageLink = new DummyMessageLink(link.getId(), link.getStatus(),
+                    link.getStickerGroupId(), link.getStickerId());
+            dummyMessageLink.message.writerId = id;
+            dummyMessageLink.message.createTime = new Date();
+        } else {
+            dummyMessageLink = new DummyMessageLink(link.getId(), link.getMessage(),
+                    link.getStatus(), mentionObjects);
+            dummyMessageLink.message.writerId = id;
+            dummyMessageLink.message.createTime = new Date();
+        }
+        return dummyMessageLink;
     }
 
     public boolean isFailedDummyMessage(DummyMessageLink dummyMessageLink) {
@@ -395,8 +413,11 @@ public class MessageListModel {
         ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), teamId, entityId, type, "", new ArrayList<>());
 
         try {
-            ResCommon resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(reqSendSticker);
-            SendMessageRepository.getRepository().deleteSendMessage(localId);
+            ResCommon resCommon = RequestApiManager.getInstance()
+                    .sendStickerByStickerApi(reqSendSticker);
+
+            SendMessageRepository.getRepository()
+                    .updateSendMessageStatus(localId, resCommon.id, SendMessage.Status.COMPLETE);
 
             trackMessagePostSuccess();
             EventBus.getDefault().post(new SendCompleteEvent(localId, resCommon.id));
@@ -499,9 +520,9 @@ public class MessageListModel {
         Observable.from(messages.records)
                 .subscribe(link -> {
                     link.roomId = messages.entityId;
-                    MessageRepository.getRepository().upsertMessage(link);
                 });
 
+        MessageRepository.getRepository().upsertMessages(messages.records);
 
     }
 
@@ -605,5 +626,9 @@ public class MessageListModel {
             return !TextUtils.isEmpty(charSequence.toString().trim());
         }
         return false;
+    }
+
+    public int getRoomIdByUserId(int entityId) {
+        return ChatRepository.getRepository().getChat(entityId).getEntityId();
     }
 }
