@@ -126,7 +126,6 @@ public class StarMentionListPresentor {
 
     @Background
     public void refreshList(String listType) {
-
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
@@ -135,7 +134,6 @@ public class StarMentionListPresentor {
 
         starMentionListModel.refreshList();
         addStarMentionMessagesToList(listType);
-
     }
 
     @Background
@@ -150,10 +148,6 @@ public class StarMentionListPresentor {
 
     public boolean isEmpty() {
         return starMentionListModel.isEmpty();
-    }
-
-    public void onDeletedFile(int linkId) {
-
     }
 
     public void onTopicDeleteEvent(int teamId, int topicId) {

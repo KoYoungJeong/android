@@ -32,7 +32,6 @@ import retrofit.http.Query;
 @AuthorizedHeader
 public interface MainRestApiClient {
 
-
     // 클라이언트 Policy(+version) 정보
     @GET("/config")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
