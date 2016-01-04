@@ -152,7 +152,7 @@ public class FileDetailPresenterTest {
 
         verify(mockView).showProgress();
         verify(mockView).setExternalShared(eq(false));
-        verify(mockView).showToast(eq(JandiApplication.getContext().getResources().getString(R.string.jandi_success_copy_clipboard_external_link)));
+        verify(mockView).showToast(eq(JandiApplication.getContext().getResources().getString(R.string.jandi_success_disable_external_link)));
         verify(mockView).dismissProgress();
     }
 

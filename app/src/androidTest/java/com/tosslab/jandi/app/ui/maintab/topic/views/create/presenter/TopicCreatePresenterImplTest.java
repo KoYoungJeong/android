@@ -12,6 +12,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
+import java.util.Date;
+
 import setup.BaseInitUtil;
 
 import static org.mockito.Matchers.anyBoolean;
@@ -73,7 +75,7 @@ public class TopicCreatePresenterImplTest {
         }).when(mockView).createTopicSuccess(anyInt(), anyInt(), anyString(), anyBoolean());
 
         // when
-        String topicName = "aaaaa123zca";
+        String topicName = "aaaaa123zca" + new Date().toString();
         topicCreatePresenter.onCreateTopic(topicName, "", true, false);
 
         Awaitility.await().until(() -> finish[0]);

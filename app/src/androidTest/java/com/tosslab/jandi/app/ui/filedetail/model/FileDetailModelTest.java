@@ -155,7 +155,7 @@ public class FileDetailModelTest {
 
         File file = new File(downloadFilePath);
         assertThat(file.exists(), is(true));
-        assertThat(new Long(file.length()).intValue(), is(equalTo(fileMessage.content.size)));
+        assertThat(file.length(), is(equalTo(fileMessage.content.size)));
     }
 
     @Test

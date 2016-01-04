@@ -89,6 +89,8 @@ public class AccountHomeActivityTest {
         // When
         rule.runOnUiThread(() -> activity.setTeamInfo(teams, selectedTeamInfo));
 
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+
         // Then
         onView(withText(selectedTeamInfo.getName()))
                 .check(matches(isDisplayed()))
@@ -101,7 +103,7 @@ public class AccountHomeActivityTest {
     public void testLoadTeamCreateActivity() throws Throwable {
         rule.runOnUiThread(() -> activity.loadTeamCreateActivity());
 
-        onView(withText(R.string.team_create))
+        onView(withText(R.string.team_info))
                 .check(matches(isDisplayed()));
 
     }
@@ -154,6 +156,7 @@ public class AccountHomeActivityTest {
     @Test
     public void testMoveEmailEditClick() throws Throwable {
         rule.runOnUiThread(() -> activity.moveEmailEditClick());
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
         onView(withText(R.string.jandi_choose_email))
                 .check(matches(isDisplayed()));
 
@@ -209,7 +212,7 @@ public class AccountHomeActivityTest {
 
         Observable.from(AccountRepository.getRepository().getAccountTeams())
                 .map(Team::createTeam)
-                .collect(() -> teams, List::add);
+                .collect(() -> teams, List::add).subscribe();
 
         return teams;
     }

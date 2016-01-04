@@ -148,7 +148,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
         ColoredToast.showError(AccountHomeActivity.this, message);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setTeamInfo(List<Team> allTeamInfos, ResAccountInfo.UserTeam selectedTeamInfo) {
 
@@ -234,13 +234,13 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
         ColoredToast.show(AccountHomeActivity.this, message);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setAccountName(String newName) {
         tvAccountName.setText(newName);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissProgressWheel() {
         if (progressWheel != null && progressWheel.isShowing()) {
@@ -248,19 +248,17 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
         }
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgressWheel() {
-        if (progressWheel != null && progressWheel.isShowing()) {
-            progressWheel.dismiss();
-        }
+        dismissProgressWheel();
 
         if (progressWheel != null && !progressWheel.isShowing()) {
             progressWheel.show();
         }
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveSelectedTeam(boolean firstJoin) {
         JandiSocketService.stopService(AccountHomeActivity.this);
