@@ -142,6 +142,7 @@ public class CarouselViewerActivityTest {
     public void testSetFileWriterName() throws Throwable {
         String name = "writer_name";
         rule.runOnUiThread(() -> activity.setFileWriterName(name));
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
         onView(withText(name))
                 .check(matches(isDisplayed()));
