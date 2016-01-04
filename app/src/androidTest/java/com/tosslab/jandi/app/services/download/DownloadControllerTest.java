@@ -7,6 +7,9 @@ import android.support.test.runner.AndroidJUnit4;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.services.download.domain.DownloadFileInfo;
+import com.tosslab.jandi.app.services.download.model.DownloadModel;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +17,7 @@ import org.junit.runner.RunWith;
 import java.io.File;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -25,13 +29,9 @@ import static org.mockito.Mockito.when;
 public class DownloadControllerTest {
     @Test
     public void testIsValidateArguments() throws Exception {
-        // Given
-        DownloadController.View view = mock(DownloadController.View.class);
-        DownloadController downloadController = new DownloadController(view);
-
         // When
-        boolean isValidArguments = downloadController.isValidateArguments(
-                DownloadService.NONE_FILE_ID, "1", "1", "1", "1");
+        boolean isValidArguments = DownloadModel.isValidateArguments(
+                new DownloadFileInfo(DownloadService.NONE_FILE_ID, "1", "1", "1", "1"));
 
         // Then
         assertEquals(false, isValidArguments);
@@ -39,12 +39,8 @@ public class DownloadControllerTest {
 
     @Test
     public void testMakeDirIfNotExistsAndGet() throws Exception {
-        // Given
-        DownloadController.View view = mock(DownloadController.View.class);
-        DownloadController downloadController = new DownloadController(view);
-
         // When
-        File dir = downloadController.makeDirIfNotExistsAndGet();
+        File dir = DownloadModel.makeDirIfNotExistsAndGet();
 
         File dirForCheck = Environment.getExternalStoragePublicDirectory("/Jandi");
 
@@ -54,13 +50,9 @@ public class DownloadControllerTest {
 
     @Test
     public void testGetDownloadUrl() throws Exception {
-        // Given
-        DownloadController.View view = mock(DownloadController.View.class);
-        DownloadController downloadController = new DownloadController(view);
-
         // When
         String url = "http://www.naver.com";
-        String downloadUrl = downloadController.getDownloadUrl(url);
+        String downloadUrl = DownloadModel.getDownloadUrl(url);
 
         // Then
         assertEquals(true, (!TextUtils.isEmpty(downloadUrl) && downloadUrl.lastIndexOf("/download") > 0));
@@ -73,30 +65,27 @@ public class DownloadControllerTest {
         Context context = InstrumentationRegistry.getContext();
 
         DownloadController.View view = mock(DownloadController.View.class);
-        when(view.getProgressNotificationBuilder(anyString()))
+        when(view.getProgressNotificationBuilder(anyInt(), anyString()))
                 .thenReturn(new NotificationCompat.Builder(context));
         DownloadController downloadController = new DownloadController(view);
 
-        File dir = downloadController.makeDirIfNotExistsAndGet();
+        File dir = DownloadModel.makeDirIfNotExistsAndGet();
 
         String fileName = "heh_heh_redo__by_a_dawg13-d5acuoq.gif";
-        File downloadTargetFile = downloadController.getDownloadTargetFile(dir, fileName, "gif");
+        File downloadTargetFile = DownloadModel.getDownloadTargetFile(dir, fileName, "gif");
 
         String downloadUrl =
                 "http://orig05.deviantart.net/89a2/f/2012/220/7/2/heh_heh_redo__by_a_dawg13-d5acuoq.gif";
 
         File file = downloadController.downloadFileAndGet(downloadTargetFile, downloadUrl,
-                downloadController.getNotificationId(), view.getProgressNotificationBuilder(fileName));
+                null);
         assertEquals(true, (file != null && file.exists()));
     }
 
     @Test
     public void testGetDownloadTargetFileWhenDuplicated() throws Exception {
-        // Given
-        DownloadController.View view = mock(DownloadController.View.class);
-        DownloadController downloadController = new DownloadController(view);
 
-        File dir = downloadController.makeDirIfNotExistsAndGet();
+        File dir = DownloadModel.makeDirIfNotExistsAndGet();
         for (File file : dir.listFiles()) {
             file.delete();
         }
@@ -107,7 +96,7 @@ public class DownloadControllerTest {
         String fileName2 = "heh_heh_redo__by_a_dawg13-d5acuoq(1).gif";
 
         // When
-        File downloadTargetFile = downloadController.getDownloadTargetFile(dir, fileName, "gif");
+        File downloadTargetFile = DownloadModel.getDownloadTargetFile(dir, fileName, "gif");
 
         // Then
         System.out.println(downloadTargetFile.getName());

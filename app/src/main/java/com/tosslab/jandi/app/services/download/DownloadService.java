@@ -13,20 +13,24 @@ import android.support.v4.app.NotificationCompat;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.services.download.model.DownloadModel;
+import com.tosslab.jandi.app.services.download.receiver.DownloadStopProxyBroadcastReceiver;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by tonyjs on 15. 11. 17..
  */
 public class DownloadService extends IntentService implements DownloadController.View {
     public static final String TAG = DownloadService.class.getSimpleName();
-    static final String KEY_FILE_ID = "file_id";
-    static final String KEY_FILE_URL = "url";
-    static final String KEY_FILE_NAME = "file_name";
-    static final String KEY_FILE_EXTENSIONS = "ext";
-    static final String KEY_FILE_TYPE = "file_type";
-    static final int NONE_FILE_ID = -1;
+    public static final String KEY_FILE_ID = "file_id";
+    public static final String KEY_FILE_URL = "url";
+    public static final String KEY_FILE_NAME = "file_name";
+    public static final String KEY_FILE_EXTENSIONS = "ext";
+    public static final String KEY_FILE_TYPE = "file_type";
+    public static final int NONE_FILE_ID = -1;
+    public static final String ACTION_STOP_DOWNLOAD_SERVICE = "com.tosslab.jandi.app.download.service.stop";
+    public static final String EXTRA_STOP = "stop";
+    public static final String EXTRA_NOTIFICATION_ID = "notification_id";
     private static final String ACTION_CONNECTIVITY_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
     private DownloadController downloadController;
     private NotificationManager notificationManager;
@@ -48,11 +52,21 @@ public class DownloadService extends IntentService implements DownloadController
                 return;
             }
 
-            boolean connected = downloadController.isNetworkConnected();
-            LogUtil.i(TAG, "NetworkChanged - " + connected);
+            boolean connected = DownloadModel.isNetworkConnected();
             if (!connected) {
+                showErrorToast(R.string.err_network);
                 downloadController.cancelDownload();
                 isHandled = true;
+            }
+        }
+    };
+
+    private BroadcastReceiver stopReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (downloadController != null) {
+                downloadController.cancelDownload();
+                abortBroadcast();
             }
         }
     };
@@ -76,6 +90,7 @@ public class DownloadService extends IntentService implements DownloadController
         super.onCreate();
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         setLastNotificationTime(0);
+        setIntentRedelivery(true);
     }
 
     @Override
@@ -110,6 +125,10 @@ public class DownloadService extends IntentService implements DownloadController
     public void registerNetworkChangeReceiver() {
         IntentFilter filter = new IntentFilter(ACTION_CONNECTIVITY_CHANGE);
         registerReceiver(networkChangeBroadcastReceiver, filter);
+
+        IntentFilter stopFilter = new IntentFilter(ACTION_STOP_DOWNLOAD_SERVICE);
+        stopFilter.setPriority(1);
+        registerReceiver(stopReceiver, stopFilter);
     }
 
     @Override
@@ -119,11 +138,22 @@ public class DownloadService extends IntentService implements DownloadController
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        try {
+            unregisterReceiver(stopReceiver);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public NotificationCompat.Builder getProgressNotificationBuilder(String fileName) {
+    public NotificationCompat.Builder getProgressNotificationBuilder(int notificationId, String fileName) {
         NotificationCompat.Builder progressNotificationBuilder = new NotificationCompat.Builder(this);
+        Context context = JandiApplication.getContext();
+        Intent intent = new Intent(DownloadStopProxyBroadcastReceiver.ACTION);
+        intent.putExtra(EXTRA_STOP, true);
+        intent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
+        PendingIntent actionCancelIntent = PendingIntent.getBroadcast(context, 121, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         progressNotificationBuilder
                 .setWhen(System.currentTimeMillis())
                 .setOngoing(true)
@@ -131,6 +161,7 @@ public class DownloadService extends IntentService implements DownloadController
                 .setContentTitle(fileName)
                 .setContentText(getString(R.string.app_name))
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
+                .addAction(android.R.drawable.ic_menu_close_clear_cancel, context.getString(R.string.jandi_cancel), actionCancelIntent)
                 .setSmallIcon(android.R.drawable.stat_sys_download);
         return progressNotificationBuilder;
     }

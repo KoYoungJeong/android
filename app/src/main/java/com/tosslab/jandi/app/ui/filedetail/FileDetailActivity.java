@@ -820,7 +820,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
      * **********************************************************
      */
     public void download() {
-        fileDetailPresenter.onClickDownload(fileId);
+        fileDetailPresenter.onClickDownload(fileId, fileMessage);
     }
 
     @UiThread

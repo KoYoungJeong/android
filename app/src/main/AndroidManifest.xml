@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.tosslab.jandi.app">
+<manifest
+    package="com.tosslab.jandi.app"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:name=".JandiApplication"
@@ -365,6 +366,18 @@
 
         <!-- Download Service -->
         <service android:name=".services.download.DownloadService" />
+
+        <receiver android:name=".services.download.receiver.DownloadStopProxyBroadcastReceiver">
+            <intent-filter>
+                <action android:name="com.tosslab.jandi.app.download.service.proxy.receiver" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".services.download.receiver.DownloadStopBroadcastReceiver">
+            <intent-filter>
+                <action android:name="com.tosslab.jandi.app.download.service.stop" />
+            </intent-filter>
+        </receiver>
 
         <!-- Download File Open Receiver -->
         <receiver android:name=".services.download.FileOpenDelegator">
