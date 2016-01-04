@@ -19,7 +19,7 @@
         android:visibility="visible">
 
         <AutoCompleteTextView
-            android:id="@+id/txt_search_keyword"
+            android:id="@+id/tv_search_keyword"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/bg_round_rect_white"
@@ -43,7 +43,7 @@
             android:src="@drawable/btn_search_back" />
 
         <ImageView
-            android:id="@+id/img_search_mic"
+            android:id="@+id/iv_search_mic"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
@@ -66,7 +66,7 @@
         android:weightSum="2">
 
         <TextView
-            android:id="@+id/txt_search_category_messages"
+            android:id="@+id/tv_search_category_messages"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -77,7 +77,7 @@
             android:textSize="@dimen/jadi_search_scope_txt_size" />
 
         <TextView
-            android:id="@+id/txt_search_category_files"
+            android:id="@+id/tv_search_category_files"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

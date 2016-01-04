@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.search.main.presenter;
 
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.ui.search.main.model.SearchModel;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 
 /**
@@ -25,29 +25,27 @@ public class SearchPresenterImpl implements SearchPresenter {
     @Bean
     SearchModel searchModel;
 
-    private View view;
+    View view;
     private PublishSubject<String> objectPublishSubject;
 
     @AfterInject
     void initObject() {
         objectPublishSubject = PublishSubject.create();
-
         objectPublishSubject
                 .throttleWithTimeout(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String text) {
-                        List<SearchKeyword> searchKeywords = searchModel.searchOldQuery(text);
-                        view.setOldQueries(searchKeywords);
-                    }
-                });
+                .subscribe(this::onSearchText);
     }
 
     @Override
     public void setView(View view) {
-
         this.view = view;
+    }
+
+    @VisibleForTesting
+    void onSearchText(String text) {
+        List<SearchKeyword> searchKeywords = searchModel.searchOldQuery(text);
+        view.setOldQueries(searchKeywords);
     }
 
     @Override
@@ -82,7 +80,6 @@ public class SearchPresenterImpl implements SearchPresenter {
         } else {
             view.showNoVoiceSearchItem();
         }
-
     }
 
     @Override

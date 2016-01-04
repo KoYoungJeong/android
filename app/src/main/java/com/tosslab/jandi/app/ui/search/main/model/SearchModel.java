@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.search.main.model;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.database.search.JandiSearchDatabaseManager;
 import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
@@ -24,6 +25,11 @@ public class SearchModel {
     }
 
     public long upsertQuery(int type, String text) {
-        return JandiSearchDatabaseManager.getInstance(context).upsertSearchKeyword(new SearchKeyword(type, text));
+        if (TextUtils.isEmpty(text)) {
+            return -1;
+        }
+
+        return JandiSearchDatabaseManager.getInstance(context)
+                .upsertSearchKeyword(new SearchKeyword(type, text));
     }
 }

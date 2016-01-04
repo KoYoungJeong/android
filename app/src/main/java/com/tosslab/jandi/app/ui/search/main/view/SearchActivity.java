@@ -62,25 +62,25 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
     @Extra
     int entityId = -1;
 
-    @ViewById(R.id.txt_search_keyword)
-    AutoCompleteTextView searchEditText;
+    @ViewById(R.id.tv_search_keyword)
+    AutoCompleteTextView etSearch;
 
     @ViewById(R.id.layout_search_bar)
     View searchLayout;
 
-    @ViewById(R.id.txt_search_category_messages)
-    View messageTabView;
+    @ViewById(R.id.tv_search_category_messages)
+    View vMessageTab;
 
-    @ViewById(R.id.txt_search_category_files)
-    View filesTabView;
+    @ViewById(R.id.tv_search_category_files)
+    View vFileTab;
 
-    @ViewById(R.id.img_search_mic)
-    ImageView micImageView;
+    @ViewById(R.id.iv_search_mic)
+    public ImageView ivMic;
 
     @SystemService
     InputMethodManager inputMethodManager;
 
-    private SearchQueryAdapter searchQueryAdapter;
+    public SearchQueryAdapter searchQueryAdapter;
 
     private int searchMaxY = 0;
     private int searchMinY;
@@ -98,10 +98,10 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
         searchPresenter.setView(this);
 
         searchQueryAdapter = new SearchQueryAdapter(SearchActivity.this);
-        searchEditText.setAdapter(searchQueryAdapter);
-        Resources resources = searchEditText.getResources();
-        searchEditText.setOnItemClickListener((parent, view, position, id) ->
-                onSearchTextAction(searchEditText));
+        etSearch.setAdapter(searchQueryAdapter);
+        Resources resources = etSearch.getResources();
+        etSearch.setOnItemClickListener((parent, view, position, id) ->
+                onSearchTextAction(etSearch));
 
         searchMinY = -(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 64,
@@ -118,7 +118,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
 
     }
 
-    private void addFragments() {
+    public void addFragments() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fileListFragment = (FileListFragment) fragmentManager
@@ -154,7 +154,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
         unselectView.setSelected(false);
     }
 
-    @Click(R.id.txt_search_category_messages)
+    @Click(R.id.tv_search_category_messages)
     void onMessageTabClick() {
         hideSoftInput();
 
@@ -180,18 +180,18 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
         searchSelectView = messageSearchFragment;
         searchSelectView.setOnSearchItemSelect(this::finish);
         searchSelectView.setOnSearchText(() -> {
-            String searchText = searchEditText.getText().toString();
+            String searchText = etSearch.getText().toString();
             searchQueries[0] = searchText;
             return searchText;
         });
 
-        setSelectTab(messageTabView, filesTabView);
+        setSelectTab(vMessageTab, vFileTab);
         setSearchText(searchQueries[0]);
         initSearchSelectView();
 
     }
 
-    @Click(R.id.txt_search_category_files)
+    @Click(R.id.tv_search_category_files)
     void onFileTabClick() {
         hideSoftInput();
 
@@ -219,13 +219,13 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
         searchSelectView = fileListFragment;
         searchSelectView.setOnSearchItemSelect(this::finish);
         searchSelectView.setOnSearchText(() -> {
-            String searchText = searchEditText.getText().toString();
+            String searchText = etSearch.getText().toString();
             searchQueries[1] = searchText;
             return searchText;
         });
 
 
-        setSelectTab(filesTabView, messageTabView);
+        setSelectTab(vFileTab, vMessageTab);
         setSearchText(searchQueries[1]);
         initSearchSelectView();
 
@@ -274,7 +274,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
         finish();
     }
 
-    @Click(R.id.img_search_mic)
+    @Click(R.id.iv_search_mic)
     void onVoiceSearch() {
         searchPresenter.onSearchVoice();
 
@@ -287,12 +287,12 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
         }
     }
 
-    @TextChange(R.id.txt_search_keyword)
+    @TextChange(R.id.tv_search_keyword)
     void onSearchTextChanged(TextView textView, CharSequence text) {
         searchPresenter.onSearchTextChange(text.toString());
     }
 
-    @EditorAction(R.id.txt_search_keyword)
+    @EditorAction(R.id.tv_search_keyword)
     void onSearchTextAction(TextView textView) {
         String text = textView.getText().toString();
         if (!TextUtils.isEmpty(text) && TextUtils.getTrimmedLength(text) > 0) {
@@ -353,44 +353,44 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
 
     @Override
     public void setMicToClearImage() {
-        micImageView.setImageResource(R.drawable.account_icon_close);
+        ivMic.setImageResource(R.drawable.account_icon_close);
     }
 
     @Override
     public void setClearToMicImage() {
-        micImageView.setImageResource(R.drawable.account_icon_mic);
+        ivMic.setImageResource(R.drawable.account_icon_mic);
     }
 
     @Override
     public CharSequence getSearchText() {
-        return searchEditText.getText();
+        return etSearch.getText();
     }
 
     @Override
     public void setSearchText(String searchText) {
-        searchEditText.setText(searchText);
-        searchEditText.setSelection(searchText.length());
-        searchEditText.dismissDropDown();
+        etSearch.setText(searchText);
+        etSearch.setSelection(searchText.length());
+        etSearch.dismissDropDown();
     }
 
     @Override
     public void dismissDropDown() {
-        searchEditText.dismissDropDown();
+        etSearch.dismissDropDown();
     }
 
     @Override
     public void hideSoftInput() {
-        inputMethodManager.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+        inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
     }
 
     @Override
     public void showSoftInput() {
-        searchEditText.requestFocus();
-        inputMethodManager.showSoftInput(searchEditText, 0);
+        etSearch.requestFocus();
+        inputMethodManager.showSoftInput(etSearch, 0);
     }
 
     @OnActivityResult(SPEECH_REQUEST_CODE)
-    void onVoidceSearchResult(int resultCode, Intent data) {
+    void onVoiceSearchResult(int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;
         }

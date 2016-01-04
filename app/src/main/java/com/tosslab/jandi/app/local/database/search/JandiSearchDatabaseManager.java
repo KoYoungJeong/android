@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.database.DatabaseConsts;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
@@ -45,6 +46,9 @@ public class JandiSearchDatabaseManager {
     }
 
     public long upsertSearchKeyword(SearchKeyword searchKeyword) {
+        if (searchKeyword == null || TextUtils.isEmpty(searchKeyword.getKeyword())) {
+            return -1;
+        }
 
         SQLiteDatabase database = getWriteableDatabase();
 
@@ -77,6 +81,9 @@ public class JandiSearchDatabaseManager {
 
     public List<SearchKeyword> searchKeywords(int type, String keyword) {
         List<SearchKeyword> searchKeywords = new ArrayList<SearchKeyword>();
+        if (TextUtils.isEmpty(keyword)) {
+            return searchKeywords;
+        }
 
         SQLiteDatabase database = getReadableDatabase();
 
