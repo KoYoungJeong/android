@@ -70,7 +70,7 @@ public class DownloadServiceTest extends ApplicationTestCase<Application> {
         verify(view).showErrorToast(anyInt());
     }
 
-    @Ignore
+    @Ignore // 통합 테스트 과정에서 의도와 다르게 결과가 나옴
     @Test
     public void testOnHandleIntent() throws Exception {
         // Given
@@ -79,8 +79,7 @@ public class DownloadServiceTest extends ApplicationTestCase<Application> {
         downloadController.setView(view);
 
         DownloadController mock = spy(downloadController);
-        when(DownloadModel.getDownloadUrl(anyString())).thenReturn("http://orig05.deviantart.net/89a2/f/2012/220/7/2/heh_heh_redo__by_a_dawg13-d5acuoq.gif");
-//        when(mock.downloadFileAndGet(any(File.class), anyString(), anyInt(), any(NotificationCompat.Builder.class))).thenThrow(any(Exception.class));
+        when(mock.getDownloadUrl(anyString())).thenReturn("http://orig05.deviantart.net/89a2/f/2012/220/7/2/heh_heh_redo__by_a_dawg13-d5acuoq.gif");
 
         Intent mockIntent = mock(Intent.class);
         when(mockIntent.getIntExtra(DownloadService.KEY_FILE_ID, -1)).thenReturn(400);
