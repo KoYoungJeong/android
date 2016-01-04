@@ -7,14 +7,12 @@ import android.test.ApplicationTestCase;
 
 import com.tosslab.jandi.app.services.download.model.DownloadModel;
 
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -79,7 +77,7 @@ public class DownloadServiceTest extends ApplicationTestCase<Application> {
         downloadController.setView(view);
 
         DownloadController mock = spy(downloadController);
-        when(mock.getDownloadUrl(anyString())).thenReturn("http://orig05.deviantart.net/89a2/f/2012/220/7/2/heh_heh_redo__by_a_dawg13-d5acuoq.gif");
+//        when(mock.getDownloadUrl(anyString())).thenReturn("http://orig05.deviantart.net/89a2/f/2012/220/7/2/heh_heh_redo__by_a_dawg13-d5acuoq.gif");
 
         Intent mockIntent = mock(Intent.class);
         when(mockIntent.getIntExtra(DownloadService.KEY_FILE_ID, -1)).thenReturn(400);
