@@ -540,9 +540,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
                                 Uri.parse("market://details?id=" + appPackageName)));
                         finish();   // 업데이트 안내를 확인하면 앱을 종료한다.
                     } catch (ActivityNotFoundException anfe) {
-
-                        showChooseUpdateWebsiteDialog(appPackageName, configInfo.latestVersions);
-
+                        AlertUtil.showChooseUpdateWebsiteDialog(MainTabActivity.this, appPackageName, configInfo.latestVersions.android);
                     }
                 })
                 .setNegativeButton(getString(R.string.jandi_cancel)
@@ -551,56 +549,6 @@ public class MainTabActivity extends BaseAppCompatActivity {
                 })
                 .setCancelable(true);
         builder.create().show();
-    }
-
-    private void showChooseUpdateWebsiteDialog(String appPackageName, ResConfig.Versions latestVersions) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainTabActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_280);
-        String[] storeNames = getResources().getStringArray(R.array.jandi_markets);
-        builder.setTitle(R.string.jandi_choose_app_store)
-                .setItems(storeNames, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        StringBuilder urlBuilder = new StringBuilder();
-                        switch (which) {
-                            case 0:
-                                // 구글 스토어
-                                urlBuilder.append("http://play.google.com/store/apps/details?id=")
-                                        .append(appPackageName);
-                                break;
-                            case 1:
-                                // 바이두
-                                urlBuilder.append("http://shouji.baidu.com/soft/item?docid=8102225");
-                                break;
-                            case 2:
-                                // 91 apk
-                                urlBuilder.append("http://apk.91.com/Soft/Android/")
-                                        .append(appPackageName)
-                                        .append("-")
-                                        .append(latestVersions.android)
-                                        .append(".html");
-                                break;
-                            case 3:
-                                // Hi apk
-                                urlBuilder.append("http://apk.hiapk.com/appinfo/")
-                                        .append(appPackageName);
-                                break;
-                        }
-
-                        if (urlBuilder.length() > 0) {
-                            try {
-                                startActivity(new Intent(Intent.ACTION_VIEW,
-                                        Uri.parse(urlBuilder.toString())));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        finish();
-                    }
-                })
-                .create()
-                .show();
     }
 
     public ResConfig getConfigInfo() {

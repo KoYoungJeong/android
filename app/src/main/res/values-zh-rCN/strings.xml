@@ -107,6 +107,7 @@
 	<string name="jandi_choose_app_store">"选择应用程序商铺"</string>
 	<string name="jandi_choose_email">"选择一个电子邮件"</string>
 	<string name="jandi_choose_your_domain">"请输入团队的域名"</string>
+	<string name="jandi_close">"关闭"</string>
 	<string name="jandi_coach_mark_create_new_topics">"建立新议题"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"选择成员开始私信"</string>
 	<string name="jandi_coach_mark_directmessage_explain1">"在这里找到所有私信"</string>
@@ -358,6 +359,7 @@
 	<string name="jandi_select_maximum_10">"一次可上传10张照片"</string>
 	<string name="jandi_select_team">"选择您的团队"</string>
 	<string name="jandi_send_invitation">"现在邀请"</string>
+	<string name="jandi_send_to_email">"发送电​​子邮件"</string>
 	<string name="jandi_sent_password_reset_mail">"密码重设指示已经成功寄送到您的电子邮箱"</string>
 	<string name="jandi_service_maintenance">"JANDI现在基于定期维护而无法使用。我们预计几个小时内就可以恢复运作。感谢您的耐心等候。"</string>
 	<string name="jandi_set_passcode">"设定密码"</string>

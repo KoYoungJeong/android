@@ -107,6 +107,7 @@
 	<string name="jandi_choose_app_store">"Choose an app market."</string>
 	<string name="jandi_choose_email">"Choose an email"</string>
 	<string name="jandi_choose_your_domain">"Choose your domain"</string>
+	<string name="jandi_close">"Close"</string>
 	<string name="jandi_coach_mark_create_new_topics">"Create new topics"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"Choose a team member\nto start messaging"</string>
 	<string name="jandi_coach_mark_directmessage_explain1">"You can find all of"</string>
@@ -358,6 +359,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_select_maximum_10">"You can select up to 10 photos."</string>
 	<string name="jandi_select_team">"Choose Your Team"</string>
 	<string name="jandi_send_invitation">"Send Invitations"</string>
+	<string name="jandi_send_to_email">"Send Email"</string>
 	<string name="jandi_sent_password_reset_mail">"Instructions to reset your password were sent to your email"</string>
 	<string name="jandi_service_maintenance">"JANDI is currently unavailable due to scheduled maintenance. We expect to be back in a couple of hours. Thanks for your patience."</string>
 	<string name="jandi_set_passcode">"Set Passcode Lock"</string>

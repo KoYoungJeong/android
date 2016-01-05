@@ -107,6 +107,7 @@
 	<string name="jandi_choose_app_store">"アプリストアを選択してください"</string>
 	<string name="jandi_choose_email">"メールアドレスを選択"</string>
 	<string name="jandi_choose_your_domain">"ドメイン名(英数字)を入力"</string>
+	<string name="jandi_close">"閉じる"</string>
 	<string name="jandi_coach_mark_create_new_topics">"トピック作成"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"ダイレクトメッセージを\n送るメンバー検索"</string>
 	<string name="jandi_coach_mark_directmessage_explain1">"ここからメンバー達に送ったダイレク"</string>
@@ -358,6 +359,7 @@
 	<string name="jandi_select_maximum_10">"最大10枚まで選択できます"</string>
 	<string name="jandi_select_team">"チームを選択してください"</string>
 	<string name="jandi_send_invitation">"招待メールを送信"</string>
+	<string name="jandi_send_to_email">"メールを送る"</string>
 	<string name="jandi_sent_password_reset_mail">"パスワード再設定メールが送信されました"</string>
 	<string name="jandi_service_maintenance">"JANDIは現在定期メンテナンス中のためご利用できません。定期メンテナンスは数時間で終了の予定です。ご不便をお掛けし申し訳ありません。"</string>
 	<string name="jandi_set_passcode">"パスコードロック設定"</string>
