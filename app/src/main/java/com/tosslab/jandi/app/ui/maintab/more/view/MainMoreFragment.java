@@ -316,7 +316,7 @@ public class MainMoreFragment extends Fragment implements MainMorePresenter.View
                 .setPositiveButton(R.string.jandi_send_to_email, (dialog, which) -> {
                     Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:support@tosslab.com"));
                     intent.putExtra(Intent.EXTRA_SUBJECT, "Jandi Usage Information");
-                    intent.putExtra(Intent.EXTRA_TEXT, "\n===================\n" + userInfoSpans.toString());
+                    intent.putExtra(Intent.EXTRA_TEXT, userInfoSpans.toString());
                     try {
                         startActivity(intent);
                     } catch (Exception e) {
