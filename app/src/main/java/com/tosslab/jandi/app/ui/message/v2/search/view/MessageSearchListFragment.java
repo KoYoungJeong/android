@@ -746,7 +746,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         this.roomId = roomId;
         messageAdapter.setTeamId(teamId);
         messageAdapter.setRoomId(roomId);
-        messageAdapter.notifyDataSetChanged();
     }
 
     @Override

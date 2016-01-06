@@ -85,6 +85,7 @@
 	<string name="jandi_announcement_delete_question">"公告將被刪除，你確定要繼續?"</string>
 	<string name="jandi_announcement_deleted">"%s 刪除公告"</string>
 	<string name="jandi_announcement_minimize">"最小化"</string>
+	<string name="jandi_are_you_sure_disable_external_link">"若移除共享連結，存取至該檔案的權限將被撤銷。你確定要移除共享連結？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你確定將此成員剔除議題？"</string>
 	<string name="jandi_auto_join_cannot_be_default_topic">"你無法取消預設議題內的自動邀請"</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"自動邀請的功能僅開放於公開議題中使用"</string>
@@ -107,6 +108,7 @@
 	<string name="jandi_choose_app_store">"選擇應用程式商鋪"</string>
 	<string name="jandi_choose_email">"選擇一個電子郵件"</string>
 	<string name="jandi_choose_your_domain">"請輸入團隊的網域名稱"</string>
+	<string name="jandi_close">"關閉"</string>
 	<string name="jandi_coach_mark_create_new_topics">"建立新議題"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"選擇成員開始私訊"</string>
 	<string name="jandi_coach_mark_directmessage_explain1">"在這裡找到所有私訊"</string>
@@ -358,6 +360,7 @@
 	<string name="jandi_select_maximum_10">"一次可上傳10張照片"</string>
 	<string name="jandi_select_team">"選擇您的團隊"</string>
 	<string name="jandi_send_invitation">"現在邀請"</string>
+	<string name="jandi_send_to_email">"發送電子郵件"</string>
 	<string name="jandi_sent_password_reset_mail">"密碼重設指示已經成功寄送到您的電子郵箱"</string>
 	<string name="jandi_service_maintenance">"JANDI現在基於定期維護而無法使用。我們預計幾個小時内就可以恢復運作。感謝您的耐心等候。"</string>
 	<string name="jandi_set_passcode">"設定密碼"</string>

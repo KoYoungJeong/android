@@ -85,6 +85,7 @@
 	<string name="jandi_announcement_delete_question">"이 공지를 삭제하시겠습니까? 삭제시 토픽 내 다른 멤버들 또한 더 이상 이 공지를 볼 수 없게되며, 원본 메시지는 보존됩니다."</string>
 	<string name="jandi_announcement_deleted">"%s님이 공지사항을 삭제했습니다."</string>
 	<string name="jandi_announcement_minimize">"최소화"</string>
+	<string name="jandi_are_you_sure_disable_external_link">"기존에 공유된 링크로 접속할 경우 더 이상 파일을 볼 수 없게 됩니다. 삭제하시겠습니까?"</string>
 	<string name="jandi_ask_kick_user_from_topic">"정말 이 멤버를 내보내시겠습니까?"</string>
 	<string name="jandi_auto_join_cannot_be_default_topic">"기본토픽에서는 자동초대를 해제할 수 없습니다."</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"자동 초대는 공개 토픽 에서만 사용 가능합니다"</string>
@@ -107,6 +108,7 @@
 	<string name="jandi_choose_app_store">"앱 마켓을 선택해주세요."</string>
 	<string name="jandi_choose_email">"이메일 선택"</string>
 	<string name="jandi_choose_your_domain">"도메인명"</string>
+	<string name="jandi_close">"닫기"</string>
 	<string name="jandi_coach_mark_create_new_topics">"토픽 만들기"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"1:1 메시지를 보낼 멤버 찾기"</string>
 	<string name="jandi_coach_mark_directmessage_explain1">"팀 멤버에게 1:1로 보낸 메시지는"</string>
@@ -270,7 +272,7 @@
 	<string name="jandi_message_hint">"메시지"</string>
 	<string name="jandi_message_invite_entity">"%1$d 명의 사용자를 초대했습니다"</string>
 	<string name="jandi_message_join_entity">"%1$s에 참여합니다"</string>
-	<string name="jandi_message_leave_private_topic">"비공개 토픽을 나가시면 초대를 받지 않는한 다시 참여하실 수 없습니다. 나가시겠습니까?"</string>
+	<string name="jandi_message_leave_private_topic">"비공개 토픽을 나가시면 초대를 받지 않는한 다시 참여하실 수 없습니다.\n나가시겠습니까?"</string>
 	<string name="jandi_message_logout">"로그아웃 되었습니다"</string>
 	<string name="jandi_message_no_member">"아직 팀에 가입한 멤버가 없습니다. 지금 바로 멤버들을 초대하세요."</string>
 	<string name="jandi_message_no_starred">"즐겨찾기가 해제되었습니다"</string>
@@ -358,6 +360,7 @@
 	<string name="jandi_select_maximum_10">"최대 10장까지 선택할 수 있습니다."</string>
 	<string name="jandi_select_team">"팀을 선택하세요"</string>
 	<string name="jandi_send_invitation">"멤버 초대하기"</string>
+	<string name="jandi_send_to_email">"메일 보내기"</string>
 	<string name="jandi_sent_password_reset_mail">"패스워드 초기화 이메일이 발송되었습니다"</string>
 	<string name="jandi_service_maintenance">"현재 잔디는 정기 점검 중입니다. 1~2시간 내에 점검이 완료될 예정이니 조금만 기다려주세요."</string>
 	<string name="jandi_set_passcode">"비밀번호 잠금 설정"</string>
