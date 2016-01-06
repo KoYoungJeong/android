@@ -203,6 +203,10 @@ public class MainTabActivity extends BaseAppCompatActivity {
             getEntities();
         }
 
+        updateMoreBadge();
+
+        updateTopicBadge();
+        updateChatBadge();
     }
 
     private void updateChatBadge() {
