@@ -104,7 +104,7 @@ public class FileShareActivity extends BaseAppCompatActivity {
 
     @UiThread
     public void showErrorToast(String message) {
-        ColoredToast.showError(this, message);
+        ColoredToast.showError( message);
     }
 
 }

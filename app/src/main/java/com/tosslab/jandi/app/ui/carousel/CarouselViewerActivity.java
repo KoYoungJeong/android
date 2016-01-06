@@ -187,7 +187,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @UiThread
     @Override
     public void setInitFail() {
-        ColoredToast.showWarning(getApplicationContext(), getString(R.string.err_download));
+        ColoredToast.showWarning(getString(R.string.err_download));
         finish();
     }
 
@@ -292,7 +292,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @UiThread
     @Override
     public void showFailToast(String message) {
-        ColoredToast.showError(this, message);
+        ColoredToast.showError(message);
     }
 
     @Override

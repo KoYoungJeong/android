@@ -222,13 +222,13 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     @UiThread
     @Override
     public void showToast(String msg) {
-        ColoredToast.show(this, msg);
+        ColoredToast.show(msg);
     }
 
     @UiThread
     @Override
     public void showErrorToast(String msg) {
-        ColoredToast.showError(this, msg);
+        ColoredToast.showError(msg);
     }
 
     @UiThread

@@ -152,7 +152,7 @@ public class ChatDetailFragment extends Fragment {
 
     @UiThread
     void showSuccessToast(String message) {
-        ColoredToast.show(getActivity(), message);
+        ColoredToast.show(message);
     }
 
     @Click(R.id.vg_chat_detail_leave)

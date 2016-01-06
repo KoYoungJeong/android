@@ -206,7 +206,7 @@
             style="@style/JandiChat.InputWrapper"
             android:orientation="horizontal">
 
-            <com.tosslab.jandi.app.utils.extracomponent.BackpressEditText
+            <com.tosslab.jandi.app.views.BackPressCatchEditText
                 android:id="@+id/et_message"
                 style="@style/JandiChat.EditText"
                 android:layout_width="0dp"

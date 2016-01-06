@@ -145,7 +145,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
     @UiThread
     @Override
     public void showErrorToast(String message) {
-        ColoredToast.showError(AccountHomeActivity.this, message);
+        ColoredToast.showError(message);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -231,7 +231,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
     @UiThread
     @Override
     public void showSuccessToast(String message) {
-        ColoredToast.show(AccountHomeActivity.this, message);
+        ColoredToast.show(message);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

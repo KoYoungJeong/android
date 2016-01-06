@@ -91,7 +91,7 @@ public class StarMentionListPresentor {
                         .lastMarker(starMentionVO.getLinkId())
                         .start();
             } else {
-                ColoredToast.show(fragment.getActivity(), fragment.getString(R.string.jandi_starmention_no_longer_in_topic));
+                ColoredToast.show(fragment.getString(R.string.jandi_starmention_no_longer_in_topic));
             }
         } else if (contentType == StarMentionVO.Type.Comment.getValue()
                 || contentType == StarMentionVO.Type.File.getValue()) {

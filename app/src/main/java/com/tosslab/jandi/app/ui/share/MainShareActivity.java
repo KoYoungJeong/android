@@ -59,7 +59,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
 
         if (!mainShareModel.hasTeamInfo() || !mainShareModel.hasEntityInfo()) {
             // Check Login Info
-            ColoredToast.show(MainShareActivity.this, getString(R.string.err_profile_get_info));
+            ColoredToast.show(getString(R.string.err_profile_get_info));
             startIntro();
             return;
         }

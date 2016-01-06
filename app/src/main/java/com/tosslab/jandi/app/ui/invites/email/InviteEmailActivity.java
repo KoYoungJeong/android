@@ -135,7 +135,7 @@ public class InviteEmailActivity extends BaseAppCompatActivity
     @Override
     @UiThread
     public void showToast(String message) {
-        ColoredToast.show(getApplicationContext(), message);
+        ColoredToast.show(message);
     }
 
     @Override

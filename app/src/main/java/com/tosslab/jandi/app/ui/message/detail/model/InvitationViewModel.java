@@ -70,7 +70,7 @@ public class InvitationViewModel {
                 .size();
 
         if (teamMemberCountWithoutMe <= 0) {
-            ColoredToast.showWarning(context, context.getString(R.string.warn_all_users_are_already_invited));
+            ColoredToast.showWarning(context.getString(R.string.warn_all_users_are_already_invited));
             return;
         }
 
@@ -101,7 +101,7 @@ public class InvitationViewModel {
         List<FormattedEntity> unjoinedMembers = getUnjoinedEntities(entityId);
 
         if (unjoinedMembers.size() <= 0) {
-            ColoredToast.showWarning(context, context.getString(R.string.warn_all_users_are_already_invited));
+            ColoredToast.showWarning(context.getString(R.string.warn_all_users_are_already_invited));
             return;
         }
 
@@ -223,12 +223,12 @@ public class InvitationViewModel {
     public void inviteSucceed(Context context, int memberSize) {
         String rawString = context.getString(R.string.jandi_message_invite_entity);
         String formatString = String.format(rawString, memberSize);
-        ColoredToast.show(context, formatString);
+        ColoredToast.show(formatString);
     }
 
     @UiThread
     public void inviteFailed(Context context, String errMessage) {
-        ColoredToast.showError(context, errMessage);
+        ColoredToast.show(errMessage);
     }
 
 }

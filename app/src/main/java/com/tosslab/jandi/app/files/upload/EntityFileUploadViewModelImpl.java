@@ -149,12 +149,12 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
 
     @UiThread
     void showFailToast(Context context, String message) {
-        ColoredToast.showError(context, message);
+        ColoredToast.showError(message);
     }
 
     @UiThread
     void showSuccessToast(Context context, String message) {
-        ColoredToast.show(context, message);
+        ColoredToast.show(message);
     }
 
 
@@ -229,7 +229,7 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void exceedMaxFileSizeError(Context context) {
 
-        ColoredToast.showError(context, context.getString(R.string.jandi_file_size_large_error));
+        ColoredToast.showError(context.getString(R.string.jandi_file_size_large_error));
     }
 
 }

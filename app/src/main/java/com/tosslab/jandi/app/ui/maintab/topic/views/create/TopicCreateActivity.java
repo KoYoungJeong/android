@@ -222,7 +222,7 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
     @UiThread
     @Override
     public void createTopicFailed(int err_entity_duplicated_name) {
-        ColoredToast.showError(TopicCreateActivity.this, TopicCreateActivity.this.getString(err_entity_duplicated_name));
+        ColoredToast.showError(TopicCreateActivity.this.getString(err_entity_duplicated_name));
 
     }
 
@@ -230,7 +230,7 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
     @Override
     public void createTopicSuccess(int teamId, int entityId, String topicTitle, boolean publicSelected) {
 
-        ColoredToast.show(TopicCreateActivity.this, TopicCreateActivity.this.getString(R.string.jandi_message_create_entity, topicTitle));
+        ColoredToast.show(TopicCreateActivity.this.getString(R.string.jandi_message_create_entity, topicTitle));
 
         int entityType;
         if (publicSelected) {

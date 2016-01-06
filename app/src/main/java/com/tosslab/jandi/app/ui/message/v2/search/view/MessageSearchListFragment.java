@@ -700,7 +700,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void showGrayToast(String message) {
-        ColoredToast.showGray(getActivity(), message);
+        ColoredToast.showGray(message);
     }
 
     @UiThread

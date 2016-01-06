@@ -309,7 +309,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     }
 
     public void onEvent(ErrorDialogFragmentEvent event) {
-        ColoredToast.showError(this, getString(event.errorMessageResId));
+        ColoredToast.showError(getString(event.errorMessageResId));
     }
 
     @OnActivityResult(Crop.REQUEST_CROP)
@@ -335,7 +335,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @Override
     public void showFailProfile() {
 
-        ColoredToast.showError(ModifyProfileActivity.this, JandiApplication.getContext().getString(R.string.err_profile_get_info));
+        ColoredToast.showError(JandiApplication.getContext().getString(R.string.err_profile_get_info));
         finish();
     }
 
@@ -459,7 +459,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showToastNoUpdateProfile() {
-        ColoredToast.showWarning(ModifyProfileActivity.this, JandiApplication.getContext()
+        ColoredToast.showWarning(JandiApplication.getContext()
                 .getString(R.string.err_profile_unmodified));
     }
 
@@ -480,27 +480,27 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void successPhotoUpload() {
-        ColoredToast.show(ModifyProfileActivity.this, JandiApplication.getContext()
+        ColoredToast.show(JandiApplication.getContext()
                 .getString(R.string.jandi_profile_photo_upload_succeed));
 
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void failPhotoUpload() {
-        ColoredToast.showError(ModifyProfileActivity.this, JandiApplication.getContext()
+        ColoredToast.showError(JandiApplication.getContext()
                 .getString(R.string.err_profile_photo_upload));
 
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateProfileSucceed() {
-        ColoredToast.show(ModifyProfileActivity.this, JandiApplication.getContext()
+        ColoredToast.show(JandiApplication.getContext()
                 .getString(R.string.jandi_profile_update_succeed));
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateProfileFailed() {
-        ColoredToast.showError(ModifyProfileActivity.this, JandiApplication.getContext()
+        ColoredToast.showError(JandiApplication.getContext()
                 .getString(R.string.err_profile_update));
 
     }

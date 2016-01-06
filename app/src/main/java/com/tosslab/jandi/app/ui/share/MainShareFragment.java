@@ -202,13 +202,13 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     @UiThread
     @Override
     public void showSuccessToast(String message) {
-        ColoredToast.show(getActivity().getApplicationContext(), message);
+        ColoredToast.show(message);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showFailToast(String message) {
-        ColoredToast.showError(getActivity().getApplicationContext(), message);
+        ColoredToast.showError(message);
     }
 
     @UiThread

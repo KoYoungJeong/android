@@ -61,8 +61,13 @@ public class JandiApplication extends MultiDexApplication {
         return isApplicationDeactive;
     }
 
-    public static void setIsApplicationDeactive(boolean isapplicationactive) {
-        JandiApplication.isApplicationDeactive = isapplicationactive;
+    public static void setIsApplicationDeactive(boolean isApplicationactive) {
+        JandiApplication.isApplicationDeactive = isApplicationactive;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <SERVICE> SERVICE getService(String service) {
+        return (SERVICE) getContext().getSystemService(service);
     }
 
     @Override

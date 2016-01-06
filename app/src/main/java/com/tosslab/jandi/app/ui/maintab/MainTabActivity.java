@@ -292,7 +292,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
             offlineLayer.dismissOfflineView();
         } else {
             offlineLayer.showOfflineView();
-            ColoredToast.showGray(MainTabActivity.this, JandiApplication.getContext().getString(R
+            ColoredToast.showGray(JandiApplication.getContext().getString(R
                     .string.jandi_msg_network_offline_warn));
         }
     }
@@ -388,7 +388,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     @UiThread
     public void getEntitiesFailed(String errMessage) {
-        ColoredToast.showError(mContext, errMessage);
+        ColoredToast.showError(errMessage);
         if (isFinishing()) {
             return;
         }

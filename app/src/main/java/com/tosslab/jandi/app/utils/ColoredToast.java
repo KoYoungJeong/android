@@ -11,7 +11,21 @@ import com.tosslab.jandi.app.R;
  * Created by justinygchoi on 2014. 7. 8..
  */
 public class ColoredToast {
-    public static void show(Context context, String message) {
+
+    public static SuperToast getToast(String message) {
+        return getToast(message, SuperToast.Background.BLUE, Color.WHITE, SuperToast.Duration.VERY_SHORT);
+    }
+
+    public static SuperToast getToast(String message, int backgroundColor, int textColor, int duration) {
+        SuperToast superToast = new SuperToast(JandiApplication.getContext());
+        superToast.setText(message);
+        superToast.setDuration(duration);
+        superToast.setBackground(backgroundColor);
+        superToast.setTextColor(textColor);
+        return superToast;
+    }
+
+    public static void show(String message) {
         SuperToast superToast = new SuperToast(JandiApplication.getContext());
         superToast.setText(message);
         superToast.setDuration(SuperToast.Duration.VERY_SHORT);
@@ -20,7 +34,7 @@ public class ColoredToast {
         superToast.show();
     }
 
-    public static void showGray(Context context, String message) {
+    public static void showGray(String message) {
         SuperToast superToast = new SuperToast(JandiApplication.getContext());
         superToast.setText(message);
         superToast.setDuration(SuperToast.Duration.VERY_SHORT);
@@ -29,7 +43,7 @@ public class ColoredToast {
         superToast.show();
     }
 
-    public static void showLong(Context context, String message) {
+    public static void showLong(String message) {
         SuperToast superToast = new SuperToast(JandiApplication.getContext());
         superToast.setText(message);
         superToast.setDuration(SuperToast.Duration.LONG);
@@ -38,7 +52,7 @@ public class ColoredToast {
         superToast.show();
     }
 
-    public static void showWarning(Context context, String message) {
+    public static void showWarning(String message) {
         SuperToast superToast = new SuperToast(JandiApplication.getContext());
         superToast.setText(message);
         superToast.setDuration(SuperToast.Duration.VERY_SHORT);
@@ -47,7 +61,7 @@ public class ColoredToast {
         superToast.show();
     }
 
-    public static void showError(Context context, String message) {
+    public static void showError(String message) {
         SuperToast superToast = new SuperToast(JandiApplication.getContext());
         superToast.setText(message);
         superToast.setDuration(SuperToast.Duration.SHORT);

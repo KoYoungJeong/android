@@ -31,7 +31,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -86,7 +85,7 @@ import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.extracomponent.BackpressEditText;
+import com.tosslab.jandi.app.views.BackPressCatchEditText;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -153,7 +152,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @ViewById(R.id.vg_file_detail_input_comment)
     View vgCommentLayout;
     @ViewById(R.id.et_message)
-    BackpressEditText etComment;
+    BackPressCatchEditText etComment;
     @ViewById(R.id.btn_send_message)
     View btnSend;
     @ViewById(R.id.vg_file_detail_preview_sticker)
@@ -555,7 +554,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread
     @Override
     public void onShareMessageSucceed(int entityIdToBeShared, ResMessages.FileMessage fileMessage) {
-        ColoredToast.show(this, getString(R.string.jandi_share_succeed, getSupportActionBar().getTitle()));
+        ColoredToast.show(getString(R.string.jandi_share_succeed, getSupportActionBar().getTitle()));
         mixpanelAnalytics.trackSharingFile(entityManager,
                 entityManager.getEntityById(entityIdToBeShared).type,
                 fileMessage);
@@ -586,7 +585,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread
     @Override
     public void onUnShareMessageSucceed(int entityIdToBeUnshared, ResMessages.FileMessage fileMessage) {
-        ColoredToast.show(this, getString(R.string.jandi_unshare_succeed, getSupportActionBar().getTitle()));
+        ColoredToast.show(getString(R.string.jandi_unshare_succeed, getSupportActionBar().getTitle()));
         mixpanelAnalytics.trackUnsharingFile(entityManager,
                 entityManager.getEntityById(entityIdToBeUnshared).type,
                 fileMessage);
@@ -693,9 +692,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         if (isOk) {
             CharSequence title = getSupportActionBar().getTitle();
             if (!TextUtils.isEmpty(title)) {
-                ColoredToast.show(this, getString(R.string.jandi_delete_succeed, title));
+                ColoredToast.show(getString(R.string.jandi_delete_succeed, title));
             } else {
-                ColoredToast.show(this, getString(R.string.jandi_delete_succeed, ""));
+                ColoredToast.show(getString(R.string.jandi_delete_succeed, ""));
             }
 
             Intent data = new Intent();
@@ -704,7 +703,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             setResult(RESULT_OK, data);
             finish();
         } else {
-            ColoredToast.showError(this, getString(R.string.err_delete_file));
+            ColoredToast.showError(getString(R.string.err_delete_file));
         }
         isFromDeleteAction = false;
     }
@@ -884,15 +883,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 intent.setDataAndType(Uri.fromFile(file), getFileType(file, fileType));
                 startActivity(intent);
             }
-            ColoredToast.show(FileDetailActivity.this, getString(R.string.jandi_file_downloaded_into, file.getPath()));
+            ColoredToast.show(getString(R.string.jandi_file_downloaded_into, file.getPath()));
         } catch (ActivityNotFoundException e) {
             String rawString = getString(R.string.err_unsupported_file_type);
             String formatString = String.format(rawString, file);
-            ColoredToast.showError(this, formatString);
+            ColoredToast.showError(formatString);
         } catch (SecurityException e) {
             String rawString = getString(R.string.err_unsupported_file_type);
             String formatString = String.format(rawString, file);
-            ColoredToast.showError(this, formatString);
+            ColoredToast.showError(formatString);
         }
     }
 
@@ -925,7 +924,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread
     @Override
     public void onGetProfileFailed() {
-        ColoredToast.showError(this, getString(R.string.err_profile_get_info));
+        ColoredToast.showError(getString(R.string.err_profile_get_info));
         finish();
     }
 
@@ -1116,13 +1115,13 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread(propagation = Propagation.REUSE)
     @Override
     public void showToast(String message) {
-        ColoredToast.show(this, message);
+        ColoredToast.show(message);
     }
 
     @UiThread
     @Override
     public void showErrorToast(String message) {
-        ColoredToast.showError(this, message);
+        ColoredToast.showError(message);
     }
 
     @Override
@@ -1181,7 +1180,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread(propagation = Propagation.REUSE)
     @Override
     public void showUnsharedFileToast() {
-        ColoredToast.showError(FileDetailActivity.this, getString(R.string.jandi_unshared_message));
+        ColoredToast.showError(getString(R.string.jandi_unshared_message));
     }
 
     @TargetApi(Build.VERSION_CODES.M)
