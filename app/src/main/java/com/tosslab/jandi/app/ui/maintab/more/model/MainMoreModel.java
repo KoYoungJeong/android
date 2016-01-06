@@ -3,12 +3,9 @@ package com.tosslab.jandi.app.ui.maintab.more.model;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.StyleSpan;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -130,11 +127,11 @@ public class MainMoreModel {
         userInfos.add(new Pair<>("디바이스 모델명", Build.MODEL));
         userInfos.add(new Pair<>("Android OS Version", Build.VERSION.RELEASE));
         userInfos.add(new Pair<>("Jandi App Version", getVersionName()));
-        userInfos.add(new Pair<>("Member ID", String.valueOf(EntityManager.getInstance().getMe().getId())));
         userInfos.add(new Pair<>("Account Name", AccountRepository.getRepository().getAccountInfo().getName()));
-        userInfos.add(new Pair<>("접속 고객 Email ID", EntityManager.getInstance().getMe().getUserEmail()));
-        userInfos.add(new Pair<>("접속 고객 팀명", EntityManager.getInstance().getTeamName()));
-        userInfos.add(new Pair<>("접속 고객 팀ID", String.valueOf(EntityManager.getInstance().getTeamId())));
+        userInfos.add(new Pair<>("멤버 고유 ID", String.valueOf(EntityManager.getInstance().getMe().getId())));
+        userInfos.add(new Pair<>("멤버 Email", EntityManager.getInstance().getMe().getUserEmail()));
+        userInfos.add(new Pair<>("팀 이름", EntityManager.getInstance().getTeamName()));
+        userInfos.add(new Pair<>("팀 고유 ID", String.valueOf(EntityManager.getInstance().getTeamId())));
 
         return userInfos;
     }
@@ -142,17 +139,13 @@ public class MainMoreModel {
     public SpannableStringBuilder getUserInfoSpans(List<Pair<String, String>> userInfos) {
         SpannableStringBuilder userInfoSpans = new SpannableStringBuilder();
         Observable.from(userInfos)
-                .doOnNext(pair -> {
+                .subscribe(pair -> {
                     if (userInfoSpans.length() > 0) {
                         userInfoSpans.append("\n\n");
                     }
-                    int startIndex = userInfoSpans.length();
                     userInfoSpans.append(pair.first);
-                    int endIndex = userInfoSpans.length();
-                    userInfoSpans.setSpan(new StyleSpan(Typeface.BOLD), startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                })
-                .doOnNext(pair -> userInfoSpans.append("\n").append(pair.second))
-                .subscribe();
+                    userInfoSpans.append("\n").append(pair.second);
+                });
         return userInfoSpans;
     }
 }

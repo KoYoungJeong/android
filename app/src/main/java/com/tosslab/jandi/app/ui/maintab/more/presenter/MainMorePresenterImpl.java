@@ -90,7 +90,7 @@ public class MainMorePresenterImpl implements MainMorePresenter {
         if (count == 0) {
             versionClickInfo.setTime(System.currentTimeMillis());
         } else if (!mainMoreModel.isIn3Seconds(versionClickInfo.getTime())) {
-            versionClickInfo.setCount(0);
+            count = 0;
             versionClickInfo.setTime(System.currentTimeMillis());
         }
         versionClickInfo.setCount(++count);

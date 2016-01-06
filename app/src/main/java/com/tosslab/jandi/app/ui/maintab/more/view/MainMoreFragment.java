@@ -10,6 +10,7 @@ import android.text.SpannableStringBuilder;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -309,7 +310,7 @@ public class MainMoreFragment extends Fragment implements MainMorePresenter.View
     @Override
     public void showBugReportDialog(SpannableStringBuilder userInfoSpans) {
 
-        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setMessage(userInfoSpans)
                 .setTitle("Jandi Usage Information")
                 .setNegativeButton(R.string.jandi_close, null)
@@ -322,7 +323,11 @@ public class MainMoreFragment extends Fragment implements MainMorePresenter.View
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }).create().show();
+                }).create();
+        WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
+        layoutParams.height = getResources().getDisplayMetrics().heightPixels * 2 / 3;
+        alertDialog.getWindow().setAttributes(layoutParams);
+        alertDialog.show();
 
     }
 
