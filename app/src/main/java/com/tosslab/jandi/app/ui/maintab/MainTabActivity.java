@@ -34,6 +34,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -203,18 +204,14 @@ public class MainTabActivity extends BaseAppCompatActivity {
             getEntities();
         }
 
-        updateMoreBadge();
-
-        updateTopicBadge();
-        updateChatBadge();
     }
 
     private void updateChatBadge() {
-        EntityManager entityManager = EntityManager.getInstance();
+
         final int[] total = {0};
-        Observable.from(entityManager.getFormattedUsers())
+        Observable.from(ChatRepository.getRepository().getChats())
                 .subscribe(formattedEntity -> {
-                    total[0] += formattedEntity.alarmCount;
+                    total[0] += formattedEntity.getUnread();
                 });
         mMainTabPagerAdapter.updateChatBadge(total[0]);
 
@@ -325,9 +322,9 @@ public class MainTabActivity extends BaseAppCompatActivity {
         fromPush = false;
 
         updateMoreBadge();
-
         updateTopicBadge();
         updateChatBadge();
+
     }
 
     @Override
