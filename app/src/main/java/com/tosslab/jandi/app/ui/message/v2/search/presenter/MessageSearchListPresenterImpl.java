@@ -184,13 +184,10 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
             }
         }
 
-        int savedLastLinkId = messageListModel.getLastReadLinkId(roomId, messageListModel.getMyId());
-        int realLastLinkId = Math.max(savedLastLinkId, lastMarker);
-
         if (roomId > 0) {
             view.setRoomId(roomId);
         }
-        view.setLastReadLinkId(realLastLinkId);
+
         messageListModel.updateMarkerInfo(teamId, roomId);
         messageListModel.setRoomId(roomId);
 

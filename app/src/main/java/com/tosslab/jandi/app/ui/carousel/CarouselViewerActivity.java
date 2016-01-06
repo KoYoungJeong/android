@@ -197,7 +197,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         viewPager.setCurrentItem(startLinkPosition, false);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setActionbarTitle(String fileName, String size, String ext) {
         ActionBar actionBar = getSupportActionBar();

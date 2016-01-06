@@ -85,6 +85,7 @@
 	<string name="jandi_announcement_delete_question">"公告将被删除，你确定要继续?"</string>
 	<string name="jandi_announcement_deleted">"%s 删除公告"</string>
 	<string name="jandi_announcement_minimize">"最小化"</string>
+	<string name="jandi_are_you_sure_disable_external_link">"若移除共享链接，访问至该文件的权限将被撤销。 你确定要移除共享链接？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你确定将此成员剔除议题？"</string>
 	<string name="jandi_auto_join_cannot_be_default_topic">"你无法取消预置议题内的自动邀请"</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"自动邀请的功能仅开放于公开议题中使用"</string>

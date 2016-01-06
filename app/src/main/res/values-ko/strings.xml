@@ -85,6 +85,7 @@
 	<string name="jandi_announcement_delete_question">"이 공지를 삭제하시겠습니까? 삭제시 토픽 내 다른 멤버들 또한 더 이상 이 공지를 볼 수 없게되며, 원본 메시지는 보존됩니다."</string>
 	<string name="jandi_announcement_deleted">"%s님이 공지사항을 삭제했습니다."</string>
 	<string name="jandi_announcement_minimize">"최소화"</string>
+	<string name="jandi_are_you_sure_disable_external_link">"기존에 공유된 링크로 접속할 경우 더 이상 파일을 볼 수 없게 됩니다. 삭제하시겠습니까?"</string>
 	<string name="jandi_ask_kick_user_from_topic">"정말 이 멤버를 내보내시겠습니까?"</string>
 	<string name="jandi_auto_join_cannot_be_default_topic">"기본토픽에서는 자동초대를 해제할 수 없습니다."</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"자동 초대는 공개 토픽 에서만 사용 가능합니다"</string>

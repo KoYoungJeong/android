@@ -31,7 +31,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -415,12 +414,23 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 fileDetailPresenter.onCopyExternLink(fileMessage, isExternalShared);
                 break;
             case R.id.action_file_detail_disable_external_link:
-                fileDetailPresenter.onDisableExternLink(fileMessage);
+                showDisableExternalLinkDialog();
                 break;
 
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDisableExternalLinkDialog() {
+        new AlertDialog.Builder(FileDetailActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setTitle(R.string.jandi_disable_external_link)
+                .setMessage(R.string.jandi_are_you_sure_disable_external_link)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.jandi_action_delete, (dialog, which) -> {
+                    fileDetailPresenter.onDisableExternLink(fileMessage);
+                })
+                .create().show();
     }
 
     private void onExportFile(ResMessages.FileMessage fileMessage) {
