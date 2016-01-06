@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.detail.model;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -253,5 +254,10 @@ public class TopicDetailModel {
     public void updateAutoJoin(int entityId, boolean autoJoin) {
         int teamId = EntityManager.getInstance().getTeamId();
         entityClientManager.modifyChannelAutoJoin(teamId, entityId, autoJoin);
+    }
+
+    public boolean isOnGlobalPush() {
+        return PreferenceManager.getDefaultSharedPreferences(JandiApplication.getContext())
+                .getBoolean("setting_push_auto_alarm", true);
     }
 }

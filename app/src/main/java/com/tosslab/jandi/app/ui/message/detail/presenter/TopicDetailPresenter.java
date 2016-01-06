@@ -28,9 +28,9 @@ public interface TopicDetailPresenter {
 
     void onConfirmChangeTopicName(Context context, int entityId, String topicName, int entityType);
 
-    void updateTopicPushSubscribe(Context context, int teamId, int entityId, boolean pushOn);
-
     void onAutoJoin(int entityId, boolean autoJoin);
+
+    void onPushClick(Context context, int teamId, int entityId, boolean checked);
 
     interface View {
 
@@ -63,5 +63,7 @@ public interface TopicDetailPresenter {
         void setLeaveVisible(boolean owner, boolean defaultTopic);
 
         void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic);
+
+        void showSetOnGlobalPushDialog();
     }
 }

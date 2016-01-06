@@ -168,6 +168,7 @@
 	<string name="jandi_err_unexpected">"出現不正常錯誤"</string>
 	<string name="jandi_error_web_token">"登入時遇到問題，請再試一次。"</string>
 	<string name="jandi_expired_invitation_link">"此邀請連結已過期，請聯絡你的邀請人重新寄發新連結。"</string>
+	<string name="jandi_explain_global_push_off">"JANDI推播通知已被停用。欲重新接收推播，點擊「更多」後進入「設定」開啟推播。"</string>
 	<string name="jandi_explain_topic_description">"說明 (選項)"</string>
 	<string name="jandi_export">"匯出"</string>
 	<string name="jandi_export_to_app">"匯出檔案至..."</string>
@@ -213,6 +214,7 @@
 	<string name="jandi_folder_renamed">"資料夾已被重新命名"</string>
 	<string name="jandi_forgot_password">"<u>忘記密碼？</u>"</string>
 	<string name="jandi_go_to_latest">"去到最近的訊息"</string>
+	<string name="jandi_go_to_setting">"前往設定"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_has_joined">"%s已加入"</string>
 	<string name="jandi_have_an_account_already">"已經有團隊註冊了嗎?"</string>

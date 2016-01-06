@@ -217,9 +217,10 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Background
-    @Override
-    public void updateTopicPushSubscribe(Context context, int teamId, int entityId, boolean pushOn) {
-        view.showProgressWheel();
+    void updateTopicPushSubscribe(Context context, int teamId, int entityId, boolean pushOn, boolean showGlobalPushAlert) {
+        if (!showGlobalPushAlert) {
+            view.showProgressWheel();
+        }
 
         try {
             topicDetailModel.updatePushStatus(teamId, entityId, pushOn);
@@ -237,7 +238,9 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         } catch (Exception e) {
             e.printStackTrace();
 
-            view.dismissProgressWheel();
+            if (!showGlobalPushAlert) {
+                view.dismissProgressWheel();
+            }
 
         }
     }
@@ -281,6 +284,16 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             }
 
         }
+    }
+
+    @Override
+    public void onPushClick(Context context, int teamId, int entityId, boolean checked) {
+        boolean onGlobalPush = topicDetailModel.isOnGlobalPush();
+        if (checked && !onGlobalPush) {
+            view.showSetOnGlobalPushDialog();
+        }
+
+        updateTopicPushSubscribe(context, teamId, entityId, checked, !onGlobalPush);
     }
 
 }

@@ -168,6 +168,7 @@
 	<string name="jandi_err_unexpected">"不明な問題が発生しました"</string>
 	<string name="jandi_error_web_token">"ログイン中にエラーが発生しました。もう一度お試しください"</string>
 	<string name="jandi_expired_invitation_link">"この招待リンクの有効期限が切れています。新しいリンクをリクエストしてください"</string>
+	<string name="jandi_explain_global_push_off">"アプリの通知がオフに設定されています。もっと見る→設定で通知をオンにすることができます。"</string>
 	<string name="jandi_explain_topic_description">"トピックの説明（選択）"</string>
 	<string name="jandi_export">"エクスポート"</string>
 	<string name="jandi_export_to_app">"他のアプリにエクスポート"</string>
@@ -213,6 +214,7 @@
 	<string name="jandi_folder_renamed">"フォルダ名が変更されました"</string>
 	<string name="jandi_forgot_password">"<u>パスワードを忘れた場合</u>"</string>
 	<string name="jandi_go_to_latest">"最新のメッセージに移動"</string>
+	<string name="jandi_go_to_setting">"設定に移動"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_has_joined">"%sさんが参加しました"</string>
 	<string name="jandi_have_an_account_already">"すでにJANDIに登録済みの方はこちら"</string>

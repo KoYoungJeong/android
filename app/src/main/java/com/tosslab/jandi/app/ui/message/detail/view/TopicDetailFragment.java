@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +36,8 @@ import com.tosslab.jandi.app.ui.message.detail.edit.TopicDescriptionEditActivity
 import com.tosslab.jandi.app.ui.message.detail.edit.TopicDescriptionEditActivity_;
 import com.tosslab.jandi.app.ui.message.detail.presenter.TopicDetailPresenter;
 import com.tosslab.jandi.app.ui.message.detail.presenter.TopicDetailPresenterImpl;
+import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
+import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -236,7 +239,8 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
         setTopicPushSwitch(checked);
 
-        topicDetailPresenter.updateTopicPushSubscribe(getActivity(), teamId, entityId, checked);
+        topicDetailPresenter.onPushClick(getActivity(), teamId, entityId, checked);
+
 
         if (checked) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TurnOnNotifications);
@@ -339,6 +343,28 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
             switchAutoJoin.setChecked(autoJoin);
             vgAutoJoinText.setEnabled(false);
         }
+    }
+
+    @Override
+    public void showSetOnGlobalPushDialog() {
+        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(R.string.jandi_explain_global_push_off)
+                .setNegativeButton(R.string.jandi_close, null)
+                .setPositiveButton(R.string.jandi_go_to_setting, (dialog, which) -> {
+                    movePushSettingActivity();
+                })
+                .create()
+                .show();
+    }
+
+    private void movePushSettingActivity() {
+        Intent mainSettingIntent = SettingsActivity_
+                .intent(TopicDetailFragment.this)
+                .get();
+        Intent pushSettingIntent = SettingPushActivity_
+                .intent(TopicDetailFragment.this)
+                .get();
+        getActivity().startActivities(new Intent[]{mainSettingIntent, pushSettingIntent});
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
