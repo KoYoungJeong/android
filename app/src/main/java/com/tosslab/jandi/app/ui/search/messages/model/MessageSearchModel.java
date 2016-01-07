@@ -140,4 +140,14 @@ public class MessageSearchModel {
 
     }
 
+    public int getRoomId(int entityId) {
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
+        if (entity.isPublicTopic()
+                || entity.isPrivateGroup()) {
+            return entityId;
+        } else {
+            return -1;
+        }
+
+    }
 }

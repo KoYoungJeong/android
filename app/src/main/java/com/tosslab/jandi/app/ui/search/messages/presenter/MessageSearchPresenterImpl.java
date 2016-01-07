@@ -186,10 +186,12 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
 
         int currentTeamId = messageSearchModel.getCurrentTeamId();
         int entityType = messageSearchModel.getEntityType(entityId);
+        int roomId = messageSearchModel.getRoomId(entityId);
         boolean isStarred = messageSearchModel.isStarredEntity(entityId);
         int linkId = searchRecord.getLinkId();
 
-        view.startMessageListActivity(currentTeamId, entityId, entityType, isStarred, linkId);
+
+        view.startMessageListActivity(currentTeamId, entityId, entityType, roomId,isStarred, linkId);
     }
 
     private ResMessageSearch searchMessage(ReqMessageSearchQeury searchQeuryInfo) throws RetrofitError {

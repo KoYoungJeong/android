@@ -86,6 +86,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
             checkItemCountIfException(currentItemCount);
         } finally {
             messageListPresenter.dismissProgressWheel();
+            messageListPresenter.dismissLoadingView();
         }
 
         return oldMessage;
