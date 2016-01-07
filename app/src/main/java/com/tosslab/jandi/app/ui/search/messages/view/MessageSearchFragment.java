@@ -255,6 +255,9 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                         }
                 );
         List<FormattedEntity> users = EntityManager.getInstance().getFormattedUsersWithoutMe();
+        if (entityManager.hasJandiBot()) {
+            users.add(0, EntityManager.getInstance().getJandiBot());
+        }
 
         RoomSelector roomSelector = new RoomSelectorImpl(allTopics, users);
 

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.selector.user;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.widget.PopupWindowCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,13 +15,14 @@ import android.view.ViewGroup;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +54,12 @@ public class UserSelectorImpl implements UserSelector {
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         UserRecyclerAdapter adapter = new UserRecyclerAdapter(context);
-
         getUsers().subscribe(adapter::addAll);
+
+        if (EntityManager.getInstance().hasJandiBot()) {
+            adapter.add(0, EntityManager.getInstance().getJandiBot());
+        }
+
         adapter.add(0, new FormattedEntity(FormattedEntity.TYPE_EVERYWHERE));
 
         adapter.setOnRoomSelectListener(onRoomSelectListener);
@@ -143,8 +149,18 @@ public class UserSelectorImpl implements UserSelector {
                 holder.tvName.setText(R.string.jandi_file_category_everyone);
                 ivIcon.setImageURI(UriFactory.getResourceUri(R.drawable.icon_search_all_members));
             } else {
-                ImageUtil.loadProfileImage(ivIcon,
-                        item.getUserSmallProfileUrl(), R.drawable.profile_img_comment);
+                if (!EntityManager.getInstance().isJandiBot(item.getId())) {
+                    ImageUtil.loadProfileImage(ivIcon,
+                            item.getUserSmallProfileUrl(), R.drawable.profile_img_comment);
+                } else {
+                    ImageLoader.newBuilder()
+                            .placeHolder(R.drawable.profile_img_comment, ScalingUtils.ScaleType.CENTER_INSIDE)
+                            .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                            .backgroundColor(Color.BLACK)
+                            .load(UriFactory.getResourceUri(R.drawable.bot_32x40))
+                            .into(ivIcon);
+
+                }
                 holder.tvName.setText(item.getName());
             }
 

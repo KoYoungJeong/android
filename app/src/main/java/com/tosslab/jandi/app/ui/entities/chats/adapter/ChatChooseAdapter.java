@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.entities.chats.adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,12 +12,15 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
+import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -182,7 +186,16 @@ public class ChatChooseAdapter extends BaseAdapter {
         SimpleDraweeView imageViewIcon = chatCHooseViewHolder.ivIcon;
         imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
-        ImageUtil.loadProfileImage(imageViewIcon, item.getPhotoUrl(), R.drawable.profile_img);
+        if (!item.isBot()) {
+            ImageUtil.loadProfileImage(imageViewIcon, item.getPhotoUrl(), R.drawable.profile_img);
+        } else {
+            ImageLoader.newBuilder()
+                    .placeHolder(R.drawable.profile_img, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .backgroundColor(Color.BLACK)
+                    .load(UriFactory.getResourceUri(R.drawable.bot_32x40))
+                    .into(imageViewIcon);
+        }
         return convertView;
     }
 

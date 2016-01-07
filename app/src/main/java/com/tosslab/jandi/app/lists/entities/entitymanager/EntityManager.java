@@ -222,7 +222,12 @@ public class EntityManager {
 
         if (resLeftSideMenu.bots != null) {
             Observable.from(resLeftSideMenu.bots)
-                    .collect(() -> bots, (botEntities, bot) -> botEntities.put(bot.id, new BotEntity(bot)))
+                    .map(BotEntity::new)
+                    .doOnNext(this::patchMarkerToFormattedEntity)
+                    .doOnNext(botEntity -> {
+                        botEntity.isStarred = starredEntities.contains(botEntity.getId());
+                    })
+                    .collect(() -> bots, (botEntities, bot) -> botEntities.put(bot.getId(), bot))
                     .subscribe();
         }
 
@@ -523,5 +528,9 @@ public class EntityManager {
                 .map(botEntity1 -> true)
                 .toBlocking()
                 .firstOrDefault(false);
+    }
+
+    public boolean isJandiBot(int entityId) {
+        return bots.containsKey(entityId);
     }
 }
