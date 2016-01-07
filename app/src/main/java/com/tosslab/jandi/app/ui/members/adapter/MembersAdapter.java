@@ -223,7 +223,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             vDisableLineThrough.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
             vDisableCover.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
 
-            if (kickMode && item.getEntityId() != myId && item.isBot()) {
+            if (kickMode && item.getEntityId() != myId && !item.isBot()) {
                 ivKick.setVisibility(View.VISIBLE);
                 ivKick.setOnClickListener(onKickClickListener);
             } else {
