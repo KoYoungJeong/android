@@ -668,7 +668,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 : JandiConstants.TYPE_DIRECT_MESSAGE;
 
         boolean isStarred = entity.isStarred;
-        if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
+        if (!entity.isUser() && !entityManager.isBot(entityId)) {
             if (entity.isPublicTopic() && entity.isJoined
                     || entity.isPrivateGroup()) {
 
@@ -677,7 +677,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 fileDetailPresenter.joinAndMove(entity);
             }
         } else {
-            moveToMessageListActivity(entityId, entityType, entityId, isStarred);
+            moveToMessageListActivity(entityId, entityType, -1, isStarred);
         }
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.TapSharedTopic);
