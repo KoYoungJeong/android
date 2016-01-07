@@ -80,9 +80,6 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @AfterViews
     public void initViews() {
 
-//        Glide.get(getApplicationContext()).clearMemory();
-//        Glide.get(getApplicationContext()).setMemoryCategory(MemoryCategory.HIGH);
-
         if (roomId <= 0) {
             finish();
             return;

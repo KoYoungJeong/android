@@ -49,6 +49,7 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
                     .imageType(fileInfo.getFileType())
                     .originalUrl(fileInfo.getFileOriginalUrl())
                     .thumbUrl(fileInfo.getFileThumbUrl())
+                    .extensions(fileInfo.getExt())
                     .build();
 
             weakHashMap.put(fileLinkId, fragment);

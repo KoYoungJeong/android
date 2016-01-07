@@ -33,6 +33,10 @@ public class PhotoViewActivity extends BaseAppCompatActivity implements OnSwipeE
 
     @Extra
     String imageName;
+
+    @Extra
+    String extensions;
+
     private boolean isFullScreen;
 
     @AfterViews
@@ -41,6 +45,7 @@ public class PhotoViewActivity extends BaseAppCompatActivity implements OnSwipeE
                 .imageType(imageType)
                 .originalUrl(thumbUrl)
                 .thumbUrl(originalUrl)
+                .extensions(extensions)
                 .build();
 
         getSupportFragmentManager()

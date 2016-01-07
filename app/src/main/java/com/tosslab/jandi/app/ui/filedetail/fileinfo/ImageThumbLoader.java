@@ -281,6 +281,7 @@ public class ImageThumbLoader implements FileThumbLoader {
             PhotoViewActivity_
                     .intent(context)
                     .thumbUrl(thumbUrl)
+                    .extensions(content.ext)
                     .originalUrl(content.fileUrl)
                     .imageName(content.name)
                     .imageType(content.type)
