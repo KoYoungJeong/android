@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -32,7 +33,7 @@ public class TopicDetailActivity extends BaseAppCompatActivity {
 
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
-        boolean isDirectMessage = entity.isUser();
+        boolean isDirectMessage = entity.isUser() || entity instanceof BotEntity;
 
         Fragment fragment;
 

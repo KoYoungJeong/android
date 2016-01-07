@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -223,7 +225,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             vDisableLineThrough.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
             vDisableCover.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
 
-            if (kickMode && item.getEntityId() != myId && item.isBot()) {
+            if (kickMode && item.getEntityId() != myId && !item.isBot()) {
                 ivKick.setVisibility(View.VISIBLE);
                 ivKick.setOnClickListener(onKickClickListener);
             } else {
@@ -238,9 +240,12 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 ImageUtil.loadProfileImage(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
             } else {
                 ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
-                layoutParams.height = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 54f, ivIcon.getResources().getDisplayMetrics()));
+                DisplayMetrics displayMetrics = ivIcon.getResources().getDisplayMetrics();
+                layoutParams.height = Math.round(
+                        TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP, 54f, displayMetrics));
                 ivIcon.setLayoutParams(layoutParams);
-                ivIcon.setImageResource(R.drawable.bot_43x54);
+                ImageLoader.newBuilder().load(R.drawable.bot_43x54).into(ivIcon);
             }
 
             itemView.setOnClickListener(v ->

@@ -137,6 +137,10 @@ public class FileDetailModel {
                 })
                 .subscribe(formattedEntities::addAll);
 
+        if (EntityManager.getInstance().hasJandiBot()) {
+            formattedEntities.add(0, EntityManager.getInstance().getJandiBot());
+        }
+
         return formattedEntities;
     }
 
