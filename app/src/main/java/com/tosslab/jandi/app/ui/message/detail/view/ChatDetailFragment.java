@@ -54,12 +54,19 @@ public class ChatDetailFragment extends Fragment {
     @Bean
     TopicDetailModel topicDetailModel;
 
+    @ViewById(R.id.vg_chat_detail_starred)
+    View vgStarred;
+
     @AfterViews
     void initViews() {
         setUpActionbar();
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         boolean isStarred = entity.isStarred;
         setStarred(isStarred);
+
+        if (EntityManager.getInstance().isBot(entityId)) {
+            vgStarred.setVisibility(View.GONE);
+        }
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MessageDescription);
 
