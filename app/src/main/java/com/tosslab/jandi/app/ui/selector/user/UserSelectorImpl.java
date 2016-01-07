@@ -149,12 +149,21 @@ public class UserSelectorImpl implements UserSelector {
                 holder.tvName.setText(R.string.jandi_file_category_everyone);
                 ivIcon.setImageURI(UriFactory.getResourceUri(R.drawable.icon_search_all_members));
             } else {
-                if (!EntityManager.getInstance().isJandiBot(item.getId())) {
+                boolean user = !EntityManager.getInstance().isJandiBot(item.getId());
+
+                ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
+                if (user) {
+                    layoutParams.height = layoutParams.width;
+                } else {
+                    layoutParams.height = layoutParams.width * 5 / 4;
+                }
+
+                if (user) {
                     ImageUtil.loadProfileImage(ivIcon,
                             item.getUserSmallProfileUrl(), R.drawable.profile_img_comment);
                 } else {
                     ImageLoader.newBuilder()
-                            .placeHolder(R.drawable.profile_img_comment, ScalingUtils.ScaleType.CENTER_INSIDE)
+                            .placeHolder(R.drawable.bot_32x40, ScalingUtils.ScaleType.CENTER_INSIDE)
                             .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
                             .backgroundColor(Color.BLACK)
                             .load(UriFactory.getResourceUri(R.drawable.bot_32x40))

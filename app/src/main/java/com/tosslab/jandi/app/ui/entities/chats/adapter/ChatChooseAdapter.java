@@ -186,14 +186,25 @@ public class ChatChooseAdapter extends BaseAdapter {
         SimpleDraweeView imageViewIcon = chatCHooseViewHolder.ivIcon;
         imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
-        if (!item.isBot()) {
+        boolean user = !item.isBot();
+
+        ViewGroup.LayoutParams layoutParams = imageViewIcon.getLayoutParams();
+        if (user) {
+            layoutParams.height = layoutParams.width;
+        } else {
+            layoutParams.height = layoutParams.width * 5 / 4;
+        }
+
+        imageViewIcon.setLayoutParams(layoutParams);
+
+        if (user) {
             ImageUtil.loadProfileImage(imageViewIcon, item.getPhotoUrl(), R.drawable.profile_img);
         } else {
             ImageLoader.newBuilder()
-                    .placeHolder(R.drawable.profile_img, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .placeHolder(R.drawable.bot_43x54, ScalingUtils.ScaleType.CENTER_INSIDE)
                     .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
                     .backgroundColor(Color.BLACK)
-                    .load(UriFactory.getResourceUri(R.drawable.bot_32x40))
+                    .load(UriFactory.getResourceUri(R.drawable.bot_43x54))
                     .into(imageViewIcon);
         }
         return convertView;

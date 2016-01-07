@@ -192,7 +192,7 @@ public class ImageUtil {
         RoundingParams circleRoundingParams = getCircleRoundingParams(
                 TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
         ImageLoader.newBuilder()
-                .placeHolder(placeHolderResId, ScalingUtils.ScaleType.CENTER_CROP)
+                .placeHolder(placeHolderResId, ScalingUtils.ScaleType.FIT_CENTER)
                 .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
                 .roundingParams(circleRoundingParams)
                 .backgroundColor(Color.BLACK)

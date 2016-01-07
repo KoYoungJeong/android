@@ -102,9 +102,19 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         } else if (item.isUser()) {
             String fileUrl = ImageUtil.getImageFileUrl(item.getProfileUrl());
-            if (EntityManager.getInstance().isJandiBot(item.getEntityId())) {
+            boolean jandiBot = EntityManager.getInstance().isJandiBot(item.getEntityId());
+
+            ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
+            if (!jandiBot) {
+                layoutParams.height = layoutParams.width;
+            } else {
+                layoutParams.height = layoutParams.width * 5 / 4;
+            }
+            ivIcon.setLayoutParams(layoutParams);
+
+            if (jandiBot) {
                 ImageLoader.newBuilder()
-                        .placeHolder(R.drawable.profile_img_comment, ScalingUtils.ScaleType.CENTER_INSIDE)
+                        .placeHolder(R.drawable.bot_32x40, ScalingUtils.ScaleType.CENTER_INSIDE)
                         .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
                         .backgroundColor(Color.BLACK)
                         .load(UriFactory.getResourceUri(R.drawable.bot_32x40))

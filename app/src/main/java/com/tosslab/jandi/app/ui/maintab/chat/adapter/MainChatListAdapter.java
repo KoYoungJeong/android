@@ -140,15 +140,23 @@ public class MainChatListAdapter extends BaseAdapter {
         SimpleDraweeView ivIcon = viewHolder.ivIcon;
         ivIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
-        if (!EntityManager.getInstance().isJandiBot(item.getEntityId())) {
+        boolean isUser = !EntityManager.getInstance().isJandiBot(item.getEntityId());
+        ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
+        if (isUser) {
+            layoutParams.height = layoutParams.width;
+        } else {
+            layoutParams.height = layoutParams.width * 5 / 4;
+        }
+        ivIcon.setLayoutParams(layoutParams);
 
+        if (isUser) {
             ImageUtil.loadProfileImage(ivIcon, Uri.parse(item.getPhoto()), R.drawable.profile_img);
         } else {
             ImageLoader.newBuilder()
-                    .placeHolder(R.drawable.bot_43x54, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .placeHolder(R.drawable.bot_80x100, ScalingUtils.ScaleType.CENTER_INSIDE)
                     .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
                     .backgroundColor(Color.BLACK)
-                    .load(UriFactory.getResourceUri(R.drawable.bot_43x54))
+                    .load(UriFactory.getResourceUri(R.drawable.bot_80x100))
                     .into(ivIcon);
 
         }

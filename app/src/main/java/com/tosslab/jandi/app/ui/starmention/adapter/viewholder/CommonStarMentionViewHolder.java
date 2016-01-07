@@ -3,7 +3,9 @@ package com.tosslab.jandi.app.ui.starmention.adapter.viewholder;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.drawee.drawable.ScalingUtils;
@@ -45,16 +47,27 @@ public class CommonStarMentionViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindView(StarMentionVO starMentionVO) {
-        if (!EntityManager.getInstance().isJandiBot(starMentionVO.getWriterId())) {
 
+
+        boolean isUser = !EntityManager.getInstance().isJandiBot(starMentionVO.getWriterId());
+        ViewGroup.LayoutParams layoutParams = ivProfile.getLayoutParams();
+        if (isUser) {
+            layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 44f, ivProfile.getResources().getDisplayMetrics());
+        } else {
+            layoutParams.height = layoutParams.width * 5 / 4;
+        }
+
+        ivProfile.setLayoutParams(layoutParams);
+
+        if (isUser) {
             Uri uri = Uri.parse(starMentionVO.getWriterPictureUrl());
             ImageUtil.loadProfileImage(ivProfile, uri, R.drawable.profile_img);
         } else {
             ImageLoader.newBuilder()
-                    .placeHolder(R.drawable.profile_img, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .placeHolder(R.drawable.bot_80x100, ScalingUtils.ScaleType.CENTER_INSIDE)
                     .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
                     .backgroundColor(Color.BLACK)
-                    .load(UriFactory.getResourceUri(R.drawable.bot_43x54))
+                    .load(UriFactory.getResourceUri(R.drawable.bot_80x100))
                     .into(ivProfile);
         }
 
