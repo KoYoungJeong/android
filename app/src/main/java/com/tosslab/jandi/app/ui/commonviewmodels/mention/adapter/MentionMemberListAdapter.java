@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.viewholder.Ment
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import java.util.List;
 
@@ -64,21 +65,16 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
         SearchedItemVO item = getItem(position);
 
         SimpleDraweeView ivIcon = holder.getIvIcon();
-        GenericDraweeHierarchy hierarchy = ivIcon.getHierarchy();
 
         if (item.getName().equals("All") && item.getType().equals("room")) {
-            hierarchy.setPlaceholderImage(null);
-            hierarchy.setRoundingParams(null);
-
-            ivIcon.setImageURI(UriFactory.getResourceUri(R.drawable.thum_all_member));
+            ImageLoader.newBuilder().load(R.drawable.thum_all_member).into(ivIcon);
             holder.getTvName().setText(item.getName() + " (of topic member)");
         } else if (item.isBot()) {
-            holder.getIvIcon().setImageResource(R.drawable.bot_32x40);
+            ImageLoader.newBuilder().load(R.drawable.bot_32x40).into(ivIcon);
             holder.getTvName().setText(item.getName());
         } else {
             ImageUtil.loadProfileImage(ivIcon,
                     item.getSmallProfileImageUrl(), R.drawable.profile_img);
-
             holder.getTvName().setText(item.getName());
         }
         holder.getConvertView().setOnClickListener(v -> {
@@ -89,7 +85,6 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
             EventBus.getDefault().post(event);
         });
     }
-
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

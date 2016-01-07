@@ -155,12 +155,9 @@ public class MainChatListAdapter extends BaseAdapter {
             ImageLoader.newBuilder()
                     .placeHolder(R.drawable.bot_80x100, ScalingUtils.ScaleType.CENTER_INSIDE)
                     .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                    .backgroundColor(Color.BLACK)
                     .load(UriFactory.getResourceUri(R.drawable.bot_80x100))
                     .into(ivIcon);
-
         }
-
 
         return convertView;
     }

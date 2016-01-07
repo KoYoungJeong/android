@@ -116,7 +116,6 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 ImageLoader.newBuilder()
                         .placeHolder(R.drawable.bot_32x40, ScalingUtils.ScaleType.CENTER_INSIDE)
                         .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                        .backgroundColor(Color.BLACK)
                         .load(UriFactory.getResourceUri(R.drawable.bot_32x40))
                         .into(ivIcon);
             } else {

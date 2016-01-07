@@ -55,7 +55,7 @@ public class JandiBotProfileLoader implements ProfileLoader {
         }
         ivProfileImageSmall.setLayoutParams(layoutParams);
 
-        ImageLoader.newBuilder().load(R.drawable.bot_80x100);
+        ImageLoader.newBuilder().load(R.drawable.bot_80x100).into(ivProfileImageSmall);
     }
 
     @Override

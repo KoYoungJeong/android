@@ -203,7 +203,6 @@ public class ChatChooseAdapter extends BaseAdapter {
             ImageLoader.newBuilder()
                     .placeHolder(R.drawable.bot_43x54, ScalingUtils.ScaleType.CENTER_INSIDE)
                     .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                    .backgroundColor(Color.BLACK)
                     .load(UriFactory.getResourceUri(R.drawable.bot_43x54))
                     .into(imageViewIcon);
         }
