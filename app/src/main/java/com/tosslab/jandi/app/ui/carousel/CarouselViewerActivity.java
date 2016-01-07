@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.carousel;
 import android.Manifest;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -145,7 +146,13 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
         if (isFullScreen) {
             // Do Nothing
-            systemUiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                systemUiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            } else {
+                // Do Nothing
+                systemUiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
+            }
 
             if (actionBar != null) {
                 actionBar.hide();
@@ -153,7 +160,14 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
             }
 
         } else {
-            systemUiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                systemUiOptions = View.SYSTEM_UI_FLAG_IMMERSIVE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN;
+
+            } else {
+                systemUiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
+            }
 
             if (actionBar != null) {
                 actionBar.show();
