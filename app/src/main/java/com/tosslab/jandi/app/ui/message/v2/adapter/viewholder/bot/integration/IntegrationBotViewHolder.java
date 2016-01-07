@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration;
 
 import android.content.Context;
+import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -8,6 +9,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.BotEntity;
@@ -22,6 +25,8 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.ut
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.utils.transform.TransformConfig;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
@@ -64,7 +69,15 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         BotEntity botEntity = (BotEntity) entity;
         ResLeftSideMenu.Bot bot = botEntity.getBot();
 
-        ImageUtil.loadProfileImage(ivProfile, botEntity.getUserLargeProfileUrl(), R.drawable.profile_img);
+        RoundingParams circleRoundingParams = ImageUtil.getCircleRoundingParams(
+                TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
+
+        ImageLoader.newBuilder()
+                .placeHolder(R.drawable.profile_img, ScalingUtils.ScaleType.FIT_CENTER)
+                .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
+                .roundingParams(circleRoundingParams)
+                .load(Uri.parse(botEntity.getUserLargeProfileUrl()))
+                .into(ivProfile);
 
         tvName.setText(botEntity.getName());
 

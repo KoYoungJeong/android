@@ -554,8 +554,23 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                         EntityManager entityManager = EntityManager.getInstance();
                         FormattedEntity entity = entityManager.getEntityById(entityIdToBeShared);
 
-                        moveToMessageListActivity(entityIdToBeShared, entity.type,
-                                entity.isUser() ? -1 : entityIdToBeShared, entity.isStarred);
+                        int type;
+                        if (entity.isPublicTopic()) {
+                            type = JandiConstants.TYPE_PUBLIC_TOPIC;
+                        } else if (entity.isPrivateGroup()) {
+                            type = JandiConstants.TYPE_PRIVATE_TOPIC;
+                        } else {
+                            type = JandiConstants.TYPE_DIRECT_MESSAGE;
+                        }
+
+                        int roomId;
+                        if (entity.isPrivateGroup() || entity.isPublicTopic()) {
+                            roomId = entityIdToBeShared;
+                        } else {
+                            roomId = -1;
+                        }
+                        
+                        moveToMessageListActivity(entityIdToBeShared, type, roomId, entity.isStarred);
                     }
                 })
                 .create()
