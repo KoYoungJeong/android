@@ -140,7 +140,7 @@ public class MainChatListAdapter extends BaseAdapter {
         SimpleDraweeView ivIcon = viewHolder.ivIcon;
         ivIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
-        boolean isUser = !EntityManager.getInstance().isJandiBot(item.getEntityId());
+        boolean isUser = !EntityManager.getInstance().isBot(item.getEntityId());
         ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
         if (isUser) {
             layoutParams.height = layoutParams.width;

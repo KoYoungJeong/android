@@ -102,7 +102,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         } else if (item.isUser()) {
             String fileUrl = ImageUtil.getImageFileUrl(item.getProfileUrl());
-            boolean jandiBot = EntityManager.getInstance().isJandiBot(item.getEntityId());
+            boolean jandiBot = EntityManager.getInstance().isBot(item.getEntityId());
 
             ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
             if (!jandiBot) {

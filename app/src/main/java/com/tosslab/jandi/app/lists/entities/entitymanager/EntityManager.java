@@ -530,7 +530,7 @@ public class EntityManager {
                 .firstOrDefault(false);
     }
 
-    public boolean isJandiBot(int entityId) {
+    public boolean isBot(int entityId) {
         return bots.containsKey(entityId);
     }
 }

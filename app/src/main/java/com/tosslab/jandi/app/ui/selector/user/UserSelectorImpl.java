@@ -149,7 +149,7 @@ public class UserSelectorImpl implements UserSelector {
                 holder.tvName.setText(R.string.jandi_file_category_everyone);
                 ivIcon.setImageURI(UriFactory.getResourceUri(R.drawable.icon_search_all_members));
             } else {
-                boolean user = !EntityManager.getInstance().isJandiBot(item.getId());
+                boolean user = !EntityManager.getInstance().isBot(item.getId());
 
                 ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
                 if (user) {

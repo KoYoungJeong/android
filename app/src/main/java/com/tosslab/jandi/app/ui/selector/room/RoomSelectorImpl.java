@@ -311,9 +311,9 @@ public class RoomSelectorImpl implements RoomSelector {
                     return userData;
                 })
                 .toSortedList((lhs, rhs) -> {
-                    if (EntityManager.getInstance().isJandiBot(lhs.getEntityId())) {
+                    if (EntityManager.getInstance().isBot(lhs.getEntityId())) {
                         return -1;
-                    } else if (EntityManager.getInstance().isJandiBot(rhs.getEntityId())) {
+                    } else if (EntityManager.getInstance().isBot(rhs.getEntityId())) {
                         return 1;
                     }
                     return lhs.getName().compareToIgnoreCase(rhs.getName());

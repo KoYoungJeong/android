@@ -49,7 +49,7 @@ public class CommonStarMentionViewHolder extends RecyclerView.ViewHolder {
     public void bindView(StarMentionVO starMentionVO) {
 
 
-        boolean isUser = !EntityManager.getInstance().isJandiBot(starMentionVO.getWriterId());
+        boolean isUser = !EntityManager.getInstance().isBot(starMentionVO.getWriterId());
         ViewGroup.LayoutParams layoutParams = ivProfile.getLayoutParams();
         if (isUser) {
             layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 44f, ivProfile.getResources().getDisplayMetrics());
