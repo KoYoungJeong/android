@@ -180,7 +180,7 @@ public class ImageFilePath {
         try {
             inputStream = context.getContentResolver().openInputStream(uri);
 
-            filePath = GoogleImagePickerUtil.getDownloadPath() + "/" + GoogleImagePickerUtil
+            filePath = FileUtil.getDownloadPath() + "/" + GoogleImagePickerUtil
                     .getWebImageName();
             outStream = new BufferedOutputStream(new FileOutputStream
                     (filePath));
@@ -219,7 +219,7 @@ public class ImageFilePath {
         String fileName = fileInfo;
 
         StringBuilder filePathBuilder = new StringBuilder();
-        filePathBuilder.append(GoogleImagePickerUtil.getDownloadPath())
+        filePathBuilder.append(FileUtil.getDownloadPath())
                 .append("/")
                 .append(fileName);
 

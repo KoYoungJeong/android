@@ -31,7 +31,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.facebook.drawee.view.SimpleDraweeView;

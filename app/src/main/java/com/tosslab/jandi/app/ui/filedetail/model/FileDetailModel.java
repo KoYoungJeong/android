@@ -29,7 +29,7 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
-import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -380,7 +380,7 @@ public class FileDetailModel {
     }
 
     public String getDownloadFilePath(String title) {
-        String downloadPath = GoogleImagePickerUtil.getDownloadPath();
+        String downloadPath = FileUtil.getDownloadPath();
         File file = new File(downloadPath);
         if (!file.exists()) {
             file.mkdir();

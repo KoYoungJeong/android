@@ -85,6 +85,7 @@ import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
+import com.tosslab.jandi.app.network.models.ResAvatarsInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResCreateFolder;
@@ -674,5 +675,10 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     @Override
     public ResValidation validDomain(String domain) {
         return RestAdapterBuilder.newInstance(ValidationApi.class).create().validDomain(domain);
+    }
+
+    @Override
+    public ResAvatarsInfo getAvartarsInfo() throws RetrofitError {
+        return RestAdapterBuilder.newInstance(ProfileApiV2Client.class).create().getAvartarsInfo();
     }
 }

@@ -25,7 +25,7 @@
             fresco:roundAsCircle="true"
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
-            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"/>
+            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
 
         <!-- 기본 표시 레이어 -->
         <TextView
@@ -42,7 +42,7 @@
             android:text="User name"
             android:textColor="@color/jandi_messages_name"
             android:textSize="@dimen/jandi_messages_user_name"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/iv_entity_listitem_line_through"
@@ -52,7 +52,7 @@
             android:layout_alignLeft="@+id/tv_message_user_name"
             android:layout_alignRight="@+id/tv_message_user_name"
             android:layout_alignTop="@+id/tv_message_user_name"
-            android:src="@drawable/line_gray"/>
+            android:src="@drawable/line_gray" />
 
         <View
             android:id="@+id/v_entity_listitem_warning"
@@ -63,7 +63,7 @@
             android:layout_alignRight="@+id/iv_message_user_profile"
             android:layout_alignTop="@+id/iv_message_user_profile"
             android:background="#99ffffff"
-            android:visibility="visible"/>
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/tv_message_create_date"
@@ -74,7 +74,7 @@
             android:layout_toRightOf="@+id/tv_message_user_name"
             android:text="AM ??:??"
             android:textColor="@color/jandi_messages_date"
-            android:textSize="@dimen/jandi_messages_date"/>
+            android:textSize="@dimen/jandi_messages_date" />
 
 
         <TextView
@@ -87,7 +87,7 @@
             android:text="10"
             android:textColor="@color/jandi_accent_color"
             android:textSize="@dimen/jandi_text_size_smaller"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
 
         <!-- 이미지일 경우 -->
@@ -119,7 +119,7 @@
                     fresco:placeholderImage="@drawable/image_preview_download"
                     fresco:placeholderImageScaleType="fitXY"
                     android:layout_width="213dp"
-                    android:layout_height="120dp"/>
+                    android:layout_height="120dp" />
             </android.support.v7.widget.CardView>
 
             <RelativeLayout
@@ -144,7 +144,7 @@
                         android:singleLine="true"
                         android:text="Shared Andrew's file"
                         android:textColor="#999999"
-                        android:textSize="11sp"/>
+                        android:textSize="11sp" />
 
                     <TextView
                         android:id="@+id/tv_message_image_file_name"
@@ -155,7 +155,7 @@
                         android:text="IMAGE"
                         android:textColor="@color/jandi_messages_file_name"
                         android:textSize="@dimen/jandi_messages_file_name"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tv_img_file_type"
@@ -166,7 +166,7 @@
                         android:singleLine="true"
                         android:text="file type"
                         android:textColor="#999999"
-                        android:textSize="11sp"/>
+                        android:textSize="11sp" />
 
                 </LinearLayout>
 
@@ -177,7 +177,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="16dp"
-                    android:src="@drawable/icon_comment_arrow"/>
+                    android:src="@drawable/icon_comment_arrow" />
 
             </RelativeLayout>
 
@@ -185,10 +185,10 @@
 
     </RelativeLayout>
 
-    <include layout="@layout/item_message_divider"/>
+    <include layout="@layout/item_message_divider" />
 
     <include
         android:id="@+id/vg_message_last_read"
-        layout="@layout/item_message_last_read_v2"/>
+        layout="@layout/item_message_last_read_v2" />
 
 </LinearLayout>

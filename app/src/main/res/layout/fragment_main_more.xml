@@ -24,7 +24,7 @@
             android:text="@string/jandi_profile_actionb"
             android:textColor="@color/jandi_text_medium_dark"
             android:textSize="@dimen/jandi_mention_star_list_item_font_size"
-            app:img="@drawable/profile_img"/>
+            app:img="@drawable/profile_img" />
 
         <com.tosslab.jandi.app.views.IconWithTextView
             android:id="@+id/ly_more_mentioned"
@@ -38,7 +38,7 @@
             android:text="@string/jandi_mention_mentions"
             android:textColor="@color/jandi_text_medium_dark"
             android:textSize="@dimen/jandi_mention_star_list_item_font_size"
-            app:img="@drawable/more_icon_mentioned"/>
+            app:img="@drawable/more_icon_mentioned" />
 
         <com.tosslab.jandi.app.views.IconWithTextView
             android:id="@+id/ly_more_starred"
@@ -52,14 +52,14 @@
             android:text="@string/jandi_starred_star"
             android:textColor="@color/jandi_text_medium_dark"
             android:textSize="@dimen/jandi_mention_star_list_item_font_size"
-            app:img="@drawable/more_icon_stared"/>
+            app:img="@drawable/more_icon_stared" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#fff1f4f8"/>
+        android:background="#fff1f4f8" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -80,7 +80,7 @@
             android:text="@string/jandi_team_member"
             android:textColor="@color/jandi_text_medium_dark"
             android:textSize="@dimen/jandi_mention_star_list_item_font_size"
-            app:img="@drawable/more_icon_team_member"/>
+            app:img="@drawable/more_icon_team_member" />
 
         <!-- invite -->
         <com.tosslab.jandi.app.views.IconWithTextView
@@ -94,7 +94,7 @@
             android:text="@string/jandi_invitation"
             android:textColor="@color/jandi_text_medium_dark"
             android:textSize="@dimen/jandi_mention_star_list_item_font_size"
-            app:img="@drawable/more_icon_invite_member"/>
+            app:img="@drawable/more_icon_invite_member" />
 
         <!-- goto main -->
         <com.tosslab.jandi.app.views.IconWithTextView
@@ -108,14 +108,14 @@
             android:text="@string/jandi_team_switch"
             android:textColor="@color/jandi_text_medium_dark"
             android:textSize="@dimen/jandi_mention_star_list_item_font_size"
-            app:img="@drawable/more_icon_team_switch"/>
+            app:img="@drawable/more_icon_team_switch" />
 
     </LinearLayout>
 
     <View
         android:background="@color/jandi_background_default"
         android:layout_width="match_parent"
-        android:layout_height="1dp"/>
+        android:layout_height="1dp" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -140,7 +140,7 @@
                 android:paddingLeft="17dp"
                 android:text="JANDI Setting"
                 android:textColor="@color/jandi_text_medium"
-                android:textSize="@dimen/jandi_text_size_medium"/>
+                android:textSize="@dimen/jandi_text_size_medium" />
 
 
             <RelativeLayout
@@ -153,7 +153,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/more_icon_help"/>
+                    android:src="@drawable/more_icon_help" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -163,20 +163,20 @@
                     android:layout_toRightOf="@id/iv_icon_help"
                     android:text="@string/jandi_help"
                     android:textColor="@color/jandi_member_profile_user_name"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/more_icon_arrow_right"/>
+                    android:src="@drawable/more_icon_arrow_right" />
 
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"/>
+                android:layout_height="1dp" />
 
             <RelativeLayout
                 android:id="@+id/rl_more_setting"
@@ -188,7 +188,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/more_icon_setting"/>
+                    android:src="@drawable/more_icon_setting" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -198,20 +198,20 @@
                     android:layout_toRightOf="@id/iv_icon_setting"
                     android:text="@string/jandi_settings"
                     android:textColor="@color/jandi_member_profile_user_name"
-                    android:textSize="@dimen/jandi_text_size_medium"/>
+                    android:textSize="@dimen/jandi_text_size_medium" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/more_icon_arrow_right"/>
+                    android:src="@drawable/more_icon_arrow_right" />
 
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"/>
+                android:layout_height="1dp" />
 
             <RelativeLayout
                 android:id="@+id/vg_more_version"
@@ -223,7 +223,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/more_icon_version"/>
+                    android:src="@drawable/more_icon_version" />
 
                 <TextView
                     android:id="@+id/tv_version_title"
@@ -234,7 +234,7 @@
                     android:layout_toRightOf="@id/iv_icon_version"
                     android:text="Version"
                     android:textColor="@color/jandi_member_profile_user_name"
-                    android:textSize="@dimen/jandi_text_size_medium"/>
+                    android:textSize="@dimen/jandi_text_size_medium" />
 
                 <TextView
                     android:id="@+id/tv_more_jandi_version"
@@ -243,7 +243,7 @@
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/tv_version_title"
                     android:text="(v1.5.0)"
-                    android:textColor="@color/jandi_member_profile_user_name"/>
+                    android:textColor="@color/jandi_member_profile_user_name" />
 
                 <TextView
                     android:id="@+id/btn_update_version"
@@ -255,7 +255,7 @@
                     android:gravity="center_horizontal|center_vertical"
                     android:text="@string/jandi_action_update"
                     android:textColor="#00a4e6"
-                    android:textSize="11sp"/>
+                    android:textSize="11sp" />
 
             </RelativeLayout>
 
@@ -281,7 +281,7 @@
                         android:gravity="center"
                         android:lineSpacingExtra="1dp"
                         android:textColor="@color/jandi_text_light"
-                        android:textSize="10dp"/>
+                        android:textSize="10dp" />
 
                     <FrameLayout
                         android:layout_marginTop="7dp"
@@ -292,13 +292,13 @@
                             android:id="@+id/iv_more_additional_image"
                             android:layout_width="23dp"
                             android:layout_height="33dp"
-                            android:scaleType="fitCenter"/>
+                            android:scaleType="fitCenter" />
 
                         <ImageView
                             android:id="@+id/iv_more_additional_image_cover"
                             android:layout_width="23dp"
                             android:layout_height="33dp"
-                            android:scaleType="fitCenter"/>
+                            android:scaleType="fitCenter" />
                     </FrameLayout>
 
                 </LinearLayout>

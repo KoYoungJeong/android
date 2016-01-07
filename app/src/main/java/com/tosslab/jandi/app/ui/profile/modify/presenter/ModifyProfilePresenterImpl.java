@@ -16,13 +16,15 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
+import java.io.File;
+
 import retrofit.RetrofitError;
 
 @EBean
 public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
     @Bean(ProfileFileUploadViewModelImpl.class)
-    FilePickerViewModel filePickerViewModel;
+    ProfileFileUploadViewModelImpl filePickerViewModel;
 
     @Bean
     ModifyProfileModel modifyProfileModel;
@@ -131,7 +133,16 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
     @Override
     public void onRequestCropImage(Activity activity) {
-        filePickerViewModel.selectFileSelector(Crop.REQUEST_CROP,
-                activity);
+        filePickerViewModel.selectFileSelector(Crop.REQUEST_CROP, activity);
+    }
+
+    @Override
+    public void onRequestCamera(Activity activity) {
+        filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO, activity);
+    }
+
+    @Override
+    public File getFilePath() {
+        return filePickerViewModel.getFilePath();
     }
 }

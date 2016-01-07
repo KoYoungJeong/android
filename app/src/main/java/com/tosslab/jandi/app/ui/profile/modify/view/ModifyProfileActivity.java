@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.profile.modify.view;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -25,6 +26,7 @@ import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
+import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
@@ -34,11 +36,11 @@ import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenter;
 import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenterImpl;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -63,6 +65,8 @@ import de.greenrobot.event.EventBus;
 public class ModifyProfileActivity extends BaseAppCompatActivity implements ModifyProfilePresenter.View {
     public static final int REQUEST_CODE = 1000;
     public static final int REQ_STORAGE_PERMISSION = 101;
+    public static final int REQUEST_CAMERA = 0x00;
+    public static final int REQUEST_CHARACTER = 0x01;
 
     @Bean(ModifyProfilePresenterImpl.class)
     ModifyProfilePresenter memberProfilePresenter;
@@ -233,7 +237,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         Permissions.getChecker()
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .hasPermission(() -> {
-                    memberProfilePresenter.onRequestCropImage(ModifyProfileActivity.this);
+//                    memberProfilePresenter.onRequestCropImage(ModifyProfileActivity.this);
+                    memberProfilePresenter.onRequestCamera(ModifyProfileActivity.this);
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile,
                             AnalyticsValue.Action.PhotoEdit);
                 })
@@ -329,6 +334,21 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         if (!TextUtils.isEmpty(filePath)) {
             memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, filePath);
         }
+    }
+
+    @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO)
+    void onCameraActivityResult(int resultCode, Intent intent) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (!NetworkCheckUtil.isConnected()) {
+            showCheckNetworkDialog();
+            return;
+        }
+
+        String tempFilePath = memberProfilePresenter.getFilePath().getPath();
+        memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, tempFilePath);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

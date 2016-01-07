@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.Log;
 import android.view.ViewGroup;
 
 import com.facebook.common.executors.CallerThreadExecutor;
@@ -34,7 +33,6 @@ import com.facebook.imagepipeline.request.Postprocessor;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.listener.ClosableAttachStateChangeListener;
 import com.tosslab.jandi.app.utils.image.listener.OnResourceReadyCallback;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -108,31 +106,6 @@ public class ImageLoader {
 
         draweeView.setController(controller);
 
-//        OnResourceReadyCallback callback = builder.getCallback();
-//        if (callback == null) {
-//            callback = new OnResourceReadyCallback() {
-//                @Override
-//                public void onReady(Drawable drawable, CloseableReference reference) {
-//                    draweeView.getHierarchy().setImage(drawable, 1f, false);
-//
-//                    draweeView.addOnAttachStateChangeListener(
-//                            new ClosableAttachStateChangeListener(reference));
-//                }
-//
-//                @Override
-//                public void onFail(Throwable cause) {
-//                    LogUtil.e(TAG, Log.getStackTraceString(cause));
-//
-//                    draweeView.getHierarchy().setFailure(cause);
-//                }
-//
-//                @Override
-//                public void onProgressUpdate(float progress) {
-//
-//                }
-//            };
-//        }
-//        loadWithPipeline(imageRequest, false, callback);
         return this;
     }
 

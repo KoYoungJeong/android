@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -23,7 +22,7 @@
             android:maxLines="2"
             android:textColor="@color/black"
             android:textSize="@dimen/jandi_entity_item_title_font"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
 
         <LinearLayout
@@ -40,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/jandi_text_medium"
                 android:textSize="@dimen/jandi_text_size_medium"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -50,13 +49,13 @@
                 android:text="・"
                 android:textColor="@color/jandi_text_medium"
                 android:textSize="@dimen/jandi_text_size_medium"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:scaleType="centerInside"
-                android:src="@drawable/modal_icon_member"/>
+                android:src="@drawable/modal_icon_member" />
 
             <TextView
                 android:id="@+id/tv_unjoin_topic_desc_member_count"
@@ -65,7 +64,7 @@
                 android:layout_marginLeft="3dp"
                 android:textColor="@color/jandi_text_medium"
                 android:textSize="@dimen/jandi_text_size_medium"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
     </LinearLayout>
@@ -79,6 +78,6 @@
         android:lineSpacingExtra="7dp"
         android:maxLines="6"
         android:minLines="6"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical" />
 
 </RelativeLayout>

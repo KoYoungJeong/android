@@ -22,7 +22,7 @@ import java.lang.ref.WeakReference;
 
 /**
  * Deprecated.
- *
+ * <p>
  * Please use {@link RecyclerView#addOnScrollListener(RecyclerView.OnScrollListener)} and {@link RecyclerView#removeOnScrollListener(RecyclerView.OnScrollListener)} instead.
  */
 @Deprecated

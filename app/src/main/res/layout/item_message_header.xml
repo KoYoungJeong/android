@@ -21,7 +21,7 @@
             android:layout_width="50dp"
             android:layout_height="1dp"
             android:layout_marginBottom="4dp"
-            android:background="@color/jandi_accent_color"/>
+            android:background="@color/jandi_accent_color" />
 
         <TextView
             android:id="@+id/txt_message_date_devider"
@@ -30,6 +30,6 @@
             android:text="When"
             android:textColor="@color/jandi_accent_color"
             android:textSize="@dimen/jandi_messages_date_divider"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -9,6 +8,7 @@
     android:paddingBottom="16dp"
     android:paddingLeft="20dp"
     android:paddingRight="20dp">
+
     <TextView
         android:id="@+id/tv_team_list_name"
         android:layout_width="match_parent"
@@ -19,5 +19,5 @@
         android:ellipsize="end"
         android:textSize="16sp"
         android:textColor="@color/jandi_text"
-        android:text="@string/jandi_select_team"/>
+        android:text="@string/jandi_select_team" />
 </LinearLayout>

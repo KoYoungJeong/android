@@ -12,10 +12,7 @@ import org.robolectric.BaseInitUtil;
 import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 
 /**
  * Created by jsuch2362 on 2015. 10. 8..

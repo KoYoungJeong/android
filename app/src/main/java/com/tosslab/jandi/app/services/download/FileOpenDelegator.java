@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.services.download;
 
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;

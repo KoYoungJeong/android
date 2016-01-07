@@ -41,7 +41,7 @@
             android:layout_height="56.6dp"
             android:layout_below="@id/tv_star_mention_name"
             android:layout_marginTop="7dp"
-            fresco:placeholderImage="@drawable/file_icon_audio_dropbox"/>
+            fresco:placeholderImage="@drawable/file_icon_audio_dropbox" />
 
         <View
             android:id="@+id/v_star_file_round"

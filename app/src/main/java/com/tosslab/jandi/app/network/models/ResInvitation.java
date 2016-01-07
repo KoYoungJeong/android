@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by justinygchoi on 2014. 9. 19..
  */
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResInvitation {
     public int inviteTotal;
     public int sendMailSuccessCount;

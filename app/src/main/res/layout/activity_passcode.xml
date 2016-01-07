@@ -24,7 +24,7 @@
                 android:text="@string/jandi_enter_passcode"
                 android:textColor="@color/jandi_primary_color"
                 android:textSize="24dp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_passcode_subtitle"
@@ -33,7 +33,7 @@
                 android:layout_height="65dp"
                 android:layout_marginTop="14dp"
                 android:textColor="@color/activate_text_color"
-                android:textSize="13dp"/>
+                android:textSize="13dp" />
 
             <LinearLayout
                 android:id="@+id/vg_passcode_checker"
@@ -85,7 +85,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:fadingEdge="none"
-            android:overScrollMode="never"/>
+            android:overScrollMode="never" />
 
     </FrameLayout>
 

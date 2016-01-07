@@ -41,7 +41,7 @@ public interface MessagesApiV2Client {
     @GET("/teams/{teamId}/rooms/{roomId}/messages/updatedList")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
     List<ResMessages.Link> getRoomUpdateMessage(@Path("teamId") int teamId,
-                                           @Path("roomId") int roomId,
-                                           @Query("linkId") int currentLinkId);
+                                                @Path("roomId") int roomId,
+                                                @Query("linkId") int currentLinkId);
 
 }

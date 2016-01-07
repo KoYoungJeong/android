@@ -17,8 +17,8 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 4..

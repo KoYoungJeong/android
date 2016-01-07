@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 /**
  * Created by Steve SeongUg Jung on 15. 4. 21..
  */
-public class JandiURLSpan extends UnderlineSpan implements ClickableSpannable{
+public class JandiURLSpan extends UnderlineSpan implements ClickableSpannable {
     private final Context context;
     private final String url;
     private final int color;

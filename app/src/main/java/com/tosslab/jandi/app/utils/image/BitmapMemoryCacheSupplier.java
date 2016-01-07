@@ -6,7 +6,6 @@ import android.os.Build;
 
 import com.facebook.common.internal.Supplier;
 import com.facebook.common.util.ByteConstants;
-import com.facebook.imagepipeline.cache.DefaultBitmapMemoryCacheParamsSupplier;
 import com.facebook.imagepipeline.cache.MemoryCacheParams;
 
 /**

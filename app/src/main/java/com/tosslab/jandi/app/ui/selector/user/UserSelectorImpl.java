@@ -20,7 +20,6 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;

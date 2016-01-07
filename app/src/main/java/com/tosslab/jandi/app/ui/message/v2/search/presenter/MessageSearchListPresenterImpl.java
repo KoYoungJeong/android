@@ -85,7 +85,8 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
                             getAnnouncement();
                             break;
                     }
-                }, throwable -> LogUtil.e("Message Publish Fail!!", throwable), () -> { });
+                }, throwable -> LogUtil.e("Message Publish Fail!!", throwable), () -> {
+                });
 
         MarkerNewMessageLoader newsMessageLoader = new MarkerNewMessageLoader();
         newsMessageLoader.setMessageListModel(messageListModel);

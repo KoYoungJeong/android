@@ -136,7 +136,8 @@ public class BaseWrapperAdapter<VH extends RecyclerView.ViewHolder>
         notifyItemMoved(fromPosition, toPosition);
     }
 
-    /*package*/ final void onWrappedAdapterChanged() {
+    /*package*/
+    final void onWrappedAdapterChanged() {
         if (LOCAL_LOGD) {
             Log.d(TAG, "onWrappedAdapterChanged");
         }
@@ -144,7 +145,8 @@ public class BaseWrapperAdapter<VH extends RecyclerView.ViewHolder>
         onHandleWrappedAdapterChanged();
     }
 
-    /*package*/ final void onWrappedAdapterItemRangeChanged(int positionStart, int itemCount) {
+    /*package*/
+    final void onWrappedAdapterItemRangeChanged(int positionStart, int itemCount) {
         if (LOCAL_LOGD) {
             Log.d(TAG, "onWrappedAdapterItemRangeChanged(positionStart = " + positionStart + ", itemCount = " + itemCount + ")");
         }
@@ -152,7 +154,8 @@ public class BaseWrapperAdapter<VH extends RecyclerView.ViewHolder>
         onHandleWrappedAdapterItemRangeChanged(positionStart, itemCount);
     }
 
-    /*package*/ final void onWrappedAdapterItemRangeInserted(int positionStart, int itemCount) {
+    /*package*/
+    final void onWrappedAdapterItemRangeInserted(int positionStart, int itemCount) {
         if (LOCAL_LOGD) {
             Log.d(TAG, "onWrappedAdapterItemRangeInserted(positionStart = " + positionStart + ", itemCount = " + itemCount + ")");
         }
@@ -160,7 +163,8 @@ public class BaseWrapperAdapter<VH extends RecyclerView.ViewHolder>
         onHandleWrappedAdapterItemRangeInserted(positionStart, itemCount);
     }
 
-    /*package*/ final void onWrappedAdapterItemRangeRemoved(int positionStart, int itemCount) {
+    /*package*/
+    final void onWrappedAdapterItemRangeRemoved(int positionStart, int itemCount) {
         if (LOCAL_LOGD) {
             Log.d(TAG, "onWrappedAdapterItemRangeRemoved(positionStart = " + positionStart + ", itemCount = " + itemCount + ")");
         }
@@ -168,7 +172,8 @@ public class BaseWrapperAdapter<VH extends RecyclerView.ViewHolder>
         onHandleWrappedAdapterItemRangeRemoved(positionStart, itemCount);
     }
 
-    /*package*/ final void onWrappedAdapterRangeMoved(int fromPosition, int toPosition, int itemCount) {
+    /*package*/
+    final void onWrappedAdapterRangeMoved(int fromPosition, int toPosition, int itemCount) {
         if (LOCAL_LOGD) {
             Log.d(TAG, "onWrappedAdapterRangeMoved(fromPosition = " + fromPosition + ", toPosition = " + toPosition + ", itemCount = " + itemCount + ")");
         }

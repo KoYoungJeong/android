@@ -58,11 +58,11 @@ public class AlertUtil {
     }
 
     public static void showDialog(Activity activity,
-                           String title, String message,
-                           int positiveResId, DialogInterface.OnClickListener positiveListener,
-                           int neutralResId, DialogInterface.OnClickListener neutralListener,
-                           int negativeResId, DialogInterface.OnClickListener negativeListener,
-                           boolean cancelable) {
+                                  String title, String message,
+                                  int positiveResId, DialogInterface.OnClickListener positiveListener,
+                                  int neutralResId, DialogInterface.OnClickListener neutralListener,
+                                  int negativeResId, DialogInterface.OnClickListener negativeListener,
+                                  boolean cancelable) {
         if (activity == null || activity.isFinishing()) {
             return;
         }
@@ -91,11 +91,11 @@ public class AlertUtil {
 
 
     public static void showDialog(Activity activity,
-                           int titleResId, int messageResId,
-                           int positiveResId, DialogInterface.OnClickListener positiveListener,
-                           int neutralResId, DialogInterface.OnClickListener neutralListener,
-                           int negativeResId, DialogInterface.OnClickListener negativeListener,
-                           boolean cancelable) {
+                                  int titleResId, int messageResId,
+                                  int positiveResId, DialogInterface.OnClickListener positiveListener,
+                                  int neutralResId, DialogInterface.OnClickListener neutralListener,
+                                  int negativeResId, DialogInterface.OnClickListener negativeListener,
+                                  boolean cancelable) {
         if (activity == null || activity.isFinishing()) {
             return;
         }

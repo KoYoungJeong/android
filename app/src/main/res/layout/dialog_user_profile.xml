@@ -17,7 +17,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="40dp"
-            android:src="@drawable/profile_img"/>
+            android:src="@drawable/profile_img" />
 
         <TextView
             android:id="@+id/txt_user_info_name"
@@ -29,7 +29,7 @@
             android:maxLines="1"
             android:singleLine="true"
             android:textSize="16sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/img_user_info_starred"
@@ -40,7 +40,7 @@
             android:layout_alignTop="@+id/txt_user_info_name"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:src="@drawable/profile_fav_on"/>
+            android:src="@drawable/profile_fav_on" />
 
         <TextView
             android:id="@+id/txt_user_info_division"
@@ -52,7 +52,7 @@
             android:maxLines="1"
             android:singleLine="true"
             android:textColor="@color/jandi_text_light"
-            android:textSize="13sp"/>
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/txt_user_info_position"
@@ -64,7 +64,7 @@
             android:maxLines="1"
             android:singleLine="true"
             android:textColor="@color/jandi_text_light"
-            android:textSize="13sp"/>
+            android:textSize="13sp" />
 
     </RelativeLayout>
 
@@ -81,13 +81,13 @@
         android:maxWidth="200dp"
         android:text="상태 메세지"
         android:textColor="@color/jandi_text_light"
-        android:textSize="14sp"/>
+        android:textSize="14sp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_marginTop="10dp"
-        android:background="@color/jandi_border_gray"/>
+        android:background="@color/jandi_border_gray" />
 
     <LinearLayout
         android:id="@+id/ly_user_info_mail"
@@ -105,7 +105,7 @@
             android:layout_width="9dp"
             android:layout_height="match_parent"
             android:scaleType="centerInside"
-            android:src="@drawable/btn_icon_mail"/>
+            android:src="@drawable/btn_icon_mail" />
 
         <TextView
             android:id="@+id/txt_user_info_email"
@@ -113,7 +113,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="4dp"
             android:gravity="center"
-            android:textSize="14sp"/>
+            android:textSize="14sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -131,7 +131,7 @@
             android:layout_width="9dp"
             android:layout_height="match_parent"
             android:scaleType="centerInside"
-            android:src="@drawable/btn_icon_call"/>
+            android:src="@drawable/btn_icon_call" />
 
         <TextView
             android:id="@+id/txt_user_info_phone"
@@ -139,14 +139,14 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="4dp"
             android:gravity="center_vertical"
-            android:textSize="14sp"/>
+            android:textSize="14sp" />
     </LinearLayout>
 
     <View
         android:id="@+id/border_user_info_direct_message"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="@color/jandi_border_gray"/>
+        android:background="@color/jandi_border_gray" />
 
     <LinearLayout
         android:id="@+id/ly_user_info_direct_message"
@@ -159,7 +159,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/jandi_action_direct_message"
-            android:textSize="14sp"/>
+            android:textSize="14sp" />
     </LinearLayout>
 
 </LinearLayout>

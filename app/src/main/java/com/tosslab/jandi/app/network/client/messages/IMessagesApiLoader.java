@@ -21,8 +21,8 @@ public interface IMessagesApiLoader {
     IExecutor<ResCommon> loadUnshareMessageByMessagesApiAuth(ReqUnshareMessage share, int messageId);
 
     IExecutor<List<ResMessages.Link>> getRoomUpdateMessageByMessagesApiAuth(int teamId,
-                                                                       int roomId,
-                                                                       int currentLinkId);
+                                                                            int roomId,
+                                                                            int currentLinkId);
 
 
 }

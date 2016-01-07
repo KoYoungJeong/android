@@ -19,7 +19,6 @@ import com.tosslab.jandi.app.services.download.domain.DownloadFileInfo;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.file.FileUtil;
-import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -57,7 +56,7 @@ public class DownloadModel {
     }
 
     public static ResponseFuture<File> buildDownloadTask(File downloadTargetFile, String downloadUrl,
-                                                   ProgressCallback downloadCallback) {
+                                                         ProgressCallback downloadCallback) {
 
         return Ion.with(JandiApplication.getContext())
                 .load(downloadUrl)
@@ -113,7 +112,7 @@ public class DownloadModel {
     }
 
     private static File getDuplicatedFile(File dir,
-                                   String fileName, String fileExtensions, String newFileNameFormat) {
+                                          String fileName, String fileExtensions, String newFileNameFormat) {
         File newFile;
         int duplicatedId = 1;
         while (true) {
@@ -152,7 +151,7 @@ public class DownloadModel {
 
     public static File makeDirIfNotExistsAndGet() {
         File dir =
-                new File(GoogleImagePickerUtil.getDownloadPath());
+                new File(FileUtil.getDownloadPath());
         if (!dir.exists()) {
             dir.mkdirs();
         }

@@ -5,6 +5,7 @@ package com.tosslab.jandi.app.events.messages;
  */
 public class ConfirmCopyMessageEvent {
     public String contentString;
+
     public ConfirmCopyMessageEvent(String contentString) {
         this.contentString = contentString;
     }

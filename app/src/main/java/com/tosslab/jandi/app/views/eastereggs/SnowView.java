@@ -15,8 +15,6 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by tonyjs on 15. 11. 30..
@@ -92,7 +90,8 @@ public class SnowView extends View {
             int r = (int) (Math.random() * intrinsicWidth);
             drawable.setBounds(0, 0, r, r);
 
-            snows[i] = new SnowAnimationDrawable(animationSet, drawable);;
+            snows[i] = new SnowAnimationDrawable(animationSet, drawable);
+            ;
         }
     }
 

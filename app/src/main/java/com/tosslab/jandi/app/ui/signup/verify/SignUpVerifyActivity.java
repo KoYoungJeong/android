@@ -132,6 +132,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         super.onResume();
         ActivityHelper.setOrientation(this);
     }
+
     @Override
     protected void onDestroy() {
         stopBlink();

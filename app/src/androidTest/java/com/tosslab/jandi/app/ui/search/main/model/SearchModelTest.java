@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by tonyjs on 15. 11. 26..

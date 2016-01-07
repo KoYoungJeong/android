@@ -247,4 +247,8 @@
     <color name="message_controller_popup_text_color">#FF212121</color>
     <color name="message_controller_popup_background">#FF212121</color>
 
+    <color name="jandi_grey_black">#FF191B1E</color>
+    <color name="jandi_grey_black_pressed">#FF101113</color>
+
+
 </resources>

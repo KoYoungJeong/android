@@ -24,6 +24,7 @@ public class PlatformApiV2ClientTest {
     public void setup() throws Exception {
         BaseInitUtil.initData(RuntimeEnvironment.application);
     }
+
     @After
     public void tearDown() throws Exception {
         BaseInitUtil.releaseDatabase();

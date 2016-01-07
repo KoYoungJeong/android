@@ -253,9 +253,9 @@ class EntityManagerLockProxy extends EntityManager {
     @Override
     public boolean hasJandiBot() {
         lock.lock();
-        try{
+        try {
             return super.hasJandiBot();
-        }finally {
+        } finally {
             lock.unlock();
         }
     }

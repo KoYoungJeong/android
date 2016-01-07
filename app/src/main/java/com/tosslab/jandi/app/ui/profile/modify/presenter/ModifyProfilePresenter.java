@@ -5,6 +5,8 @@ import android.app.Activity;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
+import java.io.File;
+
 public interface ModifyProfilePresenter {
 
     void setView(View view);
@@ -24,6 +26,10 @@ public interface ModifyProfilePresenter {
     void onStartUpload(Activity activity, String filePath);
 
     void onProfileChange(ResLeftSideMenu.User member);
+
+    void onRequestCamera(Activity activity);
+
+    File getFilePath();
 
     interface View {
 

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.profile;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
+import com.tosslab.jandi.app.network.models.ResAvatarsInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
@@ -18,5 +19,7 @@ public interface IProfileApiAuth {
     ResCommon updateMemberNameByProfileApi(int memberId, ReqProfileName reqProfileName) throws RetrofitError;
 
     ResLeftSideMenu.User updateMemberEmailByProfileApi(int memberId, ReqAccountEmail reqAccountEmail) throws RetrofitError;
+
+    ResAvatarsInfo getAvartarsInfo() throws RetrofitError;
 
 }

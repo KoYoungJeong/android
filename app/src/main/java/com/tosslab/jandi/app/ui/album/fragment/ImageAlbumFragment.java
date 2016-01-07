@@ -27,7 +27,7 @@ import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
 import com.tosslab.jandi.app.utils.AnimationModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
@@ -188,7 +188,7 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
         try {
             Crop.of(Uri.fromFile(new File(imagePath)),
                     Uri.fromFile(File.createTempFile("temp_", ".jpg",
-                            new File(GoogleImagePickerUtil.getDownloadPath()))))
+                            new File(FileUtil.getDownloadPath()))))
                     .asSquare()
                     .start(getActivity(), ImageAlbumFragment.this);
         } catch (IOException e) {

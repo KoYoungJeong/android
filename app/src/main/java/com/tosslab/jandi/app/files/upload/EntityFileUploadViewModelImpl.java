@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.ui.album.ImageAlbumActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -52,15 +53,13 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
                         .startForResult(TYPE_UPLOAD_GALLERY);
                 break;
             case TYPE_UPLOAD_TAKE_PHOTO:
-
                 try {
-                    File directory = new File(GoogleImagePickerUtil.getDownloadPath());
+                    File directory = new File(FileUtil.getDownloadPath());
                     filePath = File.createTempFile("camera", ".jpg", directory);
                     filePickerModel.openCameraForActivityResult(fragment, Uri.fromFile(filePath));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
                 break;
             case TYPE_UPLOAD_EXPLORER:
                 filePickerModel.openExplorerForActivityResult(fragment);
@@ -80,7 +79,7 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
             case TYPE_UPLOAD_TAKE_PHOTO:
 
                 try {
-                    File directory = new File(GoogleImagePickerUtil.getDownloadPath());
+                    File directory = new File(FileUtil.getDownloadPath());
                     filePath = File.createTempFile("camera", ".jpg", directory);
                     filePickerModel.openCameraForActivityResult(activity, Uri.fromFile(filePath));
                 } catch (IOException e) {
@@ -195,7 +194,7 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
 
         if (GoogleImagePickerUtil.isUrl(realFilePath)) {
 
-            String downloadDir = GoogleImagePickerUtil.getDownloadPath();
+            String downloadDir = FileUtil.getDownloadPath();
             String downloadName = GoogleImagePickerUtil.getWebImageName();
             ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(context, downloadDir, downloadName);
             downloadImageAndShowFileUploadDialog(context, fragmentManager, entityId, downloadProgress, realFilePath, downloadDir, downloadName);

@@ -72,6 +72,7 @@ public class RecyclerViewExpandableItemManager {
     private int mTouchSlop;
     private int mInitialTouchX;
     private int mInitialTouchY;
+
     /**
      * Constructor.
      *

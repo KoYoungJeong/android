@@ -11,7 +11,7 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
-import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsEqual;
@@ -162,7 +162,7 @@ public class FileDetailModelTest {
     public void testGetDownloadFilePath() throws Exception {
         String title = "hello";
         String downloadFilePath = fileDetailModel.getDownloadFilePath(title);
-        assertThat(downloadFilePath, is(equalTo(GoogleImagePickerUtil.getDownloadPath() + "/hello")));
+        assertThat(downloadFilePath, is(equalTo(FileUtil.getDownloadPath() + "/hello")));
     }
 
     @Test

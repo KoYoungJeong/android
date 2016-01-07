@@ -27,6 +27,7 @@ public class InviteUtilsTest {
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
     }
+
     @After
     public void tearDown() throws Exception {
         BaseInitUtil.releaseDatabase();

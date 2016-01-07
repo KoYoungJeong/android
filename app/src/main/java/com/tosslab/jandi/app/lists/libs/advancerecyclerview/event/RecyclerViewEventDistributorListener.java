@@ -18,5 +18,6 @@ package com.tosslab.jandi.app.lists.libs.advancerecyclerview.event;
 
 public interface RecyclerViewEventDistributorListener {
     void onAddedToEventDistributor(BaseRecyclerViewEventDistributor distributor);
+
     void onRemovedFromEventDistributor(BaseRecyclerViewEventDistributor distributor);
 }

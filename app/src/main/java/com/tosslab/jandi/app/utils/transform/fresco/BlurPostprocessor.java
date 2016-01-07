@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 
 import com.facebook.imagepipeline.request.BasePostprocessor;
 import com.tosslab.jandi.app.utils.image.BitmapUtil;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 /**
  * Created by tonyjs on 15. 12. 10..

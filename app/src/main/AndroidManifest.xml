@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="com.tosslab.jandi.app"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.tosslab.jandi.app">
 
     <application
         android:name=".JandiApplication"
@@ -317,6 +316,15 @@
         </activity>
 
         <activity android:name=".ui.passcode.PassCodeActivity_" />
+
+        <activity
+            android:name=".ui.profile.defaultimage.ProfileImageSelectorActivity_"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <service android:name=".services.socket.JandiSocketService" />
 

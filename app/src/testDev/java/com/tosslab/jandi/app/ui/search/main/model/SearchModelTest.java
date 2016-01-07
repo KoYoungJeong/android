@@ -16,7 +16,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@Config(manifest = "app/src/main/AndroidManifest.xml", sdk =18)
+@Config(manifest = "app/src/main/AndroidManifest.xml", sdk = 18)
 @RunWith(JandiRobolectricGradleTestRunner.class)
 public class SearchModelTest {
 
@@ -28,6 +28,7 @@ public class SearchModelTest {
         searchModel = SearchModel_.getInstance_(RuntimeEnvironment.application);
         upsertedId = searchModel.upsertQuery(0, "가나다");
     }
+
     @After
     public void tearDown() throws Exception {
         BaseInitUtil.releaseDatabase();

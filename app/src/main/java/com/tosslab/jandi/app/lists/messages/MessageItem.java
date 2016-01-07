@@ -5,8 +5,8 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.FormatConverter;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import java.util.Date;
 
