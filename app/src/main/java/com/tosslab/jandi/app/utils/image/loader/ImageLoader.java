@@ -107,32 +107,6 @@ public class ImageLoader {
         DraweeController controller = getController(imageRequest, draweeView.getController());
 
         draweeView.setController(controller);
-
-//        OnResourceReadyCallback callback = builder.getCallback();
-//        if (callback == null) {
-//            callback = new OnResourceReadyCallback() {
-//                @Override
-//                public void onReady(Drawable drawable, CloseableReference reference) {
-//                    draweeView.getHierarchy().setImage(drawable, 1f, false);
-//
-//                    draweeView.addOnAttachStateChangeListener(
-//                            new ClosableAttachStateChangeListener(reference));
-//                }
-//
-//                @Override
-//                public void onFail(Throwable cause) {
-//                    LogUtil.e(TAG, Log.getStackTraceString(cause));
-//
-//                    draweeView.getHierarchy().setFailure(cause);
-//                }
-//
-//                @Override
-//                public void onProgressUpdate(float progress) {
-//
-//                }
-//            };
-//        }
-//        loadWithPipeline(imageRequest, false, callback);
         return this;
     }
 
