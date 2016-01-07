@@ -15,7 +15,8 @@ public class CategorizedMenuOfFileType {
             R.string.jandi_file_category_pdf,
             R.string.jandi_file_category_image,
             R.string.jandi_file_category_video,
-            R.string.jandi_file_category_audio
+            R.string.jandi_file_category_audio,
+            R.string.jandi_file_category_zip
     };
     public static final int[] drawableResourceList = {      // 위에랑 hash map으로 합칠까...
             R.drawable.icon_search_all_files,
@@ -26,7 +27,8 @@ public class CategorizedMenuOfFileType {
             R.drawable.file_icon_pdf,
             R.drawable.file_icon_img,
             R.drawable.file_icon_video,
-            R.drawable.file_icon_audio
+            R.drawable.file_icon_audio,
+            R.drawable.file_icon_zip
     };
 
     // 서버 통신용 쿼리
@@ -39,7 +41,8 @@ public class CategorizedMenuOfFileType {
             "pdf",
             "image",
             "video",
-            "audio"
+            "audio",
+            "archive"
     };
 
     public int type;
