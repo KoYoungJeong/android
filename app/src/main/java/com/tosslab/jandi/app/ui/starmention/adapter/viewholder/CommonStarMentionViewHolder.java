@@ -1,11 +1,10 @@
 package com.tosslab.jandi.app.ui.starmention.adapter.viewholder;
 
-import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.drawable.ScalingUtils;
@@ -50,11 +49,13 @@ public class CommonStarMentionViewHolder extends RecyclerView.ViewHolder {
 
 
         boolean isUser = !EntityManager.getInstance().isBot(starMentionVO.getWriterId());
-        ViewGroup.LayoutParams layoutParams = ivProfile.getLayoutParams();
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) ivProfile.getLayoutParams();
         if (isUser) {
+            layoutParams.topMargin = ivProfile.getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin);
             layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 44f, ivProfile.getResources().getDisplayMetrics());
         } else {
             layoutParams.height = layoutParams.width * 5 / 4;
+            layoutParams.topMargin = ivProfile.getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin) - layoutParams.width / 4;
         }
 
         ivProfile.setLayoutParams(layoutParams);
