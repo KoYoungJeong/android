@@ -116,7 +116,7 @@ public class ImageThumbLoader implements FileThumbLoader {
         if (!hasImageUrl || !FileExtensionsUtil.shouldSupportImageExtensions(content.ext)) {
             ImageLoader.newBuilder()
                     .actualScaleType(ScalingUtils.ScaleType.FIT_XY)
-                    .load(R.drawable.file_messageview_noimage)
+                    .load(R.drawable.file_noimage)
                     .into(ivFilePhoto);
             ivFilePhoto.setOnClickListener(null);
             return;
@@ -141,7 +141,7 @@ public class ImageThumbLoader implements FileThumbLoader {
             final ImageLoader.Builder builder = ImageLoader.newBuilder();
             builder.placeHolder(R.drawable.comment_image_preview_download, ScalingUtils.ScaleType.FIT_XY);
             builder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-            builder.error(R.drawable.file_messageview_noimage, ScalingUtils.ScaleType.FIT_CENTER);
+            builder.error(R.drawable.file_noimage, ScalingUtils.ScaleType.FIT_CENTER);
 
             Uri uri = !TextUtils.isEmpty(localFilePath)
                     ? UriFactory.getFileUri(localFilePath)
@@ -220,7 +220,7 @@ public class ImageThumbLoader implements FileThumbLoader {
 
         ImageLoader.Builder builder = ImageLoader.newBuilder();
         builder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-        builder.error(R.drawable.file_messageview_noimage, ScalingUtils.ScaleType.FIT_CENTER);
+        builder.error(R.drawable.file_noimage, ScalingUtils.ScaleType.FIT_XY);
         builder.controllerListener(new BaseControllerListener<ImageInfo>() {
             @Override
             public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {

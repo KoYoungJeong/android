@@ -115,7 +115,7 @@ public class PhotoViewFragment extends Fragment {
                 || (TextUtils.isEmpty(thumbUrl) && TextUtils.isEmpty(originalUrl))) {
             LogUtil.e(TAG, "Url is empty.");
             vgProgress.setVisibility(View.GONE);
-            photoView.setImageResource(R.drawable.file_messageview_noimage);
+            showError();
             photoView.setZoomable(false);
             return;
         }
@@ -203,6 +203,8 @@ public class PhotoViewFragment extends Fragment {
             public void onFail(Throwable cause) {
                 LogUtil.e(TAG, Log.getStackTraceString(cause));
                 hideProgress();
+
+                showError();
             }
 
             @Override
@@ -221,6 +223,11 @@ public class PhotoViewFragment extends Fragment {
         }
 
         photoView.addOnAttachStateChangeListener(new ClosableAttachStateChangeListener(reference));
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void showError() {
+        photoView.setImageResource(R.drawable.file_noimage);
     }
 
     public void setOnCarouselImageClickListener(
