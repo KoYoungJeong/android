@@ -76,6 +76,7 @@
 	<string name="jandi_action_update">"Update"</string>
 	<string name="jandi_add">"Add"</string>
 	<string name="jandi_add_an_email_address">"Add an Email Address"</string>
+	<string name="jandi_all_of_topic_members">"@All (topic members)"</string>
 	<string name="jandi_already_in_team">"This email is already a member of %s"</string>
 	<string name="jandi_already_linked_email">"This email is already linked to your account"</string>
 	<string name="jandi_announcement_create">"Announce"</string>

@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,7 +85,10 @@ public class MainChatListAdapter extends BaseAdapter {
         ChatItem item = getItem(position);
 
         viewHolder.tvName.setText(item.getName());
-        if (item.isStarred()) {
+
+        boolean isUser = !EntityManager.getInstance().isBot(item.getEntityId());
+
+        if (item.isStarred() && isUser) {
             viewHolder.ivFavorite.setVisibility(View.VISIBLE);
         } else {
             viewHolder.ivFavorite.setVisibility(View.INVISIBLE);
@@ -140,7 +142,6 @@ public class MainChatListAdapter extends BaseAdapter {
         SimpleDraweeView ivIcon = viewHolder.ivIcon;
         ivIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
-        boolean isUser = !EntityManager.getInstance().isBot(item.getEntityId());
         ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
         if (isUser) {
             layoutParams.height = layoutParams.width;

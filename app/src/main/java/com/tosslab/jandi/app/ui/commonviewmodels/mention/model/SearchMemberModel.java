@@ -136,13 +136,13 @@ public class SearchMemberModel {
         return (lhs, rhs) -> {
 
             String roomType = SearchType.room.name();
-            if (lhs.isBot()) {
-                return 1;
-            } else if (rhs.isBot()) {
-                return -1;
-            } else if (TextUtils.equals(lhs.getType(), roomType)) {
+            if (TextUtils.equals(lhs.getType(), roomType)) {
                 return -1;
             } else if (TextUtils.equals(rhs.getType(), roomType)) {
+                return 1;
+            } else if (lhs.isBot()) {
+                return -1;
+            } else if (rhs.isBot()) {
                 return 1;
             } else {
                 return lhs.getName().compareToIgnoreCase(rhs.getName());

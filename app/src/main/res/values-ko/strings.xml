@@ -76,6 +76,7 @@
 	<string name="jandi_action_update">"업데이트"</string>
 	<string name="jandi_add">"추가"</string>
 	<string name="jandi_add_an_email_address">"이메일 추가하기"</string>
+	<string name="jandi_all_of_topic_members">"@All (모든 토픽 멤버)"</string>
 	<string name="jandi_already_in_team">"이 이메일 주소는 이미 %s의 멤버입니다."</string>
 	<string name="jandi_already_linked_email">"이미 계정과 연동되어있는 이메일입니다"</string>
 	<string name="jandi_announcement_create">"공지로 등록"</string>
