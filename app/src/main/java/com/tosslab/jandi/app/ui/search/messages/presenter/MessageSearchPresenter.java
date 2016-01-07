@@ -45,7 +45,7 @@ public interface MessageSearchPresenter {
 
         void showLoading(String query);
 
-        void startMessageListActivity(int currentTeamId, int entityId, int entityType, boolean isStarred, int linkId);
+        void startMessageListActivity(int currentTeamId, int entityId, int entityType, int roomId, boolean isStarred, int linkId);
 
         void setOnLoadingReady();
 

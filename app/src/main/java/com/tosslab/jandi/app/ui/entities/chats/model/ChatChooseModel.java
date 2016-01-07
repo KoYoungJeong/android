@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.entities.chats.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -193,9 +194,12 @@ public class ChatChooseModel {
         List<ChatChooseItem> users = new ArrayList<ChatChooseItem>();
 
         List<ChatChooseItem> enableUsers = getEnableUsers();
-        boolean hasDisabledUsers = hasDisabledUsers();
+        if (hasJandiBot()) {
+            users.add(0, getJandiBot());
+        }
         users.addAll(enableUsers);
 
+        boolean hasDisabledUsers = hasDisabledUsers();
         if (hasDisabledUsers) {
             List<ChatChooseItem> disableUsers = getDisableUsers();
             users.add(new DisableDummyItem(false, disableUsers.size()));
@@ -203,6 +207,22 @@ public class ChatChooseModel {
         }
 
         return users;
+    }
+
+    private ChatChooseItem getJandiBot() {
+        BotEntity jandiBot = ((BotEntity) EntityManager.getInstance().getJandiBot());
+        return new ChatChooseItem()
+                .enabled(jandiBot.isEnabled())
+                .isBot(true)
+                .entityId(jandiBot.getId())
+                .name(jandiBot.getName())
+                .owner(false)
+                .photoUrl(jandiBot.getUserMediumProfileUrl())
+                .starred(false);
+    }
+
+    private boolean hasJandiBot() {
+        return EntityManager.getInstance().hasJandiBot();
     }
 
 }

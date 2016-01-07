@@ -5,7 +5,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.widget.PopupWindowCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +13,7 @@ import android.widget.PopupWindow;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
@@ -294,26 +294,32 @@ public class RoomSelectorImpl implements RoomSelector {
         }
 
         Observable.from(getUsers())
-                .filter(formattedEntity -> TextUtils.equals(formattedEntity.getUser().status, "enabled"))
+                .filter(FormattedEntity::isEnabled)
+                .map(entity -> {
+                    ExpandRoomData userData = new ExpandRoomData();
+                    userData.setIsUser(true);
+                    userData.setName(entity.getName());
+                    try {
+                        userData.setProfileUrl(entity.getUserSmallProfileUrl());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    userData.setType(entity.type);
+                    userData.setEntityId(entity.getId());
+                    userData.setIsStarred(entity.isStarred);
+                    userData.setIsFolder(false);
+                    return userData;
+                })
                 .toSortedList((lhs, rhs) -> {
+                    if (EntityManager.getInstance().isBot(lhs.getEntityId())) {
+                        return -1;
+                    } else if (EntityManager.getInstance().isBot(rhs.getEntityId())) {
+                        return 1;
+                    }
                     return lhs.getName().compareToIgnoreCase(rhs.getName());
-                }).subscribe(entities -> {
-            for (FormattedEntity entity : entities) {
-                ExpandRoomData userData = new ExpandRoomData();
-                userData.setIsUser(true);
-                userData.setName(entity.getName());
-                try {
-                    userData.setProfileUrl(entity.getUserSmallProfileUrl());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                userData.setType(entity.type);
-                userData.setEntityId(entity.getUser().id);
-                userData.setIsStarred(entity.isStarred);
-                userData.setIsFolder(false);
-                roomDatas.add(userData);
-            }
-        });
+                })
+                .collect(() -> roomDatas, List::addAll)
+                .subscribe();
         return roomDatas;
     }
 

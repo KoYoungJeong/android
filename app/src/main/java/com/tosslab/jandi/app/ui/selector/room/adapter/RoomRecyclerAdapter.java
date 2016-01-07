@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.selector.room.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +14,11 @@ import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import java.util.ArrayList;
@@ -99,7 +102,25 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         } else if (item.isUser()) {
             String fileUrl = ImageUtil.getImageFileUrl(item.getProfileUrl());
-            ImageUtil.loadProfileImage(ivIcon, fileUrl, R.drawable.profile_img_comment);
+            boolean jandiBot = EntityManager.getInstance().isBot(item.getEntityId());
+
+            ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
+            if (!jandiBot) {
+                layoutParams.height = layoutParams.width;
+            } else {
+                layoutParams.height = layoutParams.width * 5 / 4;
+            }
+            ivIcon.setLayoutParams(layoutParams);
+
+            if (jandiBot) {
+                ImageLoader.newBuilder()
+                        .placeHolder(R.drawable.bot_32x40, ScalingUtils.ScaleType.CENTER_INSIDE)
+                        .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                        .load(UriFactory.getResourceUri(R.drawable.bot_32x40))
+                        .into(ivIcon);
+            } else {
+                ImageUtil.loadProfileImage(ivIcon, fileUrl, R.drawable.profile_img_comment);
+            }
             roomholder.tvName.setText(item.getName());
         } else if (item.isPublicTopic()) {
             int resId = R.drawable.topiclist_icon_topic_fav;

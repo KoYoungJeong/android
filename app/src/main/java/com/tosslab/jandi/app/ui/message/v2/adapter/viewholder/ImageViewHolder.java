@@ -20,6 +20,9 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.file.FileUtil;
@@ -218,7 +221,10 @@ public class ImageViewHolder implements BodyViewHolder {
         tvFileName.setText(fileContent.title);
 
         if (!ImageUtil.hasImageUrl(fileContent)) {
-            ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.file_icon_img));
+            ImageLoader.newBuilder()
+                    .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                    .load(R.drawable.file_icon_img)
+                    .into(ivFileImage);
             return;
         }
 
@@ -245,8 +251,11 @@ public class ImageViewHolder implements BodyViewHolder {
             ImageLoader.Builder imageRequestBuilder = ImageLoader.newBuilder();
             imageRequestBuilder.error(R.drawable.image_no_preview, ScalingUtils.ScaleType.FIT_XY);
 
-            // Local File Path 도 없고 Thumbnail Path 도 없는 경우
-            if (!isFromLocalFilePath && TextUtils.isEmpty(remoteFilePth)) {
+            // 유효한 확장자가 아닌 경우, Local File Path 도 없고 Thumbnail Path 도 없는 경우
+            boolean shouldSupportImageExtensions =
+                    FileExtensionsUtil.shouldSupportImageExtensions(fileContent.ext);
+            if (!shouldSupportImageExtensions
+                    || (!isFromLocalFilePath && TextUtils.isEmpty(remoteFilePth))) {
                 LogUtil.i(TAG, "Thumbnail's are empty.");
                 layoutParams.width = smallSizePixel;
                 layoutParams.height = smallSizePixel;
@@ -254,13 +263,15 @@ public class ImageViewHolder implements BodyViewHolder {
                 ivFileImage.setLayoutParams(layoutParams);
                 ivFileImage.requestLayout();
 
-                imageRequestBuilder.roundingParams(null);
                 imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.FIT_XY);
 
                 imageRequestBuilder.load(R.drawable.image_no_preview)
                         .into(ivFileImage);
                 return;
             }
+
+            imageRequestBuilder.placeHolder(
+                    R.drawable.comment_image_preview_download, ScalingUtils.ScaleType.FIT_XY);
 
             boolean needToResize = true;
 
@@ -286,6 +297,10 @@ public class ImageViewHolder implements BodyViewHolder {
                 height = imageSpec.getHeight();
             } else {
                 imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+                RoundingParams roundingParams =
+                        RoundingParams.fromCornersRadius(cornerRadiusPixel);
+                imageRequestBuilder.roundingParams(roundingParams);
+
                 width = maxWidthPixel;
                 height = maxHeightPixel;
             }
@@ -332,10 +347,9 @@ public class ImageViewHolder implements BodyViewHolder {
         if (width > height) {
             width = Math.min(width, maxWidthPixel);
 
-            int minSize = minimumSizePixel;
             if (ratio <= LONG_HORIZONTAL_RATIO) {
                 ImageSpec.Type type = ImageSpec.Type.LONG_HORIZONTAL;
-                height = minSize;
+                height = minimumSizePixel;
                 return new ImageSpec(width, height, orientation, type);
             }
 
@@ -345,10 +359,9 @@ public class ImageViewHolder implements BodyViewHolder {
         } else {
             height = Math.min(height, maxHeightPixelWhenVerticalImage);
 
-            int minSize = minimumSizePixel;
             if (ratio > LONG_VERTICAL_RATIO) {
                 ImageSpec.Type type = ImageSpec.Type.LONG_VERTICAL;
-                width = minSize;
+                width = minimumSizePixel;
                 return new ImageSpec(width, height, orientation, type);
             }
 
@@ -359,7 +372,8 @@ public class ImageViewHolder implements BodyViewHolder {
     }
 
     private boolean isSmallSize(int width, int height) {
-        return width <= smallSizePixel && height <= smallSizePixel;
+        final int smallSizeXXHDPI = SMALL_SIZE * 3;
+        return width <= smallSizeXXHDPI && height <= smallSizeXXHDPI;
     }
 
     private int getPixelFromDp(int dp) {

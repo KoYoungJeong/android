@@ -445,7 +445,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
                 .firstCursorLinkId(firstCursorLinkId)
                 .lastMarker(EntityManager.getInstance().getEntityById(entityId).lastLinkId)
                 .start();
-
+        getActivity().overridePendingTransition(0, 0);
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {
@@ -746,7 +746,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         this.roomId = roomId;
         messageAdapter.setTeamId(teamId);
         messageAdapter.setRoomId(roomId);
-        messageAdapter.notifyDataSetChanged();
     }
 
     @Override

@@ -201,6 +201,8 @@ public class AnnouncementViewModel {
             int lineCount = tvAnnouncementMessage.getLineCount();
             if (lineCount >= 7) {
                 lineCount = 7;
+            } else if (lineCount <= 0) {
+                lineCount = 1;
             }
 
             int newHeight = tvAnnouncementMessage.getLineHeight() * lineCount;

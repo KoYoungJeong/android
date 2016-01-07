@@ -31,6 +31,7 @@ public class StarMentionVO {
 
     private Date updatedAt;
     private List<MentionObject> mentions;
+    private int writerId;
 
     public int getContentType() {
         return contentType;
@@ -179,6 +180,14 @@ public class StarMentionVO {
                 ", updatedAt=" + updatedAt +
                 ", mentions=" + mentions +
                 '}';
+    }
+
+    public void setWriterId(int writerId) {
+        this.writerId = writerId;
+    }
+
+    public int getWriterId() {
+        return writerId;
     }
 
     public enum Type {

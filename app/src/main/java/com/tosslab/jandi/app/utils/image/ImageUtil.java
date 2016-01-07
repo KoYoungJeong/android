@@ -198,7 +198,7 @@ public class ImageUtil {
         RoundingParams circleRoundingParams = getCircleRoundingParams(
                 TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
         ImageLoader.newBuilder()
-                .placeHolder(placeHolderResId, ScalingUtils.ScaleType.CENTER_CROP)
+                .placeHolder(placeHolderResId, ScalingUtils.ScaleType.FIT_CENTER)
                 .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
                 .roundingParams(circleRoundingParams)
                 .backgroundColor(Color.BLACK)
@@ -283,6 +283,10 @@ public class ImageUtil {
                                                   final String thumbnailUrl,
                                                   final String serverUrl,
                                                   final String fileType) {
+        if (vOutLine != null) {
+            vOutLine.setVisibility(View.GONE);
+        }
+
         ImageLoader.Builder builder = ImageLoader.newBuilder()
                 .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
 
@@ -298,14 +302,14 @@ public class ImageUtil {
         if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
             builder.load(mimeTypeIconImage).into(draweeView);
         } else {
-            if (vOutLine != null) {
-                vOutLine.setVisibility(View.VISIBLE);
+            if (TextUtils.isEmpty(thumbnailUrl)) {
+                builder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+                builder.load(R.drawable.file_icon_img).into(draweeView);
+                return;
             }
 
-            if (TextUtils.isEmpty(thumbnailUrl)) {
-                builder.actualScaleType(ScalingUtils.ScaleType.FIT_XY);
-                builder.load(R.drawable.image_no_preview).into(draweeView);
-                return;
+            if (vOutLine != null) {
+                vOutLine.setVisibility(View.VISIBLE);
             }
 
             builder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);

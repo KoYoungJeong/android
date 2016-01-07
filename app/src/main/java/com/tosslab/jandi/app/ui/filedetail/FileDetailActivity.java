@@ -414,12 +414,23 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 fileDetailPresenter.onCopyExternLink(fileMessage, isExternalShared);
                 break;
             case R.id.action_file_detail_disable_external_link:
-                fileDetailPresenter.onDisableExternLink(fileMessage);
+                showDisableExternalLinkDialog();
                 break;
 
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDisableExternalLinkDialog() {
+        new AlertDialog.Builder(FileDetailActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setTitle(R.string.jandi_disable_external_link)
+                .setMessage(R.string.jandi_are_you_sure_disable_external_link)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.jandi_action_delete, (dialog, which) -> {
+                    fileDetailPresenter.onDisableExternLink(fileMessage);
+                })
+                .create().show();
     }
 
     private void onExportFile(ResMessages.FileMessage fileMessage) {
@@ -543,8 +554,23 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                         EntityManager entityManager = EntityManager.getInstance();
                         FormattedEntity entity = entityManager.getEntityById(entityIdToBeShared);
 
-                        moveToMessageListActivity(entityIdToBeShared, entity.type,
-                                entity.isUser() ? -1 : entityIdToBeShared, entity.isStarred);
+                        int type;
+                        if (entity.isPublicTopic()) {
+                            type = JandiConstants.TYPE_PUBLIC_TOPIC;
+                        } else if (entity.isPrivateGroup()) {
+                            type = JandiConstants.TYPE_PRIVATE_TOPIC;
+                        } else {
+                            type = JandiConstants.TYPE_DIRECT_MESSAGE;
+                        }
+
+                        int roomId;
+                        if (entity.isPrivateGroup() || entity.isPublicTopic()) {
+                            roomId = entityIdToBeShared;
+                        } else {
+                            roomId = -1;
+                        }
+                        
+                        moveToMessageListActivity(entityIdToBeShared, type, roomId, entity.isStarred);
                     }
                 })
                 .create()
@@ -657,7 +683,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 : JandiConstants.TYPE_DIRECT_MESSAGE;
 
         boolean isStarred = entity.isStarred;
-        if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
+        if (!entity.isUser() && !entityManager.isBot(entityId)) {
             if (entity.isPublicTopic() && entity.isJoined
                     || entity.isPrivateGroup()) {
 
@@ -666,7 +692,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 fileDetailPresenter.joinAndMove(entity);
             }
         } else {
-            moveToMessageListActivity(entityId, entityType, entityId, isStarred);
+            moveToMessageListActivity(entityId, entityType, -1, isStarred);
         }
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.TapSharedTopic);

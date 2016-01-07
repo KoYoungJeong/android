@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.entities.chats.adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,12 +12,15 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
+import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -182,7 +186,26 @@ public class ChatChooseAdapter extends BaseAdapter {
         SimpleDraweeView imageViewIcon = chatCHooseViewHolder.ivIcon;
         imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
-        ImageUtil.loadProfileImage(imageViewIcon, item.getPhotoUrl(), R.drawable.profile_img);
+        boolean user = !item.isBot();
+
+        ViewGroup.LayoutParams layoutParams = imageViewIcon.getLayoutParams();
+        if (user) {
+            layoutParams.height = layoutParams.width;
+        } else {
+            layoutParams.height = layoutParams.width * 5 / 4;
+        }
+
+        imageViewIcon.setLayoutParams(layoutParams);
+
+        if (user) {
+            ImageUtil.loadProfileImage(imageViewIcon, item.getPhotoUrl(), R.drawable.profile_img);
+        } else {
+            ImageLoader.newBuilder()
+                    .placeHolder(R.drawable.bot_43x54, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .load(UriFactory.getResourceUri(R.drawable.bot_43x54))
+                    .into(imageViewIcon);
+        }
         return convertView;
     }
 

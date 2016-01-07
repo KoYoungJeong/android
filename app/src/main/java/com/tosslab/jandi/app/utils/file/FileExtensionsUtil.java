@@ -105,6 +105,17 @@ public class FileExtensionsUtil {
         return getTypeResourceId(extensions);
     }
 
+    // jpg, jpeg, gif, png, webp 만 서포트
+    public static boolean shouldSupportImageExtensions(String ext) {
+        return !TextUtils.isEmpty(ext)
+                &&
+                (ext.contains("jpg")
+                        || ext.contains("jpeg")
+                        || ext.contains("gif")
+                        || ext.contains("png")
+                        || ext.contains("webp"));
+    }
+
     public enum Extensions {
         IMAGE("jpg", "jpeg", "gif", "bmp", "png", "tif"),
         VIDEO("avi", "mpg", "mpeg", "wmv", "mp4", "mkv", "asf", "flv"),

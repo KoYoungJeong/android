@@ -70,37 +70,51 @@
             android:textColor="@color/jandi_file_search_item_type_text"
             android:textSize="@dimen/jandi_file_search_item_date_text" />
 
-        <TextView
-            android:id="@+id/tv_searched_file_owner_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <com.tosslab.jandi.app.views.FixedLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
             android:layout_alignLeft="@id/tv_searched_file_name"
             android:layout_below="@id/tv_searched_file_type"
-            android:layout_marginTop="@dimen/jandi_file_search_item_text_margin"
-            android:text="Justin"
-            android:textColor="@color/jandi_file_search_item_owner_text"
-            android:textSize="@dimen/jandi_file_search_item_owner_text" />
+            android:layout_marginTop="@dimen/jandi_file_search_item_text_margin">
 
-        <ImageView
-            android:id="@+id/v_searched_file_name_line_through"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/tv_searched_file_owner_name"
-            android:layout_alignLeft="@+id/tv_searched_file_owner_name"
-            android:layout_alignRight="@+id/tv_searched_file_owner_name"
-            android:layout_alignTop="@+id/tv_searched_file_owner_name"
-            android:src="@drawable/line_gray" />
+             <RelativeLayout
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/tv_searched_file_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/tv_searched_file_owner_name"
-            android:layout_marginLeft="@dimen/jandi_file_search_item_text_margin"
-            android:layout_toRightOf="@id/tv_searched_file_owner_name"
-            android:text="Date"
-            android:textColor="@color/jandi_file_search_item_type_text"
-            android:textSize="@dimen/jandi_file_search_item_date_text" />
+                    <TextView
+                        android:id="@+id/tv_searched_file_owner_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="Justin"
+                        android:textColor="@color/jandi_file_search_item_owner_text"
+                        android:textSize="@dimen/jandi_file_search_item_owner_text" />
+                    <ImageView
+
+                        android:id="@+id/v_searched_file_name_line_through"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/tv_searched_file_owner_name"
+                        android:layout_alignLeft="@+id/tv_searched_file_owner_name"
+                        android:layout_alignRight="@+id/tv_searched_file_owner_name"
+                        android:layout_alignTop="@+id/tv_searched_file_owner_name"
+                        android:src="@drawable/line_gray" />
+                </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_searched_file_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/tv_searched_file_owner_name"
+                android:layout_marginLeft="@dimen/jandi_file_search_item_text_margin"
+                android:layout_toRightOf="@id/tv_searched_file_owner_name"
+                android:text="Date"
+                android:textColor="@color/jandi_file_search_item_type_text"
+                android:textSize="@dimen/jandi_file_search_item_date_text" />
+        </com.tosslab.jandi.app.views.FixedLinearLayout>
+
     </RelativeLayout>
 
 </LinearLayout>
