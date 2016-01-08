@@ -17,8 +17,7 @@
                 android:layout_height="24dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="16dp"
-                android:background="@drawable/profile_edit_close"
-                android:clickable="true" />
+                android:background="@drawable/profile_edit_close" />
         </LinearLayout>
     </FrameLayout>
 
@@ -38,8 +37,7 @@
                 android:layout_height="24dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="16dp"
-                android:background="@drawable/profile_edit_check"
-                android:clickable="true" />
+                android:background="@drawable/profile_edit_check" />
         </LinearLayout>
 
 
