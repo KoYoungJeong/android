@@ -76,6 +76,7 @@
 	<string name="jandi_action_update">"更新"</string>
 	<string name="jandi_add">"增加"</string>
 	<string name="jandi_add_an_email_address">"增加一個電子郵件地址"</string>
+	<string name="jandi_all_of_topic_members">"@All (議題成員)"</string>
 	<string name="jandi_already_in_team">"此電子郵箱已為 %s 的成員"</string>
 	<string name="jandi_already_linked_email">"這電子郵件已經連結到您的帳號"</string>
 	<string name="jandi_announcement_create">"發布公告"</string>

@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
@@ -55,7 +54,7 @@ public class JandiBotProfileLoader implements ProfileLoader {
         }
         ivProfileImageSmall.setLayoutParams(layoutParams);
 
-        ImageLoader.newBuilder().load(R.drawable.bot_80x100);
+        ImageLoader.newBuilder().load(R.drawable.bot_80x100).into(ivProfileImageSmall);
     }
 
     @Override
@@ -71,7 +70,7 @@ public class JandiBotProfileLoader implements ProfileLoader {
 
     @Override
     public boolean isEnabled(FormattedEntity member) {
-        return ((BotEntity) member).isEnabled();
+        return member.isEnabled();
     }
 
     @Override

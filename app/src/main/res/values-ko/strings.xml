@@ -76,6 +76,7 @@
 	<string name="jandi_action_update">"업데이트"</string>
 	<string name="jandi_add">"추가"</string>
 	<string name="jandi_add_an_email_address">"이메일 추가하기"</string>
+	<string name="jandi_all_of_topic_members">"@All (모든 토픽 멤버)"</string>
 	<string name="jandi_already_in_team">"이 이메일 주소는 이미 %s의 멤버입니다."</string>
 	<string name="jandi_already_linked_email">"이미 계정과 연동되어있는 이메일입니다"</string>
 	<string name="jandi_announcement_create">"공지로 등록"</string>
@@ -93,7 +94,7 @@
 	<string name="jandi_auto_join_title">"자동 초대"</string>
 	<string name="jandi_auto_join_title_wild">"자동 초대*"</string>
 	<string name="jandi_baidu_app_store">"바이두 앱 스토어"</string>
-	<string name="jandi_bot_role">"저는 잔디 사용에 꼭 필요한 메시지나, 잔디 Connect 메시지를 전달합니다."</string>
+	<string name="jandi_bot_role">"저는 잔디 사용에 꼭 필요한 메시지나,\n잔디 Connect 메시지를 전달합니다."</string>
 	<string name="jandi_bot_status">"안녕하세요? Mr.J입니다. "</string>
 	<string name="jandi_browse_other_topics">"참여하지 않은 토픽 목록 보기"</string>
 	<string name="jandi_cancel">"취소"</string>

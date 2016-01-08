@@ -63,7 +63,7 @@ public class FileUploadModel {
 
         String prefix;
 
-        if (entity.isUser()) {
+        if (entity.isUser() || entityManager.isBot(selectedEntityIdToBeShared)) {
             prefix = "@";
         } else {
             prefix = "#";

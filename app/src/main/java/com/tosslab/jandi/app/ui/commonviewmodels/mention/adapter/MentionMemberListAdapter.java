@@ -7,14 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.viewholder.MentionMemberListViewHolder;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import java.util.List;
 
@@ -64,21 +64,30 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
         SearchedItemVO item = getItem(position);
 
         SimpleDraweeView ivIcon = holder.getIvIcon();
-        GenericDraweeHierarchy hierarchy = ivIcon.getHierarchy();
+
+        boolean isBot = item.isBot();
+
+        ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
+        if (isBot) {
+            layoutParams.height = layoutParams.width * 5 / 4;
+        } else {
+            layoutParams.height = layoutParams.width;
+        }
+
+        ivIcon.setLayoutParams(layoutParams);
 
         if (item.getName().equals("All") && item.getType().equals("room")) {
-            hierarchy.setPlaceholderImage(null);
-            hierarchy.setRoundingParams(null);
-
-            ivIcon.setImageURI(UriFactory.getResourceUri(R.drawable.thum_all_member));
-            holder.getTvName().setText(item.getName() + " (of topic member)");
-        } else if (item.isBot()) {
-            holder.getIvIcon().setImageResource(R.drawable.bot_32x40);
+            ImageLoader.newBuilder().load(R.drawable.thum_all_member).into(ivIcon);
+            holder.getTvName().setText(R.string.jandi_all_of_topic_members);
+        } else if (isBot) {
+            ImageLoader.newBuilder()
+                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .load(R.drawable.bot_32x40)
+                    .into(ivIcon);
             holder.getTvName().setText(item.getName());
         } else {
             ImageUtil.loadProfileImage(ivIcon,
                     item.getSmallProfileImageUrl(), R.drawable.profile_img);
-
             holder.getTvName().setText(item.getName());
         }
         holder.getConvertView().setOnClickListener(v -> {
@@ -89,7 +98,6 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
             EventBus.getDefault().post(event);
         });
     }
-
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

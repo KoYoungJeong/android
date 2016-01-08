@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -71,9 +70,10 @@ public class EntityMenuDialogFragment extends DialogFragment {
         FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
         tvTitle.setText(entity.getName());
 
-        boolean isDirectMessage = entity.isUser();
+        boolean isBot = entityMenuDialogModel.isBot(entityId);
+        boolean isDirectMessage = entity.isUser() || isBot;
         if (isDirectMessage) {
-            if (!TextUtils.equals(entity.getUser().status, "enabled")) {
+            if (!entity.isEnabled() || isBot) {
                 btnStarred.setVisibility(View.GONE);
             }
             btnMoveFolder.setVisibility(View.GONE);
@@ -200,9 +200,10 @@ public class EntityMenuDialogFragment extends DialogFragment {
     void onLeaveClick() {
         FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
 
-        if (entity.isPublicTopic() || entity.isUser()) {
+        boolean bot = entityMenuDialogModel.isBot(entityId);
+        if (entity.isPublicTopic() || entity.isUser() || bot) {
             showProgressWheel();
-            leaveEntity(entityId, entity.isPublicTopic(), entity.isUser());
+            leaveEntity(entityId, entity.isPublicTopic(), entity.isUser() || bot);
         } else {
             showPrivateTopicLeaveDialog(entityId, entity.getName());
         }

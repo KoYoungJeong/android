@@ -49,7 +49,7 @@ public class LeaveViewModel {
 
     public void leave() {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        if (entity.isPublicTopic() || entity.isUser()) {
+        if (entity.isPublicTopic() || entity.isUser() || EntityManager.getInstance().isBot(entityId)) {
             leaveEntityInBackground(entity);
         } else {
             showPrivateTopicLeaveDialog(entity);
@@ -76,7 +76,7 @@ public class LeaveViewModel {
                 entityClientManager.leaveChannel(entityId);
             } else if (entity.isPrivateGroup()) {
                 entityClientManager.leavePrivateGroup(entityId);
-            } else if (entity.isUser()) {
+            } else if (entity.isUser() || EntityManager.getInstance().isBot(entityId)) {
                 int memberId = EntityManager.getInstance().getMe().getId();
                 RequestApiManager.getInstance().deleteChatByChatApi(memberId, entityId);
             }
