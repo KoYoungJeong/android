@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.Bean;
@@ -31,11 +30,6 @@ public class SettingFragmentViewModel {
 
     public void initProgress(Activity activity) {
         progressWheel = new ProgressWheel(activity);
-    }
-
-    @UiThread
-    public void changeNotificationTagerFailed(Context context, String errMessage) {
-        ColoredToast.showError(context, errMessage);
     }
 
     public void showSignoutDialog(Activity activity) {

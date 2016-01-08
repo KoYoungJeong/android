@@ -27,4 +27,9 @@
         <attr name="indicatorWidth" format="dimension" />
     </declare-styleable>
 
+    <declare-styleable name="SettingsBodyView">
+        <attr name="sbvTitle" format="string" />
+        <attr name="sbvSummary" format="string" />
+    </declare-styleable>
+
 </resources>

@@ -90,7 +90,7 @@
             android:label="@string/jandi_title_activity_file_explorer" />
 
         <activity
-            android:name=".ui.settings.SettingsActivity_"
+            android:name=".ui.settings.main.SettingsActivity_"
             android:label="@string/jandi_settings" />
 
         <activity
