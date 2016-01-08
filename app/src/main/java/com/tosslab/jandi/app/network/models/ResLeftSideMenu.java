@@ -133,6 +133,8 @@ public class ResLeftSideMenu {
         public int alarmCount;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Bot {
         public int id;
         public int teamId;

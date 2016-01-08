@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
-    android:padding="16dp">
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_vertical_margin">
 
     <com.tosslab.jandi.app.views.FrescoImageView
         android:id="@+id/iv_star_mention_profile"
@@ -13,7 +15,8 @@
         android:layout_height="44dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin" />
 
     <RelativeLayout
         android:id="@+id/rv_star_mention_content"
@@ -22,6 +25,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="17dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_toRightOf="@id/iv_star_mention_profile">
 
         <TextView
@@ -41,7 +45,7 @@
             android:layout_height="56.6dp"
             android:layout_below="@id/tv_star_mention_name"
             android:layout_marginTop="7dp"
-            fresco:placeholderImage="@drawable/file_icon_audio_dropbox"/>
+            fresco:placeholderImage="@drawable/file_icon_audio_dropbox" />
 
         <View
             android:id="@+id/v_star_file_round"

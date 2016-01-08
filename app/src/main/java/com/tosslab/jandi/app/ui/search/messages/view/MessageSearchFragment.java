@@ -16,7 +16,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SelectMemberEvent;
 import com.tosslab.jandi.app.events.search.MoreSearchRequestEvent;
@@ -256,6 +255,9 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                         }
                 );
         List<FormattedEntity> users = EntityManager.getInstance().getFormattedUsersWithoutMe();
+        if (entityManager.hasJandiBot()) {
+            users.add(0, EntityManager.getInstance().getJandiBot());
+        }
 
         RoomSelector roomSelector = new RoomSelectorImpl(allTopics, users);
 
@@ -354,13 +356,13 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     }
 
     @Override
-    public void startMessageListActivity(int currentTeamId, int entityId, int entityType, boolean isStarred, int linkId) {
+    public void startMessageListActivity(int currentTeamId, int entityId, int entityType, int roomId, boolean isStarred, int linkId) {
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .teamId(currentTeamId)
                 .entityId(entityId)
                 .entityType(entityType)
-                .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : -1)
+                .roomId(roomId)
                 .isFavorite(isStarred)
                 .isFromSearch(true)
                 .lastMarker(linkId)

@@ -270,6 +270,9 @@ public class FileListPresenter {
                         }
                 );
         List<FormattedEntity> users = EntityManager.getInstance().getFormattedUsersWithoutMe();
+        if (entityManager.hasJandiBot()) {
+            users.add(0, EntityManager.getInstance().getJandiBot());
+        }
 
         RoomSelector roomSelector = new RoomSelectorImpl(allTopics, users);
         roomSelector.setOnRoomSelectListener(item -> {

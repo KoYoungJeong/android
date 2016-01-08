@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.photo;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -18,6 +20,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
+import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.listener.BaseOnResourceReadyCallback;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
@@ -53,6 +56,9 @@ public class PhotoViewFragment extends Fragment {
     @FragmentArg
     String imageType;
 
+    @FragmentArg
+    String extensions;
+
     @ViewById(R.id.pv_photoview)
     PhotoView photoView;
 
@@ -84,7 +90,7 @@ public class PhotoViewFragment extends Fragment {
     void initView() {
         setupProgress();
 
-        photoView.setOnPhotoTapListener((view, x, y) -> {
+        photoView.setOnViewTapListener((view, x, y) -> {
             if (carouselImageClickListener != null) {
                 carouselImageClickListener.onCarouselImageClick();
             }
@@ -104,9 +110,13 @@ public class PhotoViewFragment extends Fragment {
             return true;
         });
 
-        if (TextUtils.isEmpty(thumbUrl) && TextUtils.isEmpty(originalUrl)) {
-            //FIXME
+        boolean shouldSupportImageExtensions = FileExtensionsUtil.shouldSupportImageExtensions(extensions);
+        if (!shouldSupportImageExtensions
+                || (TextUtils.isEmpty(thumbUrl) && TextUtils.isEmpty(originalUrl))) {
             LogUtil.e(TAG, "Url is empty.");
+            vgProgress.setVisibility(View.GONE);
+            showError();
+            photoView.setZoomable(false);
             return;
         }
 
@@ -117,6 +127,8 @@ public class PhotoViewFragment extends Fragment {
             if (ImageUtil.hasCache(originalUri)) {
                 loadImage(originalUri);
             } else {
+                // PhotoView 그려진 이미지(Drawable)이 없으면 ViewTapListener 가 동작하지 않는다.
+                photoView.setImageDrawable(new ColorDrawable(Color.TRANSPARENT));
                 vgProgress.setVisibility(View.GONE);
                 btnTapToViewOriginal.setVisibility(View.VISIBLE);
                 btnTapToViewOriginal.setOnClickListener(v -> {
@@ -191,6 +203,8 @@ public class PhotoViewFragment extends Fragment {
             public void onFail(Throwable cause) {
                 LogUtil.e(TAG, Log.getStackTraceString(cause));
                 hideProgress();
+
+                showError();
             }
 
             @Override
@@ -209,6 +223,11 @@ public class PhotoViewFragment extends Fragment {
         }
 
         photoView.addOnAttachStateChangeListener(new ClosableAttachStateChangeListener(reference));
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void showError() {
+        photoView.setImageResource(R.drawable.file_noimage);
     }
 
     public void setOnCarouselImageClickListener(

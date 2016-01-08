@@ -106,4 +106,8 @@ public class EntityMenuDialogModel {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         return entity.isTopicPushOn;
     }
+
+    public boolean isBot(int entityId) {
+        return EntityManager.getInstance().isBot(entityId);
+    }
 }

@@ -19,10 +19,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="16dp"
         android:layout_toLeftOf="@+id/tv_item_default_album_count"
         android:layout_toRightOf="@+id/iv_item_default_album_sample"
         android:maxLines="1"
+        android:textColor="@color/jandi_member_profile_user_name"
         android:singleLine="true"
         android:textSize="@dimen/jandi_text_size_large"
         android:textStyle="bold" />

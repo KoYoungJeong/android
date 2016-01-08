@@ -100,7 +100,8 @@ public class StarMentionListModel {
 
             FormattedEntity entity = EntityManager.getInstance()
                     .getEntityById(starMentionedMessageObject.getMessage().writerId);
-            starMentionVO.setWriterName(entity.getUser().name);
+            starMentionVO.setWriterName(entity.getName());
+            starMentionVO.setWriterId(starMentionedMessageObject.getMessage().writerId);
             starMentionVO.setWriterPictureUrl(entity.getUserSmallProfileUrl());
             starMentionVO.setTeamId(starMentionedMessageObject.getTeamId());
             starMentionVO.setMessageId(starMentionedMessageObject.getMessage().id);

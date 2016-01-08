@@ -7,6 +7,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
+import com.tosslab.jandi.app.lists.BotEntity;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
@@ -172,7 +174,8 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     @Override
     public void onInitRoomInfo() {
         if (roomId <= 0) {
-            boolean user = EntityManager.getInstance().getEntityById(entityId).isUser();
+            FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
+            boolean user = entity.isUser() || entity instanceof BotEntity;
 
             if (!user) {
                 roomId = entityId;
@@ -184,13 +187,10 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
             }
         }
 
-        int savedLastLinkId = messageListModel.getLastReadLinkId(roomId, messageListModel.getMyId());
-        int realLastLinkId = Math.max(savedLastLinkId, lastMarker);
-
         if (roomId > 0) {
             view.setRoomId(roomId);
         }
-        view.setLastReadLinkId(realLastLinkId);
+
         messageListModel.updateMarkerInfo(teamId, roomId);
         messageListModel.setRoomId(roomId);
 

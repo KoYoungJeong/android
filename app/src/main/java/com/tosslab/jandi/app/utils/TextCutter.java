@@ -20,6 +20,19 @@ public class TextCutter {
     public static final String TAG = TextCutter.class.getSimpleName();
 
     public static final int MAX_TEXT_LENGTH = 5000;
+
+    public static final Pattern BROKEN_MENTION_PATTERN =
+            // INVISIBLE CHARACTER == | && space = \s
+            // @Tony|11158788|\s
+            Pattern.compile(
+                    // catch @Tony|11158
+                    "((?:@)([^\\u2063@]+)(?:\\u2063)(\\d+))" +
+                            // catch @Ton
+                            "|((?:@)([^\\u2063@]+))" +
+                            // catch @Tony|
+                            //
+                            "|((?:@)([^\\u2063@]+))(?:\\u2063)");
+
     private MaxLengthTextWatcher maxLengthTextWatcher;
 
     private TextCutter(TextView textView) {
@@ -83,13 +96,15 @@ public class TextCutter {
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
         }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
             int textLength = s.length();
-            LogUtil.d(TAG, String.format("onTextChanged - length(%d)", textLength));
             if (textLength > maxLength) {
                 onMaxTextLengthReachedListener.onReached(s);
 
@@ -122,8 +137,10 @@ public class TextCutter {
             }
 
             CharSequence result = text.subSequence(0, maxLength);
-            Pattern pattern = Pattern.compile("(?:@)(.+)");
-            Matcher matcher = pattern.matcher(result);
+
+            LogUtil.d(TAG, stringForLog(result.subSequence(4991, 5000)));
+
+            Matcher matcher = BROKEN_MENTION_PATTERN.matcher(result);
 
             int start = 0;
             int end = 0;
@@ -131,26 +148,28 @@ public class TextCutter {
                 start = matcher.start();
                 end = matcher.end();
             }
-            if (end == maxLength) {
+            LogUtil.i(TAG, String.format("targetText start - %d, end - %s", start, end));
+
+            if (end > 0) {
+                String targetText = stringForLog(result.subSequence(start, end));
+                LogUtil.e(TAG, targetText);
+
                 result = result.subSequence(0, start);
             }
 
+            LogUtil.i(TAG, String.format("originLength(%d), resultLength(%d)", text.length(), result.length()));
             LogUtil.i(TAG, String.format("%s\n%s", stringForLog(text), stringForLog(result)));
             return result;
         }
 
         private String stringForLog(CharSequence text) {
-            return text.toString().replace(" ", "&npsp;");
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
+            return text.toString().replace(" ", "&npsp;").replace("\\u2063", "|");
         }
 
         private void setCursorIfNeed() {
             if (textView instanceof EditText) {
                 EditText editText = (EditText) this.textView;
-                editText.setSelection(maxLength - 1);
+                editText.setSelection(editText.getText().length());
             }
         }
 

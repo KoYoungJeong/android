@@ -12,11 +12,15 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
+import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -81,7 +85,10 @@ public class MainChatListAdapter extends BaseAdapter {
         ChatItem item = getItem(position);
 
         viewHolder.tvName.setText(item.getName());
-        if (item.isStarred()) {
+
+        boolean isUser = !EntityManager.getInstance().isBot(item.getEntityId());
+
+        if (item.isStarred() && isUser) {
             viewHolder.ivFavorite.setVisibility(View.VISIBLE);
         } else {
             viewHolder.ivFavorite.setVisibility(View.INVISIBLE);
@@ -135,7 +142,23 @@ public class MainChatListAdapter extends BaseAdapter {
         SimpleDraweeView ivIcon = viewHolder.ivIcon;
         ivIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
-        ImageUtil.loadProfileImage(ivIcon, Uri.parse(item.getPhoto()), R.drawable.profile_img);
+        ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
+        if (isUser) {
+            layoutParams.height = layoutParams.width;
+        } else {
+            layoutParams.height = layoutParams.width * 5 / 4;
+        }
+        ivIcon.setLayoutParams(layoutParams);
+
+        if (isUser) {
+            ImageUtil.loadProfileImage(ivIcon, Uri.parse(item.getPhoto()), R.drawable.profile_img);
+        } else {
+            ImageLoader.newBuilder()
+                    .placeHolder(R.drawable.bot_80x100, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .load(UriFactory.getResourceUri(R.drawable.bot_80x100))
+                    .into(ivIcon);
+        }
 
         return convertView;
     }

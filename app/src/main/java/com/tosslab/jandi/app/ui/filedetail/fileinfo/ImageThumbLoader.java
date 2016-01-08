@@ -23,11 +23,11 @@ import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
 import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar;
 import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
@@ -95,7 +95,11 @@ public class ImageThumbLoader implements FileThumbLoader {
             int resourceId = sourceType == MimeTypeUtil.SourceType.Google
                     ? R.drawable.jandi_down_placeholder_google
                     : R.drawable.jandi_down_placeholder_dropbox;
-            ivFilePhoto.setImageURI(UriFactory.getResourceUri(resourceId));
+
+            ImageLoader.newBuilder()
+                    .actualScaleType(ScalingUtils.ScaleType.FIT_XY)
+                    .load(resourceId)
+                    .into(ivFilePhoto);
 
             if (hasImageUrl) {
                 ivFilePhoto.setOnClickListener(view -> {
@@ -109,8 +113,11 @@ public class ImageThumbLoader implements FileThumbLoader {
             return;
         }
 
-        if (!hasImageUrl) {
-            ivFilePhoto.setImageURI(UriFactory.getResourceUri(R.drawable.file_down_img_disable));
+        if (!hasImageUrl || !FileExtensionsUtil.shouldSupportImageExtensions(content.ext)) {
+            ImageLoader.newBuilder()
+                    .actualScaleType(ScalingUtils.ScaleType.FIT_XY)
+                    .load(R.drawable.file_noimage)
+                    .into(ivFilePhoto);
             ivFilePhoto.setOnClickListener(null);
             return;
         }
@@ -132,10 +139,9 @@ public class ImageThumbLoader implements FileThumbLoader {
 
         } else {
             final ImageLoader.Builder builder = ImageLoader.newBuilder();
-            builder.placeHolder(
-                    R.drawable.file_messageview_downloading, ScalingUtils.ScaleType.FIT_CENTER);
+            builder.placeHolder(R.drawable.comment_image_preview_download, ScalingUtils.ScaleType.FIT_XY);
             builder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-            builder.error(R.drawable.file_messageview_noimage, ScalingUtils.ScaleType.FIT_CENTER);
+            builder.error(R.drawable.file_noimage, ScalingUtils.ScaleType.FIT_CENTER);
 
             Uri uri = !TextUtils.isEmpty(localFilePath)
                     ? UriFactory.getFileUri(localFilePath)
@@ -154,7 +160,6 @@ public class ImageThumbLoader implements FileThumbLoader {
             }
 
             builder.resize(width, height);
-
             if (!hasSizeInfo) {
                 builder.controllerListener(new BaseControllerListener<ImageInfo>() {
                     @Override
@@ -164,7 +169,6 @@ public class ImageThumbLoader implements FileThumbLoader {
                     }
                 });
             }
-
             builder.load(uri).into(ivFilePhoto);
         }
     }
@@ -216,7 +220,7 @@ public class ImageThumbLoader implements FileThumbLoader {
 
         ImageLoader.Builder builder = ImageLoader.newBuilder();
         builder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-        builder.error(R.drawable.file_messageview_noimage, ScalingUtils.ScaleType.FIT_CENTER);
+        builder.error(R.drawable.file_noimage, ScalingUtils.ScaleType.FIT_XY);
         builder.controllerListener(new BaseControllerListener<ImageInfo>() {
             @Override
             public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
@@ -277,6 +281,7 @@ public class ImageThumbLoader implements FileThumbLoader {
             PhotoViewActivity_
                     .intent(context)
                     .thumbUrl(thumbUrl)
+                    .extensions(content.ext)
                     .originalUrl(content.fileUrl)
                     .imageName(content.name)
                     .imageType(content.type)
