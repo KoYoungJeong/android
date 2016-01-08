@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
+import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -139,6 +140,11 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
     @Override
     public void onRequestCamera(Activity activity) {
         filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO, activity);
+    }
+
+    @Override
+    public void onRequestCharacter(Activity activity) {
+        filePickerViewModel.selectFileSelector(ModifyProfileActivity.REQUEST_CHARACTER, activity);
     }
 
     @Override

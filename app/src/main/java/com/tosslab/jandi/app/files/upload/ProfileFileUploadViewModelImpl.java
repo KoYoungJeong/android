@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel_;
 import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.album.ImageAlbumActivity_;
+import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.file.FileUtil;
@@ -67,6 +68,17 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
                     e.printStackTrace();
                 }
                 break;
+            case ModifyProfileActivity.REQUEST_CHARACTER:
+                try {
+                    File directory = new File(FileUtil.getDownloadPath());
+                    file = File.createTempFile("character", ".png", directory);
+                    FilePickerModel_.getInstance_(JandiApplication.getContext())
+                            .openCharacterActivityForActivityResult(activity, Uri.fromFile(file));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+
         }
     }
 

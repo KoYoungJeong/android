@@ -105,6 +105,7 @@
 	<string name="jandi_cannot_find_search_result_2">"直接上传及分享文件到任何对话当中"</string>
 	<string name="jandi_cannot_find_search_result_old">"找不到符合条件的内容"</string>
 	<string name="jandi_change_passcode">"更改密码"</string>
+	<string name="jandi_character">"人物"</string>
 	<string name="jandi_chat_detail">"聊天设置"</string>
 	<string name="jandi_choose_app_store">"选择应用程序商铺"</string>
 	<string name="jandi_choose_email">"选择一个电子邮件"</string>
@@ -168,6 +169,7 @@
 	<string name="jandi_entity_unjoined_topic">"其他议题"</string>
 	<string name="jandi_err_unexpected">"出现不正常错误"</string>
 	<string name="jandi_error_web_token">"登录时遇到问题，请再试一次。"</string>
+	<string name="jandi_exceeded_max_text_length">"可填入最多5000字"</string>
 	<string name="jandi_expired_invitation_link">"此邀请链接已过期，请联络你的邀请人重新寄发新链接。"</string>
 	<string name="jandi_explain_global_push_off">"JANDI推播通知已被停用。 欲重新接收推播，点击「更多」后进入「设置」开启推播。"</string>
 	<string name="jandi_explain_topic_description">"描述 (选项)"</string>
@@ -290,6 +292,7 @@
 	<string name="jandi_messages_release">"放掉以载入较旧的信息"</string>
 	<string name="jandi_modify_channel">"重新命名议题"</string>
 	<string name="jandi_modify_private_group">"重新命名私人议题"</string>
+	<string name="jandi_modify_profile_image">"简介照片"</string>
 	<string name="jandi_move_entity_after_share">"文件已成功被分享。您想要现在跳转到那对话中吗？"</string>
 	<string name="jandi_msg_network_offline">"联机中断。"</string>
 	<string name="jandi_msg_network_offline_warn">"目前为无网络状态JANDI会于连上网络后，"</string>
@@ -327,6 +330,7 @@
 	<string name="jandi_private_topic_tip_3">"已设定为公开或私人的议题群组在建立之后不能被转换成另一个"</string>
 	<string name="jandi_profile_actionb">"简介"</string>
 	<string name="jandi_profile_additional_info">"其它数据"</string>
+	<string name="jandi_profile_background_color">"颜色"</string>
 	<string name="jandi_profile_basic_info">"基本数据"</string>
 	<string name="jandi_profile_division">"部门"</string>
 	<string name="jandi_profile_division_hint">"部门"</string>
@@ -358,6 +362,7 @@
 	<string name="jandi_sdcard_storage_unmounted">"解除连接记忆卡"</string>
 	<string name="jandi_search_ing">"<![CDATA[搜索 <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>与 <b><font color=#404040>%2$d</font></b>符合]]>"</string>
+	<string name="jandi_select_character">"选择人物"</string>
 	<string name="jandi_select_direct_messages">"选择私信"</string>
 	<string name="jandi_select_gallery">"选择照片"</string>
 	<string name="jandi_select_maximum_10">"一次可上传10张照片"</string>

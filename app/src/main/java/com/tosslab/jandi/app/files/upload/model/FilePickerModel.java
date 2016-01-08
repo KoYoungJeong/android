@@ -25,6 +25,9 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
+import com.tosslab.jandi.app.ui.profile.defaultimage.ProfileImageSelectorActivity;
+import com.tosslab.jandi.app.ui.profile.defaultimage.ProfileImageSelectorActivity_;
+import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
@@ -112,6 +115,12 @@ public class FilePickerModel {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         activity.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO);
+    }
+
+    public void openCharacterActivityForActivityResult(Activity activity, Uri fileUri) {
+        Intent intent = new Intent(activity, ProfileImageSelectorActivity_.class);
+        intent.putExtra("profile_image_file_uri", fileUri);
+        activity.startActivityForResult(intent, ModifyProfileActivity.REQUEST_CHARACTER);
     }
 
     public void openAlbumForActivityResult(Fragment fragment) {

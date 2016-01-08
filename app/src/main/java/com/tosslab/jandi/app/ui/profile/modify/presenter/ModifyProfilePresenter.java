@@ -29,6 +29,8 @@ public interface ModifyProfilePresenter {
 
     void onRequestCamera(Activity activity);
 
+    void onRequestCharacter(Activity activity);
+
     File getFilePath();
 
     interface View {

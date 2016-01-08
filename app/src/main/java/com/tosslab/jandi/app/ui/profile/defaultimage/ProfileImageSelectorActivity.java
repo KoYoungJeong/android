@@ -12,13 +12,16 @@ import com.tosslab.jandi.app.events.DefaultProfileChangeEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.defaultimage.adapter.ProfileSelectorAdapter;
 import com.tosslab.jandi.app.ui.profile.defaultimage.presenter.ProfileImageSelectorPresenter;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
@@ -56,31 +59,39 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     @Bean
     ProfileImageSelectorPresenter profileImageSelectorPresenter;
 
+    @Extra("profile_image_file_uri")
+    Uri imageUri;
+
     private ProfileSelectorAdapter profileCharacterSelectorAdapter;
     private ProfileSelectorAdapter profileColorSelectorAdapter;
-    private int selectedColor;
-    private String selectedCharacterUrl;
+    private int selectedColor = -1;
+    private String selectedCharacterUrl = null;
 
     @AfterViews
     void initViews() {
-        profileImageSelectorPresenter.setView(this);
-        profileCharacterSelectorAdapter = new ProfileSelectorAdapter(ProfileSelectorAdapter.MODE_CHARACTER_LIST);
-        profileColorSelectorAdapter = new ProfileSelectorAdapter(ProfileSelectorAdapter.MODE_COLOR_LIST);
+        if (!NetworkCheckUtil.isConnected()) {
+            ColoredToast.show(this, getResources().getString(R.string.err_network));
+            finish();
+        } else {
+            profileImageSelectorPresenter.setView(this);
+            profileCharacterSelectorAdapter = new ProfileSelectorAdapter(ProfileSelectorAdapter.MODE_CHARACTER_LIST);
+            profileColorSelectorAdapter = new ProfileSelectorAdapter(ProfileSelectorAdapter.MODE_COLOR_LIST);
 
-        LinearLayoutManager layoutManager1 = new LinearLayoutManager(this);
-        layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
-        lvProfileCharacterSelector.setLayoutManager(layoutManager1);
-        lvProfileCharacterSelector.setAdapter(profileCharacterSelectorAdapter);
+            LinearLayoutManager layoutManager1 = new LinearLayoutManager(this);
+            layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
+            lvProfileCharacterSelector.setLayoutManager(layoutManager1);
+            lvProfileCharacterSelector.setAdapter(profileCharacterSelectorAdapter);
 
-        LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
-        layoutManager2.setOrientation(LinearLayoutManager.HORIZONTAL);
-        lvProfileColorSelector.setLayoutManager(layoutManager2);
-        lvProfileColorSelector.setAdapter(profileColorSelectorAdapter);
+            LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
+            layoutManager2.setOrientation(LinearLayoutManager.HORIZONTAL);
+            lvProfileColorSelector.setLayoutManager(layoutManager2);
+            lvProfileColorSelector.setAdapter(profileColorSelectorAdapter);
 
-        profileImageSelectorPresenter.initLists();
-        EventBus.getDefault().register(this);
+            profileImageSelectorPresenter.initLists();
+            EventBus.getDefault().register(this);
 
-        onClickOptionCharacterButton();
+            onClickOptionCharacterButton();
+        }
     }
 
     @Override
@@ -109,12 +120,21 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void onClickCancelButton() {
         LogUtil.e("click cancel button");
+        finish();
     }
 
     @Click(R.id.bt_ok)
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void onClickOkButton() {
         LogUtil.e("click ok button");
+        if (selectedCharacterUrl != null && selectedColor != -1) {
+            LogUtil.e("ImagePath", imageUri.getPath());
+            profileImageSelectorPresenter.makeCustomProfileImageFile(imageUri,
+                    selectedCharacterUrl, selectedColor);
+            setResult(RESULT_OK);
+            finish();
+        }
+
     }
 
     @Click(R.id.vg_option_color)

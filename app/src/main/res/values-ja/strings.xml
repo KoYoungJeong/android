@@ -105,6 +105,7 @@
 	<string name="jandi_cannot_find_search_result_2">"アップロードして、会話の中で共有しましょう"</string>
 	<string name="jandi_cannot_find_search_result_old">"ファイルが見つかりません"</string>
 	<string name="jandi_change_passcode">"パスコード変更"</string>
+	<string name="jandi_character">"キャラクター"</string>
 	<string name="jandi_chat_detail">"トピック設定"</string>
 	<string name="jandi_choose_app_store">"アプリストアを選択してください"</string>
 	<string name="jandi_choose_email">"メールアドレスを選択"</string>
@@ -168,6 +169,7 @@
 	<string name="jandi_entity_unjoined_topic">"未参加のトピック"</string>
 	<string name="jandi_err_unexpected">"不明な問題が発生しました"</string>
 	<string name="jandi_error_web_token">"ログイン中にエラーが発生しました。もう一度お試しください"</string>
+	<string name="jandi_exceeded_max_text_length">"５０００文字まで入力できます"</string>
 	<string name="jandi_expired_invitation_link">"この招待リンクの有効期限が切れています。新しいリンクをリクエストしてください"</string>
 	<string name="jandi_explain_global_push_off">"アプリの通知がオフに設定されています。もっと見る→設定で通知をオンにすることができます。"</string>
 	<string name="jandi_explain_topic_description">"トピックの説明（選択）"</string>
@@ -290,6 +292,7 @@
 	<string name="jandi_messages_release">"はなして以前のメッセージを表示"</string>
 	<string name="jandi_modify_channel">"トピックの名称を変更"</string>
 	<string name="jandi_modify_private_group">"グループを編集"</string>
+	<string name="jandi_modify_profile_image">"プロフィール写真を編集"</string>
 	<string name="jandi_move_entity_after_share">"ファイルが共有されました。ファイルについてコメントしますか？"</string>
 	<string name="jandi_msg_network_offline">"インターネット接続が切断されました。"</string>
 	<string name="jandi_msg_network_offline_warn">"現在ネットワークに接続されていません。"</string>
@@ -327,6 +330,7 @@
 	<string name="jandi_private_topic_tip_3">"トピック作成後はプライベートトピックへの変更はできません。その逆もできません。"</string>
 	<string name="jandi_profile_actionb">"プロフィール"</string>
 	<string name="jandi_profile_additional_info">"追加"</string>
+	<string name="jandi_profile_background_color">"色"</string>
 	<string name="jandi_profile_basic_info">"基本"</string>
 	<string name="jandi_profile_division">"部署"</string>
 	<string name="jandi_profile_division_hint">"部署"</string>
@@ -358,6 +362,7 @@
 	<string name="jandi_sdcard_storage_unmounted">"SDカードのマウントを解除しました"</string>
 	<string name="jandi_search_ing">"<![CDATA[<b><font color=#404040>%s</font></b>を検索しています]]>"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>の検索結果が<b><font color=#404040>%2$d</font></b>件あります]]>"</string>
+	<string name="jandi_select_character">"キャラクターを選択"</string>
 	<string name="jandi_select_direct_messages">"送信相手を選択"</string>
 	<string name="jandi_select_gallery">"写真を選択"</string>
 	<string name="jandi_select_maximum_10">"最大10枚まで選択できます"</string>

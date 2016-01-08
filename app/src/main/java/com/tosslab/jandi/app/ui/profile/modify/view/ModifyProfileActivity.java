@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -65,8 +66,7 @@ import de.greenrobot.event.EventBus;
 public class ModifyProfileActivity extends BaseAppCompatActivity implements ModifyProfilePresenter.View {
     public static final int REQUEST_CODE = 1000;
     public static final int REQ_STORAGE_PERMISSION = 101;
-    public static final int REQUEST_CAMERA = 0x00;
-    public static final int REQUEST_CHARACTER = 0x01;
+    public static final int REQUEST_CHARACTER = 0x11;
 
     @Bean(ModifyProfilePresenterImpl.class)
     ModifyProfilePresenter memberProfilePresenter;
@@ -86,6 +86,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @ViewById(R.id.profile_user_position)
     TextView tvProfileUserPosition;
     ProgressWheel progressWheel;
+
+    AlertDialog profileChoosedialog;
 
     @AfterInject
     void initObject() {
@@ -107,6 +109,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         memberProfilePresenter.onRequestProfile();
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.EditProfile);
+
+        initProfileChooseDialog();
 
     }
 
@@ -225,7 +229,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     void editEmail(View view) {
         if (NetworkCheckUtil.isConnected()) {
             memberProfilePresenter.onEditEmailClick(getEmail());
-
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Email);
         }
     }
@@ -233,12 +236,10 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @Click(R.id.profile_photo)
     void getPicture() {
         // 프로필 사진
-
         Permissions.getChecker()
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .hasPermission(() -> {
-//                    memberProfilePresenter.onRequestCropImage(ModifyProfileActivity.this);
-                    memberProfilePresenter.onRequestCamera(ModifyProfileActivity.this);
+                    showProfileChooseDialog();
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile,
                             AnalyticsValue.Action.PhotoEdit);
                 })
@@ -247,8 +248,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
                     ActivityCompat.requestPermissions(ModifyProfileActivity.this, permissions, REQ_STORAGE_PERMISSION);
                 })
                 .check();
-
-
     }
 
     @Override
@@ -350,6 +349,22 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         String tempFilePath = memberProfilePresenter.getFilePath().getPath();
         memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, tempFilePath);
     }
+
+    @OnActivityResult(REQUEST_CHARACTER)
+    void onCharacterActivityResult(int resultCode) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (!NetworkCheckUtil.isConnected()) {
+            showCheckNetworkDialog();
+            return;
+        }
+
+        String tempFilePath = memberProfilePresenter.getFilePath().getPath();
+        memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, tempFilePath);
+    }
+
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
@@ -577,6 +592,38 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showCheckNetworkDialog() {
         AlertUtil.showCheckNetworkDialog(ModifyProfileActivity.this, null);
+    }
+
+    @UiThread
+    public void initProfileChooseDialog() {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_profile_image_selector, null);
+        profileChoosedialog = new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setView(view)
+                .setNegativeButton(this.getResources().getString(R.string.jandi_cancel)
+                        , (dialog, id) -> dialog.dismiss())
+                .create();
+        TextView tvTitle = (TextView) view.findViewById(R.id.tv_dialog_title);
+        tvTitle.setText(this.getResources().getString(R.string.jandi_member_profile_edit));
+
+        view.findViewById(R.id.tv_from_galary).setOnClickListener(v -> {
+            memberProfilePresenter.onRequestCropImage(ModifyProfileActivity.this);
+            profileChoosedialog.dismiss();
+
+        });
+        view.findViewById(R.id.tv_from_camera).setOnClickListener(v -> {
+            memberProfilePresenter.onRequestCamera(ModifyProfileActivity.this);
+            profileChoosedialog.dismiss();
+        });
+        view.findViewById(R.id.tv_from_character).setOnClickListener(v -> {
+            memberProfilePresenter.onRequestCharacter(ModifyProfileActivity.this);
+            profileChoosedialog.dismiss();
+        });
+
+    }
+
+    @UiThread
+    public void showProfileChooseDialog() {
+        profileChoosedialog.show();
     }
 
 }

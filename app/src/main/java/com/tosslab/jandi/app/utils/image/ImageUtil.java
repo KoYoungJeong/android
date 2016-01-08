@@ -19,14 +19,11 @@ import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.image.ImageInfo;
-import com.koushikdutta.async.future.Future;
-import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.UploadedFileInfoRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -34,9 +31,6 @@ import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.utils.transform.TransformConfig;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 11..
@@ -226,49 +220,6 @@ public class ImageUtil {
                 .backgroundColor(Color.BLACK)
                 .load(uri)
                 .into(draweeView);
-    }
-
-
-    public static File getCustomProfileImageFile(String imageUrl, int color) {
-
-        File profileImageFile = new File(FileUtil.getTempDownloadPath() + "/" + "tempProfile.png");
-        Bitmap profileImageBitmap = null;
-
-        Future<Bitmap> bitmapFuture = Ion.with(JandiApplication.getContext())
-                .load(imageUrl)
-                .asBitmap();
-
-        try {
-            profileImageBitmap = bitmapFuture.get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        if (profileImageBitmap != null) {
-            int x = profileImageBitmap.getWidth();
-            int y = profileImageBitmap.getHeight();
-            Bitmap newProfileBitmap = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(newProfileBitmap);
-            canvas.drawColor(color);
-            canvas.drawBitmap(profileImageBitmap, 0, 0, null);
-
-            try {
-                if (!profileImageFile.getParentFile().exists()) {
-                    profileImageFile.getParentFile().mkdirs();
-                }
-                profileImageFile.createNewFile();
-                FileOutputStream fileOutpuStream = new FileOutputStream(profileImageFile);
-                newProfileBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutpuStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return profileImageFile;
-        } else {
-            return null;
-        }
-
     }
 
     public static RoundingParams getCircleRoundingParams(int color, int width) {

@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
-                android:text="캐릭터"
+                android:text="@string/jandi_character"
                 android:textColor="@color/jandi_text_light"
                 android:textSize="13sp" />
 
@@ -85,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
-                android:text="색상"
+                android:text="@string/jandi_profile_background_color"
                 android:textColor="@color/jandi_text_light"
                 android:textSize="13sp" />
 
