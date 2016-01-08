@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.local.orm.dao.event.CreateEventDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.InviteEventDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.PrivateCreateInfoDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.PublicCreateInfoDaoImpl;
+import com.tosslab.jandi.app.network.jackson.deserialize.message.ConnectInfoDeserialize;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.EventInfoDeserialize;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.InviteInfoDeserializer;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.LinkShareEntityDeserializer;
@@ -359,6 +360,7 @@ public class ResMessages {
     @DatabaseTable(tableName = "message_text_content_connectInfo")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonDeserialize(using = ConnectInfoDeserialize.class)
     public static class ConnectInfo {
         @DatabaseField(generatedId = true)
         public long _id;

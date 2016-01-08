@@ -20,9 +20,12 @@
         android:layout_marginRight="@dimen/jandi_file_detail_comment_name_margin_right"
         android:layout_marginTop="@dimen/jandi_file_detail_comment_margin_top"
         android:layout_toRightOf="@+id/iv_file_detail_comment_user_profile"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
         android:text="UserName"
         android:textSize="@dimen/jandi_file_detail_comment_name_text"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/iv_entity_listitem_line_through"
@@ -32,7 +35,7 @@
         android:layout_alignLeft="@+id/tv_file_detail_comment_user_name"
         android:layout_alignRight="@+id/tv_file_detail_comment_user_name"
         android:layout_alignTop="@+id/tv_file_detail_comment_user_name"
-        android:src="@drawable/line_gray"/>
+        android:src="@drawable/line_gray" />
 
 
     <View
@@ -44,7 +47,7 @@
         android:layout_alignRight="@+id/iv_file_detail_comment_user_profile"
         android:layout_alignTop="@+id/iv_file_detail_comment_user_profile"
         android:background="#99ffffff"
-        android:visibility="visible"/>
+        android:visibility="visible" />
 
 
     <TextView
@@ -57,7 +60,7 @@
         android:layout_marginTop="@dimen/jandi_file_detail_comment_profile_margin_right"
         android:text="HiHi\nThis is Comment"
         android:textColor="@color/jandi_file_detail_comment_text"
-        android:textSize="@dimen/jandi_file_detail_comment_date_text"/>
+        android:textSize="@dimen/jandi_file_detail_comment_date_text" />
 
     <View
         android:id="@+id/v_file_detail_comment_anim"
@@ -65,6 +68,6 @@
         android:layout_height="match_parent"
         android:layout_alignBottom="@+id/txt_file_detail_comment_content_2"
         android:layout_alignParentTop="true"
-        android:background="@drawable/bg_topic_selector"/>
+        android:background="@drawable/bg_topic_selector" />
 
 </com.tosslab.jandi.app.views.LongClickableRelativeLayout>

@@ -554,8 +554,23 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                         EntityManager entityManager = EntityManager.getInstance();
                         FormattedEntity entity = entityManager.getEntityById(entityIdToBeShared);
 
-                        moveToMessageListActivity(entityIdToBeShared, entity.type,
-                                entity.isUser() ? -1 : entityIdToBeShared, entity.isStarred);
+                        int type;
+                        if (entity.isPublicTopic()) {
+                            type = JandiConstants.TYPE_PUBLIC_TOPIC;
+                        } else if (entity.isPrivateGroup()) {
+                            type = JandiConstants.TYPE_PRIVATE_TOPIC;
+                        } else {
+                            type = JandiConstants.TYPE_DIRECT_MESSAGE;
+                        }
+
+                        int roomId;
+                        if (entity.isPrivateGroup() || entity.isPublicTopic()) {
+                            roomId = entityIdToBeShared;
+                        } else {
+                            roomId = -1;
+                        }
+                        
+                        moveToMessageListActivity(entityIdToBeShared, type, roomId, entity.isStarred);
                     }
                 })
                 .create()
@@ -668,7 +683,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 : JandiConstants.TYPE_DIRECT_MESSAGE;
 
         boolean isStarred = entity.isStarred;
-        if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
+        if (!entity.isUser() && !entityManager.isBot(entityId)) {
             if (entity.isPublicTopic() && entity.isJoined
                     || entity.isPrivateGroup()) {
 
@@ -677,7 +692,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 fileDetailPresenter.joinAndMove(entity);
             }
         } else {
-            moveToMessageListActivity(entityId, entityType, entityId, isStarred);
+            moveToMessageListActivity(entityId, entityType, -1, isStarred);
         }
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.TapSharedTopic);

@@ -2,11 +2,10 @@ package com.tosslab.jandi.app.utils.image.loader;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.Log;
 import android.view.ViewGroup;
 
 import com.facebook.common.executors.CallerThreadExecutor;
@@ -17,7 +16,7 @@ import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.ControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.GenericDraweeView;
@@ -34,7 +33,6 @@ import com.facebook.imagepipeline.request.Postprocessor;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.listener.ClosableAttachStateChangeListener;
 import com.tosslab.jandi.app.utils.image.listener.OnResourceReadyCallback;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -100,7 +98,7 @@ public class ImageLoader {
     public ImageLoader into(GenericDraweeView draweeView) {
         draweeView.setAspectRatio(builder.getAspectRatio());
 
-        setHierarchy(draweeView.getHierarchy());
+        setHierarchy(draweeView);
 
         ImageRequest imageRequest = getImageRequest(draweeView.getLayoutParams());
 
@@ -110,50 +108,58 @@ public class ImageLoader {
         return this;
     }
 
-    private void setHierarchy(GenericDraweeHierarchy hierarchy) {
+    private void setHierarchy(GenericDraweeView draweeView) {
         final Resources resources = JandiApplication.getContext().getResources();
+
+        GenericDraweeHierarchyBuilder hierarchyBuilder = new GenericDraweeHierarchyBuilder(resources);
+
+        if (builder.getBackgroundColor() != 0) {
+            hierarchyBuilder.setBackground(new ColorDrawable(builder.getBackgroundColor()));
+        }
 
         ScalingUtils.ScaleType actualScaleType =
                 getScaleType(builder.getActualImageScaleType(), ScalingUtils.ScaleType.CENTER_CROP);
-        hierarchy.setActualImageScaleType(actualScaleType);
+        hierarchyBuilder.setActualImageScaleType(actualScaleType);
 
         final int placeHolder = builder.getPlaceHolder();
         final Drawable placeHolderDrawable = builder.getPlaceHolderDrawable();
         if (placeHolder <= 0 && placeHolderDrawable == null) {
-            hierarchy.setPlaceholderImage(null);
+            hierarchyBuilder.setPlaceholderImage(null);
         } else {
             ScalingUtils.ScaleType scaleType = getScaleType(builder.getPlaceHolderScaleType());
             Drawable drawable = placeHolderDrawable != null
                     ? placeHolderDrawable : resources.getDrawable(builder.getPlaceHolder());
-            hierarchy.setPlaceholderImage(drawable, scaleType);
+            hierarchyBuilder.setPlaceholderImage(drawable, scaleType);
         }
 
         final int error = builder.getError();
         final Drawable errorDrawable = builder.getErrorDrawable();
         if (error <= 0 && errorDrawable == null) {
-            hierarchy.setFailureImage(null);
+            hierarchyBuilder.setFailureImage(null);
         } else {
             ScalingUtils.ScaleType scaleType = getScaleType(builder.getErrorScaleType());
             Drawable drawable = errorDrawable != null
                     ? errorDrawable : resources.getDrawable(builder.getError());
-            hierarchy.setFailureImage(drawable, scaleType);
+            hierarchyBuilder.setFailureImage(drawable, scaleType);
         }
 
         final Drawable progressDrawable = builder.getProgressDrawable();
         if (progressDrawable != null) {
             ScalingUtils.ScaleType scaleType = getScaleType(
                     builder.getPlaceHolderScaleType(), ScalingUtils.ScaleType.CENTER);
-            hierarchy.setProgressBarImage(progressDrawable, scaleType);
+            hierarchyBuilder.setProgressBarImage(progressDrawable, scaleType);
         } else {
-            hierarchy.setProgressBarImage(null);
+            hierarchyBuilder.setProgressBarImage(null);
         }
 
         final RoundingParams roundingParams = builder.getRoundingParams();
         if (roundingParams != null) {
-            hierarchy.setRoundingParams(roundingParams);
+            hierarchyBuilder.setRoundingParams(roundingParams);
         } else {
-            hierarchy.setRoundingParams(null);
+            hierarchyBuilder.setRoundingParams(null);
         }
+
+        draweeView.setHierarchy(hierarchyBuilder.build());
     }
 
     private ImageRequest getImageRequest(ViewGroup.LayoutParams layoutParams) {
@@ -179,8 +185,6 @@ public class ImageLoader {
         ImageDecodeOptions imageDecodeOptions = ImageDecodeOptions.newBuilder()
                 .setDecodePreviewFrame(true)
                 .setUseLastFrameForPreview(true)
-                .setBackgroundColor(builder.getBackgroundColor() > 0
-                        ? builder.getBackgroundColor() : Color.TRANSPARENT)
                 .build();
 
         requestBuilder.setImageDecodeOptions(imageDecodeOptions);

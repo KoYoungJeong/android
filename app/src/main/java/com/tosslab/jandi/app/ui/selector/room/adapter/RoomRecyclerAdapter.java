@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.selector.room.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,7 +96,11 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-            ivIcon.setImageURI(UriFactory.getResourceUri(R.drawable.icon_search_all_rooms));
+            ImageLoader.newBuilder()
+                    .placeHolder(R.drawable.icon_search_all_rooms, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .load(UriFactory.getResourceUri(R.drawable.icon_search_all_rooms))
+                    .into(ivIcon);
             roomholder.tvName.setText(R.string.jandi_file_category_everywhere);
 
         } else if (item.isUser()) {
@@ -116,7 +119,6 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 ImageLoader.newBuilder()
                         .placeHolder(R.drawable.bot_32x40, ScalingUtils.ScaleType.CENTER_INSIDE)
                         .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                        .backgroundColor(Color.BLACK)
                         .load(UriFactory.getResourceUri(R.drawable.bot_32x40))
                         .into(ivIcon);
             } else {
@@ -128,14 +130,22 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (!item.isStarred()) {
                 resId = R.drawable.topiclist_icon_topic;
             }
-            ivIcon.setImageURI(UriFactory.getResourceUri(resId));
+            ImageLoader.newBuilder()
+                    .placeHolder(resId, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .load(UriFactory.getResourceUri(resId))
+                    .into(ivIcon);
             roomholder.tvName.setText(item.getName());
         } else {
             int resId = R.drawable.topiclist_icon_topic_private_fav;
             if (!item.isStarred()) {
                 resId = R.drawable.topiclist_icon_topic_private;
             }
-            ivIcon.setImageURI(UriFactory.getResourceUri(resId));
+            ImageLoader.newBuilder()
+                    .placeHolder(resId, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .load(UriFactory.getResourceUri(resId))
+                    .into(ivIcon);
             roomholder.tvName.setText(item.getName());
         }
 
