@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.utils;
 
+import android.support.annotation.VisibleForTesting;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -8,13 +10,16 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by tonyjs on 16. 1. 6..
  */
 public class TextCutter {
     public static final String TAG = TextCutter.class.getSimpleName();
 
-    public static final int MAX_TEXT_LENGTH = 20;
+    public static final int MAX_TEXT_LENGTH = 5000;
     private MaxLengthTextWatcher maxLengthTextWatcher;
 
     private TextCutter(TextView textView) {
@@ -47,11 +52,17 @@ public class TextCutter {
         void onReached(CharSequence text);
     }
 
-    private static class MaxLengthTextWatcher implements TextWatcher {
+    @VisibleForTesting
+    static class MaxLengthTextWatcher implements TextWatcher {
         private TextView textView;
         private int maxLength = MAX_TEXT_LENGTH;
         private boolean autoCut = true;
         private OnMaxTextLengthReachedListener onMaxTextLengthReachedListener;
+
+        @VisibleForTesting
+        MaxLengthTextWatcher() {
+
+        }
 
         public MaxLengthTextWatcher(TextView textView) {
             this.textView = textView;
@@ -81,18 +92,55 @@ public class TextCutter {
             LogUtil.d(TAG, String.format("onTextChanged - length(%d)", textLength));
             if (textLength > maxLength) {
                 onMaxTextLengthReachedListener.onReached(s);
-                if (autoCut) {
-                    textView.removeTextChangedListener(this);
 
-                    CharSequence subSequence = s.subSequence(0, maxLength - 1);
-                    textView.setText(subSequence);
-
-                    setCursorIfNeed();
-                    dismissDropDownIfNeed();
-
-                    textView.addTextChangedListener(this);
+                if (!autoCut) {
+                    return;
                 }
+
+                textView.removeTextChangedListener(this);
+
+                CharSequence text = cutText(s);
+                textView.setText(text);
+
+                setCursorIfNeed();
+                dismissDropDownIfNeed();
+
+                textView.addTextChangedListener(this);
             }
+        }
+
+        @VisibleForTesting
+        CharSequence cutText(CharSequence text) {
+            if (TextUtils.isEmpty(text)) {
+                LogUtil.i(TAG, "text is empty");
+                return "";
+            }
+
+            if (text.length() <= maxLength) {
+                LogUtil.i(TAG, stringForLog(text));
+                return text;
+            }
+
+            CharSequence result = text.subSequence(0, maxLength);
+            Pattern pattern = Pattern.compile("(?:@)(.+)");
+            Matcher matcher = pattern.matcher(result);
+
+            int start = 0;
+            int end = 0;
+            while (matcher.find()) {
+                start = matcher.start();
+                end = matcher.end();
+            }
+            if (end == maxLength) {
+                result = result.subSequence(0, start);
+            }
+
+            LogUtil.i(TAG, String.format("%s\n%s", stringForLog(text), stringForLog(result)));
+            return result;
+        }
+
+        private String stringForLog(CharSequence text) {
+            return text.toString().replace(" ", "&npsp;");
         }
 
         @Override

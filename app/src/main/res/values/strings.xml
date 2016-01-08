@@ -76,6 +76,7 @@
 	<string name="jandi_action_update">"Update"</string>
 	<string name="jandi_add">"Add"</string>
 	<string name="jandi_add_an_email_address">"Add an Email Address"</string>
+	<string name="jandi_all_of_topic_members">"@All (topic members)"</string>
 	<string name="jandi_already_in_team">"This email is already a member of %s"</string>
 	<string name="jandi_already_linked_email">"This email is already linked to your account"</string>
 	<string name="jandi_announcement_create">"Announce"</string>
@@ -85,6 +86,7 @@
 	<string name="jandi_announcement_delete_question">"This announcement will be removed. Are you sure you want to continue?"</string>
 	<string name="jandi_announcement_deleted">"%s deleted the announcement."</string>
 	<string name="jandi_announcement_minimize">"Hide"</string>
+	<string name="jandi_are_you_sure_disable_external_link">"Access to the previously shared file will be revoked. Are you sure?"</string>
 	<string name="jandi_ask_kick_user_from_topic">"Are you sure you want to remove this member from the topic?"</string>
 	<string name="jandi_auto_join_cannot_be_default_topic">"You cannot turn off auto invitation for the default topic."</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"Auto invitation is only available in public topics."</string>
@@ -107,6 +109,7 @@
 	<string name="jandi_choose_app_store">"Choose an app market."</string>
 	<string name="jandi_choose_email">"Choose an email"</string>
 	<string name="jandi_choose_your_domain">"Choose your domain"</string>
+	<string name="jandi_close">"Close"</string>
 	<string name="jandi_coach_mark_create_new_topics">"Create new topics"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"Choose a team member\nto start messaging"</string>
 	<string name="jandi_coach_mark_directmessage_explain1">"You can find all of"</string>
@@ -165,7 +168,9 @@
 	<string name="jandi_entity_unjoined_topic">"Other Topics"</string>
 	<string name="jandi_err_unexpected">"There was an unexpected error. "</string>
 	<string name="jandi_error_web_token">"We encountered an issue during sign in. Please try again."</string>
+	<string name="jandi_exceeded_max_text_length">"You can write up to 5,000 characters."</string>
 	<string name="jandi_expired_invitation_link">"This invitation has expired. Please request a new invitation from the team member who invited you."</string>
+	<string name="jandi_explain_global_push_off">"JANDI app push notification is disabled. Turn on notification in More→Settings to receive notification."</string>
 	<string name="jandi_explain_topic_description">"Description (optional)"</string>
 	<string name="jandi_export">"Export"</string>
 	<string name="jandi_export_to_app">"Export file using..."</string>
@@ -211,6 +216,7 @@
 	<string name="jandi_folder_renamed">"The folder has been renamed."</string>
 	<string name="jandi_forgot_password">"<u>Forgot Your Password?</u>"</string>
 	<string name="jandi_go_to_latest">"Go to the most recent messages"</string>
+	<string name="jandi_go_to_setting">"Go to Settings"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_has_joined">"%s has joined"</string>
 	<string name="jandi_have_an_account_already">"Already have an account?"</string>
@@ -358,6 +364,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_select_maximum_10">"You can select up to 10 photos."</string>
 	<string name="jandi_select_team">"Choose Your Team"</string>
 	<string name="jandi_send_invitation">"Send Invitations"</string>
+	<string name="jandi_send_to_email">"Send Email"</string>
 	<string name="jandi_sent_password_reset_mail">"Instructions to reset your password were sent to your email"</string>
 	<string name="jandi_service_maintenance">"JANDI is currently unavailable due to scheduled maintenance. We expect to be back in a couple of hours. Thanks for your patience."</string>
 	<string name="jandi_set_passcode">"Set Passcode Lock"</string>

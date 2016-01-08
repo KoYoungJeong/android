@@ -34,6 +34,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.ListView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -82,6 +83,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SdkUtils;
+import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -252,10 +254,10 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FileDetail);
         setEditTextTouchEvent();
-        setKeyboardBackpressCallback();
+        setEditTextListeners();
     }
 
-    private void setKeyboardBackpressCallback() {
+    private void setEditTextListeners() {
         etComment.setOnBackPressListener(() -> {
             if (keyboardHeightModel.isOpened()) {
                 //키보드가 열려져 있고 그 위에 스티커가 있는 상태에서 둘다 제거 할때 속도를 맞추기 위해 딜레이를 줌
@@ -269,6 +271,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             }
             return false;
         });
+
+        TextCutter.with(etComment)
+                .listener((s) -> {
+                    SuperToast.cancelAllSuperToasts();
+                    ColoredToast.showError(R.string.jandi_exceeded_max_text_length);
+                });
     }
 
     @Override

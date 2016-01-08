@@ -431,11 +431,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         TextCutter.with(etMessage)
                 .listener((s) -> {
                     SuperToast.cancelAllSuperToasts();
-                    ColoredToast.show("Hello");
-//                    BaseInputConnection inputConnection =
-//                            new BaseInputConnection(etMessage, true);
-//                    inputConnection.sendKeyEvent(
-//                            new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
+                    ColoredToast.showError(R.string.jandi_exceeded_max_text_length);
                 });
     }
 

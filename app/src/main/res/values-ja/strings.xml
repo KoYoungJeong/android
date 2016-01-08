@@ -76,6 +76,7 @@
 	<string name="jandi_action_update">"アップデートする"</string>
 	<string name="jandi_add">"追加"</string>
 	<string name="jandi_add_an_email_address">"メールアドレスを追加する"</string>
+	<string name="jandi_all_of_topic_members">"@All（トピック内）"</string>
 	<string name="jandi_already_in_team">"このメールはすでに%sのメンバーです"</string>
 	<string name="jandi_already_linked_email">"このメールアドレスは既にアカウントに登録されています"</string>
 	<string name="jandi_announcement_create">"告知に登録する"</string>
@@ -85,6 +86,7 @@
 	<string name="jandi_announcement_delete_question">"この告知を削除します。続きますか？"</string>
 	<string name="jandi_announcement_deleted">"%sさんが告知を削除しました。"</string>
 	<string name="jandi_announcement_minimize">"環境設定"</string>
+	<string name="jandi_are_you_sure_disable_external_link">"削除すると、リンクはこれから使用できず、本当に削除しますか？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"本当にこのメンバーをトピックから退室させますか？"</string>
 	<string name="jandi_auto_join_cannot_be_default_topic">"基本トピックでは自動招待を解除できません"</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"自動招待は公開トピックのみで可能です"</string>
@@ -107,6 +109,7 @@
 	<string name="jandi_choose_app_store">"アプリストアを選択してください"</string>
 	<string name="jandi_choose_email">"メールアドレスを選択"</string>
 	<string name="jandi_choose_your_domain">"ドメイン名(英数字)を入力"</string>
+	<string name="jandi_close">"閉じる"</string>
 	<string name="jandi_coach_mark_create_new_topics">"トピック作成"</string>
 	<string name="jandi_coach_mark_directmessage_choose_member">"ダイレクトメッセージを\n送るメンバー検索"</string>
 	<string name="jandi_coach_mark_directmessage_explain1">"ここからメンバー達に送ったダイレク"</string>
@@ -165,7 +168,9 @@
 	<string name="jandi_entity_unjoined_topic">"未参加のトピック"</string>
 	<string name="jandi_err_unexpected">"不明な問題が発生しました"</string>
 	<string name="jandi_error_web_token">"ログイン中にエラーが発生しました。もう一度お試しください"</string>
+	<string name="jandi_exceeded_max_text_length">"５０００文字まで入力できます"</string>
 	<string name="jandi_expired_invitation_link">"この招待リンクの有効期限が切れています。新しいリンクをリクエストしてください"</string>
+	<string name="jandi_explain_global_push_off">"アプリの通知がオフに設定されています。もっと見る→設定で通知をオンにすることができます。"</string>
 	<string name="jandi_explain_topic_description">"トピックの説明（選択）"</string>
 	<string name="jandi_export">"エクスポート"</string>
 	<string name="jandi_export_to_app">"他のアプリにエクスポート"</string>
@@ -211,6 +216,7 @@
 	<string name="jandi_folder_renamed">"フォルダ名が変更されました"</string>
 	<string name="jandi_forgot_password">"<u>パスワードを忘れた場合</u>"</string>
 	<string name="jandi_go_to_latest">"最新のメッセージに移動"</string>
+	<string name="jandi_go_to_setting">"設定に移動"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_has_joined">"%sさんが参加しました"</string>
 	<string name="jandi_have_an_account_already">"すでにJANDIに登録済みの方はこちら"</string>
@@ -358,6 +364,7 @@
 	<string name="jandi_select_maximum_10">"最大10枚まで選択できます"</string>
 	<string name="jandi_select_team">"チームを選択してください"</string>
 	<string name="jandi_send_invitation">"招待メールを送信"</string>
+	<string name="jandi_send_to_email">"メールを送る"</string>
 	<string name="jandi_sent_password_reset_mail">"パスワード再設定メールが送信されました"</string>
 	<string name="jandi_service_maintenance">"JANDIは現在定期メンテナンス中のためご利用できません。定期メンテナンスは数時間で終了の予定です。ご不便をお掛けし申し訳ありません。"</string>
 	<string name="jandi_set_passcode">"パスコードロック設定"</string>
