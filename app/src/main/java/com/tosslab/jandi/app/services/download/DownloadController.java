@@ -25,6 +25,7 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 
 import rx.Observable;
 
@@ -49,19 +50,24 @@ public class DownloadController {
         this.view = view;
     }
 
-    public void onHandleIntent(Intent intent) {
+    public void onHandleIntent(Intent intent, boolean isRedeliveried) {
 
-        if (DownloadModel.isRestart()) {
+        if (isRedeliveried) {
 
             List<DownloadInfo> downloadInfosInProgress = DownloadRepository.getInstance().getDownloadInfosInProgress();
 
-            Observable.from(downloadInfosInProgress)
-                    .map(DownloadInfo::getNotificationId)
-                    .subscribe(notificationId -> {
-                        view.cancelNotification(notificationId);
-                        DownloadModel.deleteDownloadInfo(notificationId);
-                    });
-            view.showErrorToast(R.string.err_download);
+            if (!(downloadInfosInProgress.isEmpty())){
+
+                Observable.from(downloadInfosInProgress)
+                        .map(DownloadInfo::getNotificationId)
+                        .subscribe(notificationId -> {
+                            view.cancelNotification(notificationId);
+                            DownloadModel.deleteDownloadInfo(notificationId);
+                        });
+
+                view.showErrorToast(R.string.err_download);
+            }
+
 
             return;
         }
@@ -132,10 +138,12 @@ public class DownloadController {
                     (int) file.length());
         } catch (Exception e) {
             DownloadModel.logDownloadException(e);
-
             view.cancelNotification(notificationId);
 
-            view.showErrorToast(R.string.err_download);
+            if (!(e.getCause() instanceof CancellationException)) {
+                view.showErrorToast(R.string.err_download);
+            }
+
         }
 
         DownloadModel.deleteDownloadInfo(notificationId);
