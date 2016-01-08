@@ -42,7 +42,6 @@ import org.androidannotations.annotations.RootContext;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import retrofit.RetrofitError;
@@ -105,11 +104,7 @@ public class FileDetailModel {
         messageManipulator.deleteSticker(messageId, messageType);
     }
 
-    public List<FormattedEntity> getUnsharedEntities(ResMessages.FileMessage fileMessage) {
-
-        if (fileMessage == null) {
-            return Collections.emptyList();
-        }
+    public List<FormattedEntity> getUnsharedEntities() {
 
         // 모든 대상이 공유 대상이 되도록 함
         EntityManager entityManager = EntityManager.getInstance();

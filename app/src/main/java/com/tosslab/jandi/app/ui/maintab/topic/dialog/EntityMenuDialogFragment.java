@@ -200,9 +200,10 @@ public class EntityMenuDialogFragment extends DialogFragment {
     void onLeaveClick() {
         FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
 
-        if (entity.isPublicTopic() || entity.isUser()) {
+        boolean bot = entityMenuDialogModel.isBot(entityId);
+        if (entity.isPublicTopic() || entity.isUser() || bot) {
             showProgressWheel();
-            leaveEntity(entityId, entity.isPublicTopic(), entity.isUser());
+            leaveEntity(entityId, entity.isPublicTopic(), entity.isUser() || bot);
         } else {
             showPrivateTopicLeaveDialog(entityId, entity.getName());
         }

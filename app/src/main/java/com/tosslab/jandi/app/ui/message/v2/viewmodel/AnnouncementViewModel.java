@@ -20,7 +20,6 @@ import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
@@ -120,10 +119,9 @@ public class AnnouncementViewModel {
             EventBus.getDefault().post(event);
         });
 
-        ResLeftSideMenu.User user = fromEntity.getUser();
         String date = DateTransformator.getTimeStringFromISO(
                 writtenAt, DateTransformator.FORMAT_YYYYMMDD_HHMM_A);
-        String announcementInfo = String.format("%s %s", user.name, date);
+        String announcementInfo = String.format("%s %s", fromEntity.getName(), date);
         tvAnnouncementInfo.setText(announcementInfo);
 
         SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();

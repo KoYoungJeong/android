@@ -42,7 +42,7 @@ public class DownloadServiceTest extends ApplicationTestCase<Application> {
         when(mockIntent.getStringExtra(DownloadService.KEY_FILE_EXTENSIONS)).thenReturn("zxc");
         when(mockIntent.getStringExtra(DownloadService.KEY_FILE_TYPE)).thenReturn("zxc");
 
-        downloadController.onHandleIntent(mockIntent);
+        downloadController.onHandleIntent(mockIntent, false);
 
         // Then
         verify(view).showErrorToast(anyInt());
@@ -57,7 +57,7 @@ public class DownloadServiceTest extends ApplicationTestCase<Application> {
         downloadController.setView(view);
 
         // When
-        downloadController.onHandleIntent(new Intent());
+        downloadController.onHandleIntent(new Intent(), false);
 
         // Then
         verify(view).showErrorToast(anyInt());
@@ -82,7 +82,7 @@ public class DownloadServiceTest extends ApplicationTestCase<Application> {
         when(mockIntent.getStringExtra(DownloadService.KEY_FILE_TYPE)).thenReturn("image/gif");
 
         // When
-        mock.onHandleIntent(mockIntent);
+        mock.onHandleIntent(mockIntent, false);
 
         // Then
         verify(view).cancelNotification(anyInt());

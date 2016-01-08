@@ -12,7 +12,7 @@ public class JandiConstantsForFlavors {
     public static final String PARSE_CLIENT_KEY = "RP8MlBZfYVHRQiaZli0IEDzkpNSWulesgmSqmxke";
     // These constants are just for DEBUG mode
     private static final String SERVICE_PROTOCOL = "https";
-    private static final String SERVICE_DOMAIN = "i-bot.jandi.io";
+    private static final String SERVICE_DOMAIN = "i2.jandi.io";
     private static final String SERVICE_FILE_DOMAIN = "files.jandi.io";
     private static final String SERVICE_BASE_DOMAIN = "www.jandi.io";
     private static final String SERVICE_FILE_UPLOAD_DOMAIN = "upload.jandi.io";
