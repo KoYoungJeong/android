@@ -116,14 +116,14 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
         profileColorSelectorAdapter.notifyDataSetChanged();
     }
 
-    @Click(R.id.bt_cancel)
+    @Click(R.id.btn_cancel)
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void onClickCancelButton() {
         LogUtil.e("click cancel button");
         finish();
     }
 
-    @Click(R.id.bt_ok)
+    @Click(R.id.btn_ok)
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void onClickOkButton() {
         LogUtil.e("click ok button");

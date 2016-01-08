@@ -1,0 +1,48 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Crop.DoneCancelBar"
+    android:background="@color/jandi_grey_black">
+
+    <FrameLayout
+        android:id="@+id/btn_cancel"
+        style="@style/Crop.ActionButton">
+
+        <LinearLayout
+            android:id="@+id/btn_cancel_"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/jandi_grey_black">
+
+            <FrameLayout
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/profile_edit_close"
+                android:clickable="true" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/btn_done"
+        style="@style/Crop.ActionButton">
+
+        <LinearLayout
+            android:id="@+id/btn_done_"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/jandi_grey_black"
+            android:gravity="right">
+
+            <FrameLayout
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/profile_edit_check"
+                android:clickable="true" />
+        </LinearLayout>
+
+
+    </FrameLayout>
+
+</LinearLayout>

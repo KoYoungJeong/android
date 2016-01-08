@@ -226,7 +226,7 @@
             android:theme="@style/JandiTheme.PushIntro" />
 
         <activity
-            android:name="com.soundcloud.android.crop.CropImageActivity"
+            android:name="com.tosslab.jandi.app.ui.profile.crop.JandiCropImageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <activity

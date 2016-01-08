@@ -599,8 +599,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_profile_image_selector, null);
         profileChoosedialog = new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setView(view)
-                .setNegativeButton(this.getResources().getString(R.string.jandi_cancel)
-                        , (dialog, id) -> dialog.dismiss())
+                .setNegativeButton(this.getResources().getString(R.string.jandi_cancel),
+                        (dialog, id) -> dialog.dismiss())
                 .create();
         TextView tvTitle = (TextView) view.findViewById(R.id.tv_dialog_title);
         tvTitle.setText(this.getResources().getString(R.string.jandi_member_profile_edit));
