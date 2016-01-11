@@ -533,4 +533,8 @@ public class EntityManager {
     public boolean isBot(int entityId) {
         return bots.containsKey(entityId);
     }
+
+    public boolean isJandiBot(int entityId) {
+        return getJandiBot().getId() == entityId;
+    }
 }

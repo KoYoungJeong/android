@@ -207,16 +207,16 @@ public class FileDetailPresenter {
     }
 
     @Background
-    public void shareMessage(int fileId, int entityIdToBeShared) {
+    public void shareMessage(ResMessages.FileMessage fileMessage, int entityIdToBeShared) {
         view.showProgress();
         try {
-            fileDetailModel.shareMessage(fileId, entityIdToBeShared);
+            fileDetailModel.shareMessage(fileMessage.id, entityIdToBeShared);
             LogUtil.d("success to share message");
 
-            fileDetailModel.trackFileShareSuccess(entityIdToBeShared, fileId);
+            fileDetailModel.trackFileShareSuccess(entityIdToBeShared, fileMessage.id);
 
             view.dismissProgress();
-            view.onShareMessageSucceed(entityIdToBeShared, fileDetailModel.getFileMessage(fileId));
+            view.onShareMessageSucceed(entityIdToBeShared, fileMessage);
             view.showMoveDialog(entityIdToBeShared);
         } catch (RetrofitError e) {
             LogUtil.e("fail to send message", e);
@@ -233,18 +233,17 @@ public class FileDetailPresenter {
     }
 
     @Background
-    public void unShareMessage(int fileId, int entityIdToBeUnshared) {
+    public void unShareMessage(ResMessages.FileMessage fileMessage, int entityIdToBeUnshared) {
         view.showProgress();
         try {
-            fileDetailModel.unshareMessage(fileId, entityIdToBeUnshared);
+            fileDetailModel.unshareMessage(fileMessage.id, entityIdToBeUnshared);
             LogUtil.d("success to unshare message");
 
-            fileDetailModel.trackFileUnShareSuccess(entityIdToBeUnshared, fileId);
+            fileDetailModel.trackFileUnShareSuccess(entityIdToBeUnshared, fileMessage.id);
 
             view.dismissProgress();
 
-            view.onUnShareMessageSucceed(entityIdToBeUnshared,
-                    fileDetailModel.getFileMessage(fileId));
+            view.onUnShareMessageSucceed(entityIdToBeUnshared, fileMessage);
 
         } catch (RetrofitError e) {
             LogUtil.e("fail to send message", e);
@@ -375,12 +374,10 @@ public class FileDetailPresenter {
         }
     }
 
-    public void checkSharedEntity(int eventId, int fileId) {
-        final ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage(fileId);
+    public void checkSharedEntity(int eventId, ResMessages.FileMessage fileMessage) {
         if (fileMessage == null) {
             return;
         }
-        int size = fileMessage.shareEntities.size();
 
         int entityId;
         Iterator<ResMessages.OriginalMessage.IntegerWrapper> iterator = fileMessage.shareEntities.iterator();
