@@ -69,14 +69,22 @@ public class ProfileImageSelectorPresenter {
             canvas.drawColor(color);
             canvas.drawBitmap(profileImageBitmap, 0, 0, null);
 
+            FileOutputStream fileOutpuStream = null;
             try {
-                FileOutputStream fileOutpuStream = new FileOutputStream(profileImageFile);
+                fileOutpuStream = new FileOutputStream(profileImageFile);
                 newProfileBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutpuStream);
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    fileOutpuStream.close();
+                } catch (IOException e) {
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
             }
             return profileImageFile;
-
         } else {
             return null;
         }

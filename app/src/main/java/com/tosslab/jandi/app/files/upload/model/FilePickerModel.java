@@ -312,4 +312,6 @@ public class FilePickerModel {
     public ArrayList<String> getFilePathsFromInnerGallery(Intent intent) {
         return intent.getStringArrayListExtra(ImageAlbumActivity.EXTRA_DATAS);
     }
+
+
 }

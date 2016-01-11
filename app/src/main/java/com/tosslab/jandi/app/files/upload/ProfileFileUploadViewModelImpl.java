@@ -179,7 +179,8 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
 
     }
 
-    public File getFilePath() {
+    @Override
+    public File getUploadedFile() {
         return file;
     }
 }

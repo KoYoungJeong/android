@@ -15,6 +15,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 public class SocketMemberProfileEvent {
     private int version;
     private ResLeftSideMenu.User member;
+    private long ts;
 
     public ResLeftSideMenu.User getMember() {
         return member;
@@ -31,6 +32,15 @@ public class SocketMemberProfileEvent {
     public void setVersion(int version) {
         this.version = version;
     }
+
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
 
     @Override
     public String toString() {

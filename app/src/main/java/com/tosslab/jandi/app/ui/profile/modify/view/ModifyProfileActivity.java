@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -64,6 +65,9 @@ import de.greenrobot.event.EventBus;
 
 @EActivity(R.layout.activity_profile)
 public class ModifyProfileActivity extends BaseAppCompatActivity implements ModifyProfilePresenter.View {
+
+    public static final String EXTRA_NEW_PHOTO_FILE = "new_photo_file";
+
     public static final int REQUEST_CODE = 1000;
     public static final int REQ_STORAGE_PERMISSION = 101;
     public static final int REQUEST_CHARACTER = 0x11;
@@ -88,6 +92,16 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     ProgressWheel progressWheel;
 
     AlertDialog profileChoosedialog;
+
+    private File photoFile;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            photoFile = (File) savedInstanceState.getSerializable(EXTRA_NEW_PHOTO_FILE);
+        }
+    }
 
     @AfterInject
     void initObject() {
@@ -346,8 +360,11 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
             return;
         }
 
-        String tempFilePath = memberProfilePresenter.getFilePath().getPath();
-        memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, tempFilePath);
+        if (memberProfilePresenter.getFilePath() != null) {
+            memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, memberProfilePresenter.getFilePath().getPath());
+        } else {
+            memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, photoFile.getPath());
+        }
     }
 
     @OnActivityResult(REQUEST_CHARACTER)
@@ -361,8 +378,11 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
             return;
         }
 
-        String tempFilePath = memberProfilePresenter.getFilePath().getPath();
-        memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, tempFilePath);
+        if (memberProfilePresenter.getFilePath() != null) {
+            memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, memberProfilePresenter.getFilePath().getPath());
+        } else {
+            memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, photoFile.getPath());
+        }
     }
 
 
@@ -624,6 +644,14 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @UiThread
     public void showProfileChooseDialog() {
         profileChoosedialog.show();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (memberProfilePresenter.getFilePath() != null) {
+            outState.putSerializable(EXTRA_NEW_PHOTO_FILE, memberProfilePresenter.getFilePath());
+        }
     }
 
 }

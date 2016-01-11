@@ -21,6 +21,17 @@ public class SocketFileUnsharedEvent extends SocketFileEvent {
     public int writer;
     public Room_ room;
 
+    private long ts;
+
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
+
     @Override
     public String toString() {
         return "SocketFileUnsharedEvent{" +

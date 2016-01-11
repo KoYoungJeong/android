@@ -60,19 +60,15 @@ public class JandiSocketConnector implements SocketConnector {
             }).on(Socket.EVENT_ERROR, args -> {
                 LogUtil.e(TAG, Socket.EVENT_ERROR);
                 disconnectCallback(disconnectListener, args);
-                JandiPreference.setSocketConnectedLastTime();
             }).on(Socket.EVENT_DISCONNECT, args -> {
                 LogUtil.e(TAG, Socket.EVENT_DISCONNECT);
                 disconnectCallback(disconnectListener, args);
-                JandiPreference.setSocketConnectedLastTime();
             }).on(Socket.EVENT_CONNECT_ERROR, args -> {
                 LogUtil.e(TAG, Socket.EVENT_CONNECT_ERROR);
                 disconnectCallback(disconnectListener, args);
-                JandiPreference.setSocketConnectedLastTime();
             }).on(Socket.EVENT_CONNECT_TIMEOUT, args -> {
                 LogUtil.e(TAG, Socket.EVENT_CONNECT_TIMEOUT);
                 disconnectCallback(disconnectListener, args);
-                JandiPreference.setSocketConnectedLastTime();
             });
             socket.connect();
         }

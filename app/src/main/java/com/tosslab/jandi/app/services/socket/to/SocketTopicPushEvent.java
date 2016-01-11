@@ -17,24 +17,34 @@ public class SocketTopicPushEvent {
     private int version;
     private Data data;
 
+    private long ts;
+
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
     public String getEvent() {
         return event;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public Data getData() {
-        return data;
     }
 
     public void setEvent(String event) {
         this.event = event;
     }
 
+    public int getVersion() {
+        return version;
+    }
+
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public Data getData() {
+        return data;
     }
 
     public void setData(Data data) {

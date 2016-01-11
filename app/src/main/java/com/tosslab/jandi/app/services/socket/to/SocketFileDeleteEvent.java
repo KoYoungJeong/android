@@ -14,6 +14,17 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 public class SocketFileDeleteEvent extends SocketFileEvent {
     private int teamId;
 
+    private long ts;
+
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
+
     public int getTeamId() {
         return teamId;
     }

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.profile.modify.presenter;
 
 import android.app.Activity;
+import android.os.Bundle;
 
 import com.soundcloud.android.crop.Crop;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
@@ -120,7 +121,6 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
         }
     }
 
-
     @Override
     public void setView(View view) {
         this.view = view;
@@ -149,6 +149,6 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
     @Override
     public File getFilePath() {
-        return filePickerViewModel.getFilePath();
+        return filePickerViewModel.getUploadedFile();
     }
 }
