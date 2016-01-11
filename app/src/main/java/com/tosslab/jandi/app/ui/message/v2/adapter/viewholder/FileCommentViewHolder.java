@@ -6,7 +6,6 @@ import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.text.Html;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -22,6 +21,7 @@ import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.markdown.MarkdownLookUp;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
@@ -124,7 +124,20 @@ public class FileCommentViewHolder implements BodyViewHolder {
             builder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
             builder.append(" ");
 
-            boolean hasLink = LinkifyUtil.addLinks(context, builder);
+            MarkdownLookUp.text(builder).lookUp(tvComment.getContext());
+
+            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                    tvComment, builder, commentMessage.mentions, entityManager.getMe().getId())
+                    .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
+            builder = generateMentionMessageUtil.generate(true);
+
+            MarkdownLookUp.text(builder).lookUp(tvComment.getContext());
+
+            MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvComment, builder, false);
+            markdownViewModel.execute();
+
+            LinkifyUtil.setOnLinkClick(tvComment);
+            LinkifyUtil.addLinks(context, builder);
 
             int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
                     link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
@@ -137,23 +150,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 tvUnread.setVisibility(View.GONE);
             }
 
-            MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvComment, builder, false);
-            markdownViewModel.execute();
-
-            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                    tvComment, builder, commentMessage.mentions, entityManager.getMe().getId())
-                    .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
-            builder = generateMentionMessageUtil.generate(true);
-
-
-            if (hasLink) {
-                tvComment.setText(
-                        Spannable.Factory.getInstance().newSpannable(builder));
-
-                LinkifyUtil.setOnLinkClick(tvComment);
-            } else {
-                tvComment.setText(builder);
-            }
+            tvComment.setText(builder);
 
         }
 

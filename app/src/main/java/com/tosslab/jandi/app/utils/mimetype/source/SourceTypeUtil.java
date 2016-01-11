@@ -71,7 +71,7 @@ public class SourceTypeUtil {
         value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_zip);
         value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_zip_dropbox);
         value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_zip_google);
-        resourceMapper.put(MimeTypeUtil.FilterType.Etc, value);
+        resourceMapper.put(MimeTypeUtil.FilterType.Zip, value);
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
         value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_etc);

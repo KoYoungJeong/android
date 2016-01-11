@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
@@ -22,6 +19,7 @@ import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.markdown.MarkdownLookUp;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -156,16 +154,11 @@ public class AnnouncementViewModel {
         String announcementInfo = String.format("%s %s", fromEntity.getName(), date);
         tvAnnouncementInfo.setText(announcementInfo);
 
-        SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
-        messageStringBuilder.append(!TextUtils.isEmpty(content) ? content : "");
-        boolean hasLink = LinkifyUtil.addLinks(activity, messageStringBuilder);
-        if (hasLink) {
-            Spannable linkSpannable =
-                    Spannable.Factory.getInstance().newSpannable(messageStringBuilder);
-            messageStringBuilder.setSpan(linkSpannable,
-                    0, content.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            LinkifyUtil.setOnLinkClick(tvAnnouncementMessage);
-        }
+        SpannableStringBuilder messageStringBuilder = MarkdownLookUp
+                .text(content)
+                .lookUp(tvAnnouncementMessage.getContext());
+        LinkifyUtil.addLinks(activity, messageStringBuilder);
+        LinkifyUtil.setOnLinkClick(tvAnnouncementMessage);
 
         MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvAnnouncementMessage,
                 messageStringBuilder, true);
