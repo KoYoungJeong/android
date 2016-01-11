@@ -63,7 +63,8 @@
         <LinearLayout
             android:id="@+id/vg_share_content"
             android:layout_width="match_parent"
-            android:layout_height="289dp"
+            android:layout_height="wrap_content"
+            android:minHeight="289dp"
             android:layout_alignParentBottom="true"
             android:orientation="vertical">
 
