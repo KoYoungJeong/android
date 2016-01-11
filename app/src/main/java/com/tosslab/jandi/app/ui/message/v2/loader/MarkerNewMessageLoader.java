@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2.loader;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
+import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
@@ -34,7 +35,10 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
         }
 
         try {
-            ResMessages newMessage = messageListModel.getAfterMarkerMessage(linkId);
+            int itemCount = Math.min(
+                    Math.max(MessageManipulator.NUMBER_OF_MESSAGES, view.getItemCount()),
+                    MessageManipulator.MAX_OF_MESSAGES);
+            ResMessages newMessage = messageListModel.getAfterMarkerMessage(linkId, itemCount);
 
             boolean isLastLinkId = false;
 
