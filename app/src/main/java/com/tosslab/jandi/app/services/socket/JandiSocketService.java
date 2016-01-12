@@ -186,6 +186,12 @@ public class JandiSocketService extends Service {
                 jandiSocketServiceModel.refreshMemberProfile(objects[0]);
         eventHashMap.put("member_profile_updated", memberProfileListener);
 
+        EventListener connectListener = objects -> jandiSocketServiceModel.refreshConnectBot(objects[0]);
+        eventHashMap.put("connect_created", connectListener);
+        eventHashMap.put("connect_deleted", connectListener);
+        eventHashMap.put("connect_updated", connectListener);
+
+
         EventListener topicDeleteListener = objects ->
                 jandiSocketServiceModel.refreshTopicDelete(objects[0]);
         eventHashMap.put("topic_deleted", topicDeleteListener);

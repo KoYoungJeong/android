@@ -4,8 +4,6 @@ import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.res.Resources;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.view.View;
@@ -13,6 +11,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.markdown.MarkdownLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -22,12 +21,12 @@ import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 
 public class FileDetailCollapseCommentView implements CommentViewHolder {
 
-    TextView textViewCommentContent;
+    TextView tvCommentContent;
     private View selectedView;
 
     @Override
     public void init(View rootView) {
-        textViewCommentContent = (TextView) rootView.findViewById(R.id.txt_file_detail_collapse_comment_content);
+        tvCommentContent = (TextView) rootView.findViewById(R.id.txt_file_detail_collapse_comment_content);
         selectedView = rootView.findViewById(R.id.v_file_detail_comment_anim);
     }
 
@@ -43,44 +42,34 @@ public class FileDetailCollapseCommentView implements CommentViewHolder {
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         spannableStringBuilder.append(comment);
 
-        boolean hasLink =
-                LinkifyUtil.addLinks(textViewCommentContent.getContext(), spannableStringBuilder);
+        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                tvCommentContent, spannableStringBuilder, commentMessage.mentions,
+                EntityManager.getInstance().getMe().getId())
+                .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
 
-        if (hasLink) {
-            Spannable linkSpannable =
-                    Spannable.Factory.getInstance().newSpannable(spannableStringBuilder);
-            spannableStringBuilder.setSpan(linkSpannable,
-                    0, comment.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            LinkifyUtil.setOnLinkClick(textViewCommentContent);
-        }
+        MarkdownLookUp.text(spannableStringBuilder).lookUp(tvCommentContent.getContext());
+
+        MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvCommentContent, spannableStringBuilder, false);
+        markdownViewModel.execute();
+
+        spannableStringBuilder = generateMentionMessageUtil.generate(true);
+
+        LinkifyUtil.addLinks(tvCommentContent.getContext(), spannableStringBuilder);
+        LinkifyUtil.setOnLinkClick(tvCommentContent);
 
         spannableStringBuilder.append(" ");
-
-        Resources resources = textViewCommentContent.getResources();
-
-        int dateSpannableTextSize = ((int) resources.getDimension(R.dimen.jandi_messages_date));
-        int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
 
         int startIndex = spannableStringBuilder.length();
         spannableStringBuilder.append(" ");
         int endIndex = spannableStringBuilder.length();
 
         DateViewSpannable spannable =
-                new DateViewSpannable(textViewCommentContent.getContext(), createTime);
+                new DateViewSpannable(tvCommentContent.getContext(), createTime);
         spannableStringBuilder.setSpan(spannable,
                 startIndex, endIndex,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        MarkdownViewModel markdownViewModel = new MarkdownViewModel(textViewCommentContent, spannableStringBuilder, false);
-        markdownViewModel.execute();
-
-        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                textViewCommentContent, spannableStringBuilder, commentMessage.mentions,
-                EntityManager.getInstance().getMe().getId())
-                .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
-        spannableStringBuilder = generateMentionMessageUtil.generate(true);
-
-        textViewCommentContent.setText(spannableStringBuilder);
+        tvCommentContent.setText(spannableStringBuilder);
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
+import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
@@ -41,6 +42,7 @@ import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketConnectBotEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
@@ -665,6 +667,15 @@ public class JandiSocketServiceModel {
             }
 
             return false;
+        }
+    }
+
+    public void refreshConnectBot(Object object) {
+        try {
+            SocketConnectBotEvent event = getObject(object, SocketConnectBotEvent.class);
+            refreshEntity(new RefreshConnectBotEvent(event.getData().getBot()), true);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

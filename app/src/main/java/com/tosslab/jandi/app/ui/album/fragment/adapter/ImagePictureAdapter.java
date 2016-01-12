@@ -102,12 +102,6 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
             }
         });
 
-        viewHolder.ivSelector.setOnClickListener(v -> {
-            if (onRecyclerItemCheckClickListener != null) {
-                onRecyclerItemCheckClickListener.onItemClick(v, ImagePictureAdapter.this, position);
-            }
-        });
-
         loadMoreIfNeed(position);
     }
 

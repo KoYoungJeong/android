@@ -11,22 +11,29 @@ import rx.Observable;
 
 public class MarkdownLookUp {
 
-    private String text;
+    private SpannableStringBuilder stringBuilder;
 
     private MarkdownLookUp(String text) {
         if (!TextUtils.isEmpty(text)) {
-            this.text = text;
+            stringBuilder = new SpannableStringBuilder(text);
         } else {
-            this.text = "";
+            stringBuilder = new SpannableStringBuilder("");
         }
+    }
+
+    public MarkdownLookUp(SpannableStringBuilder stringBuilder) {
+        this.stringBuilder = stringBuilder;
     }
 
     public static MarkdownLookUp text(String text) {
         return new MarkdownLookUp(text);
     }
 
+    public static MarkdownLookUp text(SpannableStringBuilder stringBuilder) {
+        return new MarkdownLookUp(stringBuilder);
+    }
+
     public SpannableStringBuilder lookUp(Context context) {
-        SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text);
 
         Observable.from(MarkdownRule.values())
                 .subscribe(markdownRule -> {
