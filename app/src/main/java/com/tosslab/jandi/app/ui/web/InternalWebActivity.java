@@ -9,7 +9,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -119,20 +118,24 @@ public class InternalWebActivity extends BaseAppCompatActivity {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 super.onReceivedError(view, errorCode, description, failingUrl);
                 PageNotFoundActivity_.intent(InternalWebActivity.this)
+                        .flags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
                         .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         .url(url)
                         .start();
                 finish();
+                overridePendingTransition(0, 0);
             }
 
             @Override
             public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
                 super.onReceivedHttpError(view, request, errorResponse);
                 PageNotFoundActivity_.intent(InternalWebActivity.this)
+                        .flags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
                         .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         .url(url)
                         .start();
                 finish();
+                overridePendingTransition(0, 0);
             }
 
         });

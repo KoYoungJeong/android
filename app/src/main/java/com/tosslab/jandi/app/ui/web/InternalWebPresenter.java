@@ -79,6 +79,7 @@ public class InternalWebPresenter {
                             .url(url)
                             .start();
                     webActivity.finish();
+                    webActivity.overridePendingTransition(0, 0);
                 }
 
                 @Override
@@ -89,6 +90,7 @@ public class InternalWebPresenter {
                             .url(url)
                             .start();
                     webActivity.finish();
+                    webActivity.overridePendingTransition(0, 0);
                 }
             });
         }

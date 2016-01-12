@@ -33,10 +33,12 @@ public class PageNotFoundActivity extends BaseAppCompatActivity {
     @Click(R.id.bt_retry)
     public void retryButtonClicked() {
         InternalWebActivity_.intent(this)
+                .flags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
                 .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .url(url)
                 .start();
         finish();
+        overridePendingTransition(0, 0);
     }
 
     @OptionsItem(android.R.id.home)
