@@ -42,7 +42,7 @@ public class LinkAnalysisTest {
     public void testAnalysis() throws Exception {
         for (String testMarkdown : TEST_MARKDOWNS) {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(testMarkdown);
-            analysis.analysis(JandiApplication.getContext(), spannableStringBuilder);
+            analysis.analysis(JandiApplication.getContext(), spannableStringBuilder, plainText);
 
             int length = spannableStringBuilder.length();
             boolean find = false;
@@ -56,7 +56,7 @@ public class LinkAnalysisTest {
 
         for (String testMarkdown : TEST_MARKDOWNS_2) {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(testMarkdown);
-            analysis.analysis(JandiApplication.getContext(), spannableStringBuilder);
+            analysis.analysis(JandiApplication.getContext(), spannableStringBuilder, plainText);
 
             int length = spannableStringBuilder.length();
             boolean find = false;
@@ -71,7 +71,7 @@ public class LinkAnalysisTest {
         {
             for (String testMarkdown : TEST_MARKDOWNS_3) {
                 SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(testMarkdown);
-                analysis.analysis(JandiApplication.getContext(), spannableStringBuilder);
+                analysis.analysis(JandiApplication.getContext(), spannableStringBuilder, plainText);
 
                 int length = spannableStringBuilder.length();
                 boolean find = false;
