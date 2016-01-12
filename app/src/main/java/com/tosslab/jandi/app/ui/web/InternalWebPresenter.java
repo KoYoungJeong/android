@@ -12,6 +12,8 @@ import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -40,21 +42,21 @@ import de.greenrobot.event.EventBus;
 @EBean
 public class InternalWebPresenter {
 
+    public static final String SUPPORT_URL = "http://support.jandi.com";
     @ViewById(R.id.web_internal_web)
     WebView webView;
-
     @ViewById(R.id.loading_internal_web)
     WebLoadingBar webLoadingBar;
-
     private WebViewClient webViewClient;
     private WebChromeClient webCromeClient;
     private String url;
     private ProgressWheel progressWheel;
 
-    public static final String SUPPORT_URL = "http://support.jandi.com";
+    private Activity webActivity;
 
     public void initObject(Activity activity) {
         progressWheel = new ProgressWheel(activity);
+        webActivity = activity;
     }
 
     @AfterViews
@@ -68,14 +70,37 @@ public class InternalWebPresenter {
         if (webViewClient != null) {
             webView.setWebViewClient(webViewClient);
         } else {
-            webView.setWebViewClient(new WebViewClient());
+            webView.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                    super.onReceivedError(view, errorCode, description, failingUrl);
+                    PageNotFoundActivity_.intent(webActivity)
+                            .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            .url(url)
+                            .start();
+                    webActivity.finish();
+                }
+
+                @Override
+                public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+                    super.onReceivedHttpError(view, request, errorResponse);
+                    PageNotFoundActivity_.intent(webActivity)
+                            .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            .url(url)
+                            .start();
+                    webActivity.finish();
+                }
+            });
         }
 
         if (webCromeClient != null) {
             webView.setWebChromeClient(webCromeClient);
         } else {
-            webView.setWebChromeClient(new WebChromeClient());
+            webView.setWebChromeClient(new WebChromeClient() {
+
+            });
         }
+
         webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
@@ -84,7 +109,6 @@ public class InternalWebPresenter {
         webSettings.setBuiltInZoomControls(true);
         webSettings.setDisplayZoomControls(false);
         webSettings.setUserAgentString(webSettings.getUserAgentString() + " Jandi-Android-App");
-
         loadUrl(url);
     }
 

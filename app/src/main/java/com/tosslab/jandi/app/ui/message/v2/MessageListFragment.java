@@ -742,7 +742,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     private void loadNewMessage(MessageQueue messageQueue) {
 
-
         if (newsMessageLoader != null) {
             MessageState data = (MessageState) messageQueue.getData();
             int lastUpdateLinkId = data.getLastUpdateLinkId();
