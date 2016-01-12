@@ -544,13 +544,21 @@
     </style>
 
     <style name="JandiSettings.Body.Text.Title">
-        <item name="android:textColor">@color/jandi_member_profile_user_name</item>
+        <item name="android:textColor">@color/text_color_setting_check_title</item>
         <item name="android:textSize">@dimen/jandi_text_size_large</item>
     </style>
 
     <style name="JandiSettings.Body.Text.Summary">
-        <item name="android:textColor">@color/jandi_text_light_gray</item>
+        <item name="android:textColor">@color/text_color_setting_check_summary</item>
         <item name="android:textSize">@dimen/jandi_text_size_medium</item>
+    </style>
+
+    <style name="JandiSettings.Body.Check">
+        <item name="android:clickable">false</item>
+        <item name="android:focusable">false</item>
+        <item name="android:focusableInTouchMode">false</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
     </style>
 
     <style name="JandiSettings.Divider">

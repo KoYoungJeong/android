@@ -12,14 +12,11 @@ import android.text.TextUtils;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
-import com.tosslab.jandi.app.ui.settings.viewmodel.SettingFragmentViewModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 
 import java.util.Arrays;
@@ -29,14 +26,6 @@ import java.util.Arrays;
  */
 @EFragment
 public class SettingPushFragment extends PreferenceFragment {
-
-    @Bean
-    SettingFragmentViewModel settingFragmentViewModel;
-
-    @AfterViews
-    void init() {
-        settingFragmentViewModel.initProgress(getActivity());
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
