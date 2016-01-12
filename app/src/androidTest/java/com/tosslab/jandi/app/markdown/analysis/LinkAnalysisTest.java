@@ -26,6 +26,10 @@ public class LinkAnalysisTest {
     private static final String[] TEST_MARKDOWNS_2 = {
             "[aehe1](aaaa1) [aehe2](aaaa2)"
     };
+
+    private static final String[] TEST_MARKDOWNS_3 = {
+            "[aehe1](a\naaa1) [a\nehe2](aaaa2)"
+    };
     private RuleAnalysis analysis;
 
     @Before
@@ -62,6 +66,22 @@ public class LinkAnalysisTest {
             }
 
             assertThat("Text : " + testMarkdown, find, is(true));
+        }
+
+        {
+            for (String testMarkdown : TEST_MARKDOWNS_3) {
+                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(testMarkdown);
+                analysis.analysis(JandiApplication.getContext(), spannableStringBuilder);
+
+                int length = spannableStringBuilder.length();
+                boolean find = false;
+                JandiURLSpan[] spans = spannableStringBuilder.getSpans(0, length, JandiURLSpan.class);
+                if (spans.length > 0) {
+                    find = true;
+                }
+
+                assertThat("Text : " + testMarkdown, find, is(false));
+            }
         }
     }
 }

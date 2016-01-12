@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.markdown.MarkdownLookUp;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.UnreadCountUtil;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.util.IntegrationBotUtil;
@@ -94,11 +95,15 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
-        SpannableStringBuilder messageStringBuilder = MarkdownLookUp
-                .text(textMessage.content.body)
-                .lookUp(tvMessage.getContext());
 
         Context context = tvMessage.getContext();
+
+        SpannableStringBuilder messageStringBuilder = MarkdownLookUp
+                .text(textMessage.content.body)
+                .lookUp(context);
+
+        MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvMessage, messageStringBuilder, false);
+        markdownViewModel.execute();
 
         LinkifyUtil.addLinks(context, messageStringBuilder);
         LinkifyUtil.setOnLinkClick(tvMessage);
