@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.topic.views.create;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.view.View;
 
 import com.tosslab.jandi.app.R;
 
@@ -71,28 +70,6 @@ public class TopicCreateActivityTest {
 
     }
 
-    @Test
-    public void testOnPublicTypeClick() throws Throwable {
-        rule.runOnUiThread(() -> activity.onPublicTypeClick());
-
-        assertThat(activity.publicCheckView.getVisibility(), is(equalTo(View.VISIBLE)));
-        assertThat(activity.privateCheckView.getVisibility(), is(equalTo(View.GONE)));
-
-        assertThat(activity.publicCheckView.isSelected(), is(true));
-        assertThat(activity.privateCheckView.isSelected(), is(false));
-    }
-
-    @Test
-    public void testOnPrivateTypeClick() throws Throwable {
-        rule.runOnUiThread(() -> activity.onPrivateTypeClick());
-
-        assertThat(activity.privateCheckView.getVisibility(), is(equalTo(View.VISIBLE)));
-        assertThat(activity.publicCheckView.getVisibility(), is(equalTo(View.GONE)));
-
-        assertThat(activity.privateCheckView.isSelected(), is(true));
-        assertThat(activity.publicCheckView.isSelected(), is(false));
-
-    }
 
     @Test
     public void testOnAutojoinClick() throws Throwable {
@@ -103,7 +80,7 @@ public class TopicCreateActivityTest {
             boolean checked = activity.switchAutojoin.isChecked();
 
             // When
-            rule.runOnUiThread(() -> activity.onPublicTypeClick());
+            rule.runOnUiThread(() -> activity.setTopicType(true));
             rule.runOnUiThread(() -> activity.onAutojoinClick());
 
             // Then
@@ -113,10 +90,11 @@ public class TopicCreateActivityTest {
         {
             // Given
             activity.lastAutoJoin = false;
+            activity.isPublicTopic = false;
             rule.runOnUiThread(() -> activity.switchAutojoin.setChecked(false));
             boolean checked = activity.switchAutojoin.isChecked();
             // When
-            rule.runOnUiThread(() -> activity.onPrivateTypeClick());
+            rule.runOnUiThread(() -> activity.setTopicType(false));
             rule.runOnUiThread(() -> activity.onAutojoinClick());
 
             // Then
@@ -128,12 +106,13 @@ public class TopicCreateActivityTest {
         {
             // Given
             activity.lastAutoJoin = false;
+            activity.isPublicTopic = true;
             rule.runOnUiThread(() -> activity.switchAutojoin.setChecked(false));
-            rule.runOnUiThread(() -> activity.onPublicTypeClick());
+            rule.runOnUiThread(() -> activity.setTopicType(true));
 
             // When
             rule.runOnUiThread(() -> activity.onAutojoinClick());
-            rule.runOnUiThread(() -> activity.onPrivateTypeClick());
+            rule.runOnUiThread(() -> activity.setTopicType(false));
 
             // Then
             assertThat(activity.switchAutojoin.isChecked(), is(false));

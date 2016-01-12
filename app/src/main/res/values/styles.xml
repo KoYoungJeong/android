@@ -293,28 +293,22 @@
 
     <style name="JandiTopic" />
 
-    <style name="JandiTopic.Create.TextView.Type" parent="JandiTopic">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_weight">1</item>
-    </style>
-
     <style name="JandiTopic.Create.TextView.Title" parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">25dp</item>
-        <item name="android:layout_marginRight">25dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
         <item name="android:textSize">16dp</item>
-        <item name="android:textColor">@color/jandi_text</item>
+        <item name="android:textColor">@color/text_color_setting_check_title</item>
     </style>
 
     <style name="JandiTopic.Create.TextView.Input" parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:minHeight">45dp</item>
         <item name="android:textColorHint">@color/jandi_text_hint</item>
-        <item name="android:layout_marginRight">25dp</item>
-        <item name="android:textSize">14dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:textSize">@dimen/jandi_text_size_medium</item>
         <item name="android:textColor">@color/jandi_text</item>
         <item name="android:background">@drawable/bg_topic_create_input</item>
     </style>
@@ -322,9 +316,9 @@
     <style name="JandiTopic.Create.TextView.TextCount" parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginRight">25dp</item>
-        <item name="android:layout_marginLeft">25dp</item>
-        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginTop">8dp</item>
         <item name="android:gravity">right</item>
         <item name="android:textSize">@dimen/jandi_text_size_small</item>
         <item name="android:textColor">@color/jandi_message_search_item_topic_txt_color_sub</item>
@@ -423,10 +417,10 @@
     <style name="JandiTopicDetail" />
 
     <style name="JandiTopicDetail.Layout">
-        <item name="android:layout_marginLeft">8dp</item>
-        <item name="android:layout_marginRight">8dp</item>
-        <item name="android:paddingLeft">17dp</item>
-        <item name="android:paddingRight">17dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingRight">16dp</item>
     </style>
 
     <style name="JandiMainShare" />
