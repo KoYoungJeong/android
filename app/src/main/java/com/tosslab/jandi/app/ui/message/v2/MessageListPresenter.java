@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -21,15 +22,14 @@ import android.widget.TextView;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
 import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
@@ -49,7 +49,9 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.app.utils.transform.TransformConfig;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -467,17 +469,26 @@ public class MessageListPresenter {
             return;
         }
 
-        FormattedEntity entityById = EntityManager.getInstance().getEntityById(item.message.writerId);
-        tvPreviewUserName.setText(entityById.getName());
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(item.message.writerId);
+        tvPreviewUserName.setText(entity.getName());
 
-        ResLeftSideMenu.User user = entityById.getUser();
-        boolean hasSmallThumbnailUrl =
-                user.u_photoThumbnailUrl != null && !(TextUtils.isEmpty(user.u_photoThumbnailUrl.smallThumbnailUrl));
-        String url = hasSmallThumbnailUrl
-                ? user.u_photoThumbnailUrl.smallThumbnailUrl : user.u_photoUrl;
+        String url = ImageUtil.getImageFileUrl(entity.getUserSmallProfileUrl());
+        Uri uri = Uri.parse(url);
+        if (!EntityManager.getInstance().isBot(entity.getId())) {
+            ImageUtil.loadProfileImage(ivPreviewProfile, uri, R.drawable.profile_img);
+        } else {
+            RoundingParams circleRoundingParams = ImageUtil.getCircleRoundingParams(
+                    TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
 
-        Uri uri = Uri.parse(JandiConstantsForFlavors.SERVICE_ROOT_URL + url);
-        ImageUtil.loadProfileImage(ivPreviewProfile, uri, R.drawable.profile_img);
+            ImageLoader.newBuilder()
+                    .placeHolder(R.drawable.profile_img, ScalingUtils.ScaleType.FIT_CENTER)
+                    .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
+                    .backgroundColor(Color.WHITE)
+                    .roundingParams(circleRoundingParams)
+                    .load(uri)
+                    .into(ivPreviewProfile);
+
+        }
 
         if (item.message instanceof ResMessages.FileMessage) {
             tvPreviewContent.setText(((ResMessages.FileMessage) item.message).content.title);
