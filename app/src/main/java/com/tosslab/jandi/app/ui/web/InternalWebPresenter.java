@@ -52,11 +52,11 @@ public class InternalWebPresenter {
     private String url;
     private ProgressWheel progressWheel;
 
-    private Activity webActivity;
+    private InternalWebActivity webActivity;
 
     public void initObject(Activity activity) {
         progressWheel = new ProgressWheel(activity);
-        webActivity = activity;
+        webActivity = (InternalWebActivity) activity;
     }
 
     @AfterViews
@@ -74,23 +74,13 @@ public class InternalWebPresenter {
                 @Override
                 public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                     super.onReceivedError(view, errorCode, description, failingUrl);
-                    PageNotFoundActivity_.intent(webActivity)
-                            .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            .url(url)
-                            .start();
-                    webActivity.finish();
-                    webActivity.overridePendingTransition(0, 0);
+                    webActivity.goPageNotFound();
                 }
 
                 @Override
                 public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
                     super.onReceivedHttpError(view, request, errorResponse);
-                    PageNotFoundActivity_.intent(webActivity)
-                            .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            .url(url)
-                            .start();
-                    webActivity.finish();
-                    webActivity.overridePendingTransition(0, 0);
+                    webActivity.goPageNotFound();
                 }
             });
         }
