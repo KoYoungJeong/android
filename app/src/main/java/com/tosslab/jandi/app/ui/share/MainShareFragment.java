@@ -25,15 +25,14 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
+import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.share.model.ScrollViewHelper;
 import com.tosslab.jandi.app.ui.share.presenter.SharePresenter;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
-import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
@@ -146,6 +145,8 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
         }
 
         setOnScrollMode();
+
+        sharePresenter.initView();
     }
 
     private void setOnScrollMode() {
@@ -274,11 +275,11 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     @Override
     public void moveEntity(int teamId, int entityId, int entityType) {
 
-        MainTabActivity_.intent(MainShareFragment.this)
+        MainTabActivity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
 
-        MessageListV2Activity_.intent(MainShareFragment.this)
+        MessageListV2Activity_.intent(getActivity())
                 .teamId(teamId)
                 .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : -1)
                 .entityId(entityId)
@@ -390,6 +391,16 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
         if (uploadProgress != null && uploadProgress.isShowing()) {
             uploadProgress.dismiss();
         }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void moveIntro() {
+        IntroActivity_.intent(getActivity())
+                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                .start();
+
+        finishOnUiThread();
     }
 
 
