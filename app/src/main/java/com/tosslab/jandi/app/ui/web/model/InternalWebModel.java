@@ -74,4 +74,5 @@ public class InternalWebModel {
         messageManipulator.initEntity(entityType, entityId);
         messageManipulator.sendMessage(text, null);
     }
+
 }

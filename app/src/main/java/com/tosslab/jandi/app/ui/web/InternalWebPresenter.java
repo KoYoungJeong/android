@@ -43,10 +43,13 @@ import de.greenrobot.event.EventBus;
 public class InternalWebPresenter {
 
     public static final String SUPPORT_URL = "http://support.jandi.com";
+
     @ViewById(R.id.web_internal_web)
     WebView webView;
+
     @ViewById(R.id.loading_internal_web)
     WebLoadingBar webLoadingBar;
+
     private WebViewClient webViewClient;
     private WebChromeClient webCromeClient;
     private String url;
@@ -186,7 +189,6 @@ public class InternalWebPresenter {
                     }
                 })
                 .create().show();
-
     }
 
     public String getCurrentTitle() {
@@ -205,7 +207,6 @@ public class InternalWebPresenter {
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
-
         if (progressWheel != null && !progressWheel.isShowing()) {
             progressWheel.show();
         }
@@ -222,7 +223,6 @@ public class InternalWebPresenter {
     }
 
     public void moveOtherBrowser(Context context, String currentUrl) {
-
         String url;
 
         if (!currentUrl.startsWith("http://") && !currentUrl.startsWith("https://")) {
@@ -235,8 +235,8 @@ public class InternalWebPresenter {
         try {
             context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
         }
-
     }
 
     public void sendOtherApp(Context context, String currentTitle, String currentUrl) {
@@ -248,6 +248,7 @@ public class InternalWebPresenter {
         try {
             context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
@@ -263,4 +264,5 @@ public class InternalWebPresenter {
         cookieManager.removeAllCookie();
         cookieSyncManager.sync();
     }
+
 }

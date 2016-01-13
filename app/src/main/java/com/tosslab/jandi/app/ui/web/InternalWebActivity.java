@@ -143,7 +143,6 @@ public class InternalWebActivity extends BaseAppCompatActivity {
             }
         });
 
-
         String urlLowerCase = url.toLowerCase();
         if (!urlLowerCase.startsWith("http")) {
             url = "http://" + url;
@@ -290,4 +289,5 @@ public class InternalWebActivity extends BaseAppCompatActivity {
         finish();
         overridePendingTransition(0, 0);
     }
+
 }
