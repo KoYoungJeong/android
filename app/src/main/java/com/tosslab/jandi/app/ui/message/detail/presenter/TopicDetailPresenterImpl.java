@@ -151,8 +151,14 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
     @Override
     public void onTopicLeave(Context context, int entityId) {
-        leaveViewModel.initData(context, entityId);
-        leaveViewModel.leave();
+        if (topicDetailModel.isOwner(entityId)
+                && !(topicDetailModel.isStandAlone(entityId))) {
+            String topicName = topicDetailModel.getTopicName(entityId);
+            view.showNeedToAssignTopicOwnerDialog(topicName);
+        } else {
+            leaveViewModel.initData(context, entityId);
+            leaveViewModel.leave();
+        }
     }
 
     @Override

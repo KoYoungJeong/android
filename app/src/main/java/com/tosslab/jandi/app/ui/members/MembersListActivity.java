@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -406,9 +407,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         if (owner) {
             topicMembersAdapter.setOnKickClickListener((adapter, viewHolder, position) -> {
                 ChatChooseItem item = ((MembersAdapter) adapter).getItem(position);
-
-                showKickFromTopicDialog(item);
-
+                membersListPresenter.onKickMemberClick(entityId, item);
             });
         }
 
@@ -417,15 +416,17 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     }
 
-    void showKickFromTopicDialog(ChatChooseItem item) {
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showKickDialog(String userName, String userProfileUrl, int memberId) {
         KickDialogFragment dialogFragment = KickDialogFragment_.builder()
-                .profileUrl(item.getPhotoUrl())
-                .userName(item.getName())
+                .profileUrl(userProfileUrl)
+                .userName(userName)
                 .build();
 
         dialogFragment.setOnKickConfirmClickListener((dialog, which) -> {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Participants, AnalyticsValue.Action.KickMember);
-            membersListPresenter.onKickUser(entityId, item.getEntityId());
+            membersListPresenter.onKickUser(entityId, memberId);
         });
 
         dialogFragment.show(getSupportFragmentManager(), "dialog");
@@ -465,6 +466,17 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @Override
     public void showAlreadyTopicOwnerToast() {
         ColoredToast.showError(MembersListActivity.this, getString(R.string.jandi_alert_already_topic_owenr));
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showNeedToAssignTopicOwnerDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MembersListActivity.this,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
+        builder.setTitle(R.string.jandi_topic_owner_title);
+        builder.setMessage(R.string.jandi_guide_to_assign_topic_owner);
+        builder.setPositiveButton(R.string.jandi_confirm, null);
+        builder.create().show();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

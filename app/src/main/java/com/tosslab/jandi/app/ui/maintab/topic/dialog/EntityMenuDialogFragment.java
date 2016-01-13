@@ -206,14 +206,11 @@ public class EntityMenuDialogFragment extends DialogFragment {
         boolean isTopicOwner = entityMenuDialogModel.isTopicOwner(entityId);
         boolean isBot = entityMenuDialogModel.isBot(entityId);
 
-        if (isTopicOwner && !entity.isUser() && !isBot) {
-            if (entity.getMemberCount() <= 1) {
-                String errorMessage =
-                        getActivity().getResources().getString(R.string.jandi_topic_inside_alone);
-                showErrorToast(errorMessage);
-            } else {
-                onAssignToTopicOwner(entity.getName());
-            }
+        if (isTopicOwner
+                && entity.getMemberCount() > 1
+                && !entity.isUser()
+                && !isBot) {
+            onAssignToTopicOwner(entity.getName());
         } else {
             onLeaveEntity(entity.getName(), isPublicTopic, entity.isUser(), isBot);
         }
@@ -234,15 +231,8 @@ public class EntityMenuDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(topicName);
-        builder.setMessage(R.string.jandi_ask_to_leave_if_topic_owner);
-        builder.setPositiveButton(R.string.jandi_assign, (dialog, which) -> {
-            MembersListActivity_.intent(this)
-                    .entityId(entityId)
-                    .type(MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER)
-                    .start();
-            dismiss();
-        });
-        builder.setNegativeButton(R.string.jandi_cancel, null);
+        builder.setMessage(R.string.jandi_need_to_assign_topic_owner);
+        builder.setPositiveButton(R.string.jandi_confirm, null);
         builder.create().show();
     }
 

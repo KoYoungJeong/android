@@ -232,16 +232,22 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         view.setKickMode((topicOwner || teamOwner) && !isDefaultTopic);
     }
 
+    @Override
+    public void onKickMemberClick(int topicId, ChatChooseItem item) {
+        boolean isTopicOwner = memberModel.isTopicOwner(topicId, item.getEntityId());
+        if (isTopicOwner) {
+            view.showNeedToAssignTopicOwnerDialog();
+            return;
+        }
+
+        view.showKickDialog(item.getName(), item.getPhotoUrl(), item.getEntityId());
+    }
+
     @Background
     @Override
     public void onKickUser(int topicId, int userEntityId) {
         if (!NetworkCheckUtil.isConnected()) {
             view.showKickFailToast();
-            return;
-        }
-
-        if (memberModel.isTopicOwner(topicId, userEntityId)) {
-            view.showAlreadyTopicOwnerToast();
             return;
         }
 

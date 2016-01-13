@@ -153,7 +153,7 @@
 	<string name="jandi_confirm">"OK"</string>
 	<string name="jandi_confirm_new_passcode">"Confirm new passcode"</string>
 	<string name="jandi_confirm_passcode">"Confirm Passcode"</string>
-	<string name="jandi_copy_link">"Copy link"</string>
+	<string name="jandi_copy_link">"Copy Link"</string>
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"Create"</string>
 	<string name="jandi_create_channel">"Create New Topic"</string>
@@ -231,6 +231,7 @@
 	<string name="jandi_go_to_latest">"Go to the most recent messages"</string>
 	<string name="jandi_go_to_setting">"Go to Settings"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
+	<string name="jandi_guide_to_assign_topic_owner">"Please transfer topic adminin permission in Topic Info before you force quit this member."</string>
 	<string name="jandi_has_joined">"%s has joined"</string>
 	<string name="jandi_have_an_account_already">"Already have an account?"</string>
 	<string name="jandi_help">"Help"</string>
@@ -310,6 +311,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_msg_network_offline_warn">"It seems you are not connected to the Internet."</string>
 	<string name="jandi_my_files">"<b>My Files</b>"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
+	<string name="jandi_need_to_assign_topic_owner">"You are this topic's admin. Please transfer topic adminin permission in Topic Info before you leave."</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
 	<string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>
 	<string name="jandi_no_long_team_member">"%s is no longer a team member."</string>
@@ -474,6 +476,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_topic_no_member_2">"Tap the button below to invite other members to the conversation."</string>
 	<string name="jandi_topic_notification">"Notifications"</string>
 	<string name="jandi_topic_owner">"Topic admin"</string>
+	<string name="jandi_topic_owner_title">"This member is Topic admin"</string>
 	<string name="jandi_topic_paricipants">"Participants"</string>
 	<string name="jandi_topic_private">"Private"</string>
 	<string name="jandi_topic_public">"Public"</string>

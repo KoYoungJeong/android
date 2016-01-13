@@ -60,6 +60,8 @@ public interface TopicDetailPresenter {
 
         void showTopicNameChangeDialog(int entityId, String entityName, int entityType);
 
+        void showNeedToAssignTopicOwnerDialog(String topicName);
+
         void moveTopicDescriptionEdit();
 
         void setLeaveVisible(boolean owner, boolean defaultTopic);

@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
@@ -411,6 +412,17 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         newFragment.show(getActivity().getFragmentManager(), "dialog");
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TopicName);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showNeedToAssignTopicOwnerDialog(String topicName) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
+        builder.setTitle(topicName);
+        builder.setMessage(R.string.jandi_need_to_assign_topic_owner);
+        builder.setPositiveButton(R.string.jandi_confirm, null);
+        builder.create().show();
     }
 
     @OnActivityResult(TopicDescriptionEditActivity.REQUEST_EDIT)

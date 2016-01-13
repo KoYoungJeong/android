@@ -26,6 +26,8 @@ public interface MembersListPresenter {
 
     void initKickableMode(int entityId);
 
+    void onKickMemberClick(int topicId, final ChatChooseItem item);
+
     void onKickUser(int topicId, int userEntityId);
 
     void onMemberClickForAssignOwner(int topicId, final ChatChooseItem item);
@@ -57,11 +59,15 @@ public interface MembersListPresenter {
 
         void refreshMemberList();
 
+        void showKickDialog(String userName, String userProfileUrl, int memberId);
+
         void showKickSuccessToast();
 
         void showKickFailToast();
 
         void showAlreadyTopicOwnerToast();
+
+        void showNeedToAssignTopicOwnerDialog();
 
         void showConfirmAssignTopicOwnerDialog(String userName, String userProfileUrl, int memberId);
 
