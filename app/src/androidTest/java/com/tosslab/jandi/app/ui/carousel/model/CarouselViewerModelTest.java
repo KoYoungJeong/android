@@ -71,11 +71,6 @@ public class CarouselViewerModelTest {
         }
 
         {
-            List<ResMessages.FileMessage> fileMessages = model.searchInitFileList(teamId, roomId, lastImageMessageId - 1);
-            assertThat(fileMessages.size(), is(greaterThan(0)));
-        }
-
-        {
             try {
                 model.searchInitFileList(teamId, roomId, -1);
                 fail("성공할리가..");
@@ -137,10 +132,6 @@ public class CarouselViewerModelTest {
             assertThat(fileMessages.size(), is(equalTo(0)));
         }
 
-        {
-            List<ResMessages.FileMessage> fileMessages = model.searchAfterFileList(teamId, roomId, lastImageMessageId - 1, 10);
-            assertThat(fileMessages.size(), is(equalTo(1)));
-        }
         {
             try {
                 model.searchAfterFileList(teamId, roomId, -1, 1);

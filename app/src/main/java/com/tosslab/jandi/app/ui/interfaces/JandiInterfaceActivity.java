@@ -28,10 +28,17 @@ public class JandiInterfaceActivity extends BaseAppCompatActivity {
     @AfterInject
     void initView() {
         // renew parse push infomation before getting access
+        boolean used = (getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
+
         ParseUpdateUtil.deleteChannelOnServer();
 
         Intent intent = getIntent();
-        Uri data = intent.getData();
+        Uri data;
+        if (!used) {
+            data = intent.getData();
+        } else {
+            data = Uri.parse("http://");
+        }
 
         Action action = ActionFactory.getAction(JandiInterfaceActivity.this, data);
         action.execute(data);

@@ -91,7 +91,11 @@ public class ExpandableTopicAdapter
     }
 
     public TopicItemData getTopicItemData(int groupPosition, int childPosition) {
-        return (TopicItemData) provider.getChildItem(groupPosition, childPosition);
+        if (groupPosition < provider.getGroupCount() && childPosition < provider.getChildCount(groupPosition)) {
+            return (TopicItemData) provider.getChildItem(groupPosition, childPosition);
+        } else {
+            return null;
+        }
     }
 
     public List<TopicItemData> getAllTopicItemData() {
@@ -99,8 +103,12 @@ public class ExpandableTopicAdapter
         List<TopicItemData> topicItemDatas = new ArrayList<>();
 
         for (int i = 0; i < getGroupCount(); i++) {
-            for (int j = 0; j < getChildCount(i); j++)
-                topicItemDatas.add(getTopicItemData(i, j));
+            for (int j = 0; j < getChildCount(i); j++) {
+                TopicItemData topicItemData = getTopicItemData(i, j);
+                if (topicItemData != null) {
+                    topicItemDatas.add(topicItemData);
+                }
+            }
         }
 
         // 마지막에 들어가 있는 더미 아이템을 빼주기 위해서
@@ -365,7 +373,9 @@ public class ExpandableTopicAdapter
             int badgeCount = 0;
             for (int childIdx = 0; childIdx < childCount; childIdx++) {
                 TopicItemData topicItemData = getTopicItemData(groupIdx, childIdx);
-                badgeCount += topicItemData.getUnreadCount();
+                if (topicItemData != null) {
+                    badgeCount += topicItemData.getUnreadCount();
+                }
             }
             getTopicFolderData(groupIdx).setChildBadgeCnt(badgeCount);
         }
@@ -394,7 +404,8 @@ public class ExpandableTopicAdapter
         for (int groupIdx = 0; groupIdx < groupCount; groupIdx++) {
             int childCount = getChildCount(groupIdx);
             for (int childIdx = 0; childIdx < childCount; childIdx++) {
-                if (getTopicItemData(groupIdx, childIdx).getEntityId() == entityId) {
+                TopicItemData topicItemData = getTopicItemData(groupIdx, childIdx);
+                if (topicItemData != null && topicItemData.getEntityId() == entityId) {
                     return getTopicFolderData(groupIdx).getFolderId();
                 }
             }
