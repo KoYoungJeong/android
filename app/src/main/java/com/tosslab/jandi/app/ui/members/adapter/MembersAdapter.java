@@ -34,21 +34,22 @@ import de.greenrobot.event.EventBus;
 public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int OWNER_TYPE_TEAM = 0;
     public static final int OWNER_TYPE_TOPIC = 1;
-
     private Context context;
-
     private List<ChatChooseItem> memberChooseItems;
-
     private boolean isCheckMode = false;
     private boolean kickMode;
     private int ownerType = OWNER_TYPE_TEAM;
-
     private OnKickClickListener onKickClickListener;
+    private OnMemberClickListener onMemberClickListener;
 
     public MembersAdapter(Context context, int ownerType) {
         this.context = context;
         this.ownerType = ownerType;
         memberChooseItems = new ArrayList<>();
+    }
+
+    public void setOnMemberClickListener(OnMemberClickListener onMemberClickListener) {
+        this.onMemberClickListener = onMemberClickListener;
     }
 
     public int getCount() {
@@ -73,7 +74,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ChatChooseItem item = getItem(position);
+        final ChatChooseItem item = getItem(position);
         if (isCheckMode) {
             ((MemberChoiceViewHolder) holder).bindView(item);
         } else {
@@ -83,6 +84,10 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     onKickClickListener.onKickClick(MembersAdapter.this, holder, position);
                 }
             });
+        }
+
+        if (onMemberClickListener != null) {
+            holder.itemView.setOnClickListener((v) -> onMemberClickListener.onMemberClick(item));
         }
     }
 
@@ -128,6 +133,10 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void remove(int position) {
         memberChooseItems.remove(position);
+    }
+
+    public interface OnMemberClickListener {
+        void onMemberClick(ChatChooseItem item);
     }
 
     public interface OnKickClickListener {

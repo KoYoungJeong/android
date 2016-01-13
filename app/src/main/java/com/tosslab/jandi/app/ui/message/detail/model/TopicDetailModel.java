@@ -250,6 +250,10 @@ public class TopicDetailModel {
         return EntityManager.getInstance().getEntityById(entityId).isAutoJoin();
     }
 
+    public boolean isStandAlone(int entityId) {
+        return EntityManager.getInstance().getEntityById(entityId).getMemberCount() <= 1;
+    }
+
     public void updateAutoJoin(int entityId, boolean autoJoin) {
         int teamId = EntityManager.getInstance().getTeamId();
         entityClientManager.modifyChannelAutoJoin(teamId, entityId, autoJoin);

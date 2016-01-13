@@ -76,6 +76,7 @@
 	<string name="jandi_action_update">"更新"</string>
 	<string name="jandi_add">"增加"</string>
 	<string name="jandi_add_an_email_address">"增加一個電子郵件地址"</string>
+	<string name="jandi_alert_already_topic_owenr">"你已是此議題的管理員"</string>
 	<string name="jandi_all_of_topic_members">"@All (議題成員)"</string>
 	<string name="jandi_already_in_team">"此電子郵箱已為 %s 的成員"</string>
 	<string name="jandi_already_linked_email">"這電子郵件已經連結到您的帳號"</string>
@@ -87,7 +88,17 @@
 	<string name="jandi_announcement_deleted">"%s 刪除公告"</string>
 	<string name="jandi_announcement_minimize">"最小化"</string>
 	<string name="jandi_are_you_sure_disable_external_link">"若移除共享連結，存取至該檔案的權限將被撤銷。你確定要移除共享連結？"</string>
+	<string name="jandi_ask_assign_topic_owner">"你確定將議題管理權限轉移至此成員？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你確定將此成員剔除議題？"</string>
+	<string name="jandi_ask_to_leave_if_private_topic_owner">"欲離開此議題，請先將議題管理權限轉移至其他成員"</string>
+	<string name="jandi_ask_to_leave_if_topic_owner">"你可於離開議題前轉移管理權限"</string>
+	<string name="jandi_assign">"轉移"</string>
+	<string name="jandi_assign_topic_owner">"轉移議題管理權限"</string>
+	<string name="jandi_assign_topic_owner_desc">"議題管理員權限為下：
+- 更改議題名稱和資訊
+- 刪除議題
+- 剔除議題成員
+- 暫停/刪除JANDI Connect整合項目"</string>
 	<string name="jandi_auto_join_cannot_be_default_topic">"你無法取消預設議題內的自動邀請"</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"自動邀請的功能僅開放於公開議題中使用"</string>
 	<string name="jandi_auto_join_explain">"邀請所有新成員至此議題"</string>
@@ -105,6 +116,7 @@
 	<string name="jandi_cannot_find_search_result_2">"直接上傳及分享檔案到任何對話當中"</string>
 	<string name="jandi_cannot_find_search_result_old">"找不到符合條件的內容"</string>
 	<string name="jandi_change_passcode">"更改密碼"</string>
+	<string name="jandi_character">"人物"</string>
 	<string name="jandi_chat_detail">"聊天設定"</string>
 	<string name="jandi_choose_app_store">"選擇應用程式商鋪"</string>
 	<string name="jandi_choose_email">"選擇一個電子郵件"</string>
@@ -137,6 +149,7 @@
 	<string name="jandi_coach_mark_topic_setting">"其他議題設定\n(邀請、離開\n、重新命名)"</string>
 	<string name="jandi_coach_mark_upload_file">"上傳檔案"</string>
 	<string name="jandi_commented_on">"<![CDATA[<font color="#999999">留言於</font><font color="#000000"><b>%s</b></font><font color="#999999">的檔案</font"]]>"</string>
+	<string name="jandi_complete_assign_topic_owner">"議題管理權限已成功轉移"</string>
 	<string name="jandi_confirm">"確定"</string>
 	<string name="jandi_confirm_new_passcode">"確認新密碼"</string>
 	<string name="jandi_confirm_passcode">"確認密碼"</string>
@@ -168,6 +181,7 @@
 	<string name="jandi_entity_unjoined_topic">"其他議題"</string>
 	<string name="jandi_err_unexpected">"出現不正常錯誤"</string>
 	<string name="jandi_error_web_token">"登入時遇到問題，請再試一次。"</string>
+	<string name="jandi_exceeded_max_text_length">"可填入最多5000字"</string>
 	<string name="jandi_expired_invitation_link">"此邀請連結已過期，請聯絡你的邀請人重新寄發新連結。"</string>
 	<string name="jandi_explain_global_push_off">"JANDI推播通知已被停用。欲重新接收推播，點擊「更多」後進入「設定」開啟推播。"</string>
 	<string name="jandi_explain_topic_description">"說明 (選項)"</string>
@@ -290,6 +304,7 @@
 	<string name="jandi_messages_release">"放掉以載入較舊的訊息"</string>
 	<string name="jandi_modify_channel">"重新命名議題"</string>
 	<string name="jandi_modify_private_group">"重新命名私人議題"</string>
+	<string name="jandi_modify_profile_image">"簡介照片"</string>
 	<string name="jandi_move_entity_after_share">"檔案已成功被分享。您想要現在跳轉到那對話中嗎？"</string>
 	<string name="jandi_msg_network_offline">"連線中斷。"</string>
 	<string name="jandi_msg_network_offline_warn">"目前為無網路狀態JANDI會於連上網路後，"</string>
@@ -311,6 +326,7 @@
 	<string name="jandi_off">"關閉"</string>
 	<string name="jandi_on">"打開"</string>
 	<string name="jandi_open_browser">"開啓一個瀏覽器"</string>
+	<string name="jandi_page_not_found">"您找的頁面不存在"</string>
 	<string name="jandi_password_strength_average">"普通"</string>
 	<string name="jandi_password_strength_safe">"強"</string>
 	<string name="jandi_password_strength_strong">"非常強"</string>
@@ -327,6 +343,7 @@
 	<string name="jandi_private_topic_tip_3">"已設定爲公開或私人的議題在建立之後不能被轉換成另一個"</string>
 	<string name="jandi_profile_actionb">"簡介"</string>
 	<string name="jandi_profile_additional_info">"其它資料"</string>
+	<string name="jandi_profile_background_color">"顏色"</string>
 	<string name="jandi_profile_basic_info">"基本資料"</string>
 	<string name="jandi_profile_division">"部門"</string>
 	<string name="jandi_profile_division_hint">"部門"</string>
@@ -347,6 +364,7 @@
 	<string name="jandi_push_preview_public_only">"僅限公開議題"</string>
 	<string name="jandi_question_team_create">"您的團隊還未使用JANDI嗎？"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"你確認要刪除這個電子郵件地址？"</string>
+	<string name="jandi_retry">"請再試一次"</string>
 	<string name="jandi_retry_voice_search">"沒有接收清楚您剛才説的，麻煩再說一次"</string>
 	<string name="jandi_save">"儲存"</string>
 	<string name="jandi_screen_auto">"自動調整"</string>
@@ -358,6 +376,7 @@
 	<string name="jandi_sdcard_storage_unmounted">"解除連接記憶卡"</string>
 	<string name="jandi_search_ing">"<![CDATA[搜尋 <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>與 <b><font color=#404040>%2$d</font></b>符合]]>"</string>
+	<string name="jandi_select_character">"選擇人物"</string>
 	<string name="jandi_select_direct_messages">"選擇私訊"</string>
 	<string name="jandi_select_gallery">"選擇照片"</string>
 	<string name="jandi_select_maximum_10">"一次可上傳10張照片"</string>
@@ -448,6 +467,7 @@
 	<string name="jandi_topic_delete">"刪除議題"</string>
 	<string name="jandi_topic_description">"議題內容"</string>
 	<string name="jandi_topic_detail">"議題資訊"</string>
+	<string name="jandi_topic_inside_alone">"此為一人議題，你無法轉移權限"</string>
 	<string name="jandi_topic_invitation">"邀請"</string>
 	<string name="jandi_topic_leave">"離開議題"</string>
 	<string name="jandi_topic_no_member_1">"此議題目前只有你一人"</string>

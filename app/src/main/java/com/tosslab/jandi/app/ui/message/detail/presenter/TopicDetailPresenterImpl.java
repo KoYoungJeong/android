@@ -79,6 +79,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         view.setTopicAutoJoin(autoJoin, owner, defaultTopic, privateTopic);
         view.setTopicPushSwitch(isTopicPushSubscribe);
         view.setLeaveVisible(owner, defaultTopic);
+        view.setAssignTopicOwnerVisible(owner);
     }
 
     @Override
@@ -134,6 +135,17 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             } else {
                 topicDetailModel.trackTopicStarFail(errorCode);
             }
+        }
+    }
+
+    @Override
+    public void onAssignTopicOwner(int entityId) {
+        if(topicDetailModel.isStandAlone(entityId)) {
+            String message = JandiApplication.getContext()
+                    .getResources().getString(R.string.jandi_topic_inside_alone);
+            view.showFailToast(message);
+        } else {
+            view.moveToAssignTopicOwner();
         }
     }
 

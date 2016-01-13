@@ -286,6 +286,30 @@
                 android:background="@color/account_home_divide_line" />
 
             <LinearLayout
+                android:id="@+id/vg_topic_detail_assign_topic_owner"
+                style="@style/JandiTopicDetail.Layout"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/jandi_assign_topic_owner"
+                    android:textColor="@color/jandi_text"
+                    android:textSize="@dimen/jandi_text_size_large" />
+
+            </LinearLayout>
+
+            <View
+                style="@style/JandiTopicDetail.Layout"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line" />
+
+            <LinearLayout
                 android:id="@+id/vg_topic_detail_leave"
                 style="@style/JandiTopicDetail.Layout"
                 android:layout_width="match_parent"

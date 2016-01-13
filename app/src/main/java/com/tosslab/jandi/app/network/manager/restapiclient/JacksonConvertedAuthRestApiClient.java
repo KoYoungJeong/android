@@ -67,6 +67,7 @@ import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqNull;
+import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
@@ -654,6 +655,11 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     @Override
     public ResCommon kickUserFromTopic(int teamId, int topicId, ReqMember member) {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().kickUserFromTopic(teamId, topicId, member);
+    }
+
+    @Override
+    public ResCommon assignToTopicOwner(int teamId, int topicId, ReqOwner owner) {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().assignToTopicOwner(teamId, topicId, owner);
     }
 
     @Override

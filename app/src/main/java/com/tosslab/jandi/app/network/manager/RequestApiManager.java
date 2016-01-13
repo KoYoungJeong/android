@@ -49,6 +49,7 @@ import com.tosslab.jandi.app.network.models.ReqModifyComment;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
+import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
@@ -693,6 +694,11 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     @Override
     public ResCommon kickUserFromTopic(int teamId, int topicId, ReqMember member) {
         return requestApiExecute(RestApiLoader.getInstance().loadKickUserFromTopic(teamId, topicId, member));
+    }
+
+    @Override
+    public ResCommon assignToTopicOwner(int teamId, int topicId, ReqOwner owner) {
+        return requestApiExecute(RestApiLoader.getInstance().loadAssignToTopicOwner(teamId, topicId, owner));
     }
 
     @Override

@@ -18,6 +18,8 @@ public interface TopicDetailPresenter {
 
     void onTopicStar(Context context, int entityId);
 
+    void onAssignTopicOwner(int entityId);
+
     void onTopicLeave(Context context, int entityId);
 
     void onTopicDelete(int entityId);
@@ -63,5 +65,9 @@ public interface TopicDetailPresenter {
         void setLeaveVisible(boolean owner, boolean defaultTopic);
 
         void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic);
+
+        void setAssignTopicOwnerVisible(boolean owner);
+
+        void moveToAssignTopicOwner();
     }
 }

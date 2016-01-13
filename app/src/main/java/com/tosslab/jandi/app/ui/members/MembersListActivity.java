@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.members;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
@@ -21,6 +22,8 @@ import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.members.adapter.MembersAdapter;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment_;
+import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog;
+import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog_;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -63,6 +66,8 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     public static final int TYPE_MEMBERS_LIST_TEAM = 1;
     public static final int TYPE_MEMBERS_LIST_TOPIC = 2;
     public static final int TYPE_MEMBERS_JOINABLE_TOPIC = 3;
+    public static final int TYPE_ASSIGN_TOPIC_OWNER = 4;
+    public static final String KEY_MEMBER_ID = "memberId";
 
     @Extra
     int entityId;
@@ -94,11 +99,14 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @AfterInject
     void initObject() {
-        int ownerType = type == TYPE_MEMBERS_LIST_TOPIC
+        int ownerType = (type == TYPE_MEMBERS_LIST_TOPIC || type == TYPE_ASSIGN_TOPIC_OWNER)
                 ? MembersAdapter.OWNER_TYPE_TOPIC : MembersAdapter.OWNER_TYPE_TEAM;
         topicMembersAdapter = new MembersAdapter(getBaseContext(), ownerType);
         if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
             topicMembersAdapter.setCheckMode();
+        } else if (type == TYPE_ASSIGN_TOPIC_OWNER) {
+            topicMembersAdapter.setOnMemberClickListener(item ->
+                    membersListPresenter.onMemberClickForAssignOwner(entityId, item));
         }
 
         membersListPresenter.setView(this);
@@ -183,7 +191,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        membersListPresenter.onDestory();
+        membersListPresenter.onDestroy();
     }
 
     private int getActionbarHeight() {
@@ -218,11 +226,10 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         menu.clear();
         getMenuInflater().inflate(R.menu.team_info_menu, menu);
 
+        MenuItem menuItem = menu.findItem(R.id.action_invitation);
         if (type == TYPE_MEMBERS_LIST_TOPIC) {
-            MenuItem menuItem = menu.findItem(R.id.action_invitation);
             menuItem.setVisible(false);
         } else if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
-            MenuItem menuItem = menu.findItem(R.id.action_invitation);
             menuItem.setIcon(R.drawable.icon_actionbar_check);
             menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
@@ -241,6 +248,8 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
                     }
                 }
             });
+        } else if (type == TYPE_ASSIGN_TOPIC_OWNER) {
+            menuItem.setVisible(false);
         }
         return true;
     }
@@ -409,7 +418,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     }
 
     void showKickFromTopicDialog(ChatChooseItem item) {
-
         KickDialogFragment dialogFragment = KickDialogFragment_.builder()
                 .profileUrl(item.getPhotoUrl())
                 .userName(item.getName())
@@ -451,6 +459,48 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @Override
     public void showKickFailToast() {
         ColoredToast.show(MembersListActivity.this, getString(R.string.jandi_err_unexpected));
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showAlreadyTopicOwnerToast() {
+        ColoredToast.showError(MembersListActivity.this, getString(R.string.jandi_alert_already_topic_owenr));
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showConfirmAssignTopicOwnerDialog(String userName, String userProfileUrl, int memberId) {
+        AssignTopicOwnerDialog assignDialog = AssignTopicOwnerDialog_.builder()
+                .profileUrl(userProfileUrl)
+                .userName(userName)
+                .build();
+        assignDialog.setConfirmListener((dialog, which) -> {
+            membersListPresenter.onAssignToTopicOwner(entityId, memberId);
+        });
+        assignDialog.show(getSupportFragmentManager(), "assign_dialog");
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showAssignTopicOwnerSuccessToast() {
+        ColoredToast.show(MembersListActivity.this, getString(R.string.jandi_complete_assign_topic_owner));
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showAssignTopicOwnerFailToast() {
+        ColoredToast.showError(MembersListActivity.this, getString(R.string.jandi_err_unexpected));
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void setResultAndFinish(int memberId) {
+        if (memberId > 0) {
+            Intent intent = new Intent();
+            intent.putExtra(KEY_MEMBER_ID, memberId);
+            setResult(Activity.RESULT_OK, intent);
+        }
+        finish();
     }
 
 }

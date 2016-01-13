@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqMember;
+import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 
 import org.androidannotations.annotations.EBean;
@@ -129,8 +130,12 @@ public class MembersModel {
         return EntityManager.getInstance().getMe().isTeamOwner();
     }
 
-    public boolean isTopicOwner(int entityId) {
+    public boolean isMyTopic(int entityId) {
         return EntityManager.getInstance().isMyTopic(entityId);
+    }
+
+    public boolean isTopicOwner(int topicId, int memberId) {
+        return EntityManager.getInstance().isTopicOwner(topicId, memberId);
     }
 
     public boolean removeMember(int topicId, int userEntityId) {
@@ -143,5 +148,9 @@ public class MembersModel {
         }
 
         return false;
+    }
+
+    public void assignToTopicOwner(int teamId, int entityId, int memberId) throws Exception {
+        RequestApiManager.getInstance().assignToTopicOwner(teamId, entityId, new ReqOwner(memberId));
     }
 }
