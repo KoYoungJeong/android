@@ -51,7 +51,7 @@ public class MembersModel {
                         .toBlocking()
                         .firstOrDefault(new ChatChooseItem().entityId(-1)))
                 .filter(chatChooseItem -> chatChooseItem.getEntityId() != -1)
-                .subscribe(chatChooseItems::add);
+                .subscribe(chatChooseItems::add, Throwable::printStackTrace);
 
         return chatChooseItems;
     }

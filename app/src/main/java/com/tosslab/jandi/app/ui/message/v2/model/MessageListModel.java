@@ -509,7 +509,7 @@ public class MessageListModel {
     public boolean isUser(int entityId) {
         return EntityManager
                 .getInstance()
-                .getEntityById(entityId).isUser();
+                .getEntityById(entityId).isUser() || EntityManager.getInstance().isJandiBot(entityId);
     }
 
     public String getReadyMessage(int roomId) {

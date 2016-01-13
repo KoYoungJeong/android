@@ -4,5 +4,5 @@ import android.content.Context;
 import android.text.SpannableStringBuilder;
 
 public interface RuleAnalysis {
-    void analysis(Context context, SpannableStringBuilder spannableStringBuilder);
+    void analysis(Context context, SpannableStringBuilder spannableStringBuilder, boolean plainText);
 }

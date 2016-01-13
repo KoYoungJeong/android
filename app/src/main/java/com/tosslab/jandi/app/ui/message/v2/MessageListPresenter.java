@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -30,7 +31,9 @@ import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.markdown.MarkdownLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
@@ -52,6 +55,7 @@ import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.transform.TransformConfig;
+import com.tosslab.jandi.app.views.spannable.JandiURLSpan;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -490,16 +494,28 @@ public class MessageListPresenter {
 
         }
 
+        String message;
         if (item.message instanceof ResMessages.FileMessage) {
-            tvPreviewContent.setText(((ResMessages.FileMessage) item.message).content.title);
+            message = ((ResMessages.FileMessage) item.message).content.title;
         } else if (item.message instanceof ResMessages.CommentMessage) {
-            tvPreviewContent.setText(((ResMessages.CommentMessage) item.message).content.body);
+            message = ((ResMessages.CommentMessage) item.message).content.body;
         } else if (item.message instanceof ResMessages.TextMessage) {
-            tvPreviewContent.setText(((ResMessages.TextMessage) item.message).content.body);
+            message = ((ResMessages.TextMessage) item.message).content.body;
         } else if (item.message instanceof ResMessages.StickerMessage || item.message instanceof
                 ResMessages.CommentStickerMessage) {
-            tvPreviewContent.setText(String.format("(%s)", activity.getString(R.string.jandi_coach_mark_stickers)));
+            message = String.format("(%s)", activity.getString(R.string.jandi_coach_mark_stickers));
+        } else {
+            message = "";
         }
+        SpannableStringBuilder builder = new SpannableStringBuilder(TextUtils.isEmpty(message) ? "" : message);
+
+        MarkdownLookUp.text(builder)
+                .plainText(true)
+                .lookUp(tvPreviewContent.getContext());
+        new MarkdownViewModel(builder, true).execute();
+
+        builder.removeSpan(JandiURLSpan.class);
+        tvPreviewContent.setText(builder);
 
         vgPreview.setVisibility(View.VISIBLE);
     }

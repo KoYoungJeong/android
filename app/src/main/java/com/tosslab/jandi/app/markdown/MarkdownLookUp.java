@@ -12,6 +12,7 @@ import rx.Observable;
 public class MarkdownLookUp {
 
     private SpannableStringBuilder stringBuilder;
+    private boolean plainText;
 
     private MarkdownLookUp(String text) {
         if (!TextUtils.isEmpty(text)) {
@@ -21,8 +22,13 @@ public class MarkdownLookUp {
         }
     }
 
-    public MarkdownLookUp(SpannableStringBuilder stringBuilder) {
+    private MarkdownLookUp(SpannableStringBuilder stringBuilder) {
         this.stringBuilder = stringBuilder;
+    }
+
+    public MarkdownLookUp plainText(boolean plainText) {
+        this.plainText = plainText;
+        return this;
     }
 
     public static MarkdownLookUp text(String text) {
@@ -39,7 +45,7 @@ public class MarkdownLookUp {
                 .subscribe(markdownRule -> {
                     try {
                         RuleAnalysis analysis = markdownRule.getAnalysisClass().newInstance();
-                        analysis.analysis(context, stringBuilder);
+                        analysis.analysis(context, stringBuilder, plainText);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
