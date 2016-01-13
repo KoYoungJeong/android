@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.services.download;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
@@ -56,7 +57,7 @@ public class DownloadController {
 
             List<DownloadInfo> downloadInfosInProgress = DownloadRepository.getInstance().getDownloadInfosInProgress();
 
-            if (!(downloadInfosInProgress.isEmpty())){
+            if (!(downloadInfosInProgress.isEmpty())) {
 
                 Observable.from(downloadInfosInProgress)
                         .map(DownloadInfo::getNotificationId)
@@ -131,6 +132,16 @@ public class DownloadController {
 
             Intent openFileViewerIntent = getFileViewerIntent(file, downloadFileInfo.getFileType());
             view.notifyComplete(downloadFileInfo.getFileName(), notificationId, openFileViewerIntent);
+
+            DownloadManager downloadManager =
+                    (DownloadManager) view.getServiceContext().getSystemService(Context.DOWNLOAD_SERVICE);
+            String name = file.getName();
+            String description = file.getAbsolutePath();
+            String fileType = downloadFileInfo.getFileType();
+            long length = file.length();
+            downloadManager.addCompletedDownload(name, description,
+                    true, fileType,
+                    file.getAbsolutePath(), length, false);
 
             trackFileDownloadSuccess(downloadFileInfo.getFileId(),
                     downloadFileInfo.getFileType(),
@@ -222,5 +233,7 @@ public class DownloadController {
         void showToast(int resId);
 
         void showErrorToast(int resId);
+
+        Context getServiceContext();
     }
 }

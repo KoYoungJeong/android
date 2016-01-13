@@ -30,6 +30,7 @@ public class PlaceholderUtil {
         filterMapper.put(MimeTypeUtil.PlaceholderType.Video, (serverUrl, iconType) -> TextUtils.equals(serverUrl, "s3") && TextUtils.equals(iconType, "video"));
         filterMapper.put(MimeTypeUtil.PlaceholderType.Pdf, (serverUrl, iconType) -> TextUtils.equals(serverUrl, "s3") && TextUtils.equals(iconType, "pdf"));
         filterMapper.put(MimeTypeUtil.PlaceholderType.Hwp, (serverUrl, iconType) -> TextUtils.equals(serverUrl, "s3") && TextUtils.equals(iconType, "hwp"));
+        filterMapper.put(MimeTypeUtil.PlaceholderType.ZIP, (serverUrl, iconType) -> TextUtils.equals(serverUrl, "s3") && TextUtils.equals(iconType, "zip"));
         filterMapper.put(MimeTypeUtil.PlaceholderType.Document, (serverUrl, iconType) -> TextUtils.equals(serverUrl, "s3") && TextUtils.equals(iconType, "document"));
         filterMapper.put(MimeTypeUtil.PlaceholderType.SpreadSheet, (serverUrl, iconType) -> TextUtils.equals(serverUrl, "s3") && TextUtils.equals(iconType, "spreadsheet"));
         filterMapper.put(MimeTypeUtil.PlaceholderType.Presentation, (serverUrl, iconType) -> TextUtils.equals(serverUrl, "s3") && TextUtils.equals(iconType, "presentation"));
@@ -51,6 +52,7 @@ public class PlaceholderUtil {
         placeholderMap.put(MimeTypeUtil.PlaceholderType.Etc, () -> R.drawable.jandi_down_placeholder_etc);
         placeholderMap.put(MimeTypeUtil.PlaceholderType.Google, () -> R.drawable.jandi_down_placeholder_google);
         placeholderMap.put(MimeTypeUtil.PlaceholderType.Dropbox, () -> R.drawable.jandi_down_placeholder_dropbox);
+        placeholderMap.put(MimeTypeUtil.PlaceholderType.ZIP, () -> R.drawable.jandi_down_placeholder_zip);
     }
 
     public static MimeTypeUtil.PlaceholderType getPlaceholderType(String serverUrl, String iconType) {

@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 public class LinkAnalysis implements RuleAnalysis {
 
     @Override
-    public void analysis(Context context, SpannableStringBuilder stringBuilder) {
+    public void analysis(Context context, SpannableStringBuilder stringBuilder, boolean plainText) {
         Pattern pattern = Pattern.compile(MarkdownRule.Link.getRegex());
         Matcher matcher = pattern.matcher(stringBuilder);
         int color = context.getResources().getColor(R.color.jandi_accent_color);
@@ -30,8 +30,11 @@ public class LinkAnalysis implements RuleAnalysis {
 
             // [blahblah](http://blahblah) => blahblah
             stringBuilder.replace(start, end, replaceText);
-            // blahblah 에 하이퍼링크 처리
-            stringBuilder.setSpan(new JandiURLSpan(context, link, color), start, start + replaceText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            if (!plainText) {
+                // blahblah 에 하이퍼링크 처리
+                stringBuilder.setSpan(new JandiURLSpan(context, link, color), start, start + replaceText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
 
             // [blahblah1](http://blahblah1) [blahblah2](http://blahblah2) => blahbla1 [blahblah2](http://blahblah2)
             matcher.reset(stringBuilder);

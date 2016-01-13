@@ -6,28 +6,28 @@
     android:background="@color/white"
     android:fillViewport="true">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/vg_viwer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_above="@+id/vg_share_content"
+            android:layout_alignParentTop="true"
             android:orientation="vertical">
 
             <com.tosslab.jandi.app.views.FrescoImageView
                 android:id="@+id/iv_share_image"
                 android:layout_width="match_parent"
-                android:layout_height="222dp"
+                android:layout_height="match_parent"
                 android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/vg_file_icon"
                 android:layout_width="match_parent"
-                android:layout_height="222dp"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:visibility="visible">
 
@@ -64,8 +64,8 @@
             android:id="@+id/vg_share_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="289dp"
             android:layout_alignParentBottom="true"
-            android:layout_weight="1"
             android:orientation="vertical">
 
             <View
@@ -208,5 +208,5 @@
                 android:background="#FFDADADA" />
         </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 </ScrollView>

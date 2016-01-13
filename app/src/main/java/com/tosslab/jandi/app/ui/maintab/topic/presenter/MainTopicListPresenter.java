@@ -121,7 +121,9 @@ public class MainTopicListPresenter {
     }
 
     public void refreshListView(TopicFolderListDataProvider provider) {
-        view.refreshList(provider);
+        if (view != null) {
+            view.refreshList(provider);
+        }
     }
 
     public void onChildItemClick(RecyclerView.Adapter adapter, int groupPosition, int childPosition) {
@@ -156,13 +158,16 @@ public class MainTopicListPresenter {
         int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
         view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
                 item.getMarkerLinkId());
-        view.setSelectedItem(((ExpandableTopicAdapter) adapter)
-                .getTopicItemData(groupPosition, childPosition).getEntityId());
+        view.setSelectedItem(item.getEntityId());
         view.notifyDatasetChanged();
     }
 
     public void onChildItemLongClick(RecyclerView.Adapter adapter, int groupPosition, int childPosition) {
-        int entityId = ((ExpandableTopicAdapter) adapter).getTopicItemData(groupPosition, childPosition).getEntityId();
+        TopicItemData topicItemData = ((ExpandableTopicAdapter) adapter).getTopicItemData(groupPosition, childPosition);
+        if (topicItemData == null) {
+            return;
+        }
+        int entityId = topicItemData.getEntityId();
         int folderId = ((ExpandableTopicAdapter) adapter).getTopicFolderData(groupPosition).getFolderId();
         view.showEntityMenuDialog(entityId, folderId);
     }
