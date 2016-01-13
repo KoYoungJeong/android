@@ -15,6 +15,10 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -55,6 +59,7 @@ import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.transform.TransformConfig;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.spannable.JandiURLSpan;
 
 import org.androidannotations.annotations.AfterInject;
@@ -136,6 +141,9 @@ public class MessageListPresenter {
 
     @ViewById(R.id.vg_message_offline)
     View vgOffline;
+
+    @ViewById(R.id.progress_message)
+    View oldProgressBar;
 
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
@@ -908,5 +916,49 @@ public class MessageListPresenter {
         if (messageAdapter instanceof MessageCursorListAdapter) {
             ((MessageCursorListAdapter) messageAdapter).setFirstCursorLinkId(firstCursorLinkId);
         }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showOldLoadProgress() {
+
+        if (oldProgressBar.getVisibility() != View.GONE) {
+            return;
+        }
+
+        oldProgressBar.setVisibility(View.VISIBLE);
+
+        Animation inAnim = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, -1f,
+                Animation.RELATIVE_TO_SELF, 0f);
+        inAnim.setDuration(oldProgressBar.getContext().getResources().getInteger(R.integer.duration_short_anim));
+        inAnim.setInterpolator(new AccelerateDecelerateInterpolator());
+        inAnim.setStartTime(AnimationUtils.currentAnimationTimeMillis());
+
+        oldProgressBar.startAnimation(inAnim);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void dismissOldLoadProgress() {
+
+        if (oldProgressBar.getVisibility() != View.VISIBLE) {
+            return;
+        }
+
+        Animation outAnim = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, -1f);
+        outAnim.setDuration(oldProgressBar.getContext().getResources().getInteger(R.integer.duration_short_anim));
+        outAnim.setInterpolator(new AccelerateDecelerateInterpolator());
+        outAnim.setStartTime(AnimationUtils.currentAnimationTimeMillis());
+
+        outAnim.setAnimationListener(new SimpleEndAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                oldProgressBar.setVisibility(View.GONE);
+            }
+        });
+        oldProgressBar.startAnimation(outAnim);
     }
 }
