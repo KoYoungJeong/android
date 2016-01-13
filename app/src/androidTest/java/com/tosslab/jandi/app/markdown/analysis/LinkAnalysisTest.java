@@ -71,7 +71,7 @@ public class LinkAnalysisTest {
         {
             for (String testMarkdown : TEST_MARKDOWNS_3) {
                 SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(testMarkdown);
-                analysis.analysis(JandiApplication.getContext(), spannableStringBuilder, true);
+                analysis.analysis(JandiApplication.getContext(), spannableStringBuilder, false);
 
                 int length = spannableStringBuilder.length();
                 boolean find = false;
