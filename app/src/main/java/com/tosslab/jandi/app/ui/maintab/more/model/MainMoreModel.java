@@ -124,14 +124,14 @@ public class MainMoreModel {
     public List<Pair<String, String>> getUserInfosForBugReport() {
         List<Pair<String, String>> userInfos = new ArrayList<>();
 
-        userInfos.add(new Pair<>("디바이스 모델명", Build.MODEL));
+        userInfos.add(new Pair<>("Device", Build.MODEL));
         userInfos.add(new Pair<>("Android OS Version", Build.VERSION.RELEASE));
         userInfos.add(new Pair<>("Jandi App Version", getVersionName()));
         userInfos.add(new Pair<>("Account Name", AccountRepository.getRepository().getAccountInfo().getName()));
-        userInfos.add(new Pair<>("멤버 고유 ID", String.valueOf(EntityManager.getInstance().getMe().getId())));
-        userInfos.add(new Pair<>("멤버 Email", EntityManager.getInstance().getMe().getUserEmail()));
-        userInfos.add(new Pair<>("팀 이름", EntityManager.getInstance().getTeamName()));
-        userInfos.add(new Pair<>("팀 고유 ID", String.valueOf(EntityManager.getInstance().getTeamId())));
+        userInfos.add(new Pair<>("Member ID", String.valueOf(EntityManager.getInstance().getMe().getId())));
+        userInfos.add(new Pair<>("Member Email", EntityManager.getInstance().getMe().getUserEmail()));
+        userInfos.add(new Pair<>("Team", EntityManager.getInstance().getTeamName()));
+        userInfos.add(new Pair<>("Team ID", String.valueOf(EntityManager.getInstance().getTeamId())));
 
         return userInfos;
     }
