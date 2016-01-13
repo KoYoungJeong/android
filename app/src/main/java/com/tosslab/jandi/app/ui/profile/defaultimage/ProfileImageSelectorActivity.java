@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.profile.defaultimage;
 
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -17,6 +16,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.app.utils.progresswheel.ProgressWheelUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -67,6 +67,7 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     private ProfileSelectorAdapter profileColorSelectorAdapter;
     private int selectedColor = -1;
     private String selectedCharacterUrl = null;
+    private ProgressWheelUtil progressWheelUtil;
 
     @AfterViews
     void initViews() {
@@ -92,6 +93,7 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
             EventBus.getDefault().register(this);
 
             onClickOptionCharacterButton();
+            progressWheelUtil = ProgressWheelUtil.makeInstance();
         }
     }
 
@@ -121,6 +123,7 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void onClickCancelButton() {
         LogUtil.e("click cancel button");
+        profileImageSelectorPresenter.removeFile(imageUri.getPath());
         finish();
     }
 
@@ -135,7 +138,6 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
             setResult(RESULT_OK);
             finish();
         }
-
     }
 
     @Click(R.id.vg_option_color)
@@ -193,6 +195,22 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     private void showMainProfileImage() {
         ImageUtil.loadProfileImage(lvMainImage,
                 Uri.parse(selectedCharacterUrl), 0, selectedColor);
+    }
+
+    @Override
+    public void onBackPressed() {
+        profileImageSelectorPresenter.removeFile(imageUri.getPath());
+        super.onBackPressed();
+    }
+
+    @Override
+    public void showProgress() {
+        progressWheelUtil.showProgressWheel(this);
+    }
+
+    @Override
+    public void finishProgress() {
+        progressWheelUtil.dismissProgressWheel(this);
     }
 
 }
