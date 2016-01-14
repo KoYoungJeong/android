@@ -91,7 +91,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     TextView tvProfileUserPosition;
     ProgressWheel progressWheel;
 
-    AlertDialog profileChoosedialog;
+    AlertDialog profileChoosedialog = null;
 
     private File photoFile;
 
@@ -610,7 +610,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         AlertUtil.showCheckNetworkDialog(ModifyProfileActivity.this, null);
     }
 
-    @UiThread
     public void initProfileChooseDialog() {
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_profile_image_selector, null);
         profileChoosedialog = new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
@@ -638,7 +637,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showProfileChooseDialog() {
         if (profileChoosedialog == null) {
             initProfileChooseDialog();
