@@ -37,6 +37,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import retrofit.RetrofitError;
@@ -160,7 +161,7 @@ public class BaseInitUtil {
             int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
             ReqCreateTopic topic = new ReqCreateTopic();
             topic.teamId = teamId;
-            topic.name = "테스트 토픽";
+            topic.name = "테스트 토픽 : " + new Date();
             topic.description = "테스트 토픽 입니다.";
             ResCommon resCommon = null;
             try {
