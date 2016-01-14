@@ -78,15 +78,9 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/lv_profile_color_selector"
+            android:id="@+id/lv_profile_item_selector"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/lv_profile_character_selector"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
 
     </LinearLayout>
 

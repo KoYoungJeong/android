@@ -6,24 +6,27 @@
     android:background="@color/jandi_grey_black"
     android:orientation="horizontal">
 
-    <FrameLayout
+    <ImageView
         android:id="@+id/btn_cancel"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
-        android:background="@drawable/profile_edit_close"
-        android:clickable="true" />
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="16dp"
+        android:src="@drawable/profile_edit_close" />
 
-    <FrameLayout
+    <ImageView
         android:id="@+id/btn_ok"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/profile_edit_check"
-        android:clickable="true" />
+        android:layout_gravity="center_vertical"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:padding="16dp"
+        android:src="@drawable/profile_edit_check" />
+
 
 </RelativeLayout>

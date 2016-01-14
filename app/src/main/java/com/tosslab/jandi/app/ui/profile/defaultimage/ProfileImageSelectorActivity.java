@@ -8,15 +8,16 @@ import android.widget.LinearLayout;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.DefaultProfileChangeEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.profile.defaultimage.adapter.ProfileSelectorAdapter;
+import com.tosslab.jandi.app.ui.profile.defaultimage.adapter.CharacterSelectorAdapter;
+import com.tosslab.jandi.app.ui.profile.defaultimage.adapter.ColorSelectorAdapter;
 import com.tosslab.jandi.app.ui.profile.defaultimage.presenter.ProfileImageSelectorPresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.progresswheel.ProgressWheelUtil;
+import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -28,14 +29,12 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
-
 /**
  * Created by tee on 16. 1. 6..
  */
 
 @EActivity(R.layout.activity_profile_image_selector)
-public class ProfileImageSelectorActivity extends BaseAppCompatActivity implements ProfileImageSelectorPresenter.View {
+public class ProfileImageSelectorActivity extends BaseAppCompatActivity implements ProfileImageSelectorPresenter.View, OnRecyclerItemClickListener {
 
     public static final int CHARACTER_SELECTOR_MODE = 0x00;
     public static final int COLOR_SELECTOR_MODE = 0x01;
@@ -48,11 +47,8 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     @ViewById(R.id.vg_option_color)
     LinearLayout vgOptionColor;
 
-    @ViewById(R.id.lv_profile_color_selector)
-    RecyclerView lvProfileColorSelector;
-
-    @ViewById(R.id.lv_profile_character_selector)
-    RecyclerView lvProfileCharacterSelector;
+    @ViewById(R.id.lv_profile_item_selector)
+    RecyclerView lvProfileItemSelector;
 
     @ViewById(R.id.iv_main_image)
     SimpleDraweeView lvMainImage;
@@ -63,8 +59,8 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     @Extra("profile_image_file_uri")
     Uri imageUri;
 
-    private ProfileSelectorAdapter profileCharacterSelectorAdapter;
-    private ProfileSelectorAdapter profileColorSelectorAdapter;
+    private CharacterSelectorAdapter<String> profileCharacterSelectorAdapter;
+    private ColorSelectorAdapter<Integer> profileColorSelectorAdapter;
     private int selectedColor = -1;
     private String selectedCharacterUrl = null;
     private ProgressWheelUtil progressWheelUtil;
@@ -76,21 +72,16 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
             finish();
         } else {
             profileImageSelectorPresenter.setView(this);
-            profileCharacterSelectorAdapter = new ProfileSelectorAdapter(ProfileSelectorAdapter.MODE_CHARACTER_LIST);
-            profileColorSelectorAdapter = new ProfileSelectorAdapter(ProfileSelectorAdapter.MODE_COLOR_LIST);
-
-            LinearLayoutManager layoutManager1 = new LinearLayoutManager(this);
-            layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
-            lvProfileCharacterSelector.setLayoutManager(layoutManager1);
-            lvProfileCharacterSelector.setAdapter(profileCharacterSelectorAdapter);
-
-            LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
-            layoutManager2.setOrientation(LinearLayoutManager.HORIZONTAL);
-            lvProfileColorSelector.setLayoutManager(layoutManager2);
-            lvProfileColorSelector.setAdapter(profileColorSelectorAdapter);
+            profileCharacterSelectorAdapter = new CharacterSelectorAdapter<>();
+            profileColorSelectorAdapter = new ColorSelectorAdapter<>();
+            profileCharacterSelectorAdapter.setOnRecyclerItemClickListener(this);
+            profileColorSelectorAdapter.setOnRecyclerItemClickListener(this);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            lvProfileItemSelector.setLayoutManager(layoutManager);
+            lvProfileItemSelector.setAdapter(profileCharacterSelectorAdapter);
 
             profileImageSelectorPresenter.initLists();
-            EventBus.getDefault().register(this);
 
             onClickOptionCharacterButton();
             progressWheelUtil = ProgressWheelUtil.makeInstance();
@@ -100,8 +91,8 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     @Override
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showInitialImage() {
-        selectedCharacterUrl = (String) profileCharacterSelectorAdapter.getSelectedItem();
-        selectedColor = (Integer) profileColorSelectorAdapter.getSelectedItem();
+        selectedCharacterUrl = profileCharacterSelectorAdapter.getSelectedItem();
+        selectedColor = profileColorSelectorAdapter.getSelectedItem();
         showMainProfileImage();
     }
 
@@ -165,14 +156,12 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
             case CHARACTER_SELECTOR_MODE:
                 vgOptionCharacter.setSelected(true);
                 vgOptionColor.setSelected(false);
-                lvProfileCharacterSelector.setVisibility(View.VISIBLE);
-                lvProfileColorSelector.setVisibility(View.GONE);
+                lvProfileItemSelector.setAdapter(profileCharacterSelectorAdapter);
                 break;
             case COLOR_SELECTOR_MODE:
                 vgOptionCharacter.setSelected(false);
                 vgOptionColor.setSelected(true);
-                lvProfileCharacterSelector.setVisibility(View.GONE);
-                lvProfileColorSelector.setVisibility(View.VISIBLE);
+                lvProfileItemSelector.setAdapter(profileColorSelectorAdapter);
                 break;
         }
     }
@@ -180,16 +169,6 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
-    }
-
-    public void onEvent(DefaultProfileChangeEvent event) {
-        if (event.getMode() == ProfileSelectorAdapter.MODE_CHARACTER_LIST) {
-            selectedCharacterUrl = (String) event.getData();
-        } else {
-            selectedColor = (Integer) event.getData();
-        }
-        showMainProfileImage();
     }
 
     private void showMainProfileImage() {
@@ -211,6 +190,16 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     @Override
     public void finishProgress() {
         progressWheelUtil.dismissProgressWheel(this);
+    }
+
+    @Override
+    public void onItemClick(View view, RecyclerView.Adapter adapter, int position) {
+        if (adapter instanceof CharacterSelectorAdapter) {
+            selectedCharacterUrl = ((CharacterSelectorAdapter<String>) adapter).getSelectedItem();
+        } else if (adapter instanceof ColorSelectorAdapter) {
+            selectedColor = ((ColorSelectorAdapter<Integer>) adapter).getSelectedItem();
+        }
+        showMainProfileImage();
     }
 
 }
