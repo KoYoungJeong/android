@@ -535,6 +535,6 @@ public class EntityManager {
     }
 
     public boolean isJandiBot(int entityId) {
-        return getJandiBot().getId() == entityId;
+        return hasJandiBot() && getJandiBot().getId() == entityId;
     }
 }
