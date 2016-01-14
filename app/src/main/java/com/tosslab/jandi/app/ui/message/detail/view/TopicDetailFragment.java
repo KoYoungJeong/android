@@ -89,6 +89,9 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @ViewById(R.id.vg_topic_detail_default_message)
     View vgDefaultMessage;
 
+    @ViewById(R.id.vg_topic_detail_description)
+    ViewGroup vgDescription;
+
     @ViewById(R.id.iv_topic_detail_starred)
     View ivStarred;
     @ViewById(R.id.switch_topic_detail_set_push)

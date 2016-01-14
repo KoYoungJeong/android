@@ -158,5 +158,8 @@
     <dimen name="jandi_member_profile_buttons_width">120dp</dimen>
 
     <dimen name="jandi_settings_text_body_height_one_item">48dp</dimen>
-    <dimen name="jandi_settings_text_body_height_two_item">72dp</dimen>
+    <dimen name="jandi_settings_text_body_height_two_item">88dp</dimen>
+
+    <dimen name="jandi_topic_detail_description_min_height">104dp</dimen>
+    <dimen name="jandi_topic_detail_description_per_line_height">16dp</dimen>
 </resources>
