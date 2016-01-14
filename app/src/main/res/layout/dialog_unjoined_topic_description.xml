@@ -37,9 +37,9 @@
                 android:id="@+id/tv_unjoin_topic_desc_host"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:maxLines="1"
                 android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:textColor="@color/jandi_text_medium"
                 android:textSize="@dimen/jandi_text_size_medium"
                 android:textStyle="bold" />
@@ -68,8 +68,7 @@
                 android:textColor="@color/jandi_text_medium"
                 android:textSize="@dimen/jandi_text_size_medium"
                 android:textStyle="bold" />
-        </LinearLayout>
-                android:textStyle="bold"/>
+
         </com.tosslab.jandi.app.views.FixedLinearLayout>
 
     </LinearLayout>

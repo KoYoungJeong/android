@@ -25,17 +25,6 @@ public class ProgressWheelUtil {
     }
 
     public void showProgressWheel(Activity activity) {
-        if (progressWheel == null) {
-            init(activity);
-        }
-        activity.runOnUiThread(() -> {
-            dismissProgressWheel(activity);
-
-        WeakReference<Activity> activityWeakReference = new WeakReference<>(activity);
-        progressWheel = new ProgressWheel(activityWeakReference.get());
-    }
-
-    public void showProgressWheel(Activity activity) {
         WeakReference<Activity> activityWeakReference = new WeakReference<>(activity);
         if (progressWheel == null) {
             init(activityWeakReference.get());
@@ -51,16 +40,16 @@ public class ProgressWheelUtil {
     public void dismissProgressWheel(Activity activity) {
         if (progressWheel == null) {
             init(activity);
-        WeakReference<Activity> activityWeakReference = new WeakReference<>(activity);
-        if (progressWheel == null) {
-            init(activityWeakReference.get());
-        }
-        activity.runOnUiThread(() -> {
-            if (progressWheel != null && progressWheel.isShowing()) {
-                progressWheel.dismiss();
+            WeakReference<Activity> activityWeakReference = new WeakReference<>(activity);
+            if (progressWheel == null) {
+                init(activityWeakReference.get());
             }
-        });
+            activity.runOnUiThread(() -> {
+                if (progressWheel != null && progressWheel.isShowing()) {
+                    progressWheel.dismiss();
+                }
+            });
+        }
     }
 
-}
 }
