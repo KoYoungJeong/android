@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.web;
 
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +11,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
@@ -85,7 +89,7 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
         }
 
         url = internalWebPresenter.getAvailableUrl(url);
-        internalWebPresenter.loadWebPage(webView, url);
+        loadWebPage(webView, url);
         webTitle = webView.getTitle();
         EventBus.getDefault().register(this);
     }
@@ -265,6 +269,64 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
     @Override
     public void dismissProgressWheel() {
         progressWheelUtil.dismissProgressWheel(this);
+    }
+
+    @Override
+    public void loadWebPage(WebView webView, String url) {
+        WebSettings webSettings = webView.getSettings();
+        webView.setWebViewClient(initWebClient());
+        webView.setWebChromeClient(initWebChromeClient());
+        webView.setScrollBarStyle(android.view.View.SCROLLBARS_INSIDE_OVERLAY);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setSupportZoom(true);
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setDisplayZoomControls(false);
+        webSettings.setUserAgentString(webSettings.getUserAgentString() + " Jandi-Android-App");
+        webView.loadUrl(url);
+    }
+
+    private WebChromeClient initWebChromeClient() {
+        return new WebChromeClient() {
+            @Override
+            public void onReceivedTitle(WebView view, String title) {
+                setActionBarTitle(title);
+            }
+
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                setWebLoadingProgress(newProgress);
+            }
+        };
+    }
+
+    private WebViewClient initWebClient() {
+        return new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return internalWebPresenter.shouldOverrideUrlLoading(view, url);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                String title = view.getTitle();
+                setActionBarTitle(title);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                super.onReceivedError(view, errorCode, description, failingUrl);
+                LaunchPageNotFoundActivity();
+            }
+
+            @Override
+            public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+                super.onReceivedHttpError(view, request, errorResponse);
+                LaunchPageNotFoundActivity();
+            }
+        };
     }
 
 }
