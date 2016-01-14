@@ -316,6 +316,7 @@
         </activity>
 
         <activity android:name=".ui.passcode.PassCodeActivity_" />
+        <activity android:name=".ui.web.PageNotFoundActivity_" />
 
         <activity
             android:name=".ui.profile.defaultimage.ProfileImageSelectorActivity_"
@@ -423,6 +424,7 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
 
 </manifest>
 

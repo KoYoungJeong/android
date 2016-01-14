@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -10,6 +9,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.markdown.MarkdownLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
@@ -49,12 +49,18 @@ public class PureMessageViewHolder implements BodyViewHolder {
 
         Context context = tvMessage.getContext();
 
-        boolean hasLink = LinkifyUtil.addLinks(context, builder);
-        if (hasLink) {
-            Spannable linkSpannable = Spannable.Factory.getInstance().newSpannable(builder);
-            builder.setSpan(linkSpannable, 0, message.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            LinkifyUtil.setOnLinkClick(tvMessage);
-        }
+        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                tvMessage, builder, textMessage.mentions,
+                EntityManager.getInstance().getMe().getId());
+        builder = generateMentionMessageUtil.generate(true);
+
+        MarkdownLookUp.text(builder).lookUp(tvMessage.getContext());
+
+        MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvMessage, builder, false);
+        markdownViewModel.execute();
+
+        LinkifyUtil.addLinks(context, builder);
+        LinkifyUtil.setOnLinkClick(tvMessage);
 
         builder.append(" ");
 
@@ -82,16 +88,7 @@ public class PureMessageViewHolder implements BodyViewHolder {
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvMessage, builder, false);
-        markdownViewModel.execute();
-
-        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                tvMessage, builder, textMessage.mentions,
-                EntityManager.getInstance().getMe().getId());
-        builder = generateMentionMessageUtil.generate(true);
-
         tvMessage.setText(builder);
-
 
         linkPreviewViewModel.bindData(link);
     }

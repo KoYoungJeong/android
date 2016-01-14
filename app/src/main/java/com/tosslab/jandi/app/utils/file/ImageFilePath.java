@@ -12,6 +12,8 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.services.download.model.DownloadModel;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -229,7 +231,9 @@ public class ImageFilePath {
         try {
             inputStream = context.getContentResolver().openInputStream(uri);
 
-            filePath = filePathBuilder.toString();
+            File downloadFile = DownloadModel.getDownloadTargetFile(
+                    new File(GoogleImagePickerUtil.getDownloadPath()), fileName, "");
+            filePath = downloadFile.getAbsolutePath();
             outStream = new BufferedOutputStream(new FileOutputStream(filePath));
 
             byte[] buf = new byte[2048];

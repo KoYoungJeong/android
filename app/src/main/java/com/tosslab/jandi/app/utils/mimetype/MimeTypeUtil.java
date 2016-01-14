@@ -30,7 +30,7 @@ public class MimeTypeUtil {
     }
 
     public enum FilterType {
-        Audio, Image, Video, Pdf, Document, SpreadSheet, Presentation, Hwp, GoogleDocument, GoogleSpreadSheet, GooglePresentation, Etc
+        Audio, Image, Video, Pdf, Document, SpreadSheet, Presentation, Hwp, GoogleDocument, GoogleSpreadSheet, GooglePresentation, Zip, Etc
     }
 
     public enum SourceType {

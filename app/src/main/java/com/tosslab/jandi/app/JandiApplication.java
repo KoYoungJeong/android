@@ -9,6 +9,9 @@ import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
+import com.facebook.cache.disk.DiskCacheConfig;
+import com.facebook.common.internal.Supplier;
+import com.facebook.common.util.ByteConstants;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -31,6 +34,7 @@ import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
 import org.androidannotations.api.BackgroundExecutor;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 
@@ -107,9 +111,26 @@ public class JandiApplication extends MultiDexApplication {
         // Fresco
         ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
                 .setBitmapMemoryCacheParamsSupplier(new BitmapMemoryCacheSupplier(this))
+                .setMainDiskCacheConfig(getMainDiskConfig())
                 .build();
 
         Fresco.initialize(context, config);
+    }
+
+    private DiskCacheConfig getMainDiskConfig() {
+        return DiskCacheConfig.newBuilder()
+                .setBaseDirectoryPathSupplier(
+                        new Supplier<File>() {
+                            @Override
+                            public File get() {
+                                return context.getApplicationContext().getCacheDir();
+                            }
+                        })
+                .setBaseDirectoryName("image_cache")
+                .setMaxCacheSize(1024 * ByteConstants.MB)
+                .setMaxCacheSizeOnLowDiskSpace(10 * ByteConstants.MB)
+                .setMaxCacheSizeOnVeryLowDiskSpace(2 * ByteConstants.MB)
+                .build();
     }
 
     /**

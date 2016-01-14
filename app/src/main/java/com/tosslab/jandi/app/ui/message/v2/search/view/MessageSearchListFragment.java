@@ -806,6 +806,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         int lastItemPosition = messageAdapter.getItemCount();
 
         messageAdapter.addAll(lastItemPosition, newMessage.records);
+        messageAdapter.notifyDataSetChanged();
         if (!firstLoad && firstVisibleItemLinkId > 0) {
             moveToMessage(firstVisibleItemLinkId, firstVisibleItemTop);
         }

@@ -160,8 +160,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     @AfterInject
     void initObject() {
-        FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
-        boolean isBot = isBot(member);
+        boolean isBot = EntityManager.getInstance().isBot(memberId);
         if (!isBot) {
             profileLoader = new MemberProfileLoader();
         } else {
@@ -172,6 +171,14 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @OnActivityResult(ModifyProfileActivity.REQUEST_CODE)
     @AfterViews
     void initViews() {
+
+        if (EntityManager.getInstance().isBot(memberId)
+                && !EntityManager.getInstance().isJandiBot(memberId)) {
+            // 잔디봇이 아닌 봇은 예외 처리
+            finish();
+            return;
+        }
+
         FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
         final String profileImageUrlLarge = member.getUserLargeProfileUrl();
 

@@ -4,7 +4,7 @@ import com.tosslab.jandi.app.markdown.analysis.LinkAnalysis;
 import com.tosslab.jandi.app.markdown.analysis.RuleAnalysis;
 
 public enum MarkdownRule {
-    Link("(\\[(.*?)\\])(\\((.*?)\\))", LinkAnalysis.class);
+    Link("(\\[((?:\\[[^\\]]*\\]|[^\\[\\]])*)\\]\\([ \\t]*()<?((?:\\([^)]*\\)|[^()\\s])*?)>?[ \\t]*((['\"])(.*?)\\6[ \\t]*)?\\))", LinkAnalysis.class);
 
     private final String regex;
     private final Class<? extends RuleAnalysis> analysisClass;

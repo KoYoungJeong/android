@@ -87,7 +87,16 @@
 	<string name="jandi_announcement_deleted">"%s 刪除公告"</string>
 	<string name="jandi_announcement_minimize">"最小化"</string>
 	<string name="jandi_are_you_sure_disable_external_link">"若移除共享連結，存取至該檔案的權限將被撤銷。你確定要移除共享連結？"</string>
+	<string name="jandi_ask_assign_topic_owner">"你確定將議題管理權限轉移至此成員？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你確定將此成員剔除議題？"</string>
+	<string name="jandi_ask_to_leave_if_private_topic_owner">"欲離開此議題，請先將議題管理權限轉移至其他成員"</string>
+	<string name="jandi_ask_to_leave_if_topic_owner">"你可於離開議題前轉移管理權限"</string>
+	<string name="jandi_assign">"轉移"</string>
+	<string name="jandi_assign_topic_owner_desc">"議題管理員權限為下：
+- 更改議題名稱和資訊
+- 刪除議題
+- 剔除議題成員
+- 暫停/刪除JANDI Connect整合項目"</string>
 	<string name="jandi_auto_join_cannot_be_default_topic">"你無法取消預設議題內的自動邀請"</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"自動邀請的功能僅開放於公開議題中使用"</string>
 	<string name="jandi_auto_join_explain">"邀請所有新成員至此議題"</string>
@@ -138,6 +147,7 @@
 	<string name="jandi_coach_mark_topic_setting">"其他議題設定\n(邀請、離開\n、重新命名)"</string>
 	<string name="jandi_coach_mark_upload_file">"上傳檔案"</string>
 	<string name="jandi_commented_on">"<![CDATA[<font color="#999999">留言於</font><font color="#000000"><b>%s</b></font><font color="#999999">的檔案</font"]]>"</string>
+	<string name="jandi_complete_assign_topic_owner">"議題管理權限已成功轉移"</string>
 	<string name="jandi_confirm">"確定"</string>
 	<string name="jandi_confirm_new_passcode">"確認新密碼"</string>
 	<string name="jandi_confirm_passcode">"確認密碼"</string>
@@ -314,6 +324,7 @@
 	<string name="jandi_off">"關閉"</string>
 	<string name="jandi_on">"打開"</string>
 	<string name="jandi_open_browser">"開啓一個瀏覽器"</string>
+	<string name="jandi_page_not_found">"您找的頁面不存在"</string>
 	<string name="jandi_password_strength_average">"普通"</string>
 	<string name="jandi_password_strength_safe">"強"</string>
 	<string name="jandi_password_strength_strong">"非常強"</string>
@@ -351,6 +362,7 @@
 	<string name="jandi_push_preview_public_only">"僅限公開議題"</string>
 	<string name="jandi_question_team_create">"您的團隊還未使用JANDI嗎？"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"你確認要刪除這個電子郵件地址？"</string>
+	<string name="jandi_retry">"請再試一次"</string>
 	<string name="jandi_retry_voice_search">"沒有接收清楚您剛才説的，麻煩再說一次"</string>
 	<string name="jandi_save">"儲存"</string>
 	<string name="jandi_screen_auto">"自動調整"</string>

@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.View;
@@ -11,6 +10,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.markdown.MarkdownLookUp;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
@@ -84,23 +84,20 @@ public class PureCommentViewHolder implements BodyViewHolder {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
             spannableStringBuilder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
 
-            boolean hasLink = LinkifyUtil.addLinks(context, spannableStringBuilder);
-
-            MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvComment, spannableStringBuilder, false);
-            markdownViewModel.execute();
-
             GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                     tvComment, spannableStringBuilder, commentMessage.mentions, entityManager.getMe().getId())
                     .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
             spannableStringBuilder = generateMentionMessageUtil.generate(true);
 
-            if (hasLink) {
-                tvComment.setText(
-                        Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
-                LinkifyUtil.setOnLinkClick(tvComment);
-            } else {
-                tvComment.setText(spannableStringBuilder);
-            }
+            MarkdownLookUp.text(spannableStringBuilder).lookUp(tvComment.getContext());
+
+            MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvComment, spannableStringBuilder, false);
+            markdownViewModel.execute();
+
+            LinkifyUtil.addLinks(context, spannableStringBuilder);
+            LinkifyUtil.setOnLinkClick(tvComment);
+
+            tvComment.setText(spannableStringBuilder);
 
 
         }

@@ -87,7 +87,16 @@
 	<string name="jandi_announcement_deleted">"%s deleted the announcement."</string>
 	<string name="jandi_announcement_minimize">"Hide"</string>
 	<string name="jandi_are_you_sure_disable_external_link">"Access to the previously shared file will be revoked. Are you sure?"</string>
+	<string name="jandi_ask_assign_topic_owner">"Are you sure you want to transfer topic administrator permissions to this member?"</string>
 	<string name="jandi_ask_kick_user_from_topic">"Are you sure you want to remove this member from the topic?"</string>
+	<string name="jandi_ask_to_leave_if_private_topic_owner">"You must transfer topic administrator permissions before you leave."</string>
+	<string name="jandi_ask_to_leave_if_topic_owner">"You can transfer topic administrator permissions before you leave."</string>
+	<string name="jandi_assign">"Transfer"</string>
+	<string name="jandi_assign_topic_owner_desc">"Topic admin holds permissions as below:
+- Changing the topic name/descripiton
+- Deleting the topic
+- Forcing quit topic participants
+- Pausing/Deleting JANDI Connect integrations"</string>
 	<string name="jandi_auto_join_cannot_be_default_topic">"You cannot turn off auto invitation for the default topic."</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"Auto invitation is only available in public topics."</string>
 	<string name="jandi_auto_join_explain">"Invite all new members to this topic"</string>
@@ -138,6 +147,7 @@
 	<string name="jandi_coach_mark_topic_setting">"Topic info and settings\n(eg invite,\nleave, rename)"</string>
 	<string name="jandi_coach_mark_upload_file">"Upload files"</string>
 	<string name="jandi_commented_on">"<![CDATA[<font color="#999999">Commented on</font> <font color="#000000">%s</font><font color="#999999">'s file"</font>]]>"</string>
+	<string name="jandi_complete_assign_topic_owner">"Topic administrator permissions has been transferred successfully"</string>
 	<string name="jandi_confirm">"OK"</string>
 	<string name="jandi_confirm_new_passcode">"Confirm new passcode"</string>
 	<string name="jandi_confirm_passcode">"Confirm Passcode"</string>
@@ -314,6 +324,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_off">"Off"</string>
 	<string name="jandi_on">"On"</string>
 	<string name="jandi_open_browser">"Open in a Browser"</string>
+	<string name="jandi_page_not_found">"Page not found"</string>
 	<string name="jandi_password_strength_average">"Average"</string>
 	<string name="jandi_password_strength_safe">"Good"</string>
 	<string name="jandi_password_strength_strong">"Excellent"</string>
@@ -351,6 +362,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_push_preview_public_only">"Public topics only"</string>
 	<string name="jandi_question_team_create">"Don't have a team on JANDI yet?"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"Are you sure you want to delete this email address?"</string>
+	<string name="jandi_retry">"Try again"</string>
 	<string name="jandi_retry_voice_search">"Didn\'t catch that, try speaking again"</string>
 	<string name="jandi_save">"Save"</string>
 	<string name="jandi_screen_auto">"Auto"</string>

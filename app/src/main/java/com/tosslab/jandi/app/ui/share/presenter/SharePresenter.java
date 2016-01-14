@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
+import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
@@ -27,7 +28,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -74,8 +74,7 @@ public class SharePresenter {
         teamName = entityManager.getTeamName();
     }
 
-    @AfterViews
-    void initView() {
+    public void initView() {
         if (!NetworkCheckUtil.isConnected()) {
             view.showFailToast(JandiApplication.getContext().getResources().getString(R.string.err_network));
             view.finishOnUiThread();
@@ -120,9 +119,17 @@ public class SharePresenter {
         }
 
         if (isDefaultTopic) {
-            int defaultTopicId =
-                    Integer.valueOf(shareModel.getTeamInfoById(teamId).getTeamDefaultChannelId());
-            ResRoomInfo roomInfo = shareModel.getEntityById(teamId, defaultTopicId);
+            ResTeamDetailInfo.InviteTeam team;
+            ResRoomInfo roomInfo;
+            try {
+                team = shareModel.getTeamInfoById(teamId);
+                int defaultTopicId =
+                        Integer.valueOf(team.getTeamDefaultChannelId());
+                roomInfo = shareModel.getEntityById(teamId, defaultTopicId);
+            } catch (Exception e) {
+                view.moveIntro();
+                return;
+            }
             this.roomId = roomInfo.getId();
             this.roomName = roomInfo.getName();
 
@@ -318,6 +325,8 @@ public class SharePresenter {
         void setMentionInfo(int teamId, int roomId, int roomType);
 
         void dismissDialog(ProgressDialog uploadProgress);
+
+        void moveIntro();
     }
 
 }

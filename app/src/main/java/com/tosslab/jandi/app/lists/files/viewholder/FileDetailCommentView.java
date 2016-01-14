@@ -4,9 +4,7 @@ import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -18,6 +16,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.markdown.MarkdownLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -87,20 +86,21 @@ public class FileDetailCommentView implements CommentViewHolder {
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         spannableStringBuilder.append(commentMessage.content.body);
 
-        boolean hasLink = LinkifyUtil.addLinks(tvCommentContent.getContext(), spannableStringBuilder);
+        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                tvCommentContent, spannableStringBuilder, commentMessage.mentions, entityManager.getMe().getId())
+                .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
+        spannableStringBuilder = generateMentionMessageUtil.generate(true);
 
-        if (hasLink) {
-            Spannable linkSpannable = Spannable.Factory.getInstance().newSpannable(spannableStringBuilder);
-            spannableStringBuilder.setSpan(linkSpannable, 0, commentMessage.content.body.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            LinkifyUtil.setOnLinkClick(tvCommentContent);
-        }
+        MarkdownLookUp.text(spannableStringBuilder).lookUp(tvCommentContent.getContext());
+
+        MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvCommentContent, spannableStringBuilder, false);
+        markdownViewModel.execute();
+
+        LinkifyUtil.addLinks(tvCommentContent.getContext(), spannableStringBuilder);
+        LinkifyUtil.setOnLinkClick(tvCommentContent);
+
 
         spannableStringBuilder.append(" ");
-
-        Resources resources = ivCommentUserProfile.getContext().getResources();
-        //날짜
-        int dateSpannableTextSize = ((int) resources.getDimension(R.dimen.jandi_messages_date));
-        int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
 
         int startIndex = spannableStringBuilder.length();
         spannableStringBuilder.append(" ");
@@ -111,14 +111,6 @@ public class FileDetailCommentView implements CommentViewHolder {
         spannableStringBuilder.setSpan(spannable,
                 startIndex, endIndex,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvCommentContent, spannableStringBuilder, false);
-        markdownViewModel.execute();
-
-        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                tvCommentContent, spannableStringBuilder, commentMessage.mentions, entityManager.getMe().getId())
-                .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
-        spannableStringBuilder = generateMentionMessageUtil.generate(true);
 
         tvCommentContent.setText(spannableStringBuilder);
     }

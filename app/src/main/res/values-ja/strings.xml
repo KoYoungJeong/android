@@ -87,7 +87,16 @@
 	<string name="jandi_announcement_deleted">"%sさんが告知を削除しました。"</string>
 	<string name="jandi_announcement_minimize">"環境設定"</string>
 	<string name="jandi_are_you_sure_disable_external_link">"削除すると、リンクはこれから使用できず、本当に削除しますか？"</string>
+	<string name="jandi_ask_assign_topic_owner">"このメンバーにトピック管理者の権限を譲りますか？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"本当にこのメンバーをトピックから退室させますか？"</string>
+	<string name="jandi_ask_to_leave_if_private_topic_owner">"あなたはこのトピックの管理者です。他のメンバーに管理者の権限を譲った後トピックから退出できます。"</string>
+	<string name="jandi_ask_to_leave_if_topic_owner">"あなたはこのトピックの管理者です。トピックから退出するには管理者権限を他のメンバーに譲ってください。"</string>
+	<string name="jandi_assign">"譲る"</string>
+	<string name="jandi_assign_topic_owner_desc">"トピックの管理者は次のような権限があります。
+- トピック名や説明の変更
+- トピックの削除
+- 参加中のメンバーを退出させること
+- JANDIコネクトの項目を中止または削除"</string>
 	<string name="jandi_auto_join_cannot_be_default_topic">"基本トピックでは自動招待を解除できません"</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"自動招待は公開トピックのみで可能です"</string>
 	<string name="jandi_auto_join_explain">"新しいメンバー全員をこのトピックに招待する"</string>
@@ -138,6 +147,7 @@
 	<string name="jandi_coach_mark_topic_setting">"トピックに招\n待、トピック\n退出などの\n管理メニュー"</string>
 	<string name="jandi_coach_mark_upload_file">"ファイルをアップロードする"</string>
 	<string name="jandi_commented_on">"<![CDATA[<font color="#000000"><b>%s</b></font><font color="#999999">さんのファイルにコメントしました</font>]]>"</string>
+	<string name="jandi_complete_assign_topic_owner">"トピックの管理者が更新されました"</string>
 	<string name="jandi_confirm">"確認"</string>
 	<string name="jandi_confirm_new_passcode">"新しいパスコードを再確認"</string>
 	<string name="jandi_confirm_passcode">"パスコードを再入力"</string>
@@ -314,6 +324,7 @@
 	<string name="jandi_off">"オフ"</string>
 	<string name="jandi_on">"オン"</string>
 	<string name="jandi_open_browser">"ブラウザで開く"</string>
+	<string name="jandi_page_not_found">"ページが見つかりません"</string>
 	<string name="jandi_password_strength_average">"普通"</string>
 	<string name="jandi_password_strength_safe">"強い"</string>
 	<string name="jandi_password_strength_strong">"非常に強い"</string>
@@ -351,6 +362,7 @@
 	<string name="jandi_push_preview_public_only">"公開トピックのみ"</string>
 	<string name="jandi_question_team_create">"JANDIにチームを作成していない方はこちら"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"プライマリアドレスは削除できません"</string>
+	<string name="jandi_retry">"もう一度試す"</string>
 	<string name="jandi_retry_voice_search">"言葉を認識できませんでした。もう一度お試し下さい"</string>
 	<string name="jandi_save">"保存"</string>
 	<string name="jandi_screen_auto">"自動回転"</string>

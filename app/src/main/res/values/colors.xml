@@ -251,4 +251,8 @@
     <color name="jandi_grey_black_pressed">#FF101113</color>
 
 
+    <color name="jandi_web_button_retry_background_selected">#FFE0E0E0</color>
+    <color name="jandi_web_button_retry_background">#FFFFFFFF</color>
+    <color name="jandi_web_button_retry_round">#FFCDCDCD</color>
+
 </resources>
