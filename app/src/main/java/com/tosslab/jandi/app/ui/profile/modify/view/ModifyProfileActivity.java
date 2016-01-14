@@ -123,9 +123,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         memberProfilePresenter.onRequestProfile();
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.EditProfile);
-
-        initProfileChooseDialog();
-
     }
 
     private void setupActionBar() {
@@ -643,6 +640,9 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     @UiThread
     public void showProfileChooseDialog() {
+        if (profileChoosedialog == null) {
+            initProfileChooseDialog();
+        }
         profileChoosedialog.show();
     }
 
