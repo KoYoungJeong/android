@@ -108,7 +108,6 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
     @Background(serial = "share_background")
     void initFormattedEntities() {
         showProgress();
-
         try {
             ResLeftSideMenu leftSideMenu;
             leftSideMenu = LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
