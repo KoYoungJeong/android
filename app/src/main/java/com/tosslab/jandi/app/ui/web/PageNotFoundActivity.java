@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.web;
 
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -8,12 +7,10 @@ import android.support.v7.widget.Toolbar;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
 
 /**
@@ -23,8 +20,9 @@ import org.androidannotations.annotations.OptionsItem;
 @EActivity(R.layout.activity_web_not_found_page)
 public class PageNotFoundActivity extends BaseAppCompatActivity {
 
-    @Extra
-    String url;
+    public static final int RES_FINISH = 0x00;
+    public static final int RES_RETRY = 0x01;
+    public static final int RES_BACK = 0X02;
 
     @AfterViews
     void initViews() {
@@ -33,18 +31,24 @@ public class PageNotFoundActivity extends BaseAppCompatActivity {
 
     @Click(R.id.bt_retry)
     public void retryButtonClicked() {
-        InternalWebActivity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .url(url)
-                .start();
+        setResult(RES_RETRY);
         finish();
         overridePendingTransition(0, 0);
     }
 
     @OptionsItem(android.R.id.home)
     void onHomeOptionSelect() {
+        setResult(RES_FINISH);
         finish();
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        setResult(RES_BACK);
+        finish();
+        overridePendingTransition(0, 0);
     }
 
     private void setUpActionbar() {

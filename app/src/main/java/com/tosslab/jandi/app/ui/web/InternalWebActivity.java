@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -35,6 +36,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
@@ -50,29 +52,31 @@ import de.greenrobot.event.EventBus;
 @OptionsMenu(R.menu.internal_web)
 public class InternalWebActivity extends BaseAppCompatActivity implements InternalWebPresenter.View {
 
+    public static final int REQ_PAGE_ERROR = 0x00;
     @Extra
     String url;
     @Extra
     boolean hideActionBar;
     @Extra
     boolean helpSite;
-
     @ViewById(R.id.web_internal_web)
     WebView webView;
-
     @ViewById(R.id.loading_internal_web)
     WebLoadingBar webLoadingBar;
-
     ProgressWheelUtil progressWheelUtil;
-
     @Bean
     InternalWebPresenter internalWebPresenter;
-
     private String webTitle = null;
 
     @AfterInject
     void initObject() {
         progressWheelUtil = ProgressWheelUtil.makeInstance();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
     }
 
     @AfterViews
@@ -91,7 +95,6 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
         url = internalWebPresenter.getAvailableUrl(url);
         loadWebPage(webView, url);
         webTitle = webView.getTitle();
-        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -106,10 +109,7 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
     public void LaunchPageNotFoundActivity() {
         PageNotFoundActivity_.intent(InternalWebActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .url(url)
-                .start();
-        finish();
+                .startForResult(REQ_PAGE_ERROR);
         overridePendingTransition(0, 0);
     }
 
@@ -327,6 +327,21 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
                 LaunchPageNotFoundActivity();
             }
         };
+    }
+
+    @OnActivityResult(REQ_PAGE_ERROR)
+    public void PageErrorResult(int resultCode) {
+        switch (resultCode) {
+            case PageNotFoundActivity.RES_FINISH:
+                finish();
+                break;
+            case PageNotFoundActivity.RES_RETRY:
+                webView.reload();
+                break;
+            case PageNotFoundActivity.RES_BACK:
+                onBackPressed();
+                break;
+        }
     }
 
 }
