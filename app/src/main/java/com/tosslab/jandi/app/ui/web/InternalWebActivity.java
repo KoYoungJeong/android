@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.web;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +28,6 @@ import com.tosslab.jandi.app.views.listeners.WebLoadingBar;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -37,7 +37,6 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 
 /**
  * Created by tee on 16. 1. 13..
@@ -65,7 +64,7 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
     @Bean
     InternalWebPresenter internalWebPresenter;
 
-    String title = null;
+    private String webTitle = null;
 
     @AfterInject
     void initObject() {
@@ -84,13 +83,10 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
         if (helpSite) {
             AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.Help);
         }
-        String urlLowerCase = url.toLowerCase();
 
-        if (!urlLowerCase.startsWith("http")) {
-            url = "http://" + url;
-        }
+        url = internalWebPresenter.getAvailableUrl(url);
         internalWebPresenter.loadWebPage(webView, url);
-        title = webView.getTitle();
+        webTitle = webView.getTitle();
         EventBus.getDefault().register(this);
     }
 
@@ -141,7 +137,7 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
 
     @OptionsItem(R.id.action_copy_link)
     public void onCopyLinkOptionSelect() {
-        String message = internalWebPresenter.createMessage(title, url);
+        String message = internalWebPresenter.createMessage(webTitle, url);
         internalWebPresenter.copyToClipboard(message);
     }
 
@@ -172,7 +168,7 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
     public void onShareToAppOptionSelect() {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT, title);
+        intent.putExtra(Intent.EXTRA_SUBJECT, webTitle);
         intent.putExtra(Intent.EXTRA_TEXT, url);
         try {
             startActivity(intent);
@@ -245,26 +241,9 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
     }
 
     public void onEvent(ShareSelectRoomEvent event) {
-        sendMessage(event);
+        internalWebPresenter.sendMessage(this, webTitle, url, event);
     }
 
-    @Background
-    void sendMessage(ShareSelectRoomEvent event) {
-        showProgressWheel();
-        int entityId = event.getRoomId();
-        int entityType = event.getRoomType();
-        try {
-            String message = internalWebPresenter.createMessage(title, url);
-            internalWebPresenter.sendMessage(entityId, entityType, message, this);
-            showSuccessToast(getApplicationContext(),
-                    getString(R.string.jandi_share_succeed, getString(R.string.jandi_message_hint)));
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            showErrorToast(getApplicationContext(), getString(R.string.err_network));
-        } finally {
-            dismissProgressWheel();
-        }
-    }
 
     @Override
     public void onBackPressed() {
@@ -277,11 +256,13 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
     public void showProgressWheel() {
         progressWheelUtil.showProgressWheel(this);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
     public void dismissProgressWheel() {
         progressWheelUtil.dismissProgressWheel(this);
     }
