@@ -290,7 +290,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     public void onPushClick(Context context, int teamId, int entityId, boolean checked) {
         boolean onGlobalPush = topicDetailModel.isOnGlobalPush();
         if (checked && !onGlobalPush) {
-            view.showSetOnGlobalPushDialog();
+            view.showGlobalPushSetupDialog();
         }
 
         updateTopicPushSubscribe(context, teamId, entityId, checked, !onGlobalPush);

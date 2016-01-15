@@ -105,6 +105,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
 
     private ProgressWheel progressWheel;
+    private AlertDialog globalPushDialog;
 
     @AfterInject
     void initObject() {
@@ -346,15 +347,19 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     @Override
-    public void showSetOnGlobalPushDialog() {
-        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
-                .setMessage(R.string.jandi_explain_global_push_off)
-                .setNegativeButton(R.string.jandi_close, null)
-                .setPositiveButton(R.string.jandi_go_to_setting, (dialog, which) -> {
-                    movePushSettingActivity();
-                })
-                .create()
-                .show();
+    public void showGlobalPushSetupDialog() {
+
+        if (globalPushDialog == null) {
+            globalPushDialog = new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
+                    .setMessage(R.string.jandi_explain_global_push_off)
+                    .setNegativeButton(R.string.jandi_close, null)
+                    .setPositiveButton(R.string.jandi_go_to_setting, (dialog, which) -> {
+                        movePushSettingActivity();
+                    })
+                    .create();
+        } else if (!globalPushDialog.isShowing()) {
+            globalPushDialog.show();
+        }
     }
 
     private void movePushSettingActivity() {
