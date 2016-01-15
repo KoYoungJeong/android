@@ -61,6 +61,7 @@ public class MainChatListModel {
                 .map(resChat -> {
 
                     FormattedEntity userEntity = EntityManager.getInstance().getEntityById(resChat.getCompanionId());
+                    userEntity.alarmCount = resChat.getUnread();
 
                     ChatItem chatItem = new ChatItem();
                     chatItem.entityId(userEntity.getId())
@@ -74,6 +75,7 @@ public class MainChatListModel {
                             .unread(resChat.getUnread())
                             .status(userEntity.isEnabled())
                             .photo(userEntity.getUserLargeProfileUrl());
+
 
                     return chatItem;
                 })

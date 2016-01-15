@@ -276,6 +276,7 @@ public class MainTopicModel {
                     }
                 })
                 .doOnNext(topicItemData -> topicItemData.setUnreadCount(topicItemData.getUnreadCount() + 1))
+                .doOnNext(topicItemData -> EntityManager.getInstance().getEntityById(topicItemData.getEntityId()).alarmCount++)
                 .firstOrDefault(dummyInstance)
                 .subscribe();
     }
