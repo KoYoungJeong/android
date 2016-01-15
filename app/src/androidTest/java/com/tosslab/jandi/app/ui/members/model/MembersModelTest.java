@@ -26,6 +26,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -150,5 +151,29 @@ public class MembersModelTest {
 
         //Then
         assertThat(membersBefore.size() - 1, is(equalTo(membersAfter.size())));
+    }
+
+
+    @Test
+    public void testAssignToTopicOwner() throws Exception {
+
+        // Given
+        BaseInitUtil.createDummyTopic();
+        BaseInitUtil.inviteDummyMembers();
+
+        int topicId = BaseInitUtil.tempTopicId;
+        int teamId = EntityManager.getInstance().getTeamId();
+
+        // When
+        Integer memberId = Integer.valueOf(BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST3_EMAIL));
+        membersModel.assignToTopicOwner(teamId, topicId, memberId);
+
+        BaseInitUtil.refreshLeftSideMenu();
+
+        // Then
+        Integer target = Integer.valueOf(BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL));
+        assertTrue(!EntityManager.getInstance().isTopicOwner(topicId, target));
+
+        BaseInitUtil.deleteDummyTopic();
     }
 }

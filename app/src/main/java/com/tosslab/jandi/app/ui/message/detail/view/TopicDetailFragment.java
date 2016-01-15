@@ -87,6 +87,8 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     View vgDelete;
     @ViewById(R.id.vg_topic_detail_leave)
     View vgLeave;
+    @ViewById(R.id.vg_topic_detail_assign_topic_owner)
+    View vgAssignTopicOwner;
     @ViewById(R.id.view_topic_detail_leve_to_delete)
     View viewDividerDelete;
     @ViewById(R.id.vg_topic_detail_default_message)
@@ -114,6 +116,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         topicDetailPresenter.setView(this);
     }
 
+    @OnActivityResult(MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER)
     @AfterViews
     void initViews() {
         setUpActionbar();
@@ -270,6 +273,12 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         topicDetailPresenter.onTopicStar(getActivity(), entityId);
     }
 
+    @Click(R.id.vg_topic_detail_assign_topic_owner)
+    void onAssignTopicOwnerClick() {
+        topicDetailPresenter.onAssignTopicOwner(entityId);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Leave);
+    }
+
     @Click(R.id.vg_topic_detail_leave)
     void onTopicLeaveClick() {
         topicDetailPresenter.onTopicLeave(getActivity(), entityId);
@@ -372,6 +381,20 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
+    public void setAssignTopicOwnerVisible(boolean owner) {
+        vgAssignTopicOwner.setVisibility(owner ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void moveToAssignTopicOwner() {
+        MembersListActivity_.intent(this)
+                .entityId(entityId)
+                .type(MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER)
+                .startForResult(MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
     public void showSuccessToast(String message) {
         ColoredToast.show(message);
     }
@@ -419,6 +442,17 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TopicName);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showNeedToAssignTopicOwnerDialog(String topicName) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
+        builder.setTitle(topicName);
+        builder.setMessage(R.string.jandi_need_to_assign_topic_owner);
+        builder.setPositiveButton(R.string.jandi_confirm, null);
+        builder.create().show();
+    }
+
     @OnActivityResult(TopicDescriptionEditActivity.REQUEST_EDIT)
     void onDescriptionEditResult(int resultCode) {
         if (resultCode != Activity.RESULT_OK) {
@@ -434,5 +468,6 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
                 .entityId(entityId)
                 .startForResult(TopicDescriptionEditActivity.REQUEST_EDIT);
     }
+
 
 }

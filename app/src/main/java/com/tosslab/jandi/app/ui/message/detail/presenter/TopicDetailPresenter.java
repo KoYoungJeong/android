@@ -18,6 +18,8 @@ public interface TopicDetailPresenter {
 
     void onTopicStar(Context context, int entityId);
 
+    void onAssignTopicOwner(int entityId);
+
     void onTopicLeave(Context context, int entityId);
 
     void onTopicDelete(int entityId);
@@ -58,6 +60,8 @@ public interface TopicDetailPresenter {
 
         void showTopicNameChangeDialog(int entityId, String entityName, int entityType);
 
+        void showNeedToAssignTopicOwnerDialog(String topicName);
+
         void moveTopicDescriptionEdit();
 
         void setLeaveVisible(boolean owner, boolean defaultTopic);
@@ -65,5 +69,9 @@ public interface TopicDetailPresenter {
         void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic);
 
         void showSetOnGlobalPushDialog();
+
+        void setAssignTopicOwnerVisible(boolean owner);
+
+        void moveToAssignTopicOwner();
     }
 }

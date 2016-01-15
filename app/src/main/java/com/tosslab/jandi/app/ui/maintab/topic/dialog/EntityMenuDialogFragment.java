@@ -17,6 +17,8 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.EntityMenuDialogModel;
+import com.tosslab.jandi.app.ui.members.MembersListActivity;
+import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -197,16 +199,41 @@ public class EntityMenuDialogFragment extends DialogFragment {
         ColoredToast.showError(message);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     void onLeaveClick() {
         FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
+        final boolean isPublicTopic = entity.isPublicTopic();
+        boolean isTopicOwner = entityMenuDialogModel.isTopicOwner(entityId);
+        boolean isBot = entityMenuDialogModel.isBot(entityId);
 
-        boolean bot = entityMenuDialogModel.isBot(entityId);
-        if (entity.isPublicTopic() || entity.isUser() || bot) {
-            showProgressWheel();
-            leaveEntity(entityId, entity.isPublicTopic(), entity.isUser() || bot);
+        if (isTopicOwner
+                && entity.getMemberCount() > 1
+                && !entity.isUser()
+                && !isBot) {
+            onAssignToTopicOwner(entity.getName());
         } else {
-            showPrivateTopicLeaveDialog(entityId, entity.getName());
+            onLeaveEntity(entity.getName(), isPublicTopic, entity.isUser(), isBot);
         }
+
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void onLeaveEntity(String userName, boolean isPublicTopic, boolean isUser, boolean isBot) {
+        if (isPublicTopic || isUser || isBot) {
+            showProgressWheel();
+            leaveEntity(entityId, isPublicTopic, isUser || isBot);
+        } else {
+            showPrivateTopicLeaveDialog(entityId, userName);
+        }
+    }
+
+    private void onAssignToTopicOwner(String topicName) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
+        builder.setTitle(topicName);
+        builder.setMessage(R.string.jandi_need_to_assign_topic_owner);
+        builder.setPositiveButton(R.string.jandi_confirm, null);
+        builder.create().show();
     }
 
     private void showPrivateTopicLeaveDialog(final int entityId, String entityName) {

@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.models.ReqCreateFolder;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqMember;
+import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.network.models.ReqRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ReqUpdateFolder;
@@ -80,6 +81,8 @@ public interface ITeamApiLoader {
     IExecutor<ResCommon> loadDeleteFolderItemByTeamApi(int teamId, int folderId, int itemId);
 
     IExecutor<ResCommon> loadKickUserFromTopic(int teamId, int topicId, ReqMember member);
+
+    IExecutor<ResCommon> loadAssignToTopicOwner(int teamId, int topicId, ReqOwner member);
 
     IExecutor<ResMessages.FileMessage> loadEnableFileExternalLink(int teamId, int fileId);
 
