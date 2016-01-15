@@ -76,6 +76,7 @@
 	<string name="jandi_action_update">"Update"</string>
 	<string name="jandi_add">"Add"</string>
 	<string name="jandi_add_an_email_address">"Add an Email Address"</string>
+	<string name="jandi_alert_already_topic_owenr">"You already are this topic's admin."</string>
 	<string name="jandi_all_of_topic_members">"@All (topic members)"</string>
 	<string name="jandi_already_in_team">"This email is already a member of %s"</string>
 	<string name="jandi_already_linked_email">"This email is already linked to your account"</string>
@@ -92,6 +93,7 @@
 	<string name="jandi_ask_to_leave_if_private_topic_owner">"You must transfer topic administrator permissions before you leave."</string>
 	<string name="jandi_ask_to_leave_if_topic_owner">"You can transfer topic administrator permissions before you leave."</string>
 	<string name="jandi_assign">"Transfer"</string>
+	<string name="jandi_assign_topic_owner">"Transfer the topic admin permission"</string>
 	<string name="jandi_assign_topic_owner_desc">"Topic admin holds permissions as below:
 - Changing the topic name/descripiton
 - Deleting the topic
@@ -151,7 +153,7 @@
 	<string name="jandi_confirm">"OK"</string>
 	<string name="jandi_confirm_new_passcode">"Confirm new passcode"</string>
 	<string name="jandi_confirm_passcode">"Confirm Passcode"</string>
-	<string name="jandi_copy_link">"Copy link"</string>
+	<string name="jandi_copy_link">"Copy Link"</string>
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"Create"</string>
 	<string name="jandi_create_channel">"Create New Topic"</string>
@@ -229,6 +231,7 @@
 	<string name="jandi_go_to_latest">"Go to the most recent messages"</string>
 	<string name="jandi_go_to_setting">"Go to Settings"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
+	<string name="jandi_guide_to_assign_topic_owner">"Please transfer topic adminin permission in Topic Info before you force quit this member."</string>
 	<string name="jandi_has_joined">"%s has joined"</string>
 	<string name="jandi_have_an_account_already">"Already have an account?"</string>
 	<string name="jandi_help">"Help"</string>
@@ -308,6 +311,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_msg_network_offline_warn">"It seems you are not connected to the Internet."</string>
 	<string name="jandi_my_files">"<b>My Files</b>"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
+	<string name="jandi_need_to_assign_topic_owner">"You are this topic's admin. Please transfer topic adminin permission in Topic Info before you leave."</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
 	<string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>
 	<string name="jandi_no_long_team_member">"%s is no longer a team member."</string>
@@ -465,12 +469,14 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_topic_delete">"Delete"</string>
 	<string name="jandi_topic_description">"Topic description"</string>
 	<string name="jandi_topic_detail">"Topic Info"</string>
+	<string name="jandi_topic_inside_alone">"You are alone in this topic. Can't transfer topic admin permission."</string>
 	<string name="jandi_topic_invitation">"Invite"</string>
 	<string name="jandi_topic_leave">"Leave"</string>
 	<string name="jandi_topic_no_member_1">"You are all alone in this topic."</string>
 	<string name="jandi_topic_no_member_2">"Tap the button below to invite other members to the conversation."</string>
 	<string name="jandi_topic_notification">"Notifications"</string>
 	<string name="jandi_topic_owner">"Topic admin"</string>
+	<string name="jandi_topic_owner_title">"This member is Topic admin"</string>
 	<string name="jandi_topic_paricipants">"Participants"</string>
 	<string name="jandi_topic_private">"Private"</string>
 	<string name="jandi_topic_public">"Public"</string>
