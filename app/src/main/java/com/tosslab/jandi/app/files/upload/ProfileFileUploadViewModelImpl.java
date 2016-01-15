@@ -140,7 +140,7 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
 
     @UiThread
     void successPhotoUpload(Context context) {
-        ColoredToast.show(context, context.getString(R.string.jandi_profile_photo_upload_succeed));
+        ColoredToast.show(context.getString(R.string.jandi_profile_photo_upload_succeed));
     }
 
     @UiThread(propagation = UiThread.Propagation.ENQUEUE)

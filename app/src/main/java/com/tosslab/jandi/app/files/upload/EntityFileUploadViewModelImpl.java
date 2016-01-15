@@ -227,7 +227,7 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void exceedMaxFileSizeError(Context context) {
-        ColoredToast.showError(context, context.getString(R.string.jandi_file_size_large_error));
+        ColoredToast.showError(context.getString(R.string.jandi_file_size_large_error));
     }
 
     @Override
