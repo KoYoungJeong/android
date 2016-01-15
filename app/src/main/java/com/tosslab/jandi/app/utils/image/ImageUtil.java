@@ -200,6 +200,28 @@ public class ImageUtil {
                 .into(draweeView);
     }
 
+    public static void loadProfileImage(SimpleDraweeView draweeView, Uri uri, int placeHolderResId, int backgroundColor) {
+        RoundingParams circleRoundingParams = getCircleRoundingParams(
+                TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
+        ImageLoader.newBuilder()
+                .placeHolder(placeHolderResId, ScalingUtils.ScaleType.CENTER_CROP)
+                .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
+                .roundingParams(circleRoundingParams)
+                .backgroundColor(backgroundColor)
+                .load(uri)
+                .into(draweeView);
+    }
+
+
+    public static void loadProfileImageWithoutRounding(SimpleDraweeView draweeView, Uri uri, int placeHolderResId) {
+        ImageLoader.newBuilder()
+                .placeHolder(placeHolderResId, ScalingUtils.ScaleType.CENTER_CROP)
+                .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
+                .backgroundColor(Color.BLACK)
+                .load(uri)
+                .into(draweeView);
+    }
+
     public static RoundingParams getCircleRoundingParams(int color, int width) {
         RoundingParams roundingParams = RoundingParams.asCircle();
         roundingParams.setBorder(color, width);

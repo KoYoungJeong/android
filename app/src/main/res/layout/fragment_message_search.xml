@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_search_messages"
@@ -10,7 +10,7 @@
         android:clipToPadding="false"
         android:paddingBottom="24dp"
         android:paddingTop="112dp"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical" />
 
     <LinearLayout
         android:id="@+id/layout_search_scope"
@@ -39,7 +39,7 @@
                 android:text="@string/jandi_file_category_everywhere"
                 android:textColor="@color/white"
                 android:textSize="@dimen/jadi_search_scope_txt_size"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -62,7 +62,7 @@
                 android:text="@string/jandi_file_category_everyone"
                 android:textColor="@color/white"
                 android:textSize="@dimen/jadi_search_scope_txt_size"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
         </LinearLayout>
     </LinearLayout>
@@ -76,6 +76,6 @@
         android:layout_marginBottom="20dp"
         android:background="@drawable/bg_circle_white"
         android:indeterminate="true"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </RelativeLayout>

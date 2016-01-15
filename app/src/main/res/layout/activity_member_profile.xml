@@ -180,7 +180,7 @@
                 android:layout_height="80dp"
                 android:layout_alignTop="@id/vg_member_profile_detail"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="-40dp"/>
+                android:layout_marginTop="-40dp" />
 
         </RelativeLayout>
 

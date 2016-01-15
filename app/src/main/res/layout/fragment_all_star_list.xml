@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_star_mention"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        android:clipToPadding="false"/>
+        android:clipToPadding="false" />
 
     <LinearLayout
         android:id="@+id/ll_empty_list_star_mention"
@@ -30,7 +30,7 @@
             android:gravity="center"
             android:text="@string/jandi_mention_no_mentions"
             android:textColor="@color/account_home_help_dialog_text"
-            android:textSize="@dimen/jandi_text_size_large"/>
+            android:textSize="@dimen/jandi_text_size_large" />
 
     </LinearLayout>
 
@@ -43,6 +43,6 @@
         android:layout_marginBottom="20dp"
         android:background="@drawable/bg_circle_white"
         android:indeterminate="true"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </RelativeLayout>

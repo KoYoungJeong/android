@@ -743,7 +743,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     private void loadNewMessage(MessageQueue messageQueue) {
 
-
         if (newsMessageLoader != null) {
             MessageState data = (MessageState) messageQueue.getData();
             int lastUpdateLinkId = data.getLastUpdateLinkId();
@@ -914,7 +913,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(EXTRA_NEW_PHOTO_FILE, photoFileByCamera);
+        if (filePickerViewModel.getUploadedFile() != null) {
+            outState.putSerializable(EXTRA_NEW_PHOTO_FILE, filePickerViewModel.getUploadedFile());
+        }
     }
 
     @Override
@@ -1252,12 +1253,25 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             case FilePickerViewModel.TYPE_UPLOAD_GALLERY:
                 break;
             case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
+                List<String> filePaths = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
+                if (filePaths == null || filePaths.size() == 0) {
+                    filePaths = new ArrayList<>();
+                    String filePath = photoFileByCamera.getPath();
+                    filePaths.add(filePath);
+                }
+
+                FileUploadPreviewActivity_.intent(this)
+                        .singleUpload(true)
+                        .realFilePathList(new ArrayList<>(filePaths))
+                        .selectedEntityIdToBeShared(entityId)
+                        .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
+                break;
             case FilePickerViewModel.TYPE_UPLOAD_EXPLORER:
-                List<String> filePath = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
-                if (filePath != null && filePath.size() > 0) {
+                filePaths = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
+                if (filePaths != null && filePaths.size() > 0) {
                     FileUploadPreviewActivity_.intent(this)
                             .singleUpload(true)
-                            .realFilePathList(new ArrayList<>(filePath))
+                            .realFilePathList(new ArrayList<>(filePaths))
                             .selectedEntityIdToBeShared(entityId)
                             .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
                 }

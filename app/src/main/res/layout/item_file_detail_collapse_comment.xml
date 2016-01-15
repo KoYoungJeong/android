@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.tosslab.jandi.app.views.LongClickableRelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.tosslab.jandi.app.views.LongClickableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,13 +13,13 @@
         android:layout_marginTop="@dimen/jandi_file_detail_comment_message_margin_top"
         android:text="HiHi\nThis is Comment"
         android:textColor="@color/jandi_file_detail_comment_text"
-        android:textSize="@dimen/jandi_file_detail_comment_date_text"/>
+        android:textSize="@dimen/jandi_file_detail_comment_date_text" />
 
     <View
         android:id="@+id/v_file_detail_comment_anim"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignBottom="@+id/txt_file_detail_collapse_comment_content"
-        android:layout_alignParentTop="@+id/txt_file_detail_collapse_comment_content"/>
+        android:layout_alignParentTop="@+id/txt_file_detail_collapse_comment_content" />
 
 </com.tosslab.jandi.app.views.LongClickableRelativeLayout>

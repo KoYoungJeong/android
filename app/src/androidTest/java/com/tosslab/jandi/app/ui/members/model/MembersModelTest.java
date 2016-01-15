@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.ui.members.model;
 
 import android.support.test.runner.AndroidJUnit4;
-
 import android.text.TextUtils;
+
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -46,7 +46,7 @@ public class MembersModelTest {
     public void tearDown() throws Exception {
         BaseInitUtil.clear();
     }
-    
+
     @Test
     public void testRemoveMember() throws Exception {
         // Given

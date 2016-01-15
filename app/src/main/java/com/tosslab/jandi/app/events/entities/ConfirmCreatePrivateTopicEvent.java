@@ -5,6 +5,7 @@ package com.tosslab.jandi.app.events.entities;
  */
 public class ConfirmCreatePrivateTopicEvent {
     public String groupName;
+
     public ConfirmCreatePrivateTopicEvent(String groupName) {
         this.groupName = groupName;
     }

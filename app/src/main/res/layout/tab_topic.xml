@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -10,7 +9,7 @@
         android:layout_height="27dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="4dp"
-        android:src="@drawable/jandi_tab_selector_topic"/>
+        android:src="@drawable/jandi_tab_selector_topic" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -21,7 +20,7 @@
         android:layout_marginTop="2dp"
         android:text="@string/jandi_tab_topic"
         android:textColor="@color/jandi_selector_font"
-        android:textSize="@dimen/jandi_tab_text_size"/>
+        android:textSize="@dimen/jandi_tab_text_size" />
 
     <TextView
         android:id="@+id/tab_badge_topic_new"
@@ -35,5 +34,5 @@
         android:gravity="center"
         android:textColor="@color/jandi_text_white"
         android:textSize="11sp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </RelativeLayout>

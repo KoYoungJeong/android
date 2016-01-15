@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import setup.BaseInitUtil;
 
 import static org.junit.Assert.assertNotNull;
+
 /**
  * Created by tonyjs on 15. 12. 29..
  */

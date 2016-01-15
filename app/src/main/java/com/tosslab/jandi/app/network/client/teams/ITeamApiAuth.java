@@ -79,6 +79,7 @@ public interface ITeamApiAuth {
     ResCommon kickUserFromTopic(int teamId, int topicId, ReqMember member);
 
     ResMessages.FileMessage enableFileExternalLink(int teamId, int fileId);
+
     ResMessages.FileMessage disableFileExternalLink(int teamId, int fileId);
 
 }

@@ -5,6 +5,7 @@ package com.tosslab.jandi.app.events.files;
  */
 public class RequestFileUploadEvent {
     public int type;
+
     public RequestFileUploadEvent(int type) {
         this.type = type;
     }

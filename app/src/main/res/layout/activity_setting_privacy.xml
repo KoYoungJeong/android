@@ -8,7 +8,7 @@
         android:id="@+id/layout_search_bar"
         style="@style/Jandi.Default.ActionBar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"/>
+        android:layout_height="?attr/actionBarSize" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,7 +26,7 @@
                 android:layout_weight="1"
                 android:text="@string/jandi_set_passcode"
                 android:textColor="@color/jandi_text"
-                android:textSize="@dimen/jandi_text_size_large"/>
+                android:textSize="@dimen/jandi_text_size_large" />
 
             <android.support.v7.widget.SwitchCompat
                 android:id="@+id/switch_setting_privacy_passcode"
@@ -34,11 +34,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:checked="false"
-                android:clickable="false"/>
+                android:clickable="false" />
         </LinearLayout>
 
-        <View
-            style="@style/JandiSettingPrivacy.Divider"/>
+        <View style="@style/JandiSettingPrivacy.Divider" />
 
         <TextView
             android:id="@+id/tv_setting_privacy_passcode_detail"
@@ -49,7 +48,7 @@
             android:paddingLeft="25dp"
             android:paddingRight="25dp"
             android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
-            android:text="@string/jandi_set_passcode_detail"/>
+            android:text="@string/jandi_set_passcode_detail" />
 
         <LinearLayout
             android:id="@+id/vg_setting_privacy_passcode_modify"
@@ -62,14 +61,14 @@
                 android:layout_height="wrap_content"
                 android:text="@string/jandi_change_passcode"
                 android:textColor="@color/jandi_text"
-                android:textSize="@dimen/jandi_text_size_large"/>
+                android:textSize="@dimen/jandi_text_size_large" />
 
         </LinearLayout>
 
         <View
             android:id="@+id/v_setting_privacy_divider_for_passcode_modify"
             android:visibility="gone"
-            style="@style/JandiSettingPrivacy.Divider"/>
+            style="@style/JandiSettingPrivacy.Divider" />
 
     </LinearLayout>
 

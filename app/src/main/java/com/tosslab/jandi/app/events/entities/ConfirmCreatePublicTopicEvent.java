@@ -5,6 +5,7 @@ package com.tosslab.jandi.app.events.entities;
  */
 public class ConfirmCreatePublicTopicEvent {
     public String topicName;
+
     public ConfirmCreatePublicTopicEvent(String topicName) {
         this.topicName = topicName;
     }

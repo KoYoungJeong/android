@@ -87,7 +87,16 @@
 	<string name="jandi_announcement_deleted">"%s 删除公告"</string>
 	<string name="jandi_announcement_minimize">"最小化"</string>
 	<string name="jandi_are_you_sure_disable_external_link">"若移除共享链接，访问至该文件的权限将被撤销。 你确定要移除共享链接？"</string>
+	<string name="jandi_ask_assign_topic_owner">"你确定将议题管理权限转移至此成员？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你确定将此成员剔除议题？"</string>
+	<string name="jandi_ask_to_leave_if_private_topic_owner">"欲离开此议题，请先将议题管理权限转移至其他成员"</string>
+	<string name="jandi_ask_to_leave_if_topic_owner">"你可于离开议题前转移管理权限"</string>
+	<string name="jandi_assign">"转移"</string>
+	<string name="jandi_assign_topic_owner_desc">"议题管理员权限为下：
+- 更改议题名称和信息
+- 删除议题
+- 剔除议题成员
+- 暂停/删除JANDI Connect聚合项目"</string>
 	<string name="jandi_auto_join_cannot_be_default_topic">"你无法取消预置议题内的自动邀请"</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"自动邀请的功能仅开放于公开议题中使用"</string>
 	<string name="jandi_auto_join_explain">"邀请所有新成员至此议题"</string>
@@ -105,6 +114,7 @@
 	<string name="jandi_cannot_find_search_result_2">"直接上传及分享文件到任何对话当中"</string>
 	<string name="jandi_cannot_find_search_result_old">"找不到符合条件的内容"</string>
 	<string name="jandi_change_passcode">"更改密码"</string>
+	<string name="jandi_character">"人物"</string>
 	<string name="jandi_chat_detail">"聊天设置"</string>
 	<string name="jandi_choose_app_store">"选择应用程序商铺"</string>
 	<string name="jandi_choose_email">"选择一个电子邮件"</string>
@@ -137,6 +147,7 @@
 	<string name="jandi_coach_mark_topic_setting">"其他议题设置\n(邀请、离开\n、重新命名)"</string>
 	<string name="jandi_coach_mark_upload_file">"上传文件"</string>
 	<string name="jandi_commented_on">"<![CDATA[<font color="#999999">留言于</font><font color="#000000"><b>%s</b></font><font color="#999999">的文件</font>]]>"</string>
+	<string name="jandi_complete_assign_topic_owner">"议题管理权限已成功转移"</string>
 	<string name="jandi_confirm">"确定"</string>
 	<string name="jandi_confirm_new_passcode">"确认新密码"</string>
 	<string name="jandi_confirm_passcode">"确认密码"</string>
@@ -168,6 +179,7 @@
 	<string name="jandi_entity_unjoined_topic">"其他议题"</string>
 	<string name="jandi_err_unexpected">"出现不正常错误"</string>
 	<string name="jandi_error_web_token">"登录时遇到问题，请再试一次。"</string>
+	<string name="jandi_exceeded_max_text_length">"可填入最多5000字"</string>
 	<string name="jandi_expired_invitation_link">"此邀请链接已过期，请联络你的邀请人重新寄发新链接。"</string>
 	<string name="jandi_explain_global_push_off">"JANDI推播通知已被停用。 欲重新接收推播，点击「更多」后进入「设置」开启推播。"</string>
 	<string name="jandi_explain_topic_description">"描述 (选项)"</string>
@@ -290,6 +302,7 @@
 	<string name="jandi_messages_release">"放掉以载入较旧的信息"</string>
 	<string name="jandi_modify_channel">"重新命名议题"</string>
 	<string name="jandi_modify_private_group">"重新命名私人议题"</string>
+	<string name="jandi_modify_profile_image">"简介照片"</string>
 	<string name="jandi_move_entity_after_share">"文件已成功被分享。您想要现在跳转到那对话中吗？"</string>
 	<string name="jandi_msg_network_offline">"联机中断。"</string>
 	<string name="jandi_msg_network_offline_warn">"目前为无网络状态JANDI会于连上网络后，"</string>
@@ -311,6 +324,7 @@
 	<string name="jandi_off">"关闭"</string>
 	<string name="jandi_on">"打开"</string>
 	<string name="jandi_open_browser">"开启一个浏览器"</string>
+	<string name="jandi_page_not_found">"您找的页面不存在"</string>
 	<string name="jandi_password_strength_average">"普通"</string>
 	<string name="jandi_password_strength_safe">"强"</string>
 	<string name="jandi_password_strength_strong">"非常强"</string>
@@ -327,6 +341,7 @@
 	<string name="jandi_private_topic_tip_3">"已设定为公开或私人的议题群组在建立之后不能被转换成另一个"</string>
 	<string name="jandi_profile_actionb">"简介"</string>
 	<string name="jandi_profile_additional_info">"其它数据"</string>
+	<string name="jandi_profile_background_color">"颜色"</string>
 	<string name="jandi_profile_basic_info">"基本数据"</string>
 	<string name="jandi_profile_division">"部门"</string>
 	<string name="jandi_profile_division_hint">"部门"</string>
@@ -347,6 +362,7 @@
 	<string name="jandi_push_preview_public_only">"仅限公开议题"</string>
 	<string name="jandi_question_team_create">"您的团队还未使用JANDI吗？"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"你确认要删除这个电子邮件地址？"</string>
+	<string name="jandi_retry">"请再试一次"</string>
 	<string name="jandi_retry_voice_search">"没有接收清楚您刚才说的，麻烦再说一次"</string>
 	<string name="jandi_save">"储存"</string>
 	<string name="jandi_screen_auto">"自动调整"</string>
@@ -358,6 +374,7 @@
 	<string name="jandi_sdcard_storage_unmounted">"解除连接记忆卡"</string>
 	<string name="jandi_search_ing">"<![CDATA[搜索 <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>与 <b><font color=#404040>%2$d</font></b>符合]]>"</string>
+	<string name="jandi_select_character">"选择人物"</string>
 	<string name="jandi_select_direct_messages">"选择私信"</string>
 	<string name="jandi_select_gallery">"选择照片"</string>
 	<string name="jandi_select_maximum_10">"一次可上传10张照片"</string>

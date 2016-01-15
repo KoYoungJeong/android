@@ -6,6 +6,7 @@ package com.tosslab.jandi.app.network.models;
 public class ReqUnshareMessage {
     public int teamId;
     public int unshareEntity;
+
     public ReqUnshareMessage(int teamId, int unshareEntity) {
         this.teamId = teamId;
         this.unshareEntity = unshareEntity;

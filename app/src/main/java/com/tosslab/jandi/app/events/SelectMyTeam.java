@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.models.ResMyTeam;
  */
 public class SelectMyTeam {
     public ResMyTeam.Team myTeam;
+
     public SelectMyTeam(ResMyTeam.Team myTeam) {
         this.myTeam = myTeam;
     }

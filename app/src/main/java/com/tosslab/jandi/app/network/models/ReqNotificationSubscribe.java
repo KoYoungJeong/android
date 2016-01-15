@@ -5,6 +5,7 @@ package com.tosslab.jandi.app.network.models;
  */
 public class ReqNotificationSubscribe {
     public boolean subscribe;
+
     public ReqNotificationSubscribe(boolean subscribe) {
         this.subscribe = subscribe;
     }

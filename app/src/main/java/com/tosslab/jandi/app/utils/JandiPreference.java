@@ -7,8 +7,6 @@ import android.preference.PreferenceManager;
 
 import com.tosslab.jandi.app.JandiApplication;
 
-import java.sql.Timestamp;
-
 /**
  * Created by justinygchoi on 2014. 7. 8..
  */
@@ -329,14 +327,14 @@ public class JandiPreference {
 
     }
 
-    public static void setSocketConnectedLastTime() {
-        getSharedPreferences(JandiApplication.getContext()).edit()
-                .putLong(PREF_SOCKET_CONNECTED_LAST_TIME, new Timestamp(System.currentTimeMillis()).getTime())
-                .commit();
-    }
-
     public static long getSocketConnectedLastTime() {
         return getSharedPreferences(JandiApplication.getContext()).getLong(PREF_SOCKET_CONNECTED_LAST_TIME, -1);
+    }
+
+    public static void setSocketConnectedLastTime(long ts) {
+        getSharedPreferences(JandiApplication.getContext()).edit()
+                .putLong(PREF_SOCKET_CONNECTED_LAST_TIME, ts)
+                .commit();
     }
 
 }

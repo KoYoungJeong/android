@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -10,7 +9,7 @@
         android:layout_height="27dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="4dp"
-        android:src="@drawable/jandi_tab_selector_more"/>
+        android:src="@drawable/jandi_tab_selector_more" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -21,7 +20,7 @@
         android:layout_marginTop="2dp"
         android:text="@string/jandi_tab_more"
         android:textColor="@color/jandi_selector_font"
-        android:textSize="@dimen/jandi_tab_text_size"/>
+        android:textSize="@dimen/jandi_tab_text_size" />
 
     <ImageView
         android:id="@+id/tab_badge_more_new"
@@ -30,5 +29,5 @@
         android:layout_alignTop="@+id/tab_icon_more"
         android:layout_toRightOf="@+id/tab_icon_more"
         android:src="@drawable/circle_main_color"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 </RelativeLayout>

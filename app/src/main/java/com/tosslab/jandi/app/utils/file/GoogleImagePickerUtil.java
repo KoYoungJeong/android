@@ -78,11 +78,12 @@ public class GoogleImagePickerUtil {
             }
         }
 
-
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setMessage(context.getString(R.string.jandi_action_download) + " " + downloadDir + "/" + downloadPath);
         progressDialog.show();
 
         return progressDialog;
     }
+
+
 }

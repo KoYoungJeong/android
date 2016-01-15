@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.ui.share.views.domain.ExpandRoomData;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,14 +108,14 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             ImageUtil.loadProfileImage(ivIcon, fileUrl, R.drawable.profile_img_comment);
             roomholder.tvName.setText(item.getName());
         } else if (item.isPublicTopic()) {
-            int resId  =R.drawable.topiclist_icon_topic_fav;
+            int resId = R.drawable.topiclist_icon_topic_fav;
             if (!item.isStarred()) {
                 resId = R.drawable.topiclist_icon_topic;
             }
             ivIcon.setImageURI(UriFactory.getResourceUri(resId));
             roomholder.tvName.setText(item.getName());
         } else {
-            int resId  =R.drawable.topiclist_icon_topic_private_fav;
+            int resId = R.drawable.topiclist_icon_topic_private_fav;
             if (!item.isStarred()) {
                 resId = R.drawable.topiclist_icon_topic_private;
             }

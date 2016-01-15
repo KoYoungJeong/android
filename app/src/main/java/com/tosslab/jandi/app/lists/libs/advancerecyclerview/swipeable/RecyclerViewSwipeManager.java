@@ -224,6 +224,7 @@ public class RecyclerViewSwipeManager {
     private VelocityTracker mVelocityTracker;
     private SwipingItemOperator mSwipingItemOperator;
     private OnItemSwipeEventListener mItemSwipeEventListener;
+
     /**
      * Constructor.
      */

@@ -21,7 +21,7 @@
             android:id="@+id/iv_message_user_profile"
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
-            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"/>
+            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
         <!-- 기본 표시 레이어 -->
 
 
@@ -104,13 +104,13 @@
                 <com.tosslab.jandi.app.views.FrescoImageView
                     android:id="@+id/iv_message_commented_photo"
                     android:layout_width="@dimen/jandi_messages_image_size"
-                    android:layout_height="@dimen/jandi_messages_image_size"/>
+                    android:layout_height="@dimen/jandi_messages_image_size" />
 
                 <View
                     android:id="@+id/iv_message_commented_photo_round"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/jandi_message_image_frame"/>
+                    android:background="@drawable/jandi_message_image_frame" />
             </FrameLayout>
 
             <LinearLayout

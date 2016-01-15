@@ -28,7 +28,6 @@ public class TeamDomainInfoPresenter {
     @ViewById(R.id.et_team_detail_info_team_domain)
     TextView teamDomainView;
 
-
     @RootContext
     Activity activity;
 

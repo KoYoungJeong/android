@@ -18,6 +18,17 @@ public class SocketTopicFolderEvent {
     private int version;
     private Data data;
 
+    private long ts;
+
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
+
     public String getEvent() {
         return event;
     }

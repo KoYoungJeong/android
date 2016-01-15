@@ -7,7 +7,6 @@ import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
@@ -49,6 +48,7 @@ public class IntroActivityModelTest {
         ShadowLog.stream = System.out;
 
     }
+
     @After
     public void tearDown() throws Exception {
         BaseInitUtil.releaseDatabase();

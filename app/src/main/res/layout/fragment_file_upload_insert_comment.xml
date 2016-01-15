@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         fresco:placeholderImage="@drawable/file_icon_img_198"
         fresco:placeholderImageScaleType="center"
-        fresco:actualImageScaleType="fitCenter"/>
+        fresco:actualImageScaleType="fitCenter" />
 
     <!-- 액션바(56dp), 파일 제목, 엔티티, 댓글 영역(186dp)을 제외한 나머지 영역 -->
     <FrameLayout
@@ -33,7 +33,7 @@
             <ImageView
                 android:id="@+id/iv_file_extensions"
                 android:layout_width="66dp"
-                android:layout_height="79dp"/>
+                android:layout_height="79dp" />
 
             <TextView
                 android:id="@+id/tv_file_extenstions"
@@ -42,7 +42,7 @@
                 android:layout_marginTop="18dp"
                 android:textColor="@color/jandi_text_light_gray"
                 android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
         </LinearLayout>
 

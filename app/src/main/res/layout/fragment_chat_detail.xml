@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/vg_chat_detail_starred"
@@ -20,13 +19,13 @@
             android:layout_weight="1"
             android:text="@string/jandi_starred"
             android:textColor="@color/jandi_text"
-            android:textSize="@dimen/jandi_text_size_large"/>
+            android:textSize="@dimen/jandi_text_size_large" />
 
         <ImageView
             android:id="@+id/iv_chat_detail_starred"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/jandi_topic_starred_status"/>
+            android:src="@drawable/jandi_topic_starred_status" />
 
     </LinearLayout>
 
@@ -34,7 +33,7 @@
         style="@style/JandiTopicDetail.Layout"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/account_home_divide_line"/>
+        android:background="@color/account_home_divide_line" />
 
     <LinearLayout
         android:id="@+id/vg_chat_detail_leave"
@@ -50,7 +49,7 @@
             android:layout_height="wrap_content"
             android:text="@string/jandi_action_leave"
             android:textColor="@color/jandi_text"
-            android:textSize="@dimen/jandi_text_size_large"/>
+            android:textSize="@dimen/jandi_text_size_large" />
 
     </LinearLayout>
 

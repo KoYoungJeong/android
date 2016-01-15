@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.utils.transform.ion;
 import android.graphics.Bitmap;
 
 import com.tosslab.jandi.app.utils.image.BitmapUtil;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 11..

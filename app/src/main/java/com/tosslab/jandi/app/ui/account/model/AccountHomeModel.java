@@ -40,7 +40,6 @@ public class AccountHomeModel {
         List<Team> teams = new ArrayList<Team>();
 
         List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
-
         teams.addAll(convertJoinedTeamList(userTeams));
 
         List<ResPendingTeamInfo> pendingTeamInfo = RequestApiManager.getInstance().getPendingTeamInfoByInvitationApi();

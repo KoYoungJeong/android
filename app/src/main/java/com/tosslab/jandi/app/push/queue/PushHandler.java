@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.receiver.JandiPushReceiverModel_;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;

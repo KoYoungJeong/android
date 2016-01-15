@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.tosslab.jandi.app">
 
@@ -227,7 +226,7 @@
             android:theme="@style/JandiTheme.PushIntro" />
 
         <activity
-            android:name="com.soundcloud.android.crop.CropImageActivity"
+            android:name="com.tosslab.jandi.app.ui.profile.crop.JandiCropImageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <activity
@@ -317,6 +316,16 @@
         </activity>
 
         <activity android:name=".ui.passcode.PassCodeActivity_" />
+        <activity android:name=".ui.web.PageNotFoundActivity_" />
+
+        <activity
+            android:name=".ui.profile.defaultimage.ProfileImageSelectorActivity_"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <service android:name=".services.socket.JandiSocketService" />
 

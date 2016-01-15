@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_entity_more"
         android:icon="@drawable/actionbar_icon_menu"
         android:showAsAction="always"
         android:title="@string/jandi_tab_more"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 </menu>

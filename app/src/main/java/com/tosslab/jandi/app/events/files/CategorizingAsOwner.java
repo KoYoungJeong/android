@@ -6,6 +6,7 @@ package com.tosslab.jandi.app.events.files;
 public class CategorizingAsOwner {
     public static final String EVERYONE = "all";
     public String userId;
+
     public CategorizingAsOwner(String userId) {
         this.userId = userId;
     }
