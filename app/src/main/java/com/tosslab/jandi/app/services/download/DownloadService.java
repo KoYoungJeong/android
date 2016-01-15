@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.services.download;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -66,10 +67,12 @@ public class DownloadService extends IntentService implements DownloadController
         public void onReceive(Context context, Intent intent) {
             if (downloadController != null) {
                 downloadController.cancelDownload();
+
                 abortBroadcast();
             }
         }
     };
+    private boolean isRedeliveried;
 
     public DownloadService() {
         super(TAG);
@@ -90,13 +93,25 @@ public class DownloadService extends IntentService implements DownloadController
         super.onCreate();
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         setLastNotificationTime(0);
-        setIntentRedelivery(true);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if ((flags & Service.START_REDELIVER_INTENT) == 0) {
+            setIntentRedelivery(true);
+            isRedeliveried = false;
+        } else {
+            setIntentRedelivery(false);
+            isRedeliveried = true;
+        }
+
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         downloadController = new DownloadController(this);
-        downloadController.onHandleIntent(intent);
+        downloadController.onHandleIntent(intent, isRedeliveried);
     }
 
     @Override
@@ -228,4 +243,8 @@ public class DownloadService extends IntentService implements DownloadController
         }
     }
 
+    @Override
+    public Context getServiceContext() {
+        return this;
+    }
 }

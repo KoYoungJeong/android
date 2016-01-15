@@ -26,10 +26,10 @@
             android:textStyle="bold"/>
 
 
-        <LinearLayout
+        <com.tosslab.jandi.app.views.FixedLinearLayout
             android:id="@+id/vg_unjoin_topic_desc_member"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="16.77dp"
             android:layout_marginTop="10dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -38,6 +38,9 @@
                 android:id="@+id/tv_unjoin_topic_desc_host"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textColor="@color/jandi_text_medium"
                 android:textSize="@dimen/jandi_text_size_medium"
                 android:textStyle="bold"/>
@@ -66,7 +69,7 @@
                 android:textColor="@color/jandi_text_medium"
                 android:textSize="@dimen/jandi_text_size_medium"
                 android:textStyle="bold"/>
-        </LinearLayout>
+        </com.tosslab.jandi.app.views.FixedLinearLayout>
 
     </LinearLayout>
 

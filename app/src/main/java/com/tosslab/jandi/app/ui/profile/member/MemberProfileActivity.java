@@ -6,7 +6,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -14,7 +13,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -162,8 +160,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     @AfterInject
     void initObject() {
-        FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
-        boolean isBot = isBot(member);
+        boolean isBot = EntityManager.getInstance().isBot(memberId);
         if (!isBot) {
             profileLoader = new MemberProfileLoader();
         } else {
@@ -174,6 +171,14 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @OnActivityResult(ModifyProfileActivity.REQUEST_CODE)
     @AfterViews
     void initViews() {
+
+        if (EntityManager.getInstance().isBot(memberId)
+                && !EntityManager.getInstance().isJandiBot(memberId)) {
+            // 잔디봇이 아닌 봇은 예외 처리
+            finish();
+            return;
+        }
+
         FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
         final String profileImageUrlLarge = member.getUserLargeProfileUrl();
 

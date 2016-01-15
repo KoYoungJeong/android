@@ -62,17 +62,17 @@ public class EntityManager {
     private ResLeftSideMenu.Team mMyTeam;
     private ResLeftSideMenu.User mMe;   // with MessageMarker
 
-    private Map<Integer, FormattedEntity> mJoinedTopics;
-    private Map<Integer, FormattedEntity> mUnjoinedTopics;
-    private Map<Integer, FormattedEntity> mUsers;
-    private Map<Integer, FormattedEntity> mJoinedUsers;
-    private Map<Integer, FormattedEntity> mGroups;
+    private Map<Integer, FormattedEntity> mJoinedTopics = new HashMap<>();
+    private Map<Integer, FormattedEntity> mUnjoinedTopics = new HashMap<>();
+    private Map<Integer, FormattedEntity> mUsers = new HashMap<>();
+    private Map<Integer, FormattedEntity> mJoinedUsers = new HashMap<>();
+    private Map<Integer, FormattedEntity> mGroups = new HashMap<>();
 
-    private Map<Integer, FormattedEntity> mStarredJoinedTopics;
-    private Map<Integer, FormattedEntity> mStarredUsers;
-    private Map<Integer, FormattedEntity> mStarredGroups;
+    private Map<Integer, FormattedEntity> mStarredJoinedTopics = new HashMap<>();
+    private Map<Integer, FormattedEntity> mStarredUsers = new HashMap<>();
+    private Map<Integer, FormattedEntity> mStarredGroups = new HashMap<>();
 
-    private Map<Integer, ResLeftSideMenu.MessageMarker> mMarkers;
+    private Map<Integer, ResLeftSideMenu.MessageMarker> mMarkers = new HashMap<>();
 
     // Collection 의 Sort 는 연산 시간이 오래 걸리기 때문에 한번만 하기 위해 저장하자.
     private List<FormattedEntity> mSortedJoinedTopics = null;
@@ -80,7 +80,7 @@ public class EntityManager {
     private List<FormattedEntity> mSortedUsers = null;
     private List<FormattedEntity> mSortedUsersWithoutMe = null;
     private List<FormattedEntity> mSortedGroups = null;
-    private Map<Integer, BotEntity> bots = null;
+    private Map<Integer, BotEntity> bots = new HashMap<>();
 
     protected EntityManager() {
         ResLeftSideMenu resLeftSideMenu = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu();
@@ -97,17 +97,17 @@ public class EntityManager {
     }
 
     protected void init(ResLeftSideMenu resLeftSideMenu) {
-        mJoinedTopics = new HashMap<>();
-        mUnjoinedTopics = new HashMap<>();
-        mGroups = new HashMap<>();
-        mUsers = new HashMap<>();
-        mJoinedUsers = new HashMap<>();
+        mJoinedTopics.clear();
+        mUnjoinedTopics.clear();
+        mGroups.clear();
+        mUsers.clear();
+        mJoinedUsers.clear();
 
-        mStarredJoinedTopics = new HashMap<>();
-        mStarredGroups = new HashMap<>();
-        mStarredUsers = new HashMap<>();
+        mStarredJoinedTopics.clear();
+        mStarredGroups.clear();
+        mStarredUsers.clear();
 
-        mMarkers = new HashMap<>();
+        mMarkers.clear();
 
         this.mMyTeam = resLeftSideMenu.team;
         this.mMe = resLeftSideMenu.user;
@@ -115,7 +115,7 @@ public class EntityManager {
         for (ResLeftSideMenu.MessageMarker marker : mMe.u_messageMarkers) {
             mMarkers.put(marker.entityId, marker);
         }
-        bots = new HashMap<>();
+        bots.clear();
 
         arrangeEntities(resLeftSideMenu);
 
@@ -532,5 +532,9 @@ public class EntityManager {
 
     public boolean isBot(int entityId) {
         return bots.containsKey(entityId);
+    }
+
+    public boolean isJandiBot(int entityId) {
+        return getJandiBot().getId() == entityId;
     }
 }

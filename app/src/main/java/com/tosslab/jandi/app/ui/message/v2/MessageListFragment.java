@@ -39,6 +39,7 @@ import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
+import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
@@ -1763,6 +1764,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     public void onEvent(ProfileChangeEvent event) {
+        messageListPresenter.justRefresh();
+    }
+
+    public void onEvent(RefreshConnectBotEvent event) {
         messageListPresenter.justRefresh();
     }
 

@@ -10,7 +10,6 @@ import android.view.View;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.selector.room.RoomSelector;
@@ -71,10 +70,7 @@ public class FileShareActivity extends BaseAppCompatActivity {
     }
 
     public void showList() {
-        ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage(fileId);
-
-        final List<FormattedEntity> unSharedEntities
-                = fileDetailModel.getUnsharedEntities(fileMessage);
+        final List<FormattedEntity> unSharedEntities = fileDetailModel.getUnsharedEntities();
 
         List<FormattedEntity> topics = new ArrayList<>();
         List<FormattedEntity> users = new ArrayList<>();

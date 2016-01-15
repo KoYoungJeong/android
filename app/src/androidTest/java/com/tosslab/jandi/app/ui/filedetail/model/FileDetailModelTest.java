@@ -51,7 +51,7 @@ public class FileDetailModelTest {
     @Test
     public void testGetUnsharedEntities() throws Exception {
 
-        List<FormattedEntity> unsharedEntities = fileDetailModel.getUnsharedEntities(fileMessage);
+        List<FormattedEntity> unsharedEntities = fileDetailModel.getUnsharedEntities();
 
         assertThat(unsharedEntities, is(notNullValue()));
         assertThat(unsharedEntities.size(), is(greaterThan(0)));

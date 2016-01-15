@@ -369,7 +369,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     public void onEventMainThread(TopicDeleteEvent event) {
-        fileDetailPresenter.checkSharedEntity(event.getId(), fileId);
+        fileDetailPresenter.checkSharedEntity(event.getId(), fileMessage);
     }
 
     private void setUpActionBar() {
@@ -1242,9 +1242,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         if (resultCode == RESULT_OK) {
             int entityId = data.getIntExtra("EntityId", -1);
             if (requestCode == INTENT_RETURN_TYPE_SHARE) {
-                fileDetailPresenter.shareMessage(fileId, entityId);
+                fileDetailPresenter.shareMessage(fileMessage, entityId);
             } else if (requestCode == INTENT_RETURN_TYPE_UNSHARE) {
-                fileDetailPresenter.unShareMessage(fileId, entityId);
+                fileDetailPresenter.unShareMessage(fileMessage, entityId);
             }
         }
     }

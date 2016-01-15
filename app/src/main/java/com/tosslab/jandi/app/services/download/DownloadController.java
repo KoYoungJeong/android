@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.services.download;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
@@ -25,6 +26,7 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 
 import rx.Observable;
 
@@ -49,19 +51,24 @@ public class DownloadController {
         this.view = view;
     }
 
-    public void onHandleIntent(Intent intent) {
+    public void onHandleIntent(Intent intent, boolean isRedeliveried) {
 
-        if (DownloadModel.isRestart()) {
+        if (isRedeliveried) {
 
             List<DownloadInfo> downloadInfosInProgress = DownloadRepository.getInstance().getDownloadInfosInProgress();
 
-            Observable.from(downloadInfosInProgress)
-                    .map(DownloadInfo::getNotificationId)
-                    .subscribe(notificationId -> {
-                        view.cancelNotification(notificationId);
-                        DownloadModel.deleteDownloadInfo(notificationId);
-                    });
-            view.showErrorToast(R.string.err_download);
+            if (!(downloadInfosInProgress.isEmpty())) {
+
+                Observable.from(downloadInfosInProgress)
+                        .map(DownloadInfo::getNotificationId)
+                        .subscribe(notificationId -> {
+                            view.cancelNotification(notificationId);
+                            DownloadModel.deleteDownloadInfo(notificationId);
+                        });
+
+                view.showErrorToast(R.string.err_download);
+            }
+
 
             return;
         }
@@ -126,16 +133,28 @@ public class DownloadController {
             Intent openFileViewerIntent = getFileViewerIntent(file, downloadFileInfo.getFileType());
             view.notifyComplete(downloadFileInfo.getFileName(), notificationId, openFileViewerIntent);
 
+            DownloadManager downloadManager =
+                    (DownloadManager) view.getServiceContext().getSystemService(Context.DOWNLOAD_SERVICE);
+            String name = file.getName();
+            String description = file.getAbsolutePath();
+            String fileType = downloadFileInfo.getFileType();
+            long length = file.length();
+            downloadManager.addCompletedDownload(name, description,
+                    true, fileType,
+                    file.getAbsolutePath(), length, false);
+
             trackFileDownloadSuccess(downloadFileInfo.getFileId(),
                     downloadFileInfo.getFileType(),
                     downloadFileInfo.getFileExt(),
                     (int) file.length());
         } catch (Exception e) {
             DownloadModel.logDownloadException(e);
-
             view.cancelNotification(notificationId);
 
-            view.showErrorToast(R.string.err_download);
+            if (!(e.getCause() instanceof CancellationException)) {
+                view.showErrorToast(R.string.err_download);
+            }
+
         }
 
         DownloadModel.deleteDownloadInfo(notificationId);
@@ -214,5 +233,7 @@ public class DownloadController {
         void showToast(int resId);
 
         void showErrorToast(int resId);
+
+        Context getServiceContext();
     }
 }

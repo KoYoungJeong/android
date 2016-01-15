@@ -175,6 +175,9 @@ class ExpandablePositionTranslator {
     }
 
     public boolean isGroupExpanded(int groupPosition) {
+        if (groupPosition >= mCachedGroupPosInfo.length) {
+            return false;
+        }
         return ((mCachedGroupPosInfo[groupPosition] & FLAG_EXPANDED) != 0);
     }
 

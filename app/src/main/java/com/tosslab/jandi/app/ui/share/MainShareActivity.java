@@ -49,9 +49,11 @@ public class MainShareActivity extends BaseAppCompatActivity {
         String action = intent.getAction();
         String type = intent.getType();
 
+        boolean used = (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
+
         IntentType intentType = mainShareModel.getIntentType(action, type);
 
-        if (intentType == null) {
+        if (intentType == null || used) {
             // Check Shared Info Type
             startIntro();
             return;

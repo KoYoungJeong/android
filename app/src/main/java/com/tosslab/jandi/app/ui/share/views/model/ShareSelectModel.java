@@ -35,15 +35,15 @@ import rx.Observable;
 @EBean
 public class ShareSelectModel {
 
-    private Map<Integer, FormattedEntity> mJoinedTopics;
-    private Map<Integer, FormattedEntity> mUnjoinedTopics;
-    private Map<Integer, FormattedEntity> mUsers;
-    private Map<Integer, FormattedEntity> mJoinedUsers;
-    private Map<Integer, FormattedEntity> mGroups;
+    private Map<Integer, FormattedEntity> mJoinedTopics = new HashMap<>();
+    private Map<Integer, FormattedEntity> mUnjoinedTopics = new HashMap<>();
+    private Map<Integer, FormattedEntity> mUsers = new HashMap<>();
+    private Map<Integer, FormattedEntity> mJoinedUsers = new HashMap<>();
+    private Map<Integer, FormattedEntity> mGroups = new HashMap<>();
 
-    private Map<Integer, FormattedEntity> mStarredJoinedTopics;
-    private Map<Integer, FormattedEntity> mStarredUsers;
-    private Map<Integer, FormattedEntity> mStarredGroups;
+    private Map<Integer, FormattedEntity> mStarredJoinedTopics = new HashMap<>();
+    private Map<Integer, FormattedEntity> mStarredUsers = new HashMap<>();
+    private Map<Integer, FormattedEntity> mStarredGroups = new HashMap<>();
     private ResLeftSideMenu.Team currentTeam;
     private ResLeftSideMenu.User mMe;
 
@@ -52,14 +52,14 @@ public class ShareSelectModel {
     }
 
     public void initFormattedEntities(ResLeftSideMenu resLeftSideMenu) {
-        mJoinedTopics = new HashMap<>();
-        mUnjoinedTopics = new HashMap<>();
-        mUsers = new HashMap<>();
-        mJoinedUsers = new HashMap<>();
-        mGroups = new HashMap<>();
-        mStarredJoinedTopics = new HashMap<>();
-        mStarredUsers = new HashMap<>();
-        mStarredGroups = new HashMap<>();
+        mJoinedTopics.clear();
+        mUnjoinedTopics.clear();
+        mUsers.clear();
+        mJoinedUsers.clear();
+        mGroups.clear();
+        mStarredJoinedTopics.clear();
+        mStarredUsers.clear();
+        mStarredGroups.clear();
 
         this.mMe = resLeftSideMenu.user;
         this.currentTeam = resLeftSideMenu.team;

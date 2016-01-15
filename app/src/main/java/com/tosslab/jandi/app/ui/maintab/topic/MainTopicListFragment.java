@@ -51,6 +51,7 @@ import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
@@ -114,9 +115,13 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         progressWheel = new ProgressWheel(getActivity());
     }
 
+    @AfterInject
+    void initObjects() {
+        mainTopicListPresenter.setView(this);
+    }
+
     @AfterViews
     void initViews() {
-        mainTopicListPresenter.setView(this);
         mainTopicListPresenter.onLoadList();
         FAButtonUtil.setFAButtonController(lvMainTopic, btnFA);
         hasOptionsMenu();

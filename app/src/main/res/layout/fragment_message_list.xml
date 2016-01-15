@@ -29,6 +29,16 @@
         android:scrollbars="vertical" />
 
     <LinearLayout
+        android:id="@+id/layout_messages_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/vg_messages_input"
+        android:layout_below="@+id/layout_search_bar"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/lv_messages"
@@ -65,16 +75,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_messages_empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/vg_messages_input"
-        android:layout_below="@+id/layout_search_bar"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/vg_messages_disable_alert"
