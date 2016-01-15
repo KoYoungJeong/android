@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.utils;
 
 import android.support.annotation.VisibleForTesting;
 import android.text.Editable;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.widget.AutoCompleteTextView;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.views.spannable.MentionMessageSpannable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -104,6 +106,10 @@ public class TextCutter {
 
         @Override
         public void afterTextChanged(Editable s) {
+            if (TextUtils.isEmpty(s)) {
+                return;
+            }
+
             int textLength = s.length();
             if (textLength > maxLength) {
                 onMaxTextLengthReachedListener.onReached(s);
@@ -139,6 +145,15 @@ public class TextCutter {
             CharSequence result = text.subSequence(0, maxLength);
 
             LogUtil.d(TAG, stringForLog(result.subSequence(4991, 5000)));
+
+            if (result instanceof Spanned) {
+                Spanned spanned = (Spanned) result;
+                int spanEnd = spanned.getSpanEnd(MentionMessageSpannable.class);
+                if (spanEnd >= (maxLength - 1)) {
+                    int spanStart = spanned.getSpanStart(MentionMessageSpannable.class);
+                    return text.subSequence(0, spanStart);
+                }
+            }
 
             Matcher matcher = BROKEN_MENTION_PATTERN.matcher(result);
 
