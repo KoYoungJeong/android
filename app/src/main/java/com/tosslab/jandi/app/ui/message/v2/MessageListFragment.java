@@ -38,6 +38,7 @@ import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
+import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
@@ -102,9 +103,9 @@ import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.members.MembersListActivity;
+import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
-import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
-import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel_;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
@@ -1171,20 +1172,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!isForeground) {
             return;
         }
-        inviteMembersToEntity();
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void inviteMembersToEntity() {
-        int teamMemberCountWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe().size();
-
-        if (teamMemberCountWithoutMe <= 0) {
-            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_TOPIC_CHAT);
-            invitationDialogExecutor.execute();
-        } else {
-            InvitationViewModel invitationViewModel = InvitationViewModel_.getInstance_(getActivity());
-            invitationViewModel.inviteMembersToEntity(getActivity(), roomId);
-        }
+        MembersListActivity_.intent(MessageListFragment.this)
+                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .entityId(entityId)
+                .type(MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC)
+                .start();
     }
 
     public void onEvent(SendCompleteEvent event) {
@@ -1754,6 +1746,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     public void onEvent(ProfileChangeEvent event) {
+        messageListPresenter.justRefresh();
+    }
+
+    public void onEvent(RefreshConnectBotEvent event) {
         messageListPresenter.justRefresh();
     }
 

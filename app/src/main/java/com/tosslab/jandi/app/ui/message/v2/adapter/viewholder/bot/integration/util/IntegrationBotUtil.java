@@ -77,12 +77,15 @@ public class IntegrationBotUtil {
                 if (!TextUtils.isEmpty(info.title)) {
                     titleVisible = View.VISIBLE;
                     title.append(MarkdownLookUp.text(info.title).lookUp(vgConnectInfo.getContext()));
+                    LinkifyUtil.addLinks(tvTitle.getContext(), title);
                 } else {
                     titleVisible = View.GONE;
                 }
 
                 if (!TextUtils.isEmpty(info.description)) {
                     description.append(MarkdownLookUp.text(info.description).lookUp(vgConnectInfo.getContext()));
+                    LinkifyUtil.addLinks(tvDescription.getContext(), description);
+
                     descriptionVisible = View.VISIBLE;
                 } else {
                     descriptionVisible = View.GONE;

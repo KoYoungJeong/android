@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.markdown.MarkdownLookUp;
 import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
@@ -39,8 +40,6 @@ public class CommentStarMentionViewHolder extends CommonStarMentionViewHolder {
         tvFileName.setText(starMentionVO.getFileName());
         SpannableStringBuilder commentStringBuilder = new SpannableStringBuilder(starMentionVO.getBody());
 
-        MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvFileName, commentStringBuilder, true);
-        markdownViewModel.execute();
 
         GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
                 tvComment, commentStringBuilder, starMentionVO.getMentions(),
@@ -48,8 +47,14 @@ public class CommentStarMentionViewHolder extends CommonStarMentionViewHolder {
                 .setMeBackgroundColor(0xFF01a4e7)
                 .setMeTextColor(0xFFffffff)
                 .setPxSize(R.dimen.jandi_mention_star_list_item_font_size);
-
         commentStringBuilder = generateMentionMessageUtil.generate(false);
+
+        MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvFileName, commentStringBuilder, true);
+        markdownViewModel.execute();
+
+        MarkdownLookUp.text(commentStringBuilder).lookUp(tvComment.getContext());
+
+
         // for single spannable
         commentStringBuilder.append(" ");
         tvComment.setText(commentStringBuilder);

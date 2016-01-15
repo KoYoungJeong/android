@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi;
 
 import android.content.Context;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -16,6 +15,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.UnreadCountUtil;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
@@ -86,15 +86,16 @@ public class JandiBotViewHolder implements BodyViewHolder {
             SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
             messageStringBuilder.append(!TextUtils.isEmpty(textMessage.content.body) ? textMessage.content.body : "");
 
+            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
+                    tvMessage, messageStringBuilder, textMessage.mentions, entityManager.getMe().getId());
+            messageStringBuilder = generateMentionMessageUtil.generate(true);
 
-            boolean hasLink = LinkifyUtil.addLinks(context, messageStringBuilder);
-            if (hasLink) {
-                Spannable linkSpannable =
-                        Spannable.Factory.getInstance().newSpannable(messageStringBuilder);
-                messageStringBuilder.setSpan(linkSpannable,
-                        0, textMessage.content.body.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                LinkifyUtil.setOnLinkClick(tvMessage);
-            }
+            MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvMessage, messageStringBuilder, false);
+            markdownViewModel.execute();
+
+
+            LinkifyUtil.addLinks(context, messageStringBuilder);
+            LinkifyUtil.setOnLinkClick(tvMessage);
 
             messageStringBuilder.append(" ");
 
@@ -123,10 +124,6 @@ public class JandiBotViewHolder implements BodyViewHolder {
                         .setSpan(unreadCountSpannable, beforeLength, messageStringBuilder.length(),
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-
-            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                    tvMessage, messageStringBuilder, textMessage.mentions, entityManager.getMe().getId());
-            messageStringBuilder = generateMentionMessageUtil.generate(true);
 
             tvMessage.setText(messageStringBuilder);
 

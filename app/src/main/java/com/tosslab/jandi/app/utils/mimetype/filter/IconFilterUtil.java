@@ -29,6 +29,7 @@ public class IconFilterUtil {
         mimeFilterMap.put(MimeTypeUtil.FilterType.GoogleDocument, iconType -> IconFilterUtil.isFilter(iconType, "gdocument"));
         mimeFilterMap.put(MimeTypeUtil.FilterType.GoogleSpreadSheet, iconType -> IconFilterUtil.isFilter(iconType, "gspreadsheet"));
         mimeFilterMap.put(MimeTypeUtil.FilterType.GooglePresentation, iconType -> IconFilterUtil.isFilter(iconType, "gpresentation"));
+        mimeFilterMap.put(MimeTypeUtil.FilterType.Zip, iconType -> IconFilterUtil.isFilter(iconType, "zip"));
 
     }
 
