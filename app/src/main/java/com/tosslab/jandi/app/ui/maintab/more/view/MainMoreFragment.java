@@ -1,16 +1,16 @@
-package com.tosslab.jandi.app.ui.maintab.more;
+package com.tosslab.jandi.app.ui.maintab.more.view;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
+import android.support.v7.app.AlertDialog;
+import android.text.SpannableStringBuilder;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,33 +19,26 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
-import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
+import com.tosslab.jandi.app.ui.maintab.more.domain.VersionClickedInfo;
+import com.tosslab.jandi.app.ui.maintab.more.presenter.MainMorePresenter;
+import com.tosslab.jandi.app.ui.maintab.more.presenter.MainMorePresenterImpl;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
 import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
-import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
-import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.LanguageUtil;
+import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.IconWithTextView;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
@@ -54,11 +47,9 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -66,13 +57,7 @@ import rx.android.schedulers.AndroidSchedulers;
  * Created by justinygchoi on 2014. 10. 11..
  */
 @EFragment(R.layout.fragment_main_more)
-public class MainMoreFragment extends Fragment {
-
-    protected static final String SUPPORT_URL_KO = "https://jandi.zendesk.com/hc/ko";
-    protected static final String SUPPORT_URL_JA = "https://jandi.zendesk.com/hc/ja";
-    protected static final String SUPPORT_URL_ZH_CH = "https://jandi.zendesk.com/hc/zh-cn";
-    protected static final String SUPPORT_URL_ZH_TW = "https://jandi.zendesk.com/hc/zh-tw";
-    protected static final String SUPPORT_URL_EN = "https://jandi.zendesk.com/hc/en-us";
+public class MainMoreFragment extends Fragment implements MainMorePresenter.View {
 
     protected Context mContext;
 
@@ -96,28 +81,29 @@ public class MainMoreFragment extends Fragment {
     @ViewById(R.id.iv_more_additional_image_cover)
     ImageView ivMoreAdditionalImageCover;
 
-    @Bean
-    TeamDomainInfoModel teamDomainInfoModel;
-
-    @ViewById(R.id.tv_more_jandi_version)
+    @ViewById(R.id.tv_version_title)
     TextView textViewJandiVersion;
 
     @ViewById(R.id.btn_update_version)
     View btnUpdateVersion;
 
-    private EntityManager mEntityManager;
+    @Bean(MainMorePresenterImpl.class)
+    MainMorePresenter mainMorePresenter;
+
+    private VersionClickedInfo versionClickedInfo;
 
     @AfterInject
     void init() {
         mContext = getActivity();
-        mEntityManager = EntityManager.getInstance();
+        mainMorePresenter.setView(this);
+        versionClickedInfo = new VersionClickedInfo();
     }
 
     @AfterViews
     void initView() {
-        showJandiVersion();
-        showOtherTeamMessageCount();
-        showTeamMember();
+        mainMorePresenter.onShowJandiVersion();
+        mainMorePresenter.onShowOtherTeamMessageCount();
+        mainMorePresenter.onShowTeamMember();
         Observable.just(1)
                 .delay(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -150,23 +136,6 @@ public class MainMoreFragment extends Fragment {
 
     }
 
-    private void showTeamMember() {
-        String teamMember = getString(R.string.jandi_team_member);
-        int teamMemberCount = getEnabledUserCount();
-        String fullTeamMemberText = String.format("%s\n(%d)", teamMember, teamMemberCount);
-        vTeamMember.setIconText(fullTeamMemberText);
-    }
-
-    private int getEnabledUserCount() {
-        List<FormattedEntity> formattedUsers = EntityManager.getInstance().getFormattedUsers();
-        int enabledUserCount = Observable.from(formattedUsers)
-                .filter(formattedEntity -> TextUtils.equals(formattedEntity.getUser().status, "enabled"))
-                .count()
-                .toBlocking()
-                .firstOrDefault(0);
-        return enabledUserCount;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,18 +151,13 @@ public class MainMoreFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        showUserProfile();
+        mainMorePresenter.onShowUserProfile();
     }
 
-    private void showUserProfile() {
-        if (mEntityManager != null) {
-            FormattedEntity me = mEntityManager.getMe();
-
-            SimpleDraweeView imageView = profileIconView.getImageView();
-            Uri uri = Uri.parse(me.getUserSmallProfileUrl());
-
-            ImageUtil.loadProfileImage(imageView, uri, R.drawable.profile_img);
-        }
+    @Override
+    public void showUserProfile(Uri uri) {
+        SimpleDraweeView imageView = profileIconView.getImageView();
+        ImageUtil.loadProfileImage(imageView, uri, R.drawable.profile_img);
     }
 
     private void setEasterEgg() {
@@ -273,58 +237,12 @@ public class MainMoreFragment extends Fragment {
     }
 
     public void onEventMainThread(MessageOfOtherTeamEvent event) {
-        showOtherTeamMessageCount();
-    }
-
-    public void showOtherTeamMessageCount() {
-        AccountRepository accountRepository = AccountRepository.getRepository();
-        int selectedTeamId = accountRepository.getSelectedTeamId();
-        final int badgeCount[] = {0};
-        Observable.from(accountRepository.getAccountTeams())
-                .filter(userTeam -> userTeam.getTeamId() != selectedTeamId)
-                .subscribe(userTeam -> {
-                    badgeCount[0] += userTeam.getUnread();
-                    BadgeCountRepository.getRepository()
-                            .upsertBadgeCount(userTeam.getTeamId(), userTeam.getUnread());
-                });
-
-        BadgeUtils.setBadge(getActivity(), BadgeCountRepository.getRepository().getTotalBadgeCount());
-        vSwitchTeam.setBadgeCount(badgeCount[0]);
-    }
-
-    private void showJandiVersion() {
-        try {
-            String packageName = getActivity().getPackageName();
-            String versionName = getActivity().getPackageManager().getPackageInfo(packageName, 0).versionName;
-            textViewJandiVersion.setText(String.format("(v%s)", versionName));
-            configVersionButton();
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Background
-    void configVersionButton() {
-
-        if (!NetworkCheckUtil.isConnected()) {
-            return;
-        }
-
-        int currentVersion = getInstalledAppVersion();
-        try {
-            int latestVersion = getConfigInfo().latestVersions.android;
-            if (currentVersion < latestVersion) {
-                setVersionButtonVisibility(View.VISIBLE);
-            } else {
-                setVersionButtonVisibility(View.GONE);
-            }
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
-        }
+        mainMorePresenter.onShowOtherTeamMessageCount();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    void setVersionButtonVisibility(int visibility) {
+    @Override
+    public void setVersionButtonVisibility(int visibility) {
         btnUpdateVersion.setVisibility(visibility);
     }
 
@@ -369,13 +287,48 @@ public class MainMoreFragment extends Fragment {
 
     @Click(R.id.rl_more_help)
     public void launchHelpPageOnBrowser() {
+        mainMorePresenter.onLaunchHelpPage();
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.Help);
+    }
+
+    @Override
+    public void launchHelpPageOnBrowser(String supportUrl) {
         InternalWebActivity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .url(getSupportUrlEachLanguage())
+                .url(supportUrl)
                 .hideActionBar(true)
                 .helpSite(true)
                 .start();
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.Help);
+    }
+
+    @Override
+    public void setLatestVersion(int latestVersionCode) {
+        btnUpdateVersion.setTag(latestVersionCode);
+    }
+
+    @Override
+    public void showBugReportDialog(SpannableStringBuilder userInfoSpans) {
+
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(userInfoSpans)
+                .setTitle("Jandi Usage Information")
+                .setNegativeButton(R.string.jandi_close, null)
+                .setPositiveButton(R.string.jandi_send_to_email, (dialog, which) -> {
+                    Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:support@tosslab.com"));
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Jandi Usage Information");
+                    intent.putExtra(Intent.EXTRA_TEXT, userInfoSpans.toString());
+                    try {
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }).create();
+        WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
+        layoutParams.height = getResources().getDisplayMetrics().heightPixels * 2 / 3;
+        alertDialog.getWindow().setAttributes(layoutParams);
+        alertDialog.show();
+
     }
 
     @Click(R.id.ly_more_mentioned)
@@ -387,6 +340,7 @@ public class MainMoreFragment extends Fragment {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.Mentions);
     }
 
+
     @Click(R.id.ly_more_starred)
     public void launchHelpPageOnStarred() {
         StarMentionListActivity_.intent(getActivity())
@@ -396,38 +350,9 @@ public class MainMoreFragment extends Fragment {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoreTab, AnalyticsValue.Action.Stars);
     }
 
-    String getSupportUrlEachLanguage() {
-        String language = LanguageUtil.getLanguage(mContext);
-        String supportUrl;
-        if (TextUtils.equals(language, LanguageUtil.LANG_KO)) {
-            supportUrl = SUPPORT_URL_KO;
-        } else if (TextUtils.equals(language, LanguageUtil.LANG_JA)) {
-            supportUrl = SUPPORT_URL_EN; //일본어 컨텐츠가 없어서 영어버전 사용
-        } else if (TextUtils.equals(language, LanguageUtil.LANG_ZH_CN)) {
-            supportUrl = SUPPORT_URL_ZH_CH;
-        } else if (TextUtils.equals(language, LanguageUtil.LANG_ZH_TW)) {
-            supportUrl = SUPPORT_URL_ZH_TW;
-        } else {
-            supportUrl = SUPPORT_URL_EN;
-        }
-        return supportUrl;
-    }
-
-    public ResConfig getConfigInfo() throws RetrofitError {
-        return RequestApiManager.getInstance().getConfigByMainRest();
-    }
-
-    public int getInstalledAppVersion() {
-        try {
-            Context context = JandiApplication.getContext();
-            PackageManager packageManager = context.getPackageManager();
-            String packageName = context.getPackageName();
-            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-            return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            return 0;
-        }
+    @Click(R.id.tv_version_title)
+    void onClickUserInfoReport() {
+        mainMorePresenter.onReportUserInfo(versionClickedInfo);
     }
 
     @Click(R.id.btn_update_version)
@@ -437,10 +362,28 @@ public class MainMoreFragment extends Fragment {
             startActivity(new Intent(Intent.ACTION_VIEW,
                     Uri.parse("market://details?id=" + appPackageName)));
         } catch (android.content.ActivityNotFoundException anfe) {
-            startActivity(new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
+            int latestVersion = btnUpdateVersion.getTag() != null ? (int) btnUpdateVersion.getTag() : -1;
+            AlertUtil.showChooseUpdateWebsiteDialog(getActivity(), appPackageName, latestVersion);
         } finally {
             getActivity().finish();   // 업데이트 안내를 확인하면 앱을 종료한다.
         }
     }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void setJandiVersion(String version) {
+        textViewJandiVersion.setText(String.format("Version%s", version));
+    }
+
+    @Override
+    public void setOtherTeamBadgeCount(int badgeCount) {
+        vSwitchTeam.setBadgeCount(badgeCount);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void setMemberTextWithCount(String fullTeamMemberText) {
+        vTeamMember.setIconText(fullTeamMemberText);
+    }
+
 }

@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.utils;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
@@ -58,11 +60,11 @@ public class AlertUtil {
     }
 
     public static void showDialog(Activity activity,
-                           String title, String message,
-                           int positiveResId, DialogInterface.OnClickListener positiveListener,
-                           int neutralResId, DialogInterface.OnClickListener neutralListener,
-                           int negativeResId, DialogInterface.OnClickListener negativeListener,
-                           boolean cancelable) {
+                                  String title, String message,
+                                  int positiveResId, DialogInterface.OnClickListener positiveListener,
+                                  int neutralResId, DialogInterface.OnClickListener neutralListener,
+                                  int negativeResId, DialogInterface.OnClickListener negativeListener,
+                                  boolean cancelable) {
         if (activity == null || activity.isFinishing()) {
             return;
         }
@@ -91,11 +93,11 @@ public class AlertUtil {
 
 
     public static void showDialog(Activity activity,
-                           int titleResId, int messageResId,
-                           int positiveResId, DialogInterface.OnClickListener positiveListener,
-                           int neutralResId, DialogInterface.OnClickListener neutralListener,
-                           int negativeResId, DialogInterface.OnClickListener negativeListener,
-                           boolean cancelable) {
+                                  int titleResId, int messageResId,
+                                  int positiveResId, DialogInterface.OnClickListener positiveListener,
+                                  int neutralResId, DialogInterface.OnClickListener neutralListener,
+                                  int negativeResId, DialogInterface.OnClickListener negativeListener,
+                                  boolean cancelable) {
         if (activity == null || activity.isFinishing()) {
             return;
         }
@@ -122,4 +124,53 @@ public class AlertUtil {
         builder.create().show();
     }
 
+    public static void showChooseUpdateWebsiteDialog(Activity activity, String appPackageName, int versionCode) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.JandiTheme_AlertDialog_FixWidth_280);
+        String[] storeNames = activity.getResources().getStringArray(R.array.jandi_markets);
+        builder.setTitle(R.string.jandi_choose_app_store)
+                .setItems(storeNames, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        StringBuilder urlBuilder = new StringBuilder();
+                        switch (which) {
+                            case 0:
+                                // 구글 스토어
+                                urlBuilder.append("http://play.google.com/store/apps/details?id=")
+                                        .append(appPackageName);
+                                break;
+                            case 1:
+                                // 바이두
+                                urlBuilder.append("http://shouji.baidu.com/soft/item?docid=8102225");
+                                break;
+                            case 2:
+                                // 91 apk
+                                urlBuilder.append("http://apk.91.com/Soft/Android/")
+                                        .append(appPackageName)
+                                        .append("-")
+                                        .append(versionCode)
+                                        .append(".html");
+                                break;
+                            case 3:
+                                // Hi apk
+                                urlBuilder.append("http://apk.hiapk.com/appinfo/")
+                                        .append(appPackageName);
+                                break;
+                        }
+
+                        if (urlBuilder.length() > 0) {
+                            try {
+                                activity.startActivity(new Intent(Intent.ACTION_VIEW,
+                                        Uri.parse(urlBuilder.toString())));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        activity.finish();
+                    }
+                })
+                .create()
+                .show();
+    }
 }

@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.more;
 
+import com.tosslab.jandi.app.ui.maintab.more.view.MainMoreFragment;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

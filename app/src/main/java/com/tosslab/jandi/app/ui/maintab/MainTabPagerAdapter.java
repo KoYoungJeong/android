@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.chat.MainChatListFragment_;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment_;
-import com.tosslab.jandi.app.ui.maintab.more.MainMoreFragment_;
+import com.tosslab.jandi.app.ui.maintab.more.view.MainMoreFragment_;
 import com.tosslab.jandi.app.ui.maintab.topic.MainTopicListFragment_;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 
