@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
-import com.tosslab.jandi.app.ui.maintab.more.domain.VersionClickedInfo;
 import com.tosslab.jandi.app.ui.maintab.more.model.MainMoreModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 
@@ -25,6 +24,8 @@ public class MainMorePresenterImpl implements MainMorePresenter {
     @Bean
     MainMoreModel mainMoreModel;
     private View view;
+    private int versionClickCount = 0;
+    private long versionClickTime;
 
     @Override
     public void setView(View view) {
@@ -33,7 +34,7 @@ public class MainMorePresenterImpl implements MainMorePresenter {
 
     @Background
     @Override
-    public void onShowJandiVersion() {
+    public void showJandiVersion() {
         String versionName = mainMoreModel.getVersionName();
         if (!TextUtils.isEmpty(versionName)) {
             view.setJandiVersion(String.format("(v%s)", versionName));
@@ -55,14 +56,14 @@ public class MainMorePresenterImpl implements MainMorePresenter {
     }
 
     @Override
-    public void onShowOtherTeamMessageCount() {
+    public void showOtherTeamMessageCount() {
         int badgeCount = mainMoreModel.getOtherTeamBadge();
         BadgeUtils.setBadge(JandiApplication.getContext(), BadgeCountRepository.getRepository().getTotalBadgeCount());
         view.setOtherTeamBadgeCount(badgeCount);
     }
 
     @Override
-    public void onShowTeamMember() {
+    public void showTeamMember() {
         String teamMember = JandiApplication.getContext().getString(R.string.jandi_team_member);
         int teamMemberCount = mainMoreModel.getEnabledUserCount();
         String fullTeamMemberText = String.format("%s\n(%d)", teamMember, teamMemberCount);
@@ -71,7 +72,7 @@ public class MainMorePresenterImpl implements MainMorePresenter {
     }
 
     @Override
-    public void onShowUserProfile() {
+    public void showUserProfile() {
         FormattedEntity me = EntityManager.getInstance().getMe();
         Uri uri = Uri.parse(me.getUserSmallProfileUrl());
 
@@ -85,18 +86,17 @@ public class MainMorePresenterImpl implements MainMorePresenter {
     }
 
     @Override
-    public void onReportUserInfo(VersionClickedInfo versionClickInfo) {
-        int count = versionClickInfo.getCount();
-        if (count == 0) {
-            versionClickInfo.setTime(System.currentTimeMillis());
-        } else if (!mainMoreModel.isIn3Seconds(versionClickInfo.getTime())) {
-            count = 0;
-            versionClickInfo.setTime(System.currentTimeMillis());
+    public void onReportUserInfo() {
+        if (versionClickCount == 0) {
+            versionClickTime = System.currentTimeMillis();
+        } else if (!mainMoreModel.isIn3Seconds(versionClickTime)) {
+            versionClickCount = 0;
+            versionClickTime = System.currentTimeMillis();
         }
-        versionClickInfo.setCount(++count);
+        ++versionClickCount;
 
-        if (versionClickInfo.getCount() >= 5) {
-            versionClickInfo.setCount(0);
+        if (versionClickCount >= 5) {
+            versionClickCount = 0;
             List<Pair<String, String>> userInfosForBugReport = mainMoreModel.getUserInfosForBugReport();
             SpannableStringBuilder userInfoSpans = mainMoreModel.getUserInfoSpans(userInfosForBugReport);
             view.showBugReportDialog(userInfoSpans);

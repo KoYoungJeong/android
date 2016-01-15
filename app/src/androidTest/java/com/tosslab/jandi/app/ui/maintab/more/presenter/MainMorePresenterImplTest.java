@@ -4,7 +4,6 @@ import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.ui.maintab.more.domain.VersionClickedInfo;
 
 import org.junit.After;
 import org.junit.Before;
@@ -15,7 +14,6 @@ import org.mockito.Mockito;
 import setup.BaseInitUtil;
 
 import static com.jayway.awaitility.Awaitility.await;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -56,7 +54,7 @@ public class MainMorePresenterImplTest {
             return invocationOnMock;
         }).when(mockView).setVersionButtonVisibility(anyInt());
 
-        mainMorePresenter.onShowJandiVersion();
+        mainMorePresenter.showJandiVersion();
 
         await().until(() -> finish[0]);
 
@@ -71,19 +69,19 @@ public class MainMorePresenterImplTest {
 
     @Test
     public void testOnShowOtherTeamMessageCount() throws Exception {
-        mainMorePresenter.onShowOtherTeamMessageCount();
+        mainMorePresenter.showOtherTeamMessageCount();
         verify(mockView).setOtherTeamBadgeCount(anyInt());
     }
 
     @Test
     public void testOnShowTeamMember() throws Exception {
-        mainMorePresenter.onShowTeamMember();
+        mainMorePresenter.showTeamMember();
         verify(mockView).setMemberTextWithCount(anyString());
     }
 
     @Test
     public void testOnShowUserProfile() throws Exception {
-        mainMorePresenter.onShowUserProfile();
+        mainMorePresenter.showUserProfile();
         verify(mockView).showUserProfile(any());
     }
 
@@ -98,13 +96,13 @@ public class MainMorePresenterImplTest {
         VersionClickedInfo versionClickInfo = new VersionClickedInfo();
 
         // when 최초 클릭
-        mainMorePresenter.onReportUserInfo(versionClickInfo);
+        mainMorePresenter.onReportUserInfo();
         // then 클릭 1회 카운팅
         assertThat(versionClickInfo.getCount(), is(equalTo(1)));
 
         // when 두번째 클릭
         versionClickInfo.setTime(System.currentTimeMillis() - 1);
-        mainMorePresenter.onReportUserInfo(versionClickInfo);
+        mainMorePresenter.onReportUserInfo();
         // then 클릭 2회 카운팅, 시간은 현재보다 작은 값으로 설정
         assertThat(versionClickInfo.getCount(), is(equalTo(2)));
         assertThat(versionClickInfo.getTime(), is(lessThanOrEqualTo(System.currentTimeMillis())));
@@ -112,7 +110,7 @@ public class MainMorePresenterImplTest {
         // Given 최초 클릭을 현재보다 3초 이전으로 설정
         versionClickInfo.setTime(System.currentTimeMillis() - 3001);
         // when
-        mainMorePresenter.onReportUserInfo(versionClickInfo);
+        mainMorePresenter.onReportUserInfo();
         // then 클릭 정보 초기화
         assertThat(versionClickInfo.getCount(), is(equalTo(1)));
 
@@ -120,7 +118,7 @@ public class MainMorePresenterImplTest {
         versionClickInfo.setTime(System.currentTimeMillis() - 100);
         versionClickInfo.setCount(5);
         // when
-        mainMorePresenter.onReportUserInfo(versionClickInfo);
+        mainMorePresenter.onReportUserInfo();
         verify(mockView).showBugReportDialog(any());
 
     }

@@ -21,7 +21,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
-import com.tosslab.jandi.app.ui.maintab.more.domain.VersionClickedInfo;
 import com.tosslab.jandi.app.ui.maintab.more.presenter.MainMorePresenter;
 import com.tosslab.jandi.app.ui.maintab.more.presenter.MainMorePresenterImpl;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
@@ -90,20 +89,17 @@ public class MainMoreFragment extends Fragment implements MainMorePresenter.View
     @Bean(MainMorePresenterImpl.class)
     MainMorePresenter mainMorePresenter;
 
-    private VersionClickedInfo versionClickedInfo;
-
     @AfterInject
     void init() {
         mContext = getActivity();
         mainMorePresenter.setView(this);
-        versionClickedInfo = new VersionClickedInfo();
     }
 
     @AfterViews
     void initView() {
-        mainMorePresenter.onShowJandiVersion();
-        mainMorePresenter.onShowOtherTeamMessageCount();
-        mainMorePresenter.onShowTeamMember();
+        mainMorePresenter.showJandiVersion();
+        mainMorePresenter.showOtherTeamMessageCount();
+        mainMorePresenter.showTeamMember();
         Observable.just(1)
                 .delay(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -151,7 +147,7 @@ public class MainMoreFragment extends Fragment implements MainMorePresenter.View
     @Override
     public void onResume() {
         super.onResume();
-        mainMorePresenter.onShowUserProfile();
+        mainMorePresenter.showUserProfile();
     }
 
     @Override
@@ -237,7 +233,7 @@ public class MainMoreFragment extends Fragment implements MainMorePresenter.View
     }
 
     public void onEventMainThread(MessageOfOtherTeamEvent event) {
-        mainMorePresenter.onShowOtherTeamMessageCount();
+        mainMorePresenter.showOtherTeamMessageCount();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -352,7 +348,7 @@ public class MainMoreFragment extends Fragment implements MainMorePresenter.View
 
     @Click(R.id.tv_version_title)
     void onClickUserInfoReport() {
-        mainMorePresenter.onReportUserInfo(versionClickedInfo);
+        mainMorePresenter.onReportUserInfo();
     }
 
     @Click(R.id.btn_update_version)
