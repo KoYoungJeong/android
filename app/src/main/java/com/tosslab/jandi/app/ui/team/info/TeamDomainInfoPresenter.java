@@ -71,12 +71,12 @@ public class TeamDomainInfoPresenter {
 
     @UiThread
     public void failCreateTeam(int statusCode) {
-        ColoredToast.showWarning(activity, activity.getString(R.string.fail_to_create_team));
+        ColoredToast.showWarning(activity.getString(R.string.fail_to_create_team));
     }
 
     @UiThread
     public void successCreateTeam(String name) {
-        ColoredToast.show(activity, activity.getString(R.string.jandi_message_create_entity, name));
+        ColoredToast.show(activity.getString(R.string.jandi_message_create_entity, name));
 
         activity.setResult(Activity.RESULT_OK);
         activity.finish();
@@ -91,7 +91,7 @@ public class TeamDomainInfoPresenter {
 
     @UiThread
     public void failJoinTeam() {
-        ColoredToast.showWarning(activity, activity.getString(R.string.jandi_team_join_fail));
+        ColoredToast.showWarning(activity.getString(R.string.jandi_team_join_fail));
     }
 
     @UiThread
@@ -112,6 +112,6 @@ public class TeamDomainInfoPresenter {
 
     @UiThread
     public void showFailToast(String message) {
-        ColoredToast.showWarning(activity, message);
+        ColoredToast.showWarning(message);
     }
 }

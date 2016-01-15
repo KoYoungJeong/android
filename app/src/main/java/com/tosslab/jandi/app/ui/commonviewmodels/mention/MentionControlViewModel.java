@@ -39,6 +39,9 @@ import java.util.regex.Pattern;
  */
 
 public class MentionControlViewModel {
+    public static final Pattern MENTION_PATTERN = Pattern.compile("(?:@)([^\\u2063]+)(?:\\u2063)(\\d+)(?:\\u2063)");
+    public static final Pattern MENTION_PATTERN_FOR_SEARCH = Pattern.compile("(?:(?:^|\\s)([@\\uff20]((?:[^@\\uff20]){0,30})))$");
+    public static final Pattern MENTION_PATTERN_FOR_GOOGLE_KEYBOARD = Pattern.compile("@([^@]+)(?:\\u2063)(\\d+)$");
 
     public static final String MENTION_TYPE_MESSAGE = "mention_type_message";
     public static final String MENTION_TYPE_FILE_COMMENT = "mention_type_file_comment";
@@ -238,8 +241,7 @@ public class MentionControlViewModel {
 
     // @ 이후로 부터 검색에 필요한 이름을 얻어오는 메서드
     private String getMentionSearchName(CharSequence cs) {
-        Pattern p = Pattern.compile("(?:(?:^|\\s)([@\\uff20]((?:[^@\\uff20]){0,30})))$");
-        Matcher matcher = p.matcher(cs);
+        Matcher matcher = MENTION_PATTERN_FOR_SEARCH.matcher(cs);
         String result = null;
         while (matcher.find()) {
             result = matcher.group(2);
@@ -250,8 +252,7 @@ public class MentionControlViewModel {
     //for only google keyboard issue
     private String findMentionedMemberForGoogleKeyboard(String rawMemberText) {
         if (rawMemberText != null) {
-            Pattern p = Pattern.compile("@([^@]+)(?:\\u2063)(\\d+)$");
-            Matcher matcher = p.matcher(rawMemberText);
+            Matcher matcher = MENTION_PATTERN_FOR_GOOGLE_KEYBOARD.matcher(rawMemberText);
             while (matcher.find()) {
                 String find = matcher.group(0);
                 return find;
@@ -377,8 +378,7 @@ public class MentionControlViewModel {
             return;
         }
         StringBuilder builder = new StringBuilder(comment);
-        Pattern p = Pattern.compile("(?:@)([^\\u2063]+)(?:\\u2063)(\\d+)(?:\\u2063)");
-        Matcher matcher = p.matcher(comment);
+        Matcher matcher = MENTION_PATTERN.matcher(comment);
 
         List<Pair<Integer, Integer>> replaceIndex = new ArrayList<>();
 
@@ -407,7 +407,7 @@ public class MentionControlViewModel {
         }
 
         // 멘션 정보 반영
-        matcher = p.matcher(builder.toString());
+        matcher = MENTION_PATTERN.matcher(builder.toString());
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(builder.toString());
         while (matcher.find()) {
 
@@ -444,8 +444,8 @@ public class MentionControlViewModel {
 
         StringBuilder builder = new StringBuilder(message);
         String findId = "";
-        Pattern p = Pattern.compile("(?:@)([^\\u2063]+)(?:\\u2063)(\\d+)(?:\\u2063)");
-        Matcher matcher = p.matcher(message);
+//        Pattern p = Pattern.compile("(?:@)([^\\u2063]+)(?:\\u2063)(\\d+)(?:\\u2063)");
+        Matcher matcher = MENTION_PATTERN.matcher(message);
 
         List<SearchedItemVO> orderedSearchedMember = new ArrayList<>();
 

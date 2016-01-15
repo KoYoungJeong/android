@@ -35,7 +35,7 @@ public class SettingFragmentViewModel {
 
     @UiThread
     public void changeNotificationTagerFailed(Context context, String errMessage) {
-        ColoredToast.showError(context, errMessage);
+        ColoredToast.show(errMessage);
     }
 
     public void showSignoutDialog(Activity activity) {

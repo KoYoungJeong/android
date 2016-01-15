@@ -148,12 +148,12 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
 
     @UiThread
     void showFailToast(Context context, String message) {
-        ColoredToast.showError(context, message);
+        ColoredToast.showError(message);
     }
 
     @UiThread
     void showSuccessToast(Context context, String message) {
-        ColoredToast.show(context, message);
+        ColoredToast.show(message);
     }
 
 

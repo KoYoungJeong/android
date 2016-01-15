@@ -329,7 +329,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
 
     @Override
     public void showNoVoiceSearchItem() {
-        ColoredToast.showWarning(SearchActivity.this, getString(R.string.jandi_retry_voice_search));
+        ColoredToast.showWarning(getString(R.string.jandi_retry_voice_search));
     }
 
     @Override

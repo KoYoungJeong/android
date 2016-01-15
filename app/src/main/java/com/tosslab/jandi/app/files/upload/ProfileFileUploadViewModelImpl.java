@@ -135,7 +135,7 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
 
     @UiThread
     void failPhotoUpload(Context context) {
-        ColoredToast.showError(context, context.getString(R.string.err_profile_photo_upload));
+        ColoredToast.show(context.getString(R.string.err_profile_photo_upload));
     }
 
     @UiThread

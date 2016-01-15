@@ -189,12 +189,12 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
     @UiThread
     void showToast(String message) {
-        ColoredToast.show(getActivity(), message);
+        ColoredToast.show(message);
     }
 
     @UiThread
     void showErrorToast(String message) {
-        ColoredToast.showError(getActivity(), message);
+        ColoredToast.showError(message);
     }
 
     void onLeaveClick() {

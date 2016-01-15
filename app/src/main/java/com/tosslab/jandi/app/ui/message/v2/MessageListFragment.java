@@ -28,6 +28,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -131,13 +132,15 @@ import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.SdkUtils;
+import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.extracomponent.BackpressEditText;
+import com.tosslab.jandi.app.views.BackPressCatchEditText;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -215,7 +218,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @ViewById(R.id.btn_show_mention)
     ImageView btnShowMention;
     @ViewById(R.id.et_message)
-    BackpressEditText etMessage;
+    BackPressCatchEditText etMessage;
     @ViewById(R.id.vg_option_space)
     ViewGroup vgOptionSpace;
     @ViewById(R.id.vg_easteregg_snow)
@@ -396,7 +399,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         AnalyticsUtil.sendScreenName(messageListModel.getScreen(entityId));
 
-        setKeyboardBackpressCallback();
+        setEditTextListeners();
 
         setEditTextTouchEvent();
     }
@@ -412,7 +415,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         });
     }
 
-    private void setKeyboardBackpressCallback() {
+    private void setEditTextListeners() {
         etMessage.setOnBackPressListener(() -> {
             if (keyboardHeightModel.isOpened()) {
                 //키보드가 열려져 있고 그 위에 스티커가 있는 상태에서 둘다 제거 할때 속도를 맞추기 위해 딜레이를 줌
@@ -425,6 +428,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             }
             return false;
         });
+
+        TextCutter.with(etMessage)
+                .listener((s) -> {
+                    SuperToast.cancelAllSuperToasts();
+                    ColoredToast.showError(R.string.jandi_exceeded_max_text_length);
+                });
     }
 
     private void showStickerSelectorIfNotShow(int height) {

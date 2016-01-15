@@ -610,7 +610,7 @@ public class JandiSocketServiceModel {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(leaveEvent -> {
                             String teamName = JandiApplication.getContext().getString(R.string.jandi_your_access_disabled, leaveEvent.getTeam().getName());
-                            ColoredToast.showError(JandiApplication.getContext(), teamName);
+                            ColoredToast.showError(teamName);
                         });
                 AccountRepository.getRepository().removeSelectedTeamInfo();
                 AccountHomeActivity_.intent(JandiApplication.getContext())

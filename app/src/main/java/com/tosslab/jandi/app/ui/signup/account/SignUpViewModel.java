@@ -135,7 +135,7 @@ public class SignUpViewModel {
 
     @UiThread
     public void showErrorToast(String message) {
-        ColoredToast.showWarning(activity, message);
+        ColoredToast.showWarning(message);
     }
 
     @UiThread

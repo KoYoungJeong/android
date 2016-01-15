@@ -94,7 +94,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     @UiThread
     @Override
     public void showWarningToast(String message) {
-        ColoredToast.showWarning(getApplicationContext(), message);
+        ColoredToast.showWarning(message);
     }
 
     @UiThread

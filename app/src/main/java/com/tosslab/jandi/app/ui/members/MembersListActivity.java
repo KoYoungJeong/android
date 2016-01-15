@@ -380,13 +380,13 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     public void showInviteSucceed(int memberSize) {
         String rawString = getString(R.string.jandi_message_invite_entity);
         String formatString = String.format(rawString, memberSize);
-        ColoredToast.show(this, formatString);
+        ColoredToast.show(formatString);
     }
 
     @Override
     @UiThread
     public void showInviteFailed(String errMessage) {
-        ColoredToast.showError(this, errMessage);
+        ColoredToast.showError(errMessage);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -444,13 +444,13 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @UiThread
     @Override
     public void showKickSuccessToast() {
-        ColoredToast.show(MembersListActivity.this, getString(R.string.jandi_success_kick_user_from_topic));
+        ColoredToast.show(getString(R.string.jandi_success_kick_user_from_topic));
     }
 
     @UiThread
     @Override
     public void showKickFailToast() {
-        ColoredToast.show(MembersListActivity.this, getString(R.string.jandi_err_unexpected));
+        ColoredToast.show(getString(R.string.jandi_err_unexpected));
     }
 
 }

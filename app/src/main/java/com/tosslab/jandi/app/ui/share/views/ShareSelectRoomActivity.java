@@ -179,7 +179,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
 
     @UiThread
     void showError(String message) {
-        ColoredToast.showError(getApplicationContext(), message);
+        ColoredToast.showError(message);
     }
 
     @UiThread

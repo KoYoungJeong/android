@@ -313,7 +313,7 @@ public class MessageListPresenter {
 
     @UiThread
     public void showNoMoreMessage() {
-        ColoredToast.showWarning(activity, activity.getString(R.string.warn_no_more_messages));
+        ColoredToast.showWarning(activity.getString(R.string.warn_no_more_messages));
     }
 
     public void moveFileDetailActivity(Fragment fragment, int messageId, int roomId, int selectMessageId) {
@@ -343,7 +343,7 @@ public class MessageListPresenter {
 
     @UiThread
     public void showFailToast(String message) {
-        ColoredToast.showError(activity, message);
+        ColoredToast.showError(message);
     }
 
     public void showMessageMenuDialog(boolean isDirectMessage, boolean myMessage,
@@ -368,7 +368,7 @@ public class MessageListPresenter {
 
     @UiThread
     public void showSuccessToast(String message) {
-        ColoredToast.show(activity, message);
+        ColoredToast.show(message);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -857,7 +857,7 @@ public class MessageListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showGrayToast(String message) {
-        ColoredToast.showGray(activity, message);
+        ColoredToast.showGray(message);
     }
 
     @UiThread

@@ -116,7 +116,7 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
 
     @UiThread
     public void showErrorToast(String message) {
-        ColoredToast.showError(this, message);
+        ColoredToast.showError(message);
     }
 
 }
