@@ -68,7 +68,7 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     @AfterViews
     void initViews() {
         if (!NetworkCheckUtil.isConnected()) {
-            ColoredToast.show(this, getResources().getString(R.string.err_network));
+            ColoredToast.show(getResources().getString(R.string.err_network));
             finish();
         } else {
             profileImageSelectorPresenter.setView(this);

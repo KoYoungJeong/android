@@ -80,6 +80,9 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
     }
 
     private void updateBadgeText(int count, TextView tvBadge, int position) {
+        if (tvBadge == null) {
+            return;
+        }
         if (count <= 0) {
             hideBadge(position);
         } else if (count < 1000) {

@@ -163,7 +163,7 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showSuccessToast(String message) {
-        ColoredToast.show(getActivity(), message);
+        ColoredToast.show(message);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

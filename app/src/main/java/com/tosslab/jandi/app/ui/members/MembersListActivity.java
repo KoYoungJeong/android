@@ -465,7 +465,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showAlreadyTopicOwnerToast() {
-        ColoredToast.showError(MembersListActivity.this, getString(R.string.jandi_alert_already_topic_owenr));
+        ColoredToast.showError(getString(R.string.jandi_alert_already_topic_owenr));
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -495,13 +495,13 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showAssignTopicOwnerSuccessToast() {
-        ColoredToast.show(MembersListActivity.this, getString(R.string.jandi_complete_assign_topic_owner));
+        ColoredToast.show(getString(R.string.jandi_complete_assign_topic_owner));
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showAssignTopicOwnerFailToast() {
-        ColoredToast.showError(MembersListActivity.this, getString(R.string.jandi_err_unexpected));
+        ColoredToast.showError(getString(R.string.jandi_err_unexpected));
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

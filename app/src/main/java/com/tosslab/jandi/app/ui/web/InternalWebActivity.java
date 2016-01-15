@@ -200,13 +200,13 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
     @UiThread
     @Override
     public void showSuccessToast(Context context, String message) {
-        ColoredToast.show(context, message);
+        ColoredToast.show(message);
     }
 
     @UiThread
     @Override
     public void showErrorToast(Context context, String message) {
-        ColoredToast.showError(context, message);
+        ColoredToast.showError(message);
     }
 
     @Override
