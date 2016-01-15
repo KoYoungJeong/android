@@ -27,7 +27,7 @@ import com.tosslab.jandi.app.ui.maintab.more.presenter.MainMorePresenterImpl;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
-import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
+import com.tosslab.jandi.app.ui.settings.main.SettingsActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;

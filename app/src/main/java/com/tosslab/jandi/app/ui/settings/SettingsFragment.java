@@ -204,7 +204,7 @@ public class SettingsFragment extends PreferenceFragment {
             badgeCountRepository.deleteAll();
             BadgeUtils.clearBadge(activity);
 
-            ColoredToast.show(getString(R.string.jandi_message_logout));
+            ColoredToast.show(activity, getString(R.string.jandi_message_logout));
 
         } catch (Exception e) {
         } finally {

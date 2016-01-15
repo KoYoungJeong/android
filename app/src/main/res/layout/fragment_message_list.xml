@@ -307,4 +307,15 @@
         android:id="@+id/layout_messages_loading"
         layout="@layout/progress_wheel" />
 
+    <ProgressBar
+        android:id="@+id/progress_message"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignTop="@+id/lv_messages"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@drawable/progress_refresh_animation"
+        android:visibility="gone" />
+
 </RelativeLayout>

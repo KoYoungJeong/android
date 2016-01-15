@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:background="@color/jandi_settings_background"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -16,17 +17,17 @@
     <EditText
         android:id="@+id/et_topic_description_edit_content"
         style="@style/JandiTopic.Create.TextView.Input"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="17dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
         android:hint="@string/jandi_explain_topic_description"
         android:inputType="text|textMultiLine"
         android:lineSpacingExtra="12dp"
         android:maxLength="300"
-        android:paddingBottom="12dp"
-        android:paddingLeft="17dp"
-        android:paddingRight="17dp"
-        android:paddingTop="14dp" />
+        android:paddingBottom="8dp"
+        android:paddingTop="16dp"
+        android:textColor="@color/text_color_setting_check_title"
+        android:textColorHint="@color/jandi_message_search_item_topic_txt_color_sub" />
 
     <TextView
         android:id="@+id/tv_topic_description_edit_count"

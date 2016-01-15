@@ -109,5 +109,8 @@ public interface MessageSearchListPresenter {
 
         void showLeavedMemberDialog(int entityId);
 
+        void showOldLoadingProgress();
+
+        void dismissOldLoadingProgress();
     }
 }

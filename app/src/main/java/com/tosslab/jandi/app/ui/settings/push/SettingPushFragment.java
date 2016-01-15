@@ -126,7 +126,8 @@ public class SettingPushFragment extends PreferenceFragment {
         installation.saveEventually(e -> {
             Activity activity = getActivity();
             if (activity != null && !(activity.isFinishing())) {
-                ColoredToast.show(activity.getString(R.string.jandi_setting_push_subscription_ok));
+                ColoredToast.show(activity,
+                        activity.getString(R.string.jandi_setting_push_subscription_ok));
             }
         });
     }
@@ -144,7 +145,8 @@ public class SettingPushFragment extends PreferenceFragment {
         installation.saveEventually(e -> {
             Activity activity = getActivity();
             if (activity != null && !(activity.isFinishing())) {
-                ColoredToast.show(activity.getString(R.string.jandi_setting_push_subscription_cancel));
+                ColoredToast.show(activity,
+                        activity.getString(R.string.jandi_setting_push_subscription_cancel));
             }
         });
     }

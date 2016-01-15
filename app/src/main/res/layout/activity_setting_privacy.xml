@@ -13,7 +13,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg_message_input_panel"
+        android:background="@color/jandi_settings_background"
         android:orientation="vertical">
 
         <LinearLayout
@@ -33,6 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginLeft="32dp"
                 android:checked="false"
                 android:clickable="false" />
         </LinearLayout>
@@ -43,17 +44,17 @@
             android:id="@+id/tv_setting_privacy_passcode_detail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12dp"
-            android:layout_marginTop="10dp"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="@string/jandi_set_passcode_detail"
             android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
-            android:text="@string/jandi_set_passcode_detail" />
+            android:textSize="@dimen/jandi_text_size_small" />
 
         <LinearLayout
             android:id="@+id/vg_setting_privacy_passcode_modify"
-            android:visibility="gone"
-            style="@style/JandiSettingPrivacy.ViewGroup">
+            style="@style/JandiSettingPrivacy.ViewGroup"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tv_setting_privacy_passcode_modify"
@@ -67,8 +68,8 @@
 
         <View
             android:id="@+id/v_setting_privacy_divider_for_passcode_modify"
-            android:visibility="gone"
-            style="@style/JandiSettingPrivacy.Divider" />
+            style="@style/JandiSettingPrivacy.Divider"
+            android:visibility="gone" />
 
     </LinearLayout>
 

@@ -39,6 +39,7 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
                         Math.max(MessageManipulator.NUMBER_OF_MESSAGES, view.getItemCount()),
                         MessageManipulator.MAX_OF_MESSAGES);
                 oldMessage = messageListModel.getOldMessage(linkId, itemCount);
+                view.showOldLoadingProgress();
             } else {
                 // 마커 기준으로 위 아래 요청
                 oldMessage = messageListModel.getBeforeMarkerMessage(linkId);
@@ -77,6 +78,7 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
             e.printStackTrace();
         } finally {
             view.dismissProgressWheel();
+            view.dismissOldLoadingProgress();
         }
 
         return oldMessage;

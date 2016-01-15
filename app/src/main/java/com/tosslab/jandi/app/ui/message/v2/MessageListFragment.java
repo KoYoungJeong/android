@@ -223,6 +223,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     ViewGroup vgOptionSpace;
     @ViewById(R.id.vg_easteregg_snow)
     FrameLayout vgEasterEggSnow;
+
     @Bean
     MessageListPresenter messageListPresenter;
     @Bean
