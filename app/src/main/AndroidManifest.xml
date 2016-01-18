@@ -80,8 +80,7 @@
         <activity
             android:name=".ui.filedetail.FileDetailActivity_"
             android:label="@string/title_file_detail"
-
-
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity

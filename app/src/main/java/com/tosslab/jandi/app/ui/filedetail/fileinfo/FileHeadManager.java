@@ -64,6 +64,7 @@ public class FileHeadManager {
     private int roomId;
     private View vgDeleted;
     private TextView tvDeletedDate;
+    private FileThumbLoader thumbLoader;
 
     public View getHeaderView() {
         View header = LayoutInflater.from(activity).inflate(R.layout.activity_file_detail_header, null, false);
@@ -219,7 +220,6 @@ public class FileHeadManager {
 
             if (!TextUtils.isEmpty(fileMessage.content.type)) {
 
-                FileThumbLoader thumbLoader;
                 if (fileMessage.content.type.startsWith("image")) {
                     thumbLoader = new ImageThumbLoader(
                             ivFileType, vgDetailPhoto, ivPhotoFile, vgTapToViewOriginal, roomId);
@@ -253,5 +253,11 @@ public class FileHeadManager {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateStarred(boolean starred) {
         btnFileDetailStarred.setSelected(starred);
+    }
+
+    public void refreshHeader(ResMessages.FileMessage fileMessage) {
+        if (thumbLoader != null && fileMessage != null) {
+            thumbLoader.loadThumb(fileMessage);
+        }
     }
 }
