@@ -120,7 +120,8 @@ public class EntityMenuDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.jandi_go_to_setting, (dialog, which) -> {
                     movePushSettingActivity();
                 })
-                .create();
+                .create()
+                .show();
     }
 
     private void movePushSettingActivity() {
