@@ -3,22 +3,20 @@ package com.tosslab.jandi.app.ui.maintab.more.presenter;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
 
-import com.tosslab.jandi.app.ui.maintab.more.domain.VersionClickedInfo;
-
 public interface MainMorePresenter {
     void setView(View view);
 
-    void onShowJandiVersion();
+    void showJandiVersion();
 
-    void onShowOtherTeamMessageCount();
+    void showOtherTeamMessageCount();
 
-    void onShowTeamMember();
+    void showTeamMember();
 
-    void onShowUserProfile();
+    void showUserProfile();
 
     void onLaunchHelpPage();
 
-    void onReportUserInfo(VersionClickedInfo versionClickInfo);
+    void onReportUserInfo();
 
     interface View {
 
