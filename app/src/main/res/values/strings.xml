@@ -183,7 +183,7 @@
 	<string name="jandi_error_web_token">"We encountered an issue during sign in. Please try again."</string>
 	<string name="jandi_exceeded_max_text_length">"You can write up to 5,000 characters."</string>
 	<string name="jandi_expired_invitation_link">"This invitation has expired. Please request a new invitation from the team member who invited you."</string>
-	<string name="jandi_explain_global_push_off">"JANDI app push notification is disabled. Turn on notification in More→Settings to receive notification."</string>
+	<string name="jandi_explain_global_push_off">"JANDI app push notification is disabled. Turn on notification in More > Settings to receive notification."</string>
 	<string name="jandi_explain_topic_description">"Description (optional)"</string>
 	<string name="jandi_export">"Export"</string>
 	<string name="jandi_export_to_app">"Export file using..."</string>

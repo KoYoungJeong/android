@@ -28,12 +28,7 @@ public class SettingsBodyCheckView extends LinearLayout {
     }
 
     public SettingsBodyCheckView(Context context, AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
-    }
-
-    public SettingsBodyCheckView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-
+        super(context, attrs, defStyleAttr);
         initViews(context);
         initAttrs(context, attrs);
     }
