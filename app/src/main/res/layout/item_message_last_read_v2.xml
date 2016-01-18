@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
 
     <LinearLayout
@@ -22,7 +22,7 @@
             android:layout_marginLeft="8dp"
             android:text="@string/jandi_unread_messages_below"
             android:textColor="@color/text_color_gray"
-            android:textSize="11sp"/>
+            android:textSize="11sp" />
     </LinearLayout>
 
 </merge>

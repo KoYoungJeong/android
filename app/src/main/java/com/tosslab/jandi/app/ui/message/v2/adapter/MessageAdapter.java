@@ -302,4 +302,5 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
     public interface OnItemLongClickListener {
         boolean onItemLongClick(RecyclerView.Adapter adapter, int position);
     }
+
 }

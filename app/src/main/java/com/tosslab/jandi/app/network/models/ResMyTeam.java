@@ -9,7 +9,7 @@ import java.util.List;
  * Created by justinygchoi on 2014. 8. 1..
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResMyTeam {
     public List<Team> teamList;
 

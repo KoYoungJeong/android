@@ -9,8 +9,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
-import com.tosslab.jandi.app.utils.logger.LogUtil;
-
 /**
  * Created by tonyjs on 15. 12. 16..
  */

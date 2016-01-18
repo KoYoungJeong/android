@@ -62,6 +62,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -169,6 +170,7 @@ public class JandiSocketServiceModel {
             MessageRepository.getRepository().updateStatus(socketFileEvent.getFile().getId(), "archived");
 
             postEvent(new DeleteFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
+            JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -183,6 +185,7 @@ public class JandiSocketServiceModel {
                             socketFileEvent.getFile().getId(),
                             socketFileEvent.getComment().getId()
                     ));
+            JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -204,6 +207,7 @@ public class JandiSocketServiceModel {
             }
 
             messagePublishSubject.onNext(socketMessageEvent);
+            JandiPreference.setSocketConnectedLastTime(socketMessageEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -214,6 +218,7 @@ public class JandiSocketServiceModel {
             SocketTopicEvent socketTopicEvent =
                     getObject(object.toString(), SocketTopicEvent.class);
             refreshEntity(new TopicInfoUpdateEvent(socketTopicEvent.getTopic().getId()), false);
+            JandiPreference.setSocketConnectedLastTime(socketTopicEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -231,6 +236,7 @@ public class JandiSocketServiceModel {
             ResLeftSideMenu.User member = socketTopicEvent.getMember();
 
             refreshEntity(new ProfileChangeEvent(member), false);
+            JandiPreference.setSocketConnectedLastTime(socketTopicEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -243,6 +249,7 @@ public class JandiSocketServiceModel {
                     getObject(object.toString(), SocketTopicEvent.class);
 
             refreshEntity(new TopicDeleteEvent(socketTopicEvent.getTeamId(), socketTopicEvent.getTopic().getId()), true);
+            JandiPreference.setSocketConnectedLastTime(socketTopicEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -253,6 +260,7 @@ public class JandiSocketServiceModel {
             SocketMemberEvent socketMemberEvent =
                     getObject(object.toString(), SocketMemberEvent.class);
             refreshEntity(new MemberStarredEvent(socketMemberEvent.getMember().getId()), false);
+            JandiPreference.setSocketConnectedLastTime(socketMemberEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -268,8 +276,8 @@ public class JandiSocketServiceModel {
 
             // DB 업데이트 작업 실시
             MessageRepository.getRepository().updateUnshared(fileId, roomId);
-
             postEvent(new UnshareFileEvent(roomId, fileId));
+            JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -281,6 +289,7 @@ public class JandiSocketServiceModel {
                     getObject(object.toString(), SocketRoomMarkerEvent.class);
             postEvent(socketRoomMarkerEvent);
             markerPublishSubject.onNext(socketRoomMarkerEvent);
+            JandiPreference.setSocketConnectedLastTime(socketRoomMarkerEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -305,6 +314,7 @@ public class JandiSocketServiceModel {
             if (updateLinkPreview(teamId, messageId)) {
                 postEvent(new LinkPreviewUpdateEvent(messageId));
             }
+            JandiPreference.setSocketConnectedLastTime(socketLinkPreviewMessageEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -334,6 +344,7 @@ public class JandiSocketServiceModel {
             MessageRepository.getRepository().upsertTextMessage(textMessage);
 
             postEvent(new LinkPreviewUpdateEvent(messageId));
+            JandiPreference.setSocketConnectedLastTime(socketLinkPreviewMessageEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -365,6 +376,7 @@ public class JandiSocketServiceModel {
                     getObject(object.toString(), SocketAnnouncementEvent.class);
 
             postEvent(socketAnnouncementEvent);
+            JandiPreference.setSocketConnectedLastTime(socketAnnouncementEvent.getTs());
         } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -383,6 +395,7 @@ public class JandiSocketServiceModel {
                     getObject(object.toString(), SocketTopicPushEvent.class);
 
             postEvent(socketTopicPushEvent);
+            JandiPreference.setSocketConnectedLastTime(socketTopicPushEvent.getTs());
         } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -507,6 +520,7 @@ public class JandiSocketServiceModel {
             SocketFileEvent socketFileEvent =
                     getObject(object.toString(), SocketFileEvent.class);
             postEvent(new CreateFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
+            JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -525,6 +539,7 @@ public class JandiSocketServiceModel {
                     .getMessageId(), false);
 
             postEvent(new SocketMessageStarEvent(socketFileEvent.getStarredInfo().getMessageId(), false));
+            JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -541,6 +556,8 @@ public class JandiSocketServiceModel {
 
             postEvent(new SocketMessageStarEvent(socketFileEvent.getStarredInfo().getMessageId(), true));
 
+            JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -554,6 +571,8 @@ public class JandiSocketServiceModel {
                     = getObject(object.toString(), SocketTopicFolderEvent.class);
 
             postEvent(socketTopicFolderEvent);
+
+            JandiPreference.setSocketConnectedLastTime(socketTopicFolderEvent.getTs());
 
 
             //todo
@@ -591,13 +610,15 @@ public class JandiSocketServiceModel {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(leaveEvent -> {
                             String teamName = JandiApplication.getContext().getString(R.string.jandi_your_access_disabled, leaveEvent.getTeam().getName());
-                            ColoredToast.showError(JandiApplication.getContext(), teamName);
+                            ColoredToast.showError(teamName);
                         });
                 AccountRepository.getRepository().removeSelectedTeamInfo();
                 AccountHomeActivity_.intent(JandiApplication.getContext())
                         .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
                         .start();
             }
+
+            JandiPreference.setSocketConnectedLastTime(socketTeamLeaveEvent.getTime().getTime());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -612,6 +633,8 @@ public class JandiSocketServiceModel {
             SocketTopicKickedoutEvent.Data data = event.getData();
 
             refreshEntity(new TopicKickedoutEvent(data.getRoomId(), data.getTeamId()), true);
+
+            JandiPreference.setSocketConnectedLastTime(event.getTs());
 
         } catch (Exception e) {
             e.printStackTrace();

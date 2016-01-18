@@ -15,7 +15,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-@Config(manifest = "app/src/main/AndroidManifest.xml", sdk =18)
+@Config(manifest = "app/src/main/AndroidManifest.xml", sdk = 18)
 @RunWith(JandiRobolectricGradleTestRunner.class)
 public class MessageSearchModelTest {
 

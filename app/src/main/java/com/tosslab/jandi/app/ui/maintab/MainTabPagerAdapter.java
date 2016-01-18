@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.chat.MainChatListFragment_;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment_;
-import com.tosslab.jandi.app.ui.maintab.more.MainMoreFragment_;
+import com.tosslab.jandi.app.ui.maintab.more.view.MainMoreFragment_;
 import com.tosslab.jandi.app.ui.maintab.topic.MainTopicListFragment_;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 
@@ -80,6 +80,9 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
     }
 
     private void updateBadgeText(int count, TextView tvBadge, int position) {
+        if (tvBadge == null) {
+            return;
+        }
         if (count <= 0) {
             hideBadge(position);
         } else if (count < 1000) {

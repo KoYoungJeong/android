@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +36,8 @@ import com.tosslab.jandi.app.ui.message.detail.edit.TopicDescriptionEditActivity
 import com.tosslab.jandi.app.ui.message.detail.edit.TopicDescriptionEditActivity_;
 import com.tosslab.jandi.app.ui.message.detail.presenter.TopicDetailPresenter;
 import com.tosslab.jandi.app.ui.message.detail.presenter.TopicDetailPresenterImpl;
+import com.tosslab.jandi.app.ui.settings.main.SettingsActivity_;
+import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -84,10 +87,15 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     View vgDelete;
     @ViewById(R.id.vg_topic_detail_leave)
     View vgLeave;
+    @ViewById(R.id.vg_topic_detail_assign_topic_owner)
+    View vgAssignTopicOwner;
     @ViewById(R.id.view_topic_detail_leve_to_delete)
     View viewDividerDelete;
     @ViewById(R.id.vg_topic_detail_default_message)
     View vgDefaultMessage;
+
+    @ViewById(R.id.vg_topic_detail_description)
+    ViewGroup vgDescription;
 
     @ViewById(R.id.iv_topic_detail_starred)
     View ivStarred;
@@ -108,6 +116,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         topicDetailPresenter.setView(this);
     }
 
+    @OnActivityResult(MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER)
     @AfterViews
     void initViews() {
         setUpActionbar();
@@ -236,7 +245,8 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
         setTopicPushSwitch(checked);
 
-        topicDetailPresenter.updateTopicPushSubscribe(getActivity(), teamId, entityId, checked);
+        topicDetailPresenter.onPushClick(getActivity(), teamId, entityId, checked);
+
 
         if (checked) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TurnOnNotifications);
@@ -261,6 +271,12 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @Click(R.id.vg_topic_detail_starred)
     void onTopicStarClick() {
         topicDetailPresenter.onTopicStar(getActivity(), entityId);
+    }
+
+    @Click(R.id.vg_topic_detail_assign_topic_owner)
+    void onAssignTopicOwnerClick() {
+        topicDetailPresenter.onAssignTopicOwner(entityId);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Leave);
     }
 
     @Click(R.id.vg_topic_detail_leave)
@@ -341,16 +357,52 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         }
     }
 
+    @Override
+    public void showSetOnGlobalPushDialog() {
+        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(R.string.jandi_explain_global_push_off)
+                .setNegativeButton(R.string.jandi_close, null)
+                .setPositiveButton(R.string.jandi_go_to_setting, (dialog, which) -> {
+                    movePushSettingActivity();
+                })
+                .create()
+                .show();
+    }
+
+    private void movePushSettingActivity() {
+        Intent mainSettingIntent = SettingsActivity_
+                .intent(TopicDetailFragment.this)
+                .get();
+        Intent pushSettingIntent = SettingPushActivity_
+                .intent(TopicDetailFragment.this)
+                .get();
+        getActivity().startActivities(new Intent[]{mainSettingIntent, pushSettingIntent});
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void setAssignTopicOwnerVisible(boolean owner) {
+        vgAssignTopicOwner.setVisibility(owner ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void moveToAssignTopicOwner() {
+        MembersListActivity_.intent(this)
+                .entityId(entityId)
+                .type(MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER)
+                .startForResult(MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER);
+    }
+
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showSuccessToast(String message) {
-        ColoredToast.show(getActivity(), message);
+        ColoredToast.show(message);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showFailToast(String message) {
-        ColoredToast.showWarning(getActivity(), message);
+        ColoredToast.showWarning(message);
     }
 
     @Override
@@ -390,6 +442,17 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TopicName);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showNeedToAssignTopicOwnerDialog(String topicName) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
+        builder.setTitle(topicName);
+        builder.setMessage(R.string.jandi_need_to_assign_topic_owner);
+        builder.setPositiveButton(R.string.jandi_confirm, null);
+        builder.create().show();
+    }
+
     @OnActivityResult(TopicDescriptionEditActivity.REQUEST_EDIT)
     void onDescriptionEditResult(int resultCode) {
         if (resultCode != Activity.RESULT_OK) {
@@ -405,5 +468,6 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
                 .entityId(entityId)
                 .startForResult(TopicDescriptionEditActivity.REQUEST_EDIT);
     }
+
 
 }

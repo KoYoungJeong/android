@@ -67,6 +67,7 @@ import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqNull;
+import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
@@ -85,6 +86,7 @@ import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
+import com.tosslab.jandi.app.network.models.ResAvatarsInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResCreateFolder;
@@ -657,6 +659,11 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
+    public ResCommon assignToTopicOwner(int teamId, int topicId, ReqOwner owner) {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().assignToTopicOwner(teamId, topicId, owner);
+    }
+
+    @Override
     public ResMessages.FileMessage enableFileExternalLink(int teamId, int fileId) {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().enableFileExternalLink(teamId, fileId, new ReqNull());
     }
@@ -674,5 +681,10 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     @Override
     public ResValidation validDomain(String domain) {
         return RestAdapterBuilder.newInstance(ValidationApi.class).create().validDomain(domain);
+    }
+
+    @Override
+    public ResAvatarsInfo getAvartarsInfo() throws RetrofitError {
+        return RestAdapterBuilder.newInstance(ProfileApiV2Client.class).create().getAvartarsInfo();
     }
 }

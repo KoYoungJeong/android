@@ -6,6 +6,7 @@ package com.tosslab.jandi.app.events;
 public class ConfirmModifyProfileEvent {
     public int actionType;
     public String inputMessage;
+
     public ConfirmModifyProfileEvent(int actionType, String inputMessage) {
         this.actionType = actionType;
         this.inputMessage = inputMessage;

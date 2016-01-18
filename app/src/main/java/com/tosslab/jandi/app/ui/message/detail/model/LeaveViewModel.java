@@ -136,6 +136,6 @@ public class LeaveViewModel {
 
     @UiThread
     void leaveEntityFailed(String errMessage) {
-        ColoredToast.showError(context, errMessage);
+        ColoredToast.show(errMessage);
     }
 }

@@ -32,7 +32,7 @@
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_gravity="center"
-                fresco:placeholderImage="@drawable/circle_default_background_color"/>
+                fresco:placeholderImage="@drawable/circle_default_background_color" />
 
             <ImageView
                 android:layout_width="120dp"

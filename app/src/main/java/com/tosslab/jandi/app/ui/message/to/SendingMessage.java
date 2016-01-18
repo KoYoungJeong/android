@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.ui.message.to;
 
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import java.util.List;
 

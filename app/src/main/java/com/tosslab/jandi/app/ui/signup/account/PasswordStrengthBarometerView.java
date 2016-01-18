@@ -78,8 +78,8 @@ public class PasswordStrengthBarometerView extends LinearLayout {
 
     private void setBarometerVisibility(int level) {
         viewBarometerWeak.setVisibility((level >= PasswordChecker.TOO_SHORT) ? VISIBLE : INVISIBLE);
-        viewBarometerAverage.setVisibility((level >= PasswordChecker.AVERAGE)? VISIBLE : INVISIBLE);
-        viewBarometerSafe.setVisibility((level >= PasswordChecker.SAFE)? VISIBLE : INVISIBLE);
-        viewBarometerStrong.setVisibility((level >= PasswordChecker.STRONG)? VISIBLE : INVISIBLE);
+        viewBarometerAverage.setVisibility((level >= PasswordChecker.AVERAGE) ? VISIBLE : INVISIBLE);
+        viewBarometerSafe.setVisibility((level >= PasswordChecker.SAFE) ? VISIBLE : INVISIBLE);
+        viewBarometerStrong.setVisibility((level >= PasswordChecker.STRONG) ? VISIBLE : INVISIBLE);
     }
 }

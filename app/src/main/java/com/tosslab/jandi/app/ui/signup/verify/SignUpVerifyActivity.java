@@ -132,6 +132,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         super.onResume();
         ActivityHelper.setOrientation(this);
     }
+
     @Override
     protected void onDestroy() {
         stopBlink();
@@ -222,13 +223,13 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     @UiThread
     @Override
     public void showToast(String msg) {
-        ColoredToast.show(this, msg);
+        ColoredToast.show(msg);
     }
 
     @UiThread
     @Override
     public void showErrorToast(String msg) {
-        ColoredToast.showError(this, msg);
+        ColoredToast.showError(msg);
     }
 
     @UiThread

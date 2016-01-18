@@ -42,6 +42,7 @@ public class MainRestClientTest {
         ShadowLog.stream = System.out;
 
     }
+
     @After
     public void tearDown() throws Exception {
         BaseInitUtil.releaseDatabase();

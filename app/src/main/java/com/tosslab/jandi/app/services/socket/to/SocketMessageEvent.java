@@ -23,6 +23,16 @@ public class SocketMessageEvent {
     private int writer;
     private List<MessageRoom> rooms;
     private CommentInfo comment;
+    private long ts;
+
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
 
     @Override
     public String toString() {

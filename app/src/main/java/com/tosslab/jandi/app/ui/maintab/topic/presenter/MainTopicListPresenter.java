@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.topic.presenter;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 
+import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
@@ -19,6 +20,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 

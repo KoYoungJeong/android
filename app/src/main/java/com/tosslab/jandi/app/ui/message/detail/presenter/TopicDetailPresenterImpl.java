@@ -79,6 +79,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         view.setTopicAutoJoin(autoJoin, owner, defaultTopic, privateTopic);
         view.setTopicPushSwitch(isTopicPushSubscribe);
         view.setLeaveVisible(owner, defaultTopic);
+        view.setAssignTopicOwnerVisible(owner);
     }
 
     @Override
@@ -138,9 +139,26 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
+    public void onAssignTopicOwner(int entityId) {
+        if(topicDetailModel.isStandAlone(entityId)) {
+            String message = JandiApplication.getContext()
+                    .getResources().getString(R.string.jandi_topic_inside_alone);
+            view.showFailToast(message);
+        } else {
+            view.moveToAssignTopicOwner();
+        }
+    }
+
+    @Override
     public void onTopicLeave(Context context, int entityId) {
-        leaveViewModel.initData(context, entityId);
-        leaveViewModel.leave();
+        if (topicDetailModel.isOwner(entityId)
+                && !(topicDetailModel.isStandAlone(entityId))) {
+            String topicName = topicDetailModel.getTopicName(entityId);
+            view.showNeedToAssignTopicOwnerDialog(topicName);
+        } else {
+            leaveViewModel.initData(context, entityId);
+            leaveViewModel.leave();
+        }
     }
 
     @Override
@@ -217,9 +235,10 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Background
-    @Override
-    public void updateTopicPushSubscribe(Context context, int teamId, int entityId, boolean pushOn) {
-        view.showProgressWheel();
+    void updateTopicPushSubscribe(Context context, int teamId, int entityId, boolean pushOn, boolean showGlobalPushAlert) {
+        if (!showGlobalPushAlert) {
+            view.showProgressWheel();
+        }
 
         try {
             topicDetailModel.updatePushStatus(teamId, entityId, pushOn);
@@ -237,7 +256,9 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         } catch (Exception e) {
             e.printStackTrace();
 
-            view.dismissProgressWheel();
+            if (!showGlobalPushAlert) {
+                view.dismissProgressWheel();
+            }
 
         }
     }
@@ -281,6 +302,16 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             }
 
         }
+    }
+
+    @Override
+    public void onPushClick(Context context, int teamId, int entityId, boolean checked) {
+        boolean onGlobalPush = topicDetailModel.isOnGlobalPush();
+        if (checked && !onGlobalPush) {
+            view.showSetOnGlobalPushDialog();
+        }
+
+        updateTopicPushSubscribe(context, teamId, entityId, checked, !onGlobalPush);
     }
 
 }

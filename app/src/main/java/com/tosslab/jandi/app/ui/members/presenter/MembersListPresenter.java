@@ -18,7 +18,7 @@ public interface MembersListPresenter {
 
     void onSearch(CharSequence text);
 
-    void onDestory();
+    void onDestroy();
 
     void inviteMemberToTopic(int entityId);
 
@@ -26,7 +26,13 @@ public interface MembersListPresenter {
 
     void initKickableMode(int entityId);
 
+    void onKickMemberClick(int topicId, final ChatChooseItem item);
+
     void onKickUser(int topicId, int userEntityId);
+
+    void onMemberClickForAssignOwner(int topicId, final ChatChooseItem item);
+
+    void onAssignToTopicOwner(int topicId, int memberId);
 
     interface View {
         void showProgressWheel();
@@ -53,9 +59,23 @@ public interface MembersListPresenter {
 
         void refreshMemberList();
 
+        void showKickDialog(String userName, String userProfileUrl, int memberId);
+
         void showKickSuccessToast();
 
         void showKickFailToast();
+
+        void showAlreadyTopicOwnerToast();
+
+        void showNeedToAssignTopicOwnerDialog();
+
+        void showConfirmAssignTopicOwnerDialog(String userName, String userProfileUrl, int memberId);
+
+        void showAssignTopicOwnerSuccessToast();
+
+        void showAssignTopicOwnerFailToast();
+
+        void setResultAndFinish(int memberId);
     }
 
 }

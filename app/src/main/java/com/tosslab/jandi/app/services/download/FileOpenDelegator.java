@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.services.download;
 
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -54,7 +53,7 @@ public class FileOpenDelegator extends BroadcastReceiver {
         } catch (Exception e) {
             String error = context.getResources().getString(R.string.err_unsupported_file_type);
             String formatString = String.format(error, file);
-            ColoredToast.showError(context, formatString);
+            ColoredToast.show(formatString);
         }
     }
 

@@ -76,6 +76,7 @@
 	<string name="jandi_action_update">"업데이트"</string>
 	<string name="jandi_add">"추가"</string>
 	<string name="jandi_add_an_email_address">"이메일 추가하기"</string>
+	<string name="jandi_alert_already_topic_owenr">"이미 이 토픽의 관리자입니다."</string>
 	<string name="jandi_all_of_topic_members">"@All (모든 토픽 멤버)"</string>
 	<string name="jandi_already_in_team">"이 이메일 주소는 이미 %s의 멤버입니다."</string>
 	<string name="jandi_already_linked_email">"이미 계정과 연동되어있는 이메일입니다"</string>
@@ -87,7 +88,17 @@
 	<string name="jandi_announcement_deleted">"%s님이 공지사항을 삭제했습니다."</string>
 	<string name="jandi_announcement_minimize">"최소화"</string>
 	<string name="jandi_are_you_sure_disable_external_link">"기존에 공유된 링크로 접속할 경우 더 이상 파일을 볼 수 없게 됩니다. 삭제하시겠습니까?"</string>
+	<string name="jandi_ask_assign_topic_owner">"이 멤버를 토픽 관리자로 지정하시겠습니까?"</string>
 	<string name="jandi_ask_kick_user_from_topic">"정말 이 멤버를 내보내시겠습니까?"</string>
+	<string name="jandi_ask_to_leave_if_private_topic_owner">"회원님은 이 토픽의 관리자입니다. 다음 토픽 관리자를 지정한 후 토픽에서 나가실 수 있습니다"</string>
+	<string name="jandi_ask_to_leave_if_topic_owner">"회원님은 이 토픽의 관리자입니다. 토픽에서 나가기 전에 다음 토픽 관리자를 지정하실 수 있습니다."</string>
+	<string name="jandi_assign">"지정하기"</string>
+	<string name="jandi_assign_topic_owner">"토픽 관리자 변경하기"</string>
+	<string name="jandi_assign_topic_owner_desc">"토픽 관리자는 다음과 같은 권한이 있습니다.
+- 토픽 이름 또는 설명 변경
+- 토픽 삭제
+- 참여중인 멤버 내보내기
+- 잔디 커넥트 항목 정지/삭제"</string>
 	<string name="jandi_auto_join_cannot_be_default_topic">"기본토픽에서는 자동초대를 해제할 수 없습니다."</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"자동 초대는 공개 토픽 에서만 사용 가능합니다"</string>
 	<string name="jandi_auto_join_explain">"새로 팀에 참여하는 모든 멤버를 이 토픽에 초대합니다."</string>
@@ -105,6 +116,7 @@
 	<string name="jandi_cannot_find_search_result_2">"토픽 또는 1:1메시지에서 파일을 업로드하실 수 있습니다."</string>
 	<string name="jandi_cannot_find_search_result_old">"검색된 파일이 없습니다."</string>
 	<string name="jandi_change_passcode">"비밀번호 변경"</string>
+	<string name="jandi_character">"캐릭터"</string>
 	<string name="jandi_chat_detail">"대화창 설정"</string>
 	<string name="jandi_choose_app_store">"앱 마켓을 선택해주세요."</string>
 	<string name="jandi_choose_email">"이메일 선택"</string>
@@ -137,6 +149,7 @@
 	<string name="jandi_coach_mark_topic_setting">"토픽 초대,\n토픽 나가기등의\n관리 메뉴"</string>
 	<string name="jandi_coach_mark_upload_file">"파일 올리기"</string>
 	<string name="jandi_commented_on">"<![CDATA[<font color="#000000"><b>%s</b></font><font color="#999999">님의 파일에 코멘트를 남겼습니다.</font>]]>"</string>
+	<string name="jandi_complete_assign_topic_owner">"토픽 관리자를 변경했습니다"</string>
 	<string name="jandi_confirm">"확인"</string>
 	<string name="jandi_confirm_new_passcode">"비밀번호를 한번 더 입력해주세요."</string>
 	<string name="jandi_confirm_passcode">"비밀번호 재입력"</string>
@@ -168,6 +181,7 @@
 	<string name="jandi_entity_unjoined_topic">"참여하지 않은 토픽"</string>
 	<string name="jandi_err_unexpected">"알 수 없는 문제가 생겼습니다!"</string>
 	<string name="jandi_error_web_token">"로그인 중 에러가 발생했습니다. 다시 시도해 주세요."</string>
+	<string name="jandi_exceeded_max_text_length">"5000자 까지 입력할 수 있습니다."</string>
 	<string name="jandi_expired_invitation_link">"이 초대 링크는 만료되었습니다. 새로운 링크를 요청하세요."</string>
 	<string name="jandi_explain_global_push_off">"앱의 알림 설정이 꺼져 있습니다. 더보기→설정에서 알림을 켜야 알림을 받을 수 있습니다."</string>
 	<string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
@@ -217,6 +231,7 @@
 	<string name="jandi_go_to_latest">"최신 메시지로 가기"</string>
 	<string name="jandi_go_to_setting">"설정으로 이동"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
+	<string name="jandi_guide_to_assign_topic_owner">"토픽 상세보기 > 토픽 관리자 변경하기에서 다음 관리자를 지정한 후 토픽에서 내보낼 수 있습니다."</string>
 	<string name="jandi_has_joined">"%s님이 참여하였습니다"</string>
 	<string name="jandi_have_an_account_already">"이미 계정이 있으신가요?"</string>
 	<string name="jandi_help">"도움말"</string>
@@ -290,11 +305,15 @@
 	<string name="jandi_messages_release">"놓아서 이전 페이지"</string>
 	<string name="jandi_modify_channel">"토픽 이름 수정"</string>
 	<string name="jandi_modify_private_group">"비공개 토픽 이름 수정"</string>
+	<string name="jandi_modify_profile_image">"프로필 사진 편집"</string>
 	<string name="jandi_move_entity_after_share">"파일이 성공적으로 공유되었습니다. 파일이 공유된 대화로 이동하시겠습니까?"</string>
 	<string name="jandi_msg_network_offline">"인터넷이 연결되어 있지 않습니다."</string>
 	<string name="jandi_msg_network_offline_warn">"현재 네트워크에 접속되지 않은 것으로 보입니다."</string>
 	<string name="jandi_my_files">"<b>내 파일</b>"</string>
 	<string name="jandi_name_in_jandi">"잔디 계정 이름"</string>
+	<string name="jandi_need_to_assign_topic_owner">"회원님은 이 토픽의 관리자입니다.
+토픽 상세정보 > 토픽 관리자 변경하기 에서
+관리자를 변경한 후 나갈 수 있습니다."</string>
 	<string name="jandi_new_team_name">"새로운 팀 이름"</string>
 	<string name="jandi_no_invite_email">"팀에 초대를 원하는 멤버들의 이메일 주소를 입력해주세요"</string>
 	<string name="jandi_no_long_team_member">"%s님은 더 이상 팀 멤버가 아닙니다."</string>
@@ -311,6 +330,7 @@
 	<string name="jandi_off">"끄기"</string>
 	<string name="jandi_on">"켜기"</string>
 	<string name="jandi_open_browser">"브라우저에서 열기"</string>
+	<string name="jandi_page_not_found">"페이지를 찾을 수 없습니다."</string>
 	<string name="jandi_password_strength_average">"약함"</string>
 	<string name="jandi_password_strength_safe">"좋음"</string>
 	<string name="jandi_password_strength_strong">"강함"</string>
@@ -327,6 +347,7 @@
 	<string name="jandi_private_topic_tip_3">"비공개/공개 토픽은 생성 이후에 속성을 변경할 수 없습니다."</string>
 	<string name="jandi_profile_actionb">"프로필"</string>
 	<string name="jandi_profile_additional_info">"추가 정보"</string>
+	<string name="jandi_profile_background_color">"색상"</string>
 	<string name="jandi_profile_basic_info">"기본 정보"</string>
 	<string name="jandi_profile_division">"부서"</string>
 	<string name="jandi_profile_division_hint">"부서명"</string>
@@ -347,6 +368,7 @@
 	<string name="jandi_push_preview_public_only">"공개 토픽만"</string>
 	<string name="jandi_question_team_create">"아직 잔디 사용자가 아니세요?"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"정말 이 이메일 주소를 삭제하시겠습니까?"</string>
+	<string name="jandi_retry">"다시 시도"</string>
 	<string name="jandi_retry_voice_search">"음성 검색을 다시 시도해주십시요."</string>
 	<string name="jandi_save">"저장"</string>
 	<string name="jandi_screen_auto">"자동"</string>
@@ -358,6 +380,7 @@
 	<string name="jandi_sdcard_storage_unmounted">"SD 카드가 해제되었습니다"</string>
 	<string name="jandi_search_ing">"<![CDATA[<b><font color=#404040>%s</font></b>]]>검색 중..."</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>에 대한 <b><font color=#404040>%2$d</font></b>개의 검색 결과가 있습니다.]]>"</string>
+	<string name="jandi_select_character">"캐릭터 선택하기"</string>
 	<string name="jandi_select_direct_messages">"대화 시작하기"</string>
 	<string name="jandi_select_gallery">"사진 선택"</string>
 	<string name="jandi_select_maximum_10">"최대 10장까지 선택할 수 있습니다."</string>
@@ -449,12 +472,14 @@
 	<string name="jandi_topic_delete">"토픽 삭제하기"</string>
 	<string name="jandi_topic_description">"토픽 설명"</string>
 	<string name="jandi_topic_detail">"토픽 상세정보"</string>
+	<string name="jandi_topic_inside_alone">"이 토픽에 혼자 계셔서 토픽 관리자를 변경할 수 없습니다."</string>
 	<string name="jandi_topic_invitation">"초대하기"</string>
 	<string name="jandi_topic_leave">"토픽 나가기"</string>
 	<string name="jandi_topic_no_member_1">"아직 토픽에 초대된 멤버가 없습니다."</string>
 	<string name="jandi_topic_no_member_2">"여기를 터치하시고 토픽에 멤버를 초대해보세요."</string>
 	<string name="jandi_topic_notification">"알림"</string>
 	<string name="jandi_topic_owner">"토픽 관리자"</string>
+	<string name="jandi_topic_owner_title">"이 멤버는 토픽 관리자입니다."</string>
 	<string name="jandi_topic_paricipants">"참여 멤버"</string>
 	<string name="jandi_topic_private">"비공개"</string>
 	<string name="jandi_topic_public">"공개"</string>

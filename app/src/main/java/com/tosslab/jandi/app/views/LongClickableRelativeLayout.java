@@ -69,7 +69,7 @@ public class LongClickableRelativeLayout extends RelativeLayout {
                 if (eventTime - lastTouchTime >= ViewConfiguration.getLongPressTimeout()) {
                     LogUtil.i(TAG, "longPress");
                     clear();
-                    if(isLongClickable()) {
+                    if (isLongClickable()) {
                         setPressed(true);
                         performLongClick();
                     } else {

@@ -32,6 +32,7 @@ public class SignUpVerifyModelTest {
 
         signUpVerifyModel = SignUpVerifyModel_.getInstance_(signUpVerifyActivity_);
     }
+
     @After
     public void tearDown() throws Exception {
         BaseInitUtil.releaseDatabase();

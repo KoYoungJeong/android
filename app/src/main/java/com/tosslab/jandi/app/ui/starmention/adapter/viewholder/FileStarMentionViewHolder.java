@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by tee on 15. 7. 29..

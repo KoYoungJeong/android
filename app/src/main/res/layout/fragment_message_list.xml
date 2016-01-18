@@ -206,7 +206,7 @@
             style="@style/JandiChat.InputWrapper"
             android:orientation="horizontal">
 
-            <com.tosslab.jandi.app.utils.extracomponent.BackpressEditText
+            <com.tosslab.jandi.app.views.BackPressCatchEditText
                 android:id="@+id/et_message"
                 style="@style/JandiChat.EditText"
                 android:layout_width="0dp"
@@ -306,5 +306,16 @@
     <include
         android:id="@+id/layout_messages_loading"
         layout="@layout/progress_wheel" />
+
+    <ProgressBar
+        android:id="@+id/progress_message"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignTop="@+id/lv_messages"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@drawable/progress_refresh_animation"
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -3,15 +3,14 @@ package com.tosslab.jandi.app.ui.maintab.topic.views.create;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -59,17 +58,14 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
     @ViewById(R.id.et_topic_create_description)
     EditText tvTopicDescription;
 
-    @ViewById(R.id.img_topic_create_private_check)
-    ImageView privateCheckView;
-
-    @ViewById(R.id.img_topic_create_public_check)
-    ImageView publicCheckView;
-
     @ViewById(R.id.tv_topic_create_name_count)
     TextView tvTitleCount;
 
     @ViewById(R.id.tv_topic_create_description_count)
     TextView tvDescriptionCount;
+
+    @ViewById(R.id.tv_topic_create_is_public)
+    TextView tvPublicSubTitle;
 
     @ViewById(R.id.vg_topic_create_autojoin)
     ViewGroup vgAutojoin;
@@ -79,6 +75,7 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
 
     ProgressWheel progressWheel;
     boolean lastAutoJoin;
+    boolean isPublicTopic = true;
 
     @AfterInject
     void initObject() {
@@ -145,49 +142,61 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
     void onCreateTopicItemSelected() {
         String topicTitle = getTopicTitle();
         String topicDescriptionText = getTopicDescriptionText();
-        boolean publicSelected = isPublicSelected();
+        boolean publicSelected = isPublicTopic;
         boolean isAutojoin = publicSelected && switchAutojoin.isChecked();
 
         topicCreatePresenter.onCreateTopic(topicTitle, topicDescriptionText, publicSelected, isAutojoin);
     }
 
-    @Click(R.id.layout_topic_create_public_check)
-    void onPublicTypeClick() {
-        setTopicType(true);
-    }
-
-
-    @Click(R.id.layout_topic_create_private_check)
-    void onPrivateTypeClick() {
-        setTopicType(false);
-
-    }
-
     @Click(R.id.vg_topic_create_autojoin)
     void onAutojoinClick() {
-        if (isPublicSelected()) {
+        if (isPublicTopic) {
             switchAutojoin.setChecked(!switchAutojoin.isChecked());
             lastAutoJoin = switchAutojoin.isChecked();
         }
     }
 
-    private void setTopicType(boolean isPublic) {
+    @Click(R.id.vg_topic_create_is_public)
+    void onPublicClick() {
+
+        String[] items = {
+                getString(R.string.jandi_topic_public),
+                getString(R.string.jandi_topic_private)
+        };
+
+        new AlertDialog.Builder(TopicCreateActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setTitle(R.string.jandi_is_topic_required)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setItems(items, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            isPublicTopic = true;
+                            break;
+                        case 1:
+                            isPublicTopic = false;
+                            break;
+                    }
+                    setUpPublicSubTitle(isPublicTopic);
+                    setTopicType(isPublicTopic);
+                })
+                .create()
+                .show();
+
+    }
+
+    private void setUpPublicSubTitle(boolean isPublicTopic) {
+        if (isPublicTopic) {
+            tvPublicSubTitle.setText(R.string.jandi_topic_public);
+        } else {
+            tvPublicSubTitle.setText(R.string.jandi_topic_private);
+        }
+    }
+
+    void setTopicType(boolean isPublic) {
         if (isPublic) {
-            publicCheckView.setSelected(true);
-            publicCheckView.setVisibility(View.VISIBLE);
-
-            privateCheckView.setSelected(false);
-            privateCheckView.setVisibility(View.GONE);
-
             vgAutojoin.setEnabled(true);
             switchAutojoin.setChecked(lastAutoJoin);
-
         } else {
-            publicCheckView.setSelected(false);
-            publicCheckView.setVisibility(View.GONE);
-
-            privateCheckView.setSelected(true);
-            privateCheckView.setVisibility(View.VISIBLE);
 
             lastAutoJoin = switchAutojoin.isChecked();
             vgAutojoin.setEnabled(false);
@@ -197,10 +206,6 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
 
     private String getTopicTitle() {
         return tvTitle.getText().toString();
-    }
-
-    private boolean isPublicSelected() {
-        return publicCheckView.isSelected();
     }
 
     @UiThread
@@ -222,7 +227,7 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
     @UiThread
     @Override
     public void createTopicFailed(int err_entity_duplicated_name) {
-        ColoredToast.showError(TopicCreateActivity.this, TopicCreateActivity.this.getString(err_entity_duplicated_name));
+        ColoredToast.showError(TopicCreateActivity.this.getString(err_entity_duplicated_name));
 
     }
 
@@ -230,7 +235,7 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
     @Override
     public void createTopicSuccess(int teamId, int entityId, String topicTitle, boolean publicSelected) {
 
-        ColoredToast.show(TopicCreateActivity.this, TopicCreateActivity.this.getString(R.string.jandi_message_create_entity, topicTitle));
+        ColoredToast.show(TopicCreateActivity.this.getString(R.string.jandi_message_create_entity, topicTitle));
 
         int entityType;
         if (publicSelected) {

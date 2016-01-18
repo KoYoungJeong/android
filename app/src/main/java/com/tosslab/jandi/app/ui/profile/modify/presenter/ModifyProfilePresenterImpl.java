@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.profile.modify.presenter;
 
 import android.app.Activity;
+import android.os.Bundle;
 
 import com.soundcloud.android.crop.Crop;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
@@ -9,6 +10,7 @@ import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
+import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -16,13 +18,15 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
+import java.io.File;
+
 import retrofit.RetrofitError;
 
 @EBean
 public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
     @Bean(ProfileFileUploadViewModelImpl.class)
-    FilePickerViewModel filePickerViewModel;
+    ProfileFileUploadViewModelImpl filePickerViewModel;
 
     @Bean
     ModifyProfileModel modifyProfileModel;
@@ -117,7 +121,6 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
         }
     }
 
-
     @Override
     public void setView(View view) {
         this.view = view;
@@ -131,7 +134,21 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
     @Override
     public void onRequestCropImage(Activity activity) {
-        filePickerViewModel.selectFileSelector(Crop.REQUEST_CROP,
-                activity);
+        filePickerViewModel.selectFileSelector(Crop.REQUEST_CROP, activity);
+    }
+
+    @Override
+    public void onRequestCamera(Activity activity) {
+        filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO, activity);
+    }
+
+    @Override
+    public void onRequestCharacter(Activity activity) {
+        filePickerViewModel.selectFileSelector(ModifyProfileActivity.REQUEST_CHARACTER, activity);
+    }
+
+    @Override
+    public File getFilePath() {
+        return filePickerViewModel.getUploadedFile();
     }
 }

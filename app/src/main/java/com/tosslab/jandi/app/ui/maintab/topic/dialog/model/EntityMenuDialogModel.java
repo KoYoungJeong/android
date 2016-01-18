@@ -110,4 +110,9 @@ public class EntityMenuDialogModel {
     public boolean isBot(int entityId) {
         return EntityManager.getInstance().isBot(entityId);
     }
+
+    public boolean isTopicOwner(int entityId) {
+        final EntityManager entityManager = EntityManager.getInstance();
+        return entityManager.isTopicOwner(entityId, entityManager.getMe().getId());
+    }
 }

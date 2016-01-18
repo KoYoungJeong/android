@@ -49,6 +49,7 @@ import com.tosslab.jandi.app.network.models.ReqModifyComment;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
+import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
@@ -70,6 +71,7 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
+import com.tosslab.jandi.app.network.models.ResAvatarsInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
@@ -696,6 +698,11 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
+    public ResCommon assignToTopicOwner(int teamId, int topicId, ReqOwner owner) {
+        return requestApiExecute(RestApiLoader.getInstance().loadAssignToTopicOwner(teamId, topicId, owner));
+    }
+
+    @Override
     public ResMessages.FileMessage enableFileExternalLink(int teamId, int fileId) {
         return requestApiExecute(RestApiLoader.getInstance().loadEnableFileExternalLink(teamId, fileId));
     }
@@ -713,5 +720,10 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     @Override
     public ResValidation validDomain(String domain) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadValidDomain(domain));
+    }
+
+    @Override
+    public ResAvatarsInfo getAvartarsInfo() throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadGetAvartarsInfo());
     }
 }

@@ -8,7 +8,6 @@ import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.settings.SettingsFragment;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
@@ -31,11 +30,11 @@ public class SettingPushActivity extends BaseAppCompatActivity {
         setUpActionBar();
 
         Fragment settingPushFragment =
-                getFragmentManager().findFragmentByTag(SettingsFragment.class.getName());
+                getFragmentManager().findFragmentByTag(SettingsPushFragment.class.getName());
         if (settingPushFragment == null) {
-            getFragmentManager().beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fl_content,
-                            new SettingPushFragment_(), SettingPushFragment.class.getName())
+                            SettingsPushFragment_.builder().build(), SettingsPushFragment.class.getName())
                     .commit();
         }
     }
@@ -47,6 +46,7 @@ public class SettingPushActivity extends BaseAppCompatActivity {
         // Set up the action bar.
         ActionBar actionBar = getSupportActionBar();
         toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
+        actionBar.setTitle(R.string.jandi_setting_notification);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));

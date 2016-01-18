@@ -114,7 +114,7 @@ public class ResRoomInfo {
 
     @DatabaseTable(tableName = "room_info_marker")
     public static class MarkerInfo {
-        @DatabaseField(columnName = "roomId",foreign = true, foreignAutoRefresh = true)
+        @DatabaseField(columnName = "roomId", foreign = true, foreignAutoRefresh = true)
         private ResRoomInfo room;
 
         @DatabaseField(generatedId = true)

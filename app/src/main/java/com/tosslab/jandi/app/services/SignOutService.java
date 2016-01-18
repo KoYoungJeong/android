@@ -55,7 +55,7 @@ public class SignOutService extends IntentService {
 
         new Handler(Looper.getMainLooper())
                 .post(() -> {
-                    ColoredToast.showError(context, context.getString(R.string.err_expired_session));
+                    ColoredToast.show(context.getString(R.string.err_expired_session));
                 });
     }
 }

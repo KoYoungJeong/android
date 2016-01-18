@@ -102,7 +102,7 @@ public class InvitationDialogExecutor {
 
     @UiThread
     void showErrorToast(String message) {
-        ColoredToast.showError(activity, message);
+        ColoredToast.showError(message);
     }
 
     @UiThread

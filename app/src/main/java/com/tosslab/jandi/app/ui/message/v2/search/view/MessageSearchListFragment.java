@@ -16,6 +16,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -78,6 +82,7 @@ import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -169,6 +174,8 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @ViewById(R.id.vg_message_offline)
     View vgOffline;
+    @ViewById(R.id.progress_message)
+    View oldProgressBar;
 
     @Bean
     AnnouncementViewModel announcementViewModel;
@@ -700,7 +707,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void showGrayToast(String message) {
-        ColoredToast.showGray(getActivity(), message);
+        ColoredToast.showGray(message);
     }
 
     @UiThread
@@ -734,6 +741,52 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         String msg = JandiApplication.getContext().getString(R.string.jandi_no_long_team_member, name);
 
         AlertUtil.showConfirmDialog(getActivity(), msg, null, false);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showOldLoadingProgress() {
+
+        if (oldProgressBar.getVisibility() != View.GONE) {
+            return;
+        }
+
+        oldProgressBar.setVisibility(View.VISIBLE);
+
+        Animation inAnim = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, -1f,
+                Animation.RELATIVE_TO_SELF, 0f);
+        inAnim.setDuration(oldProgressBar.getContext().getResources().getInteger(R.integer.duration_short_anim));
+        inAnim.setInterpolator(new AccelerateDecelerateInterpolator());
+        inAnim.setStartTime(AnimationUtils.currentAnimationTimeMillis());
+
+        oldProgressBar.startAnimation(inAnim);
+
+    }
+
+    @Override
+    public void dismissOldLoadingProgress() {
+
+        if (oldProgressBar.getVisibility() != View.VISIBLE) {
+            return;
+        }
+
+        Animation outAnim = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, -1f);
+        outAnim.setDuration(oldProgressBar.getContext().getResources().getInteger(R.integer.duration_short_anim));
+        outAnim.setInterpolator(new AccelerateDecelerateInterpolator());
+        outAnim.setStartTime(AnimationUtils.currentAnimationTimeMillis());
+
+        outAnim.setAnimationListener(new SimpleEndAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                oldProgressBar.setVisibility(View.GONE);
+            }
+        });
+        oldProgressBar.startAnimation(outAnim);
     }
 
     @Override

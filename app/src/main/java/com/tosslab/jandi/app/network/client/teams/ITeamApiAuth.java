@@ -5,6 +5,7 @@ import com.tosslab.jandi.app.network.models.ReqCreateFolder;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqMember;
+import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.network.models.ReqRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ReqUpdateFolder;
@@ -78,7 +79,10 @@ public interface ITeamApiAuth {
 
     ResCommon kickUserFromTopic(int teamId, int topicId, ReqMember member);
 
+    ResCommon assignToTopicOwner(int teamId, int topicId, ReqOwner owner);
+
     ResMessages.FileMessage enableFileExternalLink(int teamId, int fileId);
+
     ResMessages.FileMessage disableFileExternalLink(int teamId, int fileId);
 
 }

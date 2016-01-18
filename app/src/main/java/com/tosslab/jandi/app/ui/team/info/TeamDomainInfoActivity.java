@@ -99,7 +99,7 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity {
         if (userEmails != null && userEmails.size() > 0) {
             userEmail = userEmails.get(0).getId();
         } else {
-            ColoredToast.showWarning(TeamDomainInfoActivity.this, getString(R.string.err_network));
+            ColoredToast.showWarning(getString(R.string.err_network));
             finish();
         }
     }

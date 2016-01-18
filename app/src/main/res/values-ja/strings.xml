@@ -76,6 +76,7 @@
 	<string name="jandi_action_update">"アップデートする"</string>
 	<string name="jandi_add">"追加"</string>
 	<string name="jandi_add_an_email_address">"メールアドレスを追加する"</string>
+	<string name="jandi_alert_already_topic_owenr">"あなたはすでにこのトピックの管理者です。"</string>
 	<string name="jandi_all_of_topic_members">"@All（トピック内）"</string>
 	<string name="jandi_already_in_team">"このメールはすでに%sのメンバーです"</string>
 	<string name="jandi_already_linked_email">"このメールアドレスは既にアカウントに登録されています"</string>
@@ -87,7 +88,17 @@
 	<string name="jandi_announcement_deleted">"%sさんが告知を削除しました。"</string>
 	<string name="jandi_announcement_minimize">"環境設定"</string>
 	<string name="jandi_are_you_sure_disable_external_link">"削除すると、リンクはこれから使用できず、本当に削除しますか？"</string>
+	<string name="jandi_ask_assign_topic_owner">"このメンバーにトピック管理者の権限を譲りますか？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"本当にこのメンバーをトピックから退室させますか？"</string>
+	<string name="jandi_ask_to_leave_if_private_topic_owner">"あなたはこのトピックの管理者です。他のメンバーに管理者の権限を譲った後トピックから退出できます。"</string>
+	<string name="jandi_ask_to_leave_if_topic_owner">"あなたはこのトピックの管理者です。トピックから退出するには管理者権限を他のメンバーに譲ってください。"</string>
+	<string name="jandi_assign">"譲る"</string>
+	<string name="jandi_assign_topic_owner">"トピックの管理者を変更する"</string>
+	<string name="jandi_assign_topic_owner_desc">"トピックの管理者は次のような権限があります。
+- トピック名や説明の変更
+- トピックの削除
+- 参加中のメンバーを退出させること
+- JANDIコネクトの項目を中止または削除"</string>
 	<string name="jandi_auto_join_cannot_be_default_topic">"基本トピックでは自動招待を解除できません"</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"自動招待は公開トピックのみで可能です"</string>
 	<string name="jandi_auto_join_explain">"新しいメンバー全員をこのトピックに招待する"</string>
@@ -105,6 +116,7 @@
 	<string name="jandi_cannot_find_search_result_2">"アップロードして、会話の中で共有しましょう"</string>
 	<string name="jandi_cannot_find_search_result_old">"ファイルが見つかりません"</string>
 	<string name="jandi_change_passcode">"パスコード変更"</string>
+	<string name="jandi_character">"キャラクター"</string>
 	<string name="jandi_chat_detail">"トピック設定"</string>
 	<string name="jandi_choose_app_store">"アプリストアを選択してください"</string>
 	<string name="jandi_choose_email">"メールアドレスを選択"</string>
@@ -137,6 +149,7 @@
 	<string name="jandi_coach_mark_topic_setting">"トピックに招\n待、トピック\n退出などの\n管理メニュー"</string>
 	<string name="jandi_coach_mark_upload_file">"ファイルをアップロードする"</string>
 	<string name="jandi_commented_on">"<![CDATA[<font color="#000000"><b>%s</b></font><font color="#999999">さんのファイルにコメントしました</font>]]>"</string>
+	<string name="jandi_complete_assign_topic_owner">"トピックの管理者が更新されました"</string>
 	<string name="jandi_confirm">"確認"</string>
 	<string name="jandi_confirm_new_passcode">"新しいパスコードを再確認"</string>
 	<string name="jandi_confirm_passcode">"パスコードを再入力"</string>
@@ -168,6 +181,7 @@
 	<string name="jandi_entity_unjoined_topic">"未参加のトピック"</string>
 	<string name="jandi_err_unexpected">"不明な問題が発生しました"</string>
 	<string name="jandi_error_web_token">"ログイン中にエラーが発生しました。もう一度お試しください"</string>
+	<string name="jandi_exceeded_max_text_length">"５０００文字まで入力できます"</string>
 	<string name="jandi_expired_invitation_link">"この招待リンクの有効期限が切れています。新しいリンクをリクエストしてください"</string>
 	<string name="jandi_explain_global_push_off">"アプリの通知がオフに設定されています。もっと見る→設定で通知をオンにすることができます。"</string>
 	<string name="jandi_explain_topic_description">"トピックの説明（選択）"</string>
@@ -217,6 +231,7 @@
 	<string name="jandi_go_to_latest">"最新のメッセージに移動"</string>
 	<string name="jandi_go_to_setting">"設定に移動"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
+	<string name="jandi_guide_to_assign_topic_owner">"トピックメニューから次の管理者を指定してからトピックから退出させられます。"</string>
 	<string name="jandi_has_joined">"%sさんが参加しました"</string>
 	<string name="jandi_have_an_account_already">"すでにJANDIに登録済みの方はこちら"</string>
 	<string name="jandi_help">"ヘルプ"</string>
@@ -290,11 +305,14 @@
 	<string name="jandi_messages_release">"はなして以前のメッセージを表示"</string>
 	<string name="jandi_modify_channel">"トピックの名称を変更"</string>
 	<string name="jandi_modify_private_group">"グループを編集"</string>
+	<string name="jandi_modify_profile_image">"プロフィール写真を編集"</string>
 	<string name="jandi_move_entity_after_share">"ファイルが共有されました。ファイルについてコメントしますか？"</string>
 	<string name="jandi_msg_network_offline">"インターネット接続が切断されました。"</string>
 	<string name="jandi_msg_network_offline_warn">"現在ネットワークに接続されていません。"</string>
 	<string name="jandi_my_files">"<b>自分</b>"</string>
 	<string name="jandi_name_in_jandi">"アカウント名"</string>
+	<string name="jandi_need_to_assign_topic_owner">"あなたはこのトピックの管理者です。
+トピックメニューからトピックの管理者を変更してから退出できます。"</string>
 	<string name="jandi_new_team_name">"新しいチーム名"</string>
 	<string name="jandi_no_invite_email">"招待したいメンバーのメールアドレスを入力してください"</string>
 	<string name="jandi_no_long_team_member">"%sさんはもうこのチームのメンバーではありません"</string>
@@ -311,6 +329,7 @@
 	<string name="jandi_off">"オフ"</string>
 	<string name="jandi_on">"オン"</string>
 	<string name="jandi_open_browser">"ブラウザで開く"</string>
+	<string name="jandi_page_not_found">"ページが見つかりません"</string>
 	<string name="jandi_password_strength_average">"普通"</string>
 	<string name="jandi_password_strength_safe">"強い"</string>
 	<string name="jandi_password_strength_strong">"非常に強い"</string>
@@ -327,6 +346,7 @@
 	<string name="jandi_private_topic_tip_3">"トピック作成後はプライベートトピックへの変更はできません。その逆もできません。"</string>
 	<string name="jandi_profile_actionb">"プロフィール"</string>
 	<string name="jandi_profile_additional_info">"追加"</string>
+	<string name="jandi_profile_background_color">"色"</string>
 	<string name="jandi_profile_basic_info">"基本"</string>
 	<string name="jandi_profile_division">"部署"</string>
 	<string name="jandi_profile_division_hint">"部署"</string>
@@ -347,6 +367,7 @@
 	<string name="jandi_push_preview_public_only">"公開トピックのみ"</string>
 	<string name="jandi_question_team_create">"JANDIにチームを作成していない方はこちら"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"プライマリアドレスは削除できません"</string>
+	<string name="jandi_retry">"もう一度試す"</string>
 	<string name="jandi_retry_voice_search">"言葉を認識できませんでした。もう一度お試し下さい"</string>
 	<string name="jandi_save">"保存"</string>
 	<string name="jandi_screen_auto">"自動回転"</string>
@@ -358,6 +379,7 @@
 	<string name="jandi_sdcard_storage_unmounted">"SDカードのマウントを解除しました"</string>
 	<string name="jandi_search_ing">"<![CDATA[<b><font color=#404040>%s</font></b>を検索しています]]>"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>の検索結果が<b><font color=#404040>%2$d</font></b>件あります]]>"</string>
+	<string name="jandi_select_character">"キャラクターを選択"</string>
 	<string name="jandi_select_direct_messages">"送信相手を選択"</string>
 	<string name="jandi_select_gallery">"写真を選択"</string>
 	<string name="jandi_select_maximum_10">"最大10枚まで選択できます"</string>
@@ -448,12 +470,14 @@
 	<string name="jandi_topic_delete">"このトピックを削除"</string>
 	<string name="jandi_topic_description">"トピック説明"</string>
 	<string name="jandi_topic_detail">"トピックの詳細情報"</string>
+	<string name="jandi_topic_inside_alone">"このトピックには他のメンバーがいませんので、トピックの管理者が変更できません。"</string>
 	<string name="jandi_topic_invitation">"招待"</string>
 	<string name="jandi_topic_leave">"このトピックから退出"</string>
 	<string name="jandi_topic_no_member_1">"このトピックには他にメンバーがいません。"</string>
 	<string name="jandi_topic_no_member_2">"以下のボタンをタップしてメンバーを招待しましょう"</string>
 	<string name="jandi_topic_notification">"トピックからの通知"</string>
 	<string name="jandi_topic_owner">"トピックの管理者"</string>
+	<string name="jandi_topic_owner_title">"このメンバーはトピックの管理者です。"</string>
 	<string name="jandi_topic_paricipants">"メンバー一覧"</string>
 	<string name="jandi_topic_private">"非公開"</string>
 	<string name="jandi_topic_public">"公開"</string>

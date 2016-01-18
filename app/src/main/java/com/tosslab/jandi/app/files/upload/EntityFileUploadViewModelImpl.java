@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.ui.album.ImageAlbumActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -52,15 +53,13 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
                         .startForResult(TYPE_UPLOAD_GALLERY);
                 break;
             case TYPE_UPLOAD_TAKE_PHOTO:
-
                 try {
-                    File directory = new File(GoogleImagePickerUtil.getDownloadPath());
+                    File directory = new File(FileUtil.getDownloadPath());
                     filePath = File.createTempFile("camera", ".jpg", directory);
                     filePickerModel.openCameraForActivityResult(fragment, Uri.fromFile(filePath));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
                 break;
             case TYPE_UPLOAD_EXPLORER:
                 filePickerModel.openExplorerForActivityResult(fragment);
@@ -80,13 +79,12 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
             case TYPE_UPLOAD_TAKE_PHOTO:
 
                 try {
-                    File directory = new File(GoogleImagePickerUtil.getDownloadPath());
+                    File directory = new File(FileUtil.getDownloadPath());
                     filePath = File.createTempFile("camera", ".jpg", directory);
                     filePickerModel.openCameraForActivityResult(activity, Uri.fromFile(filePath));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
                 break;
             case TYPE_UPLOAD_EXPLORER:
                 filePickerModel.openExplorerForActivityResult(activity);
@@ -95,7 +93,6 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
                 break;
 
         }
-
     }
 
     @Override
@@ -105,9 +102,11 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
             case TYPE_UPLOAD_GALLERY:
                 filePaths.addAll(filePickerModel.getFilePathsFromInnerGallery(intent));
                 break;
-            case TYPE_UPLOAD_EXPLORER:
             case TYPE_UPLOAD_TAKE_PHOTO:
-                filePaths.add(filePickerModel.getFilePath(context, requestCode, intent, filePath));
+            case TYPE_UPLOAD_EXPLORER:
+                if (filePath != null) {
+                    filePaths.add(filePickerModel.getFilePath(context, requestCode, intent, filePath));
+                }
                 break;
         }
         return filePaths;
@@ -149,12 +148,12 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
 
     @UiThread
     void showFailToast(Context context, String message) {
-        ColoredToast.showError(context, message);
+        ColoredToast.showError(message);
     }
 
     @UiThread
     void showSuccessToast(Context context, String message) {
-        ColoredToast.show(context, message);
+        ColoredToast.show(message);
     }
 
 
@@ -195,7 +194,7 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
 
         if (GoogleImagePickerUtil.isUrl(realFilePath)) {
 
-            String downloadDir = GoogleImagePickerUtil.getDownloadPath();
+            String downloadDir = FileUtil.getDownloadPath();
             String downloadName = GoogleImagePickerUtil.getWebImageName();
             ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(context, downloadDir, downloadName);
             downloadImageAndShowFileUploadDialog(context, fragmentManager, entityId, downloadProgress, realFilePath, downloadDir, downloadName);
@@ -219,7 +218,7 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
             exceedMaxFileSizeError(context);
         } else {
             FileUploadPreviewActivity_.intent(context)
-                    .realFilePathList(new ArrayList<String>(realFilePath))
+                    .realFilePathList(new ArrayList<>(realFilePath))
                     .selectedEntityIdToBeShared(entityId)
                     .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
         }
@@ -228,8 +227,11 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void exceedMaxFileSizeError(Context context) {
-
-        ColoredToast.showError(context, context.getString(R.string.jandi_file_size_large_error));
+        ColoredToast.showError(context.getString(R.string.jandi_file_size_large_error));
     }
 
+    @Override
+    public File getUploadedFile() {
+        return filePath;
+    }
 }

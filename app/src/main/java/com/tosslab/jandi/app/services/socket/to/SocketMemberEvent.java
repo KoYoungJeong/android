@@ -17,6 +17,17 @@ public class SocketMemberEvent {
     private int memberId;
     private MemberInfo member;
 
+    private long ts;
+
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
+
     @Override
     public String toString() {
         return "SocketMemberEvent{" +

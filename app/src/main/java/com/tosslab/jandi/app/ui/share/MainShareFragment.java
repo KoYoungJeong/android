@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
@@ -33,6 +34,7 @@ import com.tosslab.jandi.app.ui.share.presenter.SharePresenter;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
@@ -144,6 +146,12 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
             etComment.setMaxLines(6);
         }
 
+        TextCutter.with(etComment)
+                .listener((s) -> {
+                    SuperToast.cancelAllSuperToasts();
+                    ColoredToast.showError(R.string.jandi_exceeded_max_text_length);
+                });
+
         setOnScrollMode();
 
         sharePresenter.initView();
@@ -203,13 +211,13 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     @UiThread
     @Override
     public void showSuccessToast(String message) {
-        ColoredToast.show(getActivity().getApplicationContext(), message);
+        ColoredToast.show(message);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showFailToast(String message) {
-        ColoredToast.showError(getActivity().getApplicationContext(), message);
+        ColoredToast.showError(message);
     }
 
     @UiThread

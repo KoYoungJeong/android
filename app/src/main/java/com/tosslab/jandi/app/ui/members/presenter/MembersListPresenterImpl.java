@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.members.presenter;
 
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -17,6 +18,8 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
+import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog;
+import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog_;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
@@ -123,7 +126,8 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         List<ChatChooseItem> members;
         if (type == MembersListActivity.TYPE_MEMBERS_LIST_TEAM) {
             members = memberModel.getTeamMembers();
-        } else if (type == MembersListActivity.TYPE_MEMBERS_LIST_TOPIC) {
+        } else if (type == MembersListActivity.TYPE_MEMBERS_LIST_TOPIC
+                || type == MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER) {
             members = memberModel.getTopicMembers(entityId);
         } else if (type == MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC) {
             members = memberModel.getUnjoinedTopicMembers(entityId);
@@ -161,7 +165,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     }
 
     @Override
-    public void onDestory() {
+    public void onDestroy() {
         if (!subscribe.isUnsubscribed()) {
             subscribe.unsubscribe();
         }
@@ -221,11 +225,22 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     @Override
     public void initKickableMode(int entityId) {
-        boolean topicOwner = memberModel.isTopicOwner(entityId);
+        boolean topicOwner = memberModel.isMyTopic(entityId);
         boolean teamOwner = memberModel.isTeamOwner();
         boolean isDefaultTopic = EntityManager.getInstance().getDefaultTopicId() == entityId;
         // 내 토픽이되 기본 토픽이 아니어야 함
         view.setKickMode((topicOwner || teamOwner) && !isDefaultTopic);
+    }
+
+    @Override
+    public void onKickMemberClick(int topicId, ChatChooseItem item) {
+        boolean isTopicOwner = memberModel.isTopicOwner(topicId, item.getEntityId());
+        if (isTopicOwner) {
+            view.showNeedToAssignTopicOwnerDialog();
+            return;
+        }
+
+        view.showKickDialog(item.getName(), item.getPhotoUrl(), item.getEntityId());
     }
 
     @Background
@@ -254,6 +269,49 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         }
 
         view.dismissProgressWheel();
+    }
+
+    @Override
+    public void onMemberClickForAssignOwner(int topicId, final ChatChooseItem item) {
+        if (EntityManager.getInstance().isBot(item.getEntityId())) {
+            //TODO
+            return;
+        }
+
+        if (memberModel.isTopicOwner(topicId, item.getEntityId())) {
+            view.showAlreadyTopicOwnerToast();
+            return;
+        }
+
+        view.showConfirmAssignTopicOwnerDialog(item.getName(), item.getPhotoUrl(), item.getEntityId());
+    }
+
+    @Background
+    @Override
+    public void onAssignToTopicOwner(int topicId, int memberId) {
+        if (!NetworkCheckUtil.isConnected()) {
+            view.showAssignTopicOwnerFailToast();
+            return;
+        }
+
+        view.showProgressWheel();
+
+        int teamId = EntityManager.getInstance().getTeamId();
+        try {
+            memberModel.assignToTopicOwner(teamId, topicId, memberId);
+            view.dismissProgressWheel();
+
+            view.showAssignTopicOwnerSuccessToast();
+
+            view.setResultAndFinish(memberId);
+        } catch (Exception e) {
+            LogUtil.e(Log.getStackTraceString(e));
+            view.dismissProgressWheel();
+
+            view.showAssignTopicOwnerFailToast();
+
+            view.setResultAndFinish(-1);
+        }
     }
 
     private void trackTopicMemberInviteSuccess(int memberCount, int entityId) {
