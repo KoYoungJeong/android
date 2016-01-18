@@ -73,5 +73,6 @@ public interface TopicDetailPresenter {
         void setAssignTopicOwnerVisible(boolean owner);
 
         void moveToAssignTopicOwner();
+        void showGlobalPushSetupDialog();
     }
 }
