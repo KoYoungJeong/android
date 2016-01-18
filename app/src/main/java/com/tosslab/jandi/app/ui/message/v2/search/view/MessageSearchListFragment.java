@@ -712,15 +712,16 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showFailToast(String message) {
-        showFailToast(message);
+        ColoredToast.showError(getActivity(), message);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showSuccessToast(String message) {
-        showSuccessToast(message);
+        ColoredToast.show(getActivity(), message);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void modifyStarredInfo(int messageId, boolean starred) {
         int position = messageAdapter.indexByMessageId(messageId);
