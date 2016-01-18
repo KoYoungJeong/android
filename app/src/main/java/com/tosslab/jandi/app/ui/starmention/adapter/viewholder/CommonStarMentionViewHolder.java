@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -16,6 +17,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.utils.transform.TransformConfig;
 
 /**
  * Created by tee on 15. 8. 2..
@@ -48,9 +50,10 @@ public class CommonStarMentionViewHolder extends RecyclerView.ViewHolder {
     public void bindView(StarMentionVO starMentionVO) {
 
 
-        boolean isUser = !EntityManager.getInstance().isBot(starMentionVO.getWriterId());
+        boolean isBot = EntityManager.getInstance().isBot(starMentionVO.getWriterId());
+        boolean isJandiBot = EntityManager.getInstance().isJandiBot(starMentionVO.getWriterId());
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) ivProfile.getLayoutParams();
-        if (isUser) {
+        if (!isJandiBot) {
             layoutParams.topMargin = ivProfile.getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin);
             layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 44f, ivProfile.getResources().getDisplayMetrics());
         } else {
@@ -60,9 +63,21 @@ public class CommonStarMentionViewHolder extends RecyclerView.ViewHolder {
 
         ivProfile.setLayoutParams(layoutParams);
 
-        if (isUser) {
+        if (!isJandiBot) {
             Uri uri = Uri.parse(starMentionVO.getWriterPictureUrl());
-            ImageUtil.loadProfileImage(ivProfile, uri, R.drawable.profile_img);
+            if (!isBot) {
+                ImageUtil.loadProfileImage(ivProfile, uri, R.drawable.profile_img);
+            } else {
+                RoundingParams circleRoundingParams = ImageUtil.getCircleRoundingParams(
+                        TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
+
+                ImageLoader.newBuilder()
+                        .placeHolder(R.drawable.profile_img, ScalingUtils.ScaleType.FIT_CENTER)
+                        .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
+                        .roundingParams(circleRoundingParams)
+                        .load(uri)
+                        .into(ivProfile);
+            }
         } else {
             ImageLoader.newBuilder()
                     .placeHolder(R.drawable.bot_80x100, ScalingUtils.ScaleType.CENTER_INSIDE)
