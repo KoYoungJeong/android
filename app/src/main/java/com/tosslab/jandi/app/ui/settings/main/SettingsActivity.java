@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.settings;
+package com.tosslab.jandi.app.ui.settings.main;
 
 import android.app.Fragment;
 import android.graphics.drawable.ColorDrawable;
@@ -8,6 +8,8 @@ import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.settings.main.view.SettingsFragment;
+import com.tosslab.jandi.app.ui.settings.main.view.SettingsFragment_;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
@@ -31,9 +33,9 @@ public class SettingsActivity extends BaseAppCompatActivity {
         Fragment settingFragment =
                 getFragmentManager().findFragmentByTag(SettingsFragment.class.getName());
         if (settingFragment == null) {
-            getFragmentManager().beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .add(R.id.fl_content,
-                            new SettingsFragment_(), SettingsFragment.class.getName())
+                            SettingsFragment_.builder().build(), SettingsFragment.class.getName())
                     .commit();
         }
     }

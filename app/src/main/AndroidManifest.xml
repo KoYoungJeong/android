@@ -80,8 +80,7 @@
         <activity
             android:name=".ui.filedetail.FileDetailActivity_"
             android:label="@string/title_file_detail"
-
-
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
@@ -89,7 +88,7 @@
             android:label="@string/jandi_title_activity_file_explorer" />
 
         <activity
-            android:name=".ui.settings.SettingsActivity_"
+            android:name=".ui.settings.main.SettingsActivity_"
             android:label="@string/jandi_settings" />
 
         <activity
@@ -431,6 +430,8 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- for download manager addCompletedDownload-->
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
 
 </manifest>

@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,10 +24,9 @@ import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
 import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar;
 import com.tosslab.jandi.app.utils.UriFactory;
-import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -257,7 +257,26 @@ public class ImageThumbLoader implements FileThumbLoader {
     private Pair<Integer, Integer> updateViewSize(int imageWidth, int imageHeight) {
         ViewGroup.LayoutParams layoutParams = vgDetailPhoto.getLayoutParams();
 
-        int viewWidth = vgDetailPhoto.getMeasuredWidth();
+        ViewParent parent = vgDetailPhoto.getParent();
+        int margins = 0;
+        if (parent != null) {
+            View parentView = (View) parent;
+            margins = parentView.getPaddingLeft() + parentView.getPaddingRight()
+                    + vgDetailPhoto.getPaddingLeft() + vgDetailPhoto.getPaddingRight();
+            ViewGroup.LayoutParams layoutParams1 = parentView.getLayoutParams();
+            if (layoutParams1 instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams parentMargin = (ViewGroup.MarginLayoutParams) layoutParams1;
+                margins = margins + parentMargin.leftMargin + parentMargin.rightMargin;
+            }
+
+        }
+        ViewGroup.LayoutParams layoutParams1 = vgDetailPhoto.getLayoutParams();
+        if (layoutParams1 instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams photoMargin = (ViewGroup.MarginLayoutParams) layoutParams1;
+            margins += (photoMargin.leftMargin + photoMargin.rightMargin);
+        }
+
+        int viewWidth = vgDetailPhoto.getResources().getDisplayMetrics().widthPixels - margins;
         if (imageWidth > imageHeight) {
             float ratio = imageHeight / (float) imageWidth;
 

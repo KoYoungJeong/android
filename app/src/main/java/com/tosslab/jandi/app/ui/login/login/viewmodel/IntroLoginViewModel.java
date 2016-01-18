@@ -74,14 +74,14 @@ public class IntroLoginViewModel {
     @UiThread
     public void createTeamSucceed() {
         dissmissProgressDialog();
-        ColoredToast.showLong(activity, activity.getString(R.string.jandi_team_creation_succeed));
+        ColoredToast.showLong(activity.getString(R.string.jandi_team_creation_succeed));
         activity.finish();
     }
 
     @UiThread
     public void createTeamFailed(int errMessageResId) {
         dissmissProgressDialog();
-        ColoredToast.showError(activity, activity.getString(errMessageResId));
+        ColoredToast.showError(activity.getString(errMessageResId));
     }
 
     @UiThread
@@ -102,7 +102,7 @@ public class IntroLoginViewModel {
     @UiThread
     public void loginFail(int errMessageResId) {
         mProgressWheel.dismiss();
-        ColoredToast.showError(activity, activity.getString(errMessageResId));
+        ColoredToast.showError(activity.getString(errMessageResId));
     }
 
     public String getEmailText() {
@@ -128,12 +128,12 @@ public class IntroLoginViewModel {
 
     @UiThread
     public void showFailPasswordResetToast() {
-        ColoredToast.show(activity, activity.getString(R.string.jandi_fail_send_password_reset_email));
+        ColoredToast.show(activity.getString(R.string.jandi_fail_send_password_reset_email));
     }
 
     @UiThread
     public void showSuccessPasswordResetToast() {
-        ColoredToast.show(activity, activity.getString(R.string.jandi_sent_password_reset_mail));
+        ColoredToast.show(activity.getString(R.string.jandi_sent_password_reset_mail));
     }
 
     public void setSignInButtonEnable(boolean validEmailPassword) {

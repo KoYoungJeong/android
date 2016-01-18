@@ -293,28 +293,22 @@
 
     <style name="JandiTopic" />
 
-    <style name="JandiTopic.Create.TextView.Type" parent="JandiTopic">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_weight">1</item>
-    </style>
-
     <style name="JandiTopic.Create.TextView.Title" parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">25dp</item>
-        <item name="android:layout_marginRight">25dp</item>
-        <item name="android:textSize">16dp</item>
-        <item name="android:textColor">@color/jandi_text</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:textSize">@dimen/jandi_text_size_large</item>
+        <item name="android:textColor">@color/text_color_setting_check_title</item>
     </style>
 
     <style name="JandiTopic.Create.TextView.Input" parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:minHeight">45dp</item>
-        <item name="android:textColorHint">@color/jandi_text_hint</item>
-        <item name="android:layout_marginRight">25dp</item>
-        <item name="android:textSize">14dp</item>
+        <item name="android:textColorHint">@color/jandi_message_search_item_topic_txt_color_sub</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:textSize">@dimen/jandi_text_size_large</item>
         <item name="android:textColor">@color/jandi_text</item>
         <item name="android:background">@drawable/bg_topic_create_input</item>
     </style>
@@ -322,9 +316,9 @@
     <style name="JandiTopic.Create.TextView.TextCount" parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginRight">25dp</item>
-        <item name="android:layout_marginLeft">25dp</item>
-        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginTop">8dp</item>
         <item name="android:gravity">right</item>
         <item name="android:textSize">@dimen/jandi_text_size_small</item>
         <item name="android:textColor">@color/jandi_message_search_item_topic_txt_color_sub</item>
@@ -423,10 +417,10 @@
     <style name="JandiTopicDetail" />
 
     <style name="JandiTopicDetail.Layout">
-        <item name="android:layout_marginLeft">8dp</item>
-        <item name="android:layout_marginRight">8dp</item>
-        <item name="android:paddingLeft">17dp</item>
-        <item name="android:paddingRight">17dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingRight">16dp</item>
     </style>
 
     <style name="JandiMainShare" />
@@ -465,20 +459,18 @@
 
     <style name="JandiSettingPrivacy.ViewGroup">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">56dp</item>
+        <item name="android:layout_height">64dp</item>
         <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:orientation">horizontal</item>
-        <item name="android:paddingLeft">25dp</item>
-        <item name="android:paddingRight">25dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
     </style>
 
     <style name="JandiSettingPrivacy.Divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
         <item name="android:background">@color/jandi_file_search_item_divider</item>
-        <item name="android:layout_marginLeft">8dp</item>
-        <item name="android:layout_marginRight">8dp</item>
     </style>
 
     <style name="JandiMore" />
@@ -508,6 +500,63 @@
     <style name="JandiIntegration.Sub.Description">
         <item name="android:layout_marginTop">4dp</item>
         <item name="android:textSize">@dimen/jandi_mention_star_list_item_font_size</item>
+    </style>
+
+    <style name="JandiSettings" />
+
+    <style name="JandiSettings.Group">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="JandiSettings.Header"></style>
+
+    <style name="JandiSettings.Header.Text">
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/jandi_accent_color</item>
+        <item name="android:textSize">@dimen/jandi_text_size_medium</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:background">@color/transparent</item>
+    </style>
+
+    <style name="JandiSettings.Body">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="JandiSettings.Body.Text">
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:background">@color/transparent</item>
+    </style>
+
+    <style name="JandiSettings.Body.Text.Title">
+        <item name="android:textColor">@color/text_color_setting_check_title</item>
+        <item name="android:textSize">@dimen/jandi_text_size_large</item>
+    </style>
+
+    <style name="JandiSettings.Body.Text.Summary">
+        <item name="android:textColor">@color/text_color_setting_check_summary</item>
+        <item name="android:textSize">@dimen/jandi_text_size_medium</item>
+    </style>
+
+    <style name="JandiSettings.Body.Check">
+        <item name="android:clickable">false</item>
+        <item name="android:focusable">false</item>
+        <item name="android:focusableInTouchMode">false</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+    </style>
+
+    <style name="JandiSettings.Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/account_home_divide_line</item>
     </style>
 
 </resources>

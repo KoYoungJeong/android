@@ -193,17 +193,14 @@ public class TopicFolderChooseActivity extends BaseAppCompatActivity implements 
     }
 
     public void showMoveToFolderToast(String folderName) {
-        ColoredToast.show(getApplicationContext(),
-                getString(R.string.jandi_folder_has_been_move_to, folderName));
+        ColoredToast.show(getString(R.string.jandi_folder_has_been_move_to, folderName));
     }
 
     public void showRemoveFromFolderToast() {
-        ColoredToast.show(getApplicationContext(),
-                getString(R.string.jandi_folder_has_been_remove_from, currentItemFolderName));
+        ColoredToast.show(getString(R.string.jandi_folder_has_been_remove_from, currentItemFolderName));
     }
 
     public void showAlreadyHasFolderToast() {
-        ColoredToast.show(getApplicationContext(),
-                getString(R.string.jandi_folder_alread_has_name));
+        ColoredToast.show(getString(R.string.jandi_folder_alread_has_name));
     }
 }

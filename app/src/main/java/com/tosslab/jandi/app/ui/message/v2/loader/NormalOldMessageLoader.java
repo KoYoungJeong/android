@@ -51,6 +51,11 @@ public class NormalOldMessageLoader implements OldMessageLoader {
         ResMessages oldMessage = null;
         // 모든 요청은 dummy 가 아닌 실제 데이터 기준...
         int currentItemCount = messageListPresenter.getItemCountWithoutDummy();
+
+        if (currentItemCount > 0) {
+            messageListPresenter.showOldLoadProgress();
+        }
+
         try {
 
             int itemCount = Math.min(
@@ -87,6 +92,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
         } finally {
             messageListPresenter.dismissProgressWheel();
             messageListPresenter.dismissLoadingView();
+            messageListPresenter.dismissOldLoadProgress();
         }
 
         return oldMessage;

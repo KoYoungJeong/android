@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqMember;
 import com.tosslab.jandi.app.network.models.ReqNull;
+import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.network.models.ReqRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ReqUpdateFolder;
@@ -135,6 +136,9 @@ public interface TeamApiV2Client {
 
     @PUT("/teams/{teamId}/topics/{topicId}/kickout")
     ResCommon kickUserFromTopic(@Path("teamId") int teamId, @Path("topicId") int topicId, @Body ReqMember member);
+
+    @PUT("/teams/{teamId}/topics/{topicId}/admin")
+    ResCommon assignToTopicOwner(@Path("teamId") int teamId, @Path("topicId") int topicId, @Body ReqOwner owner);
 
     @PUT("/teams/{teamId}/files/{fileId}/externalShared")
     ResMessages.FileMessage enableFileExternalLink(@Path("teamId") int teamId, @Path("fileId") int fileId, @Body ReqNull reqNull);

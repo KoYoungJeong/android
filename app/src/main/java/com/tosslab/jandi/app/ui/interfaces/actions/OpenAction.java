@@ -110,12 +110,12 @@ public class OpenAction implements Action {
 
     @UiThread
     void failAccessToken() {
-        ColoredToast.showWarning(activity, activity.getString(R.string.jandi_error_web_token));
+        ColoredToast.showWarning(activity.getString(R.string.jandi_error_web_token));
     }
 
     @UiThread
     void successAccessToken(ResAccountInfo accountInfo) {
-        ColoredToast.show(activity, activity.getString(R.string.jandi_success_web_token));
+        ColoredToast.show(activity.getString(R.string.jandi_success_web_token));
     }
 
     @UiThread

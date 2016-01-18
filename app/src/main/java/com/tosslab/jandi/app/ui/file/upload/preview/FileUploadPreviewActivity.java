@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -26,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
@@ -38,6 +38,8 @@ import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadPagerAdapt
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenter;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenterImpl;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
+import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
@@ -148,6 +150,12 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
                     }
                 }, throwable -> {
                 });
+
+        TextCutter.with(etComment)
+                .listener((s) -> {
+                    SuperToast.cancelAllSuperToasts();
+                    ColoredToast.showError(R.string.jandi_exceeded_max_text_length);
+                });
     }
 
     @Override
@@ -160,7 +168,6 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         if (mentionControlViewModel != null) {
             mentionControlViewModel.registClipboardListener();
         }
-        setupFullScreen();
     }
 
     @Override
@@ -175,20 +182,6 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
                     }
                 });
 
-    }
-
-    private void setupFullScreen() {
-        int systemUiOptions;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            systemUiOptions = View.SYSTEM_UI_FLAG_IMMERSIVE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
-
-        } else {
-            systemUiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
-        }
-
-        getWindow().getDecorView().setSystemUiVisibility(systemUiOptions);
     }
 
     @Override
@@ -229,7 +222,6 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
             inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
         }
-        setupFullScreen();
     }
 
     @Override

@@ -11,7 +11,8 @@ import com.tosslab.jandi.app.R;
  * Created by justinygchoi on 2014. 7. 8..
  */
 public class ColoredToast {
-    public static void show(Context context, String message) {
+
+    public static void show(String message) {
         SuperToast superToast = new SuperToast(JandiApplication.getContext());
         superToast.setText(message);
         superToast.setDuration(SuperToast.Duration.VERY_SHORT);
@@ -20,7 +21,17 @@ public class ColoredToast {
         superToast.show();
     }
 
-    public static void showGray(Context context, String message) {
+    public static void show(int strResId) {
+        Context context = JandiApplication.getContext();
+        SuperToast superToast = new SuperToast(context);
+        superToast.setText(context.getResources().getString(strResId));
+        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
+        superToast.setBackground(SuperToast.Background.BLUE);
+        superToast.setTextColor(Color.WHITE);
+        superToast.show();
+    }
+
+    public static void showGray(String message) {
         SuperToast superToast = new SuperToast(JandiApplication.getContext());
         superToast.setText(message);
         superToast.setDuration(SuperToast.Duration.VERY_SHORT);
@@ -29,7 +40,7 @@ public class ColoredToast {
         superToast.show();
     }
 
-    public static void showLong(Context context, String message) {
+    public static void showLong(String message) {
         SuperToast superToast = new SuperToast(JandiApplication.getContext());
         superToast.setText(message);
         superToast.setDuration(SuperToast.Duration.LONG);
@@ -38,7 +49,7 @@ public class ColoredToast {
         superToast.show();
     }
 
-    public static void showWarning(Context context, String message) {
+    public static void showWarning(String message) {
         SuperToast superToast = new SuperToast(JandiApplication.getContext());
         superToast.setText(message);
         superToast.setDuration(SuperToast.Duration.VERY_SHORT);
@@ -47,9 +58,19 @@ public class ColoredToast {
         superToast.show();
     }
 
-    public static void showError(Context context, String message) {
+    public static void showError(String message) {
         SuperToast superToast = new SuperToast(JandiApplication.getContext());
         superToast.setText(message);
+        superToast.setDuration(SuperToast.Duration.SHORT);
+        superToast.setBackground(SuperToast.Background.RED);
+        superToast.setTextColor(Color.WHITE);
+        superToast.show();
+    }
+
+    public static void showError(int strResId) {
+        Context context = JandiApplication.getContext();
+        SuperToast superToast = new SuperToast(context);
+        superToast.setText(context.getResources().getString(strResId));
         superToast.setDuration(SuperToast.Duration.SHORT);
         superToast.setBackground(SuperToast.Background.RED);
         superToast.setTextColor(Color.WHITE);

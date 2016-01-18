@@ -360,12 +360,12 @@ public class FileListPresenter {
 
     @UiThread
     public void showWarningToast(String message) {
-        ColoredToast.showWarning(context, message);
+        ColoredToast.showWarning(message);
     }
 
     @UiThread
     public void showErrorToast(String failMessage) {
-        ColoredToast.showError(context, failMessage);
+        ColoredToast.show(failMessage);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -426,7 +426,7 @@ public class FileListPresenter {
     }
 
     public void exceedMaxFileSizeError() {
-        ColoredToast.showError(context, context.getString(R.string.jandi_file_size_large_error));
+        ColoredToast.show(context.getString(R.string.jandi_file_size_large_error));
 
     }
 
@@ -446,7 +446,7 @@ public class FileListPresenter {
 
     @UiThread
     public void showSuccessToast(String message) {
-        ColoredToast.show(context, message);
+        ColoredToast.show(message);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

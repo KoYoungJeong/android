@@ -67,7 +67,7 @@ class FavoriteTriggerCommand implements MenuCommand {
 
     @UiThread
     void enableFavoriteSucceed() {
-        ColoredToast.show(activity, activity.getString(R.string.jandi_message_starred));
+        ColoredToast.show(activity.getString(R.string.jandi_message_starred));
     }
 
     @Background

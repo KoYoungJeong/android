@@ -239,7 +239,7 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showWarningToast(String message) {
-        ColoredToast.showWarning(getActivity(), message);
+        ColoredToast.showWarning(message);
     }
 
     @Override

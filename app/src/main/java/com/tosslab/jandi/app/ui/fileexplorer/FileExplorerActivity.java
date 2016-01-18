@@ -38,10 +38,10 @@ public class FileExplorerActivity extends BaseAppCompatActivity {
             String action = intent.getAction();
 
             if (action.equals(Intent.ACTION_MEDIA_MOUNTED)) {
-                ColoredToast.show(context, getString(R.string.jandi_sdcard_storage_mounted));
+                ColoredToast.show(getString(R.string.jandi_sdcard_storage_mounted));
                 mountUnmountStateAction = true;
             } else if (action.equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
-                ColoredToast.showWarning(context, getString(R.string.jandi_sdcard_storage_unmounted));
+                ColoredToast.showWarning(getString(R.string.jandi_sdcard_storage_unmounted));
                 mountUnmountStateAction = false;
             }
 

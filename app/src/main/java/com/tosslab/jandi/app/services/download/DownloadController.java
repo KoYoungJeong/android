@@ -133,6 +133,7 @@ public class DownloadController {
             Intent openFileViewerIntent = getFileViewerIntent(file, downloadFileInfo.getFileType());
             view.notifyComplete(downloadFileInfo.getFileName(), notificationId, openFileViewerIntent);
 
+            // download app 리스트 목록에서 다운받은 파일을 확인할 수 있도록 처리
             DownloadManager downloadManager =
                     (DownloadManager) view.getServiceContext().getSystemService(Context.DOWNLOAD_SERVICE);
             String name = file.getName();
