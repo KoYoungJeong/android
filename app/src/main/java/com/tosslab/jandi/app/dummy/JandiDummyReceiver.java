@@ -25,6 +25,8 @@ public class JandiDummyReceiver extends BroadcastReceiver {
                 || Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())
                 || Intent.ACTION_PACKAGE_RESTARTED.equals(intent.getAction())
                 || Intent.ACTION_PACKAGE_REPLACED.equals(intent.getAction())) {
+
+            // delay가 random인 이유는 동시에 이벤트가 들어갔을때 액티비티 생명주기의 충돌을 방지하기 위함인듯..
             Subject.just(1)
                     .subscribeOn(AndroidSchedulers.mainThread())
                     .delay(new Random().nextInt(3000), TimeUnit.MILLISECONDS)
@@ -34,6 +36,7 @@ public class JandiDummyReceiver extends BroadcastReceiver {
                         context.startActivity(serviceIntent);
                         LogUtil.e("dummy activity running!!");
                     });
+
         }
     }
 }
