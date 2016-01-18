@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -160,7 +159,6 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         if (mentionControlViewModel != null) {
             mentionControlViewModel.registClipboardListener();
         }
-        setupFullScreen();
     }
 
     @Override
@@ -175,20 +173,6 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
                     }
                 });
 
-    }
-
-    private void setupFullScreen() {
-        int systemUiOptions;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            systemUiOptions = View.SYSTEM_UI_FLAG_IMMERSIVE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
-
-        } else {
-            systemUiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
-        }
-
-        getWindow().getDecorView().setSystemUiVisibility(systemUiOptions);
     }
 
     @Override
@@ -229,7 +213,6 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
             inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
         }
-        setupFullScreen();
     }
 
     @Override

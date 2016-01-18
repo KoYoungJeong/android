@@ -24,7 +24,6 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -227,13 +226,13 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Sticker_Select);
         });
 
-        lvFileDetailComments.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                hideSoftKeyboard();
-                stickerViewModel.dismissStickerSelector(true);
-            }
-            return false;
-        });
+//        lvFileDetailComments.setOnTouchListener((v, event) -> {
+//            if (event.getAction() == MotionEvent.ACTION_MOVE) {
+//                hideSoftKeyboard();
+//                stickerViewModel.dismissStickerSelector(true);
+//            }
+//            return false;
+//        });
 
         stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
 

@@ -390,7 +390,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         sendInitMessage();
 
-        setUpListTouchListener();
+//        setUpListTouchListener();
 
         TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(entityType == JandiConstants.TYPE_DIRECT_MESSAGE, getActivity());
 
