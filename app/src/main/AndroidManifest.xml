@@ -327,6 +327,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".dummy.JandiDummyActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
+
         <service android:name=".services.socket.JandiSocketService" />
 
         <receiver
@@ -338,8 +342,11 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".JandiReceiver">
+        <receiver android:name=".dummy.JandiDummyReceiver">
             <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
                 <action android:name="android.intent.action.PACKAGE_RESTARTED" />
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
             </intent-filter>
