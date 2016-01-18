@@ -68,8 +68,6 @@ public interface TopicDetailPresenter {
 
         void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic);
 
-        void showSetOnGlobalPushDialog();
-
         void setAssignTopicOwnerVisible(boolean owner);
 
         void moveToAssignTopicOwner();

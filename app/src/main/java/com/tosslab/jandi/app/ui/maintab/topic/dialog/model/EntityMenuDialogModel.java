@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.ui.maintab.topic.dialog.model;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
@@ -95,6 +97,7 @@ public class EntityMenuDialogModel {
 
         final int teamId = EntityManager.getInstance().getTeamId();
         updatePushStatus(teamId, entityId, isTopicPushOn);
+
     }
 
     public void updatePushStatus(int teamId, int entityId, boolean pushOn) throws RetrofitError {
@@ -114,5 +117,10 @@ public class EntityMenuDialogModel {
     public boolean isTopicOwner(int entityId) {
         final EntityManager entityManager = EntityManager.getInstance();
         return entityManager.isTopicOwner(entityId, entityManager.getMe().getId());
+    }
+
+    public boolean isGlobalPushOff() {
+        return PreferenceManager.getDefaultSharedPreferences(JandiApplication.getContext())
+                .getBoolean("setting_push_auto_alarm", true);
     }
 }
