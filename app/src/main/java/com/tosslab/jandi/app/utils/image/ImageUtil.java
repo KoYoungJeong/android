@@ -217,7 +217,6 @@ public class ImageUtil {
         ImageLoader.newBuilder()
                 .placeHolder(placeHolderResId, ScalingUtils.ScaleType.CENTER_CROP)
                 .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                .backgroundColor(Color.BLACK)
                 .load(uri)
                 .into(draweeView);
     }

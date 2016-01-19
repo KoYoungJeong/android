@@ -59,8 +59,8 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     @Extra("profile_image_file_uri")
     Uri imageUri;
 
-    private CharacterSelectorAdapter<String> profileCharacterSelectorAdapter;
-    private ColorSelectorAdapter<Integer> profileColorSelectorAdapter;
+    private CharacterSelectorAdapter profileCharacterSelectorAdapter;
+    private ColorSelectorAdapter profileColorSelectorAdapter;
     private int selectedColor = -1;
     private String selectedCharacterUrl = null;
     private ProgressWheelUtil progressWheelUtil;
@@ -72,8 +72,8 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
             finish();
         } else {
             profileImageSelectorPresenter.setView(this);
-            profileCharacterSelectorAdapter = new CharacterSelectorAdapter<>();
-            profileColorSelectorAdapter = new ColorSelectorAdapter<>();
+            profileCharacterSelectorAdapter = new CharacterSelectorAdapter();
+            profileColorSelectorAdapter = new ColorSelectorAdapter();
             profileCharacterSelectorAdapter.setOnRecyclerItemClickListener(this);
             profileColorSelectorAdapter.setOnRecyclerItemClickListener(this);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -195,9 +195,9 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     @Override
     public void onItemClick(View view, RecyclerView.Adapter adapter, int position) {
         if (adapter instanceof CharacterSelectorAdapter) {
-            selectedCharacterUrl = ((CharacterSelectorAdapter<String>) adapter).getSelectedItem();
+            selectedCharacterUrl = ((CharacterSelectorAdapter) adapter).getSelectedItem();
         } else if (adapter instanceof ColorSelectorAdapter) {
-            selectedColor = ((ColorSelectorAdapter<Integer>) adapter).getSelectedItem();
+            selectedColor = ((ColorSelectorAdapter) adapter).getSelectedItem();
         }
         showMainProfileImage();
     }

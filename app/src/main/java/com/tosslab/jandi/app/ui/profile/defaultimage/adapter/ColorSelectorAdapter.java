@@ -4,17 +4,16 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 
-import java.util.List;
-
 /**
  * Created by tee on 16. 1. 14..
  */
-public class ColorSelectorAdapter<Integer> extends ProfileSelectorAdapter<Integer> {
+public class ColorSelectorAdapter extends ProfileSelectorAdapter<RecyclerView.ViewHolder, Integer> {
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List payloads) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
         ItemViewHolder viewHolder = (ItemViewHolder) holder;
         ImageView ivImageBox = viewHolder.ivImageBox;
-        int color = (java.lang.Integer) items.get(position);
+        int color = items.get(position);
         ivImageBox.setImageDrawable(new ColorDrawable(color));
         ivImageBox.setOnClickListener(v -> {
                     selectedPosition = position;
@@ -22,7 +21,5 @@ public class ColorSelectorAdapter<Integer> extends ProfileSelectorAdapter<Intege
                     onRecyclerItemClickListener.onItemClick(ivImageBox, ColorSelectorAdapter.this, position);
                 }
         );
-
-        super.onBindViewHolder(holder, position, payloads);
     }
 }
