@@ -13,11 +13,11 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
  */
 public interface IProfileApiLoader {
 
-    IExecutor<ResLeftSideMenu.User> loadUpdateMemberProfileByProfileApi(int memberId, ReqUpdateProfile reqUpdateProfile);
+    IExecutor<ResLeftSideMenu.User> loadUpdateMemberProfileByProfileApi(long memberId, ReqUpdateProfile reqUpdateProfile);
 
-    IExecutor<ResCommon> loadUpdateMemberNameByProfileApi(int memberId, ReqProfileName reqProfileName);
+    IExecutor<ResCommon> loadUpdateMemberNameByProfileApi(long memberId, ReqProfileName reqProfileName);
 
-    IExecutor<ResLeftSideMenu.User> loadUpdateMemberEmailByProfileApi(int memberId, ReqAccountEmail reqAccountEmail);
+    IExecutor<ResLeftSideMenu.User> loadUpdateMemberEmailByProfileApi(long memberId, ReqAccountEmail reqAccountEmail);
 
     IExecutor<ResAvatarsInfo> loadGetAvartarsInfo();
 

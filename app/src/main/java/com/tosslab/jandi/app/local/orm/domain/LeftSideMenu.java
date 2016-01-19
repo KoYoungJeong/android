@@ -10,15 +10,15 @@ import com.j256.ormlite.table.DatabaseTable;
 public class LeftSideMenu {
 
     @DatabaseField(id = true)
-    private int teamId;
+    private long teamId;
     @DatabaseField
     private String rawLeftSideMenu;
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int team) {
+    public void setTeamId(long team) {
         this.teamId = team;
     }
 

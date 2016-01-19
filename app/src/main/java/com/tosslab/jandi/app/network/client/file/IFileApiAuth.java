@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface IFileApiAuth {
 
-    ResCommon deleteFileByFileApi(int teamId, int fileId);
+    ResCommon deleteFileByFileApi(long teamId, long fileId);
 
     List<ResMessages.FileMessage> searchInitImageFileByFileApi(int teamId, int roomId
             , int messageId, int count);

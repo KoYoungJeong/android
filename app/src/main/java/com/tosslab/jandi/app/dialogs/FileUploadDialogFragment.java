@@ -34,7 +34,7 @@ import rx.Observable;
  * Created by justinygchoi on 2014. 6. 20..
  */
 public class FileUploadDialogFragment extends DialogFragment {
-    private int selectedEntityIdToBeShared;    // Share 할 chat-room
+    private long selectedEntityIdToBeShared;    // Share 할 chat-room
     private EntitySimpleListAdapter mEntityArrayAdapter;
 
     public static FileUploadDialogFragment newInstance(String realFilePath, int currentEntityId) {

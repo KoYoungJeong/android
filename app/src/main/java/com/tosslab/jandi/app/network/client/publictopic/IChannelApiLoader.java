@@ -13,14 +13,14 @@ public interface IChannelApiLoader {
 
     IExecutor<ResCommon> loadCreateChannelByChannelApi(ReqCreateTopic channel);
 
-    IExecutor<ResCommon> loadModifyPublicTopicNameByChannelApi(ReqCreateTopic channel, int channelId);
+    IExecutor<ResCommon> loadModifyPublicTopicNameByChannelApi(ReqCreateTopic channel, long channelId);
 
-    IExecutor<ResCommon> loadDeleteTopicByChannelApi(int channelId, ReqDeleteTopic reqDeleteTopic);
+    IExecutor<ResCommon> loadDeleteTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic);
 
-    IExecutor<ResCommon> loadJoinTopicByChannelApi(int channelId, ReqDeleteTopic reqDeleteTopic);
+    IExecutor<ResCommon> loadJoinTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic);
 
-    IExecutor<ResCommon> loadLeaveTopicByChannelApi(int channelId, ReqDeleteTopic reqDeleteTopic);
+    IExecutor<ResCommon> loadLeaveTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic);
 
-    IExecutor<ResCommon> loadInvitePublicTopicByChannelApi(int channelId, ReqInviteTopicUsers reqInviteTopicUsers);
+    IExecutor<ResCommon> loadInvitePublicTopicByChannelApi(long channelId, ReqInviteTopicUsers reqInviteTopicUsers);
 
 }

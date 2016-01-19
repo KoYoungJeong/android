@@ -14,12 +14,12 @@ public interface IGroupApiAuth {
 
     ResCommon createPrivateGroupByGroupApi(ReqCreateTopic group) throws RetrofitError;
 
-    ResCommon modifyGroupByGroupApi(ReqCreateTopic channel, int groupId) throws RetrofitError;
+    ResCommon modifyGroupByGroupApi(ReqCreateTopic channel, long groupId) throws RetrofitError;
 
-    ResCommon deleteGroupByGroupApi(int teamId, int groupId) throws RetrofitError;
+    ResCommon deleteGroupByGroupApi(long teamId, long groupId) throws RetrofitError;
 
-    ResCommon leaveGroupByGroupApi(int groupId, ReqTeam team) throws RetrofitError;
+    ResCommon leaveGroupByGroupApi(long groupId, ReqTeam team) throws RetrofitError;
 
-    ResCommon inviteGroupByGroupApi(int groupId, ReqInviteTopicUsers inviteUsers) throws RetrofitError;
+    ResCommon inviteGroupByGroupApi(long groupId, ReqInviteTopicUsers inviteUsers) throws RetrofitError;
 
 }

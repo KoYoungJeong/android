@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface IFileApiLoader {
 
-    IExecutor<ResCommon> loaderDeleteFileByFileApi(int teamId, int fileId);
+    IExecutor<ResCommon> loaderDeleteFileByFileApi(long teamId, long fileId);
 
     IExecutor<List<ResMessages.FileMessage>> loaderSearchInitImageFileByFileApi(int teamId, int roomId
             , int messageId, int count);

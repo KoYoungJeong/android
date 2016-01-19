@@ -196,19 +196,19 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @FragmentArg
     int entityType;
     @FragmentArg
-    int entityId;
+    long entityId;
     @FragmentArg
     boolean isFavorite = false;
     @FragmentArg
     boolean isFromPush = false;
     @FragmentArg
-    int teamId;
+    long teamId;
     @FragmentArg
-    int lastMarker = -1;
+    long lastMarker = -1;
     @FragmentArg
-    int roomId;
+    long roomId;
     @FragmentArg
-    int firstCursorLinkId = -1;
+    long firstCursorLinkId = -1;
     @ViewById(R.id.lv_messages)
     RecyclerView messageListView;
     @ViewById(R.id.btn_message_action_button_1)

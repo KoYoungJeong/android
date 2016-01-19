@@ -30,7 +30,7 @@ public class ReqSendSticker {
         this.mentions = mentions;
     }
 
-    public static ReqSendSticker create(int groupId, String sitkcerId, int teamId, int share,
+    public static ReqSendSticker create(long groupId, String sitkcerId, long teamId, long share,
                                         String type, String content, List<MentionObject> mentions) {
 
         return new ReqSendSticker(groupId, sitkcerId, teamId, share, type, content, mentions);

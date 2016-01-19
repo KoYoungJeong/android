@@ -11,7 +11,7 @@ public class ConnectTeam {
     private final int memberId;
     private final String userName;
 
-    public ConnectTeam(String token, String userAgent, int teamId, String teamName, int memberId, String userName) {
+    public ConnectTeam(String token, String userAgent, long teamId, String teamName, long memberId, String userName) {
         this.token = token;
         this.userAgent = userAgent;
         this.teamId = teamId;

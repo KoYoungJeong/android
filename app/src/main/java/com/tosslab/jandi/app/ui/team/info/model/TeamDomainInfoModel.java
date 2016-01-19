@@ -82,7 +82,7 @@ public class TeamDomainInfoModel {
 
     }
 
-    public ResTeamDetailInfo.InviteTeam getTeamInfo(int teamId) throws RetrofitError {
+    public ResTeamDetailInfo.InviteTeam getTeamInfo(long teamId) throws RetrofitError {
         ResTeamDetailInfo.InviteTeam resTeamDetailInfo = RequestApiManager.getInstance().getTeamInfoByTeamApi(teamId);
         return resTeamDetailInfo;
     }

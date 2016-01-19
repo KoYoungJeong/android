@@ -36,10 +36,10 @@ import rx.Observable;
 public class FileUnshareActivity extends BaseAppCompatActivity {
 
     @Extra
-    int fileId;
+    long fileId;
 
     @Extra
-    ArrayList<Integer> sharedEntities;
+    ArrayList<Long> sharedEntities;
 
     @ViewById(R.id.lv_shared_entity)
     ListView lvSharedEntities;
@@ -78,9 +78,9 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
     }
 
     public void showList() {
-        int myId = fileDetailModel.getMyId();
+        long myId = fileDetailModel.getMyId();
 
-        List<Integer> sharedEntityWithoutMe = new ArrayList<>();
+        List<Long> sharedEntityWithoutMe = new ArrayList<>();
 
         Observable.from(sharedEntities)
                 .filter(integerWrapper -> integerWrapper != myId)

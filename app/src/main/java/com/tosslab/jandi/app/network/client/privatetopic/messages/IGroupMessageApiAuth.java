@@ -13,27 +13,27 @@ import retrofit.RetrofitError;
  */
 public interface IGroupMessageApiAuth {
 
-    ResMessages getGroupMessagesByGroupMessageApi(int teamId, int groupId, int fromId, int count) throws RetrofitError;
+    ResMessages getGroupMessagesByGroupMessageApi(long teamId, long groupId, long fromId, int count) throws RetrofitError;
 
     ResMessages getGroupMessagesByGroupMessageApi(int teamId, int groupId) throws RetrofitError;
 
     ResUpdateMessages getGroupMessagesUpdatedByGroupMessageApi(int teamId, int groupId, int lastLinkId) throws RetrofitError;
 
-    ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(int teamId, int groupId, int
+    ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(long teamId, long groupId, long
             currentLinkId) throws RetrofitError;
 
-    ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(int teamId,
-                                                                  int groupId,
-                                                                  int currentLinkId,
+    ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(long teamId,
+                                                                  long groupId,
+                                                                  long currentLinkId,
                                                                   int count) throws RetrofitError;
 
-    ResMessages getGroupMarkerMessagesByGroupMessageApi(int teamId, int groupId, int currentLinkId) throws RetrofitError;
+    ResMessages getGroupMarkerMessagesByGroupMessageApi(long teamId, long groupId, long currentLinkId) throws RetrofitError;
 
-    ResCommon sendGroupMessageByGroupMessageApi(int privateGroupId, int teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError;
+    ResCommon sendGroupMessageByGroupMessageApi(long privateGroupId, long teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError;
 
     ResCommon modifyPrivateGroupMessageByGroupMessageApi(ReqModifyMessage message,
                                                          int groupId, int messageId) throws RetrofitError;
 
-    ResCommon deletePrivateGroupMessageByGroupMessageApi(int teamId, int groupId, int messageId) throws RetrofitError;
+    ResCommon deletePrivateGroupMessageByGroupMessageApi(long teamId, long groupId, long messageId) throws RetrofitError;
 
 }

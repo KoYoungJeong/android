@@ -53,7 +53,7 @@ public class BotEntity extends FormattedEntity {
     }
 
     @Override
-    public int getId() {
+    public long getId() {
         return bot.id;
     }
 
@@ -88,7 +88,7 @@ public class BotEntity extends FormattedEntity {
     }
 
     @Override
-    public Collection<Integer> getMembers() {
+    public Collection<Long> getMembers() {
         return new ArrayList<>();
     }
 
@@ -138,17 +138,17 @@ public class BotEntity extends FormattedEntity {
     }
 
     @Override
-    public boolean hasGivenId(int entityId) {
+    public boolean hasGivenId(long entityId) {
         return false;
     }
 
     @Override
-    public boolean hasGivenIds(Collection<Integer> entityIds) {
+    public boolean hasGivenIds(Collection<Long> entityIds) {
         return false;
     }
 
     @Override
-    public boolean isMine(int myId) {
+    public boolean isMine(long myId) {
         return false;
     }
 

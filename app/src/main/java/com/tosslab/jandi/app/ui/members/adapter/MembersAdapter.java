@@ -78,7 +78,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (isCheckMode) {
             ((MemberChoiceViewHolder) holder).bindView(item);
         } else {
-            int myId = EntityManager.getInstance().getMe().getId();
+            long myId = EntityManager.getInstance().getMe().getId();
             ((MemberViewHolder) holder).bindView(item, ownerType, kickMode, myId, v -> {
                 if (onKickClickListener != null) {
                     onKickClickListener.onKickClick(MembersAdapter.this, holder, position);
@@ -215,7 +215,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             tvOwnerBadge = (TextView) itemView.findViewById(R.id.tv_owner_badge);
         }
 
-        public void bindView(ChatChooseItem item, int ownerType, boolean kickMode, int myId,
+        public void bindView(ChatChooseItem item, int ownerType, boolean kickMode, long myId,
                              View.OnClickListener onKickClickListener) {
             tvName.setText(item.getName());
 

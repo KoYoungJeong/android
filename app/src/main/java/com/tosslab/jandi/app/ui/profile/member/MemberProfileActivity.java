@@ -75,7 +75,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     private static final String KEY_FULL_SIZE_IMAGE_SHOWING = "full_size_image_showing";
     private static final int REQ_CALL_PERMISSION = 102;
     @Extra
-    int memberId;
+    long memberId;
 
     @Extra
     int from;

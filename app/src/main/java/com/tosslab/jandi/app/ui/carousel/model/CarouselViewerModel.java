@@ -63,7 +63,7 @@ public class CarouselViewerModel {
         return fileInfos;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
     }
 

@@ -2,12 +2,10 @@ package com.tosslab.jandi.app.ui.message.detail.model;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -91,7 +89,7 @@ public class InvitationViewModel {
                 .subscribe(adapter::setUnjoinedEntities);
 
         /**
-         * 사용자 초대를 위한 Dialog 를 보여준 뒤, 체크된 사용자를 초대한다.
+         * 사용자 초대  위한 Dialog    여준 뒤, 체크된 사용자  초대한다.
          */
         View view = LayoutInflater.from(activity.getBaseContext()).inflate(R.layout.dialog_invite_to_topic, null);
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
@@ -106,15 +104,12 @@ public class InvitationViewModel {
         }
 
         lv.setAdapter(adapter);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                UnjoinedUserListAdapter userListAdapter = (UnjoinedUserListAdapter) parent.getAdapter();
-                FormattedEntity item = userListAdapter.getItem(position);
-                item.isSelectedToBeJoined = !item.isSelectedToBeJoined;
+        lv.setOnItemClickListener((parent, view1, position, id) -> {
+            UnjoinedUserListAdapter userListAdapter = (UnjoinedUserListAdapter) parent.getAdapter();
+            FormattedEntity item = userListAdapter.getItem(position);
+            item.isSelectedToBeJoined = !item.isSelectedToBeJoined;
 
-                userListAdapter.notifyDataSetChanged();
-            }
+            userListAdapter.notifyDataSetChanged();
         });
 
         publishSubject.onNext("");
@@ -130,15 +125,12 @@ public class InvitationViewModel {
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
         dialog.setTitle(R.string.title_cdp_invite);
         dialog.setView(view);
-        dialog.setPositiveButton(R.string.menu_entity_invite, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                List<Integer> selectedCdp = adapter.getSelectedUserIds();
-                if (selectedCdp != null && !selectedCdp.isEmpty()) {
-                    inviteInBackground(context, selectedCdp, entityId);
-                } else {
-                    inviteFailed(context, context.getString(R.string.title_cdp_invite));
-                }
+        dialog.setPositiveButton(R.string.menu_entity_invite, (dialogInterface, i) -> {
+            List<Long> selectedCdp = adapter.getSelectedUserIds();
+            if (selectedCdp != null && !selectedCdp.isEmpty()) {
+                inviteInBackground(context, selectedCdp, entityId);
+            } else {
+                inviteFailed(context, context.getString(R.string.title_cdp_invite));
             }
         });
 
@@ -165,7 +157,7 @@ public class InvitationViewModel {
     }
 
     @Background
-    public void inviteInBackground(Context context, List<Integer> invitedUsers, int entityId) {
+    public void inviteInBackground(Context context, List<Long> invitedUsers, int entityId) {
         try {
 
             FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);

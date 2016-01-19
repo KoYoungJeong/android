@@ -174,12 +174,12 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResLeftSideMenu getInfosForSideMenuByMainRest(int teamId) throws RetrofitError {
+    public ResLeftSideMenu getInfosForSideMenuByMainRest(long teamId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(MainRestApiClient.class).create().getInfosForSideMenu(teamId);
     }
 
     @Override
-    public ResCommon setMarkerByMainRest(int entityId, ReqSetMarker reqSetMarker) throws RetrofitError {
+    public ResCommon setMarkerByMainRest(long entityId, ReqSetMarker reqSetMarker) throws RetrofitError {
         return RestAdapterBuilder.newInstance(MainRestApiClient.class).create().setMarker(entityId, reqSetMarker);
     }
 
@@ -205,33 +205,33 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon modifyPublicTopicNameByChannelApi(ReqCreateTopic channel, int channelId) throws RetrofitError {
+    public ResCommon modifyPublicTopicNameByChannelApi(ReqCreateTopic channel, long channelId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ChannelApiV2Client.class).create()
                 .modifyPublicTopicName(channel.teamId, channel, channelId);
     }
 
     @Override
-    public ResCommon deleteTopicByChannelApi(int channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError {
+    public ResCommon deleteTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ChannelApiV2Client.class).create().deleteTopic(channelId, reqDeleteTopic);
     }
 
     @Override
-    public ResCommon joinTopicByChannelApi(int channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError {
+    public ResCommon joinTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ChannelApiV2Client.class).create().joinTopic(channelId, reqDeleteTopic);
     }
 
     @Override
-    public ResCommon leaveTopicByChannelApi(int channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError {
+    public ResCommon leaveTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ChannelApiV2Client.class).create().leaveTopic(channelId, reqDeleteTopic);
     }
 
     @Override
-    public ResCommon invitePublicTopicByChannelApi(int channelId, ReqInviteTopicUsers reqInviteTopicUsers) throws RetrofitError {
+    public ResCommon invitePublicTopicByChannelApi(long channelId, ReqInviteTopicUsers reqInviteTopicUsers) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ChannelApiV2Client.class).create().invitePublicTopic(channelId, reqInviteTopicUsers);
     }
 
     @Override
-    public ResMessages getPublicTopicMessagesByChannelMessageApi(int teamId, int channelId, int fromId, int count) throws RetrofitError {
+    public ResMessages getPublicTopicMessagesByChannelMessageApi(long teamId, long channelId, long fromId, int count) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ChannelMessageApiV2Client.class).create().getPublicTopicMessages(teamId, channelId, fromId, count);
     }
 
@@ -246,22 +246,22 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResMessages getPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(int teamId, int channelId, int currentLinkId) throws RetrofitError {
+    public ResMessages getPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(long teamId, long channelId, long currentLinkId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ChannelMessageApiV2Client.class).create().getPublicTopicUpdatedMessagesForMarker(teamId, channelId, currentLinkId);
     }
 
     @Override
-    public ResMessages getPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(int teamId, int channelId, int currentLinkId, int count) throws RetrofitError {
+    public ResMessages getPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(long teamId, long channelId, long currentLinkId, int count) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ChannelMessageApiV2Client.class).create().getPublicTopicUpdatedMessagesForMarker(teamId, channelId, currentLinkId, count);
     }
 
     @Override
-    public ResMessages getPublicTopicMarkerMessagesByChannelMessageApi(int teamId, int channelId, int currentLinkId) throws RetrofitError {
+    public ResMessages getPublicTopicMarkerMessagesByChannelMessageApi(long teamId, long channelId, long currentLinkId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ChannelMessageApiV2Client.class).create().getPublicTopicMarkerMessages(teamId, channelId, currentLinkId);
     }
 
     @Override
-    public ResCommon sendPublicTopicMessageByChannelMessageApi(int channelId, int teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError {
+    public ResCommon sendPublicTopicMessageByChannelMessageApi(long channelId, long teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ChannelMessageApiV2Client.class).create().sendPublicTopicMessage(channelId, teamId, reqSendMessageV3);
     }
 
@@ -271,7 +271,7 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon deletePublicTopicMessageByChannelMessageApi(int teamId, int channelId, int messageId) throws RetrofitError {
+    public ResCommon deletePublicTopicMessageByChannelMessageApi(long teamId, long channelId, long messageId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ChannelMessageApiV2Client.class).create().deletePublicTopicMessage(teamId, channelId, messageId);
     }
 
@@ -286,7 +286,7 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon sendMessageCommentByCommentsApi(int messageId, int teamId, ReqSendComment reqSendComment) throws RetrofitError {
+    public ResCommon sendMessageCommentByCommentsApi(long messageId, long teamId, ReqSendComment reqSendComment) throws RetrofitError {
         return RestAdapterBuilder.newInstance(CommentsApiV2Client.class).create().sendMessageComment(messageId, teamId, reqSendComment);
     }
 
@@ -296,12 +296,12 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon deleteMessageCommentByCommentsApi(int teamId, int messageId, int commentId) throws RetrofitError {
+    public ResCommon deleteMessageCommentByCommentsApi(long teamId, long messageId, long commentId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(CommentsApiV2Client.class).create().deleteMessageComment(teamId, messageId, commentId);
     }
 
     @Override
-    public ResMessages getDirectMessagesByDirectMessageApi(int teamId, int userId, int fromId, int count) throws RetrofitError {
+    public ResMessages getDirectMessagesByDirectMessageApi(long teamId, long userId, long fromId, int count) throws RetrofitError {
         return RestAdapterBuilder.newInstance(DirectMessageApiV2Client.class).create().getDirectMessages(teamId, userId, fromId, count);
     }
 
@@ -316,22 +316,22 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int userId, int currentLinkId) throws RetrofitError {
+    public ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(long teamId, long userId, long currentLinkId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(DirectMessageApiV2Client.class).create().getDirectMessagesUpdatedForMarker(teamId, userId, currentLinkId);
     }
 
     @Override
-    public ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int userId, int currentLinkId, int count) throws RetrofitError {
+    public ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(long teamId, long userId, long currentLinkId, int count) throws RetrofitError {
         return RestAdapterBuilder.newInstance(DirectMessageApiV2Client.class).create().getDirectMessagesUpdatedForMarker(teamId, userId, currentLinkId, count);
     }
 
     @Override
-    public ResMessages getDirectMarkerMessagesByDirectMessageApi(int teamId, int userId, int currentLinkId) throws RetrofitError {
+    public ResMessages getDirectMarkerMessagesByDirectMessageApi(long teamId, long userId, long currentLinkId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(DirectMessageApiV2Client.class).create().getDirectMarkerMessages(teamId, userId, currentLinkId);
     }
 
     @Override
-    public ResCommon sendDirectMessageByDirectMessageApi(int userId, int teamId,
+    public ResCommon sendDirectMessageByDirectMessageApi(long userId, long teamId,
                                                          ReqSendMessageV3 reqSendMessageV3) throws RetrofitError {
         return RestAdapterBuilder.newInstance(DirectMessageApiV2Client.class).create()
                 .sendDirectMessage(userId, teamId, reqSendMessageV3);
@@ -343,7 +343,7 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon deleteDirectMessageByDirectMessageApi(int teamId, int userId, int messageId) throws RetrofitError {
+    public ResCommon deleteDirectMessageByDirectMessageApi(long teamId, long userId, long messageId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(DirectMessageApiV2Client.class).create().deleteDirectMessage(teamId, userId, messageId);
     }
 
@@ -355,28 +355,28 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon modifyGroupByGroupApi(ReqCreateTopic channel, int groupId) throws RetrofitError {
+    public ResCommon modifyGroupByGroupApi(ReqCreateTopic channel, long groupId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(GroupApiV2Client.class).create().modifyGroup
                 (channel.teamId, channel, groupId);
     }
 
     @Override
-    public ResCommon deleteGroupByGroupApi(int teamId, int groupId) throws RetrofitError {
+    public ResCommon deleteGroupByGroupApi(long teamId, long groupId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(GroupApiV2Client.class).create().deleteGroup(teamId, groupId);
     }
 
     @Override
-    public ResCommon leaveGroupByGroupApi(int groupId, ReqTeam team) throws RetrofitError {
+    public ResCommon leaveGroupByGroupApi(long groupId, ReqTeam team) throws RetrofitError {
         return RestAdapterBuilder.newInstance(GroupApiV2Client.class).create().leaveGroup(groupId, team);
     }
 
     @Override
-    public ResCommon inviteGroupByGroupApi(int groupId, ReqInviteTopicUsers inviteUsers) throws RetrofitError {
+    public ResCommon inviteGroupByGroupApi(long groupId, ReqInviteTopicUsers inviteUsers) throws RetrofitError {
         return RestAdapterBuilder.newInstance(GroupApiV2Client.class).create().inviteGroup(groupId, inviteUsers);
     }
 
     @Override
-    public ResMessages getGroupMessagesByGroupMessageApi(int teamId, int groupId, int fromId, int count) throws RetrofitError {
+    public ResMessages getGroupMessagesByGroupMessageApi(long teamId, long groupId, long fromId, int count) throws RetrofitError {
         return RestAdapterBuilder.newInstance(GroupMessageApiV2Client.class).create().getGroupMessages(teamId, groupId, fromId, count);
     }
 
@@ -391,22 +391,22 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(int teamId, int groupId, int currentLinkId) throws RetrofitError {
+    public ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(long teamId, long groupId, long currentLinkId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(GroupMessageApiV2Client.class).create().getGroupMessagesUpdatedForMarker(teamId, groupId, currentLinkId);
     }
 
     @Override
-    public ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(int teamId, int groupId, int currentLinkId, int count) throws RetrofitError {
+    public ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(long teamId, long groupId, long currentLinkId, int count) throws RetrofitError {
         return RestAdapterBuilder.newInstance(GroupMessageApiV2Client.class).create().getGroupMessagesUpdatedForMarker(teamId, groupId, currentLinkId, count);
     }
 
     @Override
-    public ResMessages getGroupMarkerMessagesByGroupMessageApi(int teamId, int groupId, int currentLinkId) throws RetrofitError {
+    public ResMessages getGroupMarkerMessagesByGroupMessageApi(long teamId, long groupId, long currentLinkId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(GroupMessageApiV2Client.class).create().getGroupMarkerMessages(teamId, groupId, currentLinkId);
     }
 
     @Override
-    public ResCommon sendGroupMessageByGroupMessageApi(int privateGroupId, int teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError {
+    public ResCommon sendGroupMessageByGroupMessageApi(long privateGroupId, long teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError {
         return RestAdapterBuilder.newInstance(GroupMessageApiV2Client.class).create().sendGroupMessage(privateGroupId, teamId, reqSendMessageV3);
     }
 
@@ -416,7 +416,7 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon deletePrivateGroupMessageByGroupMessageApi(int teamId, int groupId, int messageId) throws RetrofitError {
+    public ResCommon deletePrivateGroupMessageByGroupMessageApi(long teamId, long groupId, long messageId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(GroupMessageApiV2Client.class).create().deletePrivateGroupMessage(teamId, groupId, messageId);
     }
 
@@ -451,53 +451,53 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResFileDetail getFileDetailByMessagesApiAuth(int teamId, int messageId) {
+    public ResFileDetail getFileDetailByMessagesApiAuth(long teamId, long messageId) {
         return RestAdapterBuilder.newInstance(MessagesApiV2Client.class).create().getFileDetail(teamId, messageId);
     }
 
     @Override
-    public ResCommon shareMessageByMessagesApiAuth(ReqShareMessage share, int messageId) {
+    public ResCommon shareMessageByMessagesApiAuth(ReqShareMessage share, long messageId) {
         return RestAdapterBuilder.newInstance(MessagesApiV2Client.class).create().shareMessage(share, messageId);
     }
 
     @Override
-    public ResCommon unshareMessageByMessagesApiAuth(ReqUnshareMessage share, int messageId) {
+    public ResCommon unshareMessageByMessagesApiAuth(ReqUnshareMessage share, long messageId) {
         return RestAdapterBuilder.newInstance(MessagesApiV2Client.class).create().unshareMessage(share, messageId);
     }
 
     @Override
-    public List<ResMessages.Link> getRoomUpdateMessageByMessagesApiAuth(int teamId, int roomId, int currentLinkId) {
+    public List<ResMessages.Link> getRoomUpdateMessageByMessagesApiAuth(long teamId, long roomId, long currentLinkId) {
         return RestAdapterBuilder.newInstance(MessagesApiV2Client.class)
                 .create().getRoomUpdateMessage(teamId, roomId, currentLinkId);
     }
 
     @Override
-    public ResLeftSideMenu.User updateMemberProfileByProfileApi(int memberId, ReqUpdateProfile reqUpdateProfile) throws RetrofitError {
+    public ResLeftSideMenu.User updateMemberProfileByProfileApi(long memberId, ReqUpdateProfile reqUpdateProfile) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ProfileApiV2Client.class).create().updateMemberProfile(memberId, reqUpdateProfile);
     }
 
     @Override
-    public ResCommon updateMemberNameByProfileApi(int memberId, ReqProfileName reqProfileName) throws RetrofitError {
+    public ResCommon updateMemberNameByProfileApi(long memberId, ReqProfileName reqProfileName) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ProfileApiV2Client.class).create().updateMemberName(memberId, reqProfileName);
     }
 
     @Override
-    public ResLeftSideMenu.User updateMemberEmailByProfileApi(int memberId, ReqAccountEmail reqAccountEmail) throws RetrofitError {
+    public ResLeftSideMenu.User updateMemberEmailByProfileApi(long memberId, ReqAccountEmail reqAccountEmail) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ProfileApiV2Client.class).create().updateMemberEmail(memberId, reqAccountEmail);
     }
 
     @Override
-    public ResRoomInfo getRoomInfoByRoomsApi(int teamId, int roomId) throws RetrofitError {
+    public ResRoomInfo getRoomInfoByRoomsApi(long teamId, long roomId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(RoomsApiV2Client.class).create().getRoomInfo(teamId, roomId);
     }
 
     @Override
-    public ResCommon enableFavoriteByStarredEntityApi(ReqTeam reqTeam, int entityId) throws RetrofitError {
+    public ResCommon enableFavoriteByStarredEntityApi(ReqTeam reqTeam, long entityId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(StarredEntityApiV2Client.class).create().enableFavorite(reqTeam, entityId);
     }
 
     @Override
-    public ResCommon disableFavoriteByStarredEntityApi(int teamId, int entityId) throws RetrofitError {
+    public ResCommon disableFavoriteByStarredEntityApi(long teamId, long entityId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(StarredEntityApiV2Client.class).create().disableFavorite(teamId, entityId);
     }
 
@@ -517,7 +517,7 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResLeftSideMenu.User getMemberProfileByTeamApi(int teamId, int memberId) throws RetrofitError {
+    public ResLeftSideMenu.User getMemberProfileByTeamApi(long teamId, long memberId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getMemberProfile(teamId, memberId);
     }
 
@@ -527,7 +527,7 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResTeamDetailInfo.InviteTeam getTeamInfoByTeamApi(int teamId) throws RetrofitError {
+    public ResTeamDetailInfo.InviteTeam getTeamInfoByTeamApi(long teamId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getTeamInfo(teamId);
     }
 
@@ -552,7 +552,7 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResMessages.OriginalMessage getMessage(int teamId, int messageId) throws RetrofitError {
+    public ResMessages.OriginalMessage getMessage(long teamId, long messageId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getMessage(teamId, messageId);
     }
 
@@ -562,17 +562,17 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon deleteStickerCommentByStickerApi(int commentId, int teamId) throws RetrofitError {
+    public ResCommon deleteStickerCommentByStickerApi(long commentId, long teamId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(StickerApiV2Client.class).create().deleteStickerComment(commentId, teamId);
     }
 
     @Override
-    public ResCommon deleteStickerByStickerApi(int messageId, int teamId) throws RetrofitError {
+    public ResCommon deleteStickerByStickerApi(long messageId, long teamId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(StickerApiV2Client.class).create().deleteSticker(messageId, teamId);
     }
 
     @Override
-    public ResCommon deleteFileByFileApi(int teamId, int fileId) {
+    public ResCommon deleteFileByFileApi(long teamId, long fileId) {
         return RestAdapterBuilder.newInstance(FileApiV2Client.class).create().deleteFile(teamId, fileId);
     }
 
@@ -597,12 +597,12 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public StarMentionedMessageObject registStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError {
+    public StarMentionedMessageObject registStarredMessageByTeamApi(long teamId, long messageId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().registStarredMessage(teamId, messageId, new ReqNull());
     }
 
     @Override
-    public ResCommon unregistStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError {
+    public ResCommon unregistStarredMessageByTeamApi(long teamId, long messageId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().unregistStarredMessage(teamId, messageId);
     }
 
@@ -664,17 +664,17 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResMessages.FileMessage enableFileExternalLink(int teamId, int fileId) {
+    public ResMessages.FileMessage enableFileExternalLink(long teamId, long fileId) {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().enableFileExternalLink(teamId, fileId, new ReqNull());
     }
 
     @Override
-    public ResMessages.FileMessage disableFileExternalLink(int teamId, int fileId) {
+    public ResMessages.FileMessage disableFileExternalLink(long teamId, long fileId) {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().disableFileExternalLink(teamId, fileId);
     }
 
     @Override
-    public ResEventHistory getEventHistory(long ts, Integer memberId, String eventType, Integer size) throws RetrofitError {
+    public ResEventHistory getEventHistory(long ts, long memberId, String eventType, Integer size) throws RetrofitError {
         return RestAdapterBuilder.newInstance(EventsApiV2Client.class).create().getEventHistory(ts, memberId, eventType, size);
     }
 

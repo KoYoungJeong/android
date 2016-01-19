@@ -82,7 +82,7 @@ public class JandiInterfaceModel {
         return tasks != null && tasks.size() > 0 && tasks.get(0).numActivities > 1;
     }
 
-    public boolean hasTeamInfo(int teamId) {
+    public boolean hasTeamInfo(long teamId) {
         ResAccountInfo.UserTeam teamInfo = AccountRepository.getRepository().getTeamInfo(teamId);
 
         if (teamInfo == null) {
@@ -104,7 +104,7 @@ public class JandiInterfaceModel {
         return true;
     }
 
-    public boolean setupSelectedTeam(int teamId) {
+    public boolean setupSelectedTeam(long teamId) {
 
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
@@ -150,7 +150,7 @@ public class JandiInterfaceModel {
         }
     }
 
-    public int getEntityId(int teamId, int roomId, String roomType) {
+    public long getEntityId(long teamId, long roomId, String roomType) {
 
         if (!isChatType(roomType)) {
             // Room Type 은 RoomId = EntityId
@@ -162,7 +162,7 @@ public class JandiInterfaceModel {
             }
         } else {
             EntityManager entityManager = EntityManager.getInstance();
-            int chatMemberId = getChatMemberId(teamId, roomId, entityManager);
+            long chatMemberId = getChatMemberId(teamId, roomId, entityManager);
 
             if (!hasEntity(chatMemberId)) {
                 getEntityInfo();
@@ -171,11 +171,11 @@ public class JandiInterfaceModel {
         }
     }
 
-    private boolean hasEntity(int roomId) {
+    private boolean hasEntity(long roomId) {
         return EntityManager.getInstance().getEntityById(roomId) != EntityManager.UNKNOWN_USER_ENTITY;
     }
 
-    private int getChatMemberId(int teamId, int roomId, EntityManager entityManager) {
+    private long getChatMemberId(long teamId, long roomId, EntityManager entityManager) {
         ResChat chat = ChatRepository.getRepository().getChatByRoom(roomId);
 
         if (chat != null && chat.getEntityId() > 0) {
@@ -189,9 +189,9 @@ public class JandiInterfaceModel {
 
                 if (roomInfo != null) {
 
-                    int myId = entityManager.getMe().getId();
+                    long myId = entityManager.getMe().getId();
 
-                    for (int member : roomInfo.getMembers()) {
+                    for (long member : roomInfo.getMembers()) {
                         if (myId != member) {
                             return member;
                         }
@@ -210,7 +210,7 @@ public class JandiInterfaceModel {
         return TextUtils.equals(roomType, PushTO.RoomType.CHAT.getName());
     }
 
-    public int getCachedLastLinkId(int roomId) {
+    public long getCachedLastLinkId(int roomId) {
 
         ResMessages.Link lastMessage = MessageRepository.getRepository().getLastMessage(roomId);
 

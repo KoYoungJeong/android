@@ -35,11 +35,11 @@ public interface ITeamApiAuth {
 
     ResTeamDetailInfo createNewTeamByTeamApi(ReqCreateNewTeam req) throws RetrofitError;
 
-    ResLeftSideMenu.User getMemberProfileByTeamApi(int teamId, int memberId) throws RetrofitError;
+    ResLeftSideMenu.User getMemberProfileByTeamApi(long teamId, long memberId) throws RetrofitError;
 
     List<ResInvitationMembers> inviteToTeamByTeamApi(int teamId, ReqInvitationMembers invitationMembers) throws RetrofitError;
 
-    ResTeamDetailInfo.InviteTeam getTeamInfoByTeamApi(int teamId) throws RetrofitError;
+    ResTeamDetailInfo.InviteTeam getTeamInfoByTeamApi(long teamId) throws RetrofitError;
 
     ResAnnouncement getAnnouncement(int teamId, int topicId) throws RetrofitError;
 
@@ -49,13 +49,13 @@ public interface ITeamApiAuth {
 
     ResCommon deleteAnnouncement(int teamId, int topicId) throws RetrofitError;
 
-    ResMessages.OriginalMessage getMessage(int teamId, int messageId) throws RetrofitError;
+    ResMessages.OriginalMessage getMessage(long teamId, long messageId) throws RetrofitError;
 
     ResStarMentioned getMentionedMessagesByTeamApi(int teamId, Integer messageId, int count) throws RetrofitError;
 
-    StarMentionedMessageObject registStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError;
+    StarMentionedMessageObject registStarredMessageByTeamApi(long teamId, long messageId) throws RetrofitError;
 
-    ResCommon unregistStarredMessageByTeamApi(int teamId, int messageId) throws RetrofitError;
+    ResCommon unregistStarredMessageByTeamApi(long teamId, long messageId) throws RetrofitError;
 
     ResStarMentioned getStarredMessagesByTeamApi(int teamId, Integer starredId,
                                                  int count, String type) throws RetrofitError;
@@ -81,8 +81,8 @@ public interface ITeamApiAuth {
 
     ResCommon assignToTopicOwner(int teamId, int topicId, ReqOwner owner);
 
-    ResMessages.FileMessage enableFileExternalLink(int teamId, int fileId);
+    ResMessages.FileMessage enableFileExternalLink(long teamId, long fileId);
 
-    ResMessages.FileMessage disableFileExternalLink(int teamId, int fileId);
+    ResMessages.FileMessage disableFileExternalLink(long teamId, long fileId);
 
 }

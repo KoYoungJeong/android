@@ -7,7 +7,7 @@ public class ReqUnshareMessage {
     public int teamId;
     public int unshareEntity;
 
-    public ReqUnshareMessage(int teamId, int unshareEntity) {
+    public ReqUnshareMessage(long teamId, long unshareEntity) {
         this.teamId = teamId;
         this.unshareEntity = unshareEntity;
     }

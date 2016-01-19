@@ -34,11 +34,11 @@ public interface ITeamApiLoader {
 
     IExecutor<ResTeamDetailInfo> loadCreateNewTeamByTeamApi(ReqCreateNewTeam req);
 
-    IExecutor<ResLeftSideMenu.User> loadGetMemberProfileByTeamApi(int teamId, int memberId);
+    IExecutor<ResLeftSideMenu.User> loadGetMemberProfileByTeamApi(long teamId, long memberId);
 
     IExecutor<List<ResInvitationMembers>> loadInviteToTeamByTeamApi(int teamId, ReqInvitationMembers invitationMembers);
 
-    IExecutor<ResTeamDetailInfo.InviteTeam> loadGetTeamInfoByTeamApi(int teamId);
+    IExecutor<ResTeamDetailInfo.InviteTeam> loadGetTeamInfoByTeamApi(long teamId);
 
     IExecutor<ResAnnouncement> loadGetAnnouncement(int teamId, int topicId);
 
@@ -50,13 +50,13 @@ public interface ITeamApiLoader {
 
     IExecutor<ResCommon> loadDeleteAnnouncement(int teamId, int topicId);
 
-    IExecutor<ResMessages.OriginalMessage> loadGetMessage(int teamId, int topicId);
+    IExecutor<ResMessages.OriginalMessage> loadGetMessage(long teamId, long topicId);
 
     IExecutor<ResStarMentioned> loadGetMentionedMessagesByTeamApi(int teamId, Integer messageId, int count);
 
-    IExecutor<StarMentionedMessageObject> loadRegistStarredMessageByTeamApi(int teamId, int messageId);
+    IExecutor<StarMentionedMessageObject> loadRegistStarredMessageByTeamApi(long teamId, long messageId);
 
-    IExecutor<ResCommon> loadUnregistStarredMessageByTeamApi(int teamId, int messageId);
+    IExecutor<ResCommon> loadUnregistStarredMessageByTeamApi(long teamId, long messageId);
 
     IExecutor<ResStarMentioned> loadGetStarredMessagesByTeamApi(int teamId, Integer starredId,
                                                                 int count, String type);
@@ -84,7 +84,7 @@ public interface ITeamApiLoader {
 
     IExecutor<ResCommon> loadAssignToTopicOwner(int teamId, int topicId, ReqOwner member);
 
-    IExecutor<ResMessages.FileMessage> loadEnableFileExternalLink(int teamId, int fileId);
+    IExecutor<ResMessages.FileMessage> loadEnableFileExternalLink(long teamId, long fileId);
 
-    IExecutor<ResMessages.FileMessage> loadDisableFileExternalLink(int teamId, int fileId);
+    IExecutor<ResMessages.FileMessage> loadDisableFileExternalLink(long teamId, long fileId);
 }

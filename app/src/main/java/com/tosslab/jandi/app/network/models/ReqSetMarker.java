@@ -12,7 +12,7 @@ public class ReqSetMarker {
     public int lastLinkId;
     public String entityType;
 
-    public ReqSetMarker(int teamId, int lastLinkId, String entityType) {
+    public ReqSetMarker(long teamId, long lastLinkId, String entityType) {
         this.teamId = teamId;
         this.lastLinkId = lastLinkId;
         this.entityType = entityType;

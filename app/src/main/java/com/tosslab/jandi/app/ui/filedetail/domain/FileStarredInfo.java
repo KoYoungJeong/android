@@ -7,7 +7,7 @@ public class FileStarredInfo {
     private final int fileId;
     private final boolean starred;
 
-    public FileStarredInfo(int fileId, boolean starred) {
+    public FileStarredInfo(long fileId, boolean starred) {
 
         this.fileId = fileId;
         this.starred = starred;

@@ -170,7 +170,7 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
     }
 
     // 현재 화면에 뿌려진 메시지들 중에 messageId와 동일한 놈의 index 반환
-    public int searchIndexOfMessages(int commentId) {
+    public int searchIndexOfMessages(long commentId) {
         for (int i = 0; i < mMessages.size(); i++) {
             if (mMessages.get(i).id == commentId)
                 return i;
@@ -187,7 +187,7 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
         mMessages.clear();
     }
 
-    public int findMessagePosition(int messageId) {
+    public int findMessagePosition(long messageId) {
 
         for (int idx = 0, size = getCount(); idx < size; ++idx) {
             if (getItem(idx).id == messageId) {
@@ -198,7 +198,7 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
         return -1;
     }
 
-    public void setSelectMessage(int selectMessageId) {
+    public void setSelectMessage(long selectMessageId) {
         this.selectMessageId = selectMessageId;
         animStat = AnimStat.START;
     }

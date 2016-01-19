@@ -134,7 +134,7 @@ public class ChatChooseModel {
 
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return AccountRepository.getRepository().getSelectedTeamId();
     }
 

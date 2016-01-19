@@ -6,7 +6,7 @@ package com.tosslab.jandi.app.network.models;
 public class ReqTeam {
     public int teamId;
 
-    public ReqTeam(int teamId) {
+    public ReqTeam(long teamId) {
         this.teamId = teamId;
     }
 

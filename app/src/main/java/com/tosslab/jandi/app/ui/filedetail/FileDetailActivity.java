@@ -509,7 +509,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread(propagation = Propagation.REUSE)
     @Override
     public void loadSuccess(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages,
-                            boolean isSendAction, int selectMessageId) {
+                            boolean isSendAction, long selectMessageId) {
         this.fileMessage = fileMessage;
         shareEntities = fileMessage.shareEntities;
 
@@ -550,7 +550,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @UiThread
     @Override
-    public void showMoveDialog(int entityIdToBeShared) {
+    public void showMoveDialog(long entityIdToBeShared) {
         AlertDialog.Builder builder = new AlertDialog.Builder(FileDetailActivity.this,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setMessage(getString(R.string.jandi_move_entity_after_share))
@@ -570,7 +570,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                             type = JandiConstants.TYPE_DIRECT_MESSAGE;
                         }
 
-                        int roomId;
+                        long roomId;
                         if (entity.isPrivateGroup() || entity.isPublicTopic()) {
                             roomId = entityIdToBeShared;
                         } else {
@@ -586,7 +586,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @UiThread
     @Override
-    public void onShareMessageSucceed(int entityIdToBeShared, ResMessages.FileMessage fileMessage) {
+    public void onShareMessageSucceed(long entityIdToBeShared, ResMessages.FileMessage fileMessage) {
         ColoredToast.show(getString(R.string.jandi_share_succeed, getSupportActionBar().getTitle()));
         mixpanelAnalytics.trackSharingFile(entityManager,
                 entityManager.getEntityById(entityIdToBeShared).type,
@@ -601,7 +601,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
      * **********************************************************
      */
     void clickUnShareButton() {
-        ArrayList<Integer> rawSharedEntities = new ArrayList<>();
+        List<Long> rawSharedEntities = new ArrayList<>();
         if (shareEntities != null) {
 
             Observable.from(shareEntities)
@@ -617,7 +617,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @UiThread
     @Override
-    public void onUnShareMessageSucceed(int entityIdToBeUnshared, ResMessages.FileMessage fileMessage) {
+    public void onUnShareMessageSucceed(long entityIdToBeUnshared, ResMessages.FileMessage fileMessage) {
         ColoredToast.show(getString(R.string.jandi_unshare_succeed, getSupportActionBar().getTitle()));
         mixpanelAnalytics.trackUnsharingFile(entityManager,
                 entityManager.getEntityById(entityIdToBeUnshared).type,
@@ -707,7 +707,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @UiThread(propagation = Propagation.REUSE)
     @Override
-    public void moveToMessageListActivity(int entityId, int entityType, int roomId, boolean isStarred) {
+    public void moveToMessageListActivity(long entityId, int entityType, long roomId, boolean isStarred) {
         MessageListV2Activity_.intent(FileDetailActivity.this)
                 .teamId(EntityManager.getInstance().getTeamId())
                 .entityId(entityId)
@@ -950,7 +950,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return;
         }
 
-        int userEntityId = event.userId;
+        long userEntityId = event.userId;
         fileDetailPresenter.getProfile(userEntityId);
     }
 
@@ -1184,7 +1184,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return;
         }
 
-        int messageId = event.getMessageId();
+        long messageId = event.getMessageId();
 
         switch (event.getAction()) {
             case STARRED:
@@ -1200,7 +1200,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @UiThread(propagation = Propagation.REUSE)
     @Override
-    public void modifyStarredInfo(int messageId, boolean isStarred) {
+    public void modifyStarredInfo(long messageId, boolean isStarred) {
         int position = fileDetailCommentListAdapter.searchIndexOfMessages(messageId);
         fileDetailCommentListAdapter.modifyStarredStateByPosition(position, isStarred);
     }

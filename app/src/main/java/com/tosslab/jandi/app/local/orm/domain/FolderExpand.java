@@ -6,25 +6,25 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "folder_expand")
 public class FolderExpand {
     @DatabaseField
-    private int teamId;
+    private long teamId;
     @DatabaseField(id = true)
-    private int folderId;
+    private long folderId;
     @DatabaseField
     private boolean expand;
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 
-    public int getFolderId() {
+    public long getFolderId() {
         return folderId;
     }
 
-    public void setFolderId(int folderId) {
+    public void setFolderId(long folderId) {
         this.folderId = folderId;
     }
 

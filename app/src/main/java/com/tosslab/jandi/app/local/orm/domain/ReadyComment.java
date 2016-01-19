@@ -10,7 +10,7 @@ import com.j256.ormlite.table.DatabaseTable;
 public class ReadyComment {
 
     @DatabaseField(id = true)
-    private int fileId;
+    private long fileId;
     @DatabaseField
     private String text;
 
@@ -30,11 +30,11 @@ public class ReadyComment {
         this.text = text;
     }
 
-    public int getFileId() {
+    public long getFileId() {
         return fileId;
     }
 
-    public void setFileId(int fileId) {
+    public void setFileId(long fileId) {
         this.fileId = fileId;
     }
 }

@@ -45,7 +45,7 @@ public class TopicFolderRepository {
 
     public List<ResFolder> getFolders() {
         try {
-            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             Dao<ResFolder, ?> FolderDao = helper.getDao(ResFolder.class);
             return FolderDao.queryBuilder()
                     .where()
@@ -60,7 +60,7 @@ public class TopicFolderRepository {
 
     public List<ResFolderItem> getFolderItems() {
         try {
-            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             Dao<ResFolderItem, ?> FolderItemDao = helper.getDao(ResFolderItem.class);
             return FolderItemDao.queryBuilder()
                     .where()
@@ -159,11 +159,11 @@ public class TopicFolderRepository {
         }
     }
 
-    public boolean removeFolder(int folderId) {
+    public boolean removeFolder(long folderId) {
         lock.lock();
         boolean result = false;
         try {
-            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             Dao<ResFolder, ?> resFolderDao = helper.getDao(ResFolder.class);
             DeleteBuilder<ResFolder, ?> deleteBuilder = resFolderDao.deleteBuilder();
             deleteBuilder
@@ -181,7 +181,7 @@ public class TopicFolderRepository {
         }
     }
 
-    public boolean removeFolderItem(int roomId) {
+    public boolean removeFolderItem(long roomId) {
         lock.lock();
         boolean result = false;
         try {
@@ -205,7 +205,7 @@ public class TopicFolderRepository {
         lock.lock();
         boolean result = false;
         try {
-            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             Dao<ResFolder, ?> resFolderDao = helper.getDao(ResFolder.class);
             DeleteBuilder<ResFolder, ?> deleteBuilder = resFolderDao.deleteBuilder();
             deleteBuilder
@@ -226,7 +226,7 @@ public class TopicFolderRepository {
         lock.lock();
         boolean result = false;
         try {
-            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             Dao<ResFolderItem, ?> resFolderItemDao = helper.getDao(ResFolderItem.class);
             DeleteBuilder<ResFolderItem, ?> deleteBuilder = resFolderItemDao.deleteBuilder();
             deleteBuilder
@@ -246,7 +246,7 @@ public class TopicFolderRepository {
     public List<FolderExpand> getFolderExpands() {
         lock.lock();
         try {
-            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             Dao<FolderExpand, ?> dao = helper.getDao(FolderExpand.class);
             return dao.queryBuilder()
                     .where()
@@ -261,10 +261,10 @@ public class TopicFolderRepository {
         return new ArrayList<>();
     }
 
-    public boolean upsertFolderExpands(int folderId, boolean expand) {
+    public boolean upsertFolderExpands(long folderId, boolean expand) {
         lock.lock();
         try {
-            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             Dao<FolderExpand, ?> dao = helper.getDao(FolderExpand.class);
             FolderExpand data = new FolderExpand();
             data.setExpand(expand);

@@ -5,7 +5,7 @@ package com.tosslab.jandi.app.ui.message.to;
  */
 public class StickerInfo {
     private String stickerId;
-    private int stickerGroupId;
+    private long stickerGroupId;
 
     public StickerInfo() {
     }
@@ -23,11 +23,11 @@ public class StickerInfo {
         this.stickerId = stickerId;
     }
 
-    public int getStickerGroupId() {
+    public long getStickerGroupId() {
         return stickerGroupId;
     }
 
-    public void setStickerGroupId(int stickerGroupId) {
+    public void setStickerGroupId(long stickerGroupId) {
         this.stickerGroupId = stickerGroupId;
     }
 }

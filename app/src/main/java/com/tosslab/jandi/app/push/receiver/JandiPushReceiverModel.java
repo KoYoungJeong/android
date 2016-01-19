@@ -196,7 +196,7 @@ public class JandiPushReceiverModel {
             return false;
         }
 
-        int myTeamMemberId = leftSideMenu.user.id;
+        long myTeamMemberId = leftSideMenu.user.id;
         List<ResLeftSideMenu.Entity> joinEntities = leftSideMenu.joinEntities;
 
         logJoinEntities(joinEntities);
