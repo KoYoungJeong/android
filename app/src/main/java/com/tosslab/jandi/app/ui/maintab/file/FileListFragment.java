@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.CreateFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
+import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
@@ -783,6 +784,33 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             }
         }
 
+    }
+
+    public void onEvent(FileCommentRefreshEvent event) {
+        if (searchedFileItemListAdapter == null) {
+            return;
+        }
+        int fileId = event.getFileId();
+        boolean added = event.isAdded();
+
+        int size = searchedFileItemListAdapter.getItemCount();
+        for (int idx = 0; idx < size; idx++) {
+            ResMessages.FileMessage item = searchedFileItemListAdapter.getItem(idx);
+            if (item.id == fileId) {
+                if (added) {
+                    item.commentCount++;
+                } else {
+                    item.commentCount--;
+                }
+                justRefresh();
+                break;
+            }
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void justRefresh() {
+        searchedFileItemListAdapter.notifyDataSetChanged();
     }
 
     private void setHeaderTextViewColor(ViewGroup parentView, int color) {
