@@ -73,7 +73,7 @@
         android:layout_width="match_parent"
         android:layout_height="93dp"
         android:layout_above="@id/select_option"
-        android:background="@color/black"
+        android:background="@color/jandi_grey_black_pressed"
         android:clickable="true"
         android:orientation="vertical">
 

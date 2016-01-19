@@ -54,11 +54,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackground"
-                android:paddingTop="24dp"
-                android:paddingBottom="24dp"
                 android:gravity="center_vertical"
                 android:minHeight="104dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingBottom="24dp"
+                android:paddingTop="24dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -83,37 +83,51 @@
                 android:layout_height="1dp"
                 android:background="@color/account_home_divide_line" />
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/vg_topic_detail_member_count"
                 style="@style/JandiTopicDetail.Layout"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="56dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/tv_topic_detail_member_count_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/iv_topic_detail_member_count"
                     android:layout_weight="1"
                     android:text="@string/jandi_topic_paricipants"
                     android:textColor="@color/text_color_setting_check_title"
                     android:textSize="@dimen/jandi_text_size_large" />
 
                 <ImageView
+                    android:id="@+id/iv_topic_detail_member_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/tv_topic_detail_member_count_title"
+                    android:layout_alignTop="@+id/tv_topic_detail_member_count_title"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/tv_topic_detail_member_count"
+                    android:scaleType="centerInside"
+                    android:cropToPadding="true"
                     android:src="@drawable/setting_icon_member" />
 
                 <TextView
                     android:id="@+id/tv_topic_detail_member_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/tv_topic_detail_member_count_title"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@+id/tv_topic_detail_member_count_title"
                     android:layout_marginLeft="3dp"
-                    android:lineSpacingExtra="6dp"
+                    android:gravity="center_vertical"
+                    android:text="112"
                     android:textColor="@color/text_color_setting_check_summary"
                     android:textSize="@dimen/jandi_text_size_medium" />
-            </LinearLayout>
+            </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -144,11 +158,37 @@
                 android:background="@color/account_home_divide_line" />
 
             <LinearLayout
+                android:id="@+id/vg_topic_detail_assign_topic_owner"
+                style="@style/JandiTopicDetail.Layout"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/jandi_assign_topic_owner"
+                    android:textColor="@color/jandi_text"
+                    android:textSize="@dimen/jandi_text_size_large" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line" />
+
+            <LinearLayout
                 android:id="@+id/vg_topic_detail_set_auto_join"
                 style="@style/JandiTopicDetail.Layout"
                 android:layout_width="match_parent"
-                android:layout_height="104dp"
+                android:layout_height="wrap_content"
+                android:minHeight="104dp"
                 android:background="?android:attr/selectableItemBackground"
+                android:paddingTop="24dp"
+                android:paddingBottom="24dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -208,7 +248,7 @@
                 android:id="@+id/vg_topic_detail_set_push"
                 style="@style/JandiTopicDetail.Layout"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="56dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
@@ -249,7 +289,7 @@
                 android:id="@+id/vg_topic_detail_starred"
                 style="@style/JandiTopicDetail.Layout"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="56dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
@@ -273,29 +313,6 @@
             </LinearLayout>
 
             <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/account_home_divide_line" />
-
-            <LinearLayout
-                android:id="@+id/vg_topic_detail_assign_topic_owner"
-                style="@style/JandiTopicDetail.Layout"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/jandi_assign_topic_owner"
-                    android:textColor="@color/jandi_text"
-                    android:textSize="@dimen/jandi_text_size_large" />
-
-            </LinearLayout>
-
-            <View
                 style="@style/JandiTopicDetail.Layout"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -305,7 +322,7 @@
                 android:id="@+id/vg_topic_detail_leave"
                 style="@style/JandiTopicDetail.Layout"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="56dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">

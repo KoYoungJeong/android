@@ -23,15 +23,12 @@ public class SettingsBodyView extends LinearLayout {
 
     public SettingsBodyView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
+        initViews(context);
+        initAttrs(context, attrs);
     }
 
     public SettingsBodyView(Context context, AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
-    }
-
-    public SettingsBodyView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-
+        super(context, attrs, defStyleAttr);
         initViews(context);
         initAttrs(context, attrs);
     }

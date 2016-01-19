@@ -369,6 +369,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
                         movePushSettingActivity();
                     })
                     .create();
+            globalPushDialog.show();
         } else if (!globalPushDialog.isShowing()) {
             globalPushDialog.show();
         }
@@ -388,6 +389,22 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @Override
     public void setAssignTopicOwnerVisible(boolean owner) {
         vgAssignTopicOwner.setVisibility(owner ? View.VISIBLE : View.GONE);
+        if (!owner) {
+            ViewGroup parent = (ViewGroup) vgAssignTopicOwner.getParent();
+            int assignTopicOwnerIdex = -1;
+            for (int idx = 0, size = parent.getChildCount(); idx < size; idx++) {
+                View child = parent.getChildAt(idx);
+
+                if (child == vgAssignTopicOwner) {
+                    assignTopicOwnerIdex = idx;
+                    break;
+                }
+            }
+
+            if (assignTopicOwnerIdex >= 0) {
+                parent.getChildAt(assignTopicOwnerIdex + 1).setVisibility(View.GONE);
+            }
+        }
     }
 
     @Override

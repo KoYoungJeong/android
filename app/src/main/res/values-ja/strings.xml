@@ -183,7 +183,7 @@
 	<string name="jandi_error_web_token">"ログイン中にエラーが発生しました。もう一度お試しください"</string>
 	<string name="jandi_exceeded_max_text_length">"５０００文字まで入力できます"</string>
 	<string name="jandi_expired_invitation_link">"この招待リンクの有効期限が切れています。新しいリンクをリクエストしてください"</string>
-	<string name="jandi_explain_global_push_off">"アプリの通知がオフに設定されています。もっと見る→設定で通知をオンにすることができます。"</string>
+	<string name="jandi_explain_global_push_off">"アプリの通知がオフに設定されています。もっと見る > 設定で通知をオンにすることができます。"</string>
 	<string name="jandi_explain_topic_description">"トピックの説明（選択）"</string>
 	<string name="jandi_export">"エクスポート"</string>
 	<string name="jandi_export_to_app">"他のアプリにエクスポート"</string>

@@ -88,13 +88,6 @@
                     android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
                     android:textSize="@dimen/jandi_text_size_small" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:background="@color/jandi_topic_is_public_divider" />
-
             </LinearLayout>
 
             <View
@@ -166,7 +159,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="wrap_content"
+                android:minHeight="80dp"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
                 android:paddingTop="8dp">
@@ -175,6 +169,7 @@
                 <TextView
                     style="@style/JandiTopic.Create.TextView.Title"
                     android:layout_marginTop="16dp"
+                    android:textSize="@dimen/jandi_text_size_small"
                     android:text="@string/jandi_topic_description" />
 
                 <EditText
@@ -191,7 +186,6 @@
             <TextView
                 android:id="@+id/tv_topic_create_description_count"
                 style="@style/JandiTopic.Create.TextView.TextCount"
-                android:layout_marginTop="0dp"
                 android:minHeight="16dp"
                 android:text="0/300" />
 
