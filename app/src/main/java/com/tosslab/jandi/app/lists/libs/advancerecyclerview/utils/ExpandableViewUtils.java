@@ -30,5 +30,4 @@ public class ExpandableViewUtils {
 
         return (x >= left) && (x <= right) && (y >= top) && (y <= bottom);
     }
-
 }
