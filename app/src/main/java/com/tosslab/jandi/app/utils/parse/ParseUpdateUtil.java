@@ -125,40 +125,37 @@ public class ParseUpdateUtil {
     }
 
     public static void refreshChannelOnServer() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ParseInstallation currentInstallation = ParseInstallation.getCurrentInstallation();
+        new Thread(() -> {
+            ParseInstallation currentInstallation = ParseInstallation.getCurrentInstallation();
 
-                try {
-                    LogUtil.e(TAG, "remove start !");
-                    currentInstallation.remove(PARSE_CHANNELS);
-                    currentInstallation.save();
-                    LogUtil.e(TAG, "remove end !");
-                } catch (ParseException e) {
-                    LogUtil.e(TAG, Log.getStackTraceString(e));
-                }
-
-                try {
-                    String accountId = AccountUtil.getAccountId(JandiApplication.getContext());
-                    if (!TextUtils.isEmpty(accountId)) {
-                        accountId = CHANNEL_ID_PREFIX + accountId;
-
-                        List<String> channels = new ArrayList<String>();
-                        channels.add(accountId);
-
-                        LogUtil.e(TAG, "add start - " + accountId);
-                        currentInstallation.addAllUnique(PARSE_CHANNELS, channels);
-                        currentInstallation.save();
-                        LogUtil.e(TAG, "add end - " + accountId);
-                    } else {
-                        LogUtil.e(TAG, "add fail - accountId is empty.");
-                    }
-                } catch (ParseException e) {
-                    LogUtil.e(TAG, Log.getStackTraceString(e));
-                }
-
+            try {
+                LogUtil.e(TAG, "remove start !");
+                currentInstallation.remove(PARSE_CHANNELS);
+                currentInstallation.save();
+                LogUtil.e(TAG, "remove end !");
+            } catch (ParseException e) {
+                LogUtil.e(TAG, Log.getStackTraceString(e));
             }
+
+            try {
+                String accountId = AccountUtil.getAccountId(JandiApplication.getContext());
+                if (!TextUtils.isEmpty(accountId)) {
+                    accountId = CHANNEL_ID_PREFIX + accountId;
+
+                    List<String> channels = new ArrayList<>();
+                    channels.add(accountId);
+
+                    LogUtil.e(TAG, "add start - " + accountId);
+                    currentInstallation.addAllUnique(PARSE_CHANNELS, channels);
+                    currentInstallation.save();
+                    LogUtil.e(TAG, "add end - " + accountId);
+                } else {
+                    LogUtil.e(TAG, "add fail - accountId is empty.");
+                }
+            } catch (ParseException e) {
+                LogUtil.e(TAG, Log.getStackTraceString(e));
+            }
+
         }).start();
     }
 
