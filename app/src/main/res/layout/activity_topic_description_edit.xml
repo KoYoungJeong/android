@@ -19,14 +19,13 @@
         style="@style/JandiTopic.Create.TextView.Input"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:gravity="center_vertical"
         android:hint="@string/jandi_explain_topic_description"
         android:inputType="text|textMultiLine"
         android:lineSpacingExtra="12dp"
         android:maxLength="300"
         android:paddingBottom="8dp"
-        android:paddingTop="16dp"
         android:textColor="@color/text_color_setting_check_title"
         android:textColorHint="@color/jandi_message_search_item_topic_txt_color_sub" />
 
