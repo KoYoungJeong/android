@@ -62,7 +62,7 @@ public class TopicCreatePresenterImpl implements TopicCreatePresenter {
             view.dismissProgressWheel();
 
             EntityManager.getInstance().refreshEntity();
-            long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
 
             topicCreateModel.trackTopicCreateSuccess(topic.id);
 
