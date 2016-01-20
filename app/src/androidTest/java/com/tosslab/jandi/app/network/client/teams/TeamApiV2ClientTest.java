@@ -4,6 +4,7 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
@@ -13,6 +14,7 @@ import static org.junit.Assert.assertNotNull;
  */
 public class TeamApiV2ClientTest {
 
+    @Ignore
     @Test
     public void testAssignToTopicOwner() throws Exception {
         int teamId = 279;

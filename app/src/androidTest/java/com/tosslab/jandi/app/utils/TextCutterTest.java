@@ -24,11 +24,11 @@ public class TextCutterTest {
     @Test
     public void testCutText() throws Exception {
         String text = "가나safasㄹf다라 @Tony\u2063123";
-//        String text = "가나safasㄹf다라pkojun09@gmail.com";
+        String expectText = "가나safasㄹf다라 ";
 
+        watcher.setMaxLength(expectText.length());
         CharSequence charSequence = watcher.cutText(text);
 
-        String expectText = "가나safasㄹf다라 ";
 
         assertEquals(charSequence, expectText);
     }
