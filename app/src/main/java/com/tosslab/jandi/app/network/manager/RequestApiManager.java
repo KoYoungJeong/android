@@ -315,12 +315,12 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public List<ResChat> getChatListByChatApi(int memberId) throws RetrofitError {
+    public List<ResChat> getChatListByChatApi(long memberId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadGetChatListByChatApi(memberId));
     }
 
     @Override
-    public ResCommon deleteChatByChatApi(int memberId, int entityId) throws RetrofitError {
+    public ResCommon deleteChatByChatApi(long memberId, long entityId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadDeleteChatByChatApi(memberId, entityId));
     }
 
@@ -469,22 +469,22 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public ResMessageSearch searchMessagesByMessageSearchApi(int teamId, String query, int page, int perPage, int writerId, int entityId) throws RetrofitError {
+    public ResMessageSearch searchMessagesByMessageSearchApi(long teamId, String query, int page, int perPage, long writerId, long entityId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadSearchMessagesByMessageSearchApi(teamId, query, page, perPage, writerId, entityId));
     }
 
     @Override
-    public ResMessageSearch searchMessagesByEntityIdByMessageSearchApi(int teamId, String query, int page, int perPage, int entityId) throws RetrofitError {
+    public ResMessageSearch searchMessagesByEntityIdByMessageSearchApi(long teamId, String query, int page, int perPage, long entityId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadSearchMessagesByEntityIdByMessageSearchApi(teamId, query, page, perPage, entityId));
     }
 
     @Override
-    public ResMessageSearch searchMessagesByWriterIdByMessageSearchApi(int teamId, String query, int page, int perPage, int writerId) throws RetrofitError {
+    public ResMessageSearch searchMessagesByWriterIdByMessageSearchApi(long teamId, String query, int page, int perPage, long writerId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadSearchMessagesByWriterIdByMessageSearchApi(teamId, query, page, perPage, writerId));
     }
 
     @Override
-    public ResMessageSearch searchMessagesByMessageSearchApi(int teamId, String query, int page, int perPage) throws RetrofitError {
+    public ResMessageSearch searchMessagesByMessageSearchApi(long teamId, String query, int page, int perPage) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadSearchMessagesByMessageSearchApi(teamId, query, page, perPage));
     }
 
@@ -559,7 +559,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public List<ResInvitationMembers> inviteToTeamByTeamApi(int teamId, ReqInvitationMembers invitationMembers) throws RetrofitError {
+    public List<ResInvitationMembers> inviteToTeamByTeamApi(long teamId, ReqInvitationMembers invitationMembers) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadInviteToTeamByTeamApi(teamId, invitationMembers));
     }
 
@@ -569,22 +569,22 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public ResAnnouncement getAnnouncement(int teamId, int topicId) throws RetrofitError {
+    public ResAnnouncement getAnnouncement(long teamId, long topicId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadGetAnnouncement(teamId, topicId));
     }
 
     @Override
-    public ResCommon createAnnouncement(int teamId, int topicId, ReqCreateAnnouncement reqCreateAnnouncement) throws RetrofitError {
+    public ResCommon createAnnouncement(long teamId, long topicId, ReqCreateAnnouncement reqCreateAnnouncement) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadCreateAnnouncement(teamId, topicId, reqCreateAnnouncement));
     }
 
     @Override
-    public ResCommon updateAnnouncementStatus(int teamId, int memberId, ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus) throws RetrofitError {
+    public ResCommon updateAnnouncementStatus(long teamId, long memberId, ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadUpdateAnnouncementStatus(teamId, memberId, reqUpdateAnnouncementStatus));
     }
 
     @Override
-    public ResCommon deleteAnnouncement(int teamId, int topicId) throws RetrofitError {
+    public ResCommon deleteAnnouncement(long teamId, long topicId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadDeleteAnnouncement(teamId, topicId));
     }
 
@@ -594,7 +594,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public ResCommon updateTopicPushSubscribe(int teamId, int topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe) throws RetrofitError {
+    public ResCommon updateTopicPushSubscribe(long teamId, long topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadUpdateTopicPushSubscribe(teamId, topicId, reqUpdateTopicPushSubscribe));
     }
 
@@ -614,22 +614,22 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public List<ResMessages.FileMessage> searchInitImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
+    public List<ResMessages.FileMessage> searchInitImageFileByFileApi(long teamId, long roomId, long messageId, int count) {
         return requestApiExecute(RestApiLoader.getInstance().loaderSearchInitImageFileByFileApi(teamId, roomId, messageId, count));
     }
 
     @Override
-    public List<ResMessages.FileMessage> searchOldImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
+    public List<ResMessages.FileMessage> searchOldImageFileByFileApi(long teamId, long roomId, long messageId, int count) {
         return requestApiExecute(RestApiLoader.getInstance().loaderSearchOldImageFileByFileApi(teamId, roomId, messageId, count));
     }
 
     @Override
-    public List<ResMessages.FileMessage> searchNewImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
+    public List<ResMessages.FileMessage> searchNewImageFileByFileApi(long teamId, long roomId, long messageId, int count) {
         return requestApiExecute(RestApiLoader.getInstance().loaderSearchNewImageFileByFileApi(teamId, roomId, messageId, count));
     }
 
     @Override
-    public ResStarMentioned getMentionedMessagesByTeamApi(int teamId, Integer messageId, int count) throws RetrofitError {
+    public ResStarMentioned getMentionedMessagesByTeamApi(long teamId, long messageId, int count) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadGetMentionedMessagesByTeamApi(teamId, messageId, count));
     }
 
@@ -644,7 +644,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public ResStarMentioned getStarredMessagesByTeamApi(int teamId, Integer starredId, int count, String type) throws RetrofitError {
+    public ResStarMentioned getStarredMessagesByTeamApi(long teamId, long starredId, int count, String type) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadGetStarredMessagesByTeamApi(teamId, starredId, count, type));
     }
 
@@ -654,47 +654,47 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public ResCreateFolder createFolderByTeamApi(int teamId, ReqCreateFolder reqCreateFolder) throws RetrofitError {
+    public ResCreateFolder createFolderByTeamApi(long teamId, ReqCreateFolder reqCreateFolder) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadCreateFolderByTeamApi(teamId, reqCreateFolder));
     }
 
     @Override
-    public ResCommon deleteFolderByTeamApi(int teamId, int folderId) throws RetrofitError {
+    public ResCommon deleteFolderByTeamApi(long teamId, long folderId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadDeleteFolderByTeamApi(teamId, folderId));
     }
 
     @Override
-    public ResUpdateFolder updateFolderByTeamApi(int teamId, int folderId, ReqUpdateFolder reqUpdateFolder) throws RetrofitError {
+    public ResUpdateFolder updateFolderByTeamApi(long teamId, long folderId, ReqUpdateFolder reqUpdateFolder) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadUpdateFolderByTeamApi(teamId, folderId, reqUpdateFolder));
     }
 
     @Override
-    public List<ResFolder> getFoldersByTeamApi(int teamId) throws RetrofitError {
+    public List<ResFolder> getFoldersByTeamApi(long teamId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadGetFoldersByTeamApi(teamId));
     }
 
     @Override
-    public List<ResFolderItem> getFolderItemsByTeamApi(int teamId) throws RetrofitError {
+    public List<ResFolderItem> getFolderItemsByTeamApi(long teamId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadGetFolderItemsByTeamApi(teamId));
     }
 
     @Override
-    public ResRegistFolderItem registFolderItemByTeamApi(int teamId, int folderId, ReqRegistFolderItem reqRegistFolderItem) throws RetrofitError {
+    public ResRegistFolderItem registFolderItemByTeamApi(long teamId, long folderId, ReqRegistFolderItem reqRegistFolderItem) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadRegistFolderItemByTeamApi(teamId, folderId, reqRegistFolderItem));
     }
 
     @Override
-    public ResCommon deleteFolderItemByTeamApi(int teamId, int folderId, int itemId) throws RetrofitError {
+    public ResCommon deleteFolderItemByTeamApi(long teamId, long folderId, long itemId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadDeleteFolderItemByTeamApi(teamId, folderId, itemId));
     }
 
     @Override
-    public ResCommon kickUserFromTopic(int teamId, int topicId, ReqMember member) {
+    public ResCommon kickUserFromTopic(long teamId, long topicId, ReqMember member) {
         return requestApiExecute(RestApiLoader.getInstance().loadKickUserFromTopic(teamId, topicId, member));
     }
 
     @Override
-    public ResCommon assignToTopicOwner(int teamId, int topicId, ReqOwner owner) {
+    public ResCommon assignToTopicOwner(long teamId, long topicId, ReqOwner owner) {
         return requestApiExecute(RestApiLoader.getInstance().loadAssignToTopicOwner(teamId, topicId, owner));
     }
 

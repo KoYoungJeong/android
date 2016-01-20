@@ -6,10 +6,10 @@ package com.tosslab.jandi.app.events.messages;
 public class SelectedMemberInfoForMensionEvent {
 
     private String name;
-    private int id;
+    private long id;
     private String type;
 
-    public SelectedMemberInfoForMensionEvent(String name, int id, String type) {
+    public SelectedMemberInfoForMensionEvent(String name, long id, String type) {
         this.name = name;
         this.id = id;
         this.type = type;
@@ -19,7 +19,7 @@ public class SelectedMemberInfoForMensionEvent {
         return name;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

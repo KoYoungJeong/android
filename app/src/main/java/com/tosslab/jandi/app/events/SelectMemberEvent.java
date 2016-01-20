@@ -4,10 +4,10 @@ package com.tosslab.jandi.app.events;
  * Created by Steve SeongUg Jung on 15. 3. 11..
  */
 public class SelectMemberEvent {
-    private final int memberId;
+    private final long memberId;
     private final String name;
 
-    public SelectMemberEvent(int memberId, String name) {
+    public SelectMemberEvent(long memberId, String name) {
 
         this.memberId = memberId;
         this.name = name;
@@ -17,7 +17,7 @@ public class SelectMemberEvent {
         return name;
     }
 
-    public int getMemberId() {
+    public long getMemberId() {
         return memberId;
     }
 }

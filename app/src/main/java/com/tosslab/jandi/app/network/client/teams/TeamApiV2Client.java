@@ -51,98 +51,98 @@ public interface TeamApiV2Client {
 
     @GET("/teams/{teamId}/members/{memberId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResLeftSideMenu.User getMemberProfile(@Path("teamId") int teamId, @Path("memberId") int memberId);
+    ResLeftSideMenu.User getMemberProfile(@Path("teamId") long teamId, @Path("memberId") long memberId);
 
     @POST("/teams/{teamId}/invitations")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    List<ResInvitationMembers> inviteToTeam(@Path("teamId") int teamId, @Body ReqInvitationMembers invitationMembers);
+    List<ResInvitationMembers> inviteToTeam(@Path("teamId") long teamId, @Body ReqInvitationMembers invitationMembers);
 
     @GET("/teams/{teamId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResTeamDetailInfo.InviteTeam getTeamInfo(@Path("teamId") int teamId);
+    ResTeamDetailInfo.InviteTeam getTeamInfo(@Path("teamId") long teamId);
 
     @GET("/teams/{teamId}/topics/{topicId}/announcement")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResAnnouncement getAnnouncement(@Path("teamId") int teamId, @Path("topicId") int topicId);
+    ResAnnouncement getAnnouncement(@Path("teamId") long teamId, @Path("topicId") long topicId);
 
     @POST("/teams/{teamId}/topics/{topicId}/announcement")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon createAnnouncement(@Path("teamId") int teamId, @Path("topicId") int topicId, @Body ReqCreateAnnouncement reqCreateAnnouncement);
+    ResCommon createAnnouncement(@Path("teamId") long teamId, @Path("topicId") long topicId, @Body ReqCreateAnnouncement reqCreateAnnouncement);
 
     @PUT("/teams/{teamId}/members/{memberId}/announcement")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon updateAnnouncementStatus(@Path("teamId") int teamId, @Path("memberId") int memberId, @Body ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus);
+    ResCommon updateAnnouncementStatus(@Path("teamId") long teamId, @Path("memberId") long memberId, @Body ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus);
 
     @DELETEWithBody("/teams/{teamId}/topics/{topicId}/announcement")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon deleteAnnouncement(@Path("teamId") int teamId, @Path("topicId") int topicId);
+    ResCommon deleteAnnouncement(@Path("teamId") long teamId, @Path("topicId") long topicId);
 
     @GET("/teams/{teamId}/messages/{messageId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResMessages.OriginalMessage getMessage(@Path("teamId") int teamId, @Path("messageId") int messageId);
+    ResMessages.OriginalMessage getMessage(@Path("teamId") long teamId, @Path("messageId") long messageId);
 
     @PUT("/teams/{teamId}/rooms/{roomId}/subscribe")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon updateTopicPushSubscribe(@Path("teamId") int teamId, @Path("roomId") int topicId, @Body ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe);
+    ResCommon updateTopicPushSubscribe(@Path("teamId") long teamId, @Path("roomId") long topicId, @Body ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe);
 
 
     @POST("/teams/{teamId}/messages/{messageId}/starred")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    StarMentionedMessageObject registStarredMessage(@Path("teamId") int teamId, @Path("messageId") int messageId, @Body ReqNull reqNull);
+    StarMentionedMessageObject registStarredMessage(@Path("teamId") long teamId, @Path("messageId") long messageId, @Body ReqNull reqNull);
 
     @DELETEWithBody("/teams/{teamId}/messages/{messageId}/starred")
-    ResCommon unregistStarredMessage(@Path("teamId") int teamId, @Path("messageId") int messageId);
+    ResCommon unregistStarredMessage(@Path("teamId") long teamId, @Path("messageId") long messageId);
 
     @GET("/teams/{teamId}/messages/mentioned")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResStarMentioned getMentionedMessages(@Path("teamId") int teamId,
-                                          @Query("messageId") Integer messageId, @Query("count") int count);
+    ResStarMentioned getMentionedMessages(@Path("teamId") long teamId,
+                                          @Query("messageId") long messageId, @Query("count") int count);
 
     @GET("/teams/{teamId}/messages/starred")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResStarMentioned getStarredMessages(@Path("teamId") int teamId, @Query("starredId") Integer starredId,
+    ResStarMentioned getStarredMessages(@Path("teamId") long teamId, @Query("starredId") long starredId,
                                         @Query("count") int count, @Query("type") String type);
 
     @POST("/teams/{teamId}/folders")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCreateFolder createFolder(@Path("teamId") int teamId, @Body ReqCreateFolder reqCreateFolder);
+    ResCreateFolder createFolder(@Path("teamId") long teamId, @Body ReqCreateFolder reqCreateFolder);
 
     @DELETE("/teams/{teamId}/folders/{folderId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon deleteFolder(@Path("teamId") int teamId, @Path("folderId") int folderId);
+    ResCommon deleteFolder(@Path("teamId") long teamId, @Path("folderId") long folderId);
 
     @PUT("/teams/{teamId}/folders/{folderId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResUpdateFolder updateFolder(@Path("teamId") int teamId, @Path("folderId") int folderId,
+    ResUpdateFolder updateFolder(@Path("teamId") long teamId, @Path("folderId") long folderId,
                                  @Body ReqUpdateFolder reqUpdateFolder);
 
     @GET("/teams/{teamId}/folders")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    List<ResFolder> getFolders(@Path("teamId") int teamId);
+    List<ResFolder> getFolders(@Path("teamId") long teamId);
 
     @GET("/teams/{teamId}/folders/items")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    List<ResFolderItem> getFolderItems(@Path("teamId") int teamId);
+    List<ResFolderItem> getFolderItems(@Path("teamId") long teamId);
 
     @POST("/teams/{teamId}/folders/{folderId}/items")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResRegistFolderItem registFolderItem(@Path("teamId") int teamId, @Path("folderId") int folderId,
+    ResRegistFolderItem registFolderItem(@Path("teamId") long teamId, @Path("folderId") long folderId,
                                          @Body ReqRegistFolderItem reqRegistFolderItem);
 
     @DELETE("/teams/{teamId}/folders/{folderId}/items/{itemId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon deleteFolderItem(@Path("teamId") int teamId, @Path("folderId") int folderId,
-                               @Path("itemId") int itemId);
+    ResCommon deleteFolderItem(@Path("teamId") long teamId, @Path("folderId") long folderId,
+                               @Path("itemId") long itemId);
 
     @PUT("/teams/{teamId}/topics/{topicId}/kickout")
-    ResCommon kickUserFromTopic(@Path("teamId") int teamId, @Path("topicId") int topicId, @Body ReqMember member);
+    ResCommon kickUserFromTopic(@Path("teamId") long teamId, @Path("topicId") long topicId, @Body ReqMember member);
 
     @PUT("/teams/{teamId}/topics/{topicId}/admin")
-    ResCommon assignToTopicOwner(@Path("teamId") int teamId, @Path("topicId") int topicId, @Body ReqOwner owner);
+    ResCommon assignToTopicOwner(@Path("teamId") long teamId, @Path("topicId") long topicId, @Body ReqOwner owner);
 
     @PUT("/teams/{teamId}/files/{fileId}/externalShared")
-    ResMessages.FileMessage enableFileExternalLink(@Path("teamId") int teamId, @Path("fileId") int fileId, @Body ReqNull reqNull);
+    ResMessages.FileMessage enableFileExternalLink(@Path("teamId") long teamId, @Path("fileId") long fileId, @Body ReqNull reqNull);
 
     @DELETE("/teams/{teamId}/files/{fileId}/externalShared")
-    ResMessages.FileMessage disableFileExternalLink(@Path("teamId") int teamId, @Path("fileId") int fileId);
+    ResMessages.FileMessage disableFileExternalLink(@Path("teamId") long teamId, @Path("fileId") long fileId);
 }

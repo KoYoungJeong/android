@@ -5,9 +5,9 @@ package com.tosslab.jandi.app.events.messages;
  */
 public class SendCompleteEvent {
     private final long localId;
-    private final int id;
+    private final long id;
 
-    public SendCompleteEvent(long localId, int id) {
+    public SendCompleteEvent(long localId, long id) {
         this.localId = localId;
         this.id = id;
     }
@@ -16,7 +16,7 @@ public class SendCompleteEvent {
         return localId;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 }

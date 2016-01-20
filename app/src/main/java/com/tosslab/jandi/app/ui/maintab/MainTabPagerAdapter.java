@@ -24,9 +24,9 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
     private static final int TAB_MORE = 3;
 
     View[] mTabs;
-    private int selectedEntity;
+    private long selectedEntity;
 
-    public MainTabPagerAdapter(FragmentManager fm, View[] tabs, int selectedEntity) {
+    public MainTabPagerAdapter(FragmentManager fm, View[] tabs, long selectedEntity) {
         super(fm);
         mTabs = tabs;
         this.selectedEntity = selectedEntity;

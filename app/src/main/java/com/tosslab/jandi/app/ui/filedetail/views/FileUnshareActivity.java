@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
+import rx.Subscriber;
 
 /**
  * Created by tee on 15. 9. 30..
@@ -39,7 +40,7 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
     long fileId;
 
     @Extra
-    ArrayList<Long> sharedEntities;
+    long[] sharedEntities;
 
     @ViewById(R.id.lv_shared_entity)
     ListView lvSharedEntities;
@@ -81,9 +82,15 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
         long myId = fileDetailModel.getMyId();
 
         List<Long> sharedEntityWithoutMe = new ArrayList<>();
-
-        Observable.from(sharedEntities)
-                .filter(integerWrapper -> integerWrapper != myId)
+        Observable.create(new Observable.OnSubscribe<Long>() {
+            @Override
+            public void call(Subscriber<? super Long> subscriber) {
+                for (long sharedEntity : sharedEntities) {
+                    subscriber.onNext(sharedEntity);
+                }
+                subscriber.onCompleted();
+            }
+        }).filter(integerWrapper -> integerWrapper != myId)
                 .collect(() -> sharedEntityWithoutMe, List::add)
                 .subscribe();
 

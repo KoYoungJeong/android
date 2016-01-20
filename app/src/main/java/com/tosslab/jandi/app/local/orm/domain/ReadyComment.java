@@ -17,7 +17,7 @@ public class ReadyComment {
     public ReadyComment() {
     }
 
-    public ReadyComment(int fileId, String text) {
+    public ReadyComment(long fileId, String text) {
         this.fileId = fileId;
         this.text = text;
     }

@@ -40,7 +40,7 @@ import retrofit.RetrofitError;
 public class ChatDetailFragment extends Fragment {
 
     @FragmentArg
-    int entityId;
+    long entityId;
 
     @ViewById(R.id.iv_chat_detail_starred)
     View ivStarred;

@@ -15,7 +15,7 @@ import retrofit.http.Query;
 public interface EventsApiV2Client {
     @GET("/events")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResEventHistory getEventHistory(@Query("ts") long ts, @Query("memberId") Integer memberId,
+    ResEventHistory getEventHistory(@Query("ts") long ts, @Query("memberId") long memberId,
                                     @Query("eventType") String eventType, @Query("size") Integer size);
 
 }

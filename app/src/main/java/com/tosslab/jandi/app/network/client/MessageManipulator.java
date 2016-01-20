@@ -48,12 +48,12 @@ public class MessageManipulator {
         selectedTeamId = selectedTeamInfo.getTeamId();
     }
 
-    public void initEntity(int entityType, int entityId) {
+    public void initEntity(int entityType, long entityId) {
         this.entityId = entityId;
         this.entityType = entityType;
     }
 
-    public ResMessages getMessages(final int firstItemId, int count) throws RetrofitError {
+    public ResMessages getMessages(final long firstItemId, int count) throws RetrofitError {
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -86,13 +86,13 @@ public class MessageManipulator {
 
     }
 
-    public List<ResMessages.Link> updateMessages(final int fromCurrentId) throws RetrofitError {
+    public List<ResMessages.Link> updateMessages(final long fromCurrentId) throws RetrofitError {
 
         return RequestApiManager.getInstance().getRoomUpdateMessageByMessagesApiAuth
                 (selectedTeamId, roomId, fromCurrentId);
     }
 
-    public ResCommon setMarker(final int lastLinkId) throws RetrofitError {
+    public ResCommon setMarker(final long lastLinkId) throws RetrofitError {
 
         String entityType;
         switch (this.entityType) {

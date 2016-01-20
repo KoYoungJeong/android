@@ -479,8 +479,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             vgProfileTeamButtons.addView(
                     getButton(R.drawable.icon_profile_message,
                             getString(R.string.jandi_member_profile_dm), (v) -> {
-                                int teamId = entityManager.getTeamId();
-                                int entityId = member.getId();
+                                long teamId = entityManager.getTeamId();
+                                long entityId = member.getId();
                                 boolean isStarred = member.isStarred;
                                 startMessageListActivity(teamId, entityId, isStarred);
                                 AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.DirectMessage);
@@ -562,7 +562,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         }
     }
 
-    private void startMessageListActivity(int teamId, int entityId, boolean isStarred) {
+    private void startMessageListActivity(long teamId, long entityId, boolean isStarred) {
         MessageListV2Activity_.intent(MemberProfileActivity.this)
                 .teamId(teamId)
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)

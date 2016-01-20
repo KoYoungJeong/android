@@ -143,10 +143,10 @@ public class JandiPreference {
         return pref.getInt(PREF_MY_ENTITY_ID, NOT_SET_YET);
     }
 
-    public static void setMyEntityId(Context context, int myEntityId) {
+    public static void setMyEntityId(Context context, long myEntityId) {
         SharedPreferences pref = getSharedPreferences(context);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt(PREF_MY_ENTITY_ID, myEntityId);
+        editor.putLong(PREF_MY_ENTITY_ID, myEntityId);
         editor.commit();
     }
 

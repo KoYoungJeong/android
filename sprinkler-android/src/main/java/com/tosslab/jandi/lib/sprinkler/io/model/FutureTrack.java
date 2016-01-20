@@ -87,7 +87,7 @@ public class FutureTrack implements Serializable {
             return this;
         }
 
-        public Builder memberId(int memberId) {
+        public Builder memberId(long memberId) {
             identifiersMap.put(IdentifierKey.MEMBER_ID, memberId);
             return this;
         }

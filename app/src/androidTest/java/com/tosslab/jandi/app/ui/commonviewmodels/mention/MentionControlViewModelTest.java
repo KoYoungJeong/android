@@ -50,7 +50,7 @@ public class MentionControlViewModelTest {
 
     private void init() {
         textView = new AutoCompleteTextView(JandiApplication.getContext());
-        int t_defaultChannelId = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu().team.t_defaultChannelId;
+        long t_defaultChannelId = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu().team.t_defaultChannelId;
         mentionControlViewModel = MentionControlViewModel.newInstance(rule.getActivity(), textView, Arrays.asList(t_defaultChannelId), MentionControlViewModel.MENTION_TYPE_MESSAGE);
     }
 

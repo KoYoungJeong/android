@@ -28,9 +28,6 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 14..
- */
 public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int OWNER_TYPE_TEAM = 0;
     public static final int OWNER_TYPE_TOPIC = 1;
@@ -113,8 +110,8 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         isCheckMode = true;
     }
 
-    public List<Integer> getSelectedUserIds() {
-        List<Integer> selectedUserIds = new ArrayList<Integer>();
+    public List<Long> getSelectedUserIds() {
+        List<Long> selectedUserIds = new ArrayList<>();
         for (ChatChooseItem item : memberChooseItems) {
             if (item.isChooseItem()) {
                 selectedUserIds.add(item.getEntityId());

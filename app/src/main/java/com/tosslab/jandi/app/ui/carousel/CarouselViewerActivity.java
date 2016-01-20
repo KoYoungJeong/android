@@ -59,10 +59,10 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     LinearLayout vgCarouselBottom;
 
     @Extra
-    int startLinkId;
+    long startLinkId;
 
     @Extra
-    int roomId = -1;
+    long roomId = -1;
 
     @Bean(CarouselViewerPresenterImpl.class)
     CarouselViewerPresenter carouselViewerPresenter;
@@ -113,12 +113,10 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
                 tvFileCreateTime.setText(fileInfo.getFileCreateTime());
 
                 if (position == 0) {
-                    carouselViewerPresenter.onBeforeImageFiles(fileInfo
-                            .getFileLinkId(), count);
+                    carouselViewerPresenter.onBeforeImageFiles(fileInfo.getFileLinkId(), count);
                 } else {
                     if (position == count - 1) {
-                        carouselViewerPresenter.onAfterImageFiles(fileInfo
-                                .getFileLinkId(), count);
+                        carouselViewerPresenter.onAfterImageFiles(fileInfo.getFileLinkId(), count);
                     }
                 }
 

@@ -4,7 +4,7 @@ package com.tosslab.jandi.app.ui.filedetail.domain;
  * Created by Steve SeongUg Jung on 15. 8. 11..
  */
 public class FileStarredInfo {
-    private final int fileId;
+    private final long fileId;
     private final boolean starred;
 
     public FileStarredInfo(long fileId, boolean starred) {
@@ -13,7 +13,7 @@ public class FileStarredInfo {
         this.starred = starred;
     }
 
-    public int getFileId() {
+    public long getFileId() {
         return fileId;
     }
 

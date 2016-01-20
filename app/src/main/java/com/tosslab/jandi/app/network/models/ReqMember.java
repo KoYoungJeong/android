@@ -1,13 +1,13 @@
 package com.tosslab.jandi.app.network.models;
 
 public class ReqMember {
-    private final int memberId;
+    private final long memberId;
 
-    public ReqMember(int memberId) {
+    public ReqMember(long memberId) {
         this.memberId = memberId;
     }
 
-    public int getMemberId() {
+    public long getMemberId() {
         return memberId;
     }
 }

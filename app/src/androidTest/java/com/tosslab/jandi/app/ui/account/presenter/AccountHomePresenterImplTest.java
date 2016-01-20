@@ -127,7 +127,7 @@ public class AccountHomePresenterImplTest {
             return invocationOnMock;
         }).when(viewMock).dismissProgressWheel();
 
-        int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+        long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
         accountHomePresenter.onJoinedTeamSelect(selectedTeamId, false);
 
         Awaitility.await().until(() -> finish[0]);

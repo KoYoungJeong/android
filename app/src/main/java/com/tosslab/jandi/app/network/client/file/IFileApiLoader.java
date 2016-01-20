@@ -13,14 +13,14 @@ public interface IFileApiLoader {
 
     IExecutor<ResCommon> loaderDeleteFileByFileApi(long teamId, long fileId);
 
-    IExecutor<List<ResMessages.FileMessage>> loaderSearchInitImageFileByFileApi(int teamId, int roomId
-            , int messageId, int count);
+    IExecutor<List<ResMessages.FileMessage>> loaderSearchInitImageFileByFileApi(long teamId, long roomId
+            , long messageId, int count);
 
-    IExecutor<List<ResMessages.FileMessage>> loaderSearchOldImageFileByFileApi(int teamId, int roomId
-            , int messageId, int count);
+    IExecutor<List<ResMessages.FileMessage>> loaderSearchOldImageFileByFileApi(long teamId, long roomId
+            , long messageId, int count);
 
-    IExecutor<List<ResMessages.FileMessage>> loaderSearchNewImageFileByFileApi(int teamId, int roomId
-            , int messageId, int count);
+    IExecutor<List<ResMessages.FileMessage>> loaderSearchNewImageFileByFileApi(long teamId, long roomId
+            , long messageId, int count);
 
 
 }

@@ -337,7 +337,7 @@ public class FileDetailModel {
         return sortedCommentMessages;
     }
 
-    public ResMessages.FileMessage getFileMessage(int fileId) {
+    public ResMessages.FileMessage getFileMessage(long fileId) {
 
         return MessageRepository.getRepository().getFileMessage(fileId);
     }

@@ -12,13 +12,13 @@ public interface IFileApiAuth {
 
     ResCommon deleteFileByFileApi(long teamId, long fileId);
 
-    List<ResMessages.FileMessage> searchInitImageFileByFileApi(int teamId, int roomId
-            , int messageId, int count);
+    List<ResMessages.FileMessage> searchInitImageFileByFileApi(long teamId, long roomId
+            , long messageId, int count);
 
-    List<ResMessages.FileMessage> searchOldImageFileByFileApi(int teamId, int roomId
-            , int messageId, int count);
+    List<ResMessages.FileMessage> searchOldImageFileByFileApi(long teamId, long roomId
+            , long messageId, int count);
 
-    List<ResMessages.FileMessage> searchNewImageFileByFileApi(int teamId, int roomId
-            , int messageId, int count);
+    List<ResMessages.FileMessage> searchNewImageFileByFileApi(long teamId, long roomId
+            , long messageId, int count);
 
 }

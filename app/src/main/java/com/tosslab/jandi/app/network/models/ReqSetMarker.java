@@ -8,8 +8,8 @@ public class ReqSetMarker {
     public static final String PRIVATEGROUP = "privateGroup";
     public static final String USER = "user";
 
-    public int teamId;
-    public int lastLinkId;
+    public long teamId;
+    public long lastLinkId;
     public String entityType;
 
     public ReqSetMarker(long teamId, long lastLinkId, String entityType) {

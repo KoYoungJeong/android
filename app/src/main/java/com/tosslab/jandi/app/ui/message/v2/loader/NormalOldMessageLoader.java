@@ -27,7 +27,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
     MessageListModel messageListModel;
     MessageListPresenter messageListPresenter;
     private MessageState messageState;
-    private int teamId;
+    private long teamId;
     private boolean cacheMode = true;
 
     public void setMessageListModel(MessageListModel messageListModel) {
@@ -42,12 +42,12 @@ public class NormalOldMessageLoader implements OldMessageLoader {
         this.messageState = messageState;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 
     @Override
-    public ResMessages load(int roomId, int linkId) {
+    public ResMessages load(long roomId, long linkId) {
         ResMessages oldMessage = null;
         // 모든 요청은 dummy 가 아닌 실제 데이터 기준...
         int currentItemCount = messageListPresenter.getItemCountWithoutDummy();
@@ -71,7 +71,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
 
             Collections.sort(oldMessage.records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
 
-            int firstLinkIdInMessage = oldMessage.records.get(0).id;
+            long firstLinkIdInMessage = oldMessage.records.get(0).id;
             messageState.setFirstItemId(firstLinkIdInMessage);
             boolean isFirstMessage = oldMessage.firstLinkId == firstLinkIdInMessage;
             messageState.setFirstMessage(isFirstMessage);
@@ -100,7 +100,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
     }
 
     @Nullable
-    private ResMessages getOldMessages(int roomId, int linkId, int currentItemCount, int itemCount) {
+    private ResMessages getOldMessages(long roomId, long linkId, int currentItemCount, int itemCount) {
         ResMessages oldMessage = null;
         if (roomId > 0) {
             // 저장된 정보를 가져옴
@@ -115,7 +115,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
             if (oldMessages != null && oldMessages.size() > 0) {
 
 
-                int firstLinkId = oldMessages.get(oldMessages.size() - 1).id;
+                long firstLinkId = oldMessages.get(oldMessages.size() - 1).id;
                 messageState.setFirstItemId(firstLinkId);
 
                 oldMessage = new ResMessages();
@@ -191,7 +191,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
         }
     }
 
-    private void updateMarker(int teamId, int roomId, int lastUpdateLinkId) {
+    private void updateMarker(long teamId, long roomId, long lastUpdateLinkId) {
         try {
             if (lastUpdateLinkId > 0) {
                 messageListModel.updateMarker(lastUpdateLinkId);

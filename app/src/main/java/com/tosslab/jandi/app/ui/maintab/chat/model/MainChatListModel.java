@@ -39,20 +39,20 @@ public class MainChatListModel {
 
     }
 
-    public int getMemberId() {
+    public long getMemberId() {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         return selectedTeamInfo != null ? selectedTeamInfo.getMemberId() : -1;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return EntityManager.getInstance().getTeamId();
     }
 
-    public List<ResChat> getChatList(int memberId) throws RetrofitError {
+    public List<ResChat> getChatList(long memberId) throws RetrofitError {
         return RequestApiManager.getInstance().getChatListByChatApi(memberId);
     }
 
-    public List<ChatItem> convertChatItems(Context context, int teamId, List<ResChat> chatList) {
+    public List<ChatItem> convertChatItems(Context context, long teamId, List<ResChat> chatList) {
 
         List<ChatItem> chatItems = new ArrayList<ChatItem>();
 
@@ -108,14 +108,14 @@ public class MainChatListModel {
         return ChatRepository.getRepository().getChats();
     }
 
-    public void saveChatList(int teamId, List<ResChat> chatItems) {
+    public void saveChatList(long teamId, List<ResChat> chatItems) {
         for (ResChat chatItem : chatItems) {
             chatItem.setTeamId(teamId);
         }
         ChatRepository.getRepository().upsertChats(chatItems);
     }
 
-    public int getRoomId(int userId) {
+    public long getRoomId(int userId) {
 
         return ChatRepository.getRepository().getChat(userId).getEntityId();
 

@@ -22,23 +22,23 @@ import rx.Observable;
 @EBean
 public class CarouselViewerModel {
 
-    public List<ResMessages.FileMessage> searchInitFileList(int teamId, int roomId, int messageId)
+    public List<ResMessages.FileMessage> searchInitFileList(long teamId, long roomId, long messageId)
             throws RetrofitError {
         return RequestApiManager.getInstance().searchInitImageFileByFileApi(teamId, roomId,
                 messageId, 20);
     }
 
-    public List<ResMessages.FileMessage> searchBeforeFileList(int teamId, int roomId, int fileLinkId, int count) {
+    public List<ResMessages.FileMessage> searchBeforeFileList(long teamId, long roomId, long fileLinkId, int count) {
         return RequestApiManager.getInstance().searchOldImageFileByFileApi(teamId, roomId,
                 fileLinkId, count);
     }
 
-    public List<ResMessages.FileMessage> searchAfterFileList(int teamId, int roomId, int fileLinkId, int count) {
+    public List<ResMessages.FileMessage> searchAfterFileList(long teamId, long roomId, long fileLinkId, int count) {
         return RequestApiManager.getInstance().searchNewImageFileByFileApi(teamId, roomId,
                 fileLinkId, count);
     }
 
-    public List<CarouselFileInfo> getImageFileConvert(final int entityId,
+    public List<CarouselFileInfo> getImageFileConvert(final long entityId,
                                                       List<ResMessages.FileMessage> fileMessages) {
         List<CarouselFileInfo> fileInfos = new ArrayList<CarouselFileInfo>();
 
@@ -67,7 +67,7 @@ public class CarouselViewerModel {
         return AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
     }
 
-    public int findLinkPosition(List<CarouselFileInfo> imageFiles, int fileId) {
+    public int findLinkPosition(List<CarouselFileInfo> imageFiles, long fileId) {
 
         CarouselFileInfo defaultValue = new CarouselFileInfo.Builder().create();
         CarouselFileInfo startFile = Observable.from(imageFiles)

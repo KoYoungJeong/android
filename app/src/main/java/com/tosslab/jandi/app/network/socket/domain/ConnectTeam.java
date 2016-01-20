@@ -6,9 +6,9 @@ package com.tosslab.jandi.app.network.socket.domain;
 public class ConnectTeam {
     private final String token;
     private final String userAgent;
-    private final int teamId;
+    private final long teamId;
     private final String teamName;
-    private final int memberId;
+    private final long memberId;
     private final String userName;
 
     public ConnectTeam(String token, String userAgent, long teamId, String teamName, long memberId, String userName) {
@@ -20,7 +20,7 @@ public class ConnectTeam {
         this.userName = userName;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
@@ -28,7 +28,7 @@ public class ConnectTeam {
         return teamName;
     }
 
-    public int getMemberId() {
+    public long getMemberId() {
         return memberId;
     }
 

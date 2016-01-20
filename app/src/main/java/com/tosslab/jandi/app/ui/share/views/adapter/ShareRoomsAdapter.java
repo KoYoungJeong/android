@@ -125,7 +125,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         holder.itemView.setOnClickListener(v -> {
             if (onItemClickListener != null) {
-                int roomId = item.getEntityId();
+                long roomId = item.getEntityId();
                 String roomName = item.getName();
                 int type;
                 if (item.isPublicTopic()) {
@@ -168,7 +168,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public interface OnItemClickListener {
-        void onItemClick(int roomId, String roomName, int roomType);
+        void onItemClick(long roomId, String roomName, int roomType);
     }
 
     static class RoomViewHolder extends RecyclerView.ViewHolder {

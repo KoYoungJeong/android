@@ -37,49 +37,49 @@ public interface ITeamApiAuth {
 
     ResLeftSideMenu.User getMemberProfileByTeamApi(long teamId, long memberId) throws RetrofitError;
 
-    List<ResInvitationMembers> inviteToTeamByTeamApi(int teamId, ReqInvitationMembers invitationMembers) throws RetrofitError;
+    List<ResInvitationMembers> inviteToTeamByTeamApi(long teamId, ReqInvitationMembers invitationMembers) throws RetrofitError;
 
     ResTeamDetailInfo.InviteTeam getTeamInfoByTeamApi(long teamId) throws RetrofitError;
 
-    ResAnnouncement getAnnouncement(int teamId, int topicId) throws RetrofitError;
+    ResAnnouncement getAnnouncement(long teamId, long topicId) throws RetrofitError;
 
-    ResCommon createAnnouncement(int teamId, int topicId, ReqCreateAnnouncement reqCreateAnnouncement) throws RetrofitError;
+    ResCommon createAnnouncement(long teamId, long topicId, ReqCreateAnnouncement reqCreateAnnouncement) throws RetrofitError;
 
-    ResCommon updateAnnouncementStatus(int teamId, int memberId, ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus) throws RetrofitError;
+    ResCommon updateAnnouncementStatus(long teamId, long memberId, ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus) throws RetrofitError;
 
-    ResCommon deleteAnnouncement(int teamId, int topicId) throws RetrofitError;
+    ResCommon deleteAnnouncement(long teamId, long topicId) throws RetrofitError;
 
     ResMessages.OriginalMessage getMessage(long teamId, long messageId) throws RetrofitError;
 
-    ResStarMentioned getMentionedMessagesByTeamApi(int teamId, Integer messageId, int count) throws RetrofitError;
+    ResStarMentioned getMentionedMessagesByTeamApi(long teamId, long messageId, int count) throws RetrofitError;
 
     StarMentionedMessageObject registStarredMessageByTeamApi(long teamId, long messageId) throws RetrofitError;
 
     ResCommon unregistStarredMessageByTeamApi(long teamId, long messageId) throws RetrofitError;
 
-    ResStarMentioned getStarredMessagesByTeamApi(int teamId, Integer starredId,
+    ResStarMentioned getStarredMessagesByTeamApi(long teamId, long starredId,
                                                  int count, String type) throws RetrofitError;
 
 
-    ResCommon updateTopicPushSubscribe(int teamId, int topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe) throws RetrofitError;
+    ResCommon updateTopicPushSubscribe(long teamId, long topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe) throws RetrofitError;
 
-    ResCreateFolder createFolderByTeamApi(int teamId, ReqCreateFolder reqCreateFolder) throws RetrofitError;
+    ResCreateFolder createFolderByTeamApi(long teamId, ReqCreateFolder reqCreateFolder) throws RetrofitError;
 
-    ResCommon deleteFolderByTeamApi(int teamId, int folderId) throws RetrofitError;
+    ResCommon deleteFolderByTeamApi(long teamId, long folderId) throws RetrofitError;
 
-    ResUpdateFolder updateFolderByTeamApi(int teamId, int folderId, ReqUpdateFolder reqUpdateFolder) throws RetrofitError;
+    ResUpdateFolder updateFolderByTeamApi(long teamId, long folderId, ReqUpdateFolder reqUpdateFolder) throws RetrofitError;
 
-    List<ResFolder> getFoldersByTeamApi(int teamId) throws RetrofitError;
+    List<ResFolder> getFoldersByTeamApi(long teamId) throws RetrofitError;
 
-    List<ResFolderItem> getFolderItemsByTeamApi(int teamId) throws RetrofitError;
+    List<ResFolderItem> getFolderItemsByTeamApi(long teamId) throws RetrofitError;
 
-    ResRegistFolderItem registFolderItemByTeamApi(int teamId, int folderId, ReqRegistFolderItem reqRegistFolderItem) throws RetrofitError;
+    ResRegistFolderItem registFolderItemByTeamApi(long teamId, long folderId, ReqRegistFolderItem reqRegistFolderItem) throws RetrofitError;
 
-    ResCommon deleteFolderItemByTeamApi(int teamId, int folderId, int itemId) throws RetrofitError;
+    ResCommon deleteFolderItemByTeamApi(long teamId, long folderId, long itemId) throws RetrofitError;
 
-    ResCommon kickUserFromTopic(int teamId, int topicId, ReqMember member);
+    ResCommon kickUserFromTopic(long teamId, long topicId, ReqMember member);
 
-    ResCommon assignToTopicOwner(int teamId, int topicId, ReqOwner owner);
+    ResCommon assignToTopicOwner(long teamId, long topicId, ReqOwner owner);
 
     ResMessages.FileMessage enableFileExternalLink(long teamId, long fileId);
 

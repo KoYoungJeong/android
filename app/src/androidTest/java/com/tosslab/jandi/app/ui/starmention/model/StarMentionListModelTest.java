@@ -73,7 +73,7 @@ public class StarMentionListModelTest {
     @Test
     public void testGetMetionRawDatas() {
         try {
-            ResStarMentioned resStarMentioned = starMentionListModel.getMentionRawDatas(null, 10);
+            ResStarMentioned resStarMentioned = starMentionListModel.getMentionRawDatas(-1, 10);
             assertNotNull(resStarMentioned);
         } catch (RetrofitError e) {
             fail();
@@ -83,8 +83,8 @@ public class StarMentionListModelTest {
     @Test
     public void testGetStarredRawDatas() {
         try {
-            ResStarMentioned resStarMentioned1 = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL, null, 10);
-            ResStarMentioned resStarMentioned2 = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, null, 10);
+            ResStarMentioned resStarMentioned1 = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL, -1, 10);
+            ResStarMentioned resStarMentioned2 = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, -1, 10);
             assertNotNull(resStarMentioned1);
             assertNotNull(resStarMentioned2);
         } catch (RetrofitError e) {
@@ -95,18 +95,18 @@ public class StarMentionListModelTest {
     @Test
     public void testMakeStarMentionList() {
         try {
-            ResStarMentioned resStarMentioned = starMentionListModel.getMentionRawDatas(null, 10);
+            ResStarMentioned resStarMentioned = starMentionListModel.getMentionRawDatas(-1, 10);
 
             List<StarMentionVO> starMentionVOList1 = starMentionListModel
                     .makeStarMentionList(StarMentionListActivity.TYPE_MENTION_LIST, resStarMentioned.getRecords());
             Assert.assertNotNull(starMentionVOList1);
 
-            resStarMentioned = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL, null, 10);
+            resStarMentioned = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL, -1, 10);
             List<StarMentionVO> starMentionVOList2 = starMentionListModel
                     .makeStarMentionList(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL, resStarMentioned.getRecords());
             Assert.assertNotNull(starMentionVOList2);
 
-            resStarMentioned = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, null, 10);
+            resStarMentioned = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, -1, 10);
             List<StarMentionVO> starMentionVOList3 = starMentionListModel
                     .makeStarMentionList(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, resStarMentioned.getRecords());
             Assert.assertNotNull(starMentionVOList3);

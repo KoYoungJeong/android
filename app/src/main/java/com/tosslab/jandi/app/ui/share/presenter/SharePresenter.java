@@ -38,9 +38,6 @@ import java.util.concurrent.ExecutionException;
 
 import retrofit.RetrofitError;
 
-/**
- * Created by Steve SeongUg Jung on 15. 2. 14..
- */
 @EBean
 public class SharePresenter {
 
@@ -50,8 +47,8 @@ public class SharePresenter {
     private File imageFile;
     private String uriString;
 
-    private int teamId;
-    private int roomId;
+    private long teamId;
+    private long roomId;
     private String teamName;
     private String roomName;
     private boolean isPublic;
@@ -101,9 +98,9 @@ public class SharePresenter {
     }
 
     @Background
-    public void initEntityData(int teamId, String teamName,
+    public void initEntityData(long teamId, String teamName,
                                boolean isDefaultTopic,
-                               int roomId, String roomName, int roomType) {
+                               long roomId, String roomName, int roomType) {
 
         this.teamId = teamId;
         this.teamName = teamName;
@@ -195,7 +192,7 @@ public class SharePresenter {
         }
     }
 
-    public boolean setupSelectedTeam(int teamId) {
+    public boolean setupSelectedTeam(long teamId) {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         if ((selectedTeamInfo == null || selectedTeamInfo.getTeamId() != teamId)) {
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
@@ -267,11 +264,11 @@ public class SharePresenter {
         return imageFile;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 
@@ -283,11 +280,11 @@ public class SharePresenter {
         this.teamName = teamName;
     }
 
-    public int getRoomId() {
+    public long getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(int entityId) {
+    public void setRoomId(long entityId) {
         this.roomId = entityId;
     }
 
@@ -316,13 +313,13 @@ public class SharePresenter {
 
         void setRoomName(String name);
 
-        void moveEntity(int teamId, int entityId, int entityType);
+        void moveEntity(long teamId, long entityId, int entityType);
 
         String getComment();
 
         void setComment(String comment);
 
-        void setMentionInfo(int teamId, int roomId, int roomType);
+        void setMentionInfo(long teamId, long roomId, long roomType);
 
         void dismissDialog(ProgressDialog uploadProgress);
 

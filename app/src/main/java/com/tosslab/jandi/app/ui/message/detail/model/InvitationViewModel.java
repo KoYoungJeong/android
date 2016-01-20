@@ -56,7 +56,7 @@ public class InvitationViewModel {
      * Channel, PrivateGroup Invite
      */
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void inviteMembersToEntity(Activity activity, final int entityId) {
+    public void inviteMembersToEntity(Activity activity, final long entityId) {
         if (activity == null || activity.isFinishing()) {
             return;
         }
@@ -139,7 +139,7 @@ public class InvitationViewModel {
         dialog.show();
     }
 
-    private List<FormattedEntity> getUnjoinedEntities(int entityId) {
+    private List<FormattedEntity> getUnjoinedEntities(long entityId) {
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entity = entityManager.getEntityById(entityId);
         int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity
@@ -157,7 +157,7 @@ public class InvitationViewModel {
     }
 
     @Background
-    public void inviteInBackground(Context context, List<Long> invitedUsers, int entityId) {
+    public void inviteInBackground(Context context, List<Long> invitedUsers, long entityId) {
         try {
 
             FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
@@ -186,7 +186,7 @@ public class InvitationViewModel {
         }
     }
 
-    private void trackTopicMemberInviteSuccess(int memberCount, int entityId) {
+    private void trackTopicMemberInviteSuccess(int memberCount, long entityId) {
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.TopicMemberInvite)

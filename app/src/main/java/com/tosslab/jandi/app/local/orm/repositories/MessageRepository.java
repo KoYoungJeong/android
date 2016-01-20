@@ -82,7 +82,7 @@ public class MessageRepository {
         return false;
     }
 
-    public int deleteMessage(int messageId) {
+    public int deleteMessage(long messageId) {
 
         if (messageId <= 0) {
             // 이벤트는 삭제하지 않기 위함
@@ -128,7 +128,7 @@ public class MessageRepository {
         return new ArrayList<>();
     }
 
-    public ResMessages.Link getLastMessage(int roomId) {
+    public ResMessages.Link getLastMessage(long roomId) {
 
         ResMessages.Link link = null;
         try {
@@ -152,7 +152,7 @@ public class MessageRepository {
         return link;
     }
 
-    public List<ResMessages.Link> getOldMessages(int roomId, int lastLinkId, long count) {
+    public List<ResMessages.Link> getOldMessages(long roomId, long lastLinkId, int count) {
         try {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
             return helper.getDao(ResMessages.Link.class)

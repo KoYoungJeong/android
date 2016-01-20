@@ -163,7 +163,7 @@ public class FileDetailPresenterTest {
         fileMessage.shareEntities = getSharedEntities();
 
         // When
-        List<Integer> sharedTopicIds = fileDetailPresenter.getSharedTopicIds(fileMessage);
+        List<Long> sharedTopicIds = fileDetailPresenter.getSharedTopicIds(fileMessage);
 
         FormattedEntity entity = EntityManager.getInstance().getEntityById(sharedTopicIds.get(0));
         // Then

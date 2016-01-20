@@ -132,10 +132,10 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
 
     @OptionsItem(R.id.action_share_to_topic)
     public void onShareToTopicOptionSelect() {
-        int teamId = EntityManager.getInstance().getTeamId();
+        long teamId = EntityManager.getInstance().getTeamId();
         ShareSelectRoomActivity_
                 .intent(this)
-                .extra("teamId", teamId)
+                .teamId(teamId)
                 .start();
     }
 

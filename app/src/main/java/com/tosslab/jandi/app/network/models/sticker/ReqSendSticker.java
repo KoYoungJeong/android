@@ -12,14 +12,14 @@ import java.util.List;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ReqSendSticker {
     private String stickerId;
-    private int groupId;
-    private int teamId;
-    private int share;
+    private long groupId;
+    private long teamId;
+    private long share;
     private String type;
     private String content;
     private List<MentionObject> mentions;
 
-    private ReqSendSticker(int groupId, String stickerId, int teamId, int share, String type,
+    private ReqSendSticker(long groupId, String stickerId, long teamId, long share, String type,
                            String content, List<MentionObject> mentions) {
         this.stickerId = stickerId;
         this.groupId = groupId;
@@ -41,15 +41,15 @@ public class ReqSendSticker {
         return stickerId;
     }
 
-    public int getGroupId() {
+    public long getGroupId() {
         return groupId;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public int getShare() {
+    public long getShare() {
         return share;
     }
 

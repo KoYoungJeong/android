@@ -131,16 +131,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public static final int REQ_STORAGE_PERMISSION_EXPORT = 102;
     private static final int REQ_WINDOW_PERMISSION = 103;
     private static final StickerInfo NULL_STICKER = new StickerInfo();
-    public static
 
     @Extra
-    int fileId;
+    long fileId;
 
     @Extra
-    int selectMessageId = -1;
+    long selectMessageId = -1;
 
     @Extra
-    int roomId = -1;
+    long roomId = -1;
 
     @Bean
     FileDetailPresenter fileDetailPresenter;
@@ -605,13 +604,18 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         if (shareEntities != null) {
 
             Observable.from(shareEntities)
-                    .map(integerWrapper -> integerWrapper.getShareEntity())
-                    .collect(() -> rawSharedEntities, (integers, integer) -> integers.add(integer))
+                    .map(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
+                    .collect(() -> rawSharedEntities, List::add)
                     .subscribe();
+        }
+        int size = rawSharedEntities.size();
+        long[] longs = new long[size];
+        for (int idx = 0; idx < size; idx++) {
+            longs[idx] = rawSharedEntities.get(idx);
         }
         FileUnshareActivity_.intent(this)
                 .fileId(fileId)
-                .sharedEntities(rawSharedEntities)
+                .sharedEntities(longs)
                 .startForResult(INTENT_RETURN_TYPE_UNSHARE);
     }
 
@@ -679,7 +683,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return;
         }
 
-        int entityId = event.getEntityId();
+        long entityId = event.getEntityId();
 
         EntityManager entityManager = EntityManager.getInstance();
 
@@ -1041,7 +1045,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     }
 
-    public void showDeleteFileDialog(int fileId) {
+    public void showDeleteFileDialog(long fileId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(R.string.jandi_action_delete)

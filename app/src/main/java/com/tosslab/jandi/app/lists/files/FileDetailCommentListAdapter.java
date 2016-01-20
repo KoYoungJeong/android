@@ -32,7 +32,7 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
 
     @RootContext
     Context mContext;
-    private int selectMessageId;
+    private long selectMessageId;
     private AnimStat animStat = AnimStat.START;
 
     @AfterInject

@@ -202,7 +202,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     }
 
     public void onEventMainThread(DeleteFileEvent event) {
-        int messageId = event.getId();
+        long messageId = event.getId();
         starMentionListAdapter.deleteMessage(messageId);
         starMentionListAdapter.notifyDataSetChanged();
     }
@@ -266,7 +266,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     }
 
     @Override
-    public void onShowDialog(int teamId, int messageId, int position) {
+    public void onShowDialog(long teamId, long messageId, int position) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
@@ -308,7 +308,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
 
     @UiThread
     @Override
-    public void deleteItemOfTopic(int topicId) {
+    public void deleteItemOfTopic(long topicId) {
         int itemCount = starMentionListAdapter.getItemCount();
         for (int idx = itemCount - 1; idx >= 0; --idx) {
             if (starMentionListAdapter.getItem(idx).getRoomId() == topicId) {

@@ -673,7 +673,7 @@ public class FileDetailPresenter {
 
         void showCheckNetworkDialog();
 
-        void showDeleteFileDialog(int fileId);
+        void showDeleteFileDialog(long fileId);
 
         void showUserInfoDialog(FormattedEntity user);
 

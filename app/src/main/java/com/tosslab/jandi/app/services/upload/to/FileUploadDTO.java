@@ -12,7 +12,7 @@ public class FileUploadDTO {
 
     private String filePath;
     private String fileName;
-    private int entity;
+    private long entity;
     private String comment;
     private List<MentionObject> mentions;
     private UploadState uploadState = UploadState.IDLE;
@@ -21,7 +21,7 @@ public class FileUploadDTO {
     public FileUploadDTO() {
     }
 
-    public FileUploadDTO(String filePath, String fileName, int entity, String comment) {
+    public FileUploadDTO(String filePath, String fileName, long entity, String comment) {
         this.filePath = filePath;
         this.fileName = fileName;
         this.entity = entity;
@@ -66,11 +66,11 @@ public class FileUploadDTO {
         this.fileName = fileName;
     }
 
-    public int getEntity() {
+    public long getEntity() {
         return entity;
     }
 
-    public void setEntity(int entity) {
+    public void setEntity(long entity) {
         this.entity = entity;
     }
 
