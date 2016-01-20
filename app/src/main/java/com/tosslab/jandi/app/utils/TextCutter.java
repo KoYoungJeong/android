@@ -144,8 +144,6 @@ public class TextCutter {
 
             CharSequence result = text.subSequence(0, maxLength);
 
-            LogUtil.d(TAG, stringForLog(result.subSequence(4991, 5000)));
-
             if (result instanceof Spanned) {
                 Spanned spanned = (Spanned) result;
                 int spanEnd = spanned.getSpanEnd(MentionMessageSpannable.class);
