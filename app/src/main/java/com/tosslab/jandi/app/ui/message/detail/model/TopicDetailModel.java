@@ -257,7 +257,7 @@ public class TopicDetailModel {
 
     public void updateAutoJoin(int entityId, boolean autoJoin) {
         int teamId = EntityManager.getInstance().getTeamId();
-        entityClientManager.modifyChannelAutoJoin(teamId, entityId, autoJoin);
+        entityClientManager.modifyChannelAutoJoin(entityId, autoJoin);
     }
 
     public boolean isOnGlobalPush() {

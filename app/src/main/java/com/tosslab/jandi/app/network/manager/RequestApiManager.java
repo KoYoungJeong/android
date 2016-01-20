@@ -47,6 +47,9 @@ import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ReqMember;
 import com.tosslab.jandi.app.network.models.ReqModifyComment;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicAutoJoin;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicDescription;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicName;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqOwner;
@@ -249,8 +252,18 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public ResCommon modifyPublicTopicNameByChannelApi(ReqCreateTopic channel, int channelId) throws RetrofitError {
+    public ResCommon modifyPublicTopicNameByChannelApi(ReqModifyTopicName channel, int channelId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadModifyPublicTopicNameByChannelApi(channel, channelId));
+    }
+
+    @Override
+    public ResCommon modifyPublicTopicDescriptionByChannelApi(ReqModifyTopicDescription description, int channelId) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadModifyPublicTopicDescriptionByChannelApi(description, channelId));
+    }
+
+    @Override
+    public ResCommon modifyPublicTopicAutoJoinByChannelApi(ReqModifyTopicAutoJoin topicAutoJoin, int channelId) {
+        return requestApiExecute(RestApiLoader.getInstance().loadModifyPublicTopicAutoJoinByChannelApi(topicAutoJoin, channelId));
     }
 
     @Override
@@ -395,7 +408,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public ResCommon modifyGroupByGroupApi(ReqCreateTopic channel, int groupId) throws RetrofitError {
+    public ResCommon modifyGroupNameByGroupApi(ReqModifyTopicName channel, int groupId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadModifyGroupByGroupApi(channel, groupId));
     }
 
@@ -412,6 +425,11 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     @Override
     public ResCommon inviteGroupByGroupApi(int groupId, ReqInviteTopicUsers inviteUsers) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadInviteGroupByGroupApi(groupId, inviteUsers));
+    }
+
+    @Override
+    public ResCommon modifyGroupDescriptionByGroupApi(ReqModifyTopicDescription description, int entityId) {
+        return requestApiExecute(RestApiLoader.getInstance().loadModifyGroupDescriptionByGroupApi(description, entityId));
     }
 
     @Override

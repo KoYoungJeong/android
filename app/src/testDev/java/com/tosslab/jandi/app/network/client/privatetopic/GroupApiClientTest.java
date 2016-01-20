@@ -112,7 +112,7 @@ public class GroupApiClientTest {
         reqCreateTopic.name = "mod_" + new Timestamp(System.currentTimeMillis());
 
         try {
-            ResCommon resCommon = RequestApiManager.getInstance().modifyGroupByGroupApi(reqCreateTopic, privateTopic.id);
+            ResCommon resCommon = RequestApiManager.getInstance().modifyGroupNameByGroupApi(reqCreateTopic, privateTopic.id);
             assertThat(resCommon, is(notNullValue()));
         } catch (RetrofitError e) {
             fail(e.getResponse().getBody().toString());
@@ -144,7 +144,7 @@ public class GroupApiClientTest {
 
         ResCommon resCommon = null;
         try {
-            resCommon = RequestApiManager.getInstance().modifyGroupByGroupApi(reqCreateTopic, privateTopic.id);
+            resCommon = RequestApiManager.getInstance().modifyGroupNameByGroupApi(reqCreateTopic, privateTopic.id);
             assertThat(resCommon, is(notNullValue()));
         } catch (RetrofitError e) {
             fail(e.getResponse().getBody().toString());

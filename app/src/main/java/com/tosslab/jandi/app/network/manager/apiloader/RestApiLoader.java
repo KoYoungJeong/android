@@ -45,6 +45,9 @@ import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ReqMember;
 import com.tosslab.jandi.app.network.models.ReqModifyComment;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicAutoJoin;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicDescription;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicName;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqOwner;
@@ -96,6 +99,8 @@ import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.network.models.validation.ResValidation;
 
 import java.util.List;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by tee on 15. 6. 20..
@@ -207,9 +212,19 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadModifyPublicTopicNameByChannelApi(ReqCreateTopic channel, int
+    public IExecutor<ResCommon> loadModifyPublicTopicNameByChannelApi(ReqModifyTopicName channel, int
             channelId) {
         return () -> authRestApiClient.modifyPublicTopicNameByChannelApi(channel, channelId);
+    }
+
+    @Override
+    public IExecutor<ResCommon> loadModifyPublicTopicDescriptionByChannelApi(ReqModifyTopicDescription description, int channelId) throws RetrofitError {
+        return () -> authRestApiClient.modifyPublicTopicDescriptionByChannelApi(description, channelId);
+    }
+
+    @Override
+    public IExecutor<ResCommon> loadModifyPublicTopicAutoJoinByChannelApi(ReqModifyTopicAutoJoin topicAutoJoin, int channelId) throws RetrofitError {
+        return () -> authRestApiClient.modifyPublicTopicAutoJoinByChannelApi(topicAutoJoin, channelId);
     }
 
     @Override
@@ -367,8 +382,13 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadModifyGroupByGroupApi(ReqCreateTopic channel, int groupId) {
-        return () -> authRestApiClient.modifyGroupByGroupApi(channel, groupId);
+    public IExecutor<ResCommon> loadModifyGroupByGroupApi(ReqModifyTopicName channel, int groupId) {
+        return () -> authRestApiClient.modifyGroupNameByGroupApi(channel, groupId);
+    }
+
+    @Override
+    public IExecutor<ResCommon> loadModifyGroupDescriptionByGroupApi(ReqModifyTopicDescription entityInfo, int entityId) {
+        return () -> authRestApiClient.modifyGroupDescriptionByGroupApi(entityInfo, entityId);
     }
 
     @Override
