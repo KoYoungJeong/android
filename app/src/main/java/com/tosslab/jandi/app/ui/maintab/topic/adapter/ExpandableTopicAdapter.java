@@ -16,9 +16,9 @@ import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.utils.AbstractExpandableItemAdapter;
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.utils.ExpandableViewUtils;
+import com.tosslab.jandi.app.libraries.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
+import com.tosslab.jandi.app.libraries.advancerecyclerview.utils.AbstractExpandableItemAdapter;
+import com.tosslab.jandi.app.libraries.advancerecyclerview.utils.ExpandableViewUtils;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.viewholder.TopicFolderViewHolder;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.viewholder.TopicItemViewHolder;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.viewholder.TopicJoinButtonViewHolder;

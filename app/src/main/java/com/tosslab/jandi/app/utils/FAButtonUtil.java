@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.utils;
 
 import android.support.annotation.InterpolatorRes;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -73,10 +72,9 @@ public class FAButtonUtil {
 
             private void hide(View fab) {
 
-                if (fab.getVisibility() == View.GONE || isAnimating) {
+                if (fab.getVisibility() == View.INVISIBLE || isAnimating) {
                     return;
                 }
-
 
                 isAnimating = true;
 
@@ -87,7 +85,6 @@ public class FAButtonUtil {
 
                 fab.startAnimation(translateAnimation);
 
-
                 translateAnimation.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
@@ -96,7 +93,7 @@ public class FAButtonUtil {
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        fab.setVisibility(View.GONE);
+                        fab.setVisibility(View.INVISIBLE);
                         isAnimating = false;
                     }
 
@@ -144,118 +141,8 @@ public class FAButtonUtil {
                 fab.startAnimation(translateAnimation);
 
             }
+
         });
-
-
-    }
-
-    public static void setFAButtonController(RecyclerView listview, View faButton) {
-
-        final View fab = faButton;
-
-        listview.setOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            int lastScrollY = 0;
-            boolean isHide;
-
-            boolean isAnimating = false;
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-
-                if (dy > 0) {
-                    if (!isHide) {
-                        hide(fab);
-                    }
-                    isHide = true;
-                } else {
-                    if (isHide) {
-                        show(fab);
-                    }
-                    isHide = false;
-                }
-
-                lastScrollY = dy;
-
-            }
-
-            private void hide(View fab) {
-
-                if (fab.getVisibility() == View.GONE || isAnimating) {
-                    return;
-                }
-
-
-                isAnimating = true;
-
-                TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 2f);
-                translateAnimation.setInterpolator(fab.getContext(), ACCELERATE_INTERPOLATOR);
-                translateAnimation.setDuration(fab.getContext().getResources().getInteger(android.R.integer.config_shortAnimTime));
-                translateAnimation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
-
-                fab.startAnimation(translateAnimation);
-
-
-                translateAnimation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        fab.setVisibility(View.GONE);
-                        isAnimating = false;
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-
-            }
-
-
-            private void show(View fab) {
-
-                if (fab.getVisibility() == View.VISIBLE || isAnimating) {
-                    return;
-                }
-
-                isAnimating = true;
-
-                fab.setVisibility(View.VISIBLE);
-
-                TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 2f, Animation.RELATIVE_TO_SELF, 0f);
-                translateAnimation.setInterpolator(fab.getContext(), ACCELERATE_INTERPOLATOR);
-                translateAnimation.setDuration(fab.getContext().getResources().getInteger(android.R.integer.config_shortAnimTime));
-                translateAnimation.setFillAfter(true);
-                translateAnimation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
-
-                translateAnimation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        isAnimating = false;
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-
-                fab.startAnimation(translateAnimation);
-
-            }
-        });
-
-
     }
 
 }

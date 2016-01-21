@@ -2,8 +2,8 @@ package com.tosslab.jandi.app.ui.maintab.topic.domain;
 
 import android.support.v4.util.Pair;
 
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.provider.AbstractExpandableDataProvider;
+import com.tosslab.jandi.app.libraries.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
+import com.tosslab.jandi.app.libraries.advancerecyclerview.provider.AbstractExpandableDataProvider;
 
 import java.util.List;
 

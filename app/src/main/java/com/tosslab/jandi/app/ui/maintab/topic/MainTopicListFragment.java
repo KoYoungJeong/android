@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.topic;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -18,15 +19,16 @@ import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.animator.GeneralItemAnimator;
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.animator.RefactoredDefaultItemAnimator;
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
+import com.tosslab.jandi.app.libraries.advancerecyclerview.animator.GeneralItemAnimator;
+import com.tosslab.jandi.app.libraries.advancerecyclerview.animator.RefactoredDefaultItemAnimator;
+import com.tosslab.jandi.app.libraries.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.ExpandableTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.TopicFolderDialogFragment_;
@@ -34,13 +36,12 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.topic.presenter.MainTopicListPresenter;
+import com.tosslab.jandi.app.ui.maintab.topic.viewmodel.FloatingActionButtonViewModel;
 import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.TopicFolderChooseActivity_;
-import com.tosslab.jandi.app.ui.maintab.topic.views.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -54,7 +55,6 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OptionsItem;
@@ -81,8 +81,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     int selectedEntity = -2;
     @Bean(MainTopicListPresenter.class)
     MainTopicListPresenter mainTopicListPresenter;
-    @ViewById(R.id.btn_main_topic_fab)
-    View btnFA;
     @ViewById(R.id.rv_main_topic)
     RecyclerView lvMainTopic;
 
@@ -93,6 +91,12 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     private boolean isFirstForRetrieve = true;
     private ProgressWheel progressWheel;
     private boolean hasOnResumed = false;
+
+    @Override
+    public void onAttach(Context context) {
+        MainTabActivity mainTabActivity = (MainTabActivity) context;
+        super.onAttach(context);
+    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -123,7 +127,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     @AfterViews
     void initViews() {
         mainTopicListPresenter.onLoadList();
-        FAButtonUtil.setFAButtonController(lvMainTopic, btnFA);
+        FloatingActionButtonViewModel.setLvTopic(lvMainTopic);
         hasOptionsMenu();
     }
 
@@ -205,8 +209,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     @Override
     public void onResume() {
         super.onResume();
-        btnFA.setAnimation(null);
-        btnFA.setVisibility(View.VISIBLE);
         if (adapter != null && hasOnResumed) {
             scrollAndAnimateForSelectedItem();
         }
@@ -304,16 +306,16 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         return adapter.getAllTopicItemData();
     }
 
-    @Click(R.id.btn_main_topic_fab)
-    void onAddTopicClick() {
-        TopicCreateActivity_
-                .intent(MainTopicListFragment.this)
-                .start();
-
-        getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
-
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.CreateNewTopic);
-    }
+//    @Click(R.id.btn_main_topic_fab)
+//    void onAddTopicClick() {
+//        TopicCreateActivity_
+//                .intent(MainTopicListFragment.this)
+//                .start();
+//
+//        getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
+//
+//        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.CreateNewTopic);
+//    }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override

@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
+import com.tosslab.jandi.app.libraries.floatingactionmenu.FloatingActionMenu;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -50,6 +51,7 @@ import com.tosslab.jandi.app.ui.MixpanelAnalytics;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
+import com.tosslab.jandi.app.ui.maintab.topic.viewmodel.FloatingActionButtonViewModel;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -98,7 +100,8 @@ public class MainTabActivity extends BaseAppCompatActivity {
     public static final int CHAT_INDEX = 1;
     @Extra
     boolean fromPush = false;
-
+    @ViewById(R.id.vg_fab_menu)
+    FloatingActionMenu floatingActionMenu;
     @Bean
     EntityClientManager entityClientManager;
     @Bean
@@ -110,6 +113,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     @ViewById(R.id.vg_main_offline)
     View vgOffline;
+
     int selectedEntity = -1;
     private OfflineLayer offlineLayer;
     private ProgressWheel mProgressWheel;
@@ -120,6 +124,8 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     @AfterViews
     void initView() {
+        FloatingActionButtonViewModel.setFloatingActionMenu(floatingActionMenu);
+
         showDialogIfNotLastestVersion();
         ParseUpdateUtil.addChannelOnServer();
 
@@ -172,13 +178,23 @@ public class MainTabActivity extends BaseAppCompatActivity {
                 LogUtil.d("onPageSelected at " + position);
                 trackScreenView(position);
                 switch (position) {
+                    case 0:
+                        FloatingActionButtonViewModel.setFAButtonController();
+                        FloatingActionButtonViewModel.setFABMenuVisibility(true);
+                        break;
                     case 1:
+                        FloatingActionButtonViewModel.releaseFAButtonController();
+                        FloatingActionButtonViewModel.setFABMenuVisibility(false);
                         TutorialCoachMarkUtil.showCoachMarkDirectMessageListIfNotShown(MainTabActivity.this);
                         break;
                     case 2:
+                        FloatingActionButtonViewModel.releaseFAButtonController();
+                        FloatingActionButtonViewModel.setFABMenuVisibility(false);
                         TutorialCoachMarkUtil.showCoachMarkFileListIfNotShown(MainTabActivity.this);
                         break;
                     case 3:
+                        FloatingActionButtonViewModel.releaseFAButtonController();
+                        FloatingActionButtonViewModel.setFABMenuVisibility(false);
                         TutorialCoachMarkUtil.showCoachMarkMoreIfNotShown(MainTabActivity.this);
                         break;
                 }
@@ -203,6 +219,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
         if (NetworkCheckUtil.isConnected()) {
             getEntities();
         }
+
 
     }
 
@@ -244,23 +261,17 @@ public class MainTabActivity extends BaseAppCompatActivity {
         final AlertDialog dialog = builder.setView(view)
                 .show();
 
-        view.findViewById(R.id.btn_invitation_popup_invite).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_POPUP);
-                invitationDialogExecutor.execute();
+        view.findViewById(R.id.btn_invitation_popup_invite).setOnClickListener(v -> {
+            dialog.dismiss();
+            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_POPUP);
+            invitationDialogExecutor.execute();
 
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.SendInvitations);
-            }
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.SendInvitations);
         });
 
-        view.findViewById(R.id.btn_invitation_popup_later).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.Later);
-            }
+        view.findViewById(R.id.btn_invitation_popup_later).setOnClickListener(v -> {
+            dialog.dismiss();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.Later);
         });
 
     }
@@ -574,5 +585,6 @@ public class MainTabActivity extends BaseAppCompatActivity {
             return 0;
         }
     }
+
 
 }

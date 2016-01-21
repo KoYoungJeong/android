@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -49,5 +51,45 @@
         android:layout_height="4dp"
         android:layout_below="@id/sliding_tabs"
         android:background="@drawable/menu_shadow" />
+
+    <com.tosslab.jandi.app.libraries.floatingactionmenu.FloatingActionMenu
+        android:id="@+id/vg_fab_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:paddingBottom="20dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        fab:menu_backgroundColor="#48000000"
+        fab:menu_labels_ellipsize="end"
+        fab:menu_labels_singleLine="true">
+
+        <com.tosslab.jandi.app.libraries.floatingactionmenu.FloatingActionButton
+            android:id="@+id/fab1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/fab_add"
+            fab:fab_label="Menu item 1"
+            fab:fab_size="mini" />
+
+        <com.tosslab.jandi.app.libraries.floatingactionmenu.FloatingActionButton
+            android:id="@+id/fab2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/fab_add"
+            fab:fab_label="Menu item 2"
+            fab:fab_size="mini" />
+
+        <com.tosslab.jandi.app.libraries.floatingactionmenu.FloatingActionButton
+            android:id="@+id/fab3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/fab_add"
+            fab:fab_label="abcdef"
+            fab:fab_size="mini" />
+
+    </com.tosslab.jandi.app.libraries.floatingactionmenu.FloatingActionMenu>
+
 
 </RelativeLayout>

@@ -13,4 +13,6 @@
     <item name="chatchoose_item" type="id" />
     <item name="chatchoose_disable_folding" type="id" />
 
+    <!-- for ploating action menu from fab library -->
+    <item name="fab_label" type="id" />
 </resources>
