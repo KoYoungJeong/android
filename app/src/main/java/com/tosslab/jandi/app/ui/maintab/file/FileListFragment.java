@@ -312,7 +312,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
             if (justGetFilesSize < ReqSearchFile.MAX) {
 
-                fileListPresenter.showWarningToast(getString(R.string.warn_no_more_files));
+                fileListPresenter.showWarningToast(JandiApplication.getContext().getString(R.string.warn_no_more_files));
                 searchedFileItemListAdapter.setNoMoreLoad();
             } else {
                 searchedFileItemListAdapter.setReadyMore();
@@ -321,10 +321,10 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         } catch (RetrofitError e) {
             e.printStackTrace();
             LogUtil.e("fail to get searched files.", e);
-            fileListPresenter.showErrorToast(getString(R.string.err_file_search));
+            fileListPresenter.showErrorToast(JandiApplication.getContext().getString(R.string.err_file_search));
         } catch (Exception e) {
             e.printStackTrace();
-            fileListPresenter.showErrorToast(getString(R.string.err_file_search));
+            fileListPresenter.showErrorToast(JandiApplication.getContext().getString(R.string.err_file_search));
         } finally {
             fileListPresenter.dismissMoreProgressBar();
         }
