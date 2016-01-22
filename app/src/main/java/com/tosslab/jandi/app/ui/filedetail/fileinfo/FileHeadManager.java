@@ -67,7 +67,7 @@ public class FileHeadManager {
     private FileThumbLoader thumbLoader;
 
     public View getHeaderView() {
-        View header = LayoutInflater.from(activity).inflate(R.layout.activity_file_detail_header, null, false);
+        View header = LayoutInflater.from(activity).inflate(R.layout.item_file_detail_file, null, false);
         ivUserProfile = (SimpleDraweeView) header.findViewById(R.id.img_file_detail_user_profile);
         tvUserName = (TextView) header.findViewById(R.id.txt_file_detail_user_name);
         tvFileCreateDate = (TextView) header.findViewById(R.id.txt_file_detail_create_date);

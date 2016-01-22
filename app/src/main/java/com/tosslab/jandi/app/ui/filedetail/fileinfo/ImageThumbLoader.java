@@ -27,6 +27,7 @@ import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
+import com.tosslab.jandi.app.utils.image.ImageDownloadTracker;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -132,9 +133,14 @@ public class ImageThumbLoader implements FileThumbLoader {
         ivFilePhoto.setOnClickListener(view -> moveToPhotoViewer(fileMessageId, content));
 
         Uri originalUri = Uri.parse(originalUrl);
+
+        boolean hasDownloadHistory = ImageUtil.hasCache(originalUri) ||
+                (ImageDownloadTracker.getInstance()
+                        .getStatus(originalUri) != ImageDownloadTracker.Status.PENDING);
+
         if (TextUtils.isEmpty(localFilePath)
                 && !hasThumbnailUrl
-                && !ImageUtil.hasCache(originalUri)) {
+                && !hasDownloadHistory) {
 
             showTapToViewLayout(originalUri, fileMessageId, content);
 
@@ -144,7 +150,7 @@ public class ImageThumbLoader implements FileThumbLoader {
             builder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
             builder.error(R.drawable.file_noimage, ScalingUtils.ScaleType.FIT_CENTER);
 
-            Uri uri = !TextUtils.isEmpty(localFilePath)
+            final Uri uri = !TextUtils.isEmpty(localFilePath)
                     ? UriFactory.getFileUri(localFilePath)
                     : hasThumbnailUrl
                     ? Uri.parse(extraInfo.largeThumbnailUrl) : originalUri;
@@ -152,7 +158,7 @@ public class ImageThumbLoader implements FileThumbLoader {
             int width = ImageUtil.STANDARD_IMAGE_SIZE;
             int height = ImageUtil.STANDARD_IMAGE_SIZE;
 
-            boolean hasSizeInfo = extraInfo != null && extraInfo.width > 0 && extraInfo.height > 0;
+            final boolean hasSizeInfo = extraInfo != null && extraInfo.width > 0 && extraInfo.height > 0;
             if (hasSizeInfo) {
                 Pair<Integer, Integer> widthAndHeight
                         = updateViewSize(extraInfo.width, extraInfo.height, extraInfo.orientation);
@@ -161,16 +167,19 @@ public class ImageThumbLoader implements FileThumbLoader {
             }
 
             builder.resize(width, height);
-            if (!hasSizeInfo) {
-                builder.controllerListener(new BaseControllerListener<ImageInfo>() {
-                    @Override
-                    public void onFinalImageSet(String id,
-                                                ImageInfo imageInfo, Animatable animatable) {
+            builder.controllerListener(new BaseControllerListener<ImageInfo>() {
+                @Override
+                public void onFinalImageSet(String id,
+                                            ImageInfo imageInfo, Animatable animatable) {
+                    if (!hasSizeInfo) {
                         updateViewSize(imageInfo.getWidth(), imageInfo.getHeight());
                     }
-                });
-            }
+
+                    ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.COMPLETED);
+                }
+            });
             builder.load(uri).into(ivFilePhoto);
+            ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.IN_PROGRESS);
         }
     }
 
@@ -191,7 +200,7 @@ public class ImageThumbLoader implements FileThumbLoader {
         });
     }
 
-    private void loadImageWithCallback(Uri uri) {
+    private void loadImageWithCallback(final Uri uri) {
         final int millisInFuture = 6000;
         progressTimer = new CountDownTimer(millisInFuture, 120) {
             @Override
@@ -233,10 +242,14 @@ public class ImageThumbLoader implements FileThumbLoader {
                 tvPercentage.setText(100 + "%");
 
                 updateViewSize(imageInfo.getWidth(), imageInfo.getHeight());
+
+                ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.COMPLETED);
             }
         });
 
         builder.load(uri).into(ivFilePhoto);
+        ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.IN_PROGRESS);
+
         progressTimer.start();
     }
 

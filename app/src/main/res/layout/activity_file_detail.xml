@@ -13,18 +13,14 @@
         android:layout_alignParentTop="true"
         android:visibility="visible" />
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/lv_file_detail_comments"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/space_file_detail_divider"
         android:layout_below="@+id/layout_search_bar"
-        android:layout_weight="1"
         android:background="@color/jandi_file_detail_comments_bg"
-        android:choiceMode="singleChoice"
         android:clipToPadding="false"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
         android:paddingBottom="5dp" />
 
     <android.support.v7.widget.RecyclerView
@@ -33,7 +29,6 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/space_file_detail_divider"
         android:layout_below="@+id/layout_search_bar"
-        android:layout_weight="1"
         android:background="@color/jandi_file_detail_comments_bg"
         android:choiceMode="singleChoice"
         android:clipToPadding="false"
@@ -42,7 +37,6 @@
         android:paddingBottom="5dp"
         android:transcriptMode="alwaysScroll"
         android:visibility="invisible" />
-
 
     <RelativeLayout
         android:id="@+id/vg_file_detail_preview_sticker"
@@ -118,7 +112,6 @@
                 android:src="@drawable/chat_mention"
                 android:visibility="visible" />
         </LinearLayout>
-
 
         <TextView
             android:id="@+id/btn_send_message"
