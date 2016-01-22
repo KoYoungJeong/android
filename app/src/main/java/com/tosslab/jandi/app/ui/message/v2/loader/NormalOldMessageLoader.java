@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2.loader;
 import android.support.annotation.Nullable;
 
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
@@ -147,8 +148,10 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                     }
 
                     updateMarker(teamId, oldMessage.entityId, oldMessage.lastLinkId);
+                    deleteCompletedSendingMessage(oldMessage.entityId);
                 }
 
+                // 첫 대화인 경우 해당 채팅방의 보내는 중인 메세지 캐시 데이터 삭제함
             }
             upsertMessages(oldMessage);
         } else if (oldMessage.records.size() < itemCount) {
@@ -168,6 +171,10 @@ public class NormalOldMessageLoader implements OldMessageLoader {
             }
         }
         return oldMessage;
+    }
+
+    private void deleteCompletedSendingMessage(int roomId) {
+        SendMessageRepository.getRepository().deleteCompletedMessageOfRoom(roomId);
     }
 
     private void upsertMessages(ResMessages oldMessage) {
