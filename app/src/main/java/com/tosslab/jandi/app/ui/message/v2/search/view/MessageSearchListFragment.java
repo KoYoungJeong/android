@@ -765,6 +765,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissOldLoadingProgress() {
 
