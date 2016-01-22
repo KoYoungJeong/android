@@ -56,9 +56,6 @@ import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by Steve SeongUg Jung on 15. 7. 9..
- */
 @EFragment(R.layout.fragment_topic_detail)
 public class TopicDetailFragment extends Fragment implements TopicDetailPresenter.View {
 

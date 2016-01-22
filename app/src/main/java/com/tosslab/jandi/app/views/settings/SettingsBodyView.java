@@ -23,12 +23,16 @@ public class SettingsBodyView extends LinearLayout {
 
     public SettingsBodyView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
-        initViews(context);
-        initAttrs(context, attrs);
     }
 
     public SettingsBodyView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initViews(context);
+        initAttrs(context, attrs);
+    }
+
+    public SettingsBodyView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
         initViews(context);
         initAttrs(context, attrs);
     }
@@ -40,6 +44,7 @@ public class SettingsBodyView extends LinearLayout {
 
         tvTitle = ((TextView) findViewById(R.id.tv_view_settings_body_title));
         tvSummary = ((TextView) findViewById(R.id.tv_view_settings_body_summary));
+
 
     }
 
@@ -62,6 +67,7 @@ public class SettingsBodyView extends LinearLayout {
         }
 
         a.recycle();
+
     }
 
     public void setTitle(CharSequence title) {
