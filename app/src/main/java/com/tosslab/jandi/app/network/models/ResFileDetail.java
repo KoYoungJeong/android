@@ -1,5 +1,9 @@
 package com.tosslab.jandi.app.network.models;
 
+import com.j256.ormlite.table.DatabaseTable;
+import com.tosslab.jandi.app.local.orm.dao.FileDatailDaoImpl;
+import com.tosslab.jandi.app.local.orm.dao.LinkDaoImpl;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 

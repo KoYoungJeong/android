@@ -46,7 +46,7 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
     public static final int EXTRA_MODE_UPLOAD = 1;
 
     @Extra
-    int entityId;
+    long entityId;
 
     @Extra
     int mode = EXTRA_MODE_UPLOAD;

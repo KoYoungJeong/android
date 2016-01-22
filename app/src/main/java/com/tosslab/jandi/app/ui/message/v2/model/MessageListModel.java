@@ -24,7 +24,6 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ReadyMessageRepository;
@@ -88,15 +87,15 @@ public class MessageListModel {
     AppCompatActivity activity;
 
 
-    public void setEntityInfo(int entityType, int entityId) {
+    public void setEntityInfo(int entityType, long entityId) {
         messageManipulator.initEntity(entityType, entityId);
     }
 
-    public ResMessages getOldMessage(int position, int count) throws RetrofitError {
-        return messageManipulator.getMessages(position, count);
+    public ResMessages getOldMessage(long linkId, int count) throws RetrofitError {
+        return messageManipulator.getMessages(linkId, count);
     }
 
-    public ResMessages.OriginalMessage getMessage(int teamId, int messageId) {
+    public ResMessages.OriginalMessage getMessage(long teamId, long messageId) {
         ResMessages.OriginalMessage message = null;
         try {
             message = messageManipulator.getMessage(teamId, messageId);
@@ -110,15 +109,15 @@ public class MessageListModel {
         return TextUtils.isEmpty(text.toString().trim());
     }
 
-    public List<ResMessages.Link> getNewMessage(int linkId) throws RetrofitError {
+    public List<ResMessages.Link> getNewMessage(long linkId) throws RetrofitError {
         return messageManipulator.updateMessages(linkId);
     }
 
-    public void deleteMessage(int messageId) throws RetrofitError {
+    public void deleteMessage(long messageId) throws RetrofitError {
         messageManipulator.deleteMessage(messageId);
     }
 
-    public void deleteSticker(int messageId, int messageType) throws RetrofitError {
+    public void deleteSticker(long messageId, int messageType) throws RetrofitError {
         messageManipulator.deleteSticker(messageId, messageType);
     }
 
@@ -146,7 +145,7 @@ public class MessageListModel {
         return (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) ? true : false;
     }
 
-    public MenuCommand getMenuCommand(Fragment fragmet, int teamId, int entityId, MenuItem item) {
+    public MenuCommand getMenuCommand(Fragment fragmet, long teamId, long entityId, MenuItem item) {
         return MenuCommandBuilder.init(activity)
                 .with(fragmet)
                 .teamId(teamId)
@@ -154,7 +153,7 @@ public class MessageListModel {
                 .build(item);
     }
 
-    public int initRoomId() {
+    public long initRoomId() {
         try {
             ResMessages oldMessage = getOldMessage(-1, 1);
             return oldMessage.entityId;
@@ -167,7 +166,7 @@ public class MessageListModel {
     }
 
 
-    public int sendMessage(long localId, String message, List<MentionObject> mentions) {
+    public long sendMessage(long localId, String message, List<MentionObject> mentions) {
 
         SendingMessage sendingMessage = new SendingMessage(localId, new ReqSendMessageV3(message, mentions));
         try {
@@ -199,7 +198,7 @@ public class MessageListModel {
         }
     }
 
-    public long insertSendingMessage(int roomId, String message, List<MentionObject> mentions, int stickerGroupId, String stickerId) {
+    public long insertSendingMessage(long roomId, String message, List<MentionObject> mentions, long stickerGroupId, String stickerId) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setRoomId(roomId);
         sendMessage.setMessage(message);
@@ -215,7 +214,7 @@ public class MessageListModel {
         return sendMessage.getId();
     }
 
-    public boolean isMyMessage(int writerId) {
+    public boolean isMyMessage(long writerId) {
         return EntityManager.getInstance().getMe().getId() == writerId;
     }
 
@@ -251,18 +250,18 @@ public class MessageListModel {
         return requestFuture.get();
     }
 
-    public void updateMarker(int lastUpdateLinkId) throws RetrofitError {
+    public void updateMarker(long lastUpdateLinkId) throws RetrofitError {
         messageManipulator.setMarker(lastUpdateLinkId);
     }
 
-    public void saveTempMessage(int roomId, String sendEditText) {
+    public void saveTempMessage(long roomId, String sendEditText) {
         ReadyMessage readyMessage = new ReadyMessage();
         readyMessage.setRoomId(roomId);
         readyMessage.setText(sendEditText);
         ReadyMessageRepository.getRepository().upsertReadyMessage(readyMessage);
     }
 
-    public void deleteTopic(int entityId, int entityType) throws RetrofitError {
+    public void deleteTopic(long entityId, int entityType) throws RetrofitError {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             entityClientManager.deleteChannel(entityId);
         } else {
@@ -270,7 +269,7 @@ public class MessageListModel {
         }
     }
 
-    public void modifyTopicName(int entityType, int entityId, String inputName) throws RetrofitError {
+    public void modifyTopicName(int entityType, long entityId, String inputName) throws RetrofitError {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             entityClientManager.modifyChannelName(entityId, inputName);
         } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
@@ -300,10 +299,9 @@ public class MessageListModel {
         }
     }
 
-    public List<ResMessages.Link> getDummyMessages(int roomId) {
-        List<SendMessage> sendMessage = SendMessageRepository.getRepository().getSendMessage
-                (roomId);
-        int id = EntityManager.getInstance().getMe().getId();
+    public List<ResMessages.Link> getDummyMessages(long roomId) {
+        List<SendMessage> sendMessage = SendMessageRepository.getRepository().getSendMessage(roomId);
+        long id = EntityManager.getInstance().getMe().getId();
         List<ResMessages.Link> links = new ArrayList<>();
         for (SendMessage link : sendMessage) {
 
@@ -313,7 +311,7 @@ public class MessageListModel {
         return links;
     }
 
-    private DummyMessageLink getDummyMessageLink(int id, SendMessage link) {
+    private DummyMessageLink getDummyMessageLink(long id, SendMessage link) {
         List<MentionObject> mentionObjects = new ArrayList<>();
 
         Collection<MentionObject> savedMention = link.getMentionObjects();
@@ -347,7 +345,7 @@ public class MessageListModel {
         SendMessageRepository.getRepository().deleteSendMessage(localId);
     }
 
-    public void removeNotificationSameEntityId(int entityId) {
+    public void removeNotificationSameEntityId(long entityId) {
 
         int chatIdFromPush = JandiPreference.getChatIdFromPush(activity);
         if (chatIdFromPush == entityId) {
@@ -357,7 +355,7 @@ public class MessageListModel {
 
     }
 
-    public boolean isEnabledIfUser(int entityId) {
+    public boolean isEnabledIfUser(long entityId) {
 
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
@@ -369,22 +367,22 @@ public class MessageListModel {
 
     }
 
-    public ResMessages getBeforeMarkerMessage(int linkId) throws RetrofitError {
+    public ResMessages getBeforeMarkerMessage(long linkId) throws RetrofitError {
 
         return messageManipulator.getBeforeMarkerMessage(linkId);
     }
 
 
-    public ResMessages getAfterMarkerMessage(int linkId) throws RetrofitError {
+    public ResMessages getAfterMarkerMessage(long linkId) throws RetrofitError {
         return messageManipulator.getAfterMarkerMessage(linkId);
     }
 
-    public ResMessages getAfterMarkerMessage(int linkId, int count) throws RetrofitError {
+    public ResMessages getAfterMarkerMessage(long linkId, int count) throws RetrofitError {
         return messageManipulator.getAfterMarkerMessage(linkId, count);
     }
 
     @Background
-    public void updateMarkerInfo(int teamId, int roomId) {
+    public void updateMarkerInfo(long teamId, long roomId) {
 
         if (teamId <= 0 || roomId <= 0) {
             return;
@@ -400,13 +398,13 @@ public class MessageListModel {
 
     }
 
-    public void upsertMyMarker(int roomId, int lastLinkId) {
-        int myId = EntityManager.getInstance().getMe().getId();
-        int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
+    public void upsertMyMarker(long roomId, long lastLinkId) {
+        long myId = EntityManager.getInstance().getMe().getId();
+        long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
         MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, myId, lastLinkId);
     }
 
-    public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, long localId) {
+    public int sendStickerMessage(long teamId, long entityId, StickerInfo stickerInfo, long localId) {
 
         String type = null;
 
@@ -461,7 +459,7 @@ public class MessageListModel {
                 .flush();
     }
 
-    public void trackMessageDeleteSuccess(int messageId) {
+    public void trackMessageDeleteSuccess(long messageId) {
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.MessageDelete)
@@ -484,7 +482,7 @@ public class MessageListModel {
                         .build());
     }
 
-    public void registStarredMessage(int teamId, int messageId) {
+    public void registStarredMessage(long teamId, long messageId) {
         try {
             RequestApiManager.getInstance()
                     .registStarredMessageByTeamApi(teamId, messageId);
@@ -495,7 +493,7 @@ public class MessageListModel {
         }
     }
 
-    public void unregistStarredMessage(int teamId, int messageId) {
+    public void unregistStarredMessage(long teamId, long messageId) {
         try {
             RequestApiManager.getInstance()
                     .unregistStarredMessageByTeamApi(teamId, messageId);
@@ -506,13 +504,13 @@ public class MessageListModel {
         }
     }
 
-    public boolean isUser(int entityId) {
+    public boolean isUser(long entityId) {
         return EntityManager
                 .getInstance()
                 .getEntityById(entityId).isUser() || EntityManager.getInstance().isJandiBot(entityId);
     }
 
-    public String getReadyMessage(int roomId) {
+    public String getReadyMessage(long roomId) {
         return ReadyMessageRepository.getRepository().getReadyMessage(roomId).getText();
     }
 
@@ -526,14 +524,13 @@ public class MessageListModel {
 
     }
 
-    public void setRoomId(int roomId) {
+    public void setRoomId(long roomId) {
         messageManipulator.setRoomId(roomId);
     }
 
-    public int getLastReadLinkId(int roomId, int entityId) {
+    public long getLastReadLinkId(long roomId, long entityId) {
         if (roomId > 0) {
             // 기존의 마커 정보 가져오기
-            int teamId = AccountRepository.getRepository().getSelectedTeamId();
             ResRoomInfo.MarkerInfo myMarker = MarkerRepository.getRepository()
                     .getMyMarker(roomId, entityId);
 
@@ -546,17 +543,17 @@ public class MessageListModel {
         ResLeftSideMenu.User myUser = EntityManager.getInstance().getMe()
                 .getUser();
 
-        Integer lastLinkId = Observable.from(myUser.u_messageMarkers)
+        Long lastLinkId = Observable.from(myUser.u_messageMarkers)
                 .filter(messageMarker -> messageMarker.entityId == entityId)
                 .map(messageMarker -> messageMarker.lastLinkId)
-                .firstOrDefault(-1)
+                .firstOrDefault(-1L)
                 .toBlocking()
                 .first();
 
         return lastLinkId;
     }
 
-    public int getMyId() {
+    public long getMyId() {
         return EntityManager.getInstance().getMe().getId();
     }
 
@@ -565,15 +562,15 @@ public class MessageListModel {
         return EntityManager.getInstance().getMe().isTeamOwner();
     }
 
-    public boolean isCurrentTeam(int teamId) {
+    public boolean isCurrentTeam(long teamId) {
         return AccountRepository.getRepository().getSelectedTeamId() == teamId;
     }
 
-    public AnalyticsValue.Screen getScreen(int entityId) {
+    public AnalyticsValue.Screen getScreen(long entityId) {
         return isUser(entityId) ? AnalyticsValue.Screen.Message : AnalyticsValue.Screen.TopicChat;
     }
 
-    public long insertSendingMessageIfCan(int entityId, int roomId, String message, List<MentionObject> mentions) {
+    public long insertSendingMessageIfCan(long entityId, long roomId, String message, List<MentionObject> mentions) {
         long localId;
         if (isUser(entityId)) {
             if (roomId > 0) {
@@ -588,7 +585,7 @@ public class MessageListModel {
         return localId;
     }
 
-    public long insertSendingMessageIfCan(int entityId, int roomId, StickerInfo stickerInfo) {
+    public long insertSendingMessageIfCan(long entityId, long roomId, StickerInfo stickerInfo) {
 
         long localId;
         if (isUser(entityId)) {
@@ -609,10 +606,6 @@ public class MessageListModel {
         return DateComparatorUtil.isBefore30Days(time);
     }
 
-    public String getTopicName(int entityId) {
-        return EntityManager.getInstance().getEntityNameById(entityId);
-    }
-
     /**
      * @param cursorPosition
      * @param message
@@ -628,7 +621,4 @@ public class MessageListModel {
         return false;
     }
 
-    public int getRoomIdByUserId(int entityId) {
-        return ChatRepository.getRepository().getChat(entityId).getEntityId();
-    }
 }

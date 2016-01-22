@@ -157,7 +157,7 @@ public class InternalWebPresenter {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         FormattedEntity item = ((EntitySimpleListAdapter) ((AlertDialog) dialog).getListView().getAdapter()).getItem(which);
-                        int entityId = item.getId();
+                        long entityId = item.getId();
                         int entityType;
                         if (item.isPublicTopic()) {
                             entityType = JandiConstants.TYPE_PUBLIC_TOPIC;

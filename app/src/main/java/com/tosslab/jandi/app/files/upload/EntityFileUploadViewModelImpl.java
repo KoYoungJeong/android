@@ -44,7 +44,7 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
     private File filePath;
 
     @Override
-    public void selectFileSelector(int type, Fragment fragment, int entityId) {
+    public void selectFileSelector(int type, Fragment fragment, long entityId) {
         switch (type) {
             case TYPE_UPLOAD_GALLERY:
                 ImageAlbumActivity_
@@ -115,15 +115,15 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
     }
 
     @Override
-    public void startUpload(Activity activity, String title, int entityId, String realFilePath, String comment) {
+    public void startUpload(Activity activity, String title, long entityId, String realFilePath, String comment) {
         ProgressDialog uploadProgress = getUploadProgress(activity, realFilePath);
 
         uploadFile(activity.getApplicationContext(), title, entityId, realFilePath, comment, uploadProgress);
     }
 
     @Background
-    void uploadFile(Context context, String title, int entityId, String realFilePath, String comment, ProgressDialog uploadProgress) {
-        boolean isPublicTopic = filePickerModel.isPublicEntity(context, entityId);
+    void uploadFile(Context context, String title, long entityId, String realFilePath, String comment, ProgressDialog uploadProgress) {
+        boolean isPublicTopic = filePickerModel.isPublicEntity(entityId);
         try {
             JsonObject result = filePickerModel.uploadFile(context, uploadProgress, realFilePath, isPublicTopic, title, entityId, comment);
             if (result.get("code") == null) {
@@ -171,7 +171,7 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
     }
 
     @Background
-    void downloadImageAndShowFileUploadDialog(Context context, FragmentManager fragmentManager, int entityId, ProgressDialog downloadProgress, String url, String downloadDir, String downloadName) {
+    void downloadImageAndShowFileUploadDialog(Context context, FragmentManager fragmentManager, long entityId, ProgressDialog downloadProgress, String url, String downloadDir, String downloadName) {
 
         try {
             File file = GoogleImagePickerUtil.downloadFile(context, downloadProgress, url, downloadDir, downloadName);
@@ -192,7 +192,7 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
     // File Upload 대화상자 보여주기
     @Override
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void showFileUploadDialog(Context context, FragmentManager fragmentManager, String realFilePath, int entityId) {
+    public void showFileUploadDialog(Context context, FragmentManager fragmentManager, String realFilePath, long entityId) {
 
         if (GoogleImagePickerUtil.isUrl(realFilePath)) {
 

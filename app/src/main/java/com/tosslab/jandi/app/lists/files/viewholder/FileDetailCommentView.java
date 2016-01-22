@@ -46,7 +46,7 @@ public class FileDetailCommentView implements CommentViewHolder {
         ivCommentUserProfile =
                 (SimpleDraweeView) rootView.findViewById(R.id.iv_file_detail_comment_user_profile);
         tvCommentUserName = (TextView) rootView.findViewById(R.id.tv_file_detail_comment_user_name);
-        tvCommentContent = (TextView) rootView.findViewById(R.id.txt_file_detail_comment_content_2);
+        tvCommentContent = (TextView) rootView.findViewById(R.id.tv_file_detail_comment_content);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
         selectedView = rootView.findViewById(R.id.v_file_detail_comment_anim);
@@ -98,7 +98,6 @@ public class FileDetailCommentView implements CommentViewHolder {
 
         LinkifyUtil.addLinks(tvCommentContent.getContext(), spannableStringBuilder);
         LinkifyUtil.setOnLinkClick(tvCommentContent);
-
 
         spannableStringBuilder.append(" ");
 

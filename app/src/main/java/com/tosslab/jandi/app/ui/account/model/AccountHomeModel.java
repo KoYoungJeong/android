@@ -90,11 +90,11 @@ public class AccountHomeModel {
         return RequestApiManager.getInstance().changeNameByAccountProfileApi(new ReqProfileName(newName));
     }
 
-    public void updateSelectTeam(int teamId) {
+    public void updateSelectTeam(long teamId) {
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
     }
 
-    public ResLeftSideMenu getEntityInfo(int teamId) throws RetrofitError {
+    public ResLeftSideMenu getEntityInfo(long teamId) throws RetrofitError {
         return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
     }
 
@@ -133,7 +133,7 @@ public class AccountHomeModel {
         return AccountRepository.getRepository().getAccountInfo() != null;
     }
 
-    public void trackLaunchTeamSuccess(int teamId) {
+    public void trackLaunchTeamSuccess(long teamId) {
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.LaunchTeam)

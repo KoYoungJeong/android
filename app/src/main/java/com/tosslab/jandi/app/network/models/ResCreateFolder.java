@@ -5,14 +5,14 @@ package com.tosslab.jandi.app.network.models;
  */
 public class ResCreateFolder {
 
-    private int folderId;
+    private long folderId;
     private String folderName;
 
-    public int getFolderId() {
+    public long getFolderId() {
         return folderId;
     }
 
-    public void setFolderId(int folderId) {
+    public void setFolderId(long folderId) {
         this.folderId = folderId;
     }
 

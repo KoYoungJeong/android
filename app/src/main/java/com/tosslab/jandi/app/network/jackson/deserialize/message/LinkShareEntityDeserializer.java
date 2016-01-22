@@ -20,7 +20,7 @@ public class LinkShareEntityDeserializer extends JsonDeserializer<ResMessages.Or
         ObjectMapper mapper = (ObjectMapper) jp.getCodec();
         JsonNode root = mapper.readTree(jp);
         ResMessages.OriginalMessage.IntegerWrapper integerWrapper = new ResMessages.OriginalMessage.IntegerWrapper();
-        integerWrapper.setShareEntity(root.getIntValue());
+        integerWrapper.setShareEntity(root.getLongValue());
         return integerWrapper;
     }
 }

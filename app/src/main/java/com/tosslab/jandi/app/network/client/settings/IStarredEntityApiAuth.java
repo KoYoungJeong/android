@@ -10,8 +10,8 @@ import retrofit.RetrofitError;
  */
 public interface IStarredEntityApiAuth {
 
-    ResCommon enableFavoriteByStarredEntityApi(ReqTeam reqTeam, int entityId) throws RetrofitError;
+    ResCommon enableFavoriteByStarredEntityApi(ReqTeam reqTeam, long entityId) throws RetrofitError;
 
-    ResCommon disableFavoriteByStarredEntityApi(int teamId, int entityId) throws RetrofitError;
+    ResCommon disableFavoriteByStarredEntityApi(long teamId, long entityId) throws RetrofitError;
 
 }

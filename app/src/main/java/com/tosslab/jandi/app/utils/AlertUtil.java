@@ -91,7 +91,6 @@ public class AlertUtil {
         builder.create().show();
     }
 
-
     public static void showDialog(Activity activity,
                                   int titleResId, int messageResId,
                                   int positiveResId, DialogInterface.OnClickListener positiveListener,

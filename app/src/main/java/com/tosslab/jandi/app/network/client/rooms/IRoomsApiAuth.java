@@ -9,6 +9,6 @@ import retrofit.RetrofitError;
  */
 public interface IRoomsApiAuth {
 
-    ResRoomInfo getRoomInfoByRoomsApi(int teamId, int roomId) throws RetrofitError;
+    ResRoomInfo getRoomInfoByRoomsApi(long teamId, long roomId) throws RetrofitError;
 
 }

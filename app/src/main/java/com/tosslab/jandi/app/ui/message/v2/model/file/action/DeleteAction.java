@@ -39,7 +39,7 @@ public class DeleteAction implements FileAction {
     }
 
     @Background
-    void deleteFile(int fileId) {
+    void deleteFile(long fileId) {
         showProgressWheel();
         try {
 

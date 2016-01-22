@@ -46,7 +46,7 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
     private ProgressWheel progressWheel;
 
     @Override
-    public void selectFileSelector(int type, Fragment fragment, int entityId) {
+    public void selectFileSelector(int type, Fragment fragment, long entityId) {
 
     }
 
@@ -88,7 +88,7 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
     }
 
     @Override
-    public void startUpload(Activity activity, String title, int entityId, String realFilePath, String comment) {
+    public void startUpload(Activity activity, String title, long entityId, String realFilePath, String comment) {
         if (GoogleImagePickerUtil.isUrl(realFilePath)) {
             String downloadDir = FileUtil.getDownloadPath();
             String downloadName = GoogleImagePickerUtil.getWebImageName();
@@ -170,7 +170,7 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
     }
 
     @Override
-    public void showFileUploadDialog(Context context, FragmentManager fragmentManager, String realFilePath, int entityId) {
+    public void showFileUploadDialog(Context context, FragmentManager fragmentManager, String realFilePath, long entityId) {
 
     }
 

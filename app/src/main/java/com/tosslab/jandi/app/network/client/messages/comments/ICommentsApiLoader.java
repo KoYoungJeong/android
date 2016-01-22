@@ -10,10 +10,10 @@ import com.tosslab.jandi.app.network.models.ResCommon;
  */
 public interface ICommentsApiLoader {
 
-    IExecutor<ResCommon> loadSendMessageCommentByCommentsApi(int messageId, int teamId, ReqSendComment ReqSendComment);
+    IExecutor<ResCommon> loadSendMessageCommentByCommentsApi(long messageId, long teamId, ReqSendComment ReqSendComment);
 
     IExecutor<ResCommon> loadModifyMessageCommentByCommentsApi(ReqModifyComment comment, int messageId, int commentId);
 
-    IExecutor<ResCommon> loadDeleteMessageCommentByCommentsApi(int teamId, int messageId, int commentId);
+    IExecutor<ResCommon> loadDeleteMessageCommentByCommentsApi(long teamId, long messageId, long commentId);
 
 }

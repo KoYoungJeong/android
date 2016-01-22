@@ -5,14 +5,14 @@ package com.tosslab.jandi.app.events.messages;
  */
 public class MessageStarredEvent {
 
-    private int messageId;
+    private long messageId;
     private Action action;
 
     public MessageStarredEvent(Action action) {
         this.action = action;
     }
 
-    public MessageStarredEvent(Action action, int messageId) {
+    public MessageStarredEvent(Action action, long messageId) {
         this.action = action;
         this.messageId = messageId;
     }
@@ -21,7 +21,7 @@ public class MessageStarredEvent {
         return action;
     }
 
-    public int getMessageId() {
+    public long getMessageId() {
         return messageId;
     }
 

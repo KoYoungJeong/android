@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
+import rx.Subscriber;
 
 /**
  * Created by tee on 15. 9. 30..
@@ -34,12 +35,19 @@ import rx.Observable;
 
 @EActivity(R.layout.activity_file_unshare_entity_choose)
 public class FileUnshareActivity extends BaseAppCompatActivity {
+    public static final String KEY_ENTITY_ID = "entity_id";
+
+    public static final int MODE_UNSHARE = 0;
+    public static final int MODE_PICK = 1;
 
     @Extra
-    int fileId;
+    long fileId;
 
     @Extra
-    ArrayList<Integer> sharedEntities;
+    long[] sharedEntities;
+
+    @Extra
+    int mode = MODE_UNSHARE;
 
     @ViewById(R.id.lv_shared_entity)
     ListView lvSharedEntities;
@@ -64,7 +72,10 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle(R.string.jandi_title_cdp_to_be_unshared);
+        if (mode == MODE_PICK) {
+        } else {
+            actionBar.setTitle(R.string.jandi_title_cdp_to_be_unshared);
+        }
     }
 
     @Override
@@ -78,12 +89,18 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
     }
 
     public void showList() {
-        int myId = fileDetailModel.getMyId();
+        long myId = fileDetailModel.getMyId();
 
-        List<Integer> sharedEntityWithoutMe = new ArrayList<>();
-
-        Observable.from(sharedEntities)
-                .filter(integerWrapper -> integerWrapper != myId)
+        List<Long> sharedEntityWithoutMe = new ArrayList<>();
+        Observable.create(new Observable.OnSubscribe<Long>() {
+            @Override
+            public void call(Subscriber<? super Long> subscriber) {
+                for (long sharedEntity : sharedEntities) {
+                    subscriber.onNext(sharedEntity);
+                }
+                subscriber.onCompleted();
+            }
+        }).filter(integerWrapper -> integerWrapper != myId)
                 .collect(() -> sharedEntityWithoutMe, List::add)
                 .subscribe();
 
@@ -104,7 +121,7 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
             lvSharedEntities.setAdapter(adapter);
             lvSharedEntities.setOnItemClickListener((adapterView, view, i, l) -> {
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("EntityId", sharedEntities.get(i).getEntity().id);
+                returnIntent.putExtra(KEY_ENTITY_ID, sharedEntities.get(i).getEntity().id);
                 setResult(RESULT_OK, returnIntent);
                 finish();
             });

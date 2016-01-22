@@ -1,42 +1,28 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.view.KeyEvent;
-import android.widget.EditText;
+import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
-import com.tosslab.jandi.app.local.orm.domain.FileDetail;
-import com.tosslab.jandi.app.local.orm.domain.ReadyComment;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
-import com.tosslab.jandi.app.local.orm.repositories.ReadyCommentRepository;
-import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.services.download.DownloadService;
-import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
-import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.filedetail.domain.FileStarredInfo;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
-import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
-import com.tosslab.jandi.app.utils.mimetype.placeholder.PlaceholderUtil;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -44,382 +30,191 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
-import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 8..
- */
 @EBean
 public class FileDetailPresenter {
+
+    public static final String TAG = FileDetailActivity.TAG;
 
     @Bean
     FileDetailModel fileDetailModel;
 
-    private MentionControlViewModel mentionControlViewModel;
-
     private View view;
-    private PublishSubject<FileStarredInfo> starredPublishSubject;
-
-    @AfterInject
-    void initObject() {
-        starredPublishSubject = PublishSubject.create();
-
-        starredPublishSubject.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.io())
-                .subscribe(fileStarredInfo -> {
-                    if (fileStarredInfo.isStarred()) {
-                        registStarredFileMessage(fileStarredInfo.getFileId());
-                    } else {
-                        unregistStarredFileMessage(fileStarredInfo.getFileId());
-                    }
-                }, Throwable::printStackTrace);
-    }
-
-    protected List<Integer> getSharedTopicIds(ResMessages.OriginalMessage fileDetail) {
-        List<Integer> sharedTopicIds = new ArrayList<>();
-
-        EntityManager entityManager = EntityManager.getInstance();
-
-
-        ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
-        Observable.from(fileMessage.shareEntities)
-                .map(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
-                .filter(shareEntity -> {
-                    FormattedEntity entity = entityManager.getEntityById(shareEntity);
-                    return entity != EntityManager.UNKNOWN_USER_ENTITY && !entity.isUser();
-                })
-                .collect(() -> sharedTopicIds, List::add)
-                .subscribe();
-
-        return sharedTopicIds;
-    }
+    private PublishSubject<FileStarredInfo> starredStatePublishSubject;
 
     public void setView(View view) {
         this.view = view;
     }
 
-    public boolean onLoadFromCache(int fileId, int selectMessageId) {
-        List<FileDetail> fileDetail = fileDetailModel.getFileDetail(fileId);
-        if (fileDetail != null && !fileDetail.isEmpty()) {
-            ResMessages.FileMessage file = fileDetail.get(0).getFile();
+    @AfterInject
+    void initObjects() {
+        starredStatePublishSubject = PublishSubject.create();
 
-            ResFileDetail fakeFile = new ResFileDetail();
-            fakeFile.messageDetails = new ArrayList<>();
-            fakeFile.messageDetails.add(file);
-
-            for (FileDetail detail : fileDetail) {
-                ResMessages.OriginalMessage message = null;
-                if (detail.getComment() != null) {
-                    message = detail.getComment();
-                } else if (detail.getSticker() != null) {
-                    message = detail.getSticker();
-                }
-
-                if (message != null) {
-                    fakeFile.messageDetails.add(message);
-                }
-            }
-
-            ResMessages.FileMessage fileMessage = fileDetailModel.extractFileMssage(fakeFile.messageDetails);
-            List<ResMessages.OriginalMessage> commentMessages =
-                    fileDetailModel.extractCommentMessage(fakeFile.messageDetails);
-
-            view.loadSuccess(fileMessage, commentMessages, false, selectMessageId);
-
-            return true;
-        }
-
-        return false;
-
+        starredStatePublishSubject.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
+                .onBackpressureBuffer()
+                .subscribeOn(Schedulers.io())
+                .subscribe(fileStarredInfo -> {
+                    changeStarredState(fileStarredInfo.getFileId(), fileStarredInfo.isStarred());
+                }, Throwable::printStackTrace);
     }
 
-    /**
-     * 파일 상세 출력 관련
-     */
-    @Background
-    public void getFileDetail(int fileId, boolean isSendAction, boolean showDialog, int selectMessageId) {
-        LogUtil.d("try to get file detail having ID, " + fileId);
-
-        if (showDialog) {
-            view.showProgress();
-        }
-        try {
-            ResFileDetail resFileDetail = fileDetailModel.getFileDetailInfo(fileId);
-
-            LogUtil.d("FileDetailActivity", resFileDetail.toString());
-
-            ResMessages.FileMessage fileMessage = fileDetailModel.extractFileMssage(resFileDetail.messageDetails);
-
-            if (fileMessage == null) {
-                throw new NullPointerException("File Message doens't conains");
-            }
-
-            // 저장하기
-            fileDetailModel.saveFileDetailInfo(resFileDetail);
-
-            List<ResMessages.OriginalMessage> commentMessages =
-                    fileDetailModel.extractCommentMessage(resFileDetail.messageDetails);
-
-            view.dismissProgress();
-
-            view.loadSuccess(fileMessage, commentMessages, isSendAction, selectMessageId);
-
-        } catch (RetrofitError e) {
-            LogUtil.e("fail to get file detail.", e);
-            view.dismissProgress();
-            String errorMessage;
-            if (e.getResponse() != null
-                    && e.getResponse().getStatus() == 403) {
-                view.showUnsharedFileToast();
-            } else {
-                if (e.getCause() instanceof ConnectionNotFoundException) {
-                    errorMessage = JandiApplication.getContext().getResources().getString(R.string.err_network);
-                } else {
-                    errorMessage = JandiApplication.getContext().getResources().getString(R.string.err_file_detail);
-                }
-                view.showToast(errorMessage);
-            }
-            view.finishOnMainThread();
-        } catch (Exception e) {
-            view.dismissProgress();
-            view.showToast(JandiApplication.getContext().getResources().getString(R.string.err_file_detail));
-            view.finishOnMainThread();
-        }
-
-    }
-
-    public void onLongClickComment(ResMessages.OriginalMessage item) {
-        if (item == null) {
+    public void onInitializeFileDetail(long fileId, boolean withProgress) {
+        boolean isNetworkConnected = fileDetailModel.isNetworkdConneted();
+        if (!isNetworkConnected) {
+            view.showCheckNetworkDialog();
             return;
         }
-        boolean isMine = fileDetailModel.isMyComment(item.writerId) || fileDetailModel.isTeamOwner();
-        view.showManipulateMessageDialogFragment(item, isMine);
+
+        onRetrieveFileDetail(fileId, withProgress);
     }
 
     @Background
-    public void shareMessage(ResMessages.FileMessage fileMessage, int entityIdToBeShared) {
-        view.showProgress();
+    void onRetrieveFileDetail(long fileId, boolean withProgress) {
+        retrieveFileDetail(fileId, withProgress);
+    }
+
+    // 화면 진입시, 코멘트(스티커 포함) 보낼 때 사용되어 짐
+    private void retrieveFileDetail(long fileId, boolean withProgress) {
+        if (withProgress) {
+            view.showProgress();
+        }
+
+        ResFileDetail fileDetail = null;
         try {
-            fileDetailModel.shareMessage(fileMessage.id, entityIdToBeShared);
-            LogUtil.d("success to share message");
-
-            fileDetailModel.trackFileShareSuccess(entityIdToBeShared, fileMessage.id);
-
-            view.dismissProgress();
-            view.onShareMessageSucceed(entityIdToBeShared, fileMessage);
-            view.showMoveDialog(entityIdToBeShared);
+            fileDetail = fileDetailModel.getFileDetailFromServer(fileId);
         } catch (RetrofitError e) {
-            LogUtil.e("fail to send message", e);
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
-            fileDetailModel.trackFileShareFail(errorCode);
-            view.dismissProgress();
-            view.showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_share));
-        } catch (Exception e) {
-            LogUtil.e("fail to send message", e);
-            fileDetailModel.trackFileShareFail(-1);
-            view.dismissProgress();
-            view.showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_share));
+            LogUtil.e(TAG, Log.getStackTraceString(e));
         }
-    }
 
-    @Background
-    public void unShareMessage(ResMessages.FileMessage fileMessage, int entityIdToBeUnshared) {
-        view.showProgress();
-        try {
-            fileDetailModel.unshareMessage(fileMessage.id, entityIdToBeUnshared);
-            LogUtil.d("success to unshare message");
-
-            fileDetailModel.trackFileUnShareSuccess(entityIdToBeUnshared, fileMessage.id);
-
-            view.dismissProgress();
-
-            view.onUnShareMessageSucceed(entityIdToBeUnshared, fileMessage);
-
-        } catch (RetrofitError e) {
-            LogUtil.e("fail to send message", e);
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
-            fileDetailModel.trackFileUnShareFail(errorCode);
-            view.dismissProgress();
-            view.showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_unshare));
-        } catch (Exception e) {
-            LogUtil.e("fail to send message", e);
-            fileDetailModel.trackFileUnShareFail(-1);
-            view.dismissProgress();
-            view.showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_unshare));
+        if (fileDetail == null || fileDetail.messageCount <= 0) {
+            view.showUnexpectedErrorToast();
+            view.finish();
+            return;
         }
-    }
 
-    @Background
-    public void joinAndMove(FormattedEntity entityId) {
-        view.showProgress();
+        view.clearFileDetailAndComments();
 
-        try {
-            EntityManager entityManager = EntityManager.getInstance();
-            fileDetailModel.joinEntity(entityId);
+        List<ResMessages.OriginalMessage> messages = fileDetail.messageDetails;
+        // 파일의 상세정보는 API 로 부터 받아온 리스트의 마지막에 있다.
+        int fileDetailPosition = messages.size() - 1;
+        ResMessages.FileMessage fileMessage =
+                (ResMessages.FileMessage) messages.get(fileDetailPosition);
+        if (fileMessage.content != null) {
+            setFileDetailToView(fileMessage);
 
-            MixpanelMemberAnalyticsClient
-                    .getInstance(JandiApplication.getContext(), entityManager.getDistictId())
-                    .trackJoinChannel();
+            messages.remove(fileDetailPosition);
+        }
 
-            int entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
+        if (messages.size() > 0) {
+            fileDetailModel.sortByDate(messages);
+            view.setComments(messages);
+        }
 
-            fileDetailModel.refreshEntity();
+        view.notifyDataSetChanged();
 
-            view.dismissProgress();
-
-            view.moveToMessageListActivity(entityId.getId(), entityType, entityId.getId(), false);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (withProgress) {
             view.dismissProgress();
         }
     }
 
-    @Background
-    public void sendComment(int fileId, String message, List<MentionObject> mentions) {
-        view.showProgress();
-        try {
-            fileDetailModel.sendMessageComment(fileId, message, mentions);
-            view.dismissProgress();
-
-            getFileDetail(fileId, true, true, -1);
-            LogUtil.d("success to send message");
-        } catch (RetrofitError e) {
-            LogUtil.e("fail to send message", e);
-            view.dismissProgress();
-        } catch (Exception e) {
-            LogUtil.e("fail to send message", e);
-            view.dismissProgress();
-        }
+    private void setFileDetailToView(ResMessages.FileMessage fileMessage) {
+        boolean isImageFile = fileDetailModel.isImageFile(fileMessage.content);
+        boolean isDeletedFile = fileDetailModel.isDeletedFile(fileMessage.status);
+        boolean isMyFile = fileDetailModel.isMyFile(fileMessage.writerId);
+        boolean isExternalSharedFile = fileMessage.content.externalShared;
+        List<Long> sharedTopicIds = fileDetailModel.getSharedTopicIds(fileMessage);
+        view.setFileDetail(fileMessage, sharedTopicIds,
+                isMyFile, isDeletedFile, isImageFile, isExternalSharedFile);
     }
 
-    @Background
-    void sendCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment,
-                                List<MentionObject> mentions) {
+    @Background(serial = "file_detail_background")
+    public void onSendCommentWithSticker(long fileId, long stickerGroupId,
+                                         String stickerId, String comment,
+                                         List<MentionObject> mentions) {
         view.showProgress();
         try {
             fileDetailModel.sendMessageCommentWithSticker(
                     fileId, stickerGroupId, stickerId, comment, mentions);
 
+            retrieveFileDetail(fileId, false);
+
             view.dismissProgress();
 
-            getFileDetail(fileId, true, true, -1);
-        } catch (RetrofitError e) {
-            view.dismissProgress();
-            e.printStackTrace();
+            view.scrollToLastComment();
         } catch (Exception e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
             view.dismissProgress();
-            e.printStackTrace();
         }
     }
 
-    @Background
-    public void deleteComment(int fileId, int messageType, int messageId, int feedbackId) {
+    @Background(serial = "file_detail_background")
+    public void onSendComment(long fileId, String message, List<MentionObject> mentions) {
         view.showProgress();
         try {
-            if (messageType == MessageItem.TYPE_STICKER_COMMNET) {
-                fileDetailModel.deleteStickerComment(messageId, MessageItem.TYPE_STICKER_COMMNET);
+            fileDetailModel.sendMessageComment(fileId, message, mentions);
+
+            retrieveFileDetail(fileId, false);
+
+            view.dismissProgress();
+
+            view.scrollToLastComment();
+        } catch (Exception e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
+            view.dismissProgress();
+        }
+    }
+
+    public void onChangeStarredState(long fileId, boolean starred) {
+        starredStatePublishSubject.onNext(new FileStarredInfo(fileId, starred));
+    }
+
+    private void changeStarredState(long fileId, boolean starred) {
+        long teamId = AccountRepository.getRepository().getSelectedTeamId();
+        try {
+            if (starred) {
+                fileDetailModel.registStarredMessage(teamId, fileId);
+                view.showStarredSuccessToast();
             } else {
-                fileDetailModel.deleteComment(messageId, feedbackId);
+                fileDetailModel.unregistStarredMessage(teamId, fileId);
+                view.showUnstarredSuccessToast();
             }
-
-            view.dismissProgress();
-
-            getFileDetail(fileId, false, true, -1);
+            view.setFilesStarredState(starred);
+            view.notifyDataSetChanged();
         } catch (RetrofitError e) {
-            view.dismissProgress();
-        } catch (Exception e) {
-            view.dismissProgress();
+            Log.getStackTraceString(e);
         }
     }
 
-    /**
-     * 파일 삭제
-     *
-     * @param fileId
-     */
-    @Background
-    public void deleteFile(int fileId, int topicId) {
-        view.showProgress();
-        try {
-            fileDetailModel.deleteFile(fileId);
-            LogUtil.d("success to delete file");
-
-            fileDetailModel.trackFileDeleteSuccess(topicId, fileId);
-
-            view.dismissProgress();
-            view.onDeleteFileSucceed(true);
-        } catch (RetrofitError e) {
-            LogUtil.e("delete file failed", e);
-
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
-            fileDetailModel.trackFileDeleteFail(errorCode);
-
-            view.dismissProgress();
-            view.onDeleteFileSucceed(false);
-        } catch (Exception e) {
-            fileDetailModel.trackFileDeleteFail(-1);
-
-            view.dismissProgress();
-            view.onDeleteFileSucceed(false);
-        }
-    }
-
-    public void checkSharedEntity(int eventId, ResMessages.FileMessage fileMessage) {
-        if (fileMessage == null) {
+    public void onDownloadAction(long fileId, ResMessages.FileContent fileContent) {
+        if (fileContent == null) {
             return;
         }
 
-        int entityId;
-        Iterator<ResMessages.OriginalMessage.IntegerWrapper> iterator = fileMessage.shareEntities.iterator();
-        while (iterator.hasNext()) {
-            entityId = iterator.next().getShareEntity();
-
-            if (eventId == entityId) {
-                view.finishOnMainThread();
-                return;
-            }
-        }
-    }
-
-    public void onClickDownload(int fileId, ResMessages.FileMessage fileMessage) {
-        if (fileMessage == null) {
-            LogUtil.e("FileDetailPresenter", "fileMessage is empty.");
-            view.showErrorToast(JandiApplication.getContext()
-                    .getResources().getString(R.string.err_download));
+        MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileContent.serverUrl);
+        if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
+            String fileUrl = ImageUtil.getImageFileUrl(fileContent.fileUrl);
+            view.startGoogleOrDropboxFileActivity(fileUrl);
             return;
         }
 
-        ResMessages.FileContent content = fileMessage.content;
-        MimeTypeUtil.PlaceholderType placeholderType =
-                PlaceholderUtil.getPlaceholderType(content.serverUrl, content.icon);
-
-        switch (placeholderType) {
-            case Google:
-            case Dropbox:
-                String photoUrl = ImageUtil.getImageFileUrl(content.fileUrl);
-                view.startGoogleOrDropboxFileActivity(photoUrl);
-                return;
-        }
-
-        downloadFile(ImageUtil.getImageFileUrl(content.fileUrl),
-                content.title,
-                content.type,
-                content.ext,
+        downloadFile(ImageUtil.getImageFileUrl(fileContent.fileUrl),
+                fileContent.title,
+                fileContent.type,
+                fileContent.ext,
                 fileId);
     }
 
     public void downloadFile(String url, String fileName, final String fileType, String ext,
-                             int fileId) {
+                             long fileId) {
         Permissions.getChecker()
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .noPermission(() -> {
@@ -432,159 +227,33 @@ public class FileDetailPresenter {
     }
 
     private void downloadFileImpl(String url, String fileName, final String fileType, String ext,
-                                  int fileId) {
+                                  long fileId) {
         DownloadService.start(fileId, url, fileName, ext, fileType);
     }
 
-    @Background
-    public void getProfile(int userEntityId) {
-        try {
-            ResLeftSideMenu.User user = fileDetailModel.getUserProfile(userEntityId);
-            view.showUserInfoDialog(new FormattedEntity(user));
-        } catch (RetrofitError e) {
-            LogUtil.e("get profile failed", e);
-            view.onGetProfileFailed();
-        } catch (Exception e) {
-            LogUtil.e("get profile failed", e);
-            view.onGetProfileFailed();
-        }
-    }
-
-    public void refreshMentionVM(Activity activity, ResMessages.OriginalMessage fileMessage,
-                                 EditText editText) {
-
-        List<Integer> sharedTopicIds = getSharedTopicIds(fileMessage);
-
-        if (mentionControlViewModel == null) {
-            mentionControlViewModel = MentionControlViewModel.newInstance(activity,
-                    editText,
-                    sharedTopicIds,
-                    MentionControlViewModel.MENTION_TYPE_FILE_COMMENT);
-
-            ReadyComment readyComment = ReadyCommentRepository.getRepository().getReadyComment(fileMessage.id);
-            mentionControlViewModel.setUpMention(readyComment.getText());
-            mentionControlViewModel.setOnMentionShowingListener(isShowing -> {
-                if (isShowing) {
-                    view.dismissMentionButton();
-                } else {
-                    view.showMentionButton();
-                }
-            });
-
-        } else {
-            mentionControlViewModel.refreshMembers(sharedTopicIds);
-        }
-
-        if (mentionControlViewModel.getAllSelectableMembers().size() == 0) {
-            view.dismissMentionButton();
-        } else {
-            view.showMentionButton();
-        }
-        registClipboardListenerforMention();
-    }
-
-    public void registClipboardListenerforMention() {
-        removeClipboardListenerforMention();
-        if (mentionControlViewModel != null) {
-            mentionControlViewModel.registClipboardListener();
-        }
-    }
-
-    public void removeClipboardListenerforMention() {
-        if (mentionControlViewModel != null) {
-            mentionControlViewModel.removeClipboardListener();
-        }
-    }
-
-    public ResultMentionsVO getMentionInfo() {
-        if (mentionControlViewModel != null) {
-            return mentionControlViewModel.getMentionInfoObject();
-        } else {
-            return new ResultMentionsVO("", new ArrayList<>());
-        }
-    }
-
-    public MentionControlViewModel getMentionControlViewModel() {
-        return mentionControlViewModel;
-    }
-
-    @Background
-    public void registStarredComment(int messageId) {
-        try {
-            int teamId = AccountRepository.getRepository().getSelectedTeamId();
-            fileDetailModel.registStarredMessage(teamId, messageId);
-            MessageRepository.getRepository().updateStarred(messageId, true);
-            view.showToast(JandiApplication.getContext().getString(R.string.jandi_message_starred));
-            view.modifyStarredInfo(messageId, true);
-            EventBus.getDefault().post(new StarredInfoChangeEvent());
-
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
-        }
-    }
-
-    @Background
-    public void unregistStarredComment(int messageId) {
-        try {
-            int teamId = AccountRepository.getRepository().getSelectedTeamId();
-            fileDetailModel.unregistStarredMessage(teamId, messageId);
-            MessageRepository.getRepository().updateStarred(messageId, false);
-
-            view.modifyStarredInfo(messageId, false);
-            view.showToast(JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
-            EventBus.getDefault().post(new StarredInfoChangeEvent());
-
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
-        }
-
-    }
-
-    @Background
-    public void unregistStarredFileMessage(int fileId) {
-        try {
-            int teamId = AccountRepository.getRepository().getSelectedTeamId();
-            fileDetailModel.unregistStarredMessage(teamId, fileId);
-            MessageRepository.getRepository().updateStarred(fileId, false);
-
-            view.updateFileStarred(false);
-            view.showToast(JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
-            EventBus.getDefault().post(new StarredInfoChangeEvent());
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
-        }
-    }
-
-    @Background
-    public void registStarredFileMessage(int fileId) {
-        try {
-            int teamId = AccountRepository.getRepository().getSelectedTeamId();
-            fileDetailModel.registStarredMessage(teamId, fileId);
-            view.updateFileStarred(true);
-            view.showToast(JandiApplication.getContext().getString(R.string.jandi_message_starred));
-            MessageRepository.getRepository().updateStarred(fileId, true);
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
-        }
-
-    }
-
-    public void changeStarredFileMessageState(int fileId, boolean starred) {
-        // 클릭 여러번을 막기 위함
-        starredPublishSubject.onNext(new FileStarredInfo(fileId, starred));
-    }
-
-    public boolean isTeamOwner() {
-        return fileDetailModel.isTeamOwner();
-    }
-
-    public void onConfigurationChanged() {
-        mentionControlViewModel.onConfigurationChanged();
-    }
-
     public void onExportFile(ResMessages.FileMessage fileMessage, ProgressDialog progressDialog) {
+        Permissions.getChecker()
+                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .hasPermission(() -> downloadFileAndManage(FileManageType.EXPORT, fileMessage, progressDialog))
+                .noPermission(() -> {
+                    view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION_EXPORT,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                }).check();
+    }
+
+    public void onOpenFile(ResMessages.FileMessage fileMessage, ProgressDialog progressDialog) {
+        downloadFileAndManage(FileManageType.OPEN, fileMessage, progressDialog);
+    }
+
+    void downloadFileAndManage(final FileManageType type,
+                               ResMessages.FileMessage fileMessage, ProgressDialog progressDialog) {
+        if (fileMessage == null || fileMessage.content == null) {
+            return;
+        }
+
         String downloadFilePath = fileDetailModel.getDownloadFilePath(fileMessage.content.title);
         String downloadUrl = fileDetailModel.getDownloadUrl(fileMessage.content.fileUrl);
+        final String mimeType = fileMessage.content.type;
 
         fileDetailModel.downloadFile(downloadUrl, downloadFilePath, (downloaded, total) -> {
             progressDialog.setProgress((int) (downloaded * 100 / total));
@@ -592,160 +261,279 @@ public class FileDetailPresenter {
             progressDialog.dismiss();
 
             if (e == null && result != null) {
-                view.exportIntentFile(result, fileMessage.content.type);
+                if (type == FileManageType.EXPORT) {
+                    view.startExportedFileViewerActivity(result, mimeType);
+                } else if (type == FileManageType.OPEN) {
+                    String fileType = fileDetailModel.getFileType(result, mimeType);
+                    view.startDownloadedFileViewerActivity(result, fileType);
+                }
             } else {
-                view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
+                view.showUnexpectedErrorToast();
             }
         });
     }
 
-    public void onCopyExternLink(ResMessages.FileMessage fileMessage, boolean isExternalShared) {
-        if (!isExternalShared) {
-            if (NetworkCheckUtil.isConnected()) {
-                enableExternalLink(fileMessage);
+    @Background
+    public void joinAndMove(FormattedEntity entity) {
+        view.showProgress();
+
+        try {
+            fileDetailModel.joinEntity(entity);
+
+            int entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
+
+            fileDetailModel.refreshEntity();
+
+            view.dismissProgress();
+
+            view.moveToMessageListActivity(entity.getId(), entityType, entity.getId(), false);
+        } catch (Exception e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
+
+            view.dismissProgress();
+        }
+    }
+
+    @Background
+    public void onShareAction(long entityId, long fileId) {
+        view.showProgress();
+        try {
+            fileDetailModel.shareMessage(fileId, entityId);
+
+            fileDetailModel.refreshEntity();
+
+            fileDetailModel.trackFileShareSuccess(entityId, fileId);
+
+            retrieveFileDetail(fileId, false);
+
+            view.dismissProgress();
+
+            view.showMoveToSharedTopicDialog(entityId);
+        } catch (RetrofitError e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
+
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            fileDetailModel.trackFileShareFail(errorCode);
+            view.dismissProgress();
+            view.showShareErrorToast();
+        } catch (Exception e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
+
+            fileDetailModel.trackFileShareFail(-1);
+            view.dismissProgress();
+            view.showShareErrorToast();
+        }
+    }
+
+    @Background
+    public void onUnshareAction(long entityId, long fileId) {
+        view.showProgress();
+        try {
+            fileDetailModel.unshareMessage(fileId, entityId);
+
+            fileDetailModel.refreshEntity();
+
+            fileDetailModel.trackFileUnShareSuccess(entityId, fileId);
+
+            retrieveFileDetail(fileId, false);
+
+            view.dismissProgress();
+
+            view.showUnshareSuccessToast();
+        } catch (RetrofitError e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
+
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            fileDetailModel.trackFileUnShareFail(errorCode);
+            view.dismissProgress();
+            view.showUnshareErrorToast();
+        } catch (Exception e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
+
+            fileDetailModel.trackFileUnShareFail(-1);
+            view.dismissProgress();
+            view.showUnshareErrorToast();
+        }
+    }
+
+    @Background
+    public void onDeleteFile(long fileId, long topicId) {
+        view.showProgress();
+        try {
+            fileDetailModel.deleteFile(fileId);
+
+            fileDetailModel.trackFileDeleteSuccess(topicId, fileId);
+
+            view.dismissProgress();
+
+            view.showDeleteSuccessToast();
+
+            view.deliverResultToMessageList();
+        } catch (RetrofitError e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
+
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            fileDetailModel.trackFileDeleteFail(errorCode);
+
+            view.dismissProgress();
+            view.showDeleteErrorToast();
+        } catch (Exception e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
+
+            fileDetailModel.trackFileDeleteFail(-1);
+            view.dismissProgress();
+            view.showDeleteErrorToast();
+        }
+    }
+
+    @Background
+    public void onDeleteComment(int messageType, long messageId, long feedbackId) {
+        view.showProgress();
+        try {
+            if (messageType == MessageItem.TYPE_STICKER_COMMNET) {
+                fileDetailModel.deleteStickerComment(messageId, MessageItem.TYPE_STICKER_COMMNET);
             } else {
-                view.showCheckNetworkDialog();
+                fileDetailModel.deleteComment(messageId, feedbackId);
             }
-        } else {
-            // 클립보드에 바로 복사 처리
 
-            removeClipboardListenerforMention();
-            StringBuffer externalLink = new StringBuffer(JandiConstantsForFlavors.SERVICE_BASE_URL).append("file/").append(fileMessage.content.externalCode);
-            view.copyToClipboard(externalLink.toString());
-            view.showToast(JandiApplication.getContext().getResources().getString(R.string.jandi_success_copy_clipboard_external_link));
-            registClipboardListenerforMention();
-        }
-    }
-
-    @Background
-    void enableExternalLink(ResMessages.FileMessage fileMessage) {
-        try {
-            view.showProgress();
-            int teamId = fileDetailModel.getTeamId();
-            ResMessages.FileMessage fileMessage2 = fileDetailModel.enableExternalLink(teamId, fileMessage.id);
-            ResMessages.FileContent content = fileMessage2.content;
-            fileDetailModel.updateExternalLink(content.fileUrl, content.externalShared, content.externalUrl, content.externalCode);
-            view.setExternalShared(content.externalShared);
-            view.setFileMessage(fileMessage2);
-            StringBuffer externalLink = new StringBuffer(JandiConstantsForFlavors.SERVICE_BASE_URL).append("file/").append(content.externalCode);
-            view.copyToClipboard(externalLink.toString());
-            view.showToast(JandiApplication.getContext().getResources().getString(R.string.jandi_success_copy_clipboard_external_link));
             view.dismissProgress();
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
+        } catch (Exception e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
             view.dismissProgress();
         }
     }
 
     @Background
-    public void onDisableExternLink(ResMessages.FileMessage fileMessage) {
+    public void onEnableExternalLink(long fileId) {
+        view.showProgress();
+
+        long teamId = fileDetailModel.getTeamId();
+
         try {
-            view.showProgress();
-            int teamId = fileDetailModel.getTeamId();
-            ResMessages.FileMessage fileMessage2 = fileDetailModel.disableExternalLink(teamId, fileMessage.id);
-            ResMessages.FileContent content = fileMessage2.content;
-            fileDetailModel.updateExternalLink(content.fileUrl, content.externalShared, content.externalUrl, content.externalCode);
-            view.setExternalShared(content.externalShared);
-            view.setFileMessage(fileMessage2);
-            view.showToast(JandiApplication.getContext().getResources().getString(R.string.jandi_success_disable_external_link));
+            ResMessages.FileMessage fileMessage = fileDetailModel.enableExternalLink(teamId, fileId);
+            setFileDetailToView(fileMessage);
+            view.notifyDataSetChanged();
+
+            view.setExternalLinkToClipboard();
+
             view.dismissProgress();
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
+
+            view.showEnableExternalLinkSuccessToast();
+        } catch (Exception e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
             view.dismissProgress();
+            view.showUnexpectedErrorToast();
         }
     }
 
-    public void onMentionClick(int selectionStart, String message) {
-        if (fileDetailModel.needSpace(selectionStart, message)) {
-            view.inputText(KeyEvent.KEYCODE_SPACE);
+    @Background
+    public void onDisableExternalLink(long fileId) {
+        view.showProgress();
+
+        long teamId = fileDetailModel.getTeamId();
+
+        try {
+            ResMessages.FileMessage fileMessage = fileDetailModel.disableExternalLink(teamId, fileId);
+            setFileDetailToView(fileMessage);
+            view.notifyDataSetChanged();
+
+            view.setExternalLinkToClipboard();
+
+            view.dismissProgress();
+
+            view.showDisableExternalLinkSuccessToast();
+        } catch (Exception e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
+            view.dismissProgress();
+            view.showUnexpectedErrorToast();
         }
-        view.inputText(KeyEvent.KEYCODE_AT);
+    }
+
+    public void onTopicDeleted(long entityId,
+                               Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities) {
+        if (shareEntities == null || shareEntities.size() <= 0) {
+            return;
+        }
+
+        Iterator<ResMessages.OriginalMessage.IntegerWrapper> iterator = shareEntities.iterator();
+        while (iterator.hasNext()) {
+            ResMessages.OriginalMessage.IntegerWrapper integerWrapper = iterator.next();
+
+            if (entityId == integerWrapper.getShareEntity()) {
+                view.finish();
+                return;
+            }
+        }
+    }
+
+    enum FileManageType {
+        EXPORT, OPEN
     }
 
     public interface View {
-        void drawFileWriterState(boolean isEnabled);
-
-        void drawFileDetail(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages,
-                            boolean isSendAction);
-
-        void loadSuccess(ResMessages.FileMessage fileMessage, List<ResMessages.OriginalMessage> commentMessages,
-                         boolean isSendAction, int selectMessageId);
-
-        void showCheckNetworkDialog();
-
-        void showDeleteFileDialog(int fileId);
-
-        void showUserInfoDialog(FormattedEntity user);
-
-        void showMoveDialog(int entityIdToBeShared);
-
-        void showManipulateMessageDialogFragment(ResMessages.OriginalMessage item, boolean isMine);
-
-        void onShareMessageSucceed(int entityIdToBeShared, ResMessages.FileMessage fileMessage);
-
-        void onUnShareMessageSucceed(int entityIdToBeUnshared, ResMessages.FileMessage fileMessage);
-
-        void onDeleteFileSucceed(boolean isOk);
-
-        void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage,
-                                   boolean execute);
-
-        void onGetProfileFailed();
-
-        void setSendButtonSelected();
-
         void showProgress();
 
         void dismissProgress();
 
-        void showDownloadProgressDialog(String fileName);
+        void showUnexpectedErrorToast();
 
-        void dismissDownloadProgressDialog();
+        void showStarredSuccessToast();
 
-        void clearAdapter();
+        void showUnstarredSuccessToast();
 
-        void showToast(String message);
+        void showShareErrorToast();
 
-        void showErrorToast(String message);
+        void showUnshareSuccessToast();
 
-        void hideSoftKeyboard();
+        void showUnshareErrorToast();
 
-        void moveToMessageListActivity(int entityId, int entityType, int roomId, boolean isStarred);
+        void showDeleteSuccessToast();
 
-        void startGoogleOrDropboxFileActivity(String fileUrl);
+        void showDeleteErrorToast();
 
-        void finishOnMainThread();
+        void showEnableExternalLinkSuccessToast();
+
+        void showDisableExternalLinkSuccessToast();
+
+        void showMoveToSharedTopicDialog(long entityId);
+
+        void showCheckNetworkDialog();
 
         void showKeyboard();
 
-        void showStickerPreview();
+        void hideKeyboard();
 
-        void loadSticker(StickerInfo stickerInfo);
+        void copyToClipboard(String text);
 
-        void dismissStickerPreview();
+        void setExternalLinkToClipboard();
 
-        void modifyStarredInfo(int messageId, boolean isStarred);
+        void clearFileDetailAndComments();
 
-        void updateFileStarred(boolean starred);
+        void setFileDetail(ResMessages.FileMessage fileMessage, List<Long> sharedTopicIds,
+                           boolean isMyFile, boolean isDeletedFile,
+                           boolean isImageFile, boolean isExternalShared);
 
-        void showUnsharedFileToast();
+        void setComments(List<ResMessages.OriginalMessage> fileComments);
 
-        void requestPermission(int requestCode, String... permission);
+        void notifyDataSetChanged();
 
-        void copyToClipboard(String externalUrl);
+        void scrollToLastComment();
 
-        void setExternalShared(boolean externalShared);
+        void setFilesStarredState(boolean starred);
 
-        void exportIntentFile(File result, String type);
+        void startGoogleOrDropboxFileActivity(String fileUrl);
 
-        void setFileMessage(ResMessages.FileMessage fileMessage2);
+        void requestPermission(int requestCode, String... permissions);
 
-        void dismissMentionButton();
+        void startExportedFileViewerActivity(File file, String mimeType);
 
-        void showMentionButton();
+        void startDownloadedFileViewerActivity(File file, String fileType);
 
-        void inputText(int keycodeSpace);
+        void moveToMessageListActivity(long entityId, int entityType, long roomId, boolean isStarred);
+
+        void deliverResultToMessageList();
+
+        void finish();
     }
+
 }

@@ -18,13 +18,13 @@ public class TopicFolderDialogModel {
     @Bean
     EntityClientManager entityClientManager;
 
-    public void deleteTopicFolder(int folderId) throws RetrofitError {
-        int teamId = entityClientManager.getSelectedTeamId();
+    public void deleteTopicFolder(long folderId) throws RetrofitError {
+        long teamId = entityClientManager.getSelectedTeamId();
         RequestApiManager.getInstance().deleteFolderByTeamApi(teamId, folderId);
     }
 
-    public void renameFolder(int folderId, String name, int seq) throws RetrofitError {
-        int teamId = entityClientManager.getSelectedTeamId();
+    public void renameFolder(long folderId, String name, int seq) throws RetrofitError {
+        long teamId = entityClientManager.getSelectedTeamId();
         ReqUpdateFolder reqUpdateFolder = new ReqUpdateFolder();
         reqUpdateFolder.updateItems = new ReqUpdateFolder.UpdateItems();
         reqUpdateFolder.updateItems.setName(name);

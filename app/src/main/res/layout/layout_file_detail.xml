@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/jandi_file_detail_bg"
+    android:orientation="vertical">
+    <!-- 파일 제목과 사용자 프로필 부분 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="11dp"
+        android:paddingTop="10dp">
+
+        <com.tosslab.jandi.app.views.FrescoImageView
+            android:id="@+id/iv_file_detail_user_profile"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/jandi_file_detail_uploder_profile_margin_right"
+            android:src="@drawable/profile_img"/>
+
+        <TextView
+            android:id="@+id/tv_file_detail_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/btn_file_detail_star"
+            android:layout_toRightOf="@+id/iv_file_detail_user_profile"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="Diane"
+            android:textColor="@color/jandi_text"
+            android:textSize="14dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_file_detail_create_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_file_detail_user_name"
+            android:layout_toRightOf="@id/iv_file_detail_user_profile"
+            android:text="01/14/2016, 08:59 pm"
+            android:textColor="@color/jandi_file_detail_date"
+            android:textSize="12dp"/>
+
+        <View
+            android:id="@+id/v_file_detail_file_info_divider"
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/tv_file_detail_create_date"
+            android:layout_alignTop="@id/tv_file_detail_create_date"
+            android:layout_below="@id/tv_file_detail_user_name"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginTop="2dp"
+            android:layout_toRightOf="@id/tv_file_detail_create_date"
+            android:background="@color/jandi_file_search_item_divider"/>
+
+        <TextView
+            android:id="@+id/tv_file_detail_file_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_file_detail_user_name"
+            android:layout_toRightOf="@id/v_file_detail_file_info_divider"
+            android:text="1.14 MB, gif"
+            android:textColor="@color/jandi_file_detail_date"
+            android:textSize="12dp"/>
+
+        <View
+            android:id="@+id/v_file_detail_user_name_disable_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_file_detail_user_name"
+            android:layout_alignLeft="@+id/tv_file_detail_user_name"
+            android:layout_alignRight="@+id/tv_file_detail_user_name"
+            android:layout_alignTop="@+id/tv_file_detail_user_name"
+            android:background="@drawable/line_gray"
+            android:visibility="gone"/>
+
+        <View
+            android:id="@+id/v_file_detail_user_profile_disable_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/iv_file_detail_user_profile"
+            android:layout_alignLeft="@+id/iv_file_detail_user_profile"
+            android:layout_alignRight="@+id/iv_file_detail_user_profile"
+            android:layout_alignTop="@+id/iv_file_detail_user_profile"
+            android:layout_toLeftOf="@+id/btn_file_detail_star"
+            android:background="@color/nav_drawer_text"
+            android:visibility="gone"/>
+
+        <View
+            android:id="@+id/btn_file_detail_star"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="11dp"
+            android:background="@drawable/jandi_selector_starred"
+            android:clickable="true"/>
+    </RelativeLayout>
+
+    <!-- 이미지나 파일 타입 출력 -->
+    <RelativeLayout
+        android:id="@+id/vg_file_detail_content_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:id="@+id/vg_file_detail_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:id="@+id/vg_file_detail_deleted"
+            android:layout_width="match_parent"
+            android:layout_height="169dp"
+            android:layout_centerHorizontal="true"
+            android:background="@color/jandi_file_detail_tab_to_view_bg"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:scaleType="fitCenter"
+                android:layout_width="50dp"
+                android:layout_height="60dp"
+                android:src="@drawable/jandi_fl_icon_deleted"/>
+
+            <TextView
+                android:id="@+id/tv_file_detail_deleted_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/jandi_text_medium"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+    </RelativeLayout>
+    <!-- 파일의 상세 정보 -->
+    <LinearLayout
+        android:id="@+id/vg_file_detail_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        android:paddingLeft="@dimen/jandi_file_detail_padding_sides"
+        android:paddingRight="@dimen/jandi_file_detail_padding_sides"
+        android:paddingTop="8dp">
+
+        <com.tosslab.jandi.app.ui.filedetail.widget.LinkedEllipsizeTextView
+            android:id="@+id/tv_file_detail_shared_topics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"/>
+    </LinearLayout>
+</LinearLayout>

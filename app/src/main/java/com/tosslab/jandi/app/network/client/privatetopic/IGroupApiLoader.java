@@ -13,11 +13,11 @@ public interface IGroupApiLoader {
 
     IExecutor<ResCommon> loadCreatePrivateGroupByGroupApi(ReqCreateTopic group);
 
-    IExecutor<ResCommon> loadModifyGroupByGroupApi(ReqCreateTopic channel, int groupId);
+    IExecutor<ResCommon> loadModifyGroupByGroupApi(ReqCreateTopic channel, long groupId);
 
-    IExecutor<ResCommon> loadDeleteGroupByGroupApi(int teamId, int groupId);
+    IExecutor<ResCommon> loadDeleteGroupByGroupApi(long teamId, long groupId);
 
-    IExecutor<ResCommon> loadLeaveGroupByGroupApi(int groupId, ReqTeam team);
+    IExecutor<ResCommon> loadLeaveGroupByGroupApi(long groupId, ReqTeam team);
 
-    IExecutor<ResCommon> loadInviteGroupByGroupApi(int groupId, ReqInviteTopicUsers inviteUsers);
+    IExecutor<ResCommon> loadInviteGroupByGroupApi(long groupId, ReqInviteTopicUsers inviteUsers);
 }

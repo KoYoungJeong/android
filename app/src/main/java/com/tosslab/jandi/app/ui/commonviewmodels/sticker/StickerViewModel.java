@@ -80,7 +80,7 @@ public class StickerViewModel {
     private OnStickerLayoutShowListener onStickerLayoutShowListener;
     private int type;
 
-    private Pair<Integer, String> lastClickedStickerInfo;
+    private Pair<Long, String> lastClickedStickerInfo;
     private long lastClickedTime;
     private boolean isShow = false;
     private ImageView ivNoItems;
@@ -172,7 +172,7 @@ public class StickerViewModel {
 
         StickerViewPagerAdapter adapter = new StickerViewPagerAdapter(context, stickers, new OnStickerClick() {
             @Override
-            public void onStickerClick(int groupId, String stickerId) {
+            public void onStickerClick(long groupId, String stickerId) {
                 if (onStickerClick != null) {
                     onStickerClick.onStickerClick(groupId, stickerId);
                 }
@@ -212,7 +212,7 @@ public class StickerViewModel {
         return System.currentTimeMillis() - lastClickedTime <= ViewConfiguration.getJumpTapTimeout();
     }
 
-    public boolean isSameSticker(int groupId, String stickerId) {
+    public boolean isSameSticker(long groupId, String stickerId) {
         return lastClickedStickerInfo.first == groupId
                 && TextUtils.equals(lastClickedStickerInfo.second, stickerId);
     }
@@ -390,11 +390,11 @@ public class StickerViewModel {
 
 
     public interface OnStickerClick {
-        void onStickerClick(int groupId, String stickerId);
+        void onStickerClick(long groupId, String stickerId);
     }
 
     public interface OnStickerDoubleTapListener {
-        void onStickerDoubleTap(int groupId, String stickerId);
+        void onStickerDoubleTap(long groupId, String stickerId);
     }
 
     public interface OnStickerLayoutShowListener {

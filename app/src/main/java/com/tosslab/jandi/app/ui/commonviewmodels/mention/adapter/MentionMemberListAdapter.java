@@ -10,7 +10,7 @@ import android.widget.Filter;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
+import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.viewholder.MentionMemberListViewHolder;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -92,8 +92,8 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
         }
         holder.getConvertView().setOnClickListener(v -> {
             SearchedItemVO selectedMember = getItem(position);
-            SelectedMemberInfoForMensionEvent event =
-                    new SelectedMemberInfoForMensionEvent(selectedMember.getName(), selectedMember.getId(),
+            SelectedMemberInfoForMentionEvent event =
+                    new SelectedMemberInfoForMentionEvent(selectedMember.getName(), selectedMember.getId(),
                             selectedMember.getType());
             EventBus.getDefault().post(event);
         });

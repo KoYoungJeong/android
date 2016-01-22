@@ -111,7 +111,7 @@ public class IntroActivityModel {
             return false;
         }
         try {
-            int selectedTeamId = selectedTeamInfo.getTeamId();
+            long selectedTeamId = selectedTeamInfo.getTeamId();
             ResLeftSideMenu totalEntitiesInfo =
                     RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);

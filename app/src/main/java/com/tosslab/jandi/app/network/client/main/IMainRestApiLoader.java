@@ -27,9 +27,9 @@ public interface IMainRestApiLoader {
     IExecutor<ResAccountInfo> loadUpdatePrimaryEmailByMainRestApi(ReqUpdatePrimaryEmailInfo
                                                                           updatePrimaryEmailInfo);
 
-    IExecutor<ResLeftSideMenu> loadGetInfosForSideMenuByMainRestApi(int teamId);
+    IExecutor<ResLeftSideMenu> loadGetInfosForSideMenuByMainRestApi(long teamId);
 
-    IExecutor<ResCommon> loadSetMarkerByMainRestApi(int entityId, ReqSetMarker reqSetMarker);
+    IExecutor<ResCommon> loadSetMarkerByMainRestApi(long entityId, ReqSetMarker reqSetMarker);
 
     IExecutor<ResSearchFile> loadSearchFileByMainRestApi(ReqSearchFile reqSearchFile);
 

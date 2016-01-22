@@ -27,13 +27,39 @@ public abstract class MultiItemRecyclerAdapter extends RecyclerView.Adapter<Base
         return (ITEM) rows.get(position).getItem();
     }
 
+    public void addRow(Row<?> row) {
+        this.rows.add(row);
+    }
+
+    public void addRows(List<Row<?>> rows) {
+        this.rows.addAll(rows);
+    }
+
+    public void setRow(int position, Row<?> row) {
+        if (getItemCount() - 1 < position) {
+            this.rows.add(position, row);
+        }
+        this.rows.set(position, row);
+    }
+
     public void setRows(List<Row<?>> rows) {
         this.rows.clear();
         this.rows.addAll(rows);
     }
 
-    public void addRow(Row<?> row) {
-        this.rows.add(row);
+    public void remove(int position) {
+        if (getItemCount() - 1 < position) {
+            return;
+        }
+        this.rows.remove(position);
+    }
+
+    public void remove(Row<?> row) {
+        this.rows.remove(row);
+    }
+
+    public void clear() {
+        this.rows.clear();
     }
 
     @Override
@@ -43,7 +69,8 @@ public abstract class MultiItemRecyclerAdapter extends RecyclerView.Adapter<Base
 
     @Override
     public int getItemViewType(int position) {
-        return rows.get(position).getItemViewType();
+        int viewType = rows.get(position).getItemViewType();
+        return viewType;
     }
 
     public static class Row<ITEM> {

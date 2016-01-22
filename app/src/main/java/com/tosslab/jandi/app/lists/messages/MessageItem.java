@@ -58,15 +58,15 @@ public class MessageItem {
         return mLink;
     }
 
-    public int getLinkId() {
+    public long getLinkId() {
         return mLink.id;
     }
 
-    public int getMessageId() {
+    public long getMessageId() {
         return mLink.messageId;
     }
 
-    public int getFeedbackId() {
+    public long getFeedbackId() {
         return mLink.feedbackId;
     }
 

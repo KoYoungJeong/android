@@ -50,7 +50,7 @@ public class FileDetailRepository {
         return false;
     }
 
-    public List<FileDetail> getFileDetail(int fileId) {
+    public List<FileDetail> getFileDetail(long fileId) {
 
         try {
             Dao<FileDetail, ?> fileDetailDao = helper.getDao(FileDetail.class);

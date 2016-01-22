@@ -7,5 +7,5 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ResCommon {
-    public int id;
+    public long id;
 }

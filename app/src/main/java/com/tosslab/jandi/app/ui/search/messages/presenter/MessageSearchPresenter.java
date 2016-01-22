@@ -19,13 +19,13 @@ public interface MessageSearchPresenter {
 
     void onMemberClick();
 
-    void onSelectEntity(int entityId, String name, String searchText);
+    void onSelectEntity(long entityId, String name, String searchText);
 
-    void onSelectMember(int memberId, String name, String searchText);
+    void onSelectMember(long memberId, String name, String searchText);
 
     void onRecordClick(SearchResult searchRecord);
 
-    void onInitEntityId(int entityId);
+    void onInitEntityId(long entityId);
 
     interface View {
 
@@ -45,7 +45,7 @@ public interface MessageSearchPresenter {
 
         void showLoading(String query);
 
-        void startMessageListActivity(int currentTeamId, int entityId, int entityType, int roomId, boolean isStarred, int linkId);
+        void startMessageListActivity(long currentTeamId, long entityId, int entityType, long roomId, boolean isStarred, long linkId);
 
         void setOnLoadingReady();
 

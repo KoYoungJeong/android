@@ -47,39 +47,44 @@ public class FileHeadManager {
     AppCompatActivity activity;
 
     // in File Detail Header
-    private SimpleDraweeView ivUserProfile;
     private TextView tvUserName;
+    private SimpleDraweeView ivUserProfile;
     private TextView tvFileCreateDate;
     private TextView tvFileContentInfo;
-    private TextView tvSharedCdp;
+
+    /*TODO*/ private TextView tvSharedCdp;
     private View vDisableLineThrough;
     private View vDisableCover;
-
     private ImageView btnFileDetailStarred;
-    private ViewGroup vgTapToViewOriginal;
+
     private SimpleDraweeView ivPhotoFile;
-    private ViewGroup vgDetailPhoto;
+
+    /*TODO*/ private ViewGroup vgDetailPhoto;
+
     private ImageView ivFileType;
+
     private LinearLayout vgFileInfo;
-    private int roomId;
+    private long roomId;
     private View vgDeleted;
     private TextView tvDeletedDate;
     private FileThumbLoader thumbLoader;
 
+    private ViewGroup vgTapToViewOriginal;
+
     public View getHeaderView() {
-        View header = LayoutInflater.from(activity).inflate(R.layout.item_file_detail_file, null, false);
-        ivUserProfile = (SimpleDraweeView) header.findViewById(R.id.img_file_detail_user_profile);
-        tvUserName = (TextView) header.findViewById(R.id.txt_file_detail_user_name);
-        tvFileCreateDate = (TextView) header.findViewById(R.id.txt_file_detail_create_date);
-        tvFileContentInfo = (TextView) header.findViewById(R.id.txt_file_detail_file_info);
-        tvSharedCdp = (TextView) header.findViewById(R.id.txt_file_detail_shared_cdp);
-        ivPhotoFile = (SimpleDraweeView) header.findViewById(R.id.img_file_detail_photo);
-        vgDetailPhoto = (ViewGroup) header.findViewById(R.id.vg_file_detail_photo);
-        vgFileInfo = (LinearLayout) header.findViewById(R.id.ly_file_detail_info);
-        ivFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
-        vDisableLineThrough = header.findViewById(R.id.iv_entity_listitem_line_through);
-        vDisableCover = header.findViewById(R.id.v_entity_listitem_warning);
-        btnFileDetailStarred = (ImageView) header.findViewById(R.id.bt_file_detail_starred);
+        View header = LayoutInflater.from(activity).inflate(R.layout.layout_file_detail, null, false);
+//        ivUserProfile = (SimpleDraweeView) header.findViewById(R.id.img_file_detail_user_profile);
+//        tvUserName = (TextView) header.findViewById(R.id.txt_file_detail_user_name);
+//        tvFileCreateDate = (TextView) header.findViewById(R.id.txt_file_detail_create_date);
+//        tvFileContentInfo = (TextView) header.findViewById(R.id.txt_file_detail_file_info);
+//        tvSharedCdp = (TextView) header.findViewById(R.id.txt_file_detail_shared_cdp);
+//        ivPhotoFile = (SimpleDraweeView) header.findViewById(R.id.img_file_detail_thumb);
+//        vgDetailPhoto = (ViewGroup) header.findViewById(R.id.vg_file_detail_content);
+//        vgFileInfo = (LinearLayout) header.findViewById(R.id.ly_file_detail_info);
+//        ivFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
+//        vDisableLineThrough = header.findViewById(R.id.iv_entity_listitem_line_through);
+//        vDisableCover = header.findViewById(R.id.v_entity_listitem_warning);
+//        btnFileDetailStarred = (ImageView) header.findViewById(R.id.bt_file_detail_starred);
 
         vgTapToViewOriginal = (ViewGroup) header.findViewById(R.id.vg_file_detail_tap_to_view);
         vgDeleted = header.findViewById(R.id.vg_file_detail_deleted);
@@ -107,7 +112,7 @@ public class FileHeadManager {
             return;
         }
 
-        int teamId = mEntityManager.getTeamId();
+        long teamId = mEntityManager.getTeamId();
 
         if (resFileDetail.shareEntities != null && !resFileDetail.shareEntities.isEmpty()) {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
@@ -235,7 +240,7 @@ public class FileHeadManager {
         drawFileWriterState(enabledUser);
     }
 
-    private boolean isEnabledUser(int writerId) {
+    private boolean isEnabledUser(long writerId) {
         EntityManager entityManager = EntityManager.getInstance();
         String userStatus = entityManager.getEntityById(writerId).getUser().status;
         return TextUtils.equals(userStatus, "enabled");
@@ -245,7 +250,7 @@ public class FileHeadManager {
         return btnFileDetailStarred;
     }
 
-    public void setRoomId(int roomId) {
+    public void setRoomId(long roomId) {
 
         this.roomId = roomId;
     }

@@ -82,12 +82,12 @@ public class TeamDomainInfoModel {
 
     }
 
-    public ResTeamDetailInfo.InviteTeam getTeamInfo(int teamId) throws RetrofitError {
+    public ResTeamDetailInfo.InviteTeam getTeamInfo(long teamId) throws RetrofitError {
         ResTeamDetailInfo.InviteTeam resTeamDetailInfo = RequestApiManager.getInstance().getTeamInfoByTeamApi(teamId);
         return resTeamDetailInfo;
     }
 
-    public void updateTeamInfo(int teamId) {
+    public void updateTeamInfo(long teamId) {
 
         ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
@@ -98,7 +98,7 @@ public class TeamDomainInfoModel {
         return AccountRepository.getRepository().getAccountInfo().getName();
     }
 
-    public void trackCreateTeamSuccess(int teamId) {
+    public void trackCreateTeamSuccess(long teamId) {
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.CreateTeam)

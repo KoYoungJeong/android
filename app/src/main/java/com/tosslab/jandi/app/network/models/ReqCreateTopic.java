@@ -4,7 +4,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ReqCreateTopic {
-    public int teamId;
+    public long teamId;
     public String name;
     public String description;
     public boolean autoJoin;

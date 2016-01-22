@@ -12,24 +12,24 @@ import com.tosslab.jandi.app.network.models.ResUpdateMessages;
  */
 public interface IDirectMessageApiLoader {
 
-    IExecutor<ResMessages> loadGetDirectMessagesByDirectMessageApi(int teamId, int userId, int fromId, int count);
+    IExecutor<ResMessages> loadGetDirectMessagesByDirectMessageApi(long teamId, long userId, long fromId, int count);
 
     IExecutor<ResMessages> loadGetDirectMessagesByDirectMessageApi(int teamId, int userId);
 
     IExecutor<ResUpdateMessages> loadGetDirectMessagesUpdatedByDirectMessageApi(int teamId, int userId, int timeAfter);
 
-    IExecutor<ResMessages> loadGetDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int userId, int currentLinkId);
+    IExecutor<ResMessages> loadGetDirectMessagesUpdatedForMarkerByDirectMessageApi(long teamId, long userId, long currentLinkId);
 
-    IExecutor<ResMessages> loadGetDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int userId, int currentLinkId, int count);
+    IExecutor<ResMessages> loadGetDirectMessagesUpdatedForMarkerByDirectMessageApi(long teamId, long userId, long currentLinkId, int count);
 
-    IExecutor<ResMessages> loadGetDirectMarkerMessagesByDirectMessageApi(int teamId, int userId, int currentLinkId);
+    IExecutor<ResMessages> loadGetDirectMarkerMessagesByDirectMessageApi(long teamId, long userId, long currentLinkId);
 
-    IExecutor<ResCommon> loadSendDirectMessageByDirectMessageApi(int userId, int teamId,
+    IExecutor<ResCommon> loadSendDirectMessageByDirectMessageApi(long userId, long teamId,
                                                                  ReqSendMessageV3 reqSendMessageV3);
 
     IExecutor<ResCommon> loadModifyDirectMessageByDirectMessageApi(ReqModifyMessage message,
                                                                    int userId, int messageId);
 
-    IExecutor<ResCommon> loadDeleteDirectMessageByDirectMessageApi(int teamId, int userId, int messageId);
+    IExecutor<ResCommon> loadDeleteDirectMessageByDirectMessageApi(long teamId, long userId, long messageId);
 
 }

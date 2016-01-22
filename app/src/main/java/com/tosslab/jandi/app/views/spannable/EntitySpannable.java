@@ -18,21 +18,27 @@ public class EntitySpannable extends ClickableSpan {
 
     private final boolean isStarred;
     private Context context;
-    private int entityId;
+    private long entityId;
     private int entityType;
-    private int teamId;
+    private long teamId;
+    private int color;
 
-    public EntitySpannable(Context context, int teamId, int entityId, int entityType, boolean isStarred) {
+    public EntitySpannable(Context context, long teamId, long entityId, int entityType, boolean isStarred) {
         this.context = context;
         this.entityId = entityId;
         this.entityType = entityType;
         this.teamId = teamId;
         this.isStarred = isStarred;
+        color = context.getResources().getColor(R.color.jandi_file_detail_share_text);
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     @Override
     public void updateDrawState(TextPaint ds) {
-        ds.linkColor = context.getResources().getColor(R.color.jandi_file_detail_share_text);
+        ds.linkColor = color;
         ds.setUnderlineText(true);
         ds.setShadowLayer(10, 1, 1, Color.WHITE);
         ds.setTextSize(context.getResources().getDimension(R.dimen.jandi_file_detail_file_share_text));

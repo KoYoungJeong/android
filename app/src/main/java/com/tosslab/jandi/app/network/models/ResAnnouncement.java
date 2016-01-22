@@ -12,38 +12,38 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResAnnouncement {
     @DatabaseField
-    private int teamId;
+    private long teamId;
     @DatabaseField(id = true)
     @JsonProperty("topicId")
-    private int roomId;
+    private long roomId;
     @DatabaseField
     private String status;
     @DatabaseField
-    private int messageId;
+    private long messageId;
     @DatabaseField
-    private int writerId;
+    private long writerId;
     @DatabaseField
     private String content;
     @DatabaseField
     private String writtenAt;
     @DatabaseField
-    private int creatorId;
+    private long creatorId;
     @DatabaseField
     private String createdAt;
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 
-    public int getRoomId() {
+    public long getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(int roomId) {
+    public void setRoomId(long roomId) {
         this.roomId = roomId;
     }
 
@@ -55,19 +55,19 @@ public class ResAnnouncement {
         this.status = status;
     }
 
-    public int getMessageId() {
+    public long getMessageId() {
         return messageId;
     }
 
-    public void setMessageId(int messageId) {
+    public void setMessageId(long messageId) {
         this.messageId = messageId;
     }
 
-    public int getWriterId() {
+    public long getWriterId() {
         return writerId;
     }
 
-    public void setWriterId(int writerId) {
+    public void setWriterId(long writerId) {
         this.writerId = writerId;
     }
 
@@ -87,11 +87,11 @@ public class ResAnnouncement {
         this.writtenAt = writtenAt;
     }
 
-    public int getCreatorId() {
+    public long getCreatorId() {
         return creatorId;
     }
 
-    public void setCreatorId(int creatorId) {
+    public void setCreatorId(long creatorId) {
         this.creatorId = creatorId;
     }
 

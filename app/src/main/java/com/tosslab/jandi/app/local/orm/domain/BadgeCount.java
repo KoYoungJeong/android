@@ -9,23 +9,23 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "badge_count")
 public class BadgeCount {
     @DatabaseField(id = true)
-    private int teamId;
+    private long teamId;
     @DatabaseField
     private int badgeCount;
 
     public BadgeCount() {
     }
 
-    public BadgeCount(int teamId, int badgeCount) {
+    public BadgeCount(long teamId, int badgeCount) {
         this.teamId = teamId;
         this.badgeCount = badgeCount;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 

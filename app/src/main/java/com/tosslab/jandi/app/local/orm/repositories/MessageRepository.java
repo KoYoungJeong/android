@@ -15,9 +15,6 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * Created by Steve SeongUg Jung on 15. 7. 21..
- */
 public class MessageRepository {
 
     private static MessageRepository repository;
@@ -85,7 +82,7 @@ public class MessageRepository {
         return false;
     }
 
-    public int deleteMessage(int messageId) {
+    public int deleteMessage(long messageId) {
 
         if (messageId <= 0) {
             // 이벤트는 삭제하지 않기 위함
@@ -115,7 +112,7 @@ public class MessageRepository {
     public List<ResMessages.Link> getMessages(int roomId) {
 
         try {
-            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
             return helper.getDao(ResMessages.Link.class)
                     .queryBuilder()
                     .orderBy("time", false)
@@ -131,11 +128,11 @@ public class MessageRepository {
         return new ArrayList<>();
     }
 
-    public ResMessages.Link getLastMessage(int roomId) {
+    public ResMessages.Link getLastMessage(long roomId) {
 
         ResMessages.Link link = null;
         try {
-            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
             link = helper.getDao(ResMessages.Link.class)
                     .queryBuilder()
                     .orderBy("time", false)
@@ -155,9 +152,9 @@ public class MessageRepository {
         return link;
     }
 
-    public List<ResMessages.Link> getOldMessages(int roomId, int lastLinkId, long count) {
+    public List<ResMessages.Link> getOldMessages(long roomId, long lastLinkId, int count) {
         try {
-            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
             return helper.getDao(ResMessages.Link.class)
                     .queryBuilder()
                     .limit(count)
@@ -177,14 +174,14 @@ public class MessageRepository {
 
     }
 
-    public int updateStarred(int messageId, boolean isStarred) {
+    public int updateStarred(long messageId, boolean isStarred) {
         lock.lock();
         try {
-            Dao<ResMessages.TextMessage, Integer> textMessageDao = helper.getDao(ResMessages
+            Dao<ResMessages.TextMessage, Long> textMessageDao = helper.getDao(ResMessages
                     .TextMessage.class);
 
             if (textMessageDao.idExists(messageId)) {
-                UpdateBuilder<ResMessages.TextMessage, Integer> updateBuilder = textMessageDao.updateBuilder();
+                UpdateBuilder<ResMessages.TextMessage, Long> updateBuilder = textMessageDao.updateBuilder();
                 updateBuilder.updateColumnValue("isStarred", isStarred);
                 updateBuilder
                         .where()
@@ -192,11 +189,11 @@ public class MessageRepository {
                 return updateBuilder.update();
             }
 
-            Dao<ResMessages.CommentMessage, Integer> commentMessageDao
+            Dao<ResMessages.CommentMessage, Long> commentMessageDao
                     = helper.getDao(ResMessages.CommentMessage.class);
 
             if (commentMessageDao.idExists(messageId)) {
-                UpdateBuilder<ResMessages.CommentMessage, Integer> updateBuilder = commentMessageDao.updateBuilder();
+                UpdateBuilder<ResMessages.CommentMessage, Long> updateBuilder = commentMessageDao.updateBuilder();
                 updateBuilder.updateColumnValue("isStarred", isStarred);
                 updateBuilder.where()
                         .eq("id", messageId);
@@ -211,13 +208,13 @@ public class MessageRepository {
         return 0;
     }
 
-    public void updateStatus(int fileId, String archived) {
+    public void updateStatus(long fileId, String archived) {
         lock.lock();
         try {
-            Dao<ResMessages.FileMessage, Integer> dao = helper.getDao(ResMessages.FileMessage
+            Dao<ResMessages.FileMessage, Long> dao = helper.getDao(ResMessages.FileMessage
                     .class);
             if (dao.idExists(fileId)) {
-                UpdateBuilder<ResMessages.FileMessage, Integer> updateBuilder = dao.updateBuilder();
+                UpdateBuilder<ResMessages.FileMessage, Long> updateBuilder = dao.updateBuilder();
                 updateBuilder.updateColumnValue("status", archived);
                 updateBuilder.where()
                         .eq("id", fileId);
@@ -230,7 +227,7 @@ public class MessageRepository {
         }
     }
 
-    public void updateUnshared(int fileId, int roomId) {
+    public void updateUnshared(long fileId, long roomId) {
         lock.lock();
         try {
             Dao<ResMessages.OriginalMessage.IntegerWrapper, Integer> dao = helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class);
@@ -271,7 +268,7 @@ public class MessageRepository {
         return false;
     }
 
-    public int deleteLinkByMessageId(int messageId) {
+    public int deleteLinkByMessageId(long messageId) {
         lock.lock();
         try {
             Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
@@ -289,7 +286,7 @@ public class MessageRepository {
         return 0;
     }
 
-    public ResMessages.FileMessage getFileMessage(int fileId) {
+    public ResMessages.FileMessage getFileMessage(long fileId) {
         lock.lock();
 
         try {
@@ -309,7 +306,7 @@ public class MessageRepository {
         return null;
     }
 
-    public ResMessages.TextMessage getTextMessage(int messageId) {
+    public ResMessages.TextMessage getTextMessage(long messageId) {
         lock.lock();
         try {
             Dao<ResMessages.TextMessage, ?> dao = helper.getDao(ResMessages.TextMessage.class);
@@ -319,6 +316,40 @@ public class MessageRepository {
                     .eq("id", messageId)
                     .queryForFirst();
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+        return null;
+    }
+
+    public List<ResMessages.CommentMessage> getCommentMessages(long fileId) {
+        lock.lock();
+        try {
+            Dao<ResMessages.CommentMessage, ?> dao = helper.getDao(ResMessages.CommentMessage.class);
+            return dao.queryBuilder()
+                    .where()
+                    .eq("feedbackId", fileId)
+                    .query();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+        return null;
+    }
+
+    public List<ResMessages.CommentStickerMessage> getStickerCommentMessages(long fileId) {
+        lock.lock();
+        try {
+            Dao<ResMessages.CommentStickerMessage, ?> dao =
+                    helper.getDao(ResMessages.CommentStickerMessage.class);
+            return dao.queryBuilder()
+                    .where()
+                    .eq("feedbackId", fileId)
+                    .query();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -348,7 +379,7 @@ public class MessageRepository {
 
     }
 
-    public int clearLinks(int teamId, int roomId) {
+    public int clearLinks(long teamId, long roomId) {
         lock.lock();
         try {
             Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
@@ -368,7 +399,7 @@ public class MessageRepository {
 
     public int deleteAllLink() {
         lock.lock();
-        Dao<ResMessages.Link, ?> dao = null;
+        Dao<ResMessages.Link, ?> dao;
         try {
             dao = helper.getDao(ResMessages.Link.class);
             DeleteBuilder<ResMessages.Link, ?> deleteBuilder = dao.deleteBuilder();
@@ -382,10 +413,10 @@ public class MessageRepository {
         return 0;
     }
 
-    public int getMessagesCount(int roomId, int startLinkId) {
+    public int getMessagesCount(long roomId, long startLinkId) {
         lock.lock();
         try {
-            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
             return (Long.valueOf(helper.getDao(ResMessages.Link.class)
                     .queryBuilder()
                     .orderBy("time", true)
@@ -406,10 +437,10 @@ public class MessageRepository {
         return 0;
     }
 
-    public int getMessagesCount(int roomId, int startLinkId, int endLinkId) {
+    public int getMessagesCount(long roomId, long startLinkId, long endLinkId) {
         lock.lock();
         try {
-            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
             return (Long.valueOf(helper.getDao(ResMessages.Link.class)
                     .queryBuilder()
                     .orderBy("time", true)
@@ -432,10 +463,10 @@ public class MessageRepository {
         return 0;
     }
 
-    public List<ResMessages.Link> getMessages(int roomId, int firstCursorLinkId, int toCursorLinkId) {
+    public List<ResMessages.Link> getMessages(long roomId, long firstCursorLinkId, long toCursorLinkId) {
         lock.lock();
         try {
-            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
             return helper.getDao(ResMessages.Link.class)
                     .queryBuilder()
                     .orderBy("time", true)
@@ -456,7 +487,7 @@ public class MessageRepository {
         return new ArrayList<>(0);
     }
 
-    public boolean hasLinkOfMessageId(int messageId) {
+    public boolean hasLinkOfMessageId(long messageId) {
         if (messageId <= 0) {
             return false;
         }

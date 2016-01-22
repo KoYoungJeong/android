@@ -13,22 +13,22 @@ import retrofit.RetrofitError;
  */
 public interface IChannelMessageApiAuth {
 
-    ResMessages getPublicTopicMessagesByChannelMessageApi(int teamId, int channelId, int fromId, int count) throws RetrofitError;
+    ResMessages getPublicTopicMessagesByChannelMessageApi(long teamId, long channelId, long fromId, int count) throws RetrofitError;
 
     ResMessages getPublicTopicMessagesByChannelMessageApi(int teamId, int channelId) throws RetrofitError;
 
     ResUpdateMessages getPublicTopicUpdatedMessagesByChannelMessageApi(int teamId, int channelId, int currentLinkId) throws RetrofitError;
 
-    ResMessages getPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(int teamId, int channelId, int currentLinkId) throws RetrofitError;
+    ResMessages getPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(long teamId, long channelId, long currentLinkId) throws RetrofitError;
 
-    ResMessages getPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(int teamId, int channelId, int currentLinkId, int count) throws RetrofitError;
+    ResMessages getPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(long teamId, long channelId, long currentLinkId, int count) throws RetrofitError;
 
-    ResMessages getPublicTopicMarkerMessagesByChannelMessageApi(int teamId, int channelId, int currentLinkId) throws RetrofitError;
+    ResMessages getPublicTopicMarkerMessagesByChannelMessageApi(long teamId, long channelId, long currentLinkId) throws RetrofitError;
 
-    ResCommon sendPublicTopicMessageByChannelMessageApi(int channelId, int teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError;
+    ResCommon sendPublicTopicMessageByChannelMessageApi(long channelId, long teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError;
 
     ResCommon modifyPublicTopicMessageByChannelMessageApi(ReqModifyMessage message, int channelId, int messageId) throws RetrofitError;
 
-    ResCommon deletePublicTopicMessageByChannelMessageApi(int teamId, int channelId, int messageId) throws RetrofitError;
+    ResCommon deletePublicTopicMessageByChannelMessageApi(long teamId, long channelId, long messageId) throws RetrofitError;
 
 }

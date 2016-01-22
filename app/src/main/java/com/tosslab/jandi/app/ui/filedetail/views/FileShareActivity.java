@@ -32,9 +32,10 @@ import java.util.List;
 
 @EActivity(R.layout.activity_file_share_entity_choose)
 public class FileShareActivity extends BaseAppCompatActivity {
+    public static final String KEY_ENTITY_ID = "entity_id";
 
     @Extra
-    int fileId;
+    long fileId;
     @Bean
     FileDetailModel fileDetailModel;
     @ViewById(R.id.layout_search_bar)
@@ -87,7 +88,7 @@ public class FileShareActivity extends BaseAppCompatActivity {
             RoomSelector roomSelector = new RoomSelectorImpl(topics, users);
             roomSelector.setOnRoomSelectListener(item -> {
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("EntityId", item.getEntityId());
+                returnIntent.putExtra(KEY_ENTITY_ID, item.getEntityId());
                 setResult(RESULT_OK, returnIntent);
                 finish();
             });

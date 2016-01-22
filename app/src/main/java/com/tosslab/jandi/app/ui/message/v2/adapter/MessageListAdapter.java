@@ -86,7 +86,7 @@ public class MessageListAdapter extends MessageAdapter {
         links.clear();
     }
 
-    private int getDummyMessagePositionByMessageId(int messageId) {
+    private int getDummyMessagePositionByMessageId(long messageId) {
 
         int size = getItemCount();
 

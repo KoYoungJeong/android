@@ -78,7 +78,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
 
     @FragmentArg
-    int selectedEntity = -2;
+    long selectedEntity = -2;
     @Bean(MainTopicListPresenter.class)
     MainTopicListPresenter mainTopicListPresenter;
     @ViewById(R.id.btn_main_topic_fab)
@@ -180,7 +180,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         adapter.setOnGroupItemClickListener((view, adapter, groupPosition) -> {
             ExpandableTopicAdapter expandableTopicAdapter = (ExpandableTopicAdapter) adapter;
             TopicFolderData topicFolderData = expandableTopicAdapter.getTopicFolderData(groupPosition);
-            int folderId = topicFolderData.getFolderId();
+            long folderId = topicFolderData.getFolderId();
             String folderName = topicFolderData.getTitle();
             showGroupSettingPopupView(view, folderId, folderName, topicFolderData.getSeq());
         });
@@ -193,7 +193,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         setFolderExpansion();
     }
 
-    public void showGroupSettingPopupView(View view, int folderId, String folderName, int seq) {
+    public void showGroupSettingPopupView(View view, long folderId, String folderName, int seq) {
         TopicFolderDialogFragment_.builder()
                 .folderId(folderId)
                 .folderName(folderName)
@@ -226,7 +226,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     }
 
     @Override
-    public void moveToMessageActivity(int entityId, int entityType, boolean starred, int teamId, int markerLinkId) {
+    public void moveToMessageActivity(long entityId, int entityType, boolean starred, long teamId, long markerLinkId) {
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityType(entityType)
@@ -252,7 +252,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     }
 
     @Override
-    public void showEntityMenuDialog(int entityId, int folderId) {
+    public void showEntityMenuDialog(long entityId, long folderId) {
         EntityMenuDialogFragment_.builder()
                 .entityId(entityId)
                 .folderId(folderId)
@@ -275,15 +275,15 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         LogUtil.e(folderExpands.size() + "");
         if (adapter.getGroupCount() > 1 && folderExpands != null && !folderExpands.isEmpty()) {
             int groupCount = adapter.getGroupCount();
-            HashMap<Integer, Boolean> folderExpandMap = new HashMap<>();
+            HashMap<Long, Boolean> folderExpandMap = new HashMap<>();
 
             for (FolderExpand folderExpand : folderExpands) {
-                folderExpandMap.put(Integer.valueOf(folderExpand.getFolderId()), folderExpand.isExpand());
+                folderExpandMap.put(folderExpand.getFolderId(), folderExpand.isExpand());
             }
 
             for (int idx = 0; idx < groupCount; idx++) {
                 TopicFolderData topicFolderData = adapter.getTopicFolderData(idx);
-                int folderId = Integer.valueOf(topicFolderData.getFolderId());
+                long folderId = topicFolderData.getFolderId();
                 if (folderExpandMap.get(folderId) != null) {
                     if (folderExpandMap.get(folderId)) {
                         if (!expandableItemManager.isGroupExpanded(idx)) {
@@ -375,7 +375,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void setSelectedItem(int selectedEntity) {
+    public void setSelectedItem(long selectedEntity) {
         this.selectedEntity = selectedEntity;
         adapter.setSelectedEntity(selectedEntity);
     }
@@ -383,7 +383,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void scrollAndAnimateForSelectedItem() {
-        int selectedEntity = adapter.getSelectedEntity();
+        long selectedEntity = adapter.getSelectedEntity();
         if (selectedEntity <= 0) {
             return;
         }

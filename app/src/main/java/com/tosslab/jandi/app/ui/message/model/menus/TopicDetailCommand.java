@@ -15,10 +15,10 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 public class TopicDetailCommand implements MenuCommand {
 
     private final Fragment fragment;
-    private final int teamId;
-    private final int entityId;
+    private final long teamId;
+    private final long entityId;
 
-    public TopicDetailCommand(Fragment fragment, int teamId, int entityId) {
+    public TopicDetailCommand(Fragment fragment, long teamId, long entityId) {
         this.fragment = fragment;
         this.teamId = teamId;
         this.entityId = entityId;

@@ -10,15 +10,15 @@ import com.j256.ormlite.table.DatabaseTable;
 public class ReadyMessage {
 
     @DatabaseField(id = true)
-    private int roomId;
+    private long roomId;
     @DatabaseField
     private String text;
 
-    public int getRoomId() {
+    public long getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(int roomId) {
+    public void setRoomId(long roomId) {
         this.roomId = roomId;
     }
 

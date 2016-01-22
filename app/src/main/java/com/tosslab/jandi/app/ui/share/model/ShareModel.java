@@ -47,15 +47,15 @@ public class ShareModel {
     @RootContext
     Context context;
 
-    public ResRoomInfo getEntityById(int teamId, int roomId) {
+    public ResRoomInfo getEntityById(long teamId, long roomId) {
         return RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId, roomId);
     }
 
-    public ResTeamDetailInfo.InviteTeam getTeamInfoById(int teamId) {
+    public ResTeamDetailInfo.InviteTeam getTeamInfoById(long teamId) {
         return RequestApiManager.getInstance().getTeamInfoByTeamApi(teamId);
     }
 
-    public void sendMessage(int teamId, int entityId, int entityType, String messageText, List<MentionObject> mention) throws RetrofitError {
+    public void sendMessage(long teamId, long entityId, int entityType, String messageText, List<MentionObject> mention) throws RetrofitError {
 
         MessageManipulator messageManipulator = MessageManipulator_.getInstance_(context);
 
@@ -73,7 +73,7 @@ public class ShareModel {
     }
 
     public JsonObject uploadFile(File imageFile, String titleText, String commentText,
-                                 int teamId, int entityId, ProgressDialog progressDialog,
+                                 long teamId, long entityId, ProgressDialog progressDialog,
                                  boolean isPublicTopic, List<MentionObject> mentions) throws ExecutionException, InterruptedException {
         File uploadFile = new File(imageFile.getAbsolutePath());
         String requestURL = JandiConstantsForFlavors.SERVICE_FILE_UPLOAD_URL + "inner-api/file";
@@ -126,11 +126,11 @@ public class ShareModel {
         return Uri.parse(uriString).getPath();
     }
 
-    public boolean hasLeftSideMenu(int teamId) {
+    public boolean hasLeftSideMenu(long teamId) {
         return LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId) != null;
     }
 
-    public ResLeftSideMenu getLeftSideMenu(int teamId) {
+    public ResLeftSideMenu getLeftSideMenu(long teamId) {
         return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
     }
 
