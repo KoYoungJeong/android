@@ -79,8 +79,8 @@
 
         <activity
             android:name=".ui.filedetail.FileDetailActivity_"
-            android:label="@string/title_file_detail"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_file_detail"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
@@ -354,8 +354,18 @@
         </receiver>
         <!-- Google Play Campaign Measurement -->
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+
         <receiver
             android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+            android:exported="true"
+            android:permission="android.permission.INSTALL_PACKAGES">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="com.google.ads.conversiontracking.InstallReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
