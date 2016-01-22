@@ -18,22 +18,22 @@ public interface MessagesSearchApiV2Client {
     // Message Search
     @GET("/teams/{teamId}/search/messages")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResMessageSearch searchMessages(@Path("teamId") int teamId, @Query("q") String query, @Query("page") int page,
-                                    @Query("perPage") int perPage, @Query("writerId") int writerId, @Query("entityId") int entityId);
+    ResMessageSearch searchMessages(@Path("teamId") long teamId, @Query("q") String query, @Query("page") int page,
+                                    @Query("perPage") int perPage, @Query("writerId") long writerId, @Query("entityId") long entityId);
 
     @GET("/teams/{teamId}/search/messages")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResMessageSearch searchMessagesByEntityId(@Path("teamId") int teamId, @Query("q") String query, @Query("page") int page,
-                                              @Query("perPage") int perPage, @Query("entityId") int entityId);
+    ResMessageSearch searchMessagesByEntityId(@Path("teamId") long teamId, @Query("q") String query, @Query("page") int page,
+                                              @Query("perPage") int perPage, @Query("entityId") long entityId);
 
     @GET("/teams/{teamId}/search/messages")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResMessageSearch searchMessagesByWriterId(@Path("teamId") int teamId, @Query("q") String query, @Query("page") int page,
-                                              @Query("perPage") int perPage, @Query("writerId") int writerId);
+    ResMessageSearch searchMessagesByWriterId(@Path("teamId") long teamId, @Query("q") String query, @Query("page") int page,
+                                              @Query("perPage") int perPage, @Query("writerId") long writerId);
 
     @GET("/teams/{teamId}/search/messages")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResMessageSearch searchMessages(@Path("teamId") int teamId, @Query("q") String query, @Query("page") int page,
+    ResMessageSearch searchMessages(@Path("teamId") long teamId, @Query("q") String query, @Query("page") int page,
                                     @Query("perPage") int perPage);
 
 }

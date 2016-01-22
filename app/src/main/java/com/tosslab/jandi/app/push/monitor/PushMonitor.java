@@ -11,13 +11,13 @@ public class PushMonitor {
 
     private static PushMonitor instance;
 
-    private ConcurrentHashMap<Integer, PushEntity> pushMap;
+    private ConcurrentHashMap<Long, PushEntity> pushMap;
 
     private String lastNotifiedCreatedAt;
     private NotificationCompat.Builder lastNotificationBuilder;
 
     private PushMonitor() {
-        this.pushMap = new ConcurrentHashMap<Integer, PushEntity>();
+        this.pushMap = new ConcurrentHashMap<>();
     }
 
     public static PushMonitor getInstance() {
@@ -28,15 +28,15 @@ public class PushMonitor {
         return instance;
     }
 
-    public void register(int entityId) {
+    public void register(long entityId) {
         pushMap.put(entityId, new PushEntity(entityId));
     }
 
-    public void unregister(int entityId) {
+    public void unregister(long entityId) {
         pushMap.remove(entityId);
     }
 
-    public boolean hasEntityId(int entityId) {
+    public boolean hasEntityId(long entityId) {
         return pushMap.containsKey(entityId);
     }
 

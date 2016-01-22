@@ -102,7 +102,7 @@ public class AnnouncementViewModel {
             return;
         }
 
-        int writerId = announcement.getWriterId();
+        long writerId = announcement.getWriterId();
         String writtenAt = announcement.getWrittenAt();
         String content = announcement.getContent();
 

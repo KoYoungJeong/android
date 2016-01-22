@@ -20,10 +20,10 @@ public interface StarredEntityApiV2Client {
 
     @POST("/settings/starred/entities/{entityId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon enableFavorite(@Body ReqTeam reqTeam, @Path("entityId") int entityId);
+    ResCommon enableFavorite(@Body ReqTeam reqTeam, @Path("entityId") long entityId);
 
     @DELETEWithBody("/settings/starred/entities/{entityId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon disableFavorite(@Query("teamId") int teamId, @Path("entityId") int entityId);
+    ResCommon disableFavorite(@Query("teamId") long teamId, @Path("entityId") long entityId);
 
 }

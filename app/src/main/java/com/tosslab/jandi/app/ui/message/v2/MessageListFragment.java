@@ -196,19 +196,19 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @FragmentArg
     int entityType;
     @FragmentArg
-    int entityId;
+    long entityId;
     @FragmentArg
     boolean isFavorite = false;
     @FragmentArg
     boolean isFromPush = false;
     @FragmentArg
-    int teamId;
+    long teamId;
     @FragmentArg
-    int lastMarker = -1;
+    long lastMarker = -1;
     @FragmentArg
-    int roomId;
+    long roomId;
     @FragmentArg
-    int firstCursorLinkId = -1;
+    long firstCursorLinkId = -1;
     @ViewById(R.id.lv_messages)
     RecyclerView messageListView;
     @ViewById(R.id.btn_message_action_button_1)
@@ -670,7 +670,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 roomId = entityId;
             } else if (NetworkCheckUtil.isConnected()) {
 
-                int roomId = initRoomId();
+                long roomId = initRoomId();
 
                 if (roomId > 0) {
                     this.roomId = roomId;
@@ -684,7 +684,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
 
-        int savedLastLinkId = messageListModel.getLastReadLinkId(roomId, messageListModel.getMyId());
+        long savedLastLinkId = messageListModel.getLastReadLinkId(roomId, messageListModel.getMyId());
         messageState.setFirstItemId(savedLastLinkId);
 
         ResMessages.Link lastMessage = MessageRepository.getRepository().getLastMessage(roomId);
@@ -724,7 +724,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         isRoomInit = true;
     }
 
-    int initRoomId() {
+    long initRoomId() {
         try {
             ResMessages oldMessage = messageListModel.getOldMessage(-1, 1);
             return oldMessage.entityId;
@@ -755,7 +755,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (newsMessageLoader != null) {
             MessageState data = (MessageState) messageQueue.getData();
-            int lastUpdateLinkId = data.getLastUpdateLinkId();
+            long lastUpdateLinkId = data.getLastUpdateLinkId();
 
             if (lastUpdateLinkId < 0 && oldMessageLoader != null) {
                 oldMessageLoader.load(roomId, lastUpdateLinkId);
@@ -767,7 +767,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     private void sendMessage(MessageQueue messageQueue) {
         SendingMessage data = (SendingMessage) messageQueue.getData();
-        int linkId;
+        long linkId;
         List mentions = data.getMentions();
         if (data.getStickerInfo() != null) {
             linkId = messageListModel.sendStickerMessage(teamId, entityId, data.getStickerInfo(), data.getLocalId());
@@ -944,7 +944,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             EventBus.getDefault().post(new MainSelectTopicEvent(roomId));
         }
 
-        List<Integer> roomIds = new ArrayList<>();
+        List<Long> roomIds = new ArrayList<>();
         roomIds.add(roomId);
 
         if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
@@ -1328,7 +1328,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         return false;
     }
 
-    void onMessageItemClick(ResMessages.Link link, int entityId) {
+    void onMessageItemClick(ResMessages.Link link, long entityId) {
         if (link instanceof DummyMessageLink) {
             DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
@@ -1485,7 +1485,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         startFileUpload(event.title, event.entityId, event.realFilePath, event.comment);
     }
 
-    private void startFileUpload(String title, int entityId, String filePath, String comment) {
+    private void startFileUpload(String title, long entityId, String filePath, String comment) {
         filePickerViewModel.startUpload(getActivity(), title, entityId, filePath, comment);
     }
 
@@ -1535,7 +1535,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     @Background
-    void deleteMessage(int messageType, int messageId) {
+    void deleteMessage(int messageType, long messageId) {
         messageListPresenter.showProgressWheel();
         try {
             if (messageType == MessageItem.TYPE_STRING) {
@@ -1880,7 +1880,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
 
-        int messageId = event.getMessageId();
+        long messageId = event.getMessageId();
         switch (event.getAction()) {
             case STARRED:
                 try {
@@ -1926,7 +1926,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     @Background
-    void checkAnnouncementExistsAndCreate(int messageId) {
+    void checkAnnouncementExistsAndCreate(long messageId) {
         ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, roomId);
 
         if (announcement == null || announcement.isEmpty()) {
@@ -1938,7 +1938,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     @Background
-    void createAnnouncement(int messageId) {
+    void createAnnouncement(long messageId) {
 
         messageListPresenter.showProgressWheel();
         announcementModel.createAnnouncement(teamId, roomId, messageId);

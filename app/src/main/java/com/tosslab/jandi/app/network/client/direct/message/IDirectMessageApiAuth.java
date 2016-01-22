@@ -13,24 +13,24 @@ import retrofit.RetrofitError;
  */
 public interface IDirectMessageApiAuth {
 
-    ResMessages getDirectMessagesByDirectMessageApi(int teamId, int userId, int fromId, int count) throws RetrofitError;
+    ResMessages getDirectMessagesByDirectMessageApi(long teamId, long userId, long fromId, int count) throws RetrofitError;
 
     ResMessages getDirectMessagesByDirectMessageApi(int teamId, int userId) throws RetrofitError;
 
     ResUpdateMessages getDirectMessagesUpdatedByDirectMessageApi(int teamId, int userId, int timeAfter) throws RetrofitError;
 
-    ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int userId, int currentLinkId) throws RetrofitError;
+    ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(long teamId, long userId, long currentLinkId) throws RetrofitError;
 
-    ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int userId, int currentLinkId, int count) throws RetrofitError;
+    ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(long teamId, long userId, long currentLinkId, int count) throws RetrofitError;
 
-    ResMessages getDirectMarkerMessagesByDirectMessageApi(int teamId, int userId, int currentLinkId) throws RetrofitError;
+    ResMessages getDirectMarkerMessagesByDirectMessageApi(long teamId, long userId, long currentLinkId) throws RetrofitError;
 
-    ResCommon sendDirectMessageByDirectMessageApi(int userId, int teamId,
+    ResCommon sendDirectMessageByDirectMessageApi(long userId, long teamId,
                                                   ReqSendMessageV3 reqSendMessageV3) throws RetrofitError;
 
     ResCommon modifyDirectMessageByDirectMessageApi(ReqModifyMessage message,
                                                     int userId, int messageId) throws RetrofitError;
 
-    ResCommon deleteDirectMessageByDirectMessageApi(int teamId, int userId, int messageId) throws RetrofitError;
+    ResCommon deleteDirectMessageByDirectMessageApi(long teamId, long userId, long messageId) throws RetrofitError;
 
 }

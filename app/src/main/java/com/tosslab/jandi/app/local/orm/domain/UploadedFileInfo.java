@@ -8,7 +8,7 @@ import com.j256.ormlite.table.DatabaseTable;
 public class UploadedFileInfo {
 
     @DatabaseField(id = true)
-    private int messageId;
+    private long messageId;
     @DatabaseField(defaultValue = "")
     private String localPath;
 
@@ -20,11 +20,11 @@ public class UploadedFileInfo {
         this.localPath = localPath;
     }
 
-    public int getMessageId() {
+    public long getMessageId() {
         return messageId;
     }
 
-    public void setMessageId(int messageId) {
+    public void setMessageId(long messageId) {
         this.messageId = messageId;
     }
 }

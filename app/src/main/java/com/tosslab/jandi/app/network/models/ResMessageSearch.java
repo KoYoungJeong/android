@@ -135,9 +135,9 @@ public class ResMessageSearch {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Record {
         private String type;
-        private int linkId;
-        private int memberId;
-        private int messageId;
+        private long linkId;
+        private long memberId;
+        private long messageId;
         private String text;
         @JsonProperty("time")
         private Date lastDate;
@@ -154,27 +154,27 @@ public class ResMessageSearch {
             this.type = type;
         }
 
-        public int getLinkId() {
+        public long getLinkId() {
             return linkId;
         }
 
-        public void setLinkId(int linkId) {
+        public void setLinkId(long linkId) {
             this.linkId = linkId;
         }
 
-        public int getMemberId() {
+        public long getMemberId() {
             return memberId;
         }
 
-        public void setMemberId(int memberId) {
+        public void setMemberId(long memberId) {
             this.memberId = memberId;
         }
 
-        public int getMessageId() {
+        public long getMessageId() {
             return messageId;
         }
 
-        public void setMessageId(int messageId) {
+        public void setMessageId(long messageId) {
             this.messageId = messageId;
         }
 
@@ -185,7 +185,6 @@ public class ResMessageSearch {
         public void setText(String text) {
             this.text = text;
         }
-
 
         public Date getLastDate() {
             return lastDate;
@@ -216,7 +215,7 @@ public class ResMessageSearch {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class SearchEntityInfo {
         private String type;
-        private int id;
+        private long id;
         private String name;
 
         public String getType() {
@@ -227,11 +226,11 @@ public class ResMessageSearch {
             this.type = type;
         }
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(long id) {
             this.id = id;
         }
 
@@ -248,15 +247,15 @@ public class ResMessageSearch {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class FileInfo {
-        private int writerId;
+        private long writerId;
         private String title;
         private String name;
 
-        public int getWriterId() {
+        public long getWriterId() {
             return writerId;
         }
 
-        public void setWriterId(int writerId) {
+        public void setWriterId(long writerId) {
             this.writerId = writerId;
         }
 

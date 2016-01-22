@@ -96,7 +96,7 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
     }
 
     @Override
-    public void onItemClick(int teamId, String teamName) {
+    public void onItemClick(long teamId, String teamName) {
         ShareSelectTeamEvent event = new ShareSelectTeamEvent();
         event.setTeamId(teamId);
         event.setTeamName(teamName);

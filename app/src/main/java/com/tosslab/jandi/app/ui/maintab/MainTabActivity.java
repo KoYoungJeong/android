@@ -110,7 +110,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     @ViewById(R.id.vg_main_offline)
     View vgOffline;
-    int selectedEntity = -1;
+    long selectedEntity = -1;
     private OfflineLayer offlineLayer;
     private ProgressWheel mProgressWheel;
     private Context mContext;
@@ -451,7 +451,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     private int getOtherTeamMessageCount() {
         final int[] messageCount = {0};
-        int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+        long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
         Observable.from(AccountRepository.getRepository().getAccountTeams())
                 .filter(userTeam -> userTeam.getTeamId() != selectedTeamId)
                 .map(ResAccountInfo.UserTeam::getUnread)

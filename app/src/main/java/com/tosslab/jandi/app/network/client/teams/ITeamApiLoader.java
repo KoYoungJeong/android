@@ -34,57 +34,57 @@ public interface ITeamApiLoader {
 
     IExecutor<ResTeamDetailInfo> loadCreateNewTeamByTeamApi(ReqCreateNewTeam req);
 
-    IExecutor<ResLeftSideMenu.User> loadGetMemberProfileByTeamApi(int teamId, int memberId);
+    IExecutor<ResLeftSideMenu.User> loadGetMemberProfileByTeamApi(long teamId, long memberId);
 
-    IExecutor<List<ResInvitationMembers>> loadInviteToTeamByTeamApi(int teamId, ReqInvitationMembers invitationMembers);
+    IExecutor<List<ResInvitationMembers>> loadInviteToTeamByTeamApi(long teamId, ReqInvitationMembers invitationMembers);
 
-    IExecutor<ResTeamDetailInfo.InviteTeam> loadGetTeamInfoByTeamApi(int teamId);
+    IExecutor<ResTeamDetailInfo.InviteTeam> loadGetTeamInfoByTeamApi(long teamId);
 
-    IExecutor<ResAnnouncement> loadGetAnnouncement(int teamId, int topicId);
+    IExecutor<ResAnnouncement> loadGetAnnouncement(long teamId, long topicId);
 
-    IExecutor<ResCommon> loadCreateAnnouncement(int teamId, int topicId,
+    IExecutor<ResCommon> loadCreateAnnouncement(long teamId, long topicId,
                                                 ReqCreateAnnouncement reqCreateAnnouncement);
 
-    IExecutor<ResCommon> loadUpdateAnnouncementStatus(int teamId, int memberId,
+    IExecutor<ResCommon> loadUpdateAnnouncementStatus(long teamId, long memberId,
                                                       ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus);
 
-    IExecutor<ResCommon> loadDeleteAnnouncement(int teamId, int topicId);
+    IExecutor<ResCommon> loadDeleteAnnouncement(long teamId, long topicId);
 
-    IExecutor<ResMessages.OriginalMessage> loadGetMessage(int teamId, int topicId);
+    IExecutor<ResMessages.OriginalMessage> loadGetMessage(long teamId, long topicId);
 
-    IExecutor<ResStarMentioned> loadGetMentionedMessagesByTeamApi(int teamId, Integer messageId, int count);
+    IExecutor<ResStarMentioned> loadGetMentionedMessagesByTeamApi(long teamId, long messageId, int count);
 
-    IExecutor<StarMentionedMessageObject> loadRegistStarredMessageByTeamApi(int teamId, int messageId);
+    IExecutor<StarMentionedMessageObject> loadRegistStarredMessageByTeamApi(long teamId, long messageId);
 
-    IExecutor<ResCommon> loadUnregistStarredMessageByTeamApi(int teamId, int messageId);
+    IExecutor<ResCommon> loadUnregistStarredMessageByTeamApi(long teamId, long messageId);
 
-    IExecutor<ResStarMentioned> loadGetStarredMessagesByTeamApi(int teamId, Integer starredId,
+    IExecutor<ResStarMentioned> loadGetStarredMessagesByTeamApi(long teamId, long messageId,
                                                                 int count, String type);
 
-    IExecutor<ResCommon> loadUpdateTopicPushSubscribe(int teamId, int topicId,
+    IExecutor<ResCommon> loadUpdateTopicPushSubscribe(long teamId, long topicId,
                                                       ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe);
 
-    IExecutor<ResCreateFolder> loadCreateFolderByTeamApi(int teamId, ReqCreateFolder reqCreateFolder);
+    IExecutor<ResCreateFolder> loadCreateFolderByTeamApi(long teamId, ReqCreateFolder reqCreateFolder);
 
-    IExecutor<ResCommon> loadDeleteFolderByTeamApi(int teamId, int folderId);
+    IExecutor<ResCommon> loadDeleteFolderByTeamApi(long teamId, long folderId);
 
-    IExecutor<ResUpdateFolder> loadUpdateFolderByTeamApi(int teamId, int folderId,
+    IExecutor<ResUpdateFolder> loadUpdateFolderByTeamApi(long teamId, long folderId,
                                                          ReqUpdateFolder reqUpdateFolder);
 
-    IExecutor<List<ResFolder>> loadGetFoldersByTeamApi(int teamId);
+    IExecutor<List<ResFolder>> loadGetFoldersByTeamApi(long teamId);
 
-    IExecutor<List<ResFolderItem>> loadGetFolderItemsByTeamApi(int teamId);
+    IExecutor<List<ResFolderItem>> loadGetFolderItemsByTeamApi(long teamId);
 
-    IExecutor<ResRegistFolderItem> loadRegistFolderItemByTeamApi(int teamId, int folderId,
+    IExecutor<ResRegistFolderItem> loadRegistFolderItemByTeamApi(long teamId, long folderId,
                                                                  ReqRegistFolderItem reqRegistFolderItem);
 
-    IExecutor<ResCommon> loadDeleteFolderItemByTeamApi(int teamId, int folderId, int itemId);
+    IExecutor<ResCommon> loadDeleteFolderItemByTeamApi(long teamId, long folderId, long itemId);
 
-    IExecutor<ResCommon> loadKickUserFromTopic(int teamId, int topicId, ReqMember member);
+    IExecutor<ResCommon> loadKickUserFromTopic(long teamId, long topicId, ReqMember member);
 
-    IExecutor<ResCommon> loadAssignToTopicOwner(int teamId, int topicId, ReqOwner member);
+    IExecutor<ResCommon> loadAssignToTopicOwner(long teamId, long topicId, ReqOwner owner);
 
-    IExecutor<ResMessages.FileMessage> loadEnableFileExternalLink(int teamId, int fileId);
+    IExecutor<ResMessages.FileMessage> loadEnableFileExternalLink(long teamId, long fileId);
 
-    IExecutor<ResMessages.FileMessage> loadDisableFileExternalLink(int teamId, int fileId);
+    IExecutor<ResMessages.FileMessage> loadDisableFileExternalLink(long teamId, long fileId);
 }

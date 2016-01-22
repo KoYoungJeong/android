@@ -20,10 +20,10 @@ public interface ChatApiV2Client {
 
     @GET("/members/{memberId}/chats")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    List<ResChat> getChatList(@Path("memberId") int memberId);
+    List<ResChat> getChatList(@Path("memberId") long memberId);
 
     @DELETEWithBody("/members/{memberId}/chats/{entityId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon deleteChat(@Path("memberId") int teamId, @Path("entityId") int entityId);
+    ResCommon deleteChat(@Path("memberId") long teamId, @Path("entityId") long entityId);
 
 }

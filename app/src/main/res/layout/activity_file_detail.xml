@@ -6,37 +6,14 @@
     android:orientation="vertical"
     tools:context="com.tosslab.jandi.app.FileDetailActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/layout_search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true"
-        android:visibility="visible" />
-
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/lv_file_detail_comments"
+        android:id="@+id/lv_file_detail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/space_file_detail_divider"
-        android:layout_below="@+id/layout_search_bar"
         android:background="@color/jandi_file_detail_comments_bg"
         android:clipToPadding="false"
-        android:paddingBottom="5dp" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/lv_list_search_members"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/space_file_detail_divider"
-        android:layout_below="@+id/layout_search_bar"
-        android:background="@color/jandi_file_detail_comments_bg"
-        android:choiceMode="singleChoice"
-        android:clipToPadding="false"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
-        android:paddingBottom="5dp"
-        android:transcriptMode="alwaysScroll"
-        android:visibility="invisible" />
+        android:paddingTop="?attr/actionBarSize"/>
 
     <RelativeLayout
         android:id="@+id/vg_file_detail_preview_sticker"
@@ -51,7 +28,7 @@
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_centerInParent="true"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="4dp"/>
 
         <ImageView
             android:id="@+id/iv_file_detail_preview_sticker_close"
@@ -60,8 +37,7 @@
             android:layout_alignParentRight="true"
             android:padding="15dp"
             android:scaleType="centerInside"
-            android:src="@drawable/icon_sticker_close" />
-
+            android:src="@drawable/icon_sticker_close"/>
 
     </RelativeLayout>
 
@@ -71,7 +47,7 @@
         android:layout_height="1dp"
         android:layout_above="@+id/vg_file_detail_input_comment"
         android:layout_alignWithParentIfMissing="true"
-        android:background="@color/jandi_message_input_border" />
+        android:background="@color/jandi_message_input_border"/>
 
     <LinearLayout
         android:id="@+id/vg_file_detail_input_comment"
@@ -82,7 +58,7 @@
         <ImageView
             android:id="@+id/btn_message_sticker"
             style="@style/JandiChat.ActionButton.Sticker"
-            android:layout_gravity="bottom" />
+            android:layout_gravity="bottom"/>
 
         <LinearLayout
             android:id="@+id/vg_message_input_wrapper"
@@ -99,7 +75,7 @@
                 android:lineSpacingExtra="2dp"
                 android:minHeight="36dp"
                 android:paddingBottom="2dp"
-                android:paddingTop="2dp" />
+                android:paddingTop="2dp"/>
 
             <ImageView
                 android:id="@+id/btn_show_mention"
@@ -110,7 +86,7 @@
                 android:paddingRight="9dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/chat_mention"
-                android:visibility="visible" />
+                android:visibility="visible"/>
         </LinearLayout>
 
         <TextView
@@ -118,7 +94,7 @@
             style="@style/JandiChat.Button"
             android:gravity="center"
             android:text="@string/jandi_message_send"
-            android:textSize="@dimen/jandi_text_size_large" />
+            android:textSize="@dimen/jandi_text_size_large"/>
     </LinearLayout>
 
     <FrameLayout
@@ -126,6 +102,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:visibility="gone" />
+        android:visibility="gone"/>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_file_detail"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:visibility="visible"/>
 
 </RelativeLayout>

@@ -34,14 +34,14 @@ import rx.Observable;
  * Created by justinygchoi on 2014. 6. 20..
  */
 public class FileUploadDialogFragment extends DialogFragment {
-    private int selectedEntityIdToBeShared;    // Share 할 chat-room
+    private long selectedEntityIdToBeShared;    // Share 할 chat-room
     private EntitySimpleListAdapter mEntityArrayAdapter;
 
-    public static FileUploadDialogFragment newInstance(String realFilePath, int currentEntityId) {
+    public static FileUploadDialogFragment newInstance(String realFilePath, long currentEntityId) {
         FileUploadDialogFragment frag = new FileUploadDialogFragment();
         Bundle args = new Bundle();
         args.putString("realFilePath", realFilePath);
-        args.putInt("currentEntityId", currentEntityId);
+        args.putLong("currentEntityId", currentEntityId);
         frag.setArguments(args);
         return frag;
     }
@@ -49,7 +49,7 @@ public class FileUploadDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final String realFilePath = getArguments().getString("realFilePath", "");
-        selectedEntityIdToBeShared = getArguments().getInt("currentEntityId");
+        selectedEntityIdToBeShared = getArguments().getLong("currentEntityId");
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mainView = inflater.inflate(R.layout.dialog_upload_file, null);

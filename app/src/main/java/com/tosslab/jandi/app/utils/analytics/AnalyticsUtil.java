@@ -56,7 +56,7 @@ public class AnalyticsUtil {
         sendEvent(screen.name(), action.name());
     }
 
-    public static AnalyticsValue.Action getProfileAction(int userId, ShowProfileEvent.From from) {
+    public static AnalyticsValue.Action getProfileAction(long userId, ShowProfileEvent.From from) {
         AnalyticsValue.Action action;
         switch (from) {
             case Name:

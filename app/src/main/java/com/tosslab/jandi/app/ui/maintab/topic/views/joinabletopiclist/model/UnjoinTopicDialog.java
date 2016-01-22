@@ -34,7 +34,7 @@ public class UnjoinTopicDialog extends DialogFragment {
 
         args.putString(ARGS_NAME, topic.getName());
         args.putString(ARGS_DESCRIPTION, topic.getDescription());
-        args.putInt(ARGS_CREATOR_ID, topic.getCreatorId());
+        args.putLong(ARGS_CREATOR_ID, topic.getCreatorId());
         args.putInt(ARGS_MEMBER_COUNT, topic.getMemberCount());
 
         fragment.setArguments(args);
@@ -49,7 +49,7 @@ public class UnjoinTopicDialog extends DialogFragment {
 
         String name = arguments.getString(ARGS_NAME);
         String description = arguments.getString(ARGS_DESCRIPTION);
-        int creatorId = arguments.getInt(ARGS_CREATOR_ID);
+        long creatorId = arguments.getInt(ARGS_CREATOR_ID);
         int memberCount = arguments.getInt(ARGS_MEMBER_COUNT);
 
         View rootView = LayoutInflater.from(getActivity())

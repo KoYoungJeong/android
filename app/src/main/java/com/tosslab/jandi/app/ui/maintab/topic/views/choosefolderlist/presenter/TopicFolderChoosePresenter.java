@@ -74,7 +74,7 @@ public class TopicFolderChoosePresenter {
     }
 
     @Background
-    public void onDeleteItemFromFolder(int folderId, int topicId) {
+    public void onDeleteItemFromFolder(long folderId, long topicId) {
         try {
             topicFolderChooseModel.deleteItemFromFolder(folderId, topicId);
         } catch (RetrofitError retrofitError) {
@@ -84,7 +84,7 @@ public class TopicFolderChoosePresenter {
     }
 
     @Background
-    public void onAddTopicIntoFolder(int folderId, int topicId) {
+    public void onAddTopicIntoFolder(long folderId, long topicId) {
         try {
             topicFolderChooseModel.addTopicIntoFolder(folderId, topicId);
         } catch (RetrofitError retrofitError) {
@@ -93,11 +93,11 @@ public class TopicFolderChoosePresenter {
         view.finishAcitivty();
     }
 
-    public void onItemClick(RecyclerView.Adapter adapter, int position, int type, int folderId, int topicId) {
+    public void onItemClick(RecyclerView.Adapter adapter, int position, int type, long folderId, long topicId) {
         TopicFolderChooseAdapter topicFolderChooseAdapter = (TopicFolderChooseAdapter) adapter;
         switch (type) {
             case TopicFolderChooseAdapter.TYPE_FOLDER_LIST:
-                int newfolderId = topicFolderChooseAdapter.getItemById(position).id;
+                long newfolderId = topicFolderChooseAdapter.getItemById(position).id;
                 if (newfolderId != folderId) {
                     onAddTopicIntoFolder(newfolderId, topicId);
                     String name = ((TopicFolderChooseAdapter) adapter).getFolders().get(position).name;

@@ -100,7 +100,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     @Bean
     SearchedFileItemListAdapter searchedFileItemListAdapter;
     @FragmentArg
-    int entityIdForCategorizing = -1;
+    long entityIdForCategorizing = -1;
     @FragmentArg
     String mCurrentEntityCategorizingAccodingBy = null;
 
@@ -121,7 +121,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     /**
      * File tab 을 위한 액션바와 카테고리 선택 다이얼로그, 이벤트 전달
      */
-    private int selectedTeamId;
+    private long selectedTeamId;
     private boolean isSearchLayoutFirst = true;
     private boolean isForeground;
     private PublishSubject<Integer> initSearchSubject;
@@ -431,7 +431,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             return;
         }
 
-        int fileId = event.getId();
+        long fileId = event.getId();
         int positionByFileId = searchedFileItemListAdapter.findPositionByFileId(fileId);
         if (positionByFileId >= 0) {
             removeItem(positionByFileId);
@@ -656,7 +656,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
     }
 
-    private void moveToFileDetailActivity(int fileId, int mSearchEntity) {
+    private void moveToFileDetailActivity(long fileId, long mSearchEntity) {
         FileDetailActivity_
                 .intent(this)
                 .fileId(fileId)
@@ -828,8 +828,8 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         private String mSearchFileType;
         private String mSearchUser;
         private String mKeyword;
-        private int mSearchEntity;
-        private int mStartMessageId;
+        private long mSearchEntity;
+        private long mStartMessageId;
 
         public SearchQuery() {
             mSearchEntity = ReqSearchFile.ALL_ENTITIES;
@@ -858,7 +858,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             mSearchUser = userEntityId;
         }
 
-        public void setSharedEntity(int entityId) {
+        public void setSharedEntity(long entityId) {
             setToFirst();
             mSearchEntity = entityId;
         }

@@ -31,7 +31,7 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
+    public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
         ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
         String message = commentMessage.content.body;
 
@@ -84,7 +84,7 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+    public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
         if (currentLinkId == lastReadLinkId) {
             vLastRead.setVisibility(View.VISIBLE);
         } else {

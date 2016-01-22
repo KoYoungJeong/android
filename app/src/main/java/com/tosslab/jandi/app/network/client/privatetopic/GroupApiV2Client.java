@@ -24,29 +24,29 @@ public interface GroupApiV2Client {
     // Private Group 생성
     @POST("/privateGroup")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-    ResCommon createPrivateGroup(@Query("teamId") int teamId, @Body ReqCreateTopic group);
+    ResCommon createPrivateGroup(@Query("teamId") long teamId, @Body ReqCreateTopic group);
 
     // Private Group 수정
     @PUT("/privateGroups/{groupId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-    ResCommon modifyGroup(@Query("teamId") int teamId,
+    ResCommon modifyGroup(@Query("teamId") long teamId,
                           @Body ReqCreateTopic channel,
-                          @Path("groupId") int groupId);
+                          @Path("groupId") long groupId);
 
     // Private Group 삭제
     @DELETEWithBody("/privateGroups/{groupId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon deleteGroup(@Query("teamId") int teamId, @Path("groupId") int groupId);
+    ResCommon deleteGroup(@Query("teamId") long teamId, @Path("groupId") long groupId);
 
     // Private Group Leave
     @PUT("/privateGroups/{groupId}/leave")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon leaveGroup(@Path("groupId") int groupId, @Body ReqTeam team);
+    ResCommon leaveGroup(@Path("groupId") long groupId, @Body ReqTeam team);
 
     // Private Group invite
     @PUT("/privateGroups/{groupId}/invite")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon inviteGroup(@Path("groupId") int groupId, @Body ReqInviteTopicUsers inviteUsers);
+    ResCommon inviteGroup(@Path("groupId") long groupId, @Body ReqInviteTopicUsers inviteUsers);
 
     //    // Private Group invite
 //    @Put("/privateGroups/{groupId}/invite")

@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
  */
 public class ExpandRoomData {
 
-    private int entityId;
+    private long entityId;
     private String name;
     private boolean isFolder;
     private boolean isUser;
@@ -17,11 +17,11 @@ public class ExpandRoomData {
     private int type;
     private boolean isFirstAmongNoFolderItem;
 
-    public int getEntityId() {
+    public long getEntityId() {
         return entityId;
     }
 
-    public void setEntityId(int entityId) {
+    public void setEntityId(long entityId) {
         this.entityId = entityId;
     }
 

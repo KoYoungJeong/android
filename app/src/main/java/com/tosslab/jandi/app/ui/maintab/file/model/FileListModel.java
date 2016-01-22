@@ -52,7 +52,7 @@ public class FileListModel {
 
     }
 
-    public void saveOriginFirstItems(int teamId, ResSearchFile fileMessages) {
+    public void saveOriginFirstItems(long teamId, ResSearchFile fileMessages) {
         JandiFileDatabaseManager.getInstance(context).upsertFiles(teamId, fileMessages);
     }
 

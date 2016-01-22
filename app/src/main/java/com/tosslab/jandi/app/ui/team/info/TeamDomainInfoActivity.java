@@ -150,8 +150,7 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity {
 
             ResTeamDetailInfo newTeam = teamDomainInfoModel.createNewTeam(teamName, teamDomain);
 
-            int teamId = newTeam.getInviteTeam().getTeamId();
-            String distictId = newTeam.getInviteTeam().getId() + "-" + teamId;
+            long teamId = newTeam.getInviteTeam().getTeamId();
             MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
                     .pageViewTeamCreateSuccess();
 

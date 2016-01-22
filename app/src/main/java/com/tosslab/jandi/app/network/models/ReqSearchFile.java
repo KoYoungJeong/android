@@ -14,12 +14,12 @@ public class ReqSearchFile {
 
     public static final int ALL_ENTITIES = -1;
 
-    public int teamId;
+    public long teamId;
     public String searchType;
     public String writerId;
     public String fileType;
-    public int sharedEntityId;
-    public int startMessageId;
+    public long sharedEntityId;
+    public long startMessageId;
     public int listCount;
     public String keyword;
 }

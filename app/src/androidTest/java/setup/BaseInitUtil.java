@@ -39,7 +39,6 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import retrofit.RetrofitError;
 
@@ -53,7 +52,7 @@ public class BaseInitUtil {
     public static final int STATE_TEMP_TOPIC_CREATED = 1;
 
 
-    public static int tempTopicId = -1;
+    public static long tempTopicId = -1;
     public static int topicState = STATE_TEMP_TOPIC_NOT_CREATED;
 
     public static String TEST_EMAIL = "androidtester1@gustr.com";
@@ -101,12 +100,12 @@ public class BaseInitUtil {
     }
 
 
-    public static int getUserIdByEmail(String email) {
+    public static long getUserIdByEmail(String email) {
         ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
                 ReqAccessToken.createPasswordReqToken(email, TEST_PASSWORD));
         TokenUtil.saveTokenInfoByPassword(accessToken);
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-        int result = accountInfo.getMemberships().iterator().next().getMemberId();
+        long result = accountInfo.getMemberships().iterator().next().getMemberId();
         accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
                 ReqAccessToken.createPasswordReqToken("androidtester1@gustr.com", TEST_PASSWORD));
         TokenUtil.saveTokenInfoByPassword(accessToken);
@@ -142,7 +141,7 @@ public class BaseInitUtil {
         TokenUtil.saveTokenInfoByPassword(accessToken);
 
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-        int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
+        long teamId = accountInfo.getMemberships().iterator().next().getTeamId();
         AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
@@ -159,7 +158,7 @@ public class BaseInitUtil {
         if (topicState == STATE_TEMP_TOPIC_NOT_CREATED) {
             userSignin();
             ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-            int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
+            long teamId = accountInfo.getMemberships().iterator().next().getTeamId();
             ReqCreateTopic topic = new ReqCreateTopic();
             topic.teamId = teamId;
             topic.name = "테스트 토픽 : " + new Date();
@@ -178,10 +177,10 @@ public class BaseInitUtil {
 
     public static void inviteDummyMembers() {
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-        int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
-        int tester2Id = getUserIdByEmail(TEST2_EMAIL);
-        int tester3Id = getUserIdByEmail(TEST3_EMAIL);
-        List<Integer> members = new ArrayList<>();
+        long teamId = accountInfo.getMemberships().iterator().next().getTeamId();
+        long tester2Id = getUserIdByEmail(TEST2_EMAIL);
+        long tester3Id = getUserIdByEmail(TEST3_EMAIL);
+        List<Long> members = new ArrayList<>();
         members.add(tester2Id);
         members.add(tester3Id);
         ReqInviteTopicUsers reqInviteTopicUsers = new ReqInviteTopicUsers(members, teamId);
@@ -197,7 +196,7 @@ public class BaseInitUtil {
         } catch (RetrofitError retrofitError) {
             retrofitError.printStackTrace();
         }
-        int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
+        long teamId = accountInfo.getMemberships().iterator().next().getTeamId();
         if (topicState == STATE_TEMP_TOPIC_CREATED) {
             RequestApiManager.getInstance().deleteTopicByChannelApi(tempTopicId, new ReqDeleteTopic(teamId));
             topicState = STATE_TEMP_TOPIC_NOT_CREATED;

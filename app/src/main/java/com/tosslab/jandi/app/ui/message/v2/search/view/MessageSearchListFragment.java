@@ -109,15 +109,15 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     @FragmentArg
     int entityType;
     @FragmentArg
-    int entityId;
+    long entityId;
     @FragmentArg
     boolean isFavorite = false;
     @FragmentArg
-    int teamId;
+    long teamId;
     @FragmentArg
-    int lastMarker = -1;
+    long lastMarker = -1;
     @FragmentArg
-    int roomId;
+    long roomId;
     @ViewById(R.id.lv_messages)
     RecyclerView lvMessages;
 
@@ -259,7 +259,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
     @Override
-    public AnalyticsValue.Screen getScreen(int entityId) {
+    public AnalyticsValue.Screen getScreen(long entityId) {
         return EntityManager
                 .getInstance()
                 .getEntityById(entityId).isUser() ? AnalyticsValue.Screen.Message : AnalyticsValue.Screen.TopicChat;
@@ -281,7 +281,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void deleteLinkByMessageId(int messageId) {
+    public void deleteLinkByMessageId(long messageId) {
         int position = messageAdapter.indexByMessageId(messageId);
         messageAdapter.remove(position);
         messageAdapter.notifyDataSetChanged();
@@ -439,7 +439,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     @Click(R.id.vg_messages_go_to_latest)
     void onGotoLatestClick() {
         int itemCount = messageAdapter.getItemCount();
-        int firstCursorLinkId = -1;
+        long firstCursorLinkId = -1;
         if (itemCount > 0) {
             firstCursorLinkId = messageAdapter.getItem(0).id;
         }
@@ -506,7 +506,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             return;
         }
 
-        int messageId = event.getMessageId();
+        long messageId = event.getMessageId();
         switch (event.getAction()) {
             case STARRED:
                 messageSearchListPresenter.registStarredMessage(teamId, messageId);
@@ -593,7 +593,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    void changeToArchive(int messageId) {
+    void changeToArchive(long messageId) {
         int position = messageAdapter.indexByMessageId(messageId);
         String archivedStatus = "archived";
         if (position > 0) {
@@ -730,13 +730,13 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void modifyStarredInfo(int messageId, boolean starred) {
+    public void modifyStarredInfo(long messageId, boolean starred) {
         int position = messageAdapter.indexByMessageId(messageId);
         messageAdapter.modifyStarredStateByPosition(position, starred);
     }
 
     @Override
-    public void showLeavedMemberDialog(int entityId) {
+    public void showLeavedMemberDialog(long entityId) {
         String name = EntityManager.getInstance().getEntityNameById(entityId);
         String msg = JandiApplication.getContext().getString(R.string.jandi_no_long_team_member, name);
 
@@ -796,14 +796,14 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
     @Override
-    public void setRoomId(int roomId) {
+    public void setRoomId(long roomId) {
         this.roomId = roomId;
         messageAdapter.setTeamId(teamId);
         messageAdapter.setRoomId(roomId);
     }
 
     @Override
-    public void setLastReadLinkId(int realLastLinkId) {
+    public void setLastReadLinkId(long realLastLinkId) {
         messageAdapter.setLastReadLinkId(realLastLinkId);
     }
 
@@ -855,7 +855,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     @UiThread
     @Override
     public void updateMarkerNewMessage(ResMessages newMessage, boolean isLastLinkId, boolean firstLoad) {
-        int firstVisibleItemLinkId = getFirstVisibleItemLinkId();
+        long firstVisibleItemLinkId = getFirstVisibleItemLinkId();
         int firstVisibleItemTop = getFirstVisibleItemTop();
         int lastItemPosition = messageAdapter.getItemCount();
 
@@ -872,13 +872,13 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    void moveToMessage(int messageId, int firstVisibleItemTop) {
+    void moveToMessage(long messageId, int firstVisibleItemTop) {
         int itemPosition = messageAdapter.indexByMessageId(messageId);
         ((LinearLayoutManager) lvMessages.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
     @Override
-    public int getFirstVisibleItemLinkId() {
+    public long getFirstVisibleItemLinkId() {
         if (messageAdapter.getItemCount() > 0) {
             int firstVisibleItemPosition = ((LinearLayoutManager) lvMessages.getLayoutManager()).findFirstVisibleItemPosition();
             if (firstVisibleItemPosition >= 0) {
@@ -917,8 +917,8 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @UiThread
     @Override
-    public void updateMarkerMessage(int linkId, ResMessages oldMessage, boolean noFirstLoad,
-                                    boolean isFirstMessage, int latestVisibleMessageId,
+    public void updateMarkerMessage(long linkId, ResMessages oldMessage, boolean noFirstLoad,
+                                    boolean isFirstMessage, long latestVisibleMessageId,
                                     int firstVisibleItemTop) {
         messageAdapter.addAll(0, oldMessage.records);
 
@@ -927,7 +927,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         } else {
             // if has no first item...
 
-            int messageId = -1;
+            long messageId = -1;
             for (ResMessages.Link record : oldMessage.records) {
                 if (record.id == linkId) {
                     messageId = record.messageId;
@@ -964,7 +964,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
     @Override
-    public void moveFileDetailActivity(Fragment fragment, int messageId, int roomId, int selectedMessageId) {
+    public void moveFileDetailActivity(Fragment fragment, long messageId, long roomId, long selectedMessageId) {
         FileDetailActivity_
                 .intent(fragment)
                 .fileId(messageId)

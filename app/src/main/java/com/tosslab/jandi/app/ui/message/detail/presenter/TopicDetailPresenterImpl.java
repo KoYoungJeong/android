@@ -51,7 +51,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
-    public void onInit(Context context, int entityId) {
+    public void onInit(Context context, long entityId) {
         String topicName = topicDetailModel.getTopicName(entityId);
         String topicDescription = topicDetailModel.getTopicDescription(entityId);
         int topicMemberCount = topicDetailModel.getTopicMemberCount(entityId);
@@ -83,7 +83,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
-    public void onTopicInvite(Activity activity, int entityId) {
+    public void onTopicInvite(Activity activity, long entityId) {
         if (topicDetailModel.getTopicMemberCount(entityId) != topicDetailModel.getEnabledTeamMemberCount()) {
             MembersListActivity_.intent(activity)
                     .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -97,7 +97,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
-    public void onTopicDescriptionMove(int entityId) {
+    public void onTopicDescriptionMove(long entityId) {
         if (topicDetailModel.isOwner(entityId) || topicDetailModel.isTeamOwner()) {
             view.moveTopicDescriptionEdit();
         }
@@ -105,7 +105,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
     @Background
     @Override
-    public void onTopicStar(Context context, int entityId) {
+    public void onTopicStar(Context context, long entityId) {
         boolean isStarred = topicDetailModel.isStarred(entityId);
 
         try {
@@ -139,7 +139,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
-    public void onAssignTopicOwner(int entityId) {
+    public void onAssignTopicOwner(long entityId) {
         if(topicDetailModel.isStandAlone(entityId)) {
             String message = JandiApplication.getContext()
                     .getResources().getString(R.string.jandi_topic_inside_alone);
@@ -150,7 +150,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
-    public void onTopicLeave(Context context, int entityId) {
+    public void onTopicLeave(Context context, long entityId) {
         if (topicDetailModel.isOwner(entityId)
                 && !(topicDetailModel.isStandAlone(entityId))) {
             String topicName = topicDetailModel.getTopicName(entityId);
@@ -162,7 +162,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
-    public void onTopicDelete(int entityId) {
+    public void onTopicDelete(long entityId) {
         if (!(topicDetailModel.isOwner(entityId) || topicDetailModel.isTeamOwner())) {
             return;
         }
@@ -172,7 +172,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
     @Background
     @Override
-    public void deleteTopic(Context context, int entityId) {
+    public void deleteTopic(Context context, long entityId) {
         view.showProgressWheel();
         try {
             int entityType = topicDetailModel.getEntityType(entityId);
@@ -194,7 +194,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
-    public void onChangeTopicName(int entityId) {
+    public void onChangeTopicName(long entityId) {
         if (topicDetailModel.isOwner(entityId) || topicDetailModel.isTeamOwner()) {
             String topicName = topicDetailModel.getTopicName(entityId);
             int entityType = topicDetailModel.getEntityType(entityId);
@@ -204,7 +204,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
     @Background
     @Override
-    public void onConfirmChangeTopicName(Context context, int entityId, String topicName, int entityType) {
+    public void onConfirmChangeTopicName(Context context, long entityId, String topicName, int entityType) {
         view.showProgressWheel();
         try {
             topicDetailModel.modifyTopicName(entityType, entityId, topicName);
@@ -235,7 +235,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Background
-    void updateTopicPushSubscribe(Context context, int teamId, int entityId, boolean pushOn, boolean showGlobalPushAlert) {
+    void updateTopicPushSubscribe(Context context, long teamId, long entityId, boolean pushOn, boolean showGlobalPushAlert) {
         if (!showGlobalPushAlert) {
             view.showProgressWheel();
         }
@@ -265,7 +265,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
     @Background
     @Override
-    public void onAutoJoin(int entityId, boolean autoJoin) {
+    public void onAutoJoin(long entityId, boolean autoJoin) {
 
         if (!topicDetailModel.isOwner(entityId) && !topicDetailModel.isTeamOwner()) {
             // 수정권한 없음
@@ -305,7 +305,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
-    public void onPushClick(Context context, int teamId, int entityId, boolean checked) {
+    public void onPushClick(Context context, long teamId, long entityId, boolean checked) {
         boolean onGlobalPush = topicDetailModel.isOnGlobalPush();
         if (checked && !onGlobalPush) {
             view.showGlobalPushSetupDialog();

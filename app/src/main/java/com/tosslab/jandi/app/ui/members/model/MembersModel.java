@@ -27,10 +27,10 @@ import rx.Observable;
 @EBean
 public class MembersModel {
 
-    public List<ChatChooseItem> getTopicMembers(int entityId) {
+    public List<ChatChooseItem> getTopicMembers(long entityId) {
         final EntityManager entityManager = EntityManager.getInstance();
 
-        Collection<Integer> members = entityManager.getEntityById(entityId).getMembers();
+        Collection<Long> members = entityManager.getEntityById(entityId).getMembers();
         List<FormattedEntity> formattedUsers = entityManager.getFormattedUsers();
 
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
@@ -89,7 +89,7 @@ public class MembersModel {
         return chatChooseItems;
     }
 
-    public List<ChatChooseItem> getUnjoinedTopicMembers(int entityId) {
+    public List<ChatChooseItem> getUnjoinedTopicMembers(long entityId) {
 
         EntityManager entityManager = EntityManager.getInstance();
 
@@ -122,7 +122,7 @@ public class MembersModel {
 
     }
 
-    public void kickUser(int teamId, int topicId, int userEntityId) throws RetrofitError {
+    public void kickUser(long teamId, long topicId, long userEntityId) throws RetrofitError {
         RequestApiManager.getInstance().kickUserFromTopic(teamId, topicId, new ReqMember(userEntityId));
     }
 
@@ -130,27 +130,27 @@ public class MembersModel {
         return EntityManager.getInstance().getMe().isTeamOwner();
     }
 
-    public boolean isMyTopic(int entityId) {
+    public boolean isMyTopic(long entityId) {
         return EntityManager.getInstance().isMyTopic(entityId);
     }
 
-    public boolean isTopicOwner(int topicId, int memberId) {
+    public boolean isTopicOwner(long topicId, long memberId) {
         return EntityManager.getInstance().isTopicOwner(topicId, memberId);
     }
 
-    public boolean removeMember(int topicId, int userEntityId) {
+    public boolean removeMember(long topicId, long userEntityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(topicId);
         if (entity.isPublicTopic()) {
-            return entity.getChannel().ch_members.remove(new Integer(userEntityId));
+            return entity.getChannel().ch_members.remove(userEntityId);
 
         } else if (entity.isPrivateGroup()) {
-            return entity.getPrivateGroup().pg_members.remove(new Integer(userEntityId));
+            return entity.getPrivateGroup().pg_members.remove(userEntityId);
         }
 
         return false;
     }
 
-    public void assignToTopicOwner(int teamId, int entityId, int memberId) throws Exception {
+    public void assignToTopicOwner(long teamId, long entityId, long memberId) throws Exception {
         RequestApiManager.getInstance().assignToTopicOwner(teamId, entityId, new ReqOwner(memberId));
     }
 }

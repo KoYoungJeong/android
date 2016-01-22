@@ -25,25 +25,25 @@ public class TopicFolderChooseModel {
     EntityClientManager entityClientManager;
 
     public List<ResFolder> getFolders() throws RetrofitError {
-        int teamId = entityClientManager.getSelectedTeamId();
+        long teamId = entityClientManager.getSelectedTeamId();
         return RequestApiManager.getInstance().getFoldersByTeamApi(teamId);
     }
 
     public void createFolder(String title) throws RetrofitError {
-        int teamId = entityClientManager.getSelectedTeamId();
+        long teamId = entityClientManager.getSelectedTeamId();
         ReqCreateFolder reqCreateFolder = new ReqCreateFolder();
         reqCreateFolder.setName(title);
         RequestApiManager.getInstance().createFolderByTeamApi(teamId, reqCreateFolder);
     }
 
-    public void deleteItemFromFolder(int folderId, int topicId) throws RetrofitError {
-        int teamId = entityClientManager.getSelectedTeamId();
+    public void deleteItemFromFolder(long folderId, long topicId) throws RetrofitError {
+        long teamId = entityClientManager.getSelectedTeamId();
         LogUtil.e("folderId", folderId + "");
         RequestApiManager.getInstance().deleteFolderItemByTeamApi(teamId, folderId, topicId);
     }
 
-    public void addTopicIntoFolder(int folderId, int topicId) throws RetrofitError {
-        int teamId = entityClientManager.getSelectedTeamId();
+    public void addTopicIntoFolder(long folderId, long topicId) throws RetrofitError {
+        long teamId = entityClientManager.getSelectedTeamId();
         ReqRegistFolderItem reqRegistFolderItem = new ReqRegistFolderItem();
         reqRegistFolderItem.setItemId(topicId);
         RequestApiManager.getInstance().registFolderItemByTeamApi(teamId, folderId, reqRegistFolderItem);

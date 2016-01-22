@@ -12,9 +12,9 @@ import de.greenrobot.event.EventBus;
  */
 public class ProfileSpannable extends ClickableSpan {
 
-    private final int entityId;
+    private final long entityId;
 
-    public ProfileSpannable(int entityId) {
+    public ProfileSpannable(long entityId) {
         this.entityId = entityId;
     }
 

@@ -286,18 +286,18 @@ public class MessageListPresenter {
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void moveToMessage(int messageId, int firstVisibleItemTop) {
+    public void moveToMessage(long messageId, int firstVisibleItemTop) {
         int itemPosition = messageAdapter.indexByMessageId(messageId);
         ((LinearLayoutManager) lvMessages.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void moveToMessageById(int linkId, int firstVisibleItemTop) {
+    public void moveToMessageById(long linkId, int firstVisibleItemTop) {
         int itemPosition = messageAdapter.indexOfLinkId(linkId);
         ((LinearLayoutManager) lvMessages.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
-    public int getFirstVisibleItemLinkId() {
+    public long getFirstVisibleItemLinkId() {
         if (messageAdapter.getItemCount() > 0) {
             int firstVisibleItemPosition = ((LinearLayoutManager) lvMessages.getLayoutManager()).findFirstVisibleItemPosition();
             if (firstVisibleItemPosition >= 0) {
@@ -324,7 +324,7 @@ public class MessageListPresenter {
         ColoredToast.showWarning(activity.getString(R.string.warn_no_more_messages));
     }
 
-    public void moveFileDetailActivity(Fragment fragment, int messageId, int roomId, int selectMessageId) {
+    public void moveFileDetailActivity(Fragment fragment, long messageId, long roomId, long selectMessageId) {
         FileDetailActivity_
                 .intent(fragment)
                 .fileId(messageId)
@@ -408,7 +408,7 @@ public class MessageListPresenter {
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void changeToArchive(int messageId) {
+    public void changeToArchive(long messageId) {
         int position = messageAdapter.indexByMessageId(messageId);
         String archivedStatus = "archived";
         if (position > 0) {
@@ -433,7 +433,7 @@ public class MessageListPresenter {
     }
 
     public void updateLinkPreviewMessage(ResMessages.TextMessage message) {
-        int messageId = message.id;
+        long messageId = message.id;
         int index = messageAdapter.indexByMessageId(messageId);
         if (index < 0) {
             return;
@@ -597,7 +597,7 @@ public class MessageListPresenter {
     }
 
     @UiThread
-    public void setMarkerInfo(int teamId, int roomId) {
+    public void setMarkerInfo(long teamId, long roomId) {
         messageAdapter.setTeamId(teamId);
         messageAdapter.setRoomId(roomId);
         messageAdapter.notifyDataSetChanged();
@@ -682,7 +682,7 @@ public class MessageListPresenter {
         return messageAdapter.getItemCount() - messageAdapter.getDummyMessageCount();
     }
 
-    public int getRoomId() {
+    public long getRoomId() {
         return messageAdapter.getRoomId();
     }
 
@@ -706,23 +706,23 @@ public class MessageListPresenter {
         vgStickerPreview.setVisibility(View.GONE);
     }
 
-    public void setEntityInfo(int entityId) {
+    public void setEntityInfo(long entityId) {
         messageAdapter.setEntityId(entityId);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void modifyStarredInfo(int messageId, boolean isStarred) {
+    public void modifyStarredInfo(long messageId, boolean isStarred) {
         int position = messageAdapter.indexByMessageId(messageId);
         messageAdapter.modifyStarredStateByPosition(position, isStarred);
     }
 
-    public void setLastReadLinkId(int lastReadLinkId) {
+    public void setLastReadLinkId(long lastReadLinkId) {
         messageAdapter.setLastReadLinkId(lastReadLinkId);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveLastReadLink() {
-        int lastReadLinkId = messageAdapter.getLastReadLinkId();
+        long lastReadLinkId = messageAdapter.getLastReadLinkId();
 
         if (lastReadLinkId <= 0) {
             return;
@@ -761,7 +761,7 @@ public class MessageListPresenter {
 
         } else {
 
-            int latestVisibleLinkId = getFirstVisibleItemLinkId();
+            long latestVisibleLinkId = getFirstVisibleItemLinkId();
             int firstVisibleItemTop = getFirstVisibleItemTop();
 
             addAll(0, linkList);
@@ -777,7 +777,7 @@ public class MessageListPresenter {
     }
 
     @UiThread
-    public void setUpNewMessage(List<ResMessages.Link> linkList, int myId, boolean firstLoad) {
+    public void setUpNewMessage(List<ResMessages.Link> linkList, long myId, boolean firstLoad) {
 
         int location = linkList.size() - 1;
         if (location < 0) {
@@ -796,7 +796,7 @@ public class MessageListPresenter {
                 && lastUpdatedMessage.fromEntity != myId) {
             showPreviewIfNotLastItem();
         } else {
-            int messageId = lastUpdatedMessage.messageId;
+            long messageId = lastUpdatedMessage.messageId;
             if (firstLoad) {
                 moveLastReadLink();
                 setUpLastReadLink(myId);
@@ -813,8 +813,8 @@ public class MessageListPresenter {
 
     }
 
-    private void setUpLastReadLink(int myId) {
-        int lastReadLinkId = messageAdapter.getLastReadLinkId();
+    private void setUpLastReadLink(long myId) {
+        long lastReadLinkId = messageAdapter.getLastReadLinkId();
         int indexOfLinkId = messageAdapter.indexOfLinkId(lastReadLinkId);
 
         if (indexOfLinkId < 0) {
@@ -847,7 +847,7 @@ public class MessageListPresenter {
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void deleteLinkByMessageId(int messageId) {
+    public void deleteLinkByMessageId(long messageId) {
         int position = messageAdapter.indexByMessageId(messageId);
         messageAdapter.remove(position);
         messageAdapter.notifyDataSetChanged();
@@ -869,7 +869,7 @@ public class MessageListPresenter {
     }
 
     @UiThread
-    public void showLeavedMemberDialog(int entityId) {
+    public void showLeavedMemberDialog(long entityId) {
         String name = EntityManager.getInstance().getEntityNameById(entityId);
         String msg = activity.getString(R.string.jandi_no_long_team_member, name);
 
@@ -894,7 +894,7 @@ public class MessageListPresenter {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setUpLastReadLinkIdIfPosition() {
         // 마커가 마지막아이템을 가르키고 있을때만 position = -1 처리
-        int lastReadLinkId = messageAdapter.getLastReadLinkId();
+        long lastReadLinkId = messageAdapter.getLastReadLinkId();
         int markerPosition = messageAdapter.indexOfLinkId(lastReadLinkId);
         if (markerPosition == messageAdapter.getItemCount() - messageAdapter.getDummyMessageCount() - 1) {
             messageAdapter.setLastReadLinkId(-1);
@@ -912,7 +912,7 @@ public class MessageListPresenter {
     }
 
 
-    public void setFirstCursorLinkId(int firstCursorLinkId) {
+    public void setFirstCursorLinkId(long firstCursorLinkId) {
         if (messageAdapter instanceof MessageCursorListAdapter) {
             ((MessageCursorListAdapter) messageAdapter).setFirstCursorLinkId(firstCursorLinkId);
         }

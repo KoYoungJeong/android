@@ -24,8 +24,8 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
     @Bean
     CarouselViewerModel carouselViewerModel;
     private View view;
-    private int fileId;
-    private int roomId;
+    private long fileId;
+    private long roomId;
 
     private boolean isFirst;
     private boolean isLast;
@@ -36,12 +36,12 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
     }
 
     @Override
-    public void setFileId(int fileId) {
+    public void setFileId(long fileId) {
         this.fileId = fileId;
     }
 
     @Override
-    public void setRoomId(int roomId) {
+    public void setRoomId(long roomId) {
         this.roomId = roomId;
     }
 
@@ -51,7 +51,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
         List<CarouselFileInfo> imageFiles;
         try {
 
-            int teamId = carouselViewerModel.getTeamId();
+            long teamId = carouselViewerModel.getTeamId();
 
             List<ResMessages.FileMessage> fileMessages = carouselViewerModel.searchInitFileList(teamId, roomId, fileId);
             imageFiles = carouselViewerModel.getImageFileConvert(roomId, fileMessages);
@@ -83,7 +83,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
     @Background
     @Override
-    public void onBeforeImageFiles(int fileLinkId, int count) {
+    public void onBeforeImageFiles(long fileLinkId, int count) {
 
         if (isFirst) {
             return;
@@ -92,7 +92,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
         List<CarouselFileInfo> imageFiles;
         try {
 
-            int teamId = carouselViewerModel.getTeamId();
+            long teamId = carouselViewerModel.getTeamId();
 
             List<ResMessages.FileMessage> fileMessages = carouselViewerModel.searchBeforeFileList
                     (teamId, roomId, fileLinkId, count);
@@ -115,7 +115,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
     @Background
     @Override
-    public void onAfterImageFiles(int fileLinkId, int count) {
+    public void onAfterImageFiles(long fileLinkId, int count) {
 
         if (isLast) {
             return;
@@ -124,7 +124,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
         List<CarouselFileInfo> imageFiles;
         try {
 
-            int teamId = carouselViewerModel.getTeamId();
+            long teamId = carouselViewerModel.getTeamId();
 
             List<ResMessages.FileMessage> fileMessages = carouselViewerModel
                     .searchAfterFileList(teamId, roomId, fileLinkId, count);
@@ -132,7 +132,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
         } catch (RetrofitError e) {
             e.printStackTrace();
-            imageFiles = new ArrayList<CarouselFileInfo>();
+            imageFiles = new ArrayList<>();
         }
 
         if (imageFiles.size() < count) {

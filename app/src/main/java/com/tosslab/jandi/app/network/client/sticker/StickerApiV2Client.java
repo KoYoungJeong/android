@@ -27,10 +27,10 @@ public interface StickerApiV2Client {
     ResCommon sendStickerComment(@Body ReqSendSticker reqSendSticker);
 
     @DELETEWithBody("/stickers/comments/{commentId}")
-    ResCommon deleteStickerComment(@Path("commentId") int commentId, @Query("teamId") int teamId);
+    ResCommon deleteStickerComment(@Path("commentId") long commentId, @Query("teamId") long teamId);
 
     @DELETEWithBody("/stickers/messages/{messageId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon deleteSticker(@Path("messageId") int messageId, @Query("teamId") int teamId);
+    ResCommon deleteSticker(@Path("messageId") long messageId, @Query("teamId") long teamId);
 
 }

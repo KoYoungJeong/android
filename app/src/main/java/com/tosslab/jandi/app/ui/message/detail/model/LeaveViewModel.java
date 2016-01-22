@@ -40,9 +40,9 @@ public class LeaveViewModel {
 
     private Context context;
 
-    private int entityId;
+    private long entityId;
 
-    public void initData(Context context, int entityId) {
+    public void initData(Context context, long entityId) {
         this.context = context;
         this.entityId = entityId;
     }
@@ -71,13 +71,13 @@ public class LeaveViewModel {
     @Background
     void leaveEntityInBackground(FormattedEntity entity) {
         try {
-            int entityId = entity.getId();
+            long entityId = entity.getId();
             if (entity.isPublicTopic()) {
                 entityClientManager.leaveChannel(entityId);
             } else if (entity.isPrivateGroup()) {
                 entityClientManager.leavePrivateGroup(entityId);
             } else if (entity.isUser() || EntityManager.getInstance().isBot(entityId)) {
-                int memberId = EntityManager.getInstance().getMe().getId();
+                long memberId = EntityManager.getInstance().getMe().getId();
                 RequestApiManager.getInstance().deleteChatByChatApi(memberId, entityId);
             }
             trackLeavingEntity(entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity
@@ -110,7 +110,7 @@ public class LeaveViewModel {
         }
     }
 
-    private void trackTopicLeaveSuccess(int entityId) {
+    private void trackTopicLeaveSuccess(long entityId) {
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.TopicLeave)

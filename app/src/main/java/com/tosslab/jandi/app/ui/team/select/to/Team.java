@@ -3,13 +3,10 @@ package com.tosslab.jandi.app.ui.team.select.to;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 
-/**
- * Created by Steve SeongUg Jung on 14. 12. 17..
- */
 public class Team {
 
-    private final int teamId;
-    private final int memberId;
+    private final long teamId;
+    private final long memberId;
     private final String name;
     private final String teamDomain;
     private final int unread;
@@ -20,7 +17,7 @@ public class Team {
 
     private String invitationId;
 
-    private Team(int teamId, int memberId, String name, String teamDomain, Status status, int unread, String invitationId) {
+    private Team(long teamId, long memberId, String name, String teamDomain, Status status, int unread, String invitationId) {
         this.teamId = teamId;
         this.memberId = memberId;
         this.name = name;
@@ -54,11 +51,11 @@ public class Team {
         this.userEmail = userEmail;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public int getMemberId() {
+    public long getMemberId() {
         return memberId;
     }
 

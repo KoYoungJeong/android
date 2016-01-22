@@ -31,7 +31,7 @@ public class MentionObject {
     @DatabaseField(foreign = true)
     private SendMessage sendMessageOf;
     @DatabaseField
-    private int id;
+    private long id;
     @DatabaseField
     private String type;
     @DatabaseField
@@ -42,7 +42,7 @@ public class MentionObject {
     public MentionObject() {
     }
 
-    public MentionObject(int id, String type, int offset, int length) {
+    public MentionObject(long id, String type, int offset, int length) {
         this.id = id;
         this.type = type;
         this.offset = offset;
@@ -65,11 +65,11 @@ public class MentionObject {
         this.commentOf = commentOf;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

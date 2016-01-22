@@ -6,9 +6,6 @@ import com.tosslab.jandi.app.network.models.ResMessageSearch;
 
 import retrofit.RetrofitError;
 
-/**
- * Created by Steve SeongUg Jung on 15. 3. 11..
- */
 public class MessageSearchManager {
 
     private final ReqMessageSearchQeury reqMessageSearchQeury;
@@ -25,12 +22,12 @@ public class MessageSearchManager {
 
         int searchType = getSearchType(reqMessageSearchQeury);
 
-        int teamId = reqMessageSearchQeury.getTeamId();
+        long teamId = reqMessageSearchQeury.getTeamId();
         String query = reqMessageSearchQeury.getQuery();
         int page = reqMessageSearchQeury.getPage();
         int perPage = reqMessageSearchQeury.getPerPage();
-        int writerId = reqMessageSearchQeury.getWriterId();
-        int entityId = reqMessageSearchQeury.getEntityId();
+        long writerId = reqMessageSearchQeury.getWriterId();
+        long entityId = reqMessageSearchQeury.getEntityId();
         switch (searchType) {
 
             case 0x11:  // condition with writer & entity

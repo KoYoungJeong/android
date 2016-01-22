@@ -10,29 +10,29 @@ public interface TopicDetailPresenter {
 
     void setView(View view);
 
-    void onInit(Context context, int entityId);
+    void onInit(Context context, long entityId);
 
-    void onTopicInvite(Activity activity, int entityId);
+    void onTopicInvite(Activity activity, long entityId);
 
-    void onTopicDescriptionMove(int entityId);
+    void onTopicDescriptionMove(long entityId);
 
-    void onTopicStar(Context context, int entityId);
+    void onTopicStar(Context context, long entityId);
 
-    void onAssignTopicOwner(int entityId);
+    void onAssignTopicOwner(long entityId);
 
-    void onTopicLeave(Context context, int entityId);
+    void onTopicLeave(Context context, long entityId);
 
-    void onTopicDelete(int entityId);
+    void onTopicDelete(long entityId);
 
-    void deleteTopic(Context context, int entityId);
+    void deleteTopic(Context context, long entityId);
 
-    void onChangeTopicName(int entityId);
+    void onChangeTopicName(long entityId);
 
-    void onConfirmChangeTopicName(Context context, int entityId, String topicName, int entityType);
+    void onConfirmChangeTopicName(Context context, long entityId, String topicName, int entityType);
 
-    void onAutoJoin(int entityId, boolean autoJoin);
+    void onAutoJoin(long entityId, boolean autoJoin);
 
-    void onPushClick(Context context, int teamId, int entityId, boolean checked);
+    void onPushClick(Context context, long teamId, long entityId, boolean checked);
 
     interface View {
 
@@ -58,7 +58,7 @@ public interface TopicDetailPresenter {
 
         void dismissProgressWheel();
 
-        void showTopicNameChangeDialog(int entityId, String entityName, int entityType);
+        void showTopicNameChangeDialog(long entityId, String entityName, int entityType);
 
         void showNeedToAssignTopicOwnerDialog(String topicName);
 
