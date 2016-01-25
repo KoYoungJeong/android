@@ -87,6 +87,7 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
         Observable.from(sharedEntities)
                 .filter(integerWrapper -> integerWrapper != myId)
                 .map(entityManager::getEntityById)
+                .filter(formattedEntity -> formattedEntity != EntityManager.UNKNOWN_USER_ENTITY)
                 .collect(() -> entities, List::add)
                 .subscribe();
 
