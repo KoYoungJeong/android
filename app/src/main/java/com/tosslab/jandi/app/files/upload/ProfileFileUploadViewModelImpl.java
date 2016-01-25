@@ -70,7 +70,7 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
                 break;
             case ModifyProfileActivity.REQUEST_CHARACTER:
                 try {
-                    File directory = new File(FileUtil.getDownloadPath());
+                    File directory = new File(FileUtil.getCacheDir("character"));
                     file = File.createTempFile("character", ".png", directory);
                     FilePickerModel_.getInstance_(JandiApplication.getContext())
                             .openCharacterActivityForActivityResult(activity, Uri.fromFile(file));
