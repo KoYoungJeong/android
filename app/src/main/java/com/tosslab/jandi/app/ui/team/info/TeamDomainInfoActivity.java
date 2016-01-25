@@ -1,26 +1,25 @@
 package com.tosslab.jandi.app.ui.team.info;
 
+import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
-import com.tosslab.jandi.app.network.models.validation.ResValidation;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
+import com.tosslab.jandi.app.ui.team.info.presenter.TeamDomainInfoPresenter;
+import com.tosslab.jandi.app.ui.team.info.presenter.TeamDomainInfoPresenterImpl;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -28,41 +27,38 @@ import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
 
-import java.util.List;
-
-import retrofit.RetrofitError;
-
-/**
- * Created by Steve SeongUg Jung on 14. 12. 17..
- */
 @EActivity(R.layout.activity_team_domain_info)
 @OptionsMenu(R.menu.teamdomain_info)
-public class TeamDomainInfoActivity extends BaseAppCompatActivity {
+public class TeamDomainInfoActivity extends BaseAppCompatActivity implements TeamDomainInfoPresenter.View {
 
-    @Extra
-    String token;
-    @Extra
-    String domain;
-    @Extra
-    String teamName;
-    @Extra
-    int teamId;
-    @Bean
-    TeamDomainInfoModel teamDomainInfoModel;
-    @Bean
+    @ViewById(R.id.et_team_detail_info_team_name)
+    TextView teamNameView;
+
+    @ViewById(R.id.et_team_detail_info_team_domain)
+    TextView teamDomainView;
+
+    ProgressWheel progressWheel;
+
+    @Bean(TeamDomainInfoPresenterImpl.class)
     TeamDomainInfoPresenter teamDomainInfoPresenter;
-    private String userEmail;
-    private String userName;
 
     @AfterViews
     void initView() {
+
+        setUpActionBar();
+
+        teamDomainInfoPresenter.setView(this);
+        teamDomainInfoPresenter.checkEmailInfo();
+        progressWheel = new ProgressWheel(TeamDomainInfoActivity.this);
+
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.CreateaTeam);
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.ScreenView)
@@ -72,36 +68,12 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity {
 
         MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
                 .pageViewTeamCreate();
-        teamDomainInfoPresenter.setTeamCreatable(true);
-
-        setUpActionBar();
-
-        initUserEmailInfo();
-        initUserDefaultName();
-
-        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.CreateaTeam);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         ActivityHelper.setOrientation(this);
-    }
-
-    @Background
-    void initUserDefaultName() {
-        userName = teamDomainInfoModel.getUserName();
-    }
-
-    @Background
-    void initUserEmailInfo() {
-        List<ResAccountInfo.UserEmail> userEmails = teamDomainInfoModel.initUserEmailInfo();
-        if (userEmails != null && userEmails.size() > 0) {
-            userEmail = userEmails.get(0).getId();
-        } else {
-            ColoredToast.showWarning(getString(R.string.err_network));
-            finish();
-        }
     }
 
     @OptionsItem(android.R.id.home)
@@ -112,70 +84,15 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity {
 
     @OptionsItem(R.id.action_confirm)
     void confirmTeamDomain() {
-        String teamName = teamDomainInfoPresenter.getTeamName();
-        // TODO, FIXME 20자 넘을 때 l10n ?
-        if (teamDomainInfoPresenter.isExceedTeamNameCharacters(teamName)) {
-//            return;
-        }
-
-        String teamDomain = teamDomainInfoPresenter.getTeamDomain();
-        String myName = userName;
-        String myEmail = userEmail;
+        String teamName = teamNameView.getText().toString();
+        String teamDomain = teamDomainView.getText().toString();
 
         if (TextUtils.isEmpty(teamDomain)) {
-            teamDomainInfoPresenter.showFailToast(getString(R.string.err_invalid_team_domain));
+            showFailToast(getString(R.string.err_invalid_team_domain));
             return;
         }
 
-        createTeam(teamName, teamDomain.toLowerCase(), myName, myEmail);
-    }
-
-    @Background
-    void createTeam(String teamName, String teamDomain, String myName, String myEmail) {
-        teamDomainInfoPresenter.showProgressWheel();
-
-        if (!NetworkCheckUtil.isConnected()) {
-            teamDomainInfoPresenter.showFailToast(getString(R.string.err_network));
-            return;
-        }
-
-        // Team Creation
-        try {
-            ResValidation validation = teamDomainInfoModel.validDomain(teamDomain);
-            if (!validation.isValidate()) {
-                teamDomainInfoPresenter.showFailToast(getString(R.string.jandi_domain_is_already_taken));
-                teamDomainInfoPresenter.dismissProgressWheel();
-                return;
-            }
-
-            ResTeamDetailInfo newTeam = teamDomainInfoModel.createNewTeam(teamName, teamDomain);
-
-            long teamId = newTeam.getInviteTeam().getTeamId();
-            MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
-                    .pageViewTeamCreateSuccess();
-
-            teamDomainInfoModel.updateTeamInfo(teamId);
-
-            teamDomainInfoModel.trackCreateTeamSuccess(teamId);
-
-            teamDomainInfoPresenter.dismissProgressWheel();
-            teamDomainInfoPresenter.successCreateTeam(newTeam.getInviteTeam().getName());
-
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            int errorCode = -1;
-            if (e.getResponse() != null) {
-                errorCode = e.getResponse().getStatus();
-            }
-            teamDomainInfoModel.trackCreateTeamFail(errorCode);
-
-            teamDomainInfoPresenter.dismissProgressWheel();
-            if (e.getCause() instanceof ConnectionNotFoundException) {
-                teamDomainInfoPresenter.showFailToast(getString(R.string.err_network));
-                return;
-            }
-            teamDomainInfoPresenter.failCreateTeam(e.getResponse().getStatus());
-        }
+        teamDomainInfoPresenter.createTeam(teamName, teamDomain.toLowerCase());
     }
 
     private void setUpActionBar() {
@@ -190,6 +107,52 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity {
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
+    }
+
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void failCreateTeam(int statusCode) {
+        ColoredToast.showWarning(getString(R.string.fail_to_create_team));
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void successCreateTeam(String name) {
+        ColoredToast.show(getString(R.string.jandi_message_create_entity, name));
+
+        setResult(Activity.RESULT_OK);
+        finish();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showProgressWheel() {
+        if (progressWheel != null && !progressWheel.isShowing()) {
+            progressWheel.show();
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void dismissProgressWheel() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+
+    }
+
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showFailToast(String message) {
+        ColoredToast.showWarning(message);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void finishView() {
+        finish();
     }
 
     @Override
