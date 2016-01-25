@@ -33,12 +33,12 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
     }
 
     @Override
-    public void onInitEntity(Activity activity, int selectedEntityIdToBeShared) {
+    public void onInitEntity(Activity activity, long selectedEntityIdToBeShared) {
 
         String entityName;
-        int entityId;
-        if (fileUploadModel.isValid(JandiApplication.getContext(), selectedEntityIdToBeShared)) {
-            entityName = fileUploadModel.getEntityString(JandiApplication.getContext(), selectedEntityIdToBeShared);
+        long entityId;
+        if (fileUploadModel.isValid(selectedEntityIdToBeShared)) {
+            entityName = fileUploadModel.getEntityString(selectedEntityIdToBeShared);
             entityId = selectedEntityIdToBeShared;
         } else {
             FormattedEntity entity = fileUploadModel.getDefaultTopicEntity();
@@ -60,12 +60,12 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
 
     @Override
     public void onEntityUpdate(FormattedEntity item) {
-        int id = item.getId();
+        long id = item.getId();
         for (FileUploadVO fileUploadVO : fileUploadVOs) {
             fileUploadVO.setEntity(id);
         }
 
-        view.setEntityInfo(fileUploadModel.getEntityString(JandiApplication.getContext(), id));
+        view.setEntityInfo(fileUploadModel.getEntityString(id));
     }
 
     @Deprecated
@@ -107,7 +107,7 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
     }
 
     @Override
-    public void onInitViewPager(int selectedEntityIdToBeShared, ArrayList<String> realFilePathList) {
+    public void onInitViewPager(long selectedEntityIdToBeShared, ArrayList<String> realFilePathList) {
         fileUploadVOs = new ArrayList<FileUploadVO>();
 
         for (String filePath : realFilePathList) {
@@ -127,6 +127,6 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
 
         view.setFileName(fileUploadVO.getFileName());
         view.setComment(fileUploadVO.getComment());
-        view.setEntityInfo(fileUploadModel.getEntityString(JandiApplication.getContext(), fileUploadVO.getEntity()));
+        view.setEntityInfo(fileUploadModel.getEntityString(fileUploadVO.getEntity()));
     }
 }

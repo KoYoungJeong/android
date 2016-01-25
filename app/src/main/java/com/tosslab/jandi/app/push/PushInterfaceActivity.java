@@ -45,16 +45,16 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
     public static final String EXTRA_TEAM_ID = "teamId";
     // Push -> 선택된 엔티티 설정이 안됨에 따라...
 
-    public static int selectedEntityId;
+    public static long selectedEntityId;
 
     @Extra(PushInterfaceActivity.EXTRA_ENTITY_ID)
-    int entityId;
+    long entityId;
     @Extra(PushInterfaceActivity.EXTRA_ENTITY_TYPE)
     int entityType;
     @Extra(PushInterfaceActivity.EXTRA_IS_FROM_PUSH)
     boolean isFromPush;
     @Extra(PushInterfaceActivity.EXTRA_TEAM_ID)
-    int teamId;
+    long teamId;
     @Extra(PushInterfaceActivity.EXTRA_ROOM_TYPE)
     String roomType;
 
@@ -156,8 +156,8 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
 
         if (jandiInterfaceModel.setupSelectedTeam(teamId)) {
 
-            int roomId = entityId;
-            int targetEntityId = jandiInterfaceModel.getEntityId(teamId, entityId, roomType);
+            long roomId = entityId;
+            long targetEntityId = jandiInterfaceModel.getEntityId(teamId, entityId, roomType);
 
             if (targetEntityId > 0) {
 
@@ -183,7 +183,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
     }
 
     @UiThread
-    void moveMessageListActivity(int roomId, int targetEntityId) {
+    void moveMessageListActivity(long roomId, long targetEntityId) {
 
         MainTabActivity_.intent(PushInterfaceActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

@@ -99,7 +99,7 @@ public class SearchedFileItemListAdapter extends RecyclerView.Adapter {
         return searedFiles.size();
     }
 
-    public int findPositionByFileId(int fileId) {
+    public int findPositionByFileId(long fileId) {
         int itemCount = getItemCount();
         for (int idx = 0; idx < itemCount; ++idx) {
             if (getItem(idx).id == fileId) {

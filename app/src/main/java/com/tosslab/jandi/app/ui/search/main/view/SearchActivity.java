@@ -60,7 +60,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
     boolean isFromFiles;
 
     @Extra
-    int entityId = -1;
+    long entityId = -1;
 
     @ViewById(R.id.tv_search_keyword)
     AutoCompleteTextView etSearch;

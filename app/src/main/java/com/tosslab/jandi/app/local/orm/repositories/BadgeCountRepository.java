@@ -39,7 +39,7 @@ public class BadgeCountRepository {
         repository = null;
     }
 
-    public void upsertBadgeCount(int teamId, int badgeCount) {
+    public void upsertBadgeCount(long teamId, int badgeCount) {
         lock.lock();
         try {
             Dao<BadgeCount, ?> dao = helper.getDao(BadgeCount.class);
@@ -51,7 +51,7 @@ public class BadgeCountRepository {
         }
     }
 
-    public int findBadgeCountByTeamId(int teamId) {
+    public int findBadgeCountByTeamId(long teamId) {
         lock.lock();
         try {
             Dao<BadgeCount, ?> dao = helper.getDao(BadgeCount.class);

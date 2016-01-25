@@ -71,7 +71,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     public static final String KEY_MEMBER_ID = "memberId";
 
     @Extra
-    int entityId;
+    long entityId;
 
     @Extra
     int type;
@@ -235,7 +235,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
             menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    List<Integer> selectedCdp = topicMembersAdapter.getSelectedUserIds();
+                    List<Long> selectedCdp = topicMembersAdapter.getSelectedUserIds();
 
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMembers, AnalyticsValue.Action.Invite);
 
@@ -325,14 +325,14 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @UiThread
     @Override
     public void showListMembers(List<ChatChooseItem> members) {
-        final List<Integer> selectedUserIds = topicMembersAdapter.getSelectedUserIds();
+        final List<Long> selectedUserIds = topicMembersAdapter.getSelectedUserIds();
 
         topicMembersAdapter.clear();
 
         if (selectedUserIds != null && !selectedUserIds.isEmpty()) {
             Observable.from(members)
                     .filter(member -> {
-                        for (Integer ids : selectedUserIds) {
+                        for (long ids : selectedUserIds) {
                             boolean selected = ids == member.getEntityId();
                             if (selected) {
                                 return true;
@@ -357,7 +357,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     }
 
     @Override
-    public int getEntityId() {
+    public long getEntityId() {
         return entityId;
     }
 
@@ -368,7 +368,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @UiThread
     @Override
-    public void moveDirectMessageActivity(int teamId, int userId, boolean isStarred) {
+    public void moveDirectMessageActivity(long teamId, long userId, boolean isStarred) {
         MessageListV2Activity_.intent(MembersListActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .teamId(teamId)
@@ -418,7 +418,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void showKickDialog(String userName, String userProfileUrl, int memberId) {
+    public void showKickDialog(String userName, String userProfileUrl, long memberId) {
         KickDialogFragment dialogFragment = KickDialogFragment_.builder()
                 .profileUrl(userProfileUrl)
                 .userName(userName)
@@ -434,7 +434,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void removeUser(int userEntityId) {
+    public void removeUser(long userEntityId) {
         for (int idx = 0, size = topicMembersAdapter.getCount(); idx < size; idx++) {
             if (topicMembersAdapter.getItem(idx).getEntityId() == userEntityId) {
                 topicMembersAdapter.remove(idx);
@@ -481,7 +481,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void showConfirmAssignTopicOwnerDialog(String userName, String userProfileUrl, int memberId) {
+    public void showConfirmAssignTopicOwnerDialog(String userName, String userProfileUrl, long memberId) {
         AssignTopicOwnerDialog assignDialog = AssignTopicOwnerDialog_.builder()
                 .profileUrl(userProfileUrl)
                 .userName(userName)
@@ -506,7 +506,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void setResultAndFinish(int memberId) {
+    public void setResultAndFinish(long memberId) {
         if (memberId > 0) {
             Intent intent = new Intent();
             intent.putExtra(KEY_MEMBER_ID, memberId);

@@ -171,12 +171,12 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResLeftSideMenu> loadGetInfosForSideMenuByMainRestApi(int teamId) {
+    public IExecutor<ResLeftSideMenu> loadGetInfosForSideMenuByMainRestApi(long teamId) {
         return () -> authRestApiClient.getInfosForSideMenuByMainRest(teamId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadSetMarkerByMainRestApi(int entityId, ReqSetMarker reqSetMarker) {
+    public IExecutor<ResCommon> loadSetMarkerByMainRestApi(long entityId, ReqSetMarker reqSetMarker) {
         return () -> authRestApiClient.setMarkerByMainRest(entityId, reqSetMarker);
     }
 
@@ -207,35 +207,35 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadModifyPublicTopicNameByChannelApi(ReqCreateTopic channel, int
+    public IExecutor<ResCommon> loadModifyPublicTopicNameByChannelApi(ReqCreateTopic channel, long
             channelId) {
         return () -> authRestApiClient.modifyPublicTopicNameByChannelApi(channel, channelId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadDeleteTopicByChannelApi(int channelId, ReqDeleteTopic reqDeleteTopic) {
+    public IExecutor<ResCommon> loadDeleteTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic) {
         return () -> authRestApiClient.deleteTopicByChannelApi(channelId, reqDeleteTopic);
     }
 
     @Override
-    public IExecutor<ResCommon> loadJoinTopicByChannelApi(int channelId, ReqDeleteTopic reqDeleteTopic) {
+    public IExecutor<ResCommon> loadJoinTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic) {
         return () -> authRestApiClient.joinTopicByChannelApi(channelId, reqDeleteTopic);
     }
 
     @Override
-    public IExecutor<ResCommon> loadLeaveTopicByChannelApi(int channelId, ReqDeleteTopic reqDeleteTopic) {
+    public IExecutor<ResCommon> loadLeaveTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic) {
         return () -> authRestApiClient.leaveTopicByChannelApi(channelId, reqDeleteTopic);
     }
 
     @Override
-    public IExecutor<ResCommon> loadInvitePublicTopicByChannelApi(int channelId, ReqInviteTopicUsers reqInviteTopicUsers) {
+    public IExecutor<ResCommon> loadInvitePublicTopicByChannelApi(long channelId, ReqInviteTopicUsers reqInviteTopicUsers) {
         return () -> authRestApiClient.invitePublicTopicByChannelApi(channelId, reqInviteTopicUsers);
     }
 
     @Override
-    public IExecutor<ResMessages> loadGetPublicTopicMessagesByChannelMessageApi(int teamId, int
+    public IExecutor<ResMessages> loadGetPublicTopicMessagesByChannelMessageApi(long teamId, long
             channelId,
-                                                                                int fromId, int count) {
+                                                                                long fromId, int count) {
         return () -> authRestApiClient.getPublicTopicMessagesByChannelMessageApi(teamId, channelId, fromId, count);
     }
 
@@ -252,25 +252,25 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResMessages> loadGetPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(int
+    public IExecutor<ResMessages> loadGetPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(long
                                                                                                         teamId,
-                                                                                                int channelId, int currentLinkId) {
+                                                                                                long channelId, long currentLinkId) {
         return () -> authRestApiClient.getPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(teamId, channelId, currentLinkId);
     }
 
     @Override
-    public IExecutor<ResMessages> loadGetPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(int teamId, int channelId, int currentLinkId, int count) {
+    public IExecutor<ResMessages> loadGetPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(long teamId, long channelId, long currentLinkId, int count) {
         return () -> authRestApiClient.getPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(teamId, channelId, currentLinkId, count);
     }
 
     @Override
-    public IExecutor<ResMessages> loadGetPublicTopicMarkerMessagesByChannelMessageApi(int teamId, int
-            channelId, int currentLinkId) {
+    public IExecutor<ResMessages> loadGetPublicTopicMarkerMessagesByChannelMessageApi(long teamId, long
+            channelId, long currentLinkId) {
         return () -> authRestApiClient.getPublicTopicMarkerMessagesByChannelMessageApi(teamId, channelId, currentLinkId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadSendPublicTopicMessageByChannelMessageApi(int channelId, int teamId, ReqSendMessageV3 reqSendMessageV3) {
+    public IExecutor<ResCommon> loadSendPublicTopicMessageByChannelMessageApi(long channelId, long teamId, ReqSendMessageV3 reqSendMessageV3) {
         return () -> authRestApiClient.sendPublicTopicMessageByChannelMessageApi(channelId, teamId, reqSendMessageV3);
     }
 
@@ -280,22 +280,22 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadDeletePublicTopicMessageByChannelMessageApi(int teamId, int channelId, int messageId) {
+    public IExecutor<ResCommon> loadDeletePublicTopicMessageByChannelMessageApi(long teamId, long channelId, long messageId) {
         return () -> authRestApiClient.deletePublicTopicMessageByChannelMessageApi(teamId, channelId, messageId);
     }
 
     @Override
-    public IExecutor<List<ResChat>> loadGetChatListByChatApi(int memberId) {
+    public IExecutor<List<ResChat>> loadGetChatListByChatApi(long memberId) {
         return () -> authRestApiClient.getChatListByChatApi(memberId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadDeleteChatByChatApi(int memberId, int entityId) {
+    public IExecutor<ResCommon> loadDeleteChatByChatApi(long memberId, long entityId) {
         return () -> authRestApiClient.deleteChatByChatApi(memberId, entityId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadSendMessageCommentByCommentsApi(int messageId, int teamId, ReqSendComment reqSendComment) {
+    public IExecutor<ResCommon> loadSendMessageCommentByCommentsApi(long messageId, long teamId, ReqSendComment reqSendComment) {
         return () -> authRestApiClient.sendMessageCommentByCommentsApi(messageId, teamId, reqSendComment);
     }
 
@@ -305,12 +305,12 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadDeleteMessageCommentByCommentsApi(int teamId, int messageId, int commentId) {
+    public IExecutor<ResCommon> loadDeleteMessageCommentByCommentsApi(long teamId, long messageId, long commentId) {
         return () -> authRestApiClient.deleteMessageCommentByCommentsApi(teamId, messageId, commentId);
     }
 
     @Override
-    public IExecutor<ResMessages> loadGetDirectMessagesByDirectMessageApi(int teamId, int userId, int
+    public IExecutor<ResMessages> loadGetDirectMessagesByDirectMessageApi(long teamId, long userId, long
             fromId,
                                                                           int count) {
         return () -> authRestApiClient.getDirectMessagesByDirectMessageApi(teamId, userId, fromId, count);
@@ -329,24 +329,24 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResMessages> loadGetDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int
-            userId, int currentLinkId) {
+    public IExecutor<ResMessages> loadGetDirectMessagesUpdatedForMarkerByDirectMessageApi(long teamId, long
+            userId, long currentLinkId) {
         return () -> authRestApiClient.getDirectMessagesUpdatedForMarkerByDirectMessageApi(teamId, userId, currentLinkId);
     }
 
     @Override
-    public IExecutor<ResMessages> loadGetDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int userId, int currentLinkId, int count) {
+    public IExecutor<ResMessages> loadGetDirectMessagesUpdatedForMarkerByDirectMessageApi(long teamId, long userId, long currentLinkId, int count) {
         return () -> authRestApiClient.getDirectMessagesUpdatedForMarkerByDirectMessageApi(teamId, userId, currentLinkId, count);
     }
 
     @Override
-    public IExecutor<ResMessages> loadGetDirectMarkerMessagesByDirectMessageApi(int teamId, int userId,
-                                                                                int currentLinkId) {
+    public IExecutor<ResMessages> loadGetDirectMarkerMessagesByDirectMessageApi(long teamId, long userId,
+                                                                                long currentLinkId) {
         return () -> authRestApiClient.getDirectMarkerMessagesByDirectMessageApi(teamId, userId, currentLinkId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadSendDirectMessageByDirectMessageApi(int userId, int teamId,
+    public IExecutor<ResCommon> loadSendDirectMessageByDirectMessageApi(long userId, long teamId,
                                                                         ReqSendMessageV3 reqSendMessageV3) {
         return () -> authRestApiClient.sendDirectMessageByDirectMessageApi(userId, teamId, reqSendMessageV3);
     }
@@ -357,7 +357,7 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadDeleteDirectMessageByDirectMessageApi(int teamId, int userId, int messageId) {
+    public IExecutor<ResCommon> loadDeleteDirectMessageByDirectMessageApi(long teamId, long userId, long messageId) {
         return () -> authRestApiClient.deleteDirectMessageByDirectMessageApi(teamId, userId, messageId);
     }
 
@@ -367,28 +367,28 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadModifyGroupByGroupApi(ReqCreateTopic channel, int groupId) {
+    public IExecutor<ResCommon> loadModifyGroupByGroupApi(ReqCreateTopic channel, long groupId) {
         return () -> authRestApiClient.modifyGroupByGroupApi(channel, groupId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadDeleteGroupByGroupApi(int teamId, int groupId) {
+    public IExecutor<ResCommon> loadDeleteGroupByGroupApi(long teamId, long groupId) {
         return () -> authRestApiClient.deleteGroupByGroupApi(teamId, groupId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadLeaveGroupByGroupApi(int groupId, ReqTeam team) {
+    public IExecutor<ResCommon> loadLeaveGroupByGroupApi(long groupId, ReqTeam team) {
         return () -> authRestApiClient.leaveGroupByGroupApi(groupId, team);
     }
 
     @Override
-    public IExecutor<ResCommon> loadInviteGroupByGroupApi(int groupId, ReqInviteTopicUsers inviteUsers) {
+    public IExecutor<ResCommon> loadInviteGroupByGroupApi(long groupId, ReqInviteTopicUsers inviteUsers) {
         return () -> authRestApiClient.inviteGroupByGroupApi(groupId, inviteUsers);
     }
 
     @Override
-    public IExecutor<ResMessages> loadGetGroupMessagesByGroupMessageApi(int teamId, int groupId,
-                                                                        int fromId,
+    public IExecutor<ResMessages> loadGetGroupMessagesByGroupMessageApi(long teamId, long groupId,
+                                                                        long fromId,
                                                                         int count) {
         return () -> authRestApiClient.getGroupMessagesByGroupMessageApi(teamId, groupId, fromId, count);
     }
@@ -405,25 +405,25 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResMessages> loadGetGroupMessagesUpdatedForMarkerByGroupMessageApi(int teamId,
-                                                                                        int groupId,
-                                                                                        int currentLinkId) {
+    public IExecutor<ResMessages> loadGetGroupMessagesUpdatedForMarkerByGroupMessageApi(long teamId,
+                                                                                        long groupId,
+                                                                                        long currentLinkId) {
         return () -> authRestApiClient.getGroupMessagesUpdatedForMarkerByGroupMessageApi(teamId, groupId, currentLinkId);
     }
 
     @Override
-    public IExecutor<ResMessages> loadGetGroupMessagesUpdatedForMarkerByGroupMessageApi(int teamId, int groupId, int currentLinkId, int count) {
+    public IExecutor<ResMessages> loadGetGroupMessagesUpdatedForMarkerByGroupMessageApi(long teamId, long groupId, long currentLinkId, int count) {
         return () -> authRestApiClient.getGroupMessagesUpdatedForMarkerByGroupMessageApi(teamId, groupId, currentLinkId, count);
     }
 
     @Override
-    public IExecutor<ResMessages> loadGetGroupMarkerMessagesByGroupMessageApi(int teamId, int groupId,
-                                                                              int currentLinkId) {
+    public IExecutor<ResMessages> loadGetGroupMarkerMessagesByGroupMessageApi(long teamId, long groupId,
+                                                                              long currentLinkId) {
         return () -> authRestApiClient.getGroupMarkerMessagesByGroupMessageApi(teamId, groupId, currentLinkId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadSendGroupMessageByGroupMessageApi(int privateGroupId, int teamId, ReqSendMessageV3 reqSendMessageV3) {
+    public IExecutor<ResCommon> loadSendGroupMessageByGroupMessageApi(long privateGroupId, long teamId, ReqSendMessageV3 reqSendMessageV3) {
         return () -> authRestApiClient.sendGroupMessageByGroupMessageApi(privateGroupId, teamId, reqSendMessageV3);
     }
 
@@ -433,25 +433,25 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadDeletePrivateGroupMessageByGroupMessageApi(int teamId, int groupId, int messageId) {
+    public IExecutor<ResCommon> loadDeletePrivateGroupMessageByGroupMessageApi(long teamId, long groupId, long messageId) {
         return () -> authRestApiClient.deletePrivateGroupMessageByGroupMessageApi(teamId, groupId, messageId);
     }
 
 
     @Override
-    public IExecutor<ResLeftSideMenu.User> loadUpdateMemberProfileByProfileApi(int memberId, ReqUpdateProfile
+    public IExecutor<ResLeftSideMenu.User> loadUpdateMemberProfileByProfileApi(long memberId, ReqUpdateProfile
             reqUpdateProfile) {
         return () -> authRestApiClient.updateMemberProfileByProfileApi(memberId, reqUpdateProfile);
     }
 
     @Override
-    public IExecutor<ResCommon> loadUpdateMemberNameByProfileApi(int memberId, ReqProfileName
+    public IExecutor<ResCommon> loadUpdateMemberNameByProfileApi(long memberId, ReqProfileName
             reqProfileName) {
         return () -> authRestApiClient.updateMemberNameByProfileApi(memberId, reqProfileName);
     }
 
     @Override
-    public IExecutor<ResLeftSideMenu.User> loadUpdateMemberEmailByProfileApi(int memberId,
+    public IExecutor<ResLeftSideMenu.User> loadUpdateMemberEmailByProfileApi(long memberId,
                                                                              ReqAccountEmail reqAccountEmail) {
         return () -> authRestApiClient.updateMemberEmailByProfileApi(memberId, reqAccountEmail);
     }
@@ -468,65 +468,65 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResMessageSearch> loadSearchMessagesByMessageSearchApi(int teamId, String query, int
+    public IExecutor<ResMessageSearch> loadSearchMessagesByMessageSearchApi(long teamId, String query, int
             page,
-                                                                            int perPage, int writerId, int entityId) {
+                                                                            int perPage, long writerId, long entityId) {
         return () -> authRestApiClient.searchMessagesByMessageSearchApi(teamId, query, page, perPage, writerId, entityId);
     }
 
     @Override
-    public IExecutor<ResMessageSearch> loadSearchMessagesByEntityIdByMessageSearchApi(int teamId, String query,
-                                                                                      int page, int perPage, int entityId) {
+    public IExecutor<ResMessageSearch> loadSearchMessagesByEntityIdByMessageSearchApi(long teamId, String query,
+                                                                                      int page, int perPage, long entityId) {
         return () -> authRestApiClient.searchMessagesByEntityIdByMessageSearchApi(teamId, query, page, perPage, entityId);
     }
 
     @Override
-    public IExecutor<ResMessageSearch> loadSearchMessagesByWriterIdByMessageSearchApi(int teamId, String query,
-                                                                                      int page, int perPage, int writerId) {
+    public IExecutor<ResMessageSearch> loadSearchMessagesByWriterIdByMessageSearchApi(long teamId, String query,
+                                                                                      int page, int perPage, long writerId) {
         return () -> authRestApiClient.searchMessagesByWriterIdByMessageSearchApi(teamId, query, page, perPage, writerId);
     }
 
     @Override
-    public IExecutor<ResMessageSearch> loadSearchMessagesByMessageSearchApi(int teamId,
+    public IExecutor<ResMessageSearch> loadSearchMessagesByMessageSearchApi(long teamId,
                                                                             String query,
                                                                             int page, int perPage) {
         return () -> authRestApiClient.searchMessagesByMessageSearchApi(teamId, query, page, perPage);
     }
 
     @Override
-    public IExecutor<ResFileDetail> loadGetFileDetailByMessagesApiAuth(int teamId, int messageId) {
+    public IExecutor<ResFileDetail> loadGetFileDetailByMessagesApiAuth(long teamId, long messageId) {
         return () -> authRestApiClient.getFileDetailByMessagesApiAuth(teamId, messageId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadShareMessageByMessagesApiAuth(ReqShareMessage share, int
+    public IExecutor<ResCommon> loadShareMessageByMessagesApiAuth(ReqShareMessage share, long
             messageId) {
         return () -> authRestApiClient.shareMessageByMessagesApiAuth(share, messageId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadUnshareMessageByMessagesApiAuth(ReqUnshareMessage share, int
+    public IExecutor<ResCommon> loadUnshareMessageByMessagesApiAuth(ReqUnshareMessage share, long
             messageId) {
         return () -> authRestApiClient.unshareMessageByMessagesApiAuth(share, messageId);
     }
 
     @Override
-    public IExecutor<List<ResMessages.Link>> getRoomUpdateMessageByMessagesApiAuth(int teamId, int roomId, int currentLinkId) {
+    public IExecutor<List<ResMessages.Link>> getRoomUpdateMessageByMessagesApiAuth(long teamId, long roomId, long currentLinkId) {
         return () -> authRestApiClient.getRoomUpdateMessageByMessagesApiAuth(teamId, roomId, currentLinkId);
     }
 
     @Override
-    public IExecutor<ResRoomInfo> loadGetRoomInfoByRoomsApi(int teamId, int roomId) {
+    public IExecutor<ResRoomInfo> loadGetRoomInfoByRoomsApi(long teamId, long roomId) {
         return () -> authRestApiClient.getRoomInfoByRoomsApi(teamId, roomId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadEnableFavoriteByStarredEntityApi(ReqTeam reqTeam, int entityId) {
+    public IExecutor<ResCommon> loadEnableFavoriteByStarredEntityApi(ReqTeam reqTeam, long entityId) {
         return () -> authRestApiClient.enableFavoriteByStarredEntityApi(reqTeam, entityId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadDisableFavoriteByStarredEntityApi(int teamId, int entityId) {
+    public IExecutor<ResCommon> loadDisableFavoriteByStarredEntityApi(long teamId, long entityId) {
         return () -> authRestApiClient.disableFavoriteByStarredEntityApi(teamId, entityId);
     }
 
@@ -546,48 +546,48 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResLeftSideMenu.User> loadGetMemberProfileByTeamApi(int teamId, int memberId) {
+    public IExecutor<ResLeftSideMenu.User> loadGetMemberProfileByTeamApi(long teamId, long memberId) {
         return () -> authRestApiClient.getMemberProfileByTeamApi(teamId, memberId);
     }
 
     @Override
-    public IExecutor<List<ResInvitationMembers>> loadInviteToTeamByTeamApi(int teamId, ReqInvitationMembers
+    public IExecutor<List<ResInvitationMembers>> loadInviteToTeamByTeamApi(long teamId, ReqInvitationMembers
             invitationMembers) {
         return () -> authRestApiClient.inviteToTeamByTeamApi(teamId, invitationMembers);
     }
 
     @Override
-    public IExecutor<ResTeamDetailInfo.InviteTeam> loadGetTeamInfoByTeamApi(int teamId) {
+    public IExecutor<ResTeamDetailInfo.InviteTeam> loadGetTeamInfoByTeamApi(long teamId) {
         return () -> authRestApiClient.getTeamInfoByTeamApi(teamId);
     }
 
     @Override
-    public IExecutor<ResAnnouncement> loadGetAnnouncement(int teamId, int topicId) {
+    public IExecutor<ResAnnouncement> loadGetAnnouncement(long teamId, long topicId) {
         return () -> authRestApiClient.getAnnouncement(teamId, topicId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadCreateAnnouncement(int teamId, int topicId, ReqCreateAnnouncement reqCreateAnnouncement) {
+    public IExecutor<ResCommon> loadCreateAnnouncement(long teamId, long topicId, ReqCreateAnnouncement reqCreateAnnouncement) {
         return () -> authRestApiClient.createAnnouncement(teamId, topicId, reqCreateAnnouncement);
     }
 
     @Override
-    public IExecutor<ResCommon> loadUpdateAnnouncementStatus(int teamId, int memberId, ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus) {
+    public IExecutor<ResCommon> loadUpdateAnnouncementStatus(long teamId, long memberId, ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus) {
         return () -> authRestApiClient.updateAnnouncementStatus(teamId, memberId, reqUpdateAnnouncementStatus);
     }
 
     @Override
-    public IExecutor<ResCommon> loadDeleteAnnouncement(int teamId, int topicId) {
+    public IExecutor<ResCommon> loadDeleteAnnouncement(long teamId, long topicId) {
         return () -> authRestApiClient.deleteAnnouncement(teamId, topicId);
     }
 
     @Override
-    public IExecutor<ResMessages.OriginalMessage> loadGetMessage(int teamId, int topicId) {
+    public IExecutor<ResMessages.OriginalMessage> loadGetMessage(long teamId, long topicId) {
         return () -> authRestApiClient.getMessage(teamId, topicId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadUpdateTopicPushSubscribe(int teamId, int topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe) {
+    public IExecutor<ResCommon> loadUpdateTopicPushSubscribe(long teamId, long topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe) {
         return () -> authRestApiClient.updateTopicPushSubscribe(teamId, topicId, reqUpdateTopicPushSubscribe);
     }
 
@@ -629,52 +629,52 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadDeleteStickerCommentByStickerApi(int commentId, int teamId) {
+    public IExecutor<ResCommon> loadDeleteStickerCommentByStickerApi(long commentId, long teamId) {
         return () -> authRestApiClient.deleteStickerCommentByStickerApi(commentId, teamId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadDeleteStickerByStickerApi(int messageId, int teamId) {
+    public IExecutor<ResCommon> loadDeleteStickerByStickerApi(long messageId, long teamId) {
         return () -> authRestApiClient.deleteStickerByStickerApi(messageId, teamId);
     }
 
     @Override
-    public IExecutor<ResCommon> loaderDeleteFileByFileApi(int teamId, int fileId) {
+    public IExecutor<ResCommon> loaderDeleteFileByFileApi(long teamId, long fileId) {
         return () -> authRestApiClient.deleteFileByFileApi(teamId, fileId);
     }
 
     @Override
-    public IExecutor<List<ResMessages.FileMessage>> loaderSearchInitImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
+    public IExecutor<List<ResMessages.FileMessage>> loaderSearchInitImageFileByFileApi(long teamId, long roomId, long messageId, int count) {
         return () -> authRestApiClient.searchInitImageFileByFileApi(teamId, roomId, messageId, count);
     }
 
     @Override
-    public IExecutor<List<ResMessages.FileMessage>> loaderSearchOldImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
+    public IExecutor<List<ResMessages.FileMessage>> loaderSearchOldImageFileByFileApi(long teamId, long roomId, long messageId, int count) {
         return () -> authRestApiClient.searchOldImageFileByFileApi(teamId, roomId, messageId, count);
     }
 
     @Override
-    public IExecutor<List<ResMessages.FileMessage>> loaderSearchNewImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
+    public IExecutor<List<ResMessages.FileMessage>> loaderSearchNewImageFileByFileApi(long teamId, long roomId, long messageId, int count) {
         return () -> authRestApiClient.searchNewImageFileByFileApi(teamId, roomId, messageId, count);
     }
 
     @Override
-    public IExecutor<ResStarMentioned> loadGetMentionedMessagesByTeamApi(int teamId, Integer messageId, int count) {
+    public IExecutor<ResStarMentioned> loadGetMentionedMessagesByTeamApi(long teamId, long messageId, int count) {
         return () -> authRestApiClient.getMentionedMessagesByTeamApi(teamId, messageId, count);
     }
 
     @Override
-    public IExecutor<StarMentionedMessageObject> loadRegistStarredMessageByTeamApi(int teamId, int messageId) {
+    public IExecutor<StarMentionedMessageObject> loadRegistStarredMessageByTeamApi(long teamId, long messageId) {
         return () -> authRestApiClient.registStarredMessageByTeamApi(teamId, messageId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadUnregistStarredMessageByTeamApi(int teamId, int messageId) {
+    public IExecutor<ResCommon> loadUnregistStarredMessageByTeamApi(long teamId, long messageId) {
         return () -> authRestApiClient.unregistStarredMessageByTeamApi(teamId, messageId);
     }
 
     @Override
-    public IExecutor<ResStarMentioned> loadGetStarredMessagesByTeamApi(int teamId, Integer messageId, int count, String type) {
+    public IExecutor<ResStarMentioned> loadGetStarredMessagesByTeamApi(long teamId, long messageId, int count, String type) {
         return () -> authRestApiClient.getStarredMessagesByTeamApi(teamId, messageId, count, type);
     }
 
@@ -684,62 +684,62 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCreateFolder> loadCreateFolderByTeamApi(int teamId, ReqCreateFolder reqCreateFolder) {
+    public IExecutor<ResCreateFolder> loadCreateFolderByTeamApi(long teamId, ReqCreateFolder reqCreateFolder) {
         return () -> authRestApiClient.createFolderByTeamApi(teamId, reqCreateFolder);
     }
 
     @Override
-    public IExecutor<ResCommon> loadDeleteFolderByTeamApi(int teamId, int folderId) {
+    public IExecutor<ResCommon> loadDeleteFolderByTeamApi(long teamId, long folderId) {
         return () -> authRestApiClient.deleteFolderByTeamApi(teamId, folderId);
     }
 
     @Override
-    public IExecutor<ResUpdateFolder> loadUpdateFolderByTeamApi(int teamId, int folderId, ReqUpdateFolder reqUpdateFolder) {
+    public IExecutor<ResUpdateFolder> loadUpdateFolderByTeamApi(long teamId, long folderId, ReqUpdateFolder reqUpdateFolder) {
         return () -> authRestApiClient.updateFolderByTeamApi(teamId, folderId, reqUpdateFolder);
     }
 
     @Override
-    public IExecutor<List<ResFolder>> loadGetFoldersByTeamApi(int teamId) {
+    public IExecutor<List<ResFolder>> loadGetFoldersByTeamApi(long teamId) {
         return () -> authRestApiClient.getFoldersByTeamApi(teamId);
     }
 
     @Override
-    public IExecutor<List<ResFolderItem>> loadGetFolderItemsByTeamApi(int teamId) {
+    public IExecutor<List<ResFolderItem>> loadGetFolderItemsByTeamApi(long teamId) {
         return () -> authRestApiClient.getFolderItemsByTeamApi(teamId);
     }
 
     @Override
-    public IExecutor<ResRegistFolderItem> loadRegistFolderItemByTeamApi(int teamId, int folderId, ReqRegistFolderItem reqRegistFolderItem) {
+    public IExecutor<ResRegistFolderItem> loadRegistFolderItemByTeamApi(long teamId, long folderId, ReqRegistFolderItem reqRegistFolderItem) {
         return () -> authRestApiClient.registFolderItemByTeamApi(teamId, folderId, reqRegistFolderItem);
     }
 
     @Override
-    public IExecutor<ResCommon> loadDeleteFolderItemByTeamApi(int teamId, int folderId, int itemId) {
+    public IExecutor<ResCommon> loadDeleteFolderItemByTeamApi(long teamId, long folderId, long itemId) {
         return () -> authRestApiClient.deleteFolderItemByTeamApi(teamId, folderId, itemId);
     }
 
     @Override
-    public IExecutor<ResCommon> loadKickUserFromTopic(int teamId, int topicId, ReqMember member) {
+    public IExecutor<ResCommon> loadKickUserFromTopic(long teamId, long topicId, ReqMember member) {
         return () -> authRestApiClient.kickUserFromTopic(teamId, topicId, member);
     }
 
     @Override
-    public IExecutor<ResCommon> loadAssignToTopicOwner(int teamId, int topicId, ReqOwner owner) {
+    public IExecutor<ResCommon> loadAssignToTopicOwner(long teamId, long topicId, ReqOwner owner) {
         return () -> authRestApiClient.assignToTopicOwner(teamId, topicId, owner);
     }
 
     @Override
-    public IExecutor<ResMessages.FileMessage> loadEnableFileExternalLink(int teamId, int fileId) {
+    public IExecutor<ResMessages.FileMessage> loadEnableFileExternalLink(long teamId, long fileId) {
         return () -> authRestApiClient.enableFileExternalLink(teamId, fileId);
     }
 
     @Override
-    public IExecutor<ResMessages.FileMessage> loadDisableFileExternalLink(int teamId, int fileId) {
+    public IExecutor<ResMessages.FileMessage> loadDisableFileExternalLink(long teamId, long fileId) {
         return () -> authRestApiClient.disableFileExternalLink(teamId, fileId);
     }
 
     @Override
-    public IExecutor<ResEventHistory> loadGetEventHistory(long ts, Integer memberId, String eventType, Integer size) {
+    public IExecutor<ResEventHistory> loadGetEventHistory(long ts, long memberId, String eventType, Integer size) {
         return () -> authRestApiClient.getEventHistory(ts, memberId, eventType, size);
     }
 

@@ -22,18 +22,15 @@ import rx.Observable;
 import rx.functions.Func0;
 import rx.functions.Func2;
 
-/**
- * Created by tee on 15. 7. 22..
- */
 @EBean
 public class SearchMemberModel {
 
 
-    LinkedHashMap<Integer, SearchedItemVO> selectableMembersLinkedHashMap;
+    LinkedHashMap<Long, SearchedItemVO> selectableMembersLinkedHashMap;
 
     public List<SearchedItemVO> getUserSearchByName(String subNameString) {
 
-        LinkedHashMap<Integer, SearchedItemVO> searchedItemsHashMap;
+        LinkedHashMap<Long, SearchedItemVO> searchedItemsHashMap;
         List<SearchedItemVO> searchedItems = new ArrayList<>();
 
         if (selectableMembersLinkedHashMap == null || selectableMembersLinkedHashMap.size() == 0) {
@@ -41,7 +38,7 @@ public class SearchMemberModel {
         }
 
         searchedItemsHashMap =
-                (LinkedHashMap<Integer, SearchedItemVO>) selectableMembersLinkedHashMap.clone();
+                (LinkedHashMap<Long, SearchedItemVO>) selectableMembersLinkedHashMap.clone();
 
         Observable.from(searchedItemsHashMap.keySet())
                 .filter(integer ->
@@ -55,9 +52,9 @@ public class SearchMemberModel {
 
     }
 
-    public LinkedHashMap<Integer, SearchedItemVO> refreshSelectableMembers(int teamId,
-                                                                           List<Integer> topicIds,
-                                                                           String mentionType) {
+    public LinkedHashMap<Long, SearchedItemVO> refreshSelectableMembers(long teamId,
+                                                                        List<Long> topicIds,
+                                                                        String mentionType) {
 
         selectableMembersLinkedHashMap = new LinkedHashMap<>();
 
@@ -76,7 +73,7 @@ public class SearchMemberModel {
 
         Observable.from(topicIds)
                 .flatMap(topicId -> Observable.from(shareSelectModel.getEntityById(topicId).getMembers()))
-                .collect((Func0<ArrayList<Integer>>) ArrayList::new, (members, memberId) -> {
+                .collect((Func0<ArrayList<Long>>) ArrayList::new, (members, memberId) -> {
                     if (!members.contains(memberId)) {
                         members.add(memberId);
                     }
@@ -124,7 +121,7 @@ public class SearchMemberModel {
 
     }
 
-    public LinkedHashMap<Integer, SearchedItemVO> getAllSelectableMembers() {
+    public LinkedHashMap<Long, SearchedItemVO> getAllSelectableMembers() {
         return selectableMembersLinkedHashMap;
     }
 

@@ -39,19 +39,19 @@ public class EntityMenuDialogModel {
     @Bean
     EntityClientManager entityClientManager;
 
-    public FormattedEntity getEntity(int entityId) {
+    public FormattedEntity getEntity(long entityId) {
         return EntityManager.getInstance().getEntityById(entityId);
     }
 
-    public void requestStarred(int entityId) throws RetrofitError {
+    public void requestStarred(long entityId) throws RetrofitError {
         entityClientManager.enableFavorite(entityId);
     }
 
-    public void requestUnstarred(int entityId) throws RetrofitError {
+    public void requestUnstarred(long entityId) throws RetrofitError {
         entityClientManager.disableFavorite(entityId);
     }
 
-    public void requestLeaveEntity(int entityId, boolean publicTopic) throws RetrofitError {
+    public void requestLeaveEntity(long entityId, boolean publicTopic) throws RetrofitError {
         if (publicTopic) {
             entityClientManager.leaveChannel(entityId);
         } else {
@@ -69,7 +69,7 @@ public class EntityMenuDialogModel {
         EntityManager.getInstance().refreshEntity();
     }
 
-    public ResCommon requestDeleteChat(int memberId, int entityId) throws RetrofitError {
+    public ResCommon requestDeleteChat(long memberId, long entityId) throws RetrofitError {
         return RequestApiManager.getInstance().deleteChatByChatApi(memberId, entityId);
     }
 
@@ -83,38 +83,38 @@ public class EntityMenuDialogModel {
         }
     }
 
-    public boolean isDefaultTopic(int entityId) {
+    public boolean isDefaultTopic(long entityId) {
         return EntityManager.getInstance().getDefaultTopicId() == entityId;
     }
 
     @Background
-    public void updateNotificationOnOff(int entityId, boolean isTopicPushOn) {
+    public void updateNotificationOnOff(long entityId, boolean isTopicPushOn) {
         if (!NetworkCheckUtil.isConnected()) {
             getEntity(entityId).isTopicPushOn = isTopicPushOn;
             EventBus.getDefault().post(new SocketTopicPushEvent());
             return;
         }
 
-        final int teamId = EntityManager.getInstance().getTeamId();
+        final long teamId = EntityManager.getInstance().getTeamId();
         updatePushStatus(teamId, entityId, isTopicPushOn);
 
     }
 
-    public void updatePushStatus(int teamId, int entityId, boolean pushOn) throws RetrofitError {
+    public void updatePushStatus(long teamId, long entityId, boolean pushOn) throws RetrofitError {
         ReqUpdateTopicPushSubscribe req = new ReqUpdateTopicPushSubscribe(pushOn);
         RequestApiManager.getInstance().updateTopicPushSubscribe(teamId, entityId, req);
     }
 
-    public boolean isPushOn(int entityId) {
+    public boolean isPushOn(long entityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         return entity.isTopicPushOn;
     }
 
-    public boolean isBot(int entityId) {
+    public boolean isBot(long entityId) {
         return EntityManager.getInstance().isBot(entityId);
     }
 
-    public boolean isTopicOwner(int entityId) {
+    public boolean isTopicOwner(long entityId) {
         final EntityManager entityManager = EntityManager.getInstance();
         return entityManager.isTopicOwner(entityId, entityManager.getMe().getId());
     }

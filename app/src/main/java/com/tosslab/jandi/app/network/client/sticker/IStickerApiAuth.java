@@ -14,8 +14,8 @@ public interface IStickerApiAuth {
 
     ResCommon sendStickerCommentByStickerApi(ReqSendSticker reqSendSticker) throws RetrofitError;
 
-    ResCommon deleteStickerCommentByStickerApi(int commentId, int teamId) throws RetrofitError;
+    ResCommon deleteStickerCommentByStickerApi(long commentId, long teamId) throws RetrofitError;
 
-    ResCommon deleteStickerByStickerApi(int messageId, int teamId) throws RetrofitError;
+    ResCommon deleteStickerByStickerApi(long messageId, long teamId) throws RetrofitError;
 
 }

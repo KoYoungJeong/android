@@ -8,12 +8,12 @@ import com.tosslab.jandi.app.network.models.ResMessageSearch;
  */
 public interface IMessageSearchApiLoader {
 
-    IExecutor<ResMessageSearch> loadSearchMessagesByMessageSearchApi(int teamId, String query, int page, int perPage, int writerId, int entityId);
+    IExecutor<ResMessageSearch> loadSearchMessagesByMessageSearchApi(long teamId, String query, int page, int perPage, long writerId, long entityId);
 
-    IExecutor<ResMessageSearch> loadSearchMessagesByEntityIdByMessageSearchApi(int teamId, String query, int page, int perPage, int entityId);
+    IExecutor<ResMessageSearch> loadSearchMessagesByEntityIdByMessageSearchApi(long teamId, String query, int page, int perPage, long entityId);
 
-    IExecutor<ResMessageSearch> loadSearchMessagesByWriterIdByMessageSearchApi(int teamId, String query, int page, int perPage, int writerId);
+    IExecutor<ResMessageSearch> loadSearchMessagesByWriterIdByMessageSearchApi(long teamId, String query, int page, int perPage, long writerId);
 
-    IExecutor<ResMessageSearch> loadSearchMessagesByMessageSearchApi(int teamId, String query, int page, int perPage);
+    IExecutor<ResMessageSearch> loadSearchMessagesByMessageSearchApi(long teamId, String query, int page, int perPage);
 
 }

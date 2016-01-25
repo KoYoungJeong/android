@@ -20,9 +20,9 @@ import java.util.List;
 public class ResRoomInfo {
 
     @DatabaseField(id = true, columnName = "roomId")
-    private int id;
+    private long id;
     @DatabaseField
-    private int teamId;
+    private long teamId;
     @DatabaseField
     private String type;
     @DatabaseField
@@ -31,28 +31,28 @@ public class ResRoomInfo {
     @JsonProperty("default")
     private boolean isDefault;
     // Non-use
-    private List<Integer> members;
+    private List<Long> members;
 
     @DatabaseField
-    private int creatorId;
+    private long creatorId;
     @DatabaseField
     private String status;
     @ForeignCollectionField
     private Collection<MarkerInfo> markers;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 
@@ -80,19 +80,19 @@ public class ResRoomInfo {
         this.isDefault = isDefault;
     }
 
-    public List<Integer> getMembers() {
+    public List<Long> getMembers() {
         return members;
     }
 
-    public void setMembers(List<Integer> members) {
+    public void setMembers(List<Long> members) {
         this.members = members;
     }
 
-    public int getCreatorId() {
+    public long getCreatorId() {
         return creatorId;
     }
 
-    public void setCreatorId(int creatorId) {
+    public void setCreatorId(long creatorId) {
         this.creatorId = creatorId;
     }
 
@@ -121,23 +121,23 @@ public class ResRoomInfo {
         private long _id;
 
         @DatabaseField
-        private int memberId;
+        private long memberId;
         @DatabaseField
-        private int lastLinkId;
+        private long lastLinkId;
 
-        public int getLastLinkId() {
+        public long getLastLinkId() {
             return lastLinkId;
         }
 
-        public void setLastLinkId(int lastLinkId) {
+        public void setLastLinkId(long lastLinkId) {
             this.lastLinkId = lastLinkId;
         }
 
-        public int getMemberId() {
+        public long getMemberId() {
             return memberId;
         }
 
-        public void setMemberId(int memberId) {
+        public void setMemberId(long memberId) {
             this.memberId = memberId;
         }
 

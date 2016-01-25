@@ -5,9 +5,9 @@ package com.tosslab.jandi.app.events.files;
  */
 public class CategorizingAsEntity {
     public static final int EVERYWHERE = -1;
-    public int sharedEntityId;
+    public long sharedEntityId;
 
-    public CategorizingAsEntity(int sharedEntityId) {
+    public CategorizingAsEntity(long sharedEntityId) {
         this.sharedEntityId = sharedEntityId;
     }
 }

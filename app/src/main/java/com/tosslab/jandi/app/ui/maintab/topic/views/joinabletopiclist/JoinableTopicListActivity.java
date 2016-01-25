@@ -128,7 +128,7 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void moveToMessageActivity(int entityId, int entityType, boolean starred, int teamId, int markerLinkId) {
+    public void moveToMessageActivity(long entityId, int entityType, boolean starred, long teamId, long markerLinkId) {
         MessageListV2Activity_.intent(this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityType(entityType)

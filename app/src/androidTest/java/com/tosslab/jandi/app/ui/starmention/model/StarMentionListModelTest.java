@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 
 import junit.framework.Assert;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -13,11 +14,15 @@ import org.mockito.ArgumentCaptor;
 import java.util.List;
 
 import retrofit.RetrofitError;
+import setup.BaseInitUtil;
 
 import static junit.framework.Assert.fail;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -34,18 +39,24 @@ public class StarMentionListModelTest {
 
     @Before
     public void setUp() throws Exception {
+        BaseInitUtil.initData();
         starMentionListModel = new StarMentionListModel();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        BaseInitUtil.clear();
     }
 
     @Test
     public void testGetRawDatas() {
-        ArgumentCaptor<Integer> argumentCaptor = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<Long> argumentCaptor = ArgumentCaptor.forClass(Long.class);
 
         //given
         StarMentionListModel spyStarMentionListModel = spy(starMentionListModel);
         ResStarMentioned mockResStarMentioned = mock(ResStarMentioned.class);
-        when(spyStarMentionListModel.getMentionRawDatas(anyInt(), anyInt())).thenReturn(mockResStarMentioned);
-        when(spyStarMentionListModel.getStarredRawDatas(anyString(), anyInt(), anyInt())).thenReturn(mockResStarMentioned);
+        when(spyStarMentionListModel.getMentionRawDatas(anyLong(), anyInt())).thenReturn(mockResStarMentioned);
+        when(spyStarMentionListModel.getStarredRawDatas(anyString(), anyLong(), anyInt())).thenReturn(mockResStarMentioned);
         spyStarMentionListModel.isFirstDatas = true;
 
         //when
@@ -63,17 +74,14 @@ public class StarMentionListModelTest {
         verify(spyStarMentionListModel, times(3)).getMentionRawDatas(argumentCaptor.capture(), anyInt());
         verify(spyStarMentionListModel, times(3)).getStarredRawDatas(anyString(), argumentCaptor.capture(), anyInt());
 
-        List<Integer> argumentValues = argumentCaptor.getAllValues();
-        assertTrue(argumentValues.get(1) == null);
-        assertTrue(argumentValues.get(2) != null);
-        assertTrue(argumentValues.get(4) == null);
-        assertTrue(argumentValues.get(5) != null);
+        List<Long> argumentValues = argumentCaptor.getAllValues();
+        assertThat(argumentValues.size(), is(equalTo(6)));
     }
 
     @Test
     public void testGetMetionRawDatas() {
         try {
-            ResStarMentioned resStarMentioned = starMentionListModel.getMentionRawDatas(null, 10);
+            ResStarMentioned resStarMentioned = starMentionListModel.getMentionRawDatas(-1, 10);
             assertNotNull(resStarMentioned);
         } catch (RetrofitError e) {
             fail();
@@ -83,8 +91,8 @@ public class StarMentionListModelTest {
     @Test
     public void testGetStarredRawDatas() {
         try {
-            ResStarMentioned resStarMentioned1 = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL, null, 10);
-            ResStarMentioned resStarMentioned2 = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, null, 10);
+            ResStarMentioned resStarMentioned1 = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL, -1, 10);
+            ResStarMentioned resStarMentioned2 = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, -1, 10);
             assertNotNull(resStarMentioned1);
             assertNotNull(resStarMentioned2);
         } catch (RetrofitError e) {
@@ -95,18 +103,18 @@ public class StarMentionListModelTest {
     @Test
     public void testMakeStarMentionList() {
         try {
-            ResStarMentioned resStarMentioned = starMentionListModel.getMentionRawDatas(null, 10);
+            ResStarMentioned resStarMentioned = starMentionListModel.getMentionRawDatas(-1, 10);
 
             List<StarMentionVO> starMentionVOList1 = starMentionListModel
                     .makeStarMentionList(StarMentionListActivity.TYPE_MENTION_LIST, resStarMentioned.getRecords());
             Assert.assertNotNull(starMentionVOList1);
 
-            resStarMentioned = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL, null, 10);
+            resStarMentioned = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL, -1, 10);
             List<StarMentionVO> starMentionVOList2 = starMentionListModel
                     .makeStarMentionList(StarMentionListActivity.TYPE_STAR_LIST_OF_ALL, resStarMentioned.getRecords());
             Assert.assertNotNull(starMentionVOList2);
 
-            resStarMentioned = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, null, 10);
+            resStarMentioned = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, -1, 10);
             List<StarMentionVO> starMentionVOList3 = starMentionListModel
                     .makeStarMentionList(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, resStarMentioned.getRecords());
             Assert.assertNotNull(starMentionVOList3);

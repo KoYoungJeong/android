@@ -57,7 +57,7 @@ dependencies {
     }
 
     compile(name: 'photoview-expand-release_2015_1118_1108', ext: 'aar')
-    compile(name: 'sprinkler-android-release_2015_1123_1820', ext: 'aar')
+    compile(name: 'sprinkler-android-release_2016_0120_1510', ext: 'aar')
 
 //    compile project(':sprinkler-android')
 //    compile project(':photoview-expand')

@@ -14,15 +14,15 @@ import java.util.List;
  */
 public interface IMessagesApiLoader {
 
-    IExecutor<ResFileDetail> loadGetFileDetailByMessagesApiAuth(int teamId, int messageId);
+    IExecutor<ResFileDetail> loadGetFileDetailByMessagesApiAuth(long teamId, long messageId);
 
-    IExecutor<ResCommon> loadShareMessageByMessagesApiAuth(ReqShareMessage share, int messageId);
+    IExecutor<ResCommon> loadShareMessageByMessagesApiAuth(ReqShareMessage share, long messageId);
 
-    IExecutor<ResCommon> loadUnshareMessageByMessagesApiAuth(ReqUnshareMessage share, int messageId);
+    IExecutor<ResCommon> loadUnshareMessageByMessagesApiAuth(ReqUnshareMessage share, long messageId);
 
-    IExecutor<List<ResMessages.Link>> getRoomUpdateMessageByMessagesApiAuth(int teamId,
-                                                                            int roomId,
-                                                                            int currentLinkId);
+    IExecutor<List<ResMessages.Link>> getRoomUpdateMessageByMessagesApiAuth(long teamId,
+                                                                            long roomId,
+                                                                            long currentLinkId);
 
 
 }

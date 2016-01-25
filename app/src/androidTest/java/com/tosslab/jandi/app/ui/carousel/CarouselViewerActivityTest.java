@@ -44,9 +44,9 @@ public class CarouselViewerActivityTest {
 
     @Rule
     public ActivityTestRule<CarouselViewerActivity_> rule = new ActivityTestRule<>(CarouselViewerActivity_.class, false, false);
-    private int latestFileId;
-    private int teamId;
-    private int roomId;
+    private long latestFileId;
+    private long teamId;
+    private long roomId;
     private CarouselViewerActivity activity;
 
     @Before

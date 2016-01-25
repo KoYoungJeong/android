@@ -17,13 +17,11 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
-import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.selector.room.adapter.RoomRecyclerAdapter;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -170,8 +168,8 @@ public class RoomSelectorImpl implements RoomSelector {
     }
 
     // Join된 Topic에 관한 정보를 가져오기
-    public LinkedHashMap<Integer, FormattedEntity> getJoinTopics(List<FormattedEntity> entities) {
-        LinkedHashMap topicHashMap = new LinkedHashMap<Integer, Topic>();
+    public LinkedHashMap<Long, FormattedEntity> getJoinTopics(List<FormattedEntity> entities) {
+        LinkedHashMap<Long, FormattedEntity> topicHashMap = new LinkedHashMap<>();
         Observable.from(entities)
                 .toSortedList((lhs, rhs) -> {
 
@@ -202,7 +200,7 @@ public class RoomSelectorImpl implements RoomSelector {
         List<ResFolderItem> topicFolderItems = repository.getFolderItems();
         List<ResFolder> topicFolders = repository.getFolders();
 
-        LinkedHashMap<Integer, FormattedEntity> joinTopics = getJoinTopics(getTopics());
+        LinkedHashMap<Long, FormattedEntity> joinTopics = getJoinTopics(getTopics());
 
         // File Search에서 모든 대화방을 표시하는 더미 데이터가 필요
         if (isIncludeAllMember) {
@@ -211,11 +209,11 @@ public class RoomSelectorImpl implements RoomSelector {
             topicDatas.add(dummyData);
         }
 
-        LinkedHashMap<Integer, List<ExpandRoomData>> topicDataMap = new LinkedHashMap<>();
+        LinkedHashMap<Long, List<ExpandRoomData>> topicDataMap = new LinkedHashMap<>();
 
         for (ResFolder topicFolder : topicFolders) {
             if (!topicDataMap.containsKey(topicFolder.id)) {
-                topicDataMap.put(new Integer(topicFolder.id), new ArrayList<>());
+                topicDataMap.put(topicFolder.id, new ArrayList<>());
             }
         }
 
@@ -233,12 +231,12 @@ public class RoomSelectorImpl implements RoomSelector {
                         topicData.setIsFolder(false);
                         topicData.setIsPublicTopic(topic.isPublicTopic());
                         topicData.setIsStarred(topic.isStarred);
-                        topicDataMap.get(new Integer(item.folderId)).add(topicData);
+                        topicDataMap.get(item.folderId).add(topicData);
                     }
                 });
 
         for (ResFolder folder : topicFolders) {
-            Collections.sort(topicDataMap.get(new Integer(folder.id)), (lhs, rhs) -> {
+            Collections.sort(topicDataMap.get(folder.id), (lhs, rhs) -> {
                 if (lhs.isStarred() && rhs.isStarred()) {
                     return lhs.getName().compareToIgnoreCase(rhs.getName());
                 } else if (lhs.isStarred()) {
@@ -258,17 +256,15 @@ public class RoomSelectorImpl implements RoomSelector {
             folderdata.setIsUser(false);
             folderdata.setName(folder.name);
             topicDatas.add(folderdata);
-            for (ExpandRoomData roomData : topicDataMap.get(new Integer(folder.id))) {
+            for (ExpandRoomData roomData : topicDataMap.get(folder.id)) {
                 topicDatas.add(roomData);
             }
         }
 
-        Iterator joinTopicKeySets = joinTopics.keySet().iterator();
-
         boolean FirstAmongNoFolderItem = true;
 
-        while (joinTopicKeySets.hasNext()) {
-            FormattedEntity entity = joinTopics.get(joinTopicKeySets.next());
+        for (long key : joinTopics.keySet()) {
+            FormattedEntity entity = joinTopics.get(key);
             ExpandRoomData topicData = new ExpandRoomData();
             topicData.setIsFirstAmongNoFolderItem(FirstAmongNoFolderItem);
             FirstAmongNoFolderItem = false;
@@ -280,6 +276,7 @@ public class RoomSelectorImpl implements RoomSelector {
             topicData.setIsPublicTopic(entity.isPublicTopic());
             topicData.setIsStarred(entity.isStarred);
             topicDatas.add(topicData);
+
         }
         return topicDatas;
     }

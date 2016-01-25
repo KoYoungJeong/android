@@ -281,7 +281,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
 
     @UiThread
     @Override
-    public void moveEntity(int teamId, int entityId, int entityType) {
+    public void moveEntity(long teamId, long entityId, int entityType) {
 
         MainTabActivity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -357,13 +357,13 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     }
 
     public void onEvent(ShareSelectTeamEvent event) {
-        int teamId = event.getTeamId();
+        long teamId = event.getTeamId();
         String teamName = event.getTeamName();
         sharePresenter.initEntityData(teamId, teamName, true, -1, null, -1);
     }
 
     public void onEvent(ShareSelectRoomEvent event) {
-        int roomId = event.getRoomId();
+        long roomId = event.getRoomId();
         String roomName = event.getRoomName();
         int roomType = event.getRoomType();
         sharePresenter.initEntityData(
@@ -383,7 +383,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void setMentionInfo(int teamId, int roomId, int roomType) {
+    public void setMentionInfo(long teamId, long roomId, long roomType) {
 
         if (mentionControlViewModel != null) {
             mentionControlViewModel.reset();

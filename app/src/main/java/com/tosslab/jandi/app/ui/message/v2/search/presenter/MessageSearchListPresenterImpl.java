@@ -58,10 +58,10 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     private NewsMessageLoader newsMessageLoader;
     private PublishSubject<MessageQueue> messagePublishSubject;
     private Subscription messageSubscription;
-    private int teamId;
-    private int roomId;
-    private int entityId;
-    private int lastMarker;
+    private long teamId;
+    private long roomId;
+    private long entityId;
+    private long lastMarker;
     private int entityType;
 
 
@@ -132,7 +132,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
         if (newsMessageLoader != null) {
             MessageState data = (MessageState) messageQueue.getData();
-            int lastUpdateLinkId = data.getLastUpdateLinkId();
+            long lastUpdateLinkId = data.getLastUpdateLinkId();
 
             if (lastUpdateLinkId < 0 && oldMessageLoader != null) {
                 oldMessageLoader.load(roomId, lastUpdateLinkId);
@@ -153,14 +153,14 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     }
 
     @Override
-    public void checkEnabledUser(int entityId) {
+    public void checkEnabledUser(long entityId) {
         if (!messageListModel.isEnabledIfUser(entityId)) {
             view.setDisabledUser();
         }
     }
 
     @Override
-    public boolean onOptionItemSelected(Fragment fragment, MenuItem item, int teamId, int entityId) {
+    public boolean onOptionItemSelected(Fragment fragment, MenuItem item, long teamId, long entityId) {
         MenuCommand menuCommand = messageListModel.getMenuCommand(fragment,
                 teamId, entityId, item);
 
@@ -207,7 +207,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     }
 
     @Override
-    public void setDefaultInfos(int teamId, int roomId, int entityId, int lastMarker, int entityType) {
+    public void setDefaultInfos(long teamId, long roomId, long entityId, long lastMarker, int entityType) {
         this.teamId = teamId;
         this.roomId = roomId;
         this.entityId = entityId;
@@ -273,7 +273,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
     @Background
     @Override
-    public void checkAnnouncementExistsAndCreate(int messageId) {
+    public void checkAnnouncementExistsAndCreate(long messageId) {
         ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, roomId);
 
         if (announcement == null || announcement.isEmpty()) {
@@ -285,7 +285,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     }
 
     @Background
-    void createAnnouncement(int messageId) {
+    void createAnnouncement(long messageId) {
 
         view.showProgressWheel();
         announcementModel.createAnnouncement(teamId, roomId, messageId);
@@ -309,7 +309,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     }
 
     @Override
-    public void onMessageItemClick(Fragment fragment, ResMessages.Link link, int entityId) {
+    public void onMessageItemClick(Fragment fragment, ResMessages.Link link, long entityId) {
         if (link instanceof DummyMessageLink) {
             DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
@@ -359,7 +359,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
     @Background
     @Override
-    public void deleteMessage(int messageType, int messageId) {
+    public void deleteMessage(int messageType, long messageId) {
         view.showProgressWheel();
         try {
             if (messageType == MessageItem.TYPE_STRING) {
@@ -410,7 +410,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
     @Background
     @Override
-    public void registStarredMessage(int teamId, int messageId) {
+    public void registStarredMessage(long teamId, long messageId) {
         try {
             messageListModel.registStarredMessage(teamId, messageId);
             view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_message_starred));
@@ -424,7 +424,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
     @Background
     @Override
-    public void unregistStarredMessage(int teamId, int messageId) {
+    public void unregistStarredMessage(long teamId, long messageId) {
         try {
             messageListModel.unregistStarredMessage(teamId, messageId);
             view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_unpinned_message));

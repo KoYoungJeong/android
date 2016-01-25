@@ -31,9 +31,9 @@ import static org.junit.Assert.fail;
 public class CarouselViewerModelTest {
 
     private CarouselViewerModel model;
-    private int teamId;
-    private int roomId;
-    private int lastImageMessageId;
+    private long teamId;
+    private long roomId;
+    private long lastImageMessageId;
 
     @Before
     public void setUp() throws Exception {
@@ -178,7 +178,7 @@ public class CarouselViewerModelTest {
 
     @Test
     public void testGetTeamId() throws Exception {
-        int teamId = model.getTeamId();
+        long teamId = model.getTeamId();
         assertThat(teamId, is(equalTo(EntityManager.getInstance().getTeamId())));
     }
 

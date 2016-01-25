@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.topic.presenter;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 
-import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
@@ -20,7 +19,6 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -143,7 +141,7 @@ public class MainTopicListPresenter {
 
         mainTopicModel.resetBadge(item.getEntityId());
 
-        int teamId = EntityManager.getInstance().getTeamId();
+        long teamId = EntityManager.getInstance().getTeamId();
         BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
         int badgeCount = badgeCountRepository.findBadgeCountByTeamId(teamId) - itemsUnreadCount;
         if (badgeCount <= 0) {
@@ -167,8 +165,8 @@ public class MainTopicListPresenter {
         if (topicItemData == null) {
             return;
         }
-        int entityId = topicItemData.getEntityId();
-        int folderId = ((ExpandableTopicAdapter) adapter).getTopicFolderData(groupPosition).getFolderId();
+        long entityId = topicItemData.getEntityId();
+        long folderId = ((ExpandableTopicAdapter) adapter).getTopicFolderData(groupPosition).getFolderId();
         view.showEntityMenuDialog(entityId, folderId);
     }
 
@@ -225,11 +223,11 @@ public class MainTopicListPresenter {
 
         void refreshList(TopicFolderListDataProvider topicFolderListDataProvider);
 
-        void moveToMessageActivity(int entityId, int entityType, boolean starred, int teamId, int markerLinkId);
+        void moveToMessageActivity(long entityId, int entityType, boolean starred, long teamId, long markerLinkId);
 
         void notifyDatasetChanged();
 
-        void showEntityMenuDialog(int entityId, int folderId);
+        void showEntityMenuDialog(long entityId, long folderId);
 
         List<TopicItemData> getJoinedTopics();
 
@@ -239,7 +237,7 @@ public class MainTopicListPresenter {
 
         void updateGroupBadgeCount();
 
-        void setSelectedItem(int selectedEntity);
+        void setSelectedItem(long selectedEntity);
 
         void scrollAndAnimateForSelectedItem();
 

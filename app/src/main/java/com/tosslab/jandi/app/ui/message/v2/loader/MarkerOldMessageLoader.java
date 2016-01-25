@@ -28,7 +28,7 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
     }
 
     @Override
-    public ResMessages load(int roomId, int linkId) {
+    public ResMessages load(long roomId, long linkId) {
         ResMessages oldMessage = null;
         try {
 
@@ -51,15 +51,15 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
                 return oldMessage;
             }
 
-            int firstLinkId = oldMessage.records.get(0).id;
+            long firstLinkId = oldMessage.records.get(0).id;
             messageState.setFirstItemId(firstLinkId);
             boolean isFirstMessage = oldMessage.firstLinkId == firstLinkId;
             messageState.setFirstMessage(isFirstMessage);
-            int lastLinkId = oldMessage.records.get(oldMessage.records.size() - 1).id;
+            long lastLinkId = oldMessage.records.get(oldMessage.records.size() - 1).id;
 
             Collections.sort(oldMessage.records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
 
-            int latestVisibleMessageId = view.getFirstVisibleItemLinkId();
+            long latestVisibleMessageId = view.getFirstVisibleItemLinkId();
             int firstVisibleItemTop = 0;
             if (noFirstLoad) {
                 firstVisibleItemTop = view.getFirstVisibleItemTop();

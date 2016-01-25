@@ -26,22 +26,22 @@ public interface MessagesApiV2Client {
     // Message Detail
     @GET("/messages/{messageId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResFileDetail getFileDetail(@Query("teamId") int teamId, @Path("messageId") int messageId);
+    ResFileDetail getFileDetail(@Query("teamId") long teamId, @Path("messageId") long messageId);
 
     // Share Message
     @PUT("/messages/{messageId}/share")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon shareMessage(@Body ReqShareMessage share, @Path("messageId") int messageId);
+    ResCommon shareMessage(@Body ReqShareMessage share, @Path("messageId") long messageId);
 
     // Unshare Message
     @PUT("/messages/{messageId}/unshare")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon unshareMessage(@Body ReqUnshareMessage share, @Path("messageId") int messageId);
+    ResCommon unshareMessage(@Body ReqUnshareMessage share, @Path("messageId") long messageId);
 
     @GET("/teams/{teamId}/rooms/{roomId}/messages/updatedList")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-    List<ResMessages.Link> getRoomUpdateMessage(@Path("teamId") int teamId,
-                                                @Path("roomId") int roomId,
-                                                @Query("linkId") int currentLinkId);
+    List<ResMessages.Link> getRoomUpdateMessage(@Path("teamId") long teamId,
+                                                @Path("roomId") long roomId,
+                                                @Query("linkId") long currentLinkId);
 
 }

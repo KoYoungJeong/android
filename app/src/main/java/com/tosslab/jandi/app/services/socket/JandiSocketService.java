@@ -305,7 +305,7 @@ public class JandiSocketService extends Service {
     protected void updateEventHistory() {
         long ts = JandiPreference.getSocketConnectedLastTime();
         EntityManager entityManager = EntityManager.getInstance();
-        int userId = entityManager.getMe().getId();
+        long userId = entityManager.getMe().getId();
         LogUtil.e("ts", ts + "");
         if (ts > -1) {
             try {

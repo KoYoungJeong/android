@@ -23,7 +23,7 @@ public interface CommentsApiV2Client {
     // Send Comment
     @POST("/messages/{messageId}/comment")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-    ResCommon sendMessageComment(@Path("messageId") int messageId, @Query("teamId") int teamId, @Body ReqSendComment reqSendComment);
+    ResCommon sendMessageComment(@Path("messageId") long messageId, @Query("teamId") long teamId, @Body ReqSendComment reqSendComment);
 
     // Modify comment
     @PUT("/messages/{messageId}/comments/{commentId}")
@@ -33,6 +33,6 @@ public interface CommentsApiV2Client {
     // Delete comment
     @DELETEWithBody("/messages/{messageId}/comments/{commentId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon deleteMessageComment(@Query("teamId") int teamId, @Path("messageId") int messageId, @Path("commentId") int commentId);
+    ResCommon deleteMessageComment(@Query("teamId") long teamId, @Path("messageId") long messageId, @Path("commentId") long commentId);
 
 }

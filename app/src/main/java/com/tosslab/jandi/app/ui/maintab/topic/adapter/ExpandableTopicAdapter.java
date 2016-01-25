@@ -51,7 +51,7 @@ public class ExpandableTopicAdapter
 
     private TopicFolderListDataProvider provider;
 
-    private int selectedEntity;
+    private long selectedEntity;
     private AnimStatus animStatus = AnimStatus.READY;
     private ValueAnimator colorAnimator;
 
@@ -381,11 +381,11 @@ public class ExpandableTopicAdapter
         }
     }
 
-    public int getSelectedEntity() {
+    public long getSelectedEntity() {
         return selectedEntity;
     }
 
-    public void setSelectedEntity(int selectedEntity) {
+    public void setSelectedEntity(long selectedEntity) {
         this.selectedEntity = selectedEntity;
         animStatus = AnimStatus.IDLE;
     }
@@ -396,7 +396,7 @@ public class ExpandableTopicAdapter
         }
     }
 
-    public int findGroupIdOfChildEntity(int entityId) {
+    public long findGroupIdOfChildEntity(int entityId) {
         if (entityId <= 0) {
             return -1;
         }

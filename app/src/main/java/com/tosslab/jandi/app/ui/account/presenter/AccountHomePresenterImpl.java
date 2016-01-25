@@ -88,7 +88,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     //TODO 진입 시점에 네트워크 체킹 ?
     @Background
     @Override
-    public void onJoinedTeamSelect(int teamId, boolean firstJoin) {
+    public void onJoinedTeamSelect(long teamId, boolean firstJoin) {
         view.showProgressWheel();
         try {
             accountHomeModel.updateSelectTeam(teamId);

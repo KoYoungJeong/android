@@ -6,20 +6,20 @@ package com.tosslab.jandi.app.ui.maintab.chat.to;
 public class ChatItem {
     private String name;
     private boolean isStarred;
-    private int lastMessageId;
+    private long lastMessageId;
     private int unread;
-    private int entityId;
-    private int lastLinkId;
+    private long entityId;
+    private long lastLinkId;
     private String lastMessage;
     private String photo;
     private boolean status;
-    private int roomId;
+    private long roomId;
 
-    public int getLastMessageId() {
+    public long getLastMessageId() {
         return lastMessageId;
     }
 
-    public ChatItem lastMessageId(int lastMessageId) {
+    public ChatItem lastMessageId(long lastMessageId) {
         this.lastMessageId = lastMessageId;
         return this;
     }
@@ -33,20 +33,20 @@ public class ChatItem {
         return this;
     }
 
-    public int getEntityId() {
+    public long getEntityId() {
         return entityId;
     }
 
-    public ChatItem entityId(int entityId) {
+    public ChatItem entityId(long entityId) {
         this.entityId = entityId;
         return this;
     }
 
-    public int getLastLinkId() {
+    public long getLastLinkId() {
         return lastLinkId;
     }
 
-    public ChatItem lastLinkId(int lastLinkId) {
+    public ChatItem lastLinkId(long lastLinkId) {
         this.lastLinkId = lastLinkId;
         return this;
     }
@@ -96,12 +96,12 @@ public class ChatItem {
         return this;
     }
 
-    public ChatItem roomId(int roomId) {
+    public ChatItem roomId(long roomId) {
         this.roomId = roomId;
         return this;
     }
 
-    public int getRoomId() {
+    public long getRoomId() {
         return roomId;
     }
 

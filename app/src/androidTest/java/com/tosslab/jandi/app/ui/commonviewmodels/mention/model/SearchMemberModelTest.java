@@ -62,12 +62,12 @@ public class SearchMemberModelTest {
         ResAccountInfo.UserTeam userTeam = AccountRepository.getRepository().getAccountTeams().get(0);
         ResLeftSideMenu leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(userTeam.getTeamId());
 
-        LinkedHashMap<Integer, SearchedItemVO> searchedItemVOLinkedHashMap = searchMemberModel.refreshSelectableMembers(userTeam.getTeamId(), Arrays.asList(leftSideMenu.team.t_defaultChannelId), MentionControlViewModel.MENTION_TYPE_MESSAGE);
+        LinkedHashMap<Long, SearchedItemVO> searchedItemVOLinkedHashMap = searchMemberModel.refreshSelectableMembers(userTeam.getTeamId(), Arrays.asList(leftSideMenu.team.t_defaultChannelId), MentionControlViewModel.MENTION_TYPE_MESSAGE);
 
         assertThat(searchedItemVOLinkedHashMap.size(), is(greaterThan(0)));
 
         EntityManager manager = EntityManager.getInstance();
-        LinkedHashMap<Integer, SearchedItemVO> integerSearchedItemVOLinkedHashMap = searchMemberModel.refreshSelectableMembers(manager.getTeamId(), Arrays.asList(manager.getDefaultTopicId()), MentionControlViewModel.MENTION_TYPE_MESSAGE);
+        LinkedHashMap<Long, SearchedItemVO> integerSearchedItemVOLinkedHashMap = searchMemberModel.refreshSelectableMembers(manager.getTeamId(), Arrays.asList(manager.getDefaultTopicId()), MentionControlViewModel.MENTION_TYPE_MESSAGE);
 
         assertThat(integerSearchedItemVOLinkedHashMap.size(), is(equalTo(manager.getEntityById(manager.getDefaultTopicId()).getMembers().size())));
     }

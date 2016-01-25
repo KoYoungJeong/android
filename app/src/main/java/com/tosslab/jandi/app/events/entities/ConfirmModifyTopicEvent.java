@@ -6,10 +6,10 @@ package com.tosslab.jandi.app.events.entities;
  */
 public class ConfirmModifyTopicEvent {
     public int topicType;
-    public int topicId;
+    public long topicId;
     public String inputName;
 
-    public ConfirmModifyTopicEvent(int topicType, int topicId, String inputName) {
+    public ConfirmModifyTopicEvent(int topicType, long topicId, String inputName) {
         this.topicType = topicType;
         this.inputName = inputName;
         this.topicId = topicId;

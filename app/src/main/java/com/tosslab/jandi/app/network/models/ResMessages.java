@@ -42,9 +42,9 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResMessages {
-    public int entityId;
-    public int lastLinkId;
-    public int firstLinkId;
+    public long entityId;
+    public long lastLinkId;
+    public long firstLinkId;
     public List<Link> records;
 
     @Override
@@ -69,21 +69,21 @@ public class ResMessages {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Link {
         @DatabaseField(id = true)
-        public int id;
+        public long id;
         @DatabaseField
-        public int teamId;
+        public long teamId;
         @DatabaseField
-        public int roomId;
+        public long roomId;
         @DatabaseField
-        public int fromEntity;
+        public long fromEntity;
         @DatabaseField
         public Date time;
         @DatabaseField
-        public int messageId;
+        public long messageId;
         @DatabaseField
         public String status;
         @DatabaseField
-        public int feedbackId;
+        public long feedbackId;
         @DatabaseField(foreign = true)
         public EventInfo info; // How to convert other type
         @DatabaseField
@@ -144,11 +144,11 @@ public class ResMessages {
             @JsonSubTypes.Type(value = CommentMessage.class, name = "comment")})
     public static class OriginalMessage {
         @DatabaseField(id = true)
-        public int id;
+        public long id;
         @DatabaseField
-        public int teamId;
+        public long teamId;
         @DatabaseField
-        public int writerId;
+        public long writerId;
         @DatabaseField
         public Date createTime;
         @DatabaseField
@@ -160,7 +160,7 @@ public class ResMessages {
         @DatabaseField
         public int permission;
         @DatabaseField
-        public int feedbackId;
+        public long feedbackId;
         @DatabaseField
         public String linkPreviewId;
         @DatabaseField
@@ -191,7 +191,7 @@ public class ResMessages {
             @DatabaseField(generatedId = true)
             private long _id;
             @DatabaseField
-            private int shareEntity;
+            private long shareEntity;
 
             @DatabaseField(foreign = true)
             private TextMessage textOf;
@@ -212,11 +212,11 @@ public class ResMessages {
                 this._id = _id;
             }
 
-            public int getShareEntity() {
+            public long getShareEntity() {
                 return shareEntity;
             }
 
-            public void setShareEntity(int shareEntity) {
+            public void setShareEntity(long shareEntity) {
                 this.shareEntity = shareEntity;
             }
 
@@ -550,16 +550,16 @@ public class ResMessages {
         public static class Info {
 
             @DatabaseField(generatedId = true)
-            public int _id;
+            public long _id;
 
             @DatabaseField
-            private int writerId;
+            private long writerId;
 
-            public int getWriterId() {
+            public long getWriterId() {
                 return writerId;
             }
 
-            public void setWriterId(int writerId) {
+            public void setWriterId(long writerId) {
                 this.writerId = writerId;
             }
 
@@ -604,13 +604,13 @@ public class ResMessages {
             public long _id;
 
             @DatabaseField
-            private int writerId;
+            private long writerId;
 
-            public int getWriterId() {
+            public long getWriterId() {
                 return writerId;
             }
 
-            public void setWriterId(int writerId) {
+            public void setWriterId(long writerId) {
                 this.writerId = writerId;
             }
 
@@ -639,7 +639,7 @@ public class ResMessages {
 
 
         @DatabaseField
-        public int invitorId;
+        public long invitorId;
         @ForeignCollectionField
         public Collection<IntegerWrapper> inviteUsers;
 
@@ -654,7 +654,7 @@ public class ResMessages {
             @DatabaseField(foreign = true, foreignAutoRefresh = true)
             private InviteEvent inviteEvent;
             @DatabaseField
-            private int inviteUserId;
+            private long inviteUserId;
 
             public long get_id() {
                 return _id;
@@ -664,11 +664,11 @@ public class ResMessages {
                 this._id = _id;
             }
 
-            public int getInviteUserId() {
+            public long getInviteUserId() {
                 return inviteUserId;
             }
 
-            public void setInviteUserId(int inviteUserId) {
+            public void setInviteUserId(long inviteUserId) {
                 this.inviteUserId = inviteUserId;
             }
 
@@ -703,7 +703,7 @@ public class ResMessages {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class CreateInfo {
         @DatabaseField(generatedId = true)
-        public int _id;
+        public long _id;
     }
 
     @DatabaseTable(tableName = "message_info_create_topic",
@@ -714,7 +714,7 @@ public class ResMessages {
 
         @DatabaseField
         @JsonProperty("ch_creatorId")
-        public int creatorId;
+        public long creatorId;
         @DatabaseField
         @JsonProperty("ch_createTime")
         public Date createTime;
@@ -735,7 +735,7 @@ public class ResMessages {
             @DatabaseField(foreign = true, foreignAutoRefresh = true)
             private PublicCreateInfo createInfo;
             @DatabaseField
-            private int memberId;
+            private long memberId;
 
             public long get_id() {
                 return _id;
@@ -745,11 +745,11 @@ public class ResMessages {
                 this._id = _id;
             }
 
-            public int getMemberId() {
+            public long getMemberId() {
                 return memberId;
             }
 
-            public void setMemberId(int memberId) {
+            public void setMemberId(long memberId) {
                 this.memberId = memberId;
             }
 
@@ -771,7 +771,7 @@ public class ResMessages {
 
         @DatabaseField
         @JsonProperty("pg_creatorId")
-        public int creatorId;
+        public long creatorId;
         @DatabaseField
         @JsonProperty("pg_createTime")
         public Date createTime;
@@ -792,7 +792,7 @@ public class ResMessages {
             @DatabaseField(foreign = true, foreignAutoRefresh = true)
             private PrivateCreateInfo createInfo;
             @DatabaseField
-            private int memberId;
+            private long memberId;
 
             public long get_id() {
                 return _id;
@@ -802,11 +802,11 @@ public class ResMessages {
                 this._id = _id;
             }
 
-            public int getMemberId() {
+            public long getMemberId() {
                 return memberId;
             }
 
-            public void setMemberId(int memberId) {
+            public void setMemberId(long memberId) {
                 this.memberId = memberId;
             }
 
@@ -827,7 +827,7 @@ public class ResMessages {
         @DatabaseField(id = true, useGetSet = true)
         public String _id;
         @DatabaseField
-        public int groupId;
+        public long groupId;
         @DatabaseField
         public String stickerId;
         @DatabaseField

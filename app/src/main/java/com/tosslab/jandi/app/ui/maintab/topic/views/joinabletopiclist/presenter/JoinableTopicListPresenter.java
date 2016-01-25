@@ -69,7 +69,7 @@ public class JoinableTopicListPresenter {
                         .trackJoinChannel();
             }
             int entityType = topic.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
-            int teamId = AccountRepository.getRepository().getSelectedTeamInfo()
+            long teamId = AccountRepository.getRepository().getSelectedTeamInfo()
                     .getTeamId();
             view.moveToMessageActivity(topic.getEntityId(), entityType, topic.isStarred(),
                     teamId, topic.getMarkerLinkId());
@@ -113,7 +113,7 @@ public class JoinableTopicListPresenter {
 
         void setEntities(Observable<Topic> unjoinEntities);
 
-        void moveToMessageActivity(int entityId, int entityType, boolean starred, int teamId, int markerLinkId);
+        void moveToMessageActivity(long entityId, int entityType, boolean starred, long teamId, long markerLinkId);
 
         void showUnjoinDialog(Topic item);
 

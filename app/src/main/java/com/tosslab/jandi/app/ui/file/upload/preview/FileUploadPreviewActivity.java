@@ -78,7 +78,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     public static final int REQUEST_CODE = 17863;
     public static final String KEY_SINGLE_FILE_UPLOADVO = "file_uploadvo";
     @Extra
-    int selectedEntityIdToBeShared;    // Share 할 chat-room
+    long selectedEntityIdToBeShared;    // Share 할 chat-room
 
     @Extra
     boolean singleUpload = false;
@@ -430,7 +430,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     }
 
     @Override
-    public void setShareEntity(int entityId, boolean isUser) {
+    public void setShareEntity(long entityId, boolean isUser) {
         this.selectedEntityIdToBeShared = entityId;
 
         if (!isUser) {

@@ -91,8 +91,8 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public List<Integer> getSelectedUserIds() {
-        List<Integer> selectedUserIds = new ArrayList<Integer>();
+    public List<Long> getSelectedUserIds() {
+        List<Long> selectedUserIds = new ArrayList<>();
         for (FormattedEntity selectedItem : listUserToBeJoined) {
             if (selectedItem.isSelectedToBeJoined) {
                 selectedUserIds.add(selectedItem.getUser().id);

@@ -38,8 +38,8 @@ public class ResTeamDetailInfo {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class InviteTeam {
         private String _Id;
-        private int teamId;
-        private int id;
+        private long teamId;
+        private long id;
         @JsonProperty("t_emailDomain")
         private String teamEmailDomain;
         @JsonProperty("t_domain")
@@ -50,7 +50,7 @@ public class ResTeamDetailInfo {
         @JsonProperty("t_defaultChannelId")
         private String teamDefaultChannelId;
         @JsonProperty("t_members")
-        private List<Integer> teamMembers;
+        private List<Long> teamMembers;
         private String status;
         private String type;
         private String invitationStatus;
@@ -61,11 +61,11 @@ public class ResTeamDetailInfo {
             return _Id;
         }
 
-        public int getTeamId() {
+        public long getTeamId() {
             return teamId;
         }
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
@@ -93,7 +93,7 @@ public class ResTeamDetailInfo {
             return teamDefaultChannelId;
         }
 
-        public List<Integer> getTeamMembers() {
+        public List<Long> getTeamMembers() {
             return teamMembers;
         }
 
@@ -153,7 +153,7 @@ public class ResTeamDetailInfo {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class InviteTeamMember {
-        private int id;
+        private long id;
         private String _id;
         private String accountId;
         @JsonProperty("u_authority")
@@ -183,7 +183,7 @@ public class ResTeamDetailInfo {
         private String status;
         private String type;
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 

@@ -60,9 +60,9 @@ import de.greenrobot.event.EventBus;
 public class TopicDetailFragment extends Fragment implements TopicDetailPresenter.View {
 
     @FragmentArg
-    int entityId;
+    long entityId;
     @FragmentArg
-    int teamId;
+    long teamId;
 
     @Bean(TopicDetailPresenterImpl.class)
     TopicDetailPresenter topicDetailPresenter;
@@ -460,7 +460,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     @Override
-    public void showTopicNameChangeDialog(int entityId, String entityName, int entityType) {
+    public void showTopicNameChangeDialog(long entityId, String entityName, int entityType) {
         android.app.DialogFragment newFragment = EditTextDialogFragment.newInstance(
                 EditTextDialogFragment.ACTION_MODIFY_TOPIC, entityType, entityId, entityName);
         newFragment.show(getActivity().getFragmentManager(), "dialog");

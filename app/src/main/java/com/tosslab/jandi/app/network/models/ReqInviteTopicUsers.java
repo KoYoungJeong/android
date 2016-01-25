@@ -7,9 +7,9 @@ import java.util.List;
  */
 public class ReqInviteTopicUsers extends ReqInviteUsers {
 
-    public int teamId;
+    public long teamId;
 
-    public ReqInviteTopicUsers(List<Integer> inviteUsers, int teamId) {
+    public ReqInviteTopicUsers(List<Long> inviteUsers, long teamId) {
         super(inviteUsers);
         this.teamId = teamId;
     }

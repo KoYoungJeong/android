@@ -14,9 +14,9 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 class FileListCommand implements MenuCommand {
 
     private final Activity activity;
-    private final int entityId;
+    private final long entityId;
 
-    FileListCommand(Activity activity, int entityId) {
+    FileListCommand(Activity activity, long entityId) {
         this.activity = activity;
         this.entityId = entityId;
     }

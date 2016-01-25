@@ -61,7 +61,7 @@ public class ReadyCommentRepository {
         return 0;
     }
 
-    public ReadyComment getReadyComment(int fileId) {
+    public ReadyComment getReadyComment(long fileId) {
         try {
             Dao<ReadyComment, ?> readyMessageDao = helper.getDao(ReadyComment.class);
             ReadyComment readyMessage = readyMessageDao.queryBuilder()
