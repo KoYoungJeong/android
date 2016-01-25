@@ -54,7 +54,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     // @formatter:off
-    private static final int[] ATTRS = new int[] {
+    private static final int[] ATTRS = new int[]{
             android.R.attr.textSize,
             android.R.attr.textColor
     };
@@ -200,7 +200,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
             if (pager.getAdapter() instanceof IconTabProvider) {
                 addIconTab(i, ((IconTabProvider) pager.getAdapter()).getPageIconResId(i));
-            } else if(pager.getAdapter() instanceof ViewTabProvider) {
+            } else if (pager.getAdapter() instanceof ViewTabProvider) {
                 addTab(i, ((ViewTabProvider) pager.getAdapter()).getPageView(i));
             } else {
                 addTextTab(i, pager.getAdapter().getPageTitle(i).toString());

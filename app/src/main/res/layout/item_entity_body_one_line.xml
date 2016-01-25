@@ -10,7 +10,7 @@
         android:layout_height="30dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="27dp"/>
+        android:layout_marginRight="27dp" />
 
     <ImageView
         android:id="@+id/iv_entity_listitem_fav"
@@ -20,7 +20,7 @@
         android:layout_alignRight="@+id/iv_entity_listitem_icon"
         android:layout_marginBottom="-2dp"
         android:layout_marginRight="-2dp"
-        android:src="@drawable/icon_team_member_star"/>
+        android:src="@drawable/icon_team_member_star" />
 
     <com.tosslab.jandi.app.views.FixedLinearLayout
         android:layout_width="match_parent"
@@ -44,7 +44,7 @@
                 android:singleLine="true"
                 android:text="Topic Name"
                 android:textColor="@color/jandi_text"
-                android:textSize="@dimen/jandi_text_size_large"/>
+                android:textSize="@dimen/jandi_text_size_large" />
 
             <ImageView
                 android:id="@+id/iv_entity_listitem_line_through"
@@ -54,7 +54,7 @@
                 android:layout_alignLeft="@+id/tv_entity_listitem_name"
                 android:layout_alignRight="@+id/tv_entity_listitem_name"
                 android:layout_alignTop="@+id/tv_entity_listitem_name"
-                android:src="@drawable/line_black"/>
+                android:src="@drawable/line_black" />
 
         </RelativeLayout>
 
@@ -67,7 +67,7 @@
             android:background="@drawable/admin_bg"
             android:gravity="center"
             android:textSize="11sp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </com.tosslab.jandi.app.views.FixedLinearLayout>
 
@@ -76,7 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_entity_item_height"
         android:background="#66ffffff"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/cb_user"
@@ -85,6 +85,6 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="9dp"
-        android:clickable="false"/>
+        android:clickable="false" />
 
 </RelativeLayout>

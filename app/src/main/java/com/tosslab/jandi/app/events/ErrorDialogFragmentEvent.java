@@ -5,6 +5,7 @@ package com.tosslab.jandi.app.events;
  */
 public class ErrorDialogFragmentEvent {
     public int errorMessageResId;
+
     public ErrorDialogFragmentEvent(int errorMessageResId) {
         this.errorMessageResId = errorMessageResId;
     }

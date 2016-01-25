@@ -47,6 +47,7 @@ import com.tosslab.jandi.app.network.models.ReqModifyComment;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
+import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
@@ -68,6 +69,7 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
+import com.tosslab.jandi.app.network.models.ResAvatarsInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
@@ -722,6 +724,11 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
+    public IExecutor<ResCommon> loadAssignToTopicOwner(int teamId, int topicId, ReqOwner owner) {
+        return () -> authRestApiClient.assignToTopicOwner(teamId, topicId, owner);
+    }
+
+    @Override
     public IExecutor<ResMessages.FileMessage> loadEnableFileExternalLink(int teamId, int fileId) {
         return () -> authRestApiClient.enableFileExternalLink(teamId, fileId);
     }
@@ -739,5 +746,10 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     @Override
     public IExecutor<ResValidation> loadValidDomain(String domain) {
         return () -> authRestApiClient.validDomain(domain);
+    }
+
+    @Override
+    public IExecutor<ResAvatarsInfo> loadGetAvartarsInfo() {
+        return () -> authRestApiClient.getAvartarsInfo();
     }
 }

@@ -24,10 +24,11 @@ import com.tosslab.jandi.app.ui.album.fragment.presenter.ImageAlbumPresenter;
 import com.tosslab.jandi.app.ui.album.fragment.presenter.ImageAlbumPresenterImpl;
 import com.tosslab.jandi.app.ui.album.fragment.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
+import com.tosslab.jandi.app.ui.profile.crop.JandiCropImageActivity;
 import com.tosslab.jandi.app.utils.AnimationModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
@@ -186,11 +187,14 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
     private void callCropActivity(ImagePicture item) {
         String imagePath = item.getImagePath();
         try {
-            Crop.of(Uri.fromFile(new File(imagePath)),
-                    Uri.fromFile(File.createTempFile("temp_", ".jpg",
-                            new File(GoogleImagePickerUtil.getDownloadPath()))))
-                    .asSquare()
-                    .start(getActivity(), ImageAlbumFragment.this);
+
+            Intent cropIntent = new Intent(getContext(), JandiCropImageActivity.class);
+            cropIntent.setData(Uri.fromFile(new File(imagePath)));
+            cropIntent.putExtra("output", Uri.fromFile(File.createTempFile("temp_", ".jpg",
+                    new File(FileUtil.getDownloadPath()))));
+            cropIntent.putExtra("aspect_x", 1);
+            cropIntent.putExtra("aspect_y", 1);
+            startActivityForResult(cropIntent, Crop.REQUEST_CROP);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -235,7 +239,7 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showWarningToast(String message) {
-        ColoredToast.showWarning(getActivity(), message);
+        ColoredToast.showWarning(message);
     }
 
     @Override

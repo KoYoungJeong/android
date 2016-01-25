@@ -16,6 +16,17 @@ public class SocketTopicKickedoutEvent {
     private String version;
     private Data data;
 
+    private long ts;
+
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
+
     public String getEvent() {
         return event;
     }

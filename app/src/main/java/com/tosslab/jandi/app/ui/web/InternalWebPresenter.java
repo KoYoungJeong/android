@@ -197,12 +197,12 @@ public class InternalWebPresenter {
 
     @UiThread
     public void showSuccessToast(Context context, String message) {
-        ColoredToast.show(context, message);
+        ColoredToast.show(message);
     }
 
     @UiThread
     public void showErrorToast(Context context, String message) {
-        ColoredToast.showError(context, message);
+        ColoredToast.show(message);
     }
 
     public void moveOtherBrowser(Context context, String currentUrl) {

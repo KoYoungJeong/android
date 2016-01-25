@@ -6,13 +6,13 @@ import com.tosslab.jandi.app.R;
  * Created by justinygchoi on 14. 12. 11..
  */
 public class PasswordChecker {
-    public static final int TOO_SHORT   = 0;
-    public static final int WEAK        = 1;
-    public static final int AVERAGE     = 2;
-    public static final int SAFE        = 3;
-    public static final int STRONG      = 4;
+    public static final int TOO_SHORT = 0;
+    public static final int WEAK = 1;
+    public static final int AVERAGE = 2;
+    public static final int SAFE = 3;
+    public static final int STRONG = 4;
 
-    static final int MINIMUN_LENGTH     = 8;
+    static final int MINIMUN_LENGTH = 8;
 
     static final String REG_EX_CONTAIN_LOWER = ".*[a-z]+.*";
     static final String REG_EX_CONTAIN_CAPITAL = ".*[A-Z]+.*";

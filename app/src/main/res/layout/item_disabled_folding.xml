@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/jandi_entity_item_title_margin_left"
-                android:background="#FFF2F2F2">
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/jandi_entity_item_title_margin_left"
+    android:background="#FFF2F2F2">
 
     <ImageView
         android:id="@+id/iv_disabled_folding_icon"
@@ -11,7 +11,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="18.5dp"
         android:layout_marginRight="17dp"
-        android:src="@drawable/icon_disabled_members"/>
+        android:src="@drawable/icon_disabled_members" />
 
     <TextView
         android:id="@+id/tv_disabled_folding_title"
@@ -21,7 +21,7 @@
         android:layout_toRightOf="@+id/iv_disabled_folding_icon"
         android:text="Disabled members"
         android:textColor="@color/jandi_text"
-        android:textSize="@dimen/jandi_text_size_large"/>
+        android:textSize="@dimen/jandi_text_size_large" />
 
     <TextView
         android:id="@+id/tv_disabled_folding_count"
@@ -33,7 +33,7 @@
         android:layout_toRightOf="@+id/tv_disabled_folding_title"
         android:text="(3)"
         android:textColor="#FFACACAC"
-        android:textSize="@dimen/jandi_text_size_large"/>
+        android:textSize="@dimen/jandi_text_size_large" />
 
     <ImageView
         android:id="@+id/iv_disabled_folding_arrow"
@@ -42,6 +42,6 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="25dp"
-        android:src="@drawable/icon_arrow_disabled_members"/>
+        android:src="@drawable/icon_arrow_disabled_members" />
 
 </RelativeLayout>

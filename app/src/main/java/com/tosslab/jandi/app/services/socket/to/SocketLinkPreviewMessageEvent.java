@@ -22,6 +22,17 @@ public class SocketLinkPreviewMessageEvent {
     private Writer writer;
     private Message message;
 
+    private long ts;
+
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
+
     public int getVersion() {
         return version;
     }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.tosslab.jandi.app.views.LongClickableRelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.tosslab.jandi.app.views.LongClickableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <com.tosslab.jandi.app.views.FrescoImageView
         android:id="@+id/iv_file_detail_comment_user_profile"
         android:layout_width="@dimen/jandi_file_detail_comment_profile_size"

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="63dp"
+    android:layout_height="match_parent">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/iv_image_box"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/bg_character_white_rounded_box"
+        android:padding="2dp"
+        android:src="@drawable/icon_search_all_files" />
+
+</RelativeLayout>

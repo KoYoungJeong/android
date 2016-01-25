@@ -41,6 +41,7 @@ public class MarkerRepositoryTest {
 
         originRoomInfo = RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId, roomId);
     }
+
     @After
     public void tearDown() throws Exception {
         BaseInitUtil.releaseDatabase();

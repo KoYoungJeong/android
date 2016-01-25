@@ -5,6 +5,7 @@ package com.tosslab.jandi.app.network.models;
  */
 public class ReqNotificationUpdate {
     public String deviceToken;
+
     public ReqNotificationUpdate(String deviceToken) {
         this.deviceToken = deviceToken;
     }

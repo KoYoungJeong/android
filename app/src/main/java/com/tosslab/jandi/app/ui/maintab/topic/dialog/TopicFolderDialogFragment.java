@@ -163,14 +163,12 @@ public class TopicFolderDialogFragment extends DialogFragment {
 
     @UiThread
     public void showRenameFolderToast() {
-        ColoredToast.show(JandiApplication.getContext(),
-                JandiApplication.getContext().getString(R.string.jandi_folder_renamed));
+        ColoredToast.show(JandiApplication.getContext().getString(R.string.jandi_folder_renamed));
     }
 
     @UiThread
     public void showDeleteFolderToast() {
-        ColoredToast.show(JandiApplication.getContext(),
-                JandiApplication.getContext().getString(R.string.jandi_folder_removed));
+        ColoredToast.show(JandiApplication.getContext().getString(R.string.jandi_folder_removed));
     }
 
 }

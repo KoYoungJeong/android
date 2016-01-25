@@ -297,7 +297,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     @UiThread
     @Override
     public void showSuccessToast(String message) {
-        ColoredToast.show(getActivity(), message);
+        ColoredToast.show(message);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

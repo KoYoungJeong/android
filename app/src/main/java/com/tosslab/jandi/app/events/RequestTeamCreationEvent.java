@@ -5,6 +5,7 @@ package com.tosslab.jandi.app.events;
  */
 public class RequestTeamCreationEvent {
     public String email;
+
     public RequestTeamCreationEvent(String email) {
         this.email = email;
     }

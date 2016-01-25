@@ -74,6 +74,7 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
         public TextView dateTextView;
         public LinearLayout vgHeaderWrapper;
+
         public HeaderViewHolder(View itemView) {
             super(itemView);
             dateTextView = (TextView) itemView.findViewById(R.id.txt_message_date_devider);

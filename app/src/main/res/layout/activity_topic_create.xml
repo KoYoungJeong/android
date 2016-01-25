@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/jandi_entities_bg"
+    android:background="@color/jandi_settings_background"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -21,32 +21,30 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingBottom="20dp"
-            android:paddingTop="20dp">
+            android:orientation="vertical">
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingTop="8dp">
 
                 <TextView
                     style="@style/JandiTopic.Create.TextView.Title"
-                    android:text="@string/jandi_title_name_required" />
+                    android:layout_marginTop="16dp"
+                    android:text="@string/jandi_title_name_required"
+                    android:textSize="@dimen/jandi_text_size_small" />
 
                 <EditText
                     android:id="@+id/et_topic_create_title"
                     style="@style/JandiTopic.Create.TextView.Input"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:ellipsize="end"
                     android:hint="@string/jandi_input_topic_name"
                     android:maxLength="60"
                     android:maxLines="1"
-                    android:paddingBottom="12dp"
-                    android:paddingLeft="17dp"
-                    android:paddingRight="17dp"
-                    android:paddingTop="14dp"
+                    android:paddingBottom="8dp"
                     android:singleLine="true" />
 
                 <TextView
@@ -57,112 +55,91 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/vg_topic_create_is_public"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="96dp"
+                android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:paddingBottom="26dp"
-                android:paddingTop="20dp">
+                android:paddingBottom="8dp">
 
                 <TextView
                     style="@style/JandiTopic.Create.TextView.Title"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/jandi_is_topic_required" />
-
-                <LinearLayout
-                    android:id="@+id/layout_topic_create_public_check"
-                    android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    android:background="@color/white"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingLeft="25dp"
-                    android:paddingRight="25dp">
-
-                    <TextView
-                        style="@style/JandiTopic.Create.TextView.Type"
-                        android:text="@string/jandi_topic_public"
-                        android:textColor="@color/jandi_text"
-                        android:textSize="14dp" />
-
-                    <ImageView
-                        android:id="@+id/img_topic_create_public_check"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/jandi_topic_type_selector" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:background="@color/jandi_topic_is_public_divider" />
-
-                <LinearLayout
-                    android:id="@+id/layout_topic_create_private_check"
-                    android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    android:background="@color/white"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingLeft="25dp"
-                    android:paddingRight="25dp">
-
-                    <TextView
-                        style="@style/JandiTopic.Create.TextView.Type"
-                        android:text="@string/jandi_topic_private"
-                        android:textColor="@color/jandi_text"
-                        android:textSize="14dp" />
-
-                    <ImageView
-                        android:id="@+id/img_topic_create_private_check"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/jandi_topic_type_selector" />
-
-                </LinearLayout>
+                    android:text="@string/jandi_is_topic_required"
+                    android:textSize="@dimen/jandi_text_size_large" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tv_topic_create_is_public"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginRight="25dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/jandi_topic_public"
+                    android:textColor="@color/activate_text_color"
+                    android:textSize="@dimen/jandi_text_size_medium" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="3dp"
                     android:text="@string/jandi_what_is_topic_type"
                     android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
                     android:textSize="@dimen/jandi_text_size_small" />
+
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line" />
 
 
             <LinearLayout
+                android:id="@+id/vg_topic_create_autojoin"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="26dp"
-                android:paddingTop="20dp">
+                android:layout_height="88dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp">
 
-                <TextView
-                    style="@style/JandiTopic.Create.TextView.Title"
-                    android:text="@string/jandi_auto_join_title_wild" />
 
                 <LinearLayout
-                    android:id="@+id/vg_topic_create_autojoin"
-                    android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@color/white"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:duplicateParentState="true"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingLeft="25dp"
-                    android:paddingRight="25dp">
+                    android:orientation="vertical">
 
                     <TextView
-                        style="@style/JandiTopic.Create.TextView.Type"
+                        style="@style/JandiTopic.Create.TextView.Title"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="0dp"
                         android:duplicateParentState="true"
-                        android:text="@string/jandi_auto_join_title"
-                        android:textColor="@color/jandi_text"
-                        android:textSize="14dp" />
+                        android:text="@string/jandi_auto_join_title_wild" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:duplicateParentState="true"
+                        android:text="@string/jandi_auto_join_explain"
+                        android:textColor="@color/text_color_setting_check_summary"
+                        android:textSize="@dimen/jandi_text_size_medium" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="51dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="32dp"
+                    android:duplicateParentState="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <android.support.v7.widget.SwitchCompat
                         android:id="@+id/switch_topic_create_auto_join"
@@ -172,51 +149,45 @@
                         android:checked="false"
                         android:clickable="false"
                         android:duplicateParentState="true" />
-
                 </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginRight="25dp"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/jandi_auto_join_explain"
-                    android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
-                    android:textSize="@dimen/jandi_text_size_small" />
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="80dp"
+                android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:paddingTop="20dp">
+                android:paddingTop="8dp">
+
 
                 <TextView
                     style="@style/JandiTopic.Create.TextView.Title"
+                    android:layout_marginTop="16dp"
+                    android:textSize="@dimen/jandi_text_size_small"
                     android:text="@string/jandi_topic_description" />
 
                 <EditText
                     android:id="@+id/et_topic_create_description"
                     style="@style/JandiTopic.Create.TextView.Input"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
                     android:hint="@string/jandi_explain_topic_description"
                     android:inputType="text|textMultiLine"
                     android:maxLength="300"
-                    android:paddingBottom="12dp"
-                    android:paddingLeft="17dp"
-                    android:paddingRight="17dp"
-                    android:paddingTop="14dp" />
+                    android:paddingBottom="8dp" />
 
             </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_topic_create_description_count"
                 style="@style/JandiTopic.Create.TextView.TextCount"
+                android:minHeight="16dp"
                 android:text="0/300" />
-
 
         </LinearLayout>
     </ScrollView>

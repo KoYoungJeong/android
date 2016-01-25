@@ -108,7 +108,6 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
     @Background(serial = "share_background")
     void initFormattedEntities() {
         showProgress();
-
         try {
             ResLeftSideMenu leftSideMenu;
             leftSideMenu = LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
@@ -180,7 +179,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
 
     @UiThread
     void showError(String message) {
-        ColoredToast.showError(getApplicationContext(), message);
+        ColoredToast.showError(message);
     }
 
     @UiThread

@@ -142,16 +142,16 @@ public class EmailChoosePresenter {
 
     @UiThread
     public void showSuccessToast(String message) {
-        ColoredToast.show(activity, message);
+        ColoredToast.show(message);
     }
 
     @UiThread
     public void showFailToast(String message) {
-        ColoredToast.showError(activity, message);
+        ColoredToast.showError(message);
     }
 
     public void showWarning(String message) {
-        ColoredToast.showWarning(activity, message);
+        ColoredToast.showWarning(message);
     }
 
     public void showDeleteEmail(final String email) {

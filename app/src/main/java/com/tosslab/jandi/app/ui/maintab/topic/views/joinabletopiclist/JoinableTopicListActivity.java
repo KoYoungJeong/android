@@ -172,13 +172,13 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showToast(String message) {
-        ColoredToast.show(getApplicationContext(), message);
+        ColoredToast.show(message);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showErrorToast(String message) {
-        ColoredToast.showError(getApplicationContext(), message);
+        ColoredToast.showError(message);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

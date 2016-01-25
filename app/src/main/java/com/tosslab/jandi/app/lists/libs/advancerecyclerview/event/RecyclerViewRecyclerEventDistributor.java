@@ -68,7 +68,7 @@ public class RecyclerViewRecyclerEventDistributor extends BaseRecyclerViewEventD
         @Override
         public void onViewRecycled(RecyclerView.ViewHolder holder) {
             final RecyclerViewRecyclerEventDistributor distributor = mRefDistributor.get();
-            
+
             if (distributor != null) {
                 distributor.handleOnViewRecycled(holder);
             }

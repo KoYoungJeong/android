@@ -110,7 +110,7 @@ public class StickerApiClientTest {
         ResMessages.StickerContent resSticker = stickers.get((int) (Math.random() * stickers.size()));
 
         RequestApiManager.getInstance().sendStickerCommentByStickerApi(ReqSendSticker.create
-                (resSticker.groupId, resSticker.stickerId, teamId, fileMessage.id, "", "asdasd", 
+                (resSticker.groupId, resSticker.stickerId, teamId, fileMessage.id, "", "asdasd",
                         null));
 
     }

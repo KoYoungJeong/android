@@ -44,7 +44,7 @@ public class TeamDomainInfoModel {
 
     }
 
-    public ResValidation validDomain(String domain) throws RetrofitError{
+    public ResValidation validDomain(String domain) throws RetrofitError {
         return RequestApiManager.getInstance().validDomain(domain);
     }
 

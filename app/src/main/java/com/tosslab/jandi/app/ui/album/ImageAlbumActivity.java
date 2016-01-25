@@ -140,7 +140,7 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
                     .selectedEntityIdToBeShared(entityId)
                     .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
         } else {
-            ColoredToast.showError(ImageAlbumActivity.this, getString(R.string.err_file_upload_failed));
+            ColoredToast.showError(getString(R.string.err_file_upload_failed));
         }
 
 

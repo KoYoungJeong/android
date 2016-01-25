@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.utils.file;
 
+import android.os.Environment;
 import android.text.TextUtils;
 
 import java.text.DecimalFormat;
@@ -8,6 +9,17 @@ import java.text.DecimalFormat;
  * Created by Bill MinWook Heo on 15. 6. 24..
  */
 public class FileUtil {
+
+    /**
+     * @return /sdcard/DOWNLOAD/Jandi
+     */
+    public static String getDownloadPath() {
+        return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS + "/Jandi";
+    }
+
+    public static String getTempDownloadPath() {
+        return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS + "/Jandi/temp";
+    }
 
     public static String fileSizeCalculation(long fileSize) {
         String retFormat = "0";

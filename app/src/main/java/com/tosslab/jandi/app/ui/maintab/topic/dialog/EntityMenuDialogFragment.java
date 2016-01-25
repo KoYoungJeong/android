@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.topic.dialog;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -17,6 +18,8 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.EntityMenuDialogModel;
+import com.tosslab.jandi.app.ui.settings.main.SettingsActivity_;
+import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -90,6 +93,9 @@ public class EntityMenuDialogFragment extends DialogFragment {
             btnNotification.setText(notificationText);
 
             btnNotification.setOnClickListener(v -> {
+                if (entityMenuDialogModel.isGlobalPushOff()) {
+                    showGlobalPushSetupDialog();
+                }
                 entityMenuDialogModel.updateNotificationOnOff(entityId, !isTopicPushOn);
                 dismiss();
             });
@@ -104,6 +110,28 @@ public class EntityMenuDialogFragment extends DialogFragment {
         }
 
         progressWheel = new ProgressWheel(getActivity());
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void showGlobalPushSetupDialog() {
+        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(R.string.jandi_explain_global_push_off)
+                .setNegativeButton(R.string.jandi_close, null)
+                .setPositiveButton(R.string.jandi_go_to_setting, (dialog, which) -> {
+                    movePushSettingActivity();
+                })
+                .create()
+                .show();
+    }
+
+    private void movePushSettingActivity() {
+        Intent mainSettingIntent = SettingsActivity_
+                .intent(EntityMenuDialogFragment.this)
+                .get();
+        Intent pushSettingIntent = SettingPushActivity_
+                .intent(EntityMenuDialogFragment.this)
+                .get();
+        getActivity().startActivities(new Intent[]{mainSettingIntent, pushSettingIntent});
     }
 
     public void setStarredButtonText(boolean isStarred) {
@@ -189,24 +217,49 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
     @UiThread
     void showToast(String message) {
-        ColoredToast.show(getActivity(), message);
+        ColoredToast.show(message);
     }
 
     @UiThread
     void showErrorToast(String message) {
-        ColoredToast.showError(getActivity(), message);
+        ColoredToast.showError(message);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     void onLeaveClick() {
         FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
+        final boolean isPublicTopic = entity.isPublicTopic();
+        boolean isTopicOwner = entityMenuDialogModel.isTopicOwner(entityId);
+        boolean isBot = entityMenuDialogModel.isBot(entityId);
 
-        boolean bot = entityMenuDialogModel.isBot(entityId);
-        if (entity.isPublicTopic() || entity.isUser() || bot) {
-            showProgressWheel();
-            leaveEntity(entityId, entity.isPublicTopic(), entity.isUser() || bot);
+        if (isTopicOwner
+                && entity.getMemberCount() > 1
+                && !entity.isUser()
+                && !isBot) {
+            onAssignToTopicOwner(entity.getName());
         } else {
-            showPrivateTopicLeaveDialog(entityId, entity.getName());
+            onLeaveEntity(entity.getName(), isPublicTopic, entity.isUser(), isBot);
         }
+
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void onLeaveEntity(String userName, boolean isPublicTopic, boolean isUser, boolean isBot) {
+        if (isPublicTopic || isUser || isBot) {
+            showProgressWheel();
+            leaveEntity(entityId, isPublicTopic, isUser || isBot);
+        } else {
+            showPrivateTopicLeaveDialog(entityId, userName);
+        }
+    }
+
+    private void onAssignToTopicOwner(String topicName) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
+        builder.setTitle(topicName);
+        builder.setMessage(R.string.jandi_need_to_assign_topic_owner);
+        builder.setPositiveButton(R.string.jandi_confirm, null);
+        builder.create().show();
     }
 
     private void showPrivateTopicLeaveDialog(final int entityId, String entityName) {

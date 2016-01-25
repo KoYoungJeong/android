@@ -37,6 +37,7 @@ public class TopicCreateModelTest {
 
         topicCreateModel = TopicCreateModel_.getInstance_(RuntimeEnvironment.application);
     }
+
     @After
     public void tearDown() throws Exception {
         BaseInitUtil.releaseDatabase();
@@ -58,7 +59,8 @@ public class TopicCreateModelTest {
                 .getInstance_(RuntimeEnvironment.application)
                 .getTotalEntitiesInfo();
 
-        ResLeftSideMenu.Entity defaultValue = new ResLeftSideMenu.Entity() {};
+        ResLeftSideMenu.Entity defaultValue = new ResLeftSideMenu.Entity() {
+        };
         ResLeftSideMenu.Entity createdEntity = Observable.from(totalEntitiesInfo.joinEntities)
                 .filter(entity -> entity.id == createdId)
                 .firstOrDefault(defaultValue)
@@ -94,7 +96,8 @@ public class TopicCreateModelTest {
                 .getInstance_(RuntimeEnvironment.application)
                 .getTotalEntitiesInfo();
 
-        ResLeftSideMenu.Entity defaultValue = new ResLeftSideMenu.Entity() {};
+        ResLeftSideMenu.Entity defaultValue = new ResLeftSideMenu.Entity() {
+        };
         ResLeftSideMenu.Entity createdEntity = Observable.from(totalEntitiesInfo.joinEntities)
                 .filter(entity -> entity.id == createdId)
                 .firstOrDefault(defaultValue)

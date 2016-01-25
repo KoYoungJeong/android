@@ -13,25 +13,18 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @Version(1)
 public class SocketAnnouncementEvent {
-    public enum Type {
-        CREATED("announcement_created"),
-        STATUS_UPDATED("announcement_status_updated"),
-        DELETED("announcement_deleted");
-
-        String name;
-
-        Type(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
     private String event;
     private int version;
     private Data data;
+    private long ts;
+
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
 
     public String getEvent() {
         return event;
@@ -76,6 +69,22 @@ public class SocketAnnouncementEvent {
                 ", version=" + version +
                 ", data=" + data +
                 '}';
+    }
+
+    public enum Type {
+        CREATED("announcement_created"),
+        STATUS_UPDATED("announcement_status_updated"),
+        DELETED("announcement_deleted");
+
+        String name;
+
+        Type(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

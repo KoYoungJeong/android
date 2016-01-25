@@ -18,12 +18,12 @@
         android:paddingBottom="@dimen/jandi_file_search_item_height_half"
         android:paddingTop="36.5dp"
         android:scrollbars="vertical"
-        android:smoothScrollbar="true"/>
+        android:smoothScrollbar="true" />
 
     <include
         android:id="@+id/layout_file_list_empty"
         layout="@layout/view_search_list_empty"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/layout_file_list_header"
@@ -44,7 +44,7 @@
 
                 <TextView
                     android:id="@+id/txt_file_list_where"
-                    style="@style/JandiFileListCategoryTab.Text"/>
+                    style="@style/JandiFileListCategoryTab.Text" />
 
             </LinearLayout>
 
@@ -54,7 +54,7 @@
 
                 <TextView
                     android:id="@+id/txt_file_list_whom"
-                    style="@style/JandiFileListCategoryTab.Text"/>
+                    style="@style/JandiFileListCategoryTab.Text" />
 
             </LinearLayout>
 
@@ -64,7 +64,7 @@
 
                 <TextView
                     android:id="@+id/txt_file_list_type"
-                    style="@style/JandiFileListCategoryTab.Text"/>
+                    style="@style/JandiFileListCategoryTab.Text" />
 
             </LinearLayout>
         </LinearLayout>
@@ -74,18 +74,18 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:layout_below="@+id/layout_file_list_header"
-            android:background="@color/jandi_file_search_item_divider"/>
+            android:background="@color/jandi_file_search_item_divider" />
     </LinearLayout>
 
 
     <include
         android:id="@+id/layout_file_list_search_empty"
         layout="@layout/view_search_list_search_empty"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <include
         android:id="@+id/layout_file_list_loading"
-        layout="@layout/progress_wheel"/>
+        layout="@layout/progress_wheel" />
 
     <ProgressBar
         android:id="@+id/progress_file_list"
@@ -96,6 +96,6 @@
         android:layout_marginBottom="20dp"
         android:indeterminate="true"
         android:indeterminateDrawable="@drawable/progress_refresh_animation"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </RelativeLayout>

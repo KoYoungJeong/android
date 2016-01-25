@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.passcode.presenter;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.ui.passcode.PassCodeActivity;
 import com.tosslab.jandi.app.ui.passcode.model.PassCodeModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
 

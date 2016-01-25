@@ -19,6 +19,16 @@ public class SocketRoomMarkerEvent {
     private int teamId;
     private MarkerRoom room;
     private Marker marker;
+    private long ts;
+
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
 
     @Override
     public String toString() {

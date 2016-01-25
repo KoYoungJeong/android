@@ -2,8 +2,6 @@ package com.tosslab.jandi.app.lists;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by tee on 15. 11. 11..
  */

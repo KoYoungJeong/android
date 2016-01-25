@@ -18,6 +18,7 @@ public class ReqInvitation {
 
     public class InviteMember {
         public String email;
+
         public InviteMember(String email) {
             this.email = email;
         }

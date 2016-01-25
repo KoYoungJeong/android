@@ -102,6 +102,6 @@ class LeaveEntityCommand implements MenuCommand {
 
     @UiThread
     public void leaveEntityFailed(String errMessage) {
-        ColoredToast.showError(activity, errMessage);
+        ColoredToast.showError(errMessage);
     }
 }

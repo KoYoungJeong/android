@@ -9,7 +9,7 @@
         android:id="@+id/img_check_user_icon"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_margin="10dp"/>
+        android:layout_margin="10dp" />
 
     <TextView
         android:id="@+id/txt_check_user_name"
@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:text="User Name"/>
+        android:text="User Name" />
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/cb_check_user"
@@ -27,6 +27,6 @@
         android:layout_gravity="center_vertical"
         android:layout_marginRight="10dp"
         android:focusable="false"
-        android:focusableInTouchMode="false"/>
+        android:focusableInTouchMode="false" />
 
 </LinearLayout>

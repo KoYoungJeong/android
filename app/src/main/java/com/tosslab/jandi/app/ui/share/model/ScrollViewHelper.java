@@ -42,7 +42,7 @@ public class ScrollViewHelper {
                     int currentScrollY = view.getScrollY();
                     if (currentScrollY > 0) {
                         viewFirstScrollY = currentScrollY;
-                    } else if (lastTouchY < event.getRawY()){
+                    } else if (lastTouchY < event.getRawY()) {
                         // 첫 스크롤지점 = 0, 현재 스크롤지점 = 0, 하향 스크롤이면 터치 제어권 넘김
                         scrollView.requestDisallowInterceptTouchEvent(false);
                     }

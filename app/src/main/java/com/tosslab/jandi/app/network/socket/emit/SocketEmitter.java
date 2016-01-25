@@ -8,5 +8,6 @@ import io.socket.emitter.Emitter;
  */
 public interface SocketEmitter {
     void setEmitter(Emitter emitter);
+
     <T> void emit(SocketEmitData<T> socketEmitData);
 }

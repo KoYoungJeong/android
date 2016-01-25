@@ -652,7 +652,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     void searchFailed(int errMessageRes) {
         FragmentActivity activity = getActivity();
         if (activity != null && !(activity.isFinishing())) {
-            ColoredToast.showError(activity, activity.getString(errMessageRes));
+            ColoredToast.showError(activity.getString(errMessageRes));
         }
     }
 
