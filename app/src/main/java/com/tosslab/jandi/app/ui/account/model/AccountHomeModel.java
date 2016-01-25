@@ -10,10 +10,12 @@ import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
+import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -34,6 +36,21 @@ import retrofit.RetrofitError;
  */
 @EBean
 public class AccountHomeModel {
+
+    public ResTeamDetailInfo acceptOrDeclineInvite(String invitationId, String type) throws RetrofitError {
+
+        ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
+
+        if (accountInfo == null) {
+            return null;
+        }
+
+        ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore = new ReqInvitationAcceptOrIgnore(type);
+        return RequestApiManager.getInstance().
+                acceptOrDeclineInvitationByInvitationApi(invitationId, reqInvitationAcceptOrIgnore);
+
+    }
+
 
     public List<Team> getTeamInfos() throws RetrofitError {
 

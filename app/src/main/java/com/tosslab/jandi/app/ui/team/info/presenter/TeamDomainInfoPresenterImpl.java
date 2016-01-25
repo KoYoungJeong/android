@@ -33,7 +33,7 @@ public class TeamDomainInfoPresenterImpl implements TeamDomainInfoPresenter {
     @Override
     public void checkEmailInfo() {
         List<ResAccountInfo.UserEmail> userEmails = teamDomainInfoModel.initUserEmailInfo();
-        if (userEmails == null && userEmails.isEmpty()) {
+        if (userEmails == null || userEmails.isEmpty()) {
             view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
             view.finishView();
         }

@@ -179,7 +179,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showProgressWheel();
 
         try {
-            teamDomainInfoModel.acceptOrDclineInvite(
+            accountHomeModel.acceptOrDeclineInvite(
                     selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.ACCEPT.getType());
             teamDomainInfoModel.updateTeamInfo(selectedTeam.getTeamId());
             MixpanelMemberAnalyticsClient.getInstance(context, null)
@@ -236,7 +236,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showProgressWheel();
 
         try {
-            teamDomainInfoModel.acceptOrDclineInvite(
+            accountHomeModel.acceptOrDeclineInvite(
                     selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
             view.dismissProgressWheel();
             view.removePendingTeamView(selectedTeam);

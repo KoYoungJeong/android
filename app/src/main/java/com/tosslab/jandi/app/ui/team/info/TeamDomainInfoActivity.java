@@ -39,10 +39,10 @@ import org.androidannotations.annotations.ViewById;
 public class TeamDomainInfoActivity extends BaseAppCompatActivity implements TeamDomainInfoPresenter.View {
 
     @ViewById(R.id.et_team_detail_info_team_name)
-    TextView teamNameView;
+    TextView tvTeamName;
 
     @ViewById(R.id.et_team_detail_info_team_domain)
-    TextView teamDomainView;
+    TextView tvTeamDomain;
 
     ProgressWheel progressWheel;
 
@@ -84,8 +84,8 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity implements Tea
 
     @OptionsItem(R.id.action_confirm)
     void confirmTeamDomain() {
-        String teamName = teamNameView.getText().toString();
-        String teamDomain = teamDomainView.getText().toString();
+        String teamName = tvTeamName.getText().toString();
+        String teamDomain = tvTeamDomain.getText().toString();
 
         if (TextUtils.isEmpty(teamDomain)) {
             showFailToast(getString(R.string.err_invalid_team_domain));
