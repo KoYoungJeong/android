@@ -138,15 +138,24 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     public void setFloatingActionMenu() {
         floatingActionMenu.addItem(R.drawable.btn_fab_item_folder_setting,
                 "폴더 관리", () -> {
-                    clickConfigFolder();
+                    if (floatingActionMenu.isOpened()) {
+                        floatingActionMenu.close();
+                    }
+                    launchFolderSettionActivity();
                 });
         floatingActionMenu.addItem(R.drawable.btn_fab_item_create_folder,
                 "폴더 만들기", () -> {
-                    clickCreateFolder();
+                    if (floatingActionMenu.isOpened()) {
+                        floatingActionMenu.close();
+                    }
+                    showCreateNewFolderDialog();
                 });
         floatingActionMenu.addItem(R.drawable.btn_fab_item_create_topic,
                 "토픽 만들기", () -> {
-                    clickCreateTopic();
+                    if (floatingActionMenu.isOpened()) {
+                        floatingActionMenu.close();
+                    }
+                    launchCreateTopicActivity();
                 });
     }
 
@@ -162,11 +171,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         hasOptionsMenu();
     }
 
-    private void clickCreateTopic() {
-        if (floatingActionMenu.isOpened()) {
-            floatingActionMenu.close();
-        }
-
+    private void launchCreateTopicActivity() {
         Observable.just(1)
                 .delay(250, TimeUnit.MILLISECONDS)
                 .subscribe(i -> {
@@ -179,17 +184,9 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
                 });
     }
 
-    private void clickCreateFolder() {
-        if (floatingActionMenu.isOpened()) {
-            floatingActionMenu.close();
-        }
-        showCreateNewFolderDialog();
-    }
 
-    private void clickConfigFolder() {
-        if (floatingActionMenu.isOpened()) {
-            floatingActionMenu.close();
-        }
+
+    private void launchFolderSettionActivity() {
         Observable.just(1)
                 .delay(250, TimeUnit.MILLISECONDS)
                 .subscribe(i -> {

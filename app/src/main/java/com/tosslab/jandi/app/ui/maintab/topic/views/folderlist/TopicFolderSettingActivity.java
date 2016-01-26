@@ -64,9 +64,11 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     @Extra
     int folderId;
     @Bean
-    TopicFolderSettingPresenter topicFolderChoosePresentor;
+    TopicFolderSettingPresenter topicFolderSettingPresentor;
 
-    @ViewById(R.id.rv_choose_folder)
+    @ViewById(R.id.tv_folder_title)
+    TextView tvTitle;
+    @ViewById(R.id.rv_folder)
     RecyclerView lvTopicFolder;
     @ViewById(R.id.ll_no_folder)
     LinearLayout vgNoFolder;
@@ -88,7 +90,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
         } else {
             adapter = new TopicFolderSettingAdapter();
         }
-        topicFolderChoosePresentor.setView(this);
+        topicFolderSettingPresentor.setView(this);
     }
 
     @AfterViews
@@ -101,20 +103,26 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
         lvTopicFolder.setAdapter(adapter);
 
-        topicFolderChoosePresentor.onRefreshFolders(folderId);
-
-        if (mode == FOLDER_SETTING) {
-            TopicFolderSettingAdapter settingAdapter = (TopicFolderSettingAdapter) adapter;
-            ItemTouchHelper.Callback callback = new DragnDropTouchHelper(settingAdapter);
-            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
-            itemTouchHelper.attachToRecyclerView(lvTopicFolder);
-            settingAdapter.setOnFolderSeqChangeLisener(this);
-            settingAdapter.setOnRemoveFolderListener(this);
-            settingAdapter.setOnRenameFolderListener(this);
+        topicFolderSettingPresentor.onRefreshFolders(folderId);
+        switch (mode) {
+            case ITEM_FOLDER_CHOOSE:
+                tvTitle.setText(getResources().getString(R.string.jandi_folder_choose));
+                break;
+            case FOLDER_SETTING:
+                //TODO
+                tvTitle.setText("롱클릭해서 옮겨라!");
+                TopicFolderSettingAdapter settingAdapter = (TopicFolderSettingAdapter) adapter;
+                ItemTouchHelper.Callback callback = new DragnDropTouchHelper(settingAdapter);
+                ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+                itemTouchHelper.attachToRecyclerView(lvTopicFolder);
+                settingAdapter.setOnFolderSeqChangeLisener(this);
+                settingAdapter.setOnRemoveFolderListener(this);
+                settingAdapter.setOnRenameFolderListener(this);
+                break;
         }
 
         adapter.setOnRecyclerItemClickListener((view, adapter, position, type) -> {
-            topicFolderChoosePresentor.onItemClick(adapter, position, type, folderId, topicId);
+            topicFolderSettingPresentor.onItemClick(adapter, position, type, folderId, topicId);
         });
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MoveToaFolder);
@@ -160,7 +168,15 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle(getString(R.string.jandi_folder_move_to));
+        switch (mode) {
+            case ITEM_FOLDER_CHOOSE:
+                actionBar.setTitle(getString(R.string.jandi_folder_move_to));
+                break;
+            case FOLDER_SETTING:
+                //TODO
+                actionBar.setTitle("폴더 설정");
+        }
+
     }
 
     @Override
@@ -217,7 +233,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     }
 
     public void createNewFolder(String title) {
-        topicFolderChoosePresentor.onCreateFolers(title, folderId);
+        topicFolderSettingPresentor.onCreateFolers(title, folderId);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -240,7 +256,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
     @Override
     public void onSeqChanged(int folderId, int seq) {
-        topicFolderChoosePresentor.modifySeqFolder(folderId, seq);
+        topicFolderSettingPresentor.modifySeqFolder(folderId, seq);
     }
 
     @Override
@@ -254,7 +270,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
         builder.setMessage(R.string.jandi_folder_ask_delete)
                 .setPositiveButton(this.getString(R.string.jandi_confirm), (dialog, which) -> {
-                    topicFolderChoosePresentor.removeFolder(folderId);
+                    topicFolderSettingPresentor.removeFolder(folderId);
                     dialog.dismiss();
                 })
                 .setNegativeButton(getString(R.string.jandi_cancel), (dialog, which) -> {
@@ -279,7 +295,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
         builder.setView(vgInputEditText)
                 .setPositiveButton(this.getString(R.string.jandi_confirm), (dialog, which) -> {
-                    topicFolderChoosePresentor.modifyNameFolder(folderId, input.getText().toString().trim(), seq);
+                    topicFolderSettingPresentor.modifyNameFolder(folderId, input.getText().toString().trim(), seq);
                 })
                 .setNegativeButton(this.getString(R.string.jandi_cancel), (dialog, which) -> {
                     dialog.cancel();

@@ -137,9 +137,7 @@ public class FloatingActionMenu extends FrameLayout {
         vgParams.addRule(RelativeLayout.ABOVE, getButtonId());
         vg.setOrientation(LinearLayout.HORIZONTAL);
         rootView.addView(vg, vgParams);
-
         vg.setVisibility(INVISIBLE);
-
         vgItems.add(vg);
 
         TextView tv = new TextView(getContext());
@@ -260,9 +258,11 @@ public class FloatingActionMenu extends FrameLayout {
             final View btItem = btItems.get(i);
             final View tvItem = tvItems.get(i);
             final View vgItem = vgItems.get(i);
-            rootView.postDelayed(() -> {
-                Animation scaleDownAnimation1 = AnimationUtils.loadAnimation(getContext(), R.anim.fab_scale_up);
-                Animation scaleDownAnimation2 = AnimationUtils.loadAnimation(getContext(), R.anim.fab_scale_up);
+            postDelayed(() -> {
+                Animation scaleDownAnimation1 = AnimationUtils.loadAnimation(getContext(),
+                        R.anim.fab_scale_up);
+                Animation scaleDownAnimation2 = AnimationUtils.loadAnimation(getContext(),
+                        R.anim.fab_scale_up);
                 tvItem.clearAnimation();
                 btItem.clearAnimation();
                 tvItem.startAnimation(scaleDownAnimation1);
@@ -280,7 +280,8 @@ public class FloatingActionMenu extends FrameLayout {
             final View tvItem = tvItems.get(i);
             final View vgItem = vgItems.get(i);
             postDelayed(() -> {
-                Animation scaleDownAnimation1 = AnimationUtils.loadAnimation(getContext(), R.anim.fab_scale_down);
+                Animation scaleDownAnimation1 = AnimationUtils.loadAnimation(getContext(),
+                        R.anim.fab_scale_down);
                 scaleDownAnimation1.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
@@ -295,7 +296,8 @@ public class FloatingActionMenu extends FrameLayout {
                     public void onAnimationRepeat(Animation animation) {
                     }
                 });
-                Animation scaleDownAnimation2 = AnimationUtils.loadAnimation(getContext(), R.anim.fab_scale_down);
+                Animation scaleDownAnimation2 = AnimationUtils.loadAnimation(getContext(),
+                        R.anim.fab_scale_down);
                 tvItem.clearAnimation();
                 btItem.clearAnimation();
                 tvItem.startAnimation(scaleDownAnimation1);
