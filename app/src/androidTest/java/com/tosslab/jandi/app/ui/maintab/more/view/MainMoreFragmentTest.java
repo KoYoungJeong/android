@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.more.view;
 
 import android.content.Intent;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.matcher.IntentMatchers;
 import android.support.test.rule.ActivityTestRule;
@@ -187,6 +188,8 @@ public class MainMoreFragmentTest {
         rule.runOnUiThread(fragment::onClickUserInfoReport);
         rule.runOnUiThread(fragment::onClickUserInfoReport);
         rule.runOnUiThread(fragment::onClickUserInfoReport);
+
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
         onView(withText(R.string.jandi_close))
                 .inRoot(isDialog())

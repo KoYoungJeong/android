@@ -132,6 +132,8 @@ public class CarouselViewerActivityTest {
         String xls = "xls";
         rule.runOnUiThread(() -> activity.setActionbarTitle(fileName, size, xls));
 
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+
         onView(withText(fileName))
                 .check(matches(isDisplayed()));
         onView(withText(size + ", " + xls))
@@ -142,10 +144,8 @@ public class CarouselViewerActivityTest {
     public void testSetFileWriterName() throws Throwable {
         String name = "writer_name";
         rule.runOnUiThread(() -> activity.setFileWriterName(name));
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
-        onView(withText(name))
-                .check(matches(isDisplayed()));
+        assertThat(activity.tvFileWriterName.getText(), is(equalTo(name)));
     }
 
     @Test

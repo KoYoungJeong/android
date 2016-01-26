@@ -83,7 +83,9 @@ public class TopicCreatePresenterImplTest {
         // then
         verify(mockView, times(1)).dismissProgressWheel();
         verify(mockView, times(1)).showProgressWheel();
-        verify(mockView, times(1)).createTopicSuccess(eq(teamId[0]), eq(topicId[0]), eq(topicName), eq(true));
+        if (teamId[0] > 0) {
+            verify(mockView, times(1)).createTopicSuccess(eq(teamId[0]), eq(topicId[0]), eq(topicName), eq(true));
+        }
 
         // restore
         RequestApiManager.getInstance().deleteTopicByChannelApi(topicId[0], new ReqDeleteTopic(teamId[0]));

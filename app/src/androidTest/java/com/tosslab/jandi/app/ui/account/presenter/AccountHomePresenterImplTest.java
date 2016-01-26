@@ -199,7 +199,7 @@ public class AccountHomePresenterImplTest {
         // Then
         Awaitility.await().until(() -> finish[0]);
         Mockito.verify(viewMock, Mockito.times(1)).dismissProgressWheel();
-        Mockito.verify(viewMock, Mockito.times(1)).moveSelectedTeam(Mockito.eq(true));
+        Mockito.verify(viewMock, Mockito.times(1)).showProgressWheel();
 
     }
 
