@@ -3,6 +3,9 @@ package com.tosslab.jandi.app.utils.file;
 import android.os.Environment;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
+
+import java.io.File;
 import java.text.DecimalFormat;
 
 /**
@@ -14,11 +17,34 @@ public class FileUtil {
      * @return /sdcard/DOWNLOAD/Jandi
      */
     public static String getDownloadPath() {
-        return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS + "/Jandi";
+        String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS + "/Jandi";
+        File dir = new File(dirPath);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        return dirPath;
     }
 
     public static String getTempDownloadPath() {
         return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS + "/Jandi/temp";
+    }
+
+    public static String getCacheDir() {
+        File cacheDir = JandiApplication.getContext().getCacheDir();
+        if (!cacheDir.exists()) {
+            cacheDir.mkdirs();
+        }
+        return cacheDir.getAbsolutePath();
+    }
+
+    public static String getCacheDir(String childPath) {
+        String cacheDir = getCacheDir();
+        String childDir = cacheDir + "/" + childPath;
+        File child = new File(childDir);
+        if (!child.exists()) {
+            child.mkdirs();
+        }
+        return childDir;
     }
 
     public static String fileSizeCalculation(long fileSize) {

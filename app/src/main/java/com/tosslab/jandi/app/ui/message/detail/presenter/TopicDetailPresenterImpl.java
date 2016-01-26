@@ -235,7 +235,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Background
-    void updateTopicPushSubscribe(Context context, long teamId, long entityId, boolean pushOn, boolean showGlobalPushAlert) {
+    void updateTopicPushSubscribe(long teamId, long entityId, boolean pushOn, boolean showGlobalPushAlert) {
         if (!showGlobalPushAlert) {
             view.showProgressWheel();
         }
@@ -250,7 +250,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             view.dismissProgressWheel();
 
             if (e.getCause() instanceof ConnectionNotFoundException) {
-                view.showFailToast(context.getString(R.string.err_network));
+                view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
             }
 
         } catch (Exception e) {
@@ -305,13 +305,13 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
-    public void onPushClick(Context context, long teamId, long entityId, boolean checked) {
+    public void onPushClick(long teamId, long entityId, boolean checked) {
         boolean onGlobalPush = topicDetailModel.isOnGlobalPush();
         if (checked && !onGlobalPush) {
             view.showGlobalPushSetupDialog();
         }
 
-        updateTopicPushSubscribe(context, teamId, entityId, checked, !onGlobalPush);
+        updateTopicPushSubscribe(teamId, entityId, checked, !onGlobalPush);
     }
 
 }
