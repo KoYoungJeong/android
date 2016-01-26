@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.settings.viewmodel;
 
 import com.tosslab.jandi.app.ui.settings.main.SettingsActivity;
+import com.tosslab.jandi.app.ui.settings.main.view.SettingsFragment;
 
 import org.junit.Before;
 import org.junit.Ignore;

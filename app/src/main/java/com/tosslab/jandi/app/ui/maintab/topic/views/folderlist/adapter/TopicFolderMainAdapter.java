@@ -1,9 +1,10 @@
-package com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.adapter;
+package com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -14,16 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by tee on 15. 8. 30..
+ * Created by tee on 16. 1. 26..
  */
-public class TopicFolderChooseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class TopicFolderMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public static final int TYPE_REMOVE_FROM_FOLDER = 1;
     public static final int TYPE_MAKE_NEW_FOLDER = 2;
     public static final int TYPE_FOLDER_LIST = 0;
+    protected OnRecyclerItemWithTypeCLickListener onRecyclerItemClickListener;
     List<ResFolder> folders = null;
     private int folderId = -1;
-    private OnRecyclerItemWithTypeCLickListener onRecyclerItemClickListener;
 
     public List<ResFolder> getFolders() {
         if (folders != null) {
@@ -55,25 +56,17 @@ public class TopicFolderChooseAdapter extends RecyclerView.Adapter<RecyclerView.
             return new ExtraItemViewHolder(LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_folder_choose_new_folder, parent, false));
         }
-
-        return new FolderChooseAdapterViewHolder(LayoutInflater.from(parent.getContext())
+        return new FolderAdapterViewHolder(LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_choose_folder, parent, false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
         if (holder.getItemViewType() == TYPE_FOLDER_LIST) {
-            FolderChooseAdapterViewHolder viewHolder = (FolderChooseAdapterViewHolder) holder;
+            holder.itemView.setBackgroundResource(R.color.white);
+            FolderAdapterViewHolder viewHolder = (FolderAdapterViewHolder) holder;
             viewHolder.tvChooseFolder.setText(getFolders().get(position).name);
         }
-
-        holder.itemView.setOnClickListener(view -> {
-            if (onRecyclerItemClickListener != null) {
-                onRecyclerItemClickListener.onItemClick(holder.itemView, TopicFolderChooseAdapter.this,
-                        position, holder.getItemViewType());
-            }
-        });
     }
 
     @Override
@@ -97,20 +90,24 @@ public class TopicFolderChooseAdapter extends RecyclerView.Adapter<RecyclerView.
         return folders.get(position);
     }
 
-    public void setOnRecyclerItemClickListener(OnRecyclerItemWithTypeCLickListener onRecyclerItemClickListener) {
-        this.onRecyclerItemClickListener = onRecyclerItemClickListener;
-    }
-
     public void setFolderId(int folderId) {
         this.folderId = folderId;
     }
 
-    static class FolderChooseAdapterViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvChooseFolder;
+    public void setOnRecyclerItemClickListener(OnRecyclerItemWithTypeCLickListener onRecyclerItemClickListener) {
+        this.onRecyclerItemClickListener = onRecyclerItemClickListener;
+    }
 
-        public FolderChooseAdapterViewHolder(View itemView) {
+    static class FolderAdapterViewHolder extends RecyclerView.ViewHolder {
+        public TextView tvChooseFolder;
+        public Button btRemoveFolder;
+        public Button btRenameFolder;
+
+        public FolderAdapterViewHolder(View itemView) {
             super(itemView);
             tvChooseFolder = (TextView) itemView.findViewById(R.id.tv_choose_folder);
+            btRemoveFolder = (Button) itemView.findViewById(R.id.bt_delete_folder);
+            btRenameFolder = (Button) itemView.findViewById(R.id.bt_rename_folder);
         }
     }
 
@@ -119,4 +116,5 @@ public class TopicFolderChooseAdapter extends RecyclerView.Adapter<RecyclerView.
             super(itemView);
         }
     }
+
 }

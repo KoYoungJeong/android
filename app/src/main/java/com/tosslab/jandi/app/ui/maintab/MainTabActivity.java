@@ -30,7 +30,6 @@ import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
-import com.tosslab.jandi.app.libraries.floatingactionmenu.FloatingActionMenu;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -51,7 +50,6 @@ import com.tosslab.jandi.app.ui.MixpanelAnalytics;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
-import com.tosslab.jandi.app.ui.maintab.topic.viewmodel.FloatingActionButtonViewModel;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -68,6 +66,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
+import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -124,8 +123,6 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     @AfterViews
     void initView() {
-        FloatingActionButtonViewModel.setFloatingActionMenu(floatingActionMenu);
-
         showDialogIfNotLastestVersion();
         ParseUpdateUtil.addChannelOnServer();
 
@@ -179,22 +176,18 @@ public class MainTabActivity extends BaseAppCompatActivity {
                 trackScreenView(position);
                 switch (position) {
                     case 0:
-                        FloatingActionButtonViewModel.setFAButtonController();
-                        FloatingActionButtonViewModel.setFABMenuVisibility(true);
+                        setFABMenuVisibility(true);
                         break;
                     case 1:
-                        FloatingActionButtonViewModel.releaseFAButtonController();
-                        FloatingActionButtonViewModel.setFABMenuVisibility(false);
+                        setFABMenuVisibility(false);
                         TutorialCoachMarkUtil.showCoachMarkDirectMessageListIfNotShown(MainTabActivity.this);
                         break;
                     case 2:
-                        FloatingActionButtonViewModel.releaseFAButtonController();
-                        FloatingActionButtonViewModel.setFABMenuVisibility(false);
+                        setFABMenuVisibility(false);
                         TutorialCoachMarkUtil.showCoachMarkFileListIfNotShown(MainTabActivity.this);
                         break;
                     case 3:
-                        FloatingActionButtonViewModel.releaseFAButtonController();
-                        FloatingActionButtonViewModel.setFABMenuVisibility(false);
+                        setFABMenuVisibility(false);
                         TutorialCoachMarkUtil.showCoachMarkMoreIfNotShown(MainTabActivity.this);
                         break;
                 }
@@ -219,8 +212,6 @@ public class MainTabActivity extends BaseAppCompatActivity {
         if (NetworkCheckUtil.isConnected()) {
             getEntities();
         }
-
-
     }
 
     private void updateChatBadge() {
@@ -584,6 +575,24 @@ public class MainTabActivity extends BaseAppCompatActivity {
             // should never happen
             return 0;
         }
+    }
+
+    public void setFABMenuVisibility(boolean visibility) {
+        if (floatingActionMenu == null) {
+            return;
+        }
+        if (visibility) {
+            floatingActionMenu.setVisibility(View.VISIBLE);
+        } else {
+            floatingActionMenu.setVisibility(View.INVISIBLE);
+            if (floatingActionMenu.isOpened()) {
+                floatingActionMenu.dismissMenuItems();
+            }
+        }
+    }
+
+    public FloatingActionMenu getFloatingActionMenu() {
+        return floatingActionMenu;
     }
 
 

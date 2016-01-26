@@ -3,9 +3,9 @@ package com.tosslab.jandi.app.ui.maintab.topic.model;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.libraries.advancerecyclerview.provider.AbstractExpandableDataProvider;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.libraries.advancerecyclerview.provider.AbstractExpandableDataProvider;
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;

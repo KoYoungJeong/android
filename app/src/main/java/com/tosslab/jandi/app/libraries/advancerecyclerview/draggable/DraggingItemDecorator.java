@@ -81,7 +81,7 @@ class DraggingItemDecorator extends BaseDraggableItemDecorator {
         mTranslationTopLimit = mRecyclerView.getPaddingTop();
         mRecyclerViewPaddingLeft = mRecyclerView.getPaddingLeft();
 
-        // hide
+        // close
         itemView.setVisibility(View.INVISIBLE);
 
         update(e);

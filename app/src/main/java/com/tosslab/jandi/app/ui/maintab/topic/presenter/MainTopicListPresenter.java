@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.topic.presenter;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 
-import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
@@ -19,8 +18,8 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
+import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -45,6 +44,9 @@ public class MainTopicListPresenter {
 
     @Bean(MainTopicModel.class)
     MainTopicModel mainTopicModel;
+
+    @Bean
+    TopicFolderSettingModel topicFolderChooseModel;
 
     View view;
 
@@ -218,6 +220,12 @@ public class MainTopicListPresenter {
     public List<FolderExpand> onGetFolderExpands() {
         TopicFolderRepository repository = TopicFolderRepository.getRepository();
         return repository.getFolderExpands();
+    }
+
+    @Background
+    public void createNewFolder(String title) {
+        topicFolderChooseModel.createFolder(title);
+        view.notifyDatasetChanged();
     }
 
     public interface View {

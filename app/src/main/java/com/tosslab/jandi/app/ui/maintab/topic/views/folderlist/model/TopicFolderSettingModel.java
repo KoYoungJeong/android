@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.model;
+package com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.model;
 
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -19,7 +19,7 @@ import retrofit.RetrofitError;
  */
 
 @EBean
-public class TopicFolderChooseModel {
+public class TopicFolderSettingModel {
 
     @Bean
     EntityClientManager entityClientManager;

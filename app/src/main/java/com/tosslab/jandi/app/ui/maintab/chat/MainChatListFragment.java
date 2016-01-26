@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
+import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -84,7 +85,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         chatListView.setEmptyView(emptyView);
         chatListView.setAdapter(mainChatListAdapter);
 
-//        FAButtonUtil.setFAButtonController(chatListView, btnFAB);
+        FAButtonUtil.setFAButtonController(chatListView, btnFAB);
 
         mainChatListPresenter.onInitChatList(getActivity(), selectedEntity);
 

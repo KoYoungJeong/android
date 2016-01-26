@@ -1,11 +1,12 @@
-package com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.presenter;
+package com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.presenter;
 
 import android.support.v7.widget.RecyclerView;
 
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.models.ResFolder;
-import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.adapter.TopicFolderChooseAdapter;
-import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.model.TopicFolderChooseModel;
+import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter.TopicFolderMainAdapter;
+import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter.TopicFolderSettingAdapter;
+import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -24,10 +25,13 @@ import retrofit.RetrofitError;
  */
 
 @EBean
-public class TopicFolderChoosePresenter {
+public class TopicFolderSettingPresenter {
 
     @Bean
-    TopicFolderChooseModel topicFolderChooseModel;
+    TopicFolderSettingModel topicFolderChooseModel;
+
+    @Bean
+    com.tosslab.jandi.app.ui.maintab.topic.dialog.model.TopicFolderSettingModel topicFolderSettingModel;
 
     View view;
 
@@ -70,7 +74,6 @@ public class TopicFolderChoosePresenter {
             view.showAlreadyHasFolderToast();
             e.printStackTrace();
         }
-
     }
 
     @Background
@@ -94,28 +97,49 @@ public class TopicFolderChoosePresenter {
     }
 
     public void onItemClick(RecyclerView.Adapter adapter, int position, int type, int folderId, int topicId) {
-        TopicFolderChooseAdapter topicFolderChooseAdapter = (TopicFolderChooseAdapter) adapter;
+        TopicFolderMainAdapter topicFolderAdapter = (TopicFolderMainAdapter) adapter;
         switch (type) {
-            case TopicFolderChooseAdapter.TYPE_FOLDER_LIST:
-                int newfolderId = topicFolderChooseAdapter.getItemById(position).id;
+            case TopicFolderSettingAdapter.TYPE_FOLDER_LIST:
+                int newfolderId = topicFolderAdapter.getItemById(position).id;
                 if (newfolderId != folderId) {
                     onAddTopicIntoFolder(newfolderId, topicId);
-                    String name = ((TopicFolderChooseAdapter) adapter).getFolders().get(position).name;
+                    String name = ((TopicFolderMainAdapter) adapter).getFolders().get(position).name;
                     view.showMoveToFolderToast(name);
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.ChooseFolder);
                 } else {
                     view.finishAcitivty();
                 }
                 break;
-            case TopicFolderChooseAdapter.TYPE_REMOVE_FROM_FOLDER:
+            case TopicFolderSettingAdapter.TYPE_REMOVE_FROM_FOLDER:
                 onDeleteItemFromFolder(folderId, topicId);
                 view.showRemoveFromFolderToast();
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.RemoveFromThisFolder);
                 break;
-            case TopicFolderChooseAdapter.TYPE_MAKE_NEW_FOLDER:
+            case TopicFolderSettingAdapter.TYPE_MAKE_NEW_FOLDER:
                 view.showCreateNewFolderDialog();
                 break;
         }
+    }
+
+    // 순서 및 이름 변경
+    @Background
+    public void modifyNameFolder(int folderId, String name, int seq) {
+        topicFolderSettingModel.modifyFolder(folderId, name, seq);
+        onRefreshFolders(folderId);
+
+    }
+
+    // 순서 및 이름 변경
+    @Background
+    public void modifySeqFolder(int folderId, int seq) {
+        topicFolderSettingModel.modifySeqFolder(folderId, seq);
+        onRefreshFolders(folderId);
+    }
+
+    @Background
+    public void removeFolder(int folderId) {
+        topicFolderSettingModel.deleteTopicFolder(folderId);
+        onRefreshFolders(folderId);
     }
 
     public interface View {
@@ -128,8 +152,6 @@ public class TopicFolderChoosePresenter {
         void showMoveToFolderToast(String folderName);
 
         void showRemoveFromFolderToast();
-
-        void setCurrentTopicFolderName(String currentItemFolderName);
 
         void showAlreadyHasFolderToast();
     }
