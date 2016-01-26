@@ -19,7 +19,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.ui.share.MainShareActivity;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.file.FileUtil;
@@ -42,7 +41,7 @@ import retrofit.RetrofitError;
  * Created by Steve SeongUg Jung on 15. 2. 14..
  */
 @EBean
-public class SharePresenter {
+public class ImageSharePresenter {
 
     @Bean
     ShareModel shareModel;
@@ -56,8 +55,6 @@ public class SharePresenter {
     private String roomName;
     private boolean isPublic;
     private int roomType;
-
-    private int mode;
 
     public void setView(View view) {
         this.view = view;
@@ -81,20 +78,18 @@ public class SharePresenter {
             return;
         }
 
-        if (mode == MainShareActivity.MODE_SHARE_FILE) {
-            String imagePath = shareModel.getImagePath(uriString);
-            if (TextUtils.isEmpty(imagePath)) {
-                view.finishOnUiThread();
-                return;
-            }
-            if (imagePath.startsWith("https://") || imagePath.startsWith("http://")) {
-                String downloadDir = FileUtil.getDownloadPath();
-                String downloadName = GoogleImagePickerUtil.getWebImageName();
-                downloadImage(imagePath, downloadDir, downloadName);
-            } else {
-                this.imageFile = new File(imagePath);
-                view.bindImage(this.imageFile);
-            }
+        String imagePath = shareModel.getImagePath(uriString);
+        if (TextUtils.isEmpty(imagePath)) {
+            view.finishOnUiThread();
+            return;
+        }
+        if (imagePath.startsWith("https://") || imagePath.startsWith("http://")) {
+            String downloadDir = FileUtil.getDownloadPath();
+            String downloadName = GoogleImagePickerUtil.getWebImageName();
+            downloadImage(imagePath, downloadDir, downloadName);
+        } else {
+            this.imageFile = new File(imagePath);
+            view.bindImage(this.imageFile);
         }
 
         initEntityData(teamId, teamName, true, -1, null, -1);
@@ -118,41 +113,50 @@ public class SharePresenter {
             }
         }
 
-        if (isDefaultTopic) {
-            ResTeamDetailInfo.InviteTeam team;
-            ResRoomInfo roomInfo;
-            try {
-                team = shareModel.getTeamInfoById(teamId);
-                int defaultTopicId =
-                        Integer.valueOf(team.getTeamDefaultChannelId());
-                roomInfo = shareModel.getEntityById(teamId, defaultTopicId);
-            } catch (Exception e) {
-                view.moveIntro();
-                return;
-            }
-            this.roomId = roomInfo.getId();
-            this.roomName = roomInfo.getName();
+        ResTeamDetailInfo.InviteTeam team;
+        ResRoomInfo roomInfo;
+        try {
+            team = shareModel.getTeamInfoById(teamId);
+            int defaultTopicId =
+                    Integer.valueOf(team.getTeamDefaultChannelId());
+            roomInfo = shareModel.getEntityById(teamId, defaultTopicId);
+        } catch (Exception e) {
+            view.moveIntro();
+            return;
+        }
+        this.roomId = roomInfo.getId();
+        this.roomName = roomInfo.getName();
 
-            if (roomInfo.getType().equals("privateGroup")) {
-                this.roomType = JandiConstants.TYPE_PRIVATE_TOPIC;
-            } else if (roomInfo.getType().equals("channel")) {
-                this.roomType = JandiConstants.TYPE_PUBLIC_TOPIC;
-                isPublic = true;
-            } else {
-                this.roomType = JandiConstants.TYPE_DIRECT_MESSAGE;
-            }
+        if (roomInfo.getType().equals("privateGroup")) {
+            this.roomType = JandiConstants.TYPE_PRIVATE_TOPIC;
+        } else if (roomInfo.getType().equals("channel")) {
+            this.roomType = JandiConstants.TYPE_PUBLIC_TOPIC;
+            isPublic = true;
         } else {
-            this.roomId = roomId;
-            this.roomName = roomName;
-            this.roomType = roomType;
-            if (roomType == JandiConstants.TYPE_PUBLIC_TOPIC) {
-                isPublic = true;
-            }
+            this.roomType = JandiConstants.TYPE_DIRECT_MESSAGE;
         }
 
         view.setTeamName(this.teamName);
         view.setRoomName(this.roomName);
         view.setMentionInfo(teamId, this.roomId, this.roomType);
+
+    }
+
+    @Background
+    public void setEntityData(int roomId, String roomName, int roomType) {
+
+        this.roomId = roomId;
+        this.roomName = roomName;
+        this.roomType = roomType;
+        if (roomType == JandiConstants.TYPE_PUBLIC_TOPIC) {
+            isPublic = true;
+        } else {
+            isPublic = false;
+        }
+
+        view.setTeamName(this.teamName);
+        view.setRoomName(this.roomName);
+        view.setMentionInfo(this.teamId, this.roomId, this.roomType);
 
     }
 
@@ -246,23 +250,6 @@ public class SharePresenter {
         }
     }
 
-    @Background
-    public void sendMessage(String messageText, List<MentionObject> mention) {
-        view.showProgressBar();
-        try {
-            shareModel.sendMessage(teamId, roomId, roomType, messageText, mention);
-            view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_share_succeed, view.getComment()));
-            view.finishOnUiThread();
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
-        } finally {
-            view.dismissProgressBar();
-            setupSelectedTeam(teamId);
-            view.moveEntity(teamId, roomId, roomType);
-        }
-    }
-
     public File getImageFile() {
         return imageFile;
     }
@@ -289,14 +276,6 @@ public class SharePresenter {
 
     public void setRoomId(int entityId) {
         this.roomId = entityId;
-    }
-
-    public int getMode() {
-        return mode;
-    }
-
-    public void setMode(int mode) {
-        this.mode = mode;
     }
 
     public interface View {

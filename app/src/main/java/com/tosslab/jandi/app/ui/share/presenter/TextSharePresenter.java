@@ -1,0 +1,183 @@
+package com.tosslab.jandi.app.ui.share.presenter;
+
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.ui.share.model.ShareModel;
+import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
+import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
+
+import java.util.List;
+
+import retrofit.RetrofitError;
+
+@EBean
+public class TextSharePresenter {
+
+    @Bean
+    ShareModel shareModel;
+    private View view;
+    private int roomId;
+    private int teamId;
+    private ShareSelectModel shareSelectModel;
+
+    public void initViews() {
+        if (!NetworkCheckUtil.isConnected()) {
+            view.showFailToast(JandiApplication.getContext().getResources().getString(R.string.err_network));
+            view.finishOnUiThread();
+            return;
+        }
+        EntityManager entityManager = EntityManager.getInstance();
+        initEntityData(entityManager.getTeamId());
+    }
+
+    @Background
+    public void initEntityData(int teamId) {
+        this.teamId = teamId;
+
+        if (!shareModel.hasLeftSideMenu(teamId)) {
+            try {
+                ResLeftSideMenu leftSideMenu = shareModel.getLeftSideMenu(teamId);
+                shareModel.updateLeftSideMenu(leftSideMenu);
+            } catch (Exception e) {
+                e.printStackTrace();
+                view.moveIntro();
+                return;
+            }
+        }
+
+        shareSelectModel = shareModel.getShareSelectModel(teamId);
+
+        String teamName = shareSelectModel.getTeamName();
+        this.roomId = shareSelectModel.getDefaultTopicId();
+        String roomName = shareSelectModel.getEntityById(roomId).getName();
+        int roomType = JandiConstants.TYPE_PUBLIC_TOPIC;
+
+        view.setTeamName(teamName);
+        view.setRoomName(roomName);
+        view.setMentionInfo(teamId, roomId, roomType);
+
+    }
+
+    private int getRoomType(FormattedEntity entity) {
+
+        if (entity.isPrivateGroup()) {
+            return JandiConstants.TYPE_PRIVATE_TOPIC;
+        } else if (entity.isPublicTopic()) {
+            return JandiConstants.TYPE_PUBLIC_TOPIC;
+        } else {
+            return JandiConstants.TYPE_DIRECT_MESSAGE;
+        }
+    }
+
+    public void setEntity(int roomId) {
+        this.roomId = roomId;
+        FormattedEntity entity = shareSelectModel.getEntityById(roomId);
+        int roomType = getRoomType(entity);
+
+        view.setTeamName(shareSelectModel.getTeamName());
+        view.setRoomName(entity.getName());
+        view.setMentionInfo(teamId, roomId, roomType);
+
+
+    }
+
+    public void setView(View view) {
+        this.view = view;
+    }
+
+    public int getTeamId() {
+        return teamId;
+    }
+
+    @Background
+    public void sendMessage(String messageText, List<MentionObject> mentions) {
+        view.showProgressBar();
+        int roomType = getRoomType(shareSelectModel.getEntityById(roomId));
+        try {
+            shareModel.sendMessage(teamId, roomId, roomType, messageText, mentions);
+            view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_share_succeed, messageText));
+            view.finishOnUiThread();
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
+        } finally {
+            view.dismissProgressBar();
+            setupSelectedTeam(teamId);
+            view.moveEntity(teamId, roomId, roomType);
+        }
+    }
+
+    private boolean setupSelectedTeam(int teamId) {
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
+        if ((selectedTeamInfo == null || selectedTeamInfo.getTeamId() != teamId)) {
+            AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
+            return getEntityInfo();
+        } else {
+            try {
+                EntityManager.getInstance();
+                return true;
+            } catch (Exception e) {
+                return getEntityInfo();
+            }
+        }
+    }
+
+    private boolean getEntityInfo() {
+        try {
+            EntityClientManager entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
+            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
+            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
+            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
+            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
+            badgeCountRepository.upsertBadgeCount(EntityManager.getInstance().getTeamId(), totalUnreadCount);
+            BadgeUtils.setBadge(JandiApplication.getContext(), totalUnreadCount);
+            EntityManager.getInstance().refreshEntity();
+            return true;
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public interface View {
+
+        void showFailToast(String message);
+
+        void finishOnUiThread();
+
+        void moveIntro();
+
+        void setTeamName(String teamName);
+
+        void setRoomName(String roomName);
+
+        void setMentionInfo(int teamId, int roomId, int roomType);
+
+        void showProgressBar();
+
+        void showSuccessToast(String message);
+
+        void dismissProgressBar();
+
+        void moveEntity(int teamId, int roomId, int roomType);
+    }
+}

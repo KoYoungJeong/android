@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,7 +18,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
+import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
@@ -30,7 +29,7 @@ import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.share.model.ScrollViewHelper;
-import com.tosslab.jandi.app.ui.share.presenter.SharePresenter;
+import com.tosslab.jandi.app.ui.share.presenter.ImageSharePresenter;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -65,7 +64,7 @@ import rx.android.schedulers.AndroidSchedulers;
  * Created by Steve SeongUg Jung on 15. 2. 13..
  */
 @EFragment(R.layout.fragment_share_image)
-public class MainShareFragment extends Fragment implements SharePresenter.View {
+public class ImageShareFragment extends Fragment implements ImageSharePresenter.View, MainShareActivity.Share {
 
     @FragmentArg
     String uriString;
@@ -75,9 +74,6 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
 
     @FragmentArg
     String text;
-
-    @FragmentArg
-    int mode;
 
     @ViewById(R.id.iv_share_image)
     SimpleDraweeView ivShareImage;
@@ -113,7 +109,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     ScrollView vgRoot;
 
     @Bean
-    SharePresenter sharePresenter;
+    ImageSharePresenter imageSharePresenter;
 
     MentionControlViewModel mentionControlViewModel;
 
@@ -121,30 +117,13 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
 
     @AfterInject
     void initObject() {
-        sharePresenter.setMode(mode);
-        sharePresenter.setView(this);
-        sharePresenter.setUriString(uriString);
+        imageSharePresenter.setView(this);
+        imageSharePresenter.setUriString(uriString);
         EventBus.getDefault().register(this);
     }
 
     @AfterViews
     void initViews() {
-        if (mode == MainShareActivity.MODE_SHARE_TEXT) {
-            vgViewer.setVisibility(View.GONE);
-            tvTitle.setVisibility(View.GONE);
-            StringBuffer buffer = new StringBuffer();
-            if (!TextUtils.isEmpty(subject)) {
-                buffer.append(subject).append("\n");
-            }
-
-            if (!TextUtils.isEmpty(text)) {
-                buffer.append(text);
-            }
-
-            etComment.setText(buffer.toString());
-            etComment.setSelection(etComment.getText().length());
-            etComment.setMaxLines(6);
-        }
 
         TextCutter.with(etComment)
                 .listener((s) -> {
@@ -154,7 +133,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
 
         setOnScrollMode();
 
-        sharePresenter.initView();
+        imageSharePresenter.initView();
     }
 
     private void setOnScrollMode() {
@@ -162,7 +141,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
         scrollViewHelper.initTouchMode();
     }
 
-    private String getMentionType(int mode) {
+    private String getMentionType() {
 //        return mode == MainShareActivity.MODE_SHARE_TEXT ? MentionControlViewModel.MENTION_TYPE_MESSAGE : MentionControlViewModel.MENTION_TYPE_FILE_COMMENT;
         return MentionControlViewModel.MENTION_TYPE_FILE_COMMENT;
     }
@@ -275,10 +254,6 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
         return tvTitle.getText().toString();
     }
 
-    public String getCommentText() {
-        return etComment.getText().toString();
-    }
-
     @UiThread
     @Override
     public void moveEntity(int teamId, int entityId, int entityType) {
@@ -308,6 +283,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
         tvRoomName.setText(name);
     }
 
+    @Override
     public void startShare() {
 
         List<MentionObject> mentions;
@@ -322,13 +298,9 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
         }
 
 
-        if (mode == MainShareActivity.MODE_SHARE_FILE) {
-            File imageFile = sharePresenter.getImageFile();
-            ProgressDialog uploadProgress = getUploadProgress(imageFile.getParentFile().getAbsolutePath(), imageFile.getName());
-            sharePresenter.uploadFile(imageFile, getTitleText(), messageText, uploadProgress, mentions);
-        } else if (mode == MainShareActivity.MODE_SHARE_TEXT) {
-            sharePresenter.sendMessage(messageText, mentions);
-        }
+        File imageFile = imageSharePresenter.getImageFile();
+        ProgressDialog uploadProgress = getUploadProgress(imageFile.getParentFile().getAbsolutePath(), imageFile.getName());
+        imageSharePresenter.uploadFile(imageFile, getTitleText(), messageText, uploadProgress, mentions);
     }
 
     @Click(R.id.vg_team)
@@ -346,7 +318,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
         LogUtil.e("room");
         ShareSelectRoomActivity_
                 .intent(this)
-                .extra("teamId", sharePresenter.getTeamId())
+                .extra("teamId", imageSharePresenter.getTeamId())
                 .start();
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TopicSelect);
     }
@@ -359,16 +331,14 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     public void onEvent(ShareSelectTeamEvent event) {
         int teamId = event.getTeamId();
         String teamName = event.getTeamName();
-        sharePresenter.initEntityData(teamId, teamName, true, -1, null, -1);
+        imageSharePresenter.initEntityData(teamId, teamName, true, -1, null, -1);
     }
 
     public void onEvent(ShareSelectRoomEvent event) {
         int roomId = event.getRoomId();
         String roomName = event.getRoomName();
         int roomType = event.getRoomType();
-        sharePresenter.initEntityData(
-                sharePresenter.getTeamId(), sharePresenter.getTeamName(),
-                false, roomId, roomName, roomType);
+        imageSharePresenter.setEntityData(roomId, roomName, roomType);
     }
 
     @Override
@@ -390,7 +360,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
             mentionControlViewModel = null;
         }
 
-        mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(), etComment, teamId, Arrays.asList(roomId), getMentionType(mode));
+        mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(), etComment, teamId, Arrays.asList(roomId), getMentionType());
     }
 
     @UiThread
@@ -412,7 +382,7 @@ public class MainShareFragment extends Fragment implements SharePresenter.View {
     }
 
 
-    public void onEvent(SelectedMemberInfoForMensionEvent event) {
+    public void onEvent(SelectedMemberInfoForMentionEvent event) {
         if (mentionControlViewModel != null) {
             SearchedItemVO searchedItemVO = new SearchedItemVO();
             searchedItemVO.setId(event.getId());

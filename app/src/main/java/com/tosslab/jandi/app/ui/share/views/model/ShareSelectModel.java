@@ -368,6 +368,14 @@ public class ShareSelectModel {
         return AccountRepository.getRepository().getSelectedTeamInfo();
     }
 
+    public String getTeamName() {
+        return currentTeam.name;
+    }
+
+    public int getDefaultTopicId() {
+        return currentTeam.t_defaultChannelId;
+    }
+
     public FormattedEntity getEntityById(int entityId) {
 
         return Observable.just(mStarredJoinedTopics, mJoinedTopics, mStarredGroups, mGroups, mStarredUsers, mUsers, mUnjoinedTopics)

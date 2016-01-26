@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.builder.Builders;
 import com.koushikdutta.ion.future.ResponseFuture;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -22,6 +23,8 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
+import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel_;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
@@ -136,5 +139,12 @@ public class ShareModel {
 
     public void updateLeftSideMenu(ResLeftSideMenu leftSideMenu) {
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+    }
+
+    public ShareSelectModel getShareSelectModel(int teamId) {
+        ResLeftSideMenu leftSideMenu = LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
+        ShareSelectModel shareSelectModel = ShareSelectModel_.getInstance_(JandiApplication.getContext());
+        shareSelectModel.initFormattedEntities(leftSideMenu);
+        return shareSelectModel;
     }
 }

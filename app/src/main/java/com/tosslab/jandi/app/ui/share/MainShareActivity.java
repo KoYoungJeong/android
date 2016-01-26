@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -33,14 +34,12 @@ import org.androidannotations.annotations.OptionsMenu;
 @OptionsMenu(R.menu.share_menu)
 public class MainShareActivity extends BaseAppCompatActivity {
 
-    public static final int MODE_SHARE_TEXT = 1;
-    public static final int MODE_SHARE_FILE = 2;
     public static final int REQ_STORAGE_PERMISSION = 101;
 
     @Bean
     MainShareModel mainShareModel;
 
-    private MainShareFragment fragment;
+    private Share share;
 
     @AfterViews
     void initViews() {
@@ -93,26 +92,35 @@ public class MainShareActivity extends BaseAppCompatActivity {
     }
 
     private void setUpFragment(Intent intent, IntentType intentType) {
-        MainShareFragment_.FragmentBuilder_ builder = MainShareFragment_.builder();
         String fragmentTag = "share";
 
-        if (intentType == IntentType.Text) {
-            builder.subject(mainShareModel.handleSendSubject(intent));
-            builder.text(mainShareModel.handleSendText(intent));
-            builder.mode(MODE_SHARE_TEXT);
-            fragmentTag += "_text";
-        } else {
-            builder.mode(MODE_SHARE_FILE);
-            builder.uriString(mainShareModel.handleSendImage(intent).toString());
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(fragmentTag);
+
+        if (fragment != null) {
+            return;
         }
 
-        Fragment addedFragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
-        if (addedFragment == null) {
-            fragment = builder.build();
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.vg_share_container, this.fragment, fragmentTag)
-                    .commit();
+        Share share;
+        if (intentType == IntentType.Text) {
+            TextShareFragment textShareFragment = TextShareFragment_.builder()
+                    .subject(mainShareModel.handleSendSubject(intent))
+                    .text(mainShareModel.handleSendText(intent)).build();
+            fragment = textShareFragment;
+            share = textShareFragment;
+
+        } else {
+            ImageShareFragment imageShareFragment = ImageShareFragment_.builder()
+                    .uriString(mainShareModel.handleSendImage(intent).toString())
+                    .build();
+            fragment = imageShareFragment;
+            share = imageShareFragment;
         }
+
+        this.share = share;
+        fragmentManager.beginTransaction()
+                .add(R.id.vg_share_container, fragment, fragmentTag)
+                .commit();
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SharetoJandi);
     }
@@ -136,7 +144,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
                 finish();
                 return true;
             case R.id.action_share:
-                fragment.startShare();
+                share.startShare();
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.Send);
                 return true;
         }
@@ -158,6 +166,10 @@ public class MainShareActivity extends BaseAppCompatActivity {
 
     public enum IntentType {
         Image, Text, Etc
+    }
+
+    public interface Share {
+        void startShare();
     }
 
 }
