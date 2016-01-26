@@ -21,7 +21,8 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.ui.share.presenter.TextSharePresenter;
+import com.tosslab.jandi.app.ui.share.presenter.text.TextSharePresenter;
+import com.tosslab.jandi.app.ui.share.presenter.text.TextSharePresenterImpl;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -70,15 +71,16 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     @ViewById(R.id.tv_team_name)
     TextView tvTeamName;
 
-    @Bean
-    TextSharePresenter textSharePresenter;
+    @Bean(TextSharePresenterImpl.class)
+    TextSharePresenter textSharePresenterImpl;
 
     MentionControlViewModel mentionControlViewModel;
 
     @AfterInject
     void initObject() {
-        textSharePresenter.setView(this);
+        textSharePresenterImpl.setView(this);
     }
+
     @AfterViews
     void initViews() {
         StringBuffer buffer = new StringBuffer();
@@ -99,7 +101,7 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
                     SuperToast.cancelAllSuperToasts();
                     ColoredToast.showError(R.string.jandi_exceeded_max_text_length);
                 });
-        textSharePresenter.initViews();
+        textSharePresenterImpl.initViews();
     }
 
     @Override
@@ -132,7 +134,6 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     }
 
 
-
     @Click(R.id.vg_team)
     void clickSelectTeam() {
         LogUtil.e("team");
@@ -148,7 +149,7 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
         LogUtil.e("room");
         ShareSelectRoomActivity_
                 .intent(this)
-                .extra("teamId", textSharePresenter.getTeamId())
+                .extra("teamId", textSharePresenterImpl.getTeamId())
                 .start();
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TopicSelect);
     }
@@ -160,12 +161,12 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
 
     public void onEvent(ShareSelectTeamEvent event) {
         int teamId = event.getTeamId();
-        textSharePresenter.initEntityData(teamId);
+        textSharePresenterImpl.initEntityData(teamId);
     }
 
     public void onEvent(ShareSelectRoomEvent event) {
         int roomId = event.getRoomId();
-        textSharePresenter.setEntity(roomId);
+        textSharePresenterImpl.setEntity(roomId);
     }
 
 
@@ -182,7 +183,7 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
             messageText = etComment.getText().toString();
         }
 
-        textSharePresenter.sendMessage(messageText, mentions);
+        textSharePresenterImpl.sendMessage(messageText, mentions);
     }
 
     @Override

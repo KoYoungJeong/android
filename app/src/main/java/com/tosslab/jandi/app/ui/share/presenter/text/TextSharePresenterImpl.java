@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.share.presenter;
+package com.tosslab.jandi.app.ui.share.presenter.text;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -27,7 +27,7 @@ import java.util.List;
 import retrofit.RetrofitError;
 
 @EBean
-public class TextSharePresenter {
+public class TextSharePresenterImpl implements TextSharePresenter {
 
     @Bean
     ShareModel shareModel;
@@ -36,6 +36,7 @@ public class TextSharePresenter {
     private int teamId;
     private ShareSelectModel shareSelectModel;
 
+    @Override
     public void initViews() {
         if (!NetworkCheckUtil.isConnected()) {
             view.showFailToast(JandiApplication.getContext().getResources().getString(R.string.err_network));
@@ -46,6 +47,7 @@ public class TextSharePresenter {
         initEntityData(entityManager.getTeamId());
     }
 
+    @Override
     @Background
     public void initEntityData(int teamId) {
         this.teamId = teamId;
@@ -85,6 +87,7 @@ public class TextSharePresenter {
         }
     }
 
+    @Override
     public void setEntity(int roomId) {
         this.roomId = roomId;
         FormattedEntity entity = shareSelectModel.getEntityById(roomId);
@@ -97,14 +100,17 @@ public class TextSharePresenter {
 
     }
 
+    @Override
     public void setView(View view) {
         this.view = view;
     }
 
+    @Override
     public int getTeamId() {
         return teamId;
     }
 
+    @Override
     @Background
     public void sendMessage(String messageText, List<MentionObject> mentions) {
         view.showProgressBar();
@@ -158,26 +164,4 @@ public class TextSharePresenter {
         }
     }
 
-    public interface View {
-
-        void showFailToast(String message);
-
-        void finishOnUiThread();
-
-        void moveIntro();
-
-        void setTeamName(String teamName);
-
-        void setRoomName(String roomName);
-
-        void setMentionInfo(int teamId, int roomId, int roomType);
-
-        void showProgressBar();
-
-        void showSuccessToast(String message);
-
-        void dismissProgressBar();
-
-        void moveEntity(int teamId, int roomId, int roomType);
-    }
 }

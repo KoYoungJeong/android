@@ -29,7 +29,8 @@ import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.share.model.ScrollViewHelper;
-import com.tosslab.jandi.app.ui.share.presenter.ImageSharePresenter;
+import com.tosslab.jandi.app.ui.share.presenter.image.ImageSharePresenter;
+import com.tosslab.jandi.app.ui.share.presenter.image.ImageSharePresenterImpl;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -64,7 +65,7 @@ import rx.android.schedulers.AndroidSchedulers;
  * Created by Steve SeongUg Jung on 15. 2. 13..
  */
 @EFragment(R.layout.fragment_share_image)
-public class ImageShareFragment extends Fragment implements ImageSharePresenter.View, MainShareActivity.Share {
+public class ImageShareFragment extends Fragment implements ImageSharePresenterImpl.View, MainShareActivity.Share {
 
     @FragmentArg
     String uriString;
@@ -108,7 +109,7 @@ public class ImageShareFragment extends Fragment implements ImageSharePresenter.
     @ViewById(R.id.vg_share_root)
     ScrollView vgRoot;
 
-    @Bean
+    @Bean(ImageSharePresenterImpl.class)
     ImageSharePresenter imageSharePresenter;
 
     MentionControlViewModel mentionControlViewModel;
@@ -118,7 +119,6 @@ public class ImageShareFragment extends Fragment implements ImageSharePresenter.
     @AfterInject
     void initObject() {
         imageSharePresenter.setView(this);
-        imageSharePresenter.setUriString(uriString);
         EventBus.getDefault().register(this);
     }
 
@@ -133,7 +133,7 @@ public class ImageShareFragment extends Fragment implements ImageSharePresenter.
 
         setOnScrollMode();
 
-        imageSharePresenter.initView();
+        imageSharePresenter.initView(uriString);
     }
 
     private void setOnScrollMode() {
@@ -211,7 +211,7 @@ public class ImageShareFragment extends Fragment implements ImageSharePresenter.
         downloadingProgressBar.setVisibility(View.VISIBLE);
     }
 
-    public ProgressDialog getUploadProgress(String absolutePath, String name) {
+    private ProgressDialog getUploadProgress(String absolutePath, String name) {
         final ProgressDialog progressDialog = new ProgressDialog(getActivity());
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setMessage(getActivity().getApplicationContext()
@@ -331,7 +331,7 @@ public class ImageShareFragment extends Fragment implements ImageSharePresenter.
     public void onEvent(ShareSelectTeamEvent event) {
         int teamId = event.getTeamId();
         String teamName = event.getTeamName();
-        imageSharePresenter.initEntityData(teamId, teamName, true, -1, null, -1);
+        imageSharePresenter.initEntityData(teamId, teamName);
     }
 
     public void onEvent(ShareSelectRoomEvent event) {

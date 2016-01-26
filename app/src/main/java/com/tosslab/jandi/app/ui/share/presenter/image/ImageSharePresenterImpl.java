@@ -1,13 +1,13 @@
-package com.tosslab.jandi.app.ui.share.presenter;
+package com.tosslab.jandi.app.ui.share.presenter.image;
 
 import android.app.ProgressDialog;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
@@ -16,14 +16,12 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResRoomInfo;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
+import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -41,13 +39,12 @@ import retrofit.RetrofitError;
  * Created by Steve SeongUg Jung on 15. 2. 14..
  */
 @EBean
-public class ImageSharePresenter {
+public class ImageSharePresenterImpl implements ImageSharePresenter {
 
     @Bean
     ShareModel shareModel;
     private View view;
     private File imageFile;
-    private String uriString;
 
     private int teamId;
     private int roomId;
@@ -55,13 +52,11 @@ public class ImageSharePresenter {
     private String roomName;
     private boolean isPublic;
     private int roomType;
+    private ShareSelectModel shareSelectModel;
 
+    @Override
     public void setView(View view) {
         this.view = view;
-    }
-
-    public void setUriString(String uriString) {
-        this.uriString = uriString;
     }
 
     @AfterInject
@@ -71,7 +66,8 @@ public class ImageSharePresenter {
         teamName = entityManager.getTeamName();
     }
 
-    public void initView() {
+    @Override
+    public void initView(String uriString) {
         if (!NetworkCheckUtil.isConnected()) {
             view.showFailToast(JandiApplication.getContext().getResources().getString(R.string.err_network));
             view.finishOnUiThread();
@@ -92,17 +88,15 @@ public class ImageSharePresenter {
             view.bindImage(this.imageFile);
         }
 
-        initEntityData(teamId, teamName, true, -1, null, -1);
+        initEntityData(teamId, teamName);
     }
 
+    @Override
     @Background
-    public void initEntityData(int teamId, String teamName,
-                               boolean isDefaultTopic,
-                               int roomId, String roomName, int roomType) {
+    public void initEntityData(int teamId, String teamName) {
 
         this.teamId = teamId;
         this.teamName = teamName;
-        isPublic = false;
 
         if (!shareModel.hasLeftSideMenu(teamId)) {
             try {
@@ -110,31 +104,18 @@ public class ImageSharePresenter {
                 shareModel.updateLeftSideMenu(leftSideMenu);
             } catch (Exception e) {
                 e.printStackTrace();
+                view.moveIntro();
+                return;
             }
         }
 
-        ResTeamDetailInfo.InviteTeam team;
-        ResRoomInfo roomInfo;
-        try {
-            team = shareModel.getTeamInfoById(teamId);
-            int defaultTopicId =
-                    Integer.valueOf(team.getTeamDefaultChannelId());
-            roomInfo = shareModel.getEntityById(teamId, defaultTopicId);
-        } catch (Exception e) {
-            view.moveIntro();
-            return;
-        }
-        this.roomId = roomInfo.getId();
-        this.roomName = roomInfo.getName();
+        shareSelectModel = shareModel.getShareSelectModel(teamId);
 
-        if (roomInfo.getType().equals("privateGroup")) {
-            this.roomType = JandiConstants.TYPE_PRIVATE_TOPIC;
-        } else if (roomInfo.getType().equals("channel")) {
-            this.roomType = JandiConstants.TYPE_PUBLIC_TOPIC;
-            isPublic = true;
-        } else {
-            this.roomType = JandiConstants.TYPE_DIRECT_MESSAGE;
-        }
+        this.roomId = shareSelectModel.getDefaultTopicId();
+        FormattedEntity entity = shareSelectModel.getEntityById(roomId);
+        this.roomName = entity.getName();
+        this.roomType = JandiConstants.TYPE_PUBLIC_TOPIC;
+        isPublic = true;
 
         view.setTeamName(this.teamName);
         view.setRoomName(this.roomName);
@@ -142,6 +123,7 @@ public class ImageSharePresenter {
 
     }
 
+    @Override
     @Background
     public void setEntityData(int roomId, String roomName, int roomType) {
 
@@ -160,6 +142,7 @@ public class ImageSharePresenter {
 
     }
 
+    @Override
     @Background
     public void uploadFile(File imageFile,
                            String tvTitle, String commentText,
@@ -168,7 +151,6 @@ public class ImageSharePresenter {
             JsonObject result = shareModel.uploadFile(imageFile,
                     tvTitle, commentText, teamId, roomId, uploadProgress, isPublic, mentions);
             if (result.get("code") == null) {
-                LogUtil.e("Upload Success : " + result);
                 view.showSuccessToast(JandiApplication.getContext()
                         .getString(R.string.jandi_file_upload_succeed));
                 int entityType = 0;
@@ -179,19 +161,16 @@ public class ImageSharePresenter {
 
                 shareModel.trackUploadingFile(entityType, result);
             } else {
-                LogUtil.e("Upload Fail : Result : " + result);
                 view.showFailToast(JandiApplication.getContext()
                         .getString(R.string.err_file_upload_failed));
             }
         } catch (ExecutionException e) {
-            LogUtil.e("ExecutionException : ", e);
 
             if (view != null) {
                 view.showFailToast(JandiApplication.getContext()
                         .getString(R.string.jandi_canceled));
             }
         } catch (Exception e) {
-            LogUtil.e("Upload Error : ", e);
             view.showFailToast(JandiApplication.getContext()
                     .getString(R.string.err_file_upload_failed));
         } finally {
@@ -199,7 +178,7 @@ public class ImageSharePresenter {
         }
     }
 
-    public boolean setupSelectedTeam(int teamId) {
+    private boolean setupSelectedTeam(int teamId) {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         if ((selectedTeamInfo == null || selectedTeamInfo.getTeamId() != teamId)) {
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
@@ -238,10 +217,8 @@ public class ImageSharePresenter {
     void downloadImage(String path, String downloadDir, String downloadName) {
         view.showProgressBar();
         try {
-            Log.d("INFO", "Download Path " + downloadDir + "/" + downloadName);
             File file = GoogleImagePickerUtil
                     .downloadFile(JandiApplication.getContext(), null, path, downloadDir, downloadName);
-            Log.d("INFO", "Downloaded Path " + file.getAbsolutePath());
             imageFile = file;
             view.bindImage(file);
         } catch (Exception e) {
@@ -250,62 +227,14 @@ public class ImageSharePresenter {
         }
     }
 
+    @Override
     public File getImageFile() {
         return imageFile;
     }
 
+    @Override
     public int getTeamId() {
         return teamId;
-    }
-
-    public void setTeamId(int teamId) {
-        this.teamId = teamId;
-    }
-
-    public String getTeamName() {
-        return teamName;
-    }
-
-    public void setTeamName(String teamName) {
-        this.teamName = teamName;
-    }
-
-    public int getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(int entityId) {
-        this.roomId = entityId;
-    }
-
-    public interface View {
-        void showProgressBar();
-
-        void dismissProgressBar();
-
-        void bindImage(File imagePath);
-
-        void finishOnUiThread();
-
-        void showSuccessToast(String message);
-
-        void showFailToast(String message);
-
-        void setTeamName(String name);
-
-        void setRoomName(String name);
-
-        void moveEntity(int teamId, int entityId, int entityType);
-
-        String getComment();
-
-        void setComment(String comment);
-
-        void setMentionInfo(int teamId, int roomId, int roomType);
-
-        void dismissDialog(ProgressDialog uploadProgress);
-
-        void moveIntro();
     }
 
 }
