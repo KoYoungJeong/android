@@ -791,21 +791,22 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             return;
         }
         int fileId = event.getFileId();
+        int position = searchedFileItemListAdapter.findPositionByFileId(fileId);
+        if (position < 0) {
+            return;
+        }
+
         boolean added = event.isAdded();
 
-        int size = searchedFileItemListAdapter.getItemCount();
-        for (int idx = 0; idx < size; idx++) {
-            ResMessages.FileMessage item = searchedFileItemListAdapter.getItem(idx);
-            if (item.id == fileId) {
-                if (added) {
-                    item.commentCount++;
-                } else {
-                    item.commentCount--;
-                }
-                justRefresh();
-                break;
-            }
+        ResMessages.FileMessage item = searchedFileItemListAdapter.getItem(position);
+        if (added) {
+            item.commentCount++;
+        } else {
+            item.commentCount--;
         }
+
+        justRefresh();
+
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
