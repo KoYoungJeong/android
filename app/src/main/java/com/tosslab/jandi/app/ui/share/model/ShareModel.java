@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.network.client.MessageManipulator_;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
@@ -58,7 +59,7 @@ public class ShareModel {
         return RequestApiManager.getInstance().getTeamInfoByTeamApi(teamId);
     }
 
-    public void sendMessage(int teamId, int entityId, int entityType, String messageText, List<MentionObject> mention) throws RetrofitError {
+    public ResCommon sendMessage(int teamId, int entityId, int entityType, String messageText, List<MentionObject> mention) throws RetrofitError {
 
         MessageManipulator messageManipulator = MessageManipulator_.getInstance_(context);
 
@@ -66,7 +67,7 @@ public class ShareModel {
 
         messageManipulator.setTeamId(teamId);
 
-        messageManipulator.sendMessage(messageText, mention);
+        return messageManipulator.sendMessage(messageText, mention);
 
     }
 
@@ -125,10 +126,6 @@ public class ShareModel {
         }
     }
 
-    public String getFilePath(String uriString) {
-        return Uri.parse(uriString).getPath();
-    }
-
     public boolean hasLeftSideMenu(int teamId) {
         return LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId) != null;
     }
@@ -137,8 +134,8 @@ public class ShareModel {
         return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
     }
 
-    public void updateLeftSideMenu(ResLeftSideMenu leftSideMenu) {
-        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+    public boolean updateLeftSideMenu(ResLeftSideMenu leftSideMenu) {
+        return LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
     }
 
     public ShareSelectModel getShareSelectModel(int teamId) {
