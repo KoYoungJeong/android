@@ -98,8 +98,9 @@ public class ImageThumbLoader implements FileThumbLoader {
                     : R.drawable.jandi_down_placeholder_dropbox;
 
             ImageLoader.newBuilder()
-                    .actualScaleType(ScalingUtils.ScaleType.FIT_XY)
-                    .load(resourceId)
+                    .placeHolder(resourceId, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                    .load(UriFactory.getResourceUri(resourceId))
                     .into(ivFilePhoto);
 
             if (hasImageUrl) {

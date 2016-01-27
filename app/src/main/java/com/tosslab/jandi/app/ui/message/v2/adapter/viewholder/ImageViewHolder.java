@@ -20,11 +20,9 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
@@ -233,7 +231,12 @@ public class ImageViewHolder implements BodyViewHolder {
             String serverUrl = fileContent.serverUrl;
             String icon = fileContent.icon;
             int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, icon);
-            ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));
+            ImageLoader.newBuilder()
+                    .placeHolder(mimeTypeIconImage, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .load(UriFactory.getResourceUri(mimeTypeIconImage))
+                    .into(ivFileImage);
+
             tvFileType.setText(fileContent.ext);
         } else {
             String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
