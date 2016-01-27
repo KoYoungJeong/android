@@ -92,7 +92,7 @@ public class ExpandableTopicAdapter
 
     public TopicItemData getTopicItemData(int groupPosition, int childPosition) {
         if (groupPosition < provider.getGroupCount() && childPosition < provider.getChildCount(groupPosition)) {
-            return (TopicItemData) provider.getChildItem(groupPosition, childPosition);
+            return provider.getChildItem(groupPosition, childPosition);
         } else {
             return null;
         }
@@ -119,7 +119,7 @@ public class ExpandableTopicAdapter
     }
 
     public TopicFolderData getTopicFolderData(int groupPosition) {
-        return (TopicFolderData) provider.getGroupItem(groupPosition);
+        return provider.getGroupItem(groupPosition);
     }
 
     @Override
@@ -334,11 +334,7 @@ public class ExpandableTopicAdapter
         if (getTopicFolderData(groupPosition).getItemCount() == 0) {
             return false;
         }
-        // check the item is *not* pinned
-        if (getTopicFolderData(groupPosition).isPinnedToSwipeLeft()) {
-            // return false to raise View.OnClickListener#onClick() event
-            return false;
-        }
+
         // check is enabled
         if (!(holder.itemView.isEnabled() && holder.itemView.isClickable())) {
             return false;
@@ -394,23 +390,6 @@ public class ExpandableTopicAdapter
         if (animStatus == AnimStatus.IDLE) {
             animStatus = AnimStatus.READY;
         }
-    }
-
-    public int findGroupIdOfChildEntity(int entityId) {
-        if (entityId <= 0) {
-            return -1;
-        }
-        int groupCount = getGroupCount();
-        for (int groupIdx = 0; groupIdx < groupCount; groupIdx++) {
-            int childCount = getChildCount(groupIdx);
-            for (int childIdx = 0; childIdx < childCount; childIdx++) {
-                TopicItemData topicItemData = getTopicItemData(groupIdx, childIdx);
-                if (topicItemData != null && topicItemData.getEntityId() == entityId) {
-                    return getTopicFolderData(groupIdx).getFolderId();
-                }
-            }
-        }
-        return -1;
     }
 
     private enum AnimStatus {

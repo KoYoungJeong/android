@@ -26,23 +26,10 @@ public abstract class AbstractExpandableDataProvider {
 
     public abstract ChildData getChildItem(int groupPosition, int childPosition);
 
-    public abstract void moveGroupItem(int fromGroupPosition, int toGroupPosition);
-
-    public abstract void moveChildItem(int fromGroupPosition, int fromChildPosition, int toGroupPosition, int toChildPosition);
-
-    public abstract void removeGroupItem(int groupPosition);
-
-    public abstract void removeChildItem(int groupPosition, int childPosition);
-
-    public abstract long undoLastRemoval();
 
     public static abstract class GroupData {
 
-        public abstract int getSwipeReactionType();
-
         public abstract boolean isPinnedToSwipeLeft();
-
-        public abstract void setPinnedToSwipeLeft(boolean pinned);
 
         public abstract long getGroupId();
 
@@ -51,12 +38,6 @@ public abstract class AbstractExpandableDataProvider {
     public static abstract class ChildData {
 
         public abstract long getChildId();
-
-        public abstract int getSwipeReactionType();
-
-        public abstract boolean isPinnedToSwipeLeft();
-
-        public abstract void setPinnedToSwipeLeft(boolean pinned);
 
     }
 

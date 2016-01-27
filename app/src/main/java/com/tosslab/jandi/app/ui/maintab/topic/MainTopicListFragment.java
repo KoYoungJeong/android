@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -25,8 +26,6 @@ import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
-import com.tosslab.jandi.app.libraries.advancerecyclerview.animator.GeneralItemAnimator;
-import com.tosslab.jandi.app.libraries.advancerecyclerview.animator.RefactoredDefaultItemAnimator;
 import com.tosslab.jandi.app.libraries.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.network.models.ResFolder;
@@ -185,7 +184,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     }
 
 
-
     private void launchFolderSettionActivity() {
         Observable.just(1)
                 .delay(250, TimeUnit.MILLISECONDS)
@@ -214,14 +212,12 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
         wrappedAdapter = expandableItemManager.createWrappedAdapter(adapter);
 
-        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
-
         // Change animations are enabled by default since support-v7-recyclerview v22.
         // Need to disable them when using animation indicator.
-        animator.setSupportsChangeAnimations(false);
+
         lvMainTopic.setLayoutManager(layoutManager);
         lvMainTopic.setAdapter(wrappedAdapter);  // requires *wrapped* adapter
-        lvMainTopic.setItemAnimator(animator);
+        lvMainTopic.setItemAnimator(new DefaultItemAnimator());
         lvMainTopic.setHasFixedSize(false);
         expandableItemManager.attachRecyclerView(lvMainTopic);
 
