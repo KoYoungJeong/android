@@ -223,7 +223,7 @@ public class MainMoreFragment extends Fragment implements MainMorePresenter.View
 
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setMessage(userInfoSpans)
-                .setTitle("JANDI Usage Information - " + userName)
+                .setTitle("JANDI Usage Information")
                 .setNegativeButton(R.string.jandi_close, null)
                 .setPositiveButton(R.string.jandi_send_to_email, (dialog, which) -> {
                     Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:support@tosslab.com"));
