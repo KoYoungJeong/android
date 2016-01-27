@@ -31,10 +31,10 @@ public class TextSharePresenterImpl implements TextSharePresenter {
 
     @Bean
     ShareModel shareModel;
+    int roomId;
+    int teamId;
     private View view;
-    private int roomId;
-    private int teamId;
-    private ShareSelectModel shareSelectModel;
+    ShareSelectModel shareSelectModel;
 
     @Override
     public void initViews() {

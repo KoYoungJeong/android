@@ -39,7 +39,6 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import retrofit.RetrofitError;
 
@@ -65,6 +64,9 @@ public class BaseInitUtil {
     private static Context ORIGIN_CONTEXT;
 
     public static void initData() {
+        if (ORIGIN_CONTEXT != null) {
+            restoreContext();
+        }
         turnOnWifi();
         userSignin();
     }
