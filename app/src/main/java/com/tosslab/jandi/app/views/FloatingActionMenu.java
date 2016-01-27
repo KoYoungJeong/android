@@ -144,7 +144,7 @@ public class FloatingActionMenu extends FrameLayout {
         tv.setTextColor(getResources().getColor(R.color.white));
         tv.setBackgroundResource(R.drawable.text_bg_fab);
         tv.setText(title);
-        tv.setPadding(dpToPx(14), dpToPx(8), dpToPx(14), dpToPx(10));
+        tv.setPadding(dpToPx(14), dpToPx(7), dpToPx(14), dpToPx(11));
         LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);

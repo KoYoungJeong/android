@@ -20,6 +20,7 @@ public class DragnDropTouchHelper extends ItemTouchHelper.SimpleCallback {
         this.topicFolderSettingAdapter = topicFolderChooseAdapter;
     }
 
+
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
         if (target.getAdapterPosition() != dropPosition) {

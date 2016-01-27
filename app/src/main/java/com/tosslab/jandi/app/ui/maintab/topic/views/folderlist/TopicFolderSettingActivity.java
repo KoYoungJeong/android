@@ -194,7 +194,6 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
     @Override
     public void showCreateNewFolderDialog() {
-
         if (alertDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(TopicFolderSettingActivity.this,
                     R.style.JandiTheme_AlertDialog_FixWidth_300);
@@ -210,9 +209,11 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
             builder.setView(rootView)
                     .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
                         createNewFolder(etInput.getText().toString().trim());
+                        etInput.setText("");
                         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolder);
                     })
                     .setNegativeButton(R.string.jandi_cancel, (dialog, which) -> {
+                        etInput.setText("");
                         dialog.cancel();
                     });
             alertDialog = builder.create();
@@ -295,7 +296,10 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
         builder.setView(vgInputEditText)
                 .setPositiveButton(this.getString(R.string.jandi_confirm), (dialog, which) -> {
-                    topicFolderSettingPresentor.modifyNameFolder(folderId, input.getText().toString().trim(), seq);
+                    if (!name.equals(input.getText().toString().trim())) {
+                        topicFolderSettingPresentor.modifyNameFolder(folderId, input.getText().toString().trim(), seq);
+                    }
+                    dialog.cancel();
                 })
                 .setNegativeButton(this.getString(R.string.jandi_cancel), (dialog, which) -> {
                     dialog.cancel();
