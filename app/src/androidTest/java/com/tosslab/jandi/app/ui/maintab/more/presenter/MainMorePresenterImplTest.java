@@ -4,6 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 
 import org.junit.After;
 import org.junit.Before;
@@ -96,7 +97,7 @@ public class MainMorePresenterImplTest {
             Thread.sleep(5);
         }
 
-        verify(mockView).showBugReportDialog(any());
+        verify(mockView).showBugReportDialog(any(), EntityManager.getInstance().getMe().getName());
 
     }
 }
