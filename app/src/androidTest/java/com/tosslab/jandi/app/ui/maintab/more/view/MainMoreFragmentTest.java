@@ -12,6 +12,7 @@ import android.view.View;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
@@ -155,7 +156,7 @@ public class MainMoreFragmentTest {
     @Test
     public void testShowBugReportDialog() throws Throwable {
         SpannableStringBuilder test = new SpannableStringBuilder("test");
-        rule.runOnUiThread(() -> fragment.showBugReportDialog(test));
+        rule.runOnUiThread(() -> fragment.showBugReportDialog(test, EntityManager.getInstance().getMe().getName()));
 
         onView(withText("test"))
                 .inRoot(isDialog())

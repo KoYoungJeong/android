@@ -99,7 +99,7 @@ public class MainMorePresenterImpl implements MainMorePresenter {
             versionClickCount = 0;
             List<Pair<String, String>> userInfosForBugReport = mainMoreModel.getUserInfosForBugReport();
             SpannableStringBuilder userInfoSpans = mainMoreModel.getUserInfoSpans(userInfosForBugReport);
-            view.showBugReportDialog(userInfoSpans);
+            view.showBugReportDialog(userInfoSpans, EntityManager.getInstance().getMe().getName());
         }
     }
 
