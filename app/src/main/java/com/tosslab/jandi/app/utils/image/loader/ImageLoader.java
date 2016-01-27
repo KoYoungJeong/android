@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.view.ViewGroup;
 
 import com.facebook.common.executors.CallerThreadExecutor;
-import com.facebook.common.executors.UiThreadExecutorService;
+import com.facebook.common.executors.UiThreadImmediateExecutorService;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.BaseDataSubscriber;
 import com.facebook.datasource.DataSource;
@@ -90,7 +90,7 @@ public class ImageLoader {
 
         ExecutorService executorService = executeIntoCallerThread
                 ? CallerThreadExecutor.getInstance()
-                : UiThreadExecutorService.getInstance();
+                : UiThreadImmediateExecutorService.getInstance();
 
         dataSource.subscribe(new BitmapDataSubscriber(onResourceReadyCallback), executorService);
     }

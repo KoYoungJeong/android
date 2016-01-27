@@ -1041,7 +1041,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         String message = etMessage.getText().toString();
 
-        handleEasterEggSnowing(message);
+//        handleEasterEggSnowing(message);
 
         List<MentionObject> mentions;
 

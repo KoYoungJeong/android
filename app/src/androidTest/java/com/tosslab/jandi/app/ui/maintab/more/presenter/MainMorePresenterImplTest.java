@@ -91,11 +91,10 @@ public class MainMorePresenterImplTest {
     @Test
     public void testOnReportUserInfo() throws Exception {
         // when 최초 클릭
-        mainMorePresenter.onReportUserInfo();
-        mainMorePresenter.onReportUserInfo();
-        mainMorePresenter.onReportUserInfo();
-        mainMorePresenter.onReportUserInfo();
-        mainMorePresenter.onReportUserInfo();
+        for (int idx = 0; idx < 5; idx++) {
+            mainMorePresenter.onReportUserInfo();
+            Thread.sleep(5);
+        }
 
         verify(mockView).showBugReportDialog(any());
 

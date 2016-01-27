@@ -103,10 +103,12 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
                 filePaths.addAll(filePickerModel.getFilePathsFromInnerGallery(intent));
                 break;
             case TYPE_UPLOAD_TAKE_PHOTO:
-            case TYPE_UPLOAD_EXPLORER:
                 if (filePath != null) {
                     filePaths.add(filePickerModel.getFilePath(context, requestCode, intent, filePath));
                 }
+                break;
+            case TYPE_UPLOAD_EXPLORER:
+                filePaths.add(filePickerModel.getFilePath(context, requestCode, intent, filePath));
                 break;
         }
         return filePaths;

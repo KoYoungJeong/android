@@ -27,9 +27,6 @@ import org.androidannotations.annotations.ViewById;
 
 import retrofit.RetrofitError;
 
-/**
- * Created by Steve SeongUg Jung on 15. 7. 10..
- */
 @EActivity(R.layout.activity_topic_description_edit)
 @OptionsMenu(R.menu.topic_description_edit)
 public class TopicDescriptionEditActivity extends BaseAppCompatActivity {

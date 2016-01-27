@@ -56,9 +56,6 @@ import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by Steve SeongUg Jung on 15. 7. 9..
- */
 @EFragment(R.layout.fragment_topic_detail)
 public class TopicDetailFragment extends Fragment implements TopicDetailPresenter.View {
 
@@ -246,7 +243,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
         setTopicPushSwitch(checked);
 
-        topicDetailPresenter.onPushClick(getActivity(), teamId, entityId, checked);
+        topicDetailPresenter.onPushClick(teamId, entityId, checked);
 
 
         if (checked) {
@@ -364,9 +361,16 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         if (globalPushDialog == null) {
             globalPushDialog = new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
                     .setMessage(R.string.jandi_explain_global_push_off)
-                    .setNegativeButton(R.string.jandi_close, null)
+                    .setNegativeButton(R.string.jandi_close, (dialog1, which1) -> {
+                        switchSetPush.setChecked(false);
+                        topicDetailPresenter.onPushClick(teamId, entityId, false);
+                    })
                     .setPositiveButton(R.string.jandi_go_to_setting, (dialog, which) -> {
                         movePushSettingActivity();
+                    })
+                    .setOnCancelListener(dialog2 -> {
+                        switchSetPush.setChecked(false);
+                        topicDetailPresenter.onPushClick(teamId, entityId, false);
                     })
                     .create();
             globalPushDialog.show();
