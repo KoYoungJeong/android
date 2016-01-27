@@ -126,7 +126,7 @@ public class MainMoreModel {
 
         userInfos.add(new Pair<>("Device", Build.MODEL));
         userInfos.add(new Pair<>("Android OS Version", Build.VERSION.RELEASE));
-        userInfos.add(new Pair<>("Jandi App Version", getVersionName()));
+        userInfos.add(new Pair<>("JANDI App Version", getVersionName()));
         userInfos.add(new Pair<>("Account Name", AccountRepository.getRepository().getAccountInfo().getName()));
         userInfos.add(new Pair<>("Member ID", String.valueOf(EntityManager.getInstance().getMe().getId())));
         userInfos.add(new Pair<>("Member Email", EntityManager.getInstance().getMe().getUserEmail()));
