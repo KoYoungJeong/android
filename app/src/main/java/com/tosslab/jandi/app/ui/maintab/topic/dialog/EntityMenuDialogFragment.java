@@ -93,10 +93,11 @@ public class EntityMenuDialogFragment extends DialogFragment {
             btnNotification.setText(notificationText);
 
             btnNotification.setOnClickListener(v -> {
-                if (entityMenuDialogModel.isGlobalPushOff()) {
+                if (!entityMenuDialogModel.isGlobalPushOff() && !isTopicPushOn) {
                     showGlobalPushSetupDialog();
+                } else {
+                    entityMenuDialogModel.updateNotificationOnOff(entityId, !isTopicPushOn);
                 }
-                entityMenuDialogModel.updateNotificationOnOff(entityId, !isTopicPushOn);
                 dismiss();
             });
         }
@@ -126,10 +127,10 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
     private void movePushSettingActivity() {
         Intent mainSettingIntent = SettingsActivity_
-                .intent(EntityMenuDialogFragment.this)
+                .intent(getActivity())
                 .get();
         Intent pushSettingIntent = SettingPushActivity_
-                .intent(EntityMenuDialogFragment.this)
+                .intent(getActivity())
                 .get();
         getActivity().startActivities(new Intent[]{mainSettingIntent, pushSettingIntent});
     }
