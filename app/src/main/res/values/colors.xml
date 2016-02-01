@@ -261,4 +261,6 @@
 
     <color name="jandi_file_upload_list_view_background">#FFDDDDDD</color>
 
+    <color name="jandi_email_selector_item_text_color">#FF404040</color>
+
 </resources>
