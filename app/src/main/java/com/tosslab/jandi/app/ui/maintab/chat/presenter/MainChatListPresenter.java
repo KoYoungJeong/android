@@ -13,7 +13,7 @@ public interface MainChatListPresenter {
 
     void setView(View view);
 
-    void onInitChatList(Context context, int selectedEntity);
+    void initChatList(Context context, int selectedEntity);
 
     void onReloadChatList(Context context);
 

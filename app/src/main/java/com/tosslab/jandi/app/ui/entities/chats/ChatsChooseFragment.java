@@ -194,7 +194,7 @@ public class ChatsChooseFragment extends Fragment {
         publishSubject.onNext(text.toString());
     }
 
-    @Click(R.id.vg_member_empty)
+    @Click(R.id.btn_chat_choose_member_empty)
     public void invitationDialogExecution() {
         invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_CHAT_CHOOSE);
         invitationDialogExecutor.execute();
