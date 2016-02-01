@@ -183,8 +183,8 @@ public class JandiSocketServiceModel {
             postEvent(
                     new FileCommentRefreshEvent(socketFileEvent.getEvent(),
                             socketFileEvent.getFile().getId(),
-                            socketFileEvent.getComment().getId()
-                    ));
+                            socketFileEvent.getComment().getId(),
+                            TextUtils.equals(socketFileEvent.getEvent(), "file_comment_created")));
             JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
