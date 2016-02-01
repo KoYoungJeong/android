@@ -181,7 +181,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     private boolean isForeground;
     private boolean isFromDeleteAction = false;
     private ProgressWheel progressWheel;
-    private ProgressDialog progressDialog;
     private StickerInfo stickerInfo = NULL_STICKER;
     private MixpanelAnalytics mixpanelAnalytics;
     private Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities;
@@ -576,7 +575,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                         } else {
                             roomId = -1;
                         }
-                        
+
                         moveToMessageListActivity(entityIdToBeShared, type, roomId, entity.isStarred);
                     }
                 })
@@ -861,53 +860,26 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fileUrl)));
     }
 
-    private void initProgressDialog() {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progressDialog.setCancelable(false);
-        }
-
-        if (progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
-    @UiThread(propagation = Propagation.REUSE)
-    @Override
-    public void showDownloadProgressDialog(String fileName) {
-        initProgressDialog();
-        progressDialog.setMessage("Downloading " + fileName);
-        progressDialog.show();
-    }
-
-    @UiThread
-    @Override
-    public void dismissDownloadProgressDialog() {
-        if (progressDialog == null || !progressDialog.isShowing() || !isForeground) {
-            return;
-        }
-        progressDialog.dismiss();
-    }
-
     public void onEventMainThread(FileDownloadStartEvent fileDownloadStartEvent) {
         if (!isForeground) {
             return;
         }
 
-        initProgressDialog();
+        ProgressDialog progressDialog = new ProgressDialog(FileDetailActivity.this);
+        progressDialog.setMax(100);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage("Downloading " + fileMessage.content.title);
+        progressDialog.show();
 
-        fileDetailPresenter.downloadFile(fileDownloadStartEvent.getUrl(),
-                fileDownloadStartEvent.getFileName(),
-                fileDownloadStartEvent.getFileType(),
-                fileDownloadStartEvent.getExt(),
-                fileId);
+        fileDetailPresenter.onTapToView(fileMessage, progressDialog);
+
     }
 
     @UiThread
     @Override
-    public void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage,
-                                      boolean execute) {
+    public void downloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage,
+                                    boolean execute) {
         mixpanelAnalytics.trackDownloadingFile(entityManager, fileMessage);
         try {
             if (execute) {

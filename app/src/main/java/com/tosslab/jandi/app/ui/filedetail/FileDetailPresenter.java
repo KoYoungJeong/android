@@ -664,6 +664,27 @@ public class FileDetailPresenter {
         view.inputText(KeyEvent.KEYCODE_AT);
     }
 
+    public void onTapToView(ResMessages.FileMessage fileMessage, ProgressDialog progressDialog) {
+        String downloadFilePath = fileDetailModel.getDownloadFilePath(fileMessage.content.title);
+        String downloadUrl = fileDetailModel.getDownloadUrl(fileMessage.content.fileUrl);
+
+        fileDetailModel.downloadFile(downloadUrl, downloadFilePath, (downloaded, total) -> {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.setProgress((int) (downloaded * 100 / total));
+            }
+        }, (e, result) -> {
+            progressDialog.dismiss();
+
+            if (e == null && result != null) {
+                view.downloadFileSucceed(result, fileMessage.content.type, fileMessage, true);
+            } else {
+                String message = JandiApplication.getContext()
+                        .getResources().getString(R.string.err_download);
+                view.showErrorToast(message);
+            }
+        });
+    }
+
     public interface View {
         void drawFileWriterState(boolean isEnabled);
 
@@ -689,8 +710,8 @@ public class FileDetailPresenter {
 
         void onDeleteFileSucceed(boolean isOk);
 
-        void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage,
-                                   boolean execute);
+        void downloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage,
+                                 boolean execute);
 
         void onGetProfileFailed();
 
@@ -699,10 +720,6 @@ public class FileDetailPresenter {
         void showProgress();
 
         void dismissProgress();
-
-        void showDownloadProgressDialog(String fileName);
-
-        void dismissDownloadProgressDialog();
 
         void clearAdapter();
 
