@@ -59,7 +59,7 @@ import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
-import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
+import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
@@ -1908,7 +1908,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
     }
 
-    public void onEvent(SelectedMemberInfoForMensionEvent event) {
+    public void onEvent(SelectedMemberInfoForMentionEvent event) {
 
         if (!isForeground) {
             return;

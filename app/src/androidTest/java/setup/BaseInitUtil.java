@@ -64,6 +64,9 @@ public class BaseInitUtil {
     private static Context ORIGIN_CONTEXT;
 
     public static void initData() {
+        if (ORIGIN_CONTEXT != null) {
+            restoreContext();
+        }
         turnOnWifi();
         userSignin();
     }

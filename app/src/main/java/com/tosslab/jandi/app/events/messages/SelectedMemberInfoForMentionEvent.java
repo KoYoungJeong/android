@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.events.messages;
 /**
  * Created by tee on 15. 7. 22..
  */
-public class SelectedMemberInfoForMensionEvent {
+public class SelectedMemberInfoForMentionEvent {
 
     private String name;
     private long id;
