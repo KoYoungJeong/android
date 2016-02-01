@@ -18,8 +18,6 @@ import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.animator.GeneralItemAnimator;
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.animator.RefactoredDefaultItemAnimator;
 import com.tosslab.jandi.app.lists.libs.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.network.models.ResFolder;
@@ -90,7 +88,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     private ExpandableTopicAdapter adapter;
     private RecyclerView.Adapter wrappedAdapter;
     private RecyclerViewExpandableItemManager expandableItemManager;
-    private boolean isFirstForRetrieve = true;
     private ProgressWheel progressWheel;
     private boolean hasOnResumed = false;
 
@@ -138,22 +135,16 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     @Override
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showList(TopicFolderListDataProvider topicFolderListDataProvider) {
-
         adapter = new ExpandableTopicAdapter(topicFolderListDataProvider);
 
         wrappedAdapter = expandableItemManager.createWrappedAdapter(adapter);
 
-        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
-
-        // Change animations are enabled by default since support-v7-recyclerview v22.
-        // Need to disable them when using animation indicator.
-        animator.setSupportsChangeAnimations(false);
         lvMainTopic.setLayoutManager(layoutManager);
         lvMainTopic.setAdapter(wrappedAdapter);  // requires *wrapped* adapter
-        lvMainTopic.setItemAnimator(animator);
         lvMainTopic.setHasFixedSize(false);
-        expandableItemManager.attachRecyclerView(lvMainTopic);
 
+        // ListView를 Set함
+        expandableItemManager.attachRecyclerView(lvMainTopic);
         // 어떤 폴더에도 속하지 않는 토픽들을 expand된 상태에서 보여주기 위하여
         expandableItemManager.expandGroup(adapter.getGroupCount() - 1);
 
@@ -162,6 +153,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             mainTopicListPresenter.onFolderCollapse(topicFolderData);
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolderCollapse);
         });
+
         expandableItemManager.setOnGroupExpandListener((groupPosition, fromUser) -> {
             TopicFolderData topicFolderData = adapter.getTopicFolderData(groupPosition);
             mainTopicListPresenter.onFolderExpand(topicFolderData);
@@ -399,7 +391,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             for (int i = 0; i < groupCount; i++) {
                 int childCount = provider.getChildCount(i);
                 for (int j = 0; j < childCount; j++) {
-                    TopicItemData childItem = (TopicItemData) provider.getChildItem(i, j);
+                    TopicItemData childItem = provider.getChildItem(i, j);
                     if (childItem.getEntityId() == selectedEntity) {
                         groupPosition = i;
                         childPosition = j;
@@ -410,7 +402,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         } else {
             groupPosition = 0;
             for (int i = 0; i < provider.getChildCount(0); i++) {
-                TopicItemData childItem = (TopicItemData) provider.getChildItem(0, i);
+                TopicItemData childItem = provider.getChildItem(0, i);
                 if (childItem.getEntityId() == selectedEntity) {
                     childPosition = i;
                     break;

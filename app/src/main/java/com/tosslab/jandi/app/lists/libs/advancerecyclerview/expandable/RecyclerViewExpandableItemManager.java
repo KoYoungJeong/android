@@ -270,7 +270,7 @@ public class RecyclerViewExpandableItemManager {
         int[] adapterSavedState = (mSavedState != null) ? mSavedState.adapterSavedState : null;
         mSavedState = null;
 
-        mAdapter = new ExpandableRecyclerViewWrapperAdapter(this, adapter, adapterSavedState);
+        mAdapter = new ExpandableRecyclerViewWrapperAdapter(adapter, adapterSavedState);
 
         // move listeners to wrapper adapter
         mAdapter.setOnGroupExpandListener(mOnGroupExpandListener);
@@ -777,4 +777,5 @@ public class RecyclerViewExpandableItemManager {
             dest.writeIntArray(this.adapterSavedState);
         }
     }
+
 }

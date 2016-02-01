@@ -44,7 +44,7 @@ checkstyle {
     toolVersion = "6.2"
 }
 
-def supportLibVersion = "23.0.+"
+def supportLibVersion = "23.1.0"
 
 dependencies {
 

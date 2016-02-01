@@ -156,6 +156,8 @@ public class FileUploadStateViewModel {
             FileUploadViewHolder holder = new FileUploadViewHolder(view);
             holder.ivPhoto =
                     (SimpleDraweeView) view.findViewById(R.id.iv_item_message_file_upload_state_photo);
+            holder.ivPhoto.setBackgroundColor(context.getResources()
+                    .getColor(R.color.jandi_file_upload_list_view_background));
             holder.ivState = (ImageView) view.findViewById(R.id.iv_item_message_file_upload_state_state);
 
             return holder;
@@ -168,6 +170,7 @@ public class FileUploadStateViewModel {
             SimpleDraweeView ivPhoto = holder.ivPhoto;
 
             if (fileExtType == FileExtensionsUtil.Extensions.IMAGE) {
+                ivPhoto.setPadding(0, 0, 0, 0);
                 ViewGroup.LayoutParams layoutParams = ivPhoto.getLayoutParams();
                 int width = layoutParams.width;
                 int height = layoutParams.height;
@@ -180,6 +183,8 @@ public class FileUploadStateViewModel {
                         .into(ivPhoto);
             } else {
                 int resId = FileExtensionsUtil.getTypeResourceId(fileExtType);
+                int paddingPx = (int) (4 * context.getResources().getDisplayMetrics().density);
+                ivPhoto.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
                 ImageLoader.newBuilder()
                         .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
                         .load(resId)

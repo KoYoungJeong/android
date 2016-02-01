@@ -259,4 +259,6 @@
     <color name="jandi_web_button_retry_background">#FFFFFFFF</color>
     <color name="jandi_web_button_retry_round">#FFCDCDCD</color>
 
+    <color name="jandi_file_upload_list_view_background">#FFDDDDDD</color>
+
 </resources>
