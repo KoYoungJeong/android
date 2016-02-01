@@ -18,11 +18,11 @@ public class EntitySpannable extends ClickableSpan {
 
     private final boolean isStarred;
     private Context context;
-    private int entityId;
+    private long entityId;
     private int entityType;
-    private int teamId;
+    private long teamId;
 
-    public EntitySpannable(Context context, int teamId, int entityId, int entityType, boolean isStarred) {
+    public EntitySpannable(Context context, long teamId, long entityId, int entityType, boolean isStarred) {
         this.context = context;
         this.entityId = entityId;
         this.entityType = entityType;

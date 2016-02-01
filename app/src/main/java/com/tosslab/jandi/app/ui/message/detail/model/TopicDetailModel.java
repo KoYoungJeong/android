@@ -34,12 +34,12 @@ public class TopicDetailModel {
     EntityClientManager entityClientManager;
 
 
-    public String getTopicName(int entityId) {
+    public String getTopicName(long entityId) {
 
         return EntityManager.getInstance().getEntityById(entityId).getName();
     }
 
-    public String getTopicDescription(int entityId) {
+    public String getTopicDescription(long entityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         ResLeftSideMenu.Entity rawEntity = entity.getEntity();
         if (entity.isPublicTopic()) {
@@ -51,22 +51,22 @@ public class TopicDetailModel {
         }
     }
 
-    public int getTopicMemberCount(int entityId) {
+    public int getTopicMemberCount(long entityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         return entity.getMemberCount();
     }
 
-    public boolean isStarred(int entityId) {
+    public boolean isStarred(long entityId) {
 
         return EntityManager.getInstance().getEntityById(entityId).isStarred;
     }
 
-    public boolean isOwner(int entityId) {
+    public boolean isOwner(long entityId) {
         return EntityManager.getInstance().isMyTopic(entityId);
 
     }
 
-    public void deleteTopic(int entityId, int entityType) throws RetrofitError {
+    public void deleteTopic(long entityId, int entityType) throws RetrofitError {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             entityClientManager.deleteChannel(entityId);
         } else {
@@ -74,7 +74,7 @@ public class TopicDetailModel {
         }
     }
 
-    public int getEntityType(int entityId) {
+    public int getEntityType(long entityId) {
 
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         if (entity.isPublicTopic()) {
@@ -96,7 +96,7 @@ public class TopicDetailModel {
         }
     }
 
-    public void trackTopicDeleteSuccess(int entityId) {
+    public void trackTopicDeleteSuccess(long entityId) {
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.TopicDelete)
@@ -118,7 +118,7 @@ public class TopicDetailModel {
                         .build());
     }
 
-    public void modifyTopicName(int entityType, int entityId, String inputName) throws RetrofitError {
+    public void modifyTopicName(int entityType, long entityId, String inputName) throws RetrofitError {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             entityClientManager.modifyChannelName(entityId, inputName);
         } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
@@ -126,17 +126,17 @@ public class TopicDetailModel {
         }
     }
 
-    public void updatePushStatus(int teamId, int entityId, boolean pushOn) throws RetrofitError {
+    public void updatePushStatus(long teamId, long entityId, boolean pushOn) throws RetrofitError {
         ReqUpdateTopicPushSubscribe req = new ReqUpdateTopicPushSubscribe(pushOn);
         RequestApiManager.getInstance().updateTopicPushSubscribe(teamId, entityId, req);
     }
 
-    public boolean isPushOn(int entityId) {
+    public boolean isPushOn(long entityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         return entity.isTopicPushOn;
     }
 
-    public void trackChangingEntityName(Context context, int entityId, int entityType) {
+    public void trackChangingEntityName(Context context, long entityId, int entityType) {
 
         try {
             String distictId = EntityManager.getInstance().getDistictId();
@@ -170,7 +170,7 @@ public class TopicDetailModel {
 
     }
 
-    public void trackTopicStarSuccess(int topicId) {
+    public void trackTopicStarSuccess(long topicId) {
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.TopicStar)
@@ -181,7 +181,7 @@ public class TopicDetailModel {
                         .build());
     }
 
-    public void trackTopicUnStarSuccess(int topicId) {
+    public void trackTopicUnStarSuccess(long topicId) {
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.TopicUnStar)
@@ -216,7 +216,7 @@ public class TopicDetailModel {
 
     }
 
-    public boolean isDefaultTopic(int entityId) {
+    public boolean isDefaultTopic(long entityId) {
         return EntityManager.getInstance().getDefaultTopicId() == entityId;
     }
 
@@ -243,20 +243,20 @@ public class TopicDetailModel {
 
     }
 
-    public boolean isPrivateTopic(int entityId) {
+    public boolean isPrivateTopic(long entityId) {
         return EntityManager.getInstance().getEntityById(entityId).isPrivateGroup();
     }
 
-    public boolean isAutoJoin(int entityId) {
+    public boolean isAutoJoin(long entityId) {
         return EntityManager.getInstance().getEntityById(entityId).isAutoJoin();
     }
 
-    public boolean isStandAlone(int entityId) {
+    public boolean isStandAlone(long entityId) {
         return EntityManager.getInstance().getEntityById(entityId).getMemberCount() <= 1;
     }
 
-    public void updateAutoJoin(int entityId, boolean autoJoin) {
-        int teamId = EntityManager.getInstance().getTeamId();
+    public void updateAutoJoin(long entityId, boolean autoJoin) {
+        long teamId = EntityManager.getInstance().getTeamId();
         entityClientManager.modifyChannelAutoJoin(entityId, autoJoin);
     }
 

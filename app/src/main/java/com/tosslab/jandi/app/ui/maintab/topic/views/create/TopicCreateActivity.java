@@ -233,7 +233,7 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
 
     @UiThread
     @Override
-    public void createTopicSuccess(int teamId, int entityId, String topicTitle, boolean publicSelected) {
+    public void createTopicSuccess(long teamId, long entityId, String topicTitle, boolean publicSelected) {
 
         ColoredToast.show(TopicCreateActivity.this.getString(R.string.jandi_message_create_entity, topicTitle));
 

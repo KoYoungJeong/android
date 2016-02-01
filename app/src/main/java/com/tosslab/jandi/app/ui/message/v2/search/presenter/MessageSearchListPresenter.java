@@ -17,13 +17,13 @@ public interface MessageSearchListPresenter {
 
     void onRequestNewMessage();
 
-    void checkEnabledUser(int entityId);
+    void checkEnabledUser(long entityId);
 
-    boolean onOptionItemSelected(Fragment messageSearchListFragment, MenuItem item, int teamId, int entityId);
+    boolean onOptionItemSelected(Fragment messageSearchListFragment, MenuItem item, long teamId, long entityId);
 
     void onInitRoomInfo();
 
-    void setDefaultInfos(int teamId, int roomId, int entityId, int lastMarker, int entityType);
+    void setDefaultInfos(long teamId, long roomId, long entityId, long lastMarker, int entityType);
 
     void onAccouncementOpen();
 
@@ -33,21 +33,21 @@ public interface MessageSearchListPresenter {
 
     void onUpdateAnnouncement(boolean isForeground, boolean isRoomInit, SocketAnnouncementEvent.Data data);
 
-    void checkAnnouncementExistsAndCreate(int messageId);
+    void checkAnnouncementExistsAndCreate(long messageId);
 
     void onDeleteAnnouncement();
 
-    void onMessageItemClick(Fragment fragment, ResMessages.Link item, int entityId);
+    void onMessageItemClick(Fragment fragment, ResMessages.Link item, long entityId);
 
     void onMessageItemLongClick(ResMessages.Link item);
 
-    void deleteMessage(int messageType, int messageId);
+    void deleteMessage(int messageType, long messageId);
 
     void onModifyEntity(String inputName);
 
-    void registStarredMessage(int teamId, int messageId);
+    void registStarredMessage(long teamId, long messageId);
 
-    void unregistStarredMessage(int teamId, int messageId);
+    void unregistStarredMessage(long teamId, long messageId);
 
     void onTeamLeave(int teamId, int memberId);
 
@@ -57,9 +57,9 @@ public interface MessageSearchListPresenter {
 
         void setDisabledUser();
 
-        void setRoomId(int roomId);
+        void setRoomId(long roomId);
 
-        void setLastReadLinkId(int realLastLinkId);
+        void setLastReadLinkId(long realLastLinkId);
 
         void setRoomInit(boolean isRoomInit);
 
@@ -77,7 +77,7 @@ public interface MessageSearchListPresenter {
 
         void updateMarkerNewMessage(ResMessages newMessage, boolean isLastLinkId, boolean firstLoad);
 
-        int getFirstVisibleItemLinkId();
+        long getFirstVisibleItemLinkId();
 
         int getItemCount();
 
@@ -85,19 +85,19 @@ public interface MessageSearchListPresenter {
 
         int getFirstVisibleItemTop();
 
-        void updateMarkerMessage(int linkId, ResMessages oldMessage, boolean noFirstLoad, boolean isFirstMessage, int latestVisibleMessageId, int firstVisibleItemTop);
+        void updateMarkerMessage(long linkId, ResMessages oldMessage, boolean noFirstLoad, boolean isFirstMessage, long latestVisibleMessageId, int firstVisibleItemTop);
 
         void showDummyMessageDialog(long localId);
 
-        void moveFileDetailActivity(Fragment fragment, int messageId, int roomId, int selectedMessageId);
+        void moveFileDetailActivity(Fragment fragment, long messageId, long roomId, long selectedMessageId);
 
-        AnalyticsValue.Screen getScreen(int entityId);
+        AnalyticsValue.Screen getScreen(long entityId);
 
         void showMessageMenuDialog(boolean isDirectMessage, boolean isMyMessage, ResMessages.TextMessage textMessage);
 
         void showMessageMenuDialog(ResMessages.CommentMessage message);
 
-        void deleteLinkByMessageId(int messageId);
+        void deleteLinkByMessageId(long messageId);
 
         void modifyEntitySucceed(String topicName);
 
@@ -105,9 +105,9 @@ public interface MessageSearchListPresenter {
 
         void showSuccessToast(String message);
 
-        void modifyStarredInfo(int messageId, boolean starred);
+        void modifyStarredInfo(long messageId, boolean starred);
 
-        void showLeavedMemberDialog(int entityId);
+        void showLeavedMemberDialog(long entityId);
 
         void showOldLoadingProgress();
 

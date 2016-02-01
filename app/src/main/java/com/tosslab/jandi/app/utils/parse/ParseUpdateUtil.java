@@ -74,7 +74,7 @@ public class ParseUpdateUtil {
                 .observeOn(Schedulers.io())
                 .subscribe(accountId -> {
                     ParseInstallation currentInstallation = ParseInstallation.getCurrentInstallation();
-                    int memberId = AccountRepository.getRepository().getSelectedTeamInfo().getMemberId();
+                    long memberId = AccountRepository.getRepository().getSelectedTeamInfo().getMemberId();
                     currentInstallation.put(PARSE_MY_ENTITY_ID, memberId);
 
                     // 이전 채널 중 accountId 와 맞지 않는 채널이 있으면 지운다.
@@ -99,7 +99,7 @@ public class ParseUpdateUtil {
                     }
 
                     try {
-                        List<String> channels = new ArrayList<String>();
+                        List<String> channels = new ArrayList<>();
                         channels.add(accountId);
 
                         currentInstallation.addAllUnique(PARSE_CHANNELS, channels);

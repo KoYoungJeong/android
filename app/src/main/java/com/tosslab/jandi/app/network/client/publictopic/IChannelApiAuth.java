@@ -17,16 +17,16 @@ public interface IChannelApiAuth {
 
     ResCommon createChannelByChannelApi(ReqCreateTopic channel) throws RetrofitError;
 
-    ResCommon modifyPublicTopicNameByChannelApi(ReqModifyTopicName channel, int channelId) throws RetrofitError;
-    ResCommon modifyPublicTopicDescriptionByChannelApi(ReqModifyTopicDescription description, int channelId) throws RetrofitError;
-    ResCommon modifyPublicTopicAutoJoinByChannelApi(ReqModifyTopicAutoJoin topicAutoJoin, int channelId);
+    ResCommon modifyPublicTopicNameByChannelApi(ReqModifyTopicName channel, long channelId) throws RetrofitError;
+    ResCommon modifyPublicTopicDescriptionByChannelApi(ReqModifyTopicDescription description, long channelId) throws RetrofitError;
+    ResCommon modifyPublicTopicAutoJoinByChannelApi(ReqModifyTopicAutoJoin topicAutoJoin, long channelId);
 
-    ResCommon deleteTopicByChannelApi(int channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError;
+    ResCommon deleteTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError;
 
-    ResCommon joinTopicByChannelApi(int channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError;
+    ResCommon joinTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError;
 
-    ResCommon leaveTopicByChannelApi(int channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError;
+    ResCommon leaveTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError;
 
-    ResCommon invitePublicTopicByChannelApi(int channelId, ReqInviteTopicUsers reqInviteTopicUsers) throws RetrofitError;
+    ResCommon invitePublicTopicByChannelApi(long channelId, ReqInviteTopicUsers reqInviteTopicUsers) throws RetrofitError;
 
 }

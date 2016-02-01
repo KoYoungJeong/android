@@ -49,7 +49,7 @@ public class FileUploadStateViewModel {
     @RootContext
     Context context;
 
-    private int entityId;
+    private long entityId;
 
     @AfterViews
     void initViews() {
@@ -118,7 +118,7 @@ public class FileUploadStateViewModel {
 
     }
 
-    public void setEntityId(int entityId) {
+    public void setEntityId(long entityId) {
         this.entityId = entityId;
     }
 

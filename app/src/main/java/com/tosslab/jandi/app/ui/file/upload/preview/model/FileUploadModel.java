@@ -54,7 +54,7 @@ public class FileUploadModel {
         return formattedEntities;
     }
 
-    public String getEntityString(Context context, int selectedEntityIdToBeShared) {
+    public String getEntityString(long selectedEntityIdToBeShared) {
 
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entity = entityManager.getEntityById(selectedEntityIdToBeShared);
@@ -73,12 +73,12 @@ public class FileUploadModel {
         return String.format("%s%s", prefix, originEntityName);
     }
 
-    public boolean isValid(Context context, int selectedEntityIdToBeShared) {
+    public boolean isValid(long selectedEntityIdToBeShared) {
         return EntityManager.getInstance().getEntityById(selectedEntityIdToBeShared) !=
                 EntityManager.UNKNOWN_USER_ENTITY;
     }
 
-    public FormattedEntity getEntity(int entityId) {
+    public FormattedEntity getEntity(long entityId) {
         return EntityManager.getInstance().getEntityById(entityId);
     }
 

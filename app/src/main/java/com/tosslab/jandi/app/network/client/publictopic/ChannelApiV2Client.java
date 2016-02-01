@@ -28,42 +28,42 @@ public interface ChannelApiV2Client {
     // 채널 생성
     @POST("/channel")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-    ResCommon createChannel(@Query("teamId") int teamId, @Body ReqCreateTopic channel);
+    ResCommon createChannel(@Query("teamId") long teamId, @Body ReqCreateTopic channel);
 
     @PUT("/channels/{channelId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-    ResCommon modifyPublicTopicName(@Query("teamId") int teamId,
+    ResCommon modifyPublicTopicName(@Query("teamId") long teamId,
                                     @Body ReqModifyTopicName topicName,
-                                    @Path("channelId") int channelId);
+                                    @Path("channelId") long channelId);
     @PUT("/channels/{channelId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-    ResCommon modifyPublicTopicDescription(@Query("teamId") int teamId,
+    ResCommon modifyPublicTopicDescription(@Query("teamId") long teamId,
                                     @Body ReqModifyTopicDescription description,
-                                    @Path("channelId") int channelId);
+                                    @Path("channelId") long channelId);
 
     @PUT("/channels/{channelId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-    ResCommon modifyPublicTopicAutoJoin(@Query("teamId") int teamId,
+    ResCommon modifyPublicTopicAutoJoin(@Query("teamId") long teamId,
                                     @Body ReqModifyTopicAutoJoin topicAutoJoin,
-                                    @Path("channelId") int channelId);
+                                    @Path("channelId") long channelId);
 
     // 채널 삭제
     @DELETEWithBody("/channels/{channelId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon deleteTopic(@Path("channelId") int channelId, @Body ReqDeleteTopic reqDeleteTopic);
+    ResCommon deleteTopic(@Path("channelId") long channelId, @Body ReqDeleteTopic reqDeleteTopic);
 
     // 채널 Join
     @PUT("/channels/{channelId}/join")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon joinTopic(@Path("channelId") int channelId, @Body ReqDeleteTopic reqDeleteTopic);
+    ResCommon joinTopic(@Path("channelId") long channelId, @Body ReqDeleteTopic reqDeleteTopic);
 
     // 채널 leave
     @PUT("/channels/{channelId}/leave")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon leaveTopic(@Path("channelId") int channelId, @Body ReqDeleteTopic reqDeleteTopic);
+    ResCommon leaveTopic(@Path("channelId") long channelId, @Body ReqDeleteTopic reqDeleteTopic);
 
     // 채널 invite
     @PUT("/channels/{channelId}/invite")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon invitePublicTopic(@Path("channelId") int channelId, @Body ReqInviteTopicUsers reqInviteTopicUsers);
+    ResCommon invitePublicTopic(@Path("channelId") long channelId, @Body ReqInviteTopicUsers reqInviteTopicUsers);
 }

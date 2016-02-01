@@ -8,14 +8,14 @@ public class AnnouncementEvent {
         CREATE, DELETE
     }
 
-    private int messageId;
+    private long messageId;
     private Action action;
 
     public AnnouncementEvent(Action action) {
         this.action = action;
     }
 
-    public AnnouncementEvent(Action action, int messageId) {
+    public AnnouncementEvent(Action action, long messageId) {
         this.action = action;
         this.messageId = messageId;
     }
@@ -24,7 +24,7 @@ public class AnnouncementEvent {
         return action;
     }
 
-    public int getMessageId() {
+    public long getMessageId() {
         return messageId;
     }
 }

@@ -35,7 +35,7 @@ import retrofit.RetrofitError;
 public class TopicFolderDialogFragment extends DialogFragment {
 
     @FragmentArg
-    int folderId;
+    long folderId;
     @FragmentArg
     String folderName;
     @FragmentArg
@@ -86,7 +86,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
         showDeleteFolderDialog(folderId);
     }
 
-    private void showRenameFolderDialog(int folderId, String name, int seq) {
+    private void showRenameFolderDialog(long folderId, String name, int seq) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
 
@@ -122,7 +122,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
         });
     }
 
-    private void showDeleteFolderDialog(int folderId) {
+    private void showDeleteFolderDialog(long folderId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
 
@@ -136,7 +136,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
     }
 
     @Background
-    public void deleteTopicFolder(int folderId) {
+    public void deleteTopicFolder(long folderId) {
         try {
             topicFolderDialogModel.deleteTopicFolder(folderId);
             showDeleteFolderToast();
@@ -147,7 +147,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
     }
 
     @Background
-    public void renameFolder(int folderId, String name, int seq) {
+    public void renameFolder(long folderId, String name, int seq) {
         try {
             topicFolderDialogModel.renameFolder(folderId, name, seq);
             showRenameFolderToast();

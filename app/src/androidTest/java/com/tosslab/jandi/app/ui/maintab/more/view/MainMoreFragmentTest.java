@@ -62,6 +62,8 @@ public class MainMoreFragmentTest {
             throwable.printStackTrace();
         }
 
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+
     }
 
     @After

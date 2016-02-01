@@ -5,15 +5,15 @@ package com.tosslab.jandi.app.events.share;
  */
 public class ShareSelectTeamEvent {
 
-    private int teamId;
+    private long teamId;
 
     private String teamName;
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 

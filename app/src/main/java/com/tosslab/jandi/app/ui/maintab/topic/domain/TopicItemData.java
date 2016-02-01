@@ -6,24 +6,26 @@ package com.tosslab.jandi.app.ui.maintab.topic.domain;
 public class TopicItemData {
 
     private long id;
-    private int creatorId;
+
+    private long creatorId;
+    private boolean pinnedToSwipeLeft;
     private String name;
     private boolean isStarred;
     private boolean isJoined;
-    private int entityId;
+    private long entityId;
     private int memberCount;
     private int unreadCount;
     private boolean isPublic;
     private String description;
     private boolean selected;
-    private int markerLinkId;
+    private long markerLinkId;
     private boolean isPushOn;
 
     public TopicItemData() {
     }
 
-    public TopicItemData(long id, int creatorId, String name, boolean isStarred,
-                         boolean isJoined, int entityId, int unreadCount, int markerLinkId, boolean isPushOn,
+    public TopicItemData(long id, int swipeReaction, long creatorId, String name, boolean isStarred,
+                         boolean isJoined, long entityId, int unreadCount, long markerLinkId, boolean isPushOn,
                          boolean selected, String description, boolean isPublic, int memberCount) {
         this.id = id;
         this.creatorId = creatorId;
@@ -40,9 +42,9 @@ public class TopicItemData {
         this.memberCount = memberCount;
     }
 
-    public static TopicItemData newInstance(long id, int creatorId, String name,
-                                            boolean isStarred, boolean isJoined, int entityId,
-                                            int unreadCount, int markerLinkId, boolean isPushOn,
+    public static TopicItemData newInstance(long id, int swipeReaction, long creatorId, String name,
+                                            boolean isStarred, boolean isJoined, long entityId,
+                                            int unreadCount, long markerLinkId, boolean isPushOn,
                                             boolean selected, String description, boolean isPublic,
                                             int memberCount) {
 
@@ -64,11 +66,11 @@ public class TopicItemData {
         this.id = id;
     }
 
-    public int getCreatorId() {
+    public long getCreatorId() {
         return creatorId;
     }
 
-    public void setCreatorId(int creatorId) {
+    public void setCreatorId(long creatorId) {
         this.creatorId = creatorId;
     }
 
@@ -96,11 +98,11 @@ public class TopicItemData {
         this.isJoined = isJoined;
     }
 
-    public int getEntityId() {
+    public long getEntityId() {
         return entityId;
     }
 
-    public void setEntityId(int entityId) {
+    public void setEntityId(long entityId) {
         this.entityId = entityId;
     }
 
@@ -144,11 +146,11 @@ public class TopicItemData {
         this.selected = selected;
     }
 
-    public int getMarkerLinkId() {
+    public long getMarkerLinkId() {
         return markerLinkId;
     }
 
-    public void setMarkerLinkId(int markerLinkId) {
+    public void setMarkerLinkId(long markerLinkId) {
         this.markerLinkId = markerLinkId;
     }
 

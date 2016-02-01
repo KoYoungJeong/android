@@ -11,10 +11,11 @@ public class TopicFolderData {
     private int itemCount = 0;
     private int seq;
     private String title;
-    private int folderId;
+    private long folderId;
+    private boolean pinnedToSwipeLeft;
     private boolean isFakeFolder = false;
 
-    public TopicFolderData(long id, String title, int folderId) {
+    public TopicFolderData(long id, String title, long folderId, int swipeReaction) {
         this.id = id;
         this.title = title;
         this.folderId = folderId;
@@ -29,7 +30,7 @@ public class TopicFolderData {
         return title;
     }
 
-    public int getFolderId() {
+    public long getFolderId() {
         return folderId;
     }
 

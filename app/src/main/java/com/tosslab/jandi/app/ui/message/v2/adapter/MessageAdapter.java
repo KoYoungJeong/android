@@ -29,7 +29,7 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
 
     Context context;
 
-    int lastMarker = -1;
+    long lastMarker = -1;
     AnimState markerAnimState = AnimState.Idle;
     boolean moreFromNew;
     MoreState oldMoreState;
@@ -38,10 +38,10 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
     MessageListAdapter.OnItemClickListener onItemClickListener;
     MessageListAdapter.OnItemLongClickListener onItemLongClickListener;
 
-    int teamId;
-    int roomId = -1;
-    int entityId;
-    int lastReadLinkId = -1;
+    long teamId;
+    long roomId = -1;
+    long entityId;
+    long lastReadLinkId = -1;
 
     List<ResMessages.Link> links;
 
@@ -147,7 +147,7 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
         oldMoreState = MoreState.Nope;
     }
 
-    public int indexByMessageId(int messageId) {
+    public int indexByMessageId(long messageId) {
         int count = getItemCount();
         for (int idx = 0; idx < count; idx++) {
             if (getItem(idx).messageId == messageId)
@@ -156,7 +156,7 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
         return -1;
     }
 
-    public int indexOfLinkId(int linkId) {
+    public int indexOfLinkId(long linkId) {
         int size = getItemCount();
         for (int idx = size - 1; idx >= 0; --idx) {
             if (getItem(idx).id == linkId) {
@@ -168,7 +168,7 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
 
     public abstract void clear();
 
-    public List<Integer> indexByFeedbackId(int messageId) {
+    public List<Integer> indexByFeedbackId(long messageId) {
 
         List<Integer> indexList = new ArrayList<Integer>();
 
@@ -210,7 +210,7 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
 
     public abstract void remove(int position);
 
-    public void setMarker(int lastMarker) {
+    public void setMarker(long lastMarker) {
         this.lastMarker = lastMarker;
     }
 
@@ -234,7 +234,7 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
         this.onItemLongClickListener = onItemLongClickListener;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 
@@ -262,15 +262,15 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
         return total;
     }
 
-    public int getRoomId() {
+    public long getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(int roomId) {
+    public void setRoomId(long roomId) {
         this.roomId = roomId;
     }
 
-    public void setEntityId(int entityId) {
+    public void setEntityId(long entityId) {
         this.entityId = entityId;
     }
 
@@ -279,11 +279,11 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
         notifyItemChanged(position);
     }
 
-    public int getLastReadLinkId() {
+    public long getLastReadLinkId() {
         return lastReadLinkId;
     }
 
-    public void setLastReadLinkId(int lastReadLinkId) {
+    public void setLastReadLinkId(long lastReadLinkId) {
         this.lastReadLinkId = lastReadLinkId;
     }
 

@@ -36,21 +36,21 @@ public class MessageSearchModel {
     @RootContext
     Context context;
 
-    public ResMessageSearch requestSearchQuery(int teamId, String query, int page, int perPage, int entityId, int writerId) throws RetrofitError {
+    public ResMessageSearch requestSearchQuery(long teamId, String query, int page, int perPage, long entityId, long writerId) throws RetrofitError {
         ReqMessageSearchQeury reqMessageSearchQeury = new ReqMessageSearchQeury(teamId, query, page, perPage);
         reqMessageSearchQeury.entityId(entityId).writerId(writerId);
         return MessageSearchManager.newInstance(reqMessageSearchQeury).request();
     }
 
-    public int getCurrentTeamId() {
+    public long getCurrentTeamId() {
         return AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
     }
 
-    public boolean hasEntity(int entityId) {
+    public boolean hasEntity(long entityId) {
         return EntityManager.getInstance().getEntityById(entityId) != EntityManager.UNKNOWN_USER_ENTITY;
     }
 
-    public int getEntityType(int entityId) {
+    public int getEntityType(long entityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         if (entity.isPublicTopic()) {
             return JandiConstants.TYPE_PUBLIC_TOPIC;
@@ -61,7 +61,7 @@ public class MessageSearchModel {
         }
     }
 
-    public boolean isStarredEntity(int entityId) {
+    public boolean isStarredEntity(long entityId) {
         return EntityManager.getInstance().getEntityById(entityId).isStarred;
     }
 
@@ -105,7 +105,7 @@ public class MessageSearchModel {
         return searchResults;
     }
 
-    public String getEntityName(int entityId) {
+    public String getEntityName(long entityId) {
         return EntityManager.getInstance().getEntityNameById(entityId);
     }
 
@@ -140,7 +140,7 @@ public class MessageSearchModel {
 
     }
 
-    public int getRoomId(int entityId) {
+    public long getRoomId(long entityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         if (entity.isPublicTopic()
                 || entity.isPrivateGroup()) {

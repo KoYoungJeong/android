@@ -35,7 +35,7 @@ public class TopicDescriptionEditActivity extends BaseAppCompatActivity {
     public static final int REQUEST_EDIT = 321;
 
     @Extra
-    int entityId;
+    long entityId;
 
     @ViewById(R.id.et_topic_description_edit_content)
     EditText etDescpription;

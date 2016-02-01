@@ -62,17 +62,17 @@ public class EntityManager {
     private ResLeftSideMenu.Team mMyTeam;
     private ResLeftSideMenu.User mMe;   // with MessageMarker
 
-    private Map<Integer, FormattedEntity> mJoinedTopics = new HashMap<>();
-    private Map<Integer, FormattedEntity> mUnjoinedTopics = new HashMap<>();
-    private Map<Integer, FormattedEntity> mUsers = new HashMap<>();
-    private Map<Integer, FormattedEntity> mJoinedUsers = new HashMap<>();
-    private Map<Integer, FormattedEntity> mGroups = new HashMap<>();
+    private Map<Long, FormattedEntity> mJoinedTopics = new HashMap<>();
+    private Map<Long, FormattedEntity> mUnjoinedTopics = new HashMap<>();
+    private Map<Long, FormattedEntity> mUsers = new HashMap<>();
+    private Map<Long, FormattedEntity> mJoinedUsers = new HashMap<>();
+    private Map<Long, FormattedEntity> mGroups = new HashMap<>();
 
-    private Map<Integer, FormattedEntity> mStarredJoinedTopics = new HashMap<>();
-    private Map<Integer, FormattedEntity> mStarredUsers = new HashMap<>();
-    private Map<Integer, FormattedEntity> mStarredGroups = new HashMap<>();
+    private Map<Long, FormattedEntity> mStarredJoinedTopics = new HashMap<>();
+    private Map<Long, FormattedEntity> mStarredUsers = new HashMap<>();
+    private Map<Long, FormattedEntity> mStarredGroups = new HashMap<>();
 
-    private Map<Integer, ResLeftSideMenu.MessageMarker> mMarkers = new HashMap<>();
+    private Map<Long, ResLeftSideMenu.MessageMarker> mMarkers = new HashMap<>();
 
     // Collection 의 Sort 는 연산 시간이 오래 걸리기 때문에 한번만 하기 위해 저장하자.
     private List<FormattedEntity> mSortedJoinedTopics = null;
@@ -80,7 +80,7 @@ public class EntityManager {
     private List<FormattedEntity> mSortedUsers = null;
     private List<FormattedEntity> mSortedUsersWithoutMe = null;
     private List<FormattedEntity> mSortedGroups = null;
-    private Map<Integer, BotEntity> bots = new HashMap<>();
+    private Map<Long, BotEntity> bots = new HashMap<>();
 
     protected EntityManager() {
         ResLeftSideMenu resLeftSideMenu = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu();
@@ -157,10 +157,10 @@ public class EntityManager {
     private void arrangeEntities(ResLeftSideMenu resLeftSideMenu) {
         // HashTable 로 빼야하나? 즐겨찾기처럼 길이가 작을 경우 어떤게 더 유리한지 모르겠넹~
         LogUtil.d("EntityManger.arrangeEntities");
-        Collection<Integer> starredEntities =
+        Collection<Long> starredEntities =
                 (resLeftSideMenu.user.u_starredEntities != null)
                         ? resLeftSideMenu.user.u_starredEntities
-                        : new ArrayList<Integer>();
+                        : new ArrayList<>();
 
         // Unjoined topic 혹은 User 리스트 정리
         for (ResLeftSideMenu.Entity entity : resLeftSideMenu.entities) {
@@ -250,7 +250,7 @@ public class EntityManager {
      * **********************************************************
      */
     public List<FormattedEntity> getJoinedChannels() {
-        ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
+        ArrayList<FormattedEntity> ret = new ArrayList<>();
         if (mSortedJoinedTopics == null) {
             mSortedJoinedTopics = sortFormattedEntityList(mJoinedTopics.values());
         }
@@ -267,7 +267,7 @@ public class EntityManager {
     }
 
     public List<FormattedEntity> getGroups() {
-        ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
+        ArrayList<FormattedEntity> ret = new ArrayList<>();
         if (mSortedGroups == null) {
             mSortedGroups = sortFormattedEntityList(mGroups.values());
         }
@@ -277,7 +277,7 @@ public class EntityManager {
     }
 
     public List<FormattedEntity> getFormattedUsers() {
-        ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
+        ArrayList<FormattedEntity> ret = new ArrayList<>();
         if (mSortedUsers == null) {
             mSortedUsers = sortFormattedEntityList(mUsers.values());
         }
@@ -287,7 +287,7 @@ public class EntityManager {
     }
 
     public List<FormattedEntity> getFormattedUsersWithoutMe() {
-        ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
+        ArrayList<FormattedEntity> ret = new ArrayList<>();
 
         if (mStarredUsers != null) {
             Observable.from(mStarredUsers.values())
@@ -298,7 +298,7 @@ public class EntityManager {
 
         if (mSortedUsersWithoutMe == null && mUsers != null) {
 
-            List<FormattedEntity> tempEntities = new ArrayList<FormattedEntity>();
+            List<FormattedEntity> tempEntities = new ArrayList<>();
 
             Observable.from(mUsers.values())
                     .filter(formattedEntity -> formattedEntity.getId() != mMe.id)
@@ -314,7 +314,7 @@ public class EntityManager {
     }
 
     public List<FormattedEntity> getCategorizableEntities() {
-        List<FormattedEntity> formattedEntities = new ArrayList<FormattedEntity>();
+        List<FormattedEntity> formattedEntities = new ArrayList<>();
         formattedEntities.add(new FormattedEntity(FormattedEntity.TYPE_EVERYWHERE));
         formattedEntities.addAll(retrieveAccessableEntities());
         return formattedEntities;
@@ -337,11 +337,11 @@ public class EntityManager {
         return mMyTeam.name;
     }
 
-    public int getDefaultTopicId() {
+    public long getDefaultTopicId() {
         return mMyTeam.t_defaultChannelId;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return mMyTeam.id;
     }
 
@@ -351,7 +351,7 @@ public class EntityManager {
      * @param givenEntityIds
      * @return
      */
-    public List<FormattedEntity> retrieveGivenEntities(List<Integer> givenEntityIds) {
+    public List<FormattedEntity> retrieveGivenEntities(List<Long> givenEntityIds) {
         return retrieveByGivenEntities(givenEntityIds, true);
     }
 
@@ -361,14 +361,14 @@ public class EntityManager {
      * @param givenEntityIds
      * @return
      */
-    public List<FormattedEntity> retrieveExclusivedEntities(List<Integer> givenEntityIds) {
+    public List<FormattedEntity> retrieveExclusivedEntities(List<Long> givenEntityIds) {
         return retrieveByGivenEntities(givenEntityIds, false);
     }
 
-    private List<FormattedEntity> retrieveByGivenEntities(List<Integer> givenEntityIds, boolean
+    private List<FormattedEntity> retrieveByGivenEntities(List<Long> givenEntityIds, boolean
             includable) {
         List<FormattedEntity> accessableEntities = retrieveAccessableEntities();
-        ArrayList<FormattedEntity> retCdpItems = new ArrayList<FormattedEntity>();
+        ArrayList<FormattedEntity> retCdpItems = new ArrayList<>();
 
         for (FormattedEntity accessableEntity : accessableEntities) {
             if (accessableEntity.hasGivenIds(givenEntityIds) == includable) {
@@ -379,14 +379,14 @@ public class EntityManager {
     }
 
     public List<FormattedEntity> retrieveAccessableEntities() {
-        List<FormattedEntity> entities = new ArrayList<FormattedEntity>();
+        List<FormattedEntity> entities = new ArrayList<>();
         entities.addAll(getJoinedChannels());
         entities.addAll(getGroups());
         entities.addAll(getFormattedUsers());
         return entities;
     }
 
-    public FormattedEntity getEntityById(int entityId) {
+    public FormattedEntity getEntityById(long entityId) {
         FormattedEntity topic = searchPublicTopicById(entityId);
         if (topic != null) {
             return topic;
@@ -407,29 +407,33 @@ public class EntityManager {
         return UNKNOWN_USER_ENTITY;
     }
 
-    private FormattedEntity searchBotById(int entityId) {
+    private FormattedEntity searchBotById(long entityId) {
         return this.bots.get(entityId);
     }
 
-    public String getEntityNameById(int entityId) {
+    public String getEntityNameById(long entityId) {
         FormattedEntity entity = getEntityById(entityId);
         return (entity != UNKNOWN_USER_ENTITY) ? entity.getName() : "";
     }
 
-    public List<FormattedEntity> getUnjoinedMembersOfEntity(int entityId, int entityType) {
+    public List<FormattedEntity> getUnjoinedMembersOfEntity(long entityId, int entityType) {
         FormattedEntity entity;
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             entity = searchPublicTopicById(entityId);
         } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
             entity = searchPrivateTopicById(entityId);
         } else {
-            return null;
+            return new ArrayList<>();
         }
-        return extractExclusivedUser(entity.getMembers());
+        if (entity != null) {
+            return extractExclusivedUser(entity.getMembers());
+        } else {
+            return new ArrayList<>();
+        }
     }
 
-    private List<FormattedEntity> extractExclusivedUser(Collection<Integer> joinedMembers) {
-        ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
+    private List<FormattedEntity> extractExclusivedUser(Collection<Long> joinedMembers) {
+        List<FormattedEntity> ret = new ArrayList<>();
 
         Observable.merge(Observable.from(mStarredUsers.values()), Observable.from(mUsers.values()))
                 .filter(formattedEntity ->
@@ -449,11 +453,11 @@ public class EntityManager {
         return ret;
     }
 
-    public boolean isMyTopic(int entityId) {
+    public boolean isMyTopic(long entityId) {
         return isTopicOwner(entityId, mMe.id);
     }
 
-    public boolean isTopicOwner(int topicId, int userId) {
+    public boolean isTopicOwner(long topicId, long userId) {
         FormattedEntity searchedTopic = searchPublicTopicById(topicId);
         if (searchedTopic != null) {
             return searchedTopic.isMine(userId);
@@ -465,11 +469,11 @@ public class EntityManager {
         return false;
     }
 
-    public boolean isMe(int userId) {
+    public boolean isMe(long userId) {
         return (getMe().getId() == userId);
     }
 
-    private FormattedEntity searchPublicTopicById(int topicId) {
+    private FormattedEntity searchPublicTopicById(long topicId) {
         if (mStarredJoinedTopics.containsKey(topicId)) {
             return mStarredJoinedTopics.get(topicId);
         }
@@ -482,7 +486,7 @@ public class EntityManager {
         return null;
     }
 
-    private FormattedEntity searchPrivateTopicById(int groupId) {
+    private FormattedEntity searchPrivateTopicById(long groupId) {
         if (mStarredGroups.containsKey(groupId)) {
             return mStarredGroups.get(groupId);
         }
@@ -492,7 +496,7 @@ public class EntityManager {
         return null;
     }
 
-    private FormattedEntity searchUserById(int userId) {
+    private FormattedEntity searchUserById(long userId) {
         if (mStarredUsers.containsKey(userId)) {
             return mStarredUsers.get(userId);
         }
@@ -508,7 +512,7 @@ public class EntityManager {
      * **********************************************************
      */
     private List<FormattedEntity> sortFormattedEntityList(Collection<FormattedEntity> naiveEntities) {
-        List<FormattedEntity> sortedEntities = new ArrayList<FormattedEntity>(naiveEntities);
+        List<FormattedEntity> sortedEntities = new ArrayList<>(naiveEntities);
         Collections.sort(sortedEntities, (formattedEntity, formattedEntity2) ->
                 formattedEntity.getName().compareToIgnoreCase(formattedEntity2.getName()));
 
@@ -530,11 +534,11 @@ public class EntityManager {
                 .firstOrDefault(false);
     }
 
-    public boolean isBot(int entityId) {
+    public boolean isBot(long entityId) {
         return bots.containsKey(entityId);
     }
 
-    public boolean isJandiBot(int entityId) {
+    public boolean isJandiBot(long entityId) {
         return hasJandiBot() && getJandiBot().getId() == entityId;
     }
 }

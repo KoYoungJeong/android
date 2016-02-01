@@ -54,7 +54,7 @@ public class JandiFileDatabaseManager {
         }
     }
 
-    public void upsertFiles(int teamId, ResSearchFile fileMessages) {
+    public void upsertFiles(long teamId, ResSearchFile fileMessages) {
 
         SQLiteDatabase database = getWriteableDatabase();
 
@@ -84,7 +84,7 @@ public class JandiFileDatabaseManager {
     }
 
 
-    public ResSearchFile getFiles(int teamId) {
+    public ResSearchFile getFiles(long teamId) {
 
         SQLiteDatabase database = getReadableDatabase();
         String selection = Files.teamId + " = ?";

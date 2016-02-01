@@ -37,7 +37,7 @@ public class DummyPureViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
+    public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
 
         DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
@@ -129,7 +129,7 @@ public class DummyPureViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+    public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
     }
 
     @Override

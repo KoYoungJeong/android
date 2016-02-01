@@ -6,7 +6,7 @@ package com.tosslab.jandi.app.ui.commonviewmodels.mention.vo;
 public class SearchedItemVO {
 
     private String name;
-    private int id;
+    private long id;
     private String type;
     private int offset;
     private int length;
@@ -24,11 +24,11 @@ public class SearchedItemVO {
         return this;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public SearchedItemVO setId(int id) {
+    public SearchedItemVO setId(long id) {
         this.id = id;
         return this;
     }

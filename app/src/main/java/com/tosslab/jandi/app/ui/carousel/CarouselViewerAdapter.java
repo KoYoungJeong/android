@@ -19,13 +19,13 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
 
     private List<CarouselFileInfo> carouselFileInfos;
 
-    private WeakHashMap<Integer, Fragment> weakHashMap;
+    private WeakHashMap<Long, Fragment> weakHashMap;
     private CarouselViewerActivity.OnCarouselImageClickListener carouselImageClickListener;
 
     public CarouselViewerAdapter(FragmentManager fm) {
         super(fm);
-        carouselFileInfos = new ArrayList<CarouselFileInfo>();
-        weakHashMap = new WeakHashMap<Integer, Fragment>();
+        carouselFileInfos = new ArrayList<>();
+        weakHashMap = new WeakHashMap<>();
     }
 
     @Override
@@ -37,7 +37,7 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
 
         CarouselFileInfo fileInfo = carouselFileInfos.get(position);
-        int fileLinkId = fileInfo.getFileLinkId();
+        long fileLinkId = fileInfo.getFileLinkId();
 
         Fragment fragment;
 

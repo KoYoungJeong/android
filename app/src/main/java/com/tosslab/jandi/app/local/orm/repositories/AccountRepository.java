@@ -62,13 +62,13 @@ public class AccountRepository {
 
     }
 
-    public ResAccountInfo.UserTeam getTeamInfo(int teamId) {
+    public ResAccountInfo.UserTeam getTeamInfo(long teamId) {
         lock.lock();
         try {
-            Dao<ResAccountInfo.UserTeam, Integer> dao = helper.getDao(ResAccountInfo.UserTeam
+            Dao<ResAccountInfo.UserTeam, Long> dao = helper.getDao(ResAccountInfo.UserTeam
                     .class);
 
-            QueryBuilder<ResAccountInfo.UserTeam, Integer> queryBuilder = dao.queryBuilder();
+            QueryBuilder<ResAccountInfo.UserTeam, Long> queryBuilder = dao.queryBuilder();
             queryBuilder.where().eq("teamId", teamId);
             ResAccountInfo.UserTeam userTeam = queryBuilder.queryForFirst();
 
@@ -127,7 +127,7 @@ public class AccountRepository {
         return new ArrayList<>();
     }
 
-    public long updateSelectedTeamInfo(int teamId) {
+    public long updateSelectedTeamInfo(long teamId) {
         lock.lock();
         try {
             Dao<SelectedTeam, Long> dao = helper.getDao(SelectedTeam.class);
@@ -165,7 +165,7 @@ public class AccountRepository {
         }
     }
 
-    public int getSelectedTeamId() {
+    public long getSelectedTeamId() {
         lock.lock();
         try {
             Dao<SelectedTeam, Long> dao = helper.getDao(SelectedTeam.class);
@@ -175,7 +175,7 @@ public class AccountRepository {
                 return 0;
             }
 
-            int selectedTeamId = selectedTeam.getSelectedTeamId();
+            long selectedTeamId = selectedTeam.getSelectedTeamId();
             return selectedTeamId;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -188,9 +188,9 @@ public class AccountRepository {
     public ResAccountInfo.UserTeam getSelectedTeamInfo() {
         lock.lock();
         try {
-            int selectedTeamId = getSelectedTeamId();
+            long selectedTeamId = getSelectedTeamId();
 
-            Dao<ResAccountInfo.UserTeam, Integer> teamDao = helper.getDao(ResAccountInfo
+            Dao<ResAccountInfo.UserTeam, Long> teamDao = helper.getDao(ResAccountInfo
                     .UserTeam.class);
             ResAccountInfo.UserTeam userTeam = teamDao.queryForId(selectedTeamId);
 

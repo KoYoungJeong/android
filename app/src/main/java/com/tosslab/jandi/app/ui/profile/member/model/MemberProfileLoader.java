@@ -108,7 +108,7 @@ public class MemberProfileLoader implements ProfileLoader {
         vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
     }
 
-    private boolean isMe(int memberId) {
+    private boolean isMe(long memberId) {
         return EntityManager.getInstance().isMe(memberId);
     }
 

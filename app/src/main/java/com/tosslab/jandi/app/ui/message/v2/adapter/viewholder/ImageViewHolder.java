@@ -108,8 +108,8 @@ public class ImageViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
-        int fromEntityId = link.fromEntity;
+    public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
+        long fromEntityId = link.fromEntity;
 
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity fromEntity = entityManager.getEntityById(fromEntityId);
@@ -147,7 +147,7 @@ public class ImageViewHolder implements BodyViewHolder {
             vDisableCover.setVisibility(View.GONE);
             vDisableLineThrough.setVisibility(View.GONE);
 
-            int userId = user.id;
+            long userId = user.id;
             ShowProfileEvent eventFromImage = new ShowProfileEvent(userId, ShowProfileEvent.From.Image);
             ivProfile.setOnClickListener(v -> EventBus.getDefault().post(eventFromImage));
 
@@ -164,7 +164,7 @@ public class ImageViewHolder implements BodyViewHolder {
         }
     }
 
-    private void bindUnreadCount(int linkId, int teamId, int roomId, int fromEntityId, int myId) {
+    private void bindUnreadCount(long linkId, long teamId, long roomId, long fromEntityId, long myId) {
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId, linkId, fromEntityId, myId);
         tvUnread.setText(String.valueOf(unreadCount));
         if (unreadCount <= 0) {
@@ -174,7 +174,7 @@ public class ImageViewHolder implements BodyViewHolder {
         }
     }
 
-    private void bindUploader(ResLeftSideMenu.User user, int writerId) {
+    private void bindUploader(ResLeftSideMenu.User user, long writerId) {
         if (isWriter(user, writerId)) {
             tvUploader.setVisibility(View.GONE);
         } else {
@@ -202,7 +202,7 @@ public class ImageViewHolder implements BodyViewHolder {
         }
     }
 
-    private boolean isWriter(ResLeftSideMenu.User user, int writerId) {
+    private boolean isWriter(ResLeftSideMenu.User user, long writerId) {
         return user != null && user.id == writerId;
     }
 
@@ -389,7 +389,7 @@ public class ImageViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+    public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
         if (currentLinkId == lastReadLinkId) {
             vLastRead.setVisibility(View.VISIBLE);
         } else {

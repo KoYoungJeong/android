@@ -24,7 +24,7 @@ public class MembersListPresenterImplTest {
 
     private MembersListPresenterImpl presenter;
     private MembersListPresenterImpl.View mockView;
-    private int topicId;
+    private long topicId;
 
     @Before
     public void setUp() throws Exception {
@@ -45,7 +45,7 @@ public class MembersListPresenterImplTest {
 
     @Test
     public void testOnKickUser() throws Exception {
-        int entityId = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL);
+        long entityId = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL);
         {
             final boolean[] finish = {false};
             Mockito.doAnswer(invocationOnMock -> {

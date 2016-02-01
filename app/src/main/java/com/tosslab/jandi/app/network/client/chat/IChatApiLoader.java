@@ -11,8 +11,8 @@ import java.util.List;
  */
 public interface IChatApiLoader {
 
-    IExecutor<List<ResChat>> loadGetChatListByChatApi(int memberId);
+    IExecutor<List<ResChat>> loadGetChatListByChatApi(long memberId);
 
-    IExecutor<ResCommon> loadDeleteChatByChatApi(int memberId, int entityId);
+    IExecutor<ResCommon> loadDeleteChatByChatApi(long memberId, long entityId);
 
 }

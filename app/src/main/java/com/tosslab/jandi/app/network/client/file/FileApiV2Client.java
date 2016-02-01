@@ -21,24 +21,24 @@ public interface FileApiV2Client {
 
     @DELETEWithBody("/files/{fileId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon deleteFile(@Query("teamId") int teamId, @Path("fileId") int fileId);
+    ResCommon deleteFile(@Query("teamId") long teamId, @Path("fileId") long fileId);
 
     @GET("/teams/{teamId}/rooms/{roomId}/images")
-    List<ResMessages.FileMessage> searchInitImageFile(@Path("teamId") int teamId
-            , @Path("roomId") int roomId
-            , @Query("messageId") int messageId
+    List<ResMessages.FileMessage> searchInitImageFile(@Path("teamId") long teamId
+            , @Path("roomId") long roomId
+            , @Query("messageId") long messageId
             , @Query("count") int count);
 
     @GET("/teams/{teamId}/rooms/{roomId}/images?type=old")
-    List<ResMessages.FileMessage> searchOldImageFile(@Path("teamId") int teamId
-            , @Path("roomId") int roomId
-            , @Query("messageId") int messageId
+    List<ResMessages.FileMessage> searchOldImageFile(@Path("teamId") long teamId
+            , @Path("roomId") long roomId
+            , @Query("messageId") long messageId
             , @Query("count") int count);
 
     @GET("/teams/{teamId}/rooms/{roomId}/images?type=new")
-    List<ResMessages.FileMessage> searchNewImageFile(@Path("teamId") int teamId
-            , @Path("roomId") int roomId
-            , @Query("messageId") int messageId
+    List<ResMessages.FileMessage> searchNewImageFile(@Path("teamId") long teamId
+            , @Path("roomId") long roomId
+            , @Query("messageId") long messageId
             , @Query("count") int count);
 
 }

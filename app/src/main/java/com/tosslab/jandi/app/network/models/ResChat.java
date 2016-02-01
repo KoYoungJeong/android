@@ -17,16 +17,16 @@ public class ResChat {
     @DatabaseField
     private long teamId;
     @DatabaseField(id = true, columnName = "roomId")
-    private int entityId;
+    private long entityId;
 
     @DatabaseField
-    private int lastMessageId;
+    private long lastMessageId;
     @DatabaseField
     private int unread;
     @DatabaseField(columnName = "userId")
-    private int companionId;
+    private long companionId;
     @DatabaseField
-    private int lastLinkId;
+    private long lastLinkId;
     @DatabaseField
     private String lastMessage;
     @DatabaseField
@@ -36,7 +36,7 @@ public class ResChat {
     @DatabaseField
     private boolean isOld;
 
-    public int getLastMessageId() {
+    public long getLastMessageId() {
         return lastMessageId;
     }
 
@@ -52,19 +52,19 @@ public class ResChat {
         this.unread = unread;
     }
 
-    public int getEntityId() {
+    public long getEntityId() {
         return entityId;
     }
 
-    public void setEntityId(int entityId) {
+    public void setEntityId(long entityId) {
         this.entityId = entityId;
     }
 
-    public int getLastLinkId() {
+    public long getLastLinkId() {
         return lastLinkId;
     }
 
-    public void setLastLinkId(int lastLinkId) {
+    public void setLastLinkId(long lastLinkId) {
         this.lastLinkId = lastLinkId;
     }
 
@@ -76,11 +76,11 @@ public class ResChat {
         this.lastMessage = lastMessage;
     }
 
-    public int getCompanionId() {
+    public long getCompanionId() {
         return companionId;
     }
 
-    public ResChat companionId(int companionId) {
+    public ResChat companionId(long companionId) {
         this.companionId = companionId;
         return this;
     }

@@ -12,8 +12,8 @@ import rx.Observable;
  */
 public class UnreadCountUtil {
 
-    public static int getUnreadCount(int teamId, int roomId, int linkId,
-                                     int fromEntityId, int myId) {
+    public static int getUnreadCount(long teamId, long roomId, long linkId,
+                                     long fromEntityId, long myId) {
 
         Collection<ResRoomInfo.MarkerInfo> markers =
                 MarkerRepository.getRepository().getRoomMarker(teamId, roomId);

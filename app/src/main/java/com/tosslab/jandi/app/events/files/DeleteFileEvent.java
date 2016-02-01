@@ -4,19 +4,19 @@ package com.tosslab.jandi.app.events.files;
  * Created by Steve SeongUg Jung on 15. 4. 7..
  */
 public class DeleteFileEvent {
-    private final int teamId;
-    private final int id;
+    private final long teamId;
+    private final long id;
 
-    public DeleteFileEvent(int teamId, int id) {
+    public DeleteFileEvent(long teamId, long id) {
         this.teamId = teamId;
         this.id = id;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 }

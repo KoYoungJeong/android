@@ -14,11 +14,11 @@ import retrofit.RetrofitError;
  */
 public interface IProfileApiAuth {
 
-    ResLeftSideMenu.User updateMemberProfileByProfileApi(int memberId, ReqUpdateProfile reqUpdateProfile) throws RetrofitError;
+    ResLeftSideMenu.User updateMemberProfileByProfileApi(long memberId, ReqUpdateProfile reqUpdateProfile) throws RetrofitError;
 
-    ResCommon updateMemberNameByProfileApi(int memberId, ReqProfileName reqProfileName) throws RetrofitError;
+    ResCommon updateMemberNameByProfileApi(long memberId, ReqProfileName reqProfileName) throws RetrofitError;
 
-    ResLeftSideMenu.User updateMemberEmailByProfileApi(int memberId, ReqAccountEmail reqAccountEmail) throws RetrofitError;
+    ResLeftSideMenu.User updateMemberEmailByProfileApi(long memberId, ReqAccountEmail reqAccountEmail) throws RetrofitError;
 
     ResAvatarsInfo getAvartarsInfo() throws RetrofitError;
 

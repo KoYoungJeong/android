@@ -35,7 +35,7 @@ public class UploadedFileInfoRepository {
         return 0;
     }
 
-    public UploadedFileInfo getUploadedFileInfo(int messageId) {
+    public UploadedFileInfo getUploadedFileInfo(long messageId) {
         UploadedFileInfo fileInfo = null;
         try {
             Dao<UploadedFileInfo, ?> dao = helper.getDao(UploadedFileInfo.class);

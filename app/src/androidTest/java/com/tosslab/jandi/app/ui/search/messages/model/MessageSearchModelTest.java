@@ -32,7 +32,7 @@ public class MessageSearchModelTest {
     public void testRequestSearchQuery() throws Exception {
         // Given
         final String query = "가";
-        int teamId = EntityManager.getInstance().getTeamId();
+        long teamId = EntityManager.getInstance().getTeamId();
 
         // When
         ResMessageSearch searchQuery = searchModel.requestSearchQuery(teamId, query, 1, 20, -1, -1);

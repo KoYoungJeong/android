@@ -78,7 +78,7 @@ public class DownloadService extends IntentService implements DownloadController
         super(TAG);
     }
 
-    public static void start(int fileId, String url, String fileName, String ext, String fileType) {
+    public static void start(long fileId, String url, String fileName, String ext, String fileType) {
         Intent intent = new Intent(JandiApplication.getContext(), DownloadService.class);
         intent.putExtra(KEY_FILE_ID, fileId);
         intent.putExtra(KEY_FILE_URL, url);

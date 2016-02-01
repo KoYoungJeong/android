@@ -173,7 +173,7 @@ public class ChatsChooseFragment extends Fragment {
         } else {
 
             getActivity().finish();
-            int entityId = chatChooseItem.getEntityId();
+            long entityId = chatChooseItem.getEntityId();
             MessageListV2Activity_.intent(getActivity())
                     .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                     .entityId(entityId)

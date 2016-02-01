@@ -29,7 +29,7 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
     }
 
     @Override
-    public void load(int roomId, int linkId) {
+    public void load(long roomId, long linkId) {
         if (linkId <= 0) {
             return;
         }
@@ -46,10 +46,10 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
                 if (newMessage.records.size() > 0) {
                     isLastLinkId = newMessage.lastLinkId == newMessage.records.get(newMessage.records.size() - 1).id;
 
-                    int lastLinkId = newMessage.records.get(newMessage.records.size() - 1).id;
+                    long lastLinkId = newMessage.records.get(newMessage.records.size() - 1).id;
                     messageState.setLastUpdateLinkId(lastLinkId);
 
-                    int myId = EntityManager.getInstance().getMe().getId();
+                    long myId = EntityManager.getInstance().getMe().getId();
                     ResRoomInfo.MarkerInfo myMarker = MarkerRepository.getRepository().getMyMarker(roomId, myId);
 
                     if (myMarker.getLastLinkId() < lastLinkId) {

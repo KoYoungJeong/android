@@ -50,7 +50,7 @@ public class MainMoreModel {
 
     public int getOtherTeamBadge() {
         AccountRepository accountRepository = AccountRepository.getRepository();
-        int selectedTeamId = accountRepository.getSelectedTeamId();
+        long selectedTeamId = accountRepository.getSelectedTeamId();
         final int badgeCount[] = {0};
         Observable.from(accountRepository.getAccountTeams())
                 .filter(userTeam -> userTeam.getTeamId() != selectedTeamId)

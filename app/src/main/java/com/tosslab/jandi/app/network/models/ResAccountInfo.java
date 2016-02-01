@@ -272,9 +272,9 @@ public class ResAccountInfo {
         @JsonIgnore
         ResAccountInfo accountInfo;
         @DatabaseField(id = true)
-        private int teamId;
+        private long teamId;
         @DatabaseField
-        private int memberId;
+        private long memberId;
         @DatabaseField
         private String name;
         @DatabaseField
@@ -296,19 +296,19 @@ public class ResAccountInfo {
             this.accountInfo = accountInfo;
         }
 
-        public int getTeamId() {
+        public long getTeamId() {
             return teamId;
         }
 
-        public void setTeamId(int teamId) {
+        public void setTeamId(long teamId) {
             this.teamId = teamId;
         }
 
-        public int getMemberId() {
+        public long getMemberId() {
             return memberId;
         }
 
-        public void setMemberId(int memberId) {
+        public void setMemberId(long memberId) {
             this.memberId = memberId;
         }
 

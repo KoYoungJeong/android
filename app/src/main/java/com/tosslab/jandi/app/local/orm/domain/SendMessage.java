@@ -17,16 +17,16 @@ public class SendMessage {
     private long id;
 
     @DatabaseField
-    private int messageId;
+    private long messageId;
 
     @DatabaseField
-    private int roomId;
+    private long roomId;
     @DatabaseField
     private String message;
     @DatabaseField
     private String status;
     @DatabaseField
-    private int stickerGroupId;
+    private long stickerGroupId;
     @DatabaseField
     private String stickerId;
 
@@ -41,11 +41,11 @@ public class SendMessage {
         this.id = id;
     }
 
-    public int getRoomId() {
+    public long getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(int roomId) {
+    public void setRoomId(long roomId) {
         this.roomId = roomId;
     }
 
@@ -65,11 +65,11 @@ public class SendMessage {
         this.status = status;
     }
 
-    public int getMessageId() {
+    public long getMessageId() {
         return messageId;
     }
 
-    public void setMessageId(int messageId) {
+    public void setMessageId(long messageId) {
         this.messageId = messageId;
     }
 
@@ -81,11 +81,11 @@ public class SendMessage {
         this.mentionObjects = mentionObjects;
     }
 
-    public int getStickerGroupId() {
+    public long getStickerGroupId() {
         return stickerGroupId;
     }
 
-    public void setStickerGroupId(int stickerGroupId) {
+    public void setStickerGroupId(long stickerGroupId) {
         this.stickerGroupId = stickerGroupId;
     }
 

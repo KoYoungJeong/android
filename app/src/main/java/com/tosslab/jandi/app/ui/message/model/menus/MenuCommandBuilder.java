@@ -13,8 +13,8 @@ public class MenuCommandBuilder {
 
     private AppCompatActivity activity;
     private Fragment fragment;
-    private int teamId;
-    private int entityId;
+    private long teamId;
+    private long entityId;
 
     public MenuCommandBuilder(AppCompatActivity activity) {
         this.activity = activity;
@@ -24,12 +24,12 @@ public class MenuCommandBuilder {
         return new MenuCommandBuilder(activity);
     }
 
-    public MenuCommandBuilder teamId(int teamId) {
+    public MenuCommandBuilder teamId(long teamId) {
         this.teamId = teamId;
         return this;
     }
 
-    public MenuCommandBuilder entityId(int entityId) {
+    public MenuCommandBuilder entityId(long entityId) {
         this.entityId = entityId;
         return this;
     }

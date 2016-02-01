@@ -5,13 +5,13 @@ package com.tosslab.jandi.app.network.models;
  */
 public class ReqRegistFolderItem {
 
-    private int itemId;
+    private long itemId;
 
-    public int getItemId() {
+    public long getItemId() {
         return itemId;
     }
 
-    public void setItemId(int itemId) {
+    public void setItemId(long itemId) {
         this.itemId = itemId;
     }
 

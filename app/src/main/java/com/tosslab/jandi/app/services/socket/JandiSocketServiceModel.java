@@ -601,7 +601,7 @@ public class JandiSocketServiceModel {
             TeamLeaveEvent teamLeaveEvent = new TeamLeaveEvent(socketTeamLeaveEvent.getTeam().getId(), socketTeamLeaveEvent.getMember().getId());
 
             int leaveMemberId = socketTeamLeaveEvent.getMember().getId();
-            int myId = EntityManager.getInstance().getMe().getId();
+            long myId = EntityManager.getInstance().getMe().getId();
 
             if (leaveMemberId != myId) {
                 refreshEntity(teamLeaveEvent, false);

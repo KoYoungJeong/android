@@ -34,10 +34,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by tee on 15. 7. 21..
- */
-
 public class MentionControlViewModel {
     public static final Pattern MENTION_PATTERN = Pattern.compile("(?:@)([^\\u2063]+)(?:\\u2063)(\\d+)(?:\\u2063)");
     public static final Pattern MENTION_PATTERN_FOR_SEARCH = Pattern.compile("(?:(?:^|\\s)([@\\uff20]((?:[^@\\uff20]){0,30})))$");
@@ -68,8 +64,8 @@ public class MentionControlViewModel {
 
     private MentionControlViewModel(Activity activity,
                                     EditText editText,
-                                    int teamId,
-                                    List<Integer> roomIds,
+                                    long teamId,
+                                    List<Long> roomIds,
                                     String mentionType) {
 
         this.clipBoard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -81,9 +77,9 @@ public class MentionControlViewModel {
 
     public static MentionControlViewModel newInstance(Activity activity,
                                                       EditText editText,
-                                                      List<Integer> roomIds,
+                                                      List<Long> roomIds,
                                                       String mentionType) {
-        int teamId = EntityManager.getInstance().getTeamId();
+        long teamId = EntityManager.getInstance().getTeamId();
         return new MentionControlViewModel(activity,
                 editText,
                 teamId,
@@ -93,8 +89,8 @@ public class MentionControlViewModel {
 
     public static MentionControlViewModel newInstance(Activity activity,
                                                       EditText editText,
-                                                      int teamId,
-                                                      List<Integer> roomIds,
+                                                      long teamId,
+                                                      List<Long> roomIds,
                                                       String mentionType) {
         return new MentionControlViewModel(activity,
                 editText,
@@ -103,7 +99,7 @@ public class MentionControlViewModel {
                 mentionType);
     }
 
-    private void init(Activity activity, EditText editText, int teamId, List<Integer> roomIds) {
+    private void init(Activity activity, EditText editText, long teamId, List<Long> roomIds) {
 
         this.etMessage = (AutoCompleteTextView) editText;
 
@@ -135,11 +131,11 @@ public class MentionControlViewModel {
         this.onMentionShowingListener = onMentionShowingListener;
     }
 
-    public void refreshMembers(List<Integer> roomIds) {
+    public void refreshMembers(List<Long> roomIds) {
         refreshMembers(EntityManager.getInstance().getTeamId(), roomIds);
     }
 
-    public void refreshMembers(int teamId, List<Integer> roomIds) {
+    public void refreshMembers(long teamId, List<Long> roomIds) {
         refreshSelectableMembers(teamId, roomIds);
 
         if (etMessage != null) {
@@ -326,12 +322,12 @@ public class MentionControlViewModel {
     }
 
     // 현재 토픽 또는 파일에서 멘션 가능한 모든 멤버들을 얻어오는 메서드
-    public LinkedHashMap<Integer, SearchedItemVO> getAllSelectableMembers() {
+    public LinkedHashMap<Long, SearchedItemVO> getAllSelectableMembers() {
         return searchMemberModel.getAllSelectableMembers();
     }
 
     // 토픽 또는 파일의 정보 갱신으로 갱신된 멘션가능한 멤버들을 얻어오는 메서드
-    public void refreshSelectableMembers(int teamId, List<Integer> roomIds) {
+    public void refreshSelectableMembers(long teamId, List<Long> roomIds) {
         searchMemberModel.refreshSelectableMembers(teamId, roomIds, mentionType);
     }
 
@@ -382,14 +378,14 @@ public class MentionControlViewModel {
 
         List<Pair<Integer, Integer>> replaceIndex = new ArrayList<>();
 
-        LinkedHashMap<Integer, SearchedItemVO> selectableMembers = getAllSelectableMembers();
+        LinkedHashMap<Long, SearchedItemVO> selectableMembers = getAllSelectableMembers();
 
-        String findId = "";
+        String findId;
         // 해제할 멘션 정보.
         while (matcher.find()) {
             findId = matcher.group(2);
             try {
-                int id = Integer.parseInt(findId);
+                long id = Long.parseLong(findId);
                 if (!selectableMembers.containsKey(id)) {
                     replaceIndex.add(new Pair<>(matcher.start(2) - 1, matcher.end(2) + 1));
                 }
@@ -436,14 +432,14 @@ public class MentionControlViewModel {
 
     // 현재까지의 editText에서 멘션 가공된 message와 mention object 리스트를 얻어오는 메서드
     private ResultMentionsVO getMentionInfoObject(String message,
-                                                  LinkedHashMap<Integer, SearchedItemVO> selectableMembers) {
+                                                  LinkedHashMap<Long, SearchedItemVO> selectableMembers) {
 
         if (TextUtils.isEmpty(message)) {
             return new ResultMentionsVO("", new ArrayList<>());
         }
 
         StringBuilder builder = new StringBuilder(message);
-        String findId = "";
+        String findId;
 //        Pattern p = Pattern.compile("(?:@)([^\\u2063]+)(?:\\u2063)(\\d+)(?:\\u2063)");
         Matcher matcher = MENTION_PATTERN.matcher(message);
 
@@ -454,7 +450,7 @@ public class MentionControlViewModel {
         while (matcher.find()) {
             findId = matcher.group(2);
             try {
-                int id = Integer.parseInt(findId);
+                long id = Long.parseLong(findId);
                 if (selectableMembers.containsKey(id)) {
                     orderedSearchedMember.add(selectableMembers.get(id));
                 } else {
@@ -576,7 +572,7 @@ public class MentionControlViewModel {
                 return;
 
             // if U cut the string in the etMessage, etMessage already removed all string.
-            String et = null;
+            String et;
             boolean isCut = false;
             if (afterText.length() == 0 && beforeText.length() > 0) {
                 et = beforeText;
@@ -591,11 +587,11 @@ public class MentionControlViewModel {
             }
             ClipboardManager clipBoard = (ClipboardManager) etMessage.getContext()
                     .getSystemService(Context.CLIPBOARD_SERVICE);
-            CharSequence pasteData = "";
+            CharSequence pasteData;
             ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
             pasteData = item.getText();
             if (!TextUtils.isEmpty(pasteData) && et.contains(pasteData.toString())) {
-                String convertedMessage = null;
+                String convertedMessage;
                 if (isCut) {
                     convertedMessage =
                             getMentionInfoObject(et).getMessage();

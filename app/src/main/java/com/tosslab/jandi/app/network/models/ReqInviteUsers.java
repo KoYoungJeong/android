@@ -7,9 +7,9 @@ import java.util.List;
  */
 @Deprecated
 public class ReqInviteUsers {
-    public List<Integer> inviteUsers;
+    public List<Long> inviteUsers;
 
-    public ReqInviteUsers(List<Integer> inviteUsers) {
+    public ReqInviteUsers(List<Long> inviteUsers) {
         this.inviteUsers = inviteUsers;
     }
 

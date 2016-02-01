@@ -36,7 +36,7 @@ public class InviteEmailModel {
 
     public List<ResInvitationMembers> inviteMembers(List<String> invites) throws RetrofitError {
 
-        int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
+        long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
         return RequestApiManager.getInstance().inviteToTeamByTeamApi(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage(context.getApplicationContext())));
 

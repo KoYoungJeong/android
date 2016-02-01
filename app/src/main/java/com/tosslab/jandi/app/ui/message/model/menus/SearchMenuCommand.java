@@ -14,9 +14,9 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 public class SearchMenuCommand implements MenuCommand {
 
     private final Context context;
-    private final int entityId;
+    private final long entityId;
 
-    public SearchMenuCommand(Context context, int entityId) {
+    public SearchMenuCommand(Context context, long entityId) {
         this.context = context;
         this.entityId = entityId;
     }

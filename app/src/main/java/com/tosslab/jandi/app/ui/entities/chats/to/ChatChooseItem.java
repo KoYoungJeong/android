@@ -4,7 +4,7 @@ package com.tosslab.jandi.app.ui.entities.chats.to;
  * Created by Steve SeongUg Jung on 15. 1. 14..
  */
 public class ChatChooseItem {
-    private int entityId;
+    private long entityId;
     private String name;
     private String statusMessage;
     private String photoUrl;
@@ -29,7 +29,7 @@ public class ChatChooseItem {
         return this;
     }
 
-    public ChatChooseItem entityId(int entityId) {
+    public ChatChooseItem entityId(long entityId) {
 
         this.entityId = entityId;
         return this;
@@ -55,7 +55,7 @@ public class ChatChooseItem {
         return isOwner;
     }
 
-    public int getEntityId() {
+    public long getEntityId() {
         return entityId;
     }
 
