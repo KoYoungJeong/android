@@ -3,6 +3,8 @@ package com.tosslab.jandi.app.network.client.privatetopic;
 import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicDescription;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicName;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
@@ -13,7 +15,9 @@ public interface IGroupApiLoader {
 
     IExecutor<ResCommon> loadCreatePrivateGroupByGroupApi(ReqCreateTopic group);
 
-    IExecutor<ResCommon> loadModifyGroupByGroupApi(ReqCreateTopic channel, int groupId);
+    IExecutor<ResCommon> loadModifyGroupByGroupApi(ReqModifyTopicName channel, int groupId);
+
+    IExecutor<ResCommon> loadModifyGroupDescriptionByGroupApi(ReqModifyTopicDescription entityInfo, int entityId);
 
     IExecutor<ResCommon> loadDeleteGroupByGroupApi(int teamId, int groupId);
 

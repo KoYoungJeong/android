@@ -113,6 +113,8 @@ public class ResRoomInfo {
     }
 
     @DatabaseTable(tableName = "room_info_marker")
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class MarkerInfo {
         @DatabaseField(columnName = "roomId", foreign = true, foreignAutoRefresh = true)
         private ResRoomInfo room;
@@ -123,7 +125,7 @@ public class ResRoomInfo {
         @DatabaseField
         private int memberId;
         @DatabaseField
-        private int lastLinkId;
+        private int lastLinkId = -1;
 
         public int getLastLinkId() {
             return lastLinkId;

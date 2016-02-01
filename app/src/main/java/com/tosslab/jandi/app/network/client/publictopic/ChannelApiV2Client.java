@@ -6,6 +6,9 @@ import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWith
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicAutoJoin;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicDescription;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicName;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
 import retrofit.http.Body;
@@ -30,7 +33,18 @@ public interface ChannelApiV2Client {
     @PUT("/channels/{channelId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
     ResCommon modifyPublicTopicName(@Query("teamId") int teamId,
-                                    @Body ReqCreateTopic channel,
+                                    @Body ReqModifyTopicName topicName,
+                                    @Path("channelId") int channelId);
+    @PUT("/channels/{channelId}")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+    ResCommon modifyPublicTopicDescription(@Query("teamId") int teamId,
+                                    @Body ReqModifyTopicDescription description,
+                                    @Path("channelId") int channelId);
+
+    @PUT("/channels/{channelId}")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+    ResCommon modifyPublicTopicAutoJoin(@Query("teamId") int teamId,
+                                    @Body ReqModifyTopicAutoJoin topicAutoJoin,
                                     @Path("channelId") int channelId);
 
     // 채널 삭제

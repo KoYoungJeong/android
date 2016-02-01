@@ -5,6 +5,8 @@ import com.tosslab.jandi.app.network.manager.restapiclient.annotation.Authorized
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicDescription;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicName;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
@@ -29,10 +31,15 @@ public interface GroupApiV2Client {
     // Private Group 수정
     @PUT("/privateGroups/{groupId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-    ResCommon modifyGroup(@Query("teamId") int teamId,
-                          @Body ReqCreateTopic channel,
-                          @Path("groupId") int groupId);
+    ResCommon modifyGroupName(@Query("teamId") int teamId,
+                              @Body ReqModifyTopicName channel,
+                              @Path("groupId") int groupId);
 
+    @PUT("/privateGroups/{groupId}")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+    ResCommon modifyGroupDescription(@Query("teamId") int teamId,
+                          @Body ReqModifyTopicDescription description,
+                          @Path("groupId") int groupId);
     // Private Group 삭제
     @DELETEWithBody("/privateGroups/{groupId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)

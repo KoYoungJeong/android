@@ -80,31 +80,23 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
     public void showList() {
         int myId = fileDetailModel.getMyId();
 
-        List<Integer> sharedEntityWithoutMe = new ArrayList<>();
+
+        List<FormattedEntity> entities = new ArrayList<>();
+        EntityManager entityManager = EntityManager.getInstance();
 
         Observable.from(sharedEntities)
                 .filter(integerWrapper -> integerWrapper != myId)
-                .collect(() -> sharedEntityWithoutMe, List::add)
+                .map(entityManager::getEntityById)
+                .filter(formattedEntity -> formattedEntity != EntityManager.UNKNOWN_USER_ENTITY)
+                .collect(() -> entities, List::add)
                 .subscribe();
 
-        EntityManager entityManager = EntityManager.getInstance();
-
-        final List<FormattedEntity> sharedEntities = entityManager.retrieveGivenEntities(sharedEntityWithoutMe);
-
-        List<FormattedEntity> unjoinedChannels = entityManager.getUnjoinedChannels();
-
-        for (FormattedEntity unjoinedEntity : unjoinedChannels) {
-            if (unjoinedEntity.hasGivenIds(sharedEntityWithoutMe)) {
-                sharedEntities.add(unjoinedEntity);
-            }
-        }
-
-        if (!sharedEntities.isEmpty()) {
-            final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, sharedEntities);
+        if (!entities.isEmpty()) {
+            final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, entities);
             lvSharedEntities.setAdapter(adapter);
             lvSharedEntities.setOnItemClickListener((adapterView, view, i, l) -> {
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("EntityId", sharedEntities.get(i).getEntity().id);
+                returnIntent.putExtra("EntityId", entities.get(i).getId());
                 setResult(RESULT_OK, returnIntent);
                 finish();
             });

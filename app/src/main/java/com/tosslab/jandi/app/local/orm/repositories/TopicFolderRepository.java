@@ -48,6 +48,7 @@ public class TopicFolderRepository {
             int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             Dao<ResFolder, ?> FolderDao = helper.getDao(ResFolder.class);
             return FolderDao.queryBuilder()
+                    .orderBy("seq", true)
                     .where()
                     .eq("teamId", selectedTeamId)
                     .query();
