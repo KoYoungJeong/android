@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.google.ads.conversiontracking.AdWordsConversionReporter;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -164,6 +165,11 @@ public class IntroLoginFragment extends Fragment implements IntroMainActivity.Ke
      */
     @Click(R.id.btn_getting_started)
     void onClickSignUp() {
+
+        AdWordsConversionReporter.reportWithConversionId(JandiApplication.getContext(),
+                "957512006", "l9F-CIeql2MQxvLJyAM", "0.00", true);
+
+
         String emailText = introLoginViewModel.getEmailText();
         SignUpActivity_.intent(IntroLoginFragment.this)
                 .email(emailText)

@@ -44,7 +44,8 @@ checkstyle {
     toolVersion = "6.2"
 }
 
-def supportLibVersion = "23.1.0"
+def supportLibVersion = "23.0.+"
+def playServiceVersion = "7.0.0"
 
 dependencies {
 
@@ -68,8 +69,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     // Google
-    compile 'com.google.android.gms:play-services-analytics:7.0.0'
-    compile 'com.google.android.gms:play-services-gcm:7.0.0'
+    compile "com.google.android.gms:play-services-analytics:${playServiceVersion}"
+    compile "com.google.android.gms:play-services-gcm:${playServiceVersion}"
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:support-v4:${supportLibVersion}"
     compile "com.android.support:support-v13:${supportLibVersion}"

@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.ads.conversiontracking.AdWordsConversionReporter;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
@@ -235,6 +236,11 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     @UiThread
     @Override
     public void moveToAccountHome() {
+
+        AdWordsConversionReporter.reportWithConversionId(getApplicationContext(),
+                "957512006", "M3MOCM6ij2MQxvLJyAM", "0.00", true);
+
+
         AccountHomeActivity_.intent(this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK
                         | Intent.FLAG_ACTIVITY_NEW_TASK)
