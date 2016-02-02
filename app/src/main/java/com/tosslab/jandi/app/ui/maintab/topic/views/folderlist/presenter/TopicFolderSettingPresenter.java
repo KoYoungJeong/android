@@ -40,7 +40,7 @@ public class TopicFolderSettingPresenter {
     }
 
     @Background
-    public void onRefreshFolders(int folderId) {
+    public void onRefreshFolders(long folderId) {
         boolean hasFolder = false;
         List<ResFolder> folders = null;
         if (NetworkCheckUtil.isConnected()) {
@@ -124,21 +124,21 @@ public class TopicFolderSettingPresenter {
 
     // 순서 및 이름 변경
     @Background
-    public void modifyNameFolder(int folderId, String name, int seq) {
-        topicFolderSettingModel.modifyFolder(folderId, name, seq);
+    public void modifyNameFolder(long folderId, String name, int seq) {
+        topicFolderSettingModel.renameFolder(folderId, name, seq);
         onRefreshFolders(folderId);
 
     }
 
     // 순서 및 이름 변경
     @Background
-    public void modifySeqFolder(int folderId, int seq) {
+    public void modifySeqFolder(long folderId, int seq) {
         topicFolderSettingModel.modifySeqFolder(folderId, seq);
         onRefreshFolders(folderId);
     }
 
     @Background
-    public void removeFolder(int folderId) {
+    public void removeFolder(long folderId) {
         topicFolderSettingModel.deleteTopicFolder(folderId);
         onRefreshFolders(folderId);
     }

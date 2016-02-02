@@ -193,7 +193,7 @@ public class SendMessageRepository {
 
     }
 
-    public int deleteCompletedMessageOfRoom(int roomId) {
+    public int deleteCompletedMessageOfRoom(long roomId) {
         try {
             Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
             DeleteBuilder<SendMessage, ?> deleteBuilder = dao.deleteBuilder();

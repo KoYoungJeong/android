@@ -173,7 +173,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
         return oldMessage;
     }
 
-    private void deleteCompletedSendingMessage(int roomId) {
+    private void deleteCompletedSendingMessage(long roomId) {
         SendMessageRepository.getRepository().deleteCompletedMessageOfRoom(roomId);
     }
 

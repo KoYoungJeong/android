@@ -19,8 +19,9 @@ package com.tosslab.jandi.app.libraries.advancerecyclerview.expandable;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.utils.BaseWrapperAdapter;
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.utils.WrapperAdapterUtils;
+import com.tosslab.jandi.app.libraries.advancerecyclerview.utils.BaseWrapperAdapter;
+import com.tosslab.jandi.app.libraries.advancerecyclerview.utils.WrapperAdapterUtils;
+
 
 class ExpandableRecyclerViewWrapperAdapter
         extends BaseWrapperAdapter<RecyclerView.ViewHolder> {

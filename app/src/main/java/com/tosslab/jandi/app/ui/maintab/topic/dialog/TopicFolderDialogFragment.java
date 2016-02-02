@@ -149,7 +149,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
     @Background
     public void renameFolder(long folderId, String name, int seq) {
         try {
-            topicFolderDialogModel.modifyFolder(folderId, name, seq);
+            topicFolderDialogModel.renameFolder(folderId, name, seq);
             showRenameFolderToast();
             dismiss();
         } catch (RetrofitError retrofitError) {

@@ -424,7 +424,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public ResCommon modifyGroupDescriptionByGroupApi(ReqModifyTopicDescription description, int entityId) {
+    public ResCommon modifyGroupDescriptionByGroupApi(ReqModifyTopicDescription description, long entityId) {
         return requestApiExecute(RestApiLoader.getInstance().loadModifyGroupDescriptionByGroupApi(description, entityId));
     }
 

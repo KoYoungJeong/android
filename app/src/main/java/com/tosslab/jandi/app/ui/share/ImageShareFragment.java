@@ -353,7 +353,7 @@ public class ImageShareFragment extends Fragment implements ImageSharePresenterI
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void setMentionInfo(long teamId, long roomId, long roomType) {
+    public void setMentionInfo(long teamId, long roomId, int roomType) {
 
         if (mentionControlViewModel != null) {
             mentionControlViewModel.reset();

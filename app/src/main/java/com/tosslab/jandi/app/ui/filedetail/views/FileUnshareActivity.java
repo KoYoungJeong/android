@@ -81,7 +81,9 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
     public void showList() {
         long myId = fileDetailModel.getMyId();
 
-        List<Long> sharedEntityWithoutMe = new ArrayList<>();
+        List<FormattedEntity> entities = new ArrayList<>();
+        EntityManager entityManager = EntityManager.getInstance();
+
         Observable.create(new Observable.OnSubscribe<Long>() {
             @Override
             public void call(Subscriber<? super Long> subscriber) {
@@ -91,7 +93,8 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
                 subscriber.onCompleted();
             }
         }).filter(integerWrapper -> integerWrapper != myId)
-                .collect(() -> sharedEntityWithoutMe, List::add)
+                .map(entityManager::getEntityById)
+                .collect(() -> entities, List::add)
                 .subscribe();
 
         if (!entities.isEmpty()) {

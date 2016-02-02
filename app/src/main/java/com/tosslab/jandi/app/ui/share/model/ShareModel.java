@@ -142,7 +142,7 @@ public class ShareModel {
         return LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
     }
 
-    public ShareSelectModel getShareSelectModel(int teamId) {
+    public ShareSelectModel getShareSelectModel(long teamId) {
         ResLeftSideMenu leftSideMenu = LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
         ShareSelectModel shareSelectModel = ShareSelectModel_.getInstance_(JandiApplication.getContext());
         shareSelectModel.initFormattedEntities(leftSideMenu);

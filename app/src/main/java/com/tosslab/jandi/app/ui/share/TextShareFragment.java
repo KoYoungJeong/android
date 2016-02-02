@@ -160,12 +160,12 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     }
 
     public void onEvent(ShareSelectTeamEvent event) {
-        int teamId = event.getTeamId();
+        long teamId = event.getTeamId();
         textSharePresenterImpl.initEntityData(teamId);
     }
 
     public void onEvent(ShareSelectRoomEvent event) {
-        int roomId = event.getRoomId();
+        long roomId = event.getRoomId();
         textSharePresenterImpl.setEntity(roomId);
     }
 
@@ -222,7 +222,7 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void setMentionInfo(int teamId, int roomId, int roomType) {
+    public void setMentionInfo(long teamId, long roomId, int roomType) {
         mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(), etComment,
                 teamId,
                 Arrays.asList(roomId),
@@ -249,7 +249,7 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void moveEntity(int teamId, int roomId, int roomType) {
+    public void moveEntity(long teamId, long roomId, int roomType) {
         MainTabActivity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();

@@ -9,7 +9,7 @@ public class SelectedMemberInfoForMentionEvent {
     private long id;
     private String type;
 
-    public SelectedMemberInfoForMensionEvent(String name, long id, String type) {
+    public SelectedMemberInfoForMentionEvent(String name, long id, String type) {
         this.name = name;
         this.id = id;
         this.type = type;

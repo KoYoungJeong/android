@@ -7,13 +7,13 @@ import java.util.List;
 public interface TextSharePresenter {
     void initViews();
 
-    void initEntityData(int teamId);
+    void initEntityData(long teamId);
 
-    void setEntity(int roomId);
+    void setEntity(long roomId);
 
     void setView(View view);
 
-    int getTeamId();
+    long getTeamId();
 
     void sendMessage(String messageText, List<MentionObject> mentions);
 
@@ -29,7 +29,7 @@ public interface TextSharePresenter {
 
         void setRoomName(String roomName);
 
-        void setMentionInfo(int teamId, int roomId, int roomType);
+        void setMentionInfo(long teamId, long roomId, int roomType);
 
         void showProgressBar();
 
@@ -37,6 +37,6 @@ public interface TextSharePresenter {
 
         void dismissProgressBar();
 
-        void moveEntity(int teamId, int roomId, int roomType);
+        void moveEntity(long teamId, long roomId, int roomType);
     }
 }

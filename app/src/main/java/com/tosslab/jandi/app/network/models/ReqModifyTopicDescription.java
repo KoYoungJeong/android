@@ -4,6 +4,6 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ReqModifyTopicDescription {
-    public int teamId;
+    public long teamId;
     public String description;
 }

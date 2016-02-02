@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.ui.maintab.topic.domain;
 
-import com.tosslab.jandi.app.libraries.advancerecyclerview.provider.AbstractExpandableDataProvider;
-
 /**
  * Created by tee on 15. 8. 27..
  */
@@ -14,10 +12,9 @@ public class TopicFolderData {
     private int seq;
     private String title;
     private long folderId;
-    private boolean pinnedToSwipeLeft;
     private boolean isFakeFolder = false;
 
-    public TopicFolderData(long id, String title, long folderId, int swipeReaction) {
+    public TopicFolderData(long id, String title, long folderId) {
         this.id = id;
         this.title = title;
         this.folderId = folderId;

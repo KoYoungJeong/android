@@ -391,7 +391,7 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon modifyGroupDescriptionByGroupApi(ReqModifyTopicDescription description, int entityId) {
+    public ResCommon modifyGroupDescriptionByGroupApi(ReqModifyTopicDescription description, long entityId) {
         return RestAdapterBuilder.newInstance(GroupApiV2Client.class).create().modifyGroupDescription(description.teamId, description, entityId);
     }
 

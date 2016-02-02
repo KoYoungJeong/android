@@ -122,7 +122,7 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
 
     @Override
     @Background
-    public void setEntityData(int roomId, String roomName, int roomType) {
+    public void setEntityData(long roomId, String roomName, int roomType) {
 
         this.roomId = roomId;
         this.roomName = roomName;

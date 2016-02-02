@@ -31,8 +31,8 @@ public class TextSharePresenterImpl implements TextSharePresenter {
 
     @Bean
     ShareModel shareModel;
-    int roomId;
-    int teamId;
+    long roomId;
+    long teamId;
     private View view;
     ShareSelectModel shareSelectModel;
 
@@ -49,7 +49,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
 
     @Override
     @Background
-    public void initEntityData(int teamId) {
+    public void initEntityData(long teamId) {
         this.teamId = teamId;
 
         if (!shareModel.hasLeftSideMenu(teamId)) {
@@ -88,7 +88,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
     }
 
     @Override
-    public void setEntity(int roomId) {
+    public void setEntity(long roomId) {
         this.roomId = roomId;
         FormattedEntity entity = shareSelectModel.getEntityById(roomId);
         int roomType = getRoomType(entity);
@@ -106,7 +106,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
     }
 
     @Override
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
@@ -129,7 +129,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
         }
     }
 
-    private boolean setupSelectedTeam(int teamId) {
+    private boolean setupSelectedTeam(long teamId) {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         if ((selectedTeamInfo == null || selectedTeamInfo.getTeamId() != teamId)) {
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);

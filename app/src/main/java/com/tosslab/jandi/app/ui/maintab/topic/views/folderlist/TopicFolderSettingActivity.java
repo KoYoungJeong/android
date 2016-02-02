@@ -256,16 +256,16 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void onSeqChanged(int folderId, int seq) {
+    public void onSeqChanged(long folderId, int seq) {
         topicFolderSettingPresentor.modifySeqFolder(folderId, seq);
     }
 
     @Override
-    public void onRemove(int folderId) {
+    public void onRemove(long folderId) {
         showDeleteFolderDialog(folderId);
     }
 
-    private void showDeleteFolderDialog(int folderId) {
+    private void showDeleteFolderDialog(long folderId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
 
@@ -280,7 +280,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
         builder.show();
     }
 
-    private void showRenameFolderDialog(int folderId, String name, int seq) {
+    private void showRenameFolderDialog(long folderId, String name, int seq) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
 
@@ -321,7 +321,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void onRename(int folderId, String folderName, int seq) {
+    public void onRename(long folderId, String folderName, int seq) {
         showRenameFolderDialog(folderId, folderName, seq);
     }
 

@@ -12,9 +12,9 @@ public interface ImageSharePresenter {
 
     void initView(String uriString);
 
-    void initEntityData(int teamId, String teamName);
+    void initEntityData(long teamId, String teamName);
 
-    void setEntityData(int roomId, String roomName, int roomType);
+    void setEntityData(long roomId, String roomName, int roomType);
 
     void uploadFile(File imageFile,
                     String tvTitle, String commentText,
@@ -22,7 +22,7 @@ public interface ImageSharePresenter {
 
     File getImageFile();
 
-    int getTeamId();
+    long getTeamId();
 
     interface View {
         void showProgressBar();
@@ -41,13 +41,13 @@ public interface ImageSharePresenter {
 
         void setRoomName(String name);
 
-        void moveEntity(int teamId, int entityId, int entityType);
+        void moveEntity(long teamId, long entityId, int entityType);
 
         String getComment();
 
         void setComment(String comment);
 
-        void setMentionInfo(int teamId, int roomId, int roomType);
+        void setMentionInfo(long teamId, long roomId, int roomType);
 
         void dismissDialog(ProgressDialog uploadProgress);
 

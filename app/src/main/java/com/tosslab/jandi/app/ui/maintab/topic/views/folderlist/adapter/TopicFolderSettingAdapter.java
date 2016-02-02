@@ -57,20 +57,20 @@ public class TopicFolderSettingAdapter extends TopicFolderMainAdapter {
         }
     }
 
-    public void sendChangeSeq(int folderId, int seq) {
+    public void sendChangeSeq(long folderId, int seq) {
         onFolderSeqChangeLisener.onSeqChanged(folderId, seq);
     }
 
     public interface OnRemoveFolderListener {
-        void onRemove(int folderId);
+        void onRemove(long folderId);
     }
 
     public interface OnRenameFolderListener {
-        void onRename(int folderId, String name, int seq);
+        void onRename(long folderId, String name, int seq);
     }
 
     public interface OnFolderSeqChangeLisener {
-        void onSeqChanged(int folderId, int seq);
+        void onSeqChanged(long folderId, int seq);
     }
 
 }

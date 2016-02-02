@@ -12,7 +12,7 @@ public class DragnDropTouchHelper extends ItemTouchHelper.SimpleCallback {
 
     private TopicFolderSettingAdapter topicFolderSettingAdapter;
 
-    private int startFolderId;
+    private long startFolderId;
     private int dropPosition;
 
     public DragnDropTouchHelper(TopicFolderSettingAdapter topicFolderChooseAdapter) {

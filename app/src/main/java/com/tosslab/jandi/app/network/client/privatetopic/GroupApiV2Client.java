@@ -37,9 +37,9 @@ public interface GroupApiV2Client {
 
     @PUT("/privateGroups/{groupId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-    ResCommon modifyGroupDescription(@Query("teamId") int teamId,
+    ResCommon modifyGroupDescription(@Query("teamId") long teamId,
                           @Body ReqModifyTopicDescription description,
-                          @Path("groupId") int groupId);
+                          @Path("groupId") long groupId);
     // Private Group 삭제
     @DELETEWithBody("/privateGroups/{groupId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
