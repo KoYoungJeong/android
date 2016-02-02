@@ -252,7 +252,7 @@
         </activity>
 
         <activity
-            android:name=".ui.maintab.topic.views.choosefolderlist.TopicFolderChooseActivity_"
+            android:name=".ui.maintab.topic.views.folderlist.TopicFolderSettingActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_folder_move_to">
 

@@ -1,15 +1,23 @@
 package com.tosslab.jandi.app.ui.maintab.topic;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -19,12 +27,14 @@ import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
 import com.tosslab.jandi.app.lists.libs.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
+import com.tosslab.jandi.app.libraries.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.ExpandableTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.TopicFolderDialogFragment_;
@@ -32,8 +42,9 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.topic.presenter.MainTopicListPresenter;
-import com.tosslab.jandi.app.ui.maintab.topic.views.choosefolderlist.TopicFolderChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.views.create.TopicCreateActivity_;
+import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.TopicFolderSettingActivity;
+import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.TopicFolderSettingActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
@@ -43,6 +54,8 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.views.FloatingActionMenu;
+import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -52,7 +65,6 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OptionsItem;
@@ -62,6 +74,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
@@ -79,8 +92,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     long selectedEntity = -2;
     @Bean(MainTopicListPresenter.class)
     MainTopicListPresenter mainTopicListPresenter;
-    @ViewById(R.id.btn_main_topic_fab)
-    View btnFA;
     @ViewById(R.id.rv_main_topic)
     RecyclerView lvMainTopic;
 
@@ -90,6 +101,17 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     private RecyclerViewExpandableItemManager expandableItemManager;
     private ProgressWheel progressWheel;
     private boolean hasOnResumed = false;
+    private FloatingActionMenu floatingActionMenu;
+
+
+    private AlertDialog createFolderDialog;
+
+    @Override
+    public void onAttach(Context context) {
+        MainTabActivity mainTabActivity = (MainTabActivity) context;
+        floatingActionMenu = mainTabActivity.getFloatingActionMenu();
+        super.onAttach(context);
+    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -110,6 +132,31 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
         expandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
         progressWheel = new ProgressWheel(getActivity());
+        setFloatingActionMenu();
+    }
+
+    public void setFloatingActionMenu() {
+        floatingActionMenu.addItem(R.drawable.btn_fab_item_folder_setting,
+                "폴더 관리", () -> {
+                    if (floatingActionMenu.isOpened()) {
+                        floatingActionMenu.close();
+                    }
+                    launchFolderSettionActivity();
+                });
+        floatingActionMenu.addItem(R.drawable.btn_fab_item_create_folder,
+                "폴더 만들기", () -> {
+                    if (floatingActionMenu.isOpened()) {
+                        floatingActionMenu.close();
+                    }
+                    showCreateNewFolderDialog();
+                });
+        floatingActionMenu.addItem(R.drawable.btn_fab_item_create_topic,
+                "토픽 만들기", () -> {
+                    if (floatingActionMenu.isOpened()) {
+                        floatingActionMenu.close();
+                    }
+                    launchCreateTopicActivity();
+                });
     }
 
     @AfterInject
@@ -120,8 +167,34 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     @AfterViews
     void initViews() {
         mainTopicListPresenter.onLoadList();
-        FAButtonUtil.setFAButtonController(lvMainTopic, btnFA);
+        FAButtonUtil.setFAButtonController(lvMainTopic, floatingActionMenu);
         hasOptionsMenu();
+    }
+
+    private void launchCreateTopicActivity() {
+        Observable.just(1)
+                .delay(250, TimeUnit.MILLISECONDS)
+                .subscribe(i -> {
+                    TopicCreateActivity_
+                            .intent(MainTopicListFragment.this)
+                            .start();
+                    getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
+                            AnalyticsValue.Action.CreateNewTopic);
+                });
+    }
+
+
+    private void launchFolderSettionActivity() {
+        Observable.just(1)
+                .delay(250, TimeUnit.MILLISECONDS)
+                .subscribe(i -> {
+                    TopicFolderSettingActivity_.intent(getActivity())
+                            .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                            .extra("mode", TopicFolderSettingActivity.FOLDER_SETTING)
+                            .extra("folderId", -1)
+                            .start();
+                });
     }
 
     @OptionsItem(R.id.action_main_search)
@@ -174,7 +247,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             TopicFolderData topicFolderData = expandableTopicAdapter.getTopicFolderData(groupPosition);
             long folderId = topicFolderData.getFolderId();
             String folderName = topicFolderData.getTitle();
-            showGroupSettingPopupView(view, folderId, folderName, topicFolderData.getSeq());
+            showFolderSettingPopupView(view, folderId, folderName, topicFolderData.getSeq());
         });
 
         int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
@@ -197,8 +270,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     @Override
     public void onResume() {
         super.onResume();
-        btnFA.setAnimation(null);
-        btnFA.setVisibility(View.VISIBLE);
         if (adapter != null && hasOnResumed) {
             scrollAndAnimateForSelectedItem();
         }
@@ -296,17 +367,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         return adapter.getAllTopicItemData();
     }
 
-    @Click(R.id.btn_main_topic_fab)
-    void onAddTopicClick() {
-        TopicCreateActivity_
-                .intent(MainTopicListFragment.this)
-                .start();
-
-        getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
-
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.CreateNewTopic);
-    }
-
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgressWheel() {
@@ -330,8 +390,9 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     }
 
     public void onEvent(TopicFolderMoveCallEvent event) {
-        TopicFolderChooseActivity_.intent(getActivity())
+        TopicFolderSettingActivity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .extra("mode", TopicFolderSettingActivity.ITEM_FOLDER_CHOOSE)
                 .extra("topicId", event.getTopicId())
                 .extra("folderId", event.getFolderId())
                 .start();
@@ -444,6 +505,46 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             adapter.startAnimation();
             adapter.notifyDataSetChanged();
         }, 300);
+    }
+
+    public void showCreateNewFolderDialog() {
+        if (createFolderDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),
+                    R.style.JandiTheme_AlertDialog_FixWidth_300);
+
+            RelativeLayout rootView = (RelativeLayout) LayoutInflater
+                    .from(getContext()).inflate(R.layout.dialog_fragment_input_text, null);
+
+            TextView tvTitle = (TextView) rootView.findViewById(R.id.tv_popup_title);
+            EditText etInput = (EditText) rootView.findViewById(R.id.et_dialog_input_text);
+            etInput.setHint(R.string.jandi_title_name);
+            tvTitle.setText(R.string.jandi_folder_insert_name);
+
+            builder.setView(rootView)
+                    .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
+                        mainTopicListPresenter.createNewFolder(etInput.getText().toString().trim());
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolder);
+                    })
+                    .setNegativeButton(R.string.jandi_cancel, (dialog, which) -> {
+                        dialog.cancel();
+                    });
+
+            createFolderDialog = builder.create();
+            createFolderDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
+            etInput.addTextChangedListener(new SimpleTextWatcher() {
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (s.toString().trim().length() <= 0) {
+                        createFolderDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    } else {
+                        createFolderDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    }
+                }
+            });
+        }
+        createFolderDialog.show();
+        createFolderDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
     }
 
 }

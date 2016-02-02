@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.TopicFolderDialogModel;
+import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -44,7 +44,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
     TextView tvFolderTitle;
 
     @Bean
-    TopicFolderDialogModel topicFolderDialogModel;
+    TopicFolderSettingModel topicFolderDialogModel;
 
     @NonNull
     @Override
@@ -149,7 +149,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
     @Background
     public void renameFolder(long folderId, String name, int seq) {
         try {
-            topicFolderDialogModel.renameFolder(folderId, name, seq);
+            topicFolderDialogModel.modifyFolder(folderId, name, seq);
             showRenameFolderToast();
             dismiss();
         } catch (RetrofitError retrofitError) {

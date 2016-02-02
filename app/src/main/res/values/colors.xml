@@ -15,6 +15,7 @@
     <color name="jandi_transparent_white_50p">#7FFFFFFF</color>
     <color name="jandi_transparent_white_30p">#4CFFFFFF</color>
     <color name="jandi_transparent_white_1f">#1FFFFFFF</color>
+    <color name="jandi_transparent_black_50p">#7F000000</color>
 
 
     <color name="jandi_primary_color_transparent_55">#55003658</color>
@@ -258,6 +259,8 @@
     <color name="jandi_web_button_retry_background_selected">#FFE0E0E0</color>
     <color name="jandi_web_button_retry_background">#FFFFFFFF</color>
     <color name="jandi_web_button_retry_round">#FFCDCDCD</color>
+
+    <color name="jandi_floating_button_menu_background">#FF00A4E6</color>
 
     <color name="jandi_file_upload_list_view_background">#FFDDDDDD</color>
 

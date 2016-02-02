@@ -162,4 +162,9 @@
 
     <dimen name="jandi_topic_detail_description_min_height">104dp</dimen>
     <dimen name="jandi_topic_detail_description_per_line_height">16dp</dimen>
+
+    <!-- for ploating action menu from fab library -->
+    <dimen name="fab_size_normal">50dp</dimen>
+    <dimen name="fab_size_mini">40dp</dimen>
+    <dimen name="labels_text_size">14sp</dimen>
 </resources>

@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.topic.domain;
 
+import com.tosslab.jandi.app.libraries.advancerecyclerview.provider.AbstractExpandableDataProvider;
+
 /**
  * Created by tee on 15. 8. 27..
  */

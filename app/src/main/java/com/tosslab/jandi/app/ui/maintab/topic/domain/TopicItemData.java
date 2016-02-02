@@ -8,7 +8,6 @@ public class TopicItemData {
     private long id;
 
     private long creatorId;
-    private boolean pinnedToSwipeLeft;
     private String name;
     private boolean isStarred;
     private boolean isJoined;
@@ -24,7 +23,7 @@ public class TopicItemData {
     public TopicItemData() {
     }
 
-    public TopicItemData(long id, int swipeReaction, long creatorId, String name, boolean isStarred,
+    public TopicItemData(long id, long creatorId, String name, boolean isStarred,
                          boolean isJoined, long entityId, int unreadCount, long markerLinkId, boolean isPushOn,
                          boolean selected, String description, boolean isPublic, int memberCount) {
         this.id = id;
@@ -42,7 +41,7 @@ public class TopicItemData {
         this.memberCount = memberCount;
     }
 
-    public static TopicItemData newInstance(long id, int swipeReaction, long creatorId, String name,
+    public static TopicItemData newInstance(long id, long creatorId, String name,
                                             boolean isStarred, boolean isJoined, long entityId,
                                             int unreadCount, long markerLinkId, boolean isPushOn,
                                             boolean selected, String description, boolean isPublic,

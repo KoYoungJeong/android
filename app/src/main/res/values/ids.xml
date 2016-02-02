@@ -13,4 +13,9 @@
     <item name="chatchoose_item" type="id" />
     <item name="chatchoose_disable_folding" type="id" />
 
+    <item name="fab_menu_button" type="id" />
+    <item name="fab_button_1" type="id" />
+    <item name="fab_button_2" type="id" />
+    <item name="fab_button_3" type="id" />
+    <item name="fab_button_4" type="id" />
 </resources>
