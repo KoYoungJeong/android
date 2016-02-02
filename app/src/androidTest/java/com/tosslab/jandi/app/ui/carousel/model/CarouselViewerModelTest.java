@@ -121,7 +121,7 @@ public class CarouselViewerModelTest {
         }
         {
             List<ResMessages.FileMessage> fileMessages = model.searchBeforeFileList(teamId, roomId, lastImageMessageId, 0);
-            assertThat(fileMessages.size(), is(equalTo(10)));
+            assertThat(fileMessages.size(), is(greaterThan(0)));
         }
     }
 

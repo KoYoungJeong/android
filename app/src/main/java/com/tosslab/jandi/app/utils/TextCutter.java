@@ -163,7 +163,7 @@ public class TextCutter {
             if (end >= maxLength) {
                 result = result.subSequence(0, start);
             } else {
-                result = result.subSequence(0, maxLength - 1);
+                result = result.subSequence(0, maxLength);
             }
 
             return result;
