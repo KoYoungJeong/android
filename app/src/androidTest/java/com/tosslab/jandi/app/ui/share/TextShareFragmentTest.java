@@ -99,8 +99,8 @@ public class TextShareFragmentTest {
 
     @Test
     public void testSetMentionInfo() throws Throwable {
-        int teamId = EntityManager.getInstance().getTeamId();
-        int topicId = EntityManager.getInstance().getDefaultTopicId();
+        long teamId = EntityManager.getInstance().getTeamId();
+        long topicId = EntityManager.getInstance().getDefaultTopicId();
         rule.runOnUiThread(() -> textShareFragment.setMentionInfo(teamId, topicId, JandiConstants.TYPE_PUBLIC_TOPIC));
 
         assertThat(textShareFragment.mentionControlViewModel, is(notNullValue()));
@@ -123,8 +123,8 @@ public class TextShareFragmentTest {
     @Test
     public void testMoveEntity() throws Throwable {
         Intents.init();
-        int teamId = EntityManager.getInstance().getTeamId();
-        int topicId = EntityManager.getInstance().getDefaultTopicId();
+        long teamId = EntityManager.getInstance().getTeamId();
+        long topicId = EntityManager.getInstance().getDefaultTopicId();
         rule.runOnUiThread(() -> textShareFragment.moveEntity(teamId, topicId, JandiConstants.TYPE_PUBLIC_TOPIC));
 
         Intents.intended(IntentMatchers.hasComponent(MainTabActivity_.class.getName()));

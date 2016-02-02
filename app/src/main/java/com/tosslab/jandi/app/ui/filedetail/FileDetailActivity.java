@@ -872,7 +872,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         ProgressDialog progressDialog = new ProgressDialog(FileDetailActivity.this);
         progressDialog.setMax(100);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
         progressDialog.setMessage("Downloading " + fileMessage.content.title);
         progressDialog.show();
 

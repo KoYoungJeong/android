@@ -49,8 +49,8 @@ public class ShareModelTest {
 
     @Test
     public void testGetEntityById() throws Exception {
-        int teamId = EntityManager.getInstance().getTeamId();
-        int defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
+        long teamId = EntityManager.getInstance().getTeamId();
+        long defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
         FormattedEntity entity = EntityManager.getInstance().getEntityById(defaultTopicId);
 
         ResRoomInfo roomInfo = shareModel.getEntityById(teamId, defaultTopicId);
@@ -61,7 +61,7 @@ public class ShareModelTest {
 
     @Test
     public void testGetTeamInfoById() throws Exception {
-        int teamId = EntityManager.getInstance().getTeamId();
+        long teamId = EntityManager.getInstance().getTeamId();
         ResTeamDetailInfo.InviteTeam inviteTeam = shareModel.getTeamInfoById(teamId);
 
         ResAccountInfo.UserTeam userTeam = AccountRepository.getRepository().getTeamInfo(teamId);
@@ -73,12 +73,12 @@ public class ShareModelTest {
     @Test
     public void testSendMessage() throws Exception {
 
-        int teamId = EntityManager.getInstance().getTeamId();
-        int topicId = EntityManager.getInstance().getDefaultTopicId();
+        long teamId = EntityManager.getInstance().getTeamId();
+        long topicId = EntityManager.getInstance().getDefaultTopicId();
 
         ResCommon result = shareModel.sendMessage(teamId, topicId, JandiConstants.TYPE_PUBLIC_TOPIC, "hello", new ArrayList<>());
         assertThat(result, is(notNullValue()));
-        assertThat(result.id, is(greaterThan(0)));
+        assertThat(result.id, is(greaterThan(0L)));
     }
 
     @Test
@@ -98,10 +98,10 @@ public class ShareModelTest {
 
     @Test
     public void testUpdateLeftSideMenu() throws Exception {
-        int teamId = Observable.from(AccountRepository.getRepository().getAccountTeams())
+        long teamId = Observable.from(AccountRepository.getRepository().getAccountTeams())
                 .filter(userTeam -> userTeam.getTeamId() != AccountRepository.getRepository().getSelectedTeamId())
                 .map(ResAccountInfo.UserTeam::getTeamId)
-                .firstOrDefault(-1)
+                .firstOrDefault(-1L)
                 .toBlocking().first();
 
         if (teamId > 0) {

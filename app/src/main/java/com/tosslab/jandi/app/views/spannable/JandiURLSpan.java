@@ -6,8 +6,7 @@ import android.net.Uri;
 import android.text.TextPaint;
 import android.text.style.UnderlineSpan;
 
-import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 21..
@@ -36,7 +35,10 @@ public class JandiURLSpan extends UnderlineSpan implements ClickableSpannable {
         try {
             context.startActivity(intent);
         } catch (Exception e) {
-            ColoredToast.show(R.string.jandi_err_unexpected);
+            InternalWebActivity_.intent(context)
+                    .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    .url(url)
+                    .start();
         }
     }
 
