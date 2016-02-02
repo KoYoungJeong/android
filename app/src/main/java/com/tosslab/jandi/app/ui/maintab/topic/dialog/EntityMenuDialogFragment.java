@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
@@ -126,13 +127,14 @@ public class EntityMenuDialogFragment extends DialogFragment {
     }
 
     private void movePushSettingActivity() {
-        Intent mainSettingIntent = SettingsActivity_
-                .intent(getActivity())
-                .get();
-        Intent pushSettingIntent = SettingPushActivity_
-                .intent(getActivity())
-                .get();
-        getActivity().startActivities(new Intent[]{mainSettingIntent, pushSettingIntent});
+        SettingsActivity_
+                .intent(JandiApplication.getContext())
+                .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .start();
+        SettingPushActivity_
+                .intent(JandiApplication.getContext())
+                .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .start();
     }
 
     public void setStarredButtonText(boolean isStarred) {
