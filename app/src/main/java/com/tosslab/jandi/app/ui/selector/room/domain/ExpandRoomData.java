@@ -14,8 +14,17 @@ public class ExpandRoomData {
     private boolean isStarred;
     private boolean isPublicTopic;
     private String profileUrl;
+    private boolean enabled;
     private int type;
     private boolean isFirstAmongNoFolderItem;
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     public long getEntityId() {
         return entityId;
@@ -102,5 +111,32 @@ public class ExpandRoomData {
                 ", type=" + type +
                 ", isFirstAmongNoFolderItem=" + isFirstAmongNoFolderItem +
                 '}';
+    }
+
+    public static class DummyDisabledRoomData extends ExpandRoomData {
+        private boolean expanded;
+        private int count;
+
+        public DummyDisabledRoomData(int count) {
+            this.count = count;
+            setEnabled(false);
+            setIsUser(true);
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public void setCount(int count) {
+            this.count = count;
+        }
+
+        public boolean isExpanded() {
+            return expanded;
+        }
+
+        public void setExpanded(boolean expanded) {
+            this.expanded = expanded;
+        }
     }
 }

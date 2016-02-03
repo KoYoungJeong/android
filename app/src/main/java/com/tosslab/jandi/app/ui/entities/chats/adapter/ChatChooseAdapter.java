@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.entities.chats.adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.v4.util.Pair;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,27 +44,6 @@ public class ChatChooseAdapter extends BaseAdapter {
         return chatChooseItems.size();
     }
 
-    private Pair<Integer, DisableDummyItem> getDisabledInfo() {
-
-        DisableDummyItem disableDummyItem = null;
-        int disableCount = 0;
-
-        for (int idx = chatChooseItems.size() - 1; idx >= 0; idx--) {
-            ChatChooseItem chatChooseItem = chatChooseItems.get(idx);
-            if (chatChooseItem.isEnabled()) {
-                break;
-            } else if (!(chatChooseItem instanceof DisableDummyItem)) {
-                ++disableCount;
-            }
-
-            if (chatChooseItem instanceof DisableDummyItem) {
-                disableDummyItem = (DisableDummyItem) chatChooseItem;
-            }
-        }
-
-        return new Pair<Integer, DisableDummyItem>(disableCount, disableDummyItem);
-    }
-
     @Override
     public ChatChooseItem getItem(int position) {
         return chatChooseItems.get(position);
@@ -100,7 +78,6 @@ public class ChatChooseAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_disabled_folding, parent, false);
 
             disableFoldingViewHolder.ivIcon = (ImageView) convertView.findViewById(R.id.iv_disabled_folding_icon);
-            disableFoldingViewHolder.ivArrow = (ImageView) convertView.findViewById(R.id.iv_disabled_folding_arrow);
             disableFoldingViewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tv_disabled_folding_title);
             disableFoldingViewHolder.tvCount = (TextView) convertView.findViewById(R.id.tv_disabled_folding_count);
 
@@ -248,7 +225,6 @@ public class ChatChooseAdapter extends BaseAdapter {
     static class DisableFoldingViewHolder {
         public TextView tvTitle;
         public ImageView ivIcon;
-        public ImageView ivArrow;
         public TextView tvCount;
     }
 }
