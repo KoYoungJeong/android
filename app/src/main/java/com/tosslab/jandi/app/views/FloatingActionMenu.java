@@ -40,6 +40,7 @@ public class FloatingActionMenu extends FrameLayout {
     private int buttonCnt = 0;
 
     private ImageView btMenu;
+    private ImageView btMenuIcon;
 
     private List<View> vgItems;
     private List<View> btItems;
@@ -93,11 +94,23 @@ public class FloatingActionMenu extends FrameLayout {
         menuParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         menuParams.setMargins(0, dpToPx(7), dpToPx(20), dpToPx(20));
 
+        btMenuIcon = new ImageView(getContext());
+        RelativeLayout.LayoutParams menuIconParams =
+                new RelativeLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+        menuIconParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        menuIconParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        menuIconParams.setMargins(0, dpToPx(7), dpToPx(24), dpToPx(24));
+
         rootView.addView(btMenu, menuParams);
+        rootView.addView(btMenuIcon, menuIconParams);
 
         btMenu.setClickable(true);
-        btMenu.setImageResource(R.drawable.btn_chat_fab);
+        btMenu.setImageResource(R.drawable.chat_bg_fab);
         btMenu.setId(R.id.fab_menu_button);
+
+        btMenuIcon.setImageResource(R.drawable.chat_fab_icon);
 
         vgItems = new ArrayList<>();
         btItems = new ArrayList<>();
@@ -229,14 +242,14 @@ public class FloatingActionMenu extends FrameLayout {
     // 135도 돌리는 애니메이션 set
     public void setOnMenuAnimation() {
         ObjectAnimator expandAnimator = ObjectAnimator.ofFloat(
-                btMenu,
+                btMenuIcon,
                 "rotation",
                 0f,
                 135f
         );
 
         ObjectAnimator collapseAnimator = ObjectAnimator.ofFloat(
-                btMenu,
+                btMenuIcon,
                 "rotation",
                 135f,
                 0f

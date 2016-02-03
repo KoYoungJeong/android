@@ -67,6 +67,7 @@
 	<string name="jandi_action_leave">"离开"</string>
 	<string name="jandi_action_login">"登录"</string>
 	<string name="jandi_action_menu_message_copy">"复制"</string>
+	<string name="jandi_action_more">"更多"</string>
 	<string name="jandi_action_rename">"重新命名"</string>
 	<string name="jandi_action_search">"搜索"</string>
 	<string name="jandi_action_share">"分享"</string>
@@ -157,8 +158,10 @@
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"建立"</string>
 	<string name="jandi_create_channel">"建立新议题"</string>
+	<string name="jandi_create_folder">"建立议题文件夹"</string>
 	<string name="jandi_create_privategroup">"建立新私人议题"</string>
 	<string name="jandi_create_team_message">"请提供您的电子邮件地址以免费地建立新的JANDI团队!"</string>
+	<string name="jandi_create_topic">"建立议题"</string>
 	<string name="jandi_created_this_topic">"%s建立了这议题"</string>
 	<string name="jandi_decide_choose">"选择照片"</string>
 	<string name="jandi_delete_succeed">"%s已被删除"</string>
@@ -168,6 +171,7 @@
 	<string name="jandi_device_storage">"行动装置"</string>
 	<string name="jandi_disable_external_link">"移除共享链接"</string>
 	<string name="jandi_disable_user_profile_explain">"此成员权限已被暂时关闭。\n欲知更多细节，请联络团队管理員。"</string>
+	<string name="jandi_disabled_members">"关闭成员"</string>
 	<string name="jandi_disabled_team">"你已被剔除%1$s。 进一步协助，请联络团队管理员。"</string>
 	<string name="jandi_disabled_user">"此成员权限已被暂时关闭"</string>
 	<string name="jandi_domain_is_already_taken">"网域名称已经被使用"</string>
@@ -366,6 +370,7 @@
 	<string name="jandi_push_preview_public_only">"仅限公开议题"</string>
 	<string name="jandi_question_team_create">"您的团队还未使用JANDI吗？"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"你确认要删除这个电子邮件地址？"</string>
+	<string name="jandi_reorder_from_long_press">"拖拉文件夹更改排列顺序"</string>
 	<string name="jandi_retry">"请再试一次"</string>
 	<string name="jandi_retry_voice_search">"没有接收清楚您刚才说的，麻烦再说一次"</string>
 	<string name="jandi_save">"储存"</string>
@@ -390,6 +395,7 @@
 	<string name="jandi_set_passcode">"设定密码"</string>
 	<string name="jandi_set_passcode_detail">"如果你忘记密码，将无法解锁。 请重新安装JANDI，再重新登入。"</string>
 	<string name="jandi_setting_display">"屏幕显示"</string>
+	<string name="jandi_setting_folder">"建立议题文件夹"</string>
 	<string name="jandi_setting_general">"一般"</string>
 	<string name="jandi_setting_notification">"通知设置"</string>
 	<string name="jandi_setting_push">"通知偏好"</string>
