@@ -60,11 +60,6 @@ public class TextShareFragmentTest {
     }
 
     @Test
-    public void testStartShare() throws Exception {
-        textShareFragment.startShare();
-    }
-
-    @Test
     public void testFinishOnUiThread() throws Throwable {
 
         rule.runOnUiThread(textShareFragment::finishOnUiThread);
