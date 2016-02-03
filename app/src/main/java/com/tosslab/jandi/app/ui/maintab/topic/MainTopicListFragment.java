@@ -106,9 +106,17 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
     @Override
     public void onAttach(Context context) {
-        MainTabActivity mainTabActivity = (MainTabActivity) context;
-        floatingActionMenu = mainTabActivity.getFloatingActionMenu();
         super.onAttach(context);
+        MainTabActivity mainTabActivity = (MainTabActivity) context;
+
+        // orientation change시 activity instance가 충분히 실행되기 전에 실행되어 버려 죽는 현상을 막기 위해
+        // delay를 삽입함.
+        Observable.just(1)
+                .delay(200, TimeUnit.MILLISECONDS)
+                .subscribe(Integer -> {
+                    floatingActionMenu = mainTabActivity.getFloatingActionMenu();
+                    setFloatingActionMenu();
+                });
     }
 
     @Override
@@ -130,7 +138,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
         expandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
         progressWheel = new ProgressWheel(getActivity());
-        setFloatingActionMenu();
     }
 
     public void setFloatingActionMenu() {
