@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.album.fragment;
+package com.tosslab.jandi.app.ui.album.imagealbum;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,16 +15,15 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
-import com.soundcloud.android.crop.Crop;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
-import com.tosslab.jandi.app.ui.album.fragment.adapter.DefaultAlbumAdapter;
-import com.tosslab.jandi.app.ui.album.fragment.adapter.ImagePictureAdapter;
-import com.tosslab.jandi.app.ui.album.fragment.presenter.ImageAlbumPresenter;
-import com.tosslab.jandi.app.ui.album.fragment.presenter.ImageAlbumPresenterImpl;
-import com.tosslab.jandi.app.ui.album.fragment.vo.ImageAlbum;
-import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
-import com.tosslab.jandi.app.ui.profile.crop.JandiCropImageActivity;
+import com.tosslab.jandi.app.ui.album.imagealbum.adapter.DefaultAlbumAdapter;
+import com.tosslab.jandi.app.ui.album.imagealbum.adapter.ImagePictureAdapter;
+import com.tosslab.jandi.app.ui.album.imagealbum.presenter.ImageAlbumPresenter;
+import com.tosslab.jandi.app.ui.album.imagealbum.presenter.ImageAlbumPresenterImpl;
+import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImageAlbum;
+import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
+import com.tosslab.jandi.app.ui.album.imagecrop.ImageCropPickerActivity_;
+import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.AnimationModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -187,14 +186,11 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
     private void callCropActivity(ImagePicture item) {
         String imagePath = item.getImagePath();
         try {
-
-            Intent cropIntent = new Intent(getContext(), JandiCropImageActivity.class);
-            cropIntent.setData(Uri.fromFile(new File(imagePath)));
+            Intent cropIntent = new Intent(getContext(), ImageCropPickerActivity_.class);
+            cropIntent.putExtra("input", Uri.fromFile(new File(imagePath)));
             cropIntent.putExtra("output", Uri.fromFile(File.createTempFile("temp_", ".jpg",
                     new File(FileUtil.getDownloadPath()))));
-            cropIntent.putExtra("aspect_x", 1);
-            cropIntent.putExtra("aspect_y", 1);
-            startActivityForResult(cropIntent, Crop.REQUEST_CROP);
+            startActivityForResult(cropIntent, ModifyProfileActivity.REQUEST_CROP);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -207,7 +203,7 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
             return;
         }
 
-        if (requestCode == Crop.REQUEST_CROP) {
+        if (requestCode == ModifyProfileActivity.REQUEST_CROP) {
             FragmentActivity activity = getActivity();
             activity.setResult(Activity.RESULT_OK, data);
             activity.finish();

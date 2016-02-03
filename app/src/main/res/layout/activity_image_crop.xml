@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_done_cancel_actionbar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        tools:context=".MainActivity">
+
+        <io.togoto.imagezoomcrop.photoview.PhotoView
+            android:id="@+id/iv_photo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black"
+            android:scaleType="center" />
+
+        <io.togoto.imagezoomcrop.cropoverlay.CropOverlayView
+            android:id="@+id/crop_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:centerInParent="true"
+            app:guideLines="false" />
+
+    </RelativeLayout>
+
+</LinearLayout>

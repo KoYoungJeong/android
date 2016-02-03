@@ -134,7 +134,7 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
     @Override
     public void onRequestCropImage(Activity activity) {
-        filePickerViewModel.selectFileSelector(Crop.REQUEST_CROP, activity);
+        filePickerViewModel.selectFileSelector(ModifyProfileActivity.REQUEST_CROP, activity);
     }
 
     @Override

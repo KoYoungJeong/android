@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.soundcloud.android.crop.Crop;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
@@ -71,6 +70,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     public static final int REQUEST_CODE = 1000;
     public static final int REQ_STORAGE_PERMISSION = 101;
     public static final int REQUEST_CHARACTER = 0x11;
+    public static final int REQUEST_CROP = 11;
 
     @Bean(ModifyProfilePresenterImpl.class)
     ModifyProfilePresenter memberProfilePresenter;
@@ -327,7 +327,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         ColoredToast.showError(getString(event.errorMessageResId));
     }
 
-    @OnActivityResult(Crop.REQUEST_CROP)
+    @OnActivityResult(REQUEST_CROP)
     public void onImageCropResult(int resultCode, Intent imageData) {
         if (resultCode != RESULT_OK) {
             return;
@@ -338,7 +338,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
             return;
         }
 
-        Uri output = Crop.getOutput(imageData);
+        Uri output = imageData.getParcelableExtra("output");
 
         String filePath = output.getPath();
         if (!TextUtils.isEmpty(filePath)) {

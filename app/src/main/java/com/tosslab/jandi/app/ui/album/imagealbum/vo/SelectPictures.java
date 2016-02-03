@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.album.fragment.vo;
+package com.tosslab.jandi.app.ui.album.imagealbum.vo;
 
 import android.text.TextUtils;
 

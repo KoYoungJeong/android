@@ -13,8 +13,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel_;
-import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
-import com.tosslab.jandi.app.ui.album.ImageAlbumActivity_;
+import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
+import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -53,7 +53,7 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
     @Override
     public void selectFileSelector(int requestCode, Activity activity) {
         switch (requestCode) {
-            case Crop.REQUEST_CROP:
+            case ModifyProfileActivity.REQUEST_CROP:
                 ImageAlbumActivity_.intent(activity)
                         .mode(ImageAlbumActivity.EXTRA_MODE_CROP_PICK)
                         .startForResult(requestCode);
