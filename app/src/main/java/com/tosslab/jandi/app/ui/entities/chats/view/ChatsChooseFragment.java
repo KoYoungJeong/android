@@ -1,10 +1,10 @@
-package com.tosslab.jandi.app.ui.entities.chats;
+package com.tosslab.jandi.app.ui.entities.chats.view;
 
+import android.app.Activity;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
@@ -15,63 +15,61 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
-import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
-import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
-import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
+import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
+import com.tosslab.jandi.app.ui.entities.chats.presenter.ChatChoosePresenter;
+import com.tosslab.jandi.app.ui.entities.chats.presenter.ChatChoosePresenterImpl;
+import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
-import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.EditorAction;
 import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 14..
  */
 @EFragment(R.layout.fragment_chat_choose)
-public class ChatsChooseFragment extends Fragment {
+public class ChatsChooseFragment extends Fragment implements ChatChoosePresenter.View {
 
+    private static final int REQ_DISABLED_MEMBERS = 901;
+    public static final String EXTRA_ENTITY_ID = "entity_id";
     @ViewById(R.id.list_chat_choose)
     ListView lvChatChoose;
 
     @ViewById(R.id.layout_member_empty)
     View emptyMemberView;
-
-    @Bean
-    ChatChooseModel chatChooseModel;
-
     ChatChooseAdapter chatChooseAdapter;
-    @Bean
-    TeamDomainInfoModel teamDomainInfoModel;
     @SystemService
     ClipboardManager clipboardManager;
     @SystemService
     InputMethodManager inputMethodManager;
-    @Bean
-    InvitationDialogExecutor invitationDialogExecutor;
-    private PublishSubject<String> publishSubject;
+
+    @Bean(ChatChoosePresenterImpl.class)
+    ChatChoosePresenter presenter;
+
+    @AfterInject
+    void initObjects() {
+        presenter.setView(this);
+    }
 
     @AfterViews
     void initViews() {
@@ -79,9 +77,7 @@ public class ChatsChooseFragment extends Fragment {
         chatChooseAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
-                List<ChatChooseItem> tempUsers = chatChooseModel.getUsers();
-
-                if (tempUsers == null || tempUsers.isEmpty()) {
+                if (chatChooseAdapter.isEmpty()) {
                     emptyMemberView.setVisibility(View.VISIBLE);
                 } else {
                     emptyMemberView.setVisibility(View.GONE);
@@ -91,38 +87,8 @@ public class ChatsChooseFragment extends Fragment {
 
         lvChatChoose.setAdapter(chatChooseAdapter);
 
-        setUpMember();
+        presenter.initMembers();
 
-        initSearchTextObserver();
-
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    void setUpMember() {
-        chatChooseAdapter.clear();
-        List<ChatChooseItem> users = chatChooseModel.getUsers();
-        chatChooseAdapter.addAll(users);
-        chatChooseAdapter.notifyDataSetChanged();
-    }
-
-    private void initSearchTextObserver() {
-        publishSubject = PublishSubject.create();
-        publishSubject
-                .throttleWithTimeout(500, TimeUnit.MILLISECONDS)
-                .observeOn(Schedulers.io())
-                .map(name -> {
-                    if (!TextUtils.isEmpty(name)) {
-                        return chatChooseModel.getChatListWithoutMe(name);
-                    } else {
-                        return chatChooseModel.getUsers();
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(chatChooseItems -> {
-                    chatChooseAdapter.clear();
-                    chatChooseAdapter.addAll(chatChooseItems);
-                    chatChooseAdapter.notifyDataSetChanged();
-                });
     }
 
     @Override
@@ -137,6 +103,28 @@ public class ChatsChooseFragment extends Fragment {
         EventBus.getDefault().unregister(this);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void setUsers(List<ChatChooseItem> users) {
+        chatChooseAdapter.clear();
+        chatChooseAdapter.addAll(users);
+        chatChooseAdapter.notifyDataSetChanged();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void moveChatMessage(long teamId, long entityId) {
+        getActivity().finish();
+        MessageListV2Activity_.intent(getActivity())
+                .teamId(teamId)
+                .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                .entityId(entityId)
+                .roomId(-1)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .start();
+    }
+
+
     public void onEventMainThread(ShowProfileEvent event) {
         MemberProfileActivity_.intent(getActivity())
                 .memberId(event.userId)
@@ -149,38 +137,29 @@ public class ChatsChooseFragment extends Fragment {
     }
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
-        getActivity().finish();
-        EntityManager entityManager = EntityManager.getInstance();
-        MessageListV2Activity_.intent(getActivity())
-                .teamId(entityManager.getTeamId())
-                .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
-                .entityId(event.userId)
-                .roomId(-1)
-                .isFavorite(entityManager.getEntityById(event.userId).isStarred)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+        presenter.onMoveChatMessage(event.userId);
     }
 
     @ItemClick(R.id.list_chat_choose)
     void onEntitySelect(int position) {
         ChatChooseItem chatChooseItem = chatChooseAdapter.getItem(position);
         if (chatChooseItem instanceof DisableDummyItem) {
-            chatChooseAdapter.remove(chatChooseItem);
-            chatChooseAdapter.notifyDataSetChanged();
-
-            lvChatChoose.smoothScrollToPositionFromTop(position, lvChatChoose.getChildAt(0).getHeight() / 2);
-
+            DisabledEntityChooseActivity_.intent(ChatsChooseFragment.this)
+                    .startForResult(REQ_DISABLED_MEMBERS);
         } else {
+            presenter.onMoveChatMessage(chatChooseItem.getEntityId());
+        }
+    }
 
-            getActivity().finish();
-            long entityId = chatChooseItem.getEntityId();
-            MessageListV2Activity_.intent(getActivity())
-                    .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
-                    .entityId(entityId)
-                    .teamId(chatChooseModel.getTeamId())
-                    .roomId(-1)
-                    .isFavorite(chatChooseItem.isStarred())
-                    .start();
+    @OnActivityResult(REQ_DISABLED_MEMBERS)
+    void onDisabledMemberActivityResult(int resultCode, Intent data) {
+
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (data.hasExtra(EXTRA_ENTITY_ID)) {
+            presenter.onMoveChatMessage(data.getLongExtra(EXTRA_ENTITY_ID, -1));
         }
     }
 
@@ -191,17 +170,16 @@ public class ChatsChooseFragment extends Fragment {
 
     @TextChange(R.id.et_chat_choose_search)
     void onSearchTextChange(CharSequence text) {
-        publishSubject.onNext(text.toString());
+        presenter.onSearch(text.toString());
     }
 
     @Click(R.id.btn_chat_choose_member_empty)
     public void invitationDialogExecution() {
-        invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_CHAT_CHOOSE);
-        invitationDialogExecutor.execute();
+        presenter.invite();
+
     }
 
     public void onEvent(MemberStarredEvent event) {
-        setUpMember();
+        presenter.initMembers();
     }
-
 }

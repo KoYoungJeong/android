@@ -67,6 +67,7 @@
 	<string name="jandi_action_leave">"나가기"</string>
 	<string name="jandi_action_login">"로그인"</string>
 	<string name="jandi_action_menu_message_copy">"복사"</string>
+	<string name="jandi_action_more">"더보기"</string>
 	<string name="jandi_action_rename">"이름수정"</string>
 	<string name="jandi_action_search">"검색"</string>
 	<string name="jandi_action_share">"공유"</string>
@@ -153,7 +154,7 @@
 	<string name="jandi_confirm">"확인"</string>
 	<string name="jandi_confirm_new_passcode">"비밀번호를 한번 더 입력해주세요."</string>
 	<string name="jandi_confirm_passcode">"비밀번호 재입력"</string>
-	<string name="jandi_copy_link">"주소 복사하기"</string>
+	<string name="jandi_copy_link">"링크 복사"</string>
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"생성하기"</string>
 	<string name="jandi_create_channel">"토픽 생성"</string>
@@ -168,6 +169,7 @@
 	<string name="jandi_device_storage">"장치"</string>
 	<string name="jandi_disable_external_link">"외부 공유용 링크 삭제"</string>
 	<string name="jandi_disable_user_profile_explain">"차단된 멤버입니다.\n궁금하신 사항은 팀 관리자에게 문의하세요."</string>
+	<string name="jandi_disabled_members">"차단 멤버"</string>
 	<string name="jandi_disabled_team">"%1$s에서 차단된 멤버입니다. 팀 관리자에게 문의하세요."</string>
 	<string name="jandi_disabled_user">"차단된 멤버입니다"</string>
 	<string name="jandi_domain_is_already_taken">"이미 사용중인 도메인 입니다"</string>

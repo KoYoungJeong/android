@@ -141,14 +141,14 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
     }
 
     @Override
-    public void onMoveDirectMessage(Context context, int entityId) {
+    public void onMoveDirectMessage(Context context, long entityId) {
         EntityManager entityManager = EntityManager.getInstance();
         long roomId = mainChatListModel.getRoomId(entityId);
 
         view.moveMessageActivity(entityManager.getTeamId(),
                 entityId,
                 roomId,
-                mainChatListModel.isStarred(context, entityId), -1);
+                mainChatListModel.isStarred(entityId), -1);
     }
 
     @Override

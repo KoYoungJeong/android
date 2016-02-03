@@ -330,6 +330,11 @@
             android:name=".dummy.JandiDummyActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
 
+        <activity
+            android:name=".ui.entities.disabled.view.DisabledEntityChooseActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_disabled_members" />
+
         <service android:name=".services.socket.JandiSocketService" />
 
         <receiver

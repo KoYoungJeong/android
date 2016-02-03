@@ -67,6 +67,7 @@
 	<string name="jandi_action_leave">"Leave"</string>
 	<string name="jandi_action_login">"Sign in"</string>
 	<string name="jandi_action_menu_message_copy">"Copy"</string>
+	<string name="jandi_action_more">"More"</string>
 	<string name="jandi_action_rename">"Rename"</string>
 	<string name="jandi_action_search">"Search"</string>
 	<string name="jandi_action_share">"Share"</string>
@@ -153,7 +154,7 @@
 	<string name="jandi_confirm">"OK"</string>
 	<string name="jandi_confirm_new_passcode">"Confirm new passcode"</string>
 	<string name="jandi_confirm_passcode">"Confirm Passcode"</string>
-	<string name="jandi_copy_link">"Copy Link"</string>
+	<string name="jandi_copy_link">"Copy link"</string>
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"Create"</string>
 	<string name="jandi_create_channel">"Create New Topic"</string>
@@ -168,6 +169,7 @@
 	<string name="jandi_device_storage">"Device"</string>
 	<string name="jandi_disable_external_link">"Remove public link"</string>
 	<string name="jandi_disable_user_profile_explain">"This member has been temporarily disabled.\nPlease contact the team administrator for more information."</string>
+	<string name="jandi_disabled_members">"Disabled Members"</string>
 	<string name="jandi_disabled_team">"You are a disabled member of %1$s. Please contact the team administrator."</string>
 	<string name="jandi_disabled_user">"This member has been temporarily disabled"</string>
 	<string name="jandi_domain_is_already_taken">"That domain is already taken"</string>

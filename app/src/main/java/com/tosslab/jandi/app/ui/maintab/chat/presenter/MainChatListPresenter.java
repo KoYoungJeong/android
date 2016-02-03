@@ -17,7 +17,7 @@ public interface MainChatListPresenter {
 
     void onReloadChatList(Context context);
 
-    void onMoveDirectMessage(Context context, int userId);
+    void onMoveDirectMessage(Context context, long userId);
 
     void onEntityItemClick(Context context, int position);
 

@@ -17,7 +17,6 @@ import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
-import com.tosslab.jandi.app.ui.entities.EntityChooseActivity;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenter;
@@ -269,7 +268,6 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     @Click({R.id.btn_main_chat_fab, R.id.btn_chat_list_no_messages})
     void onAddClick(View view) {
         EntityChooseActivity_.intent(getActivity())
-                .type(EntityChooseActivity.Type.MESSAGES.name())
                 .start();
         getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
 

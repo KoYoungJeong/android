@@ -7,63 +7,25 @@ import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
-import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
+import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import rx.Observable;
+import rx.functions.Func2;
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 14..
- */
 @EBean
 public class ChatChooseModel {
 
     @RootContext
     Context context;
 
-    public List<ChatChooseItem> getEnableUsers() {
-        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe();
-
-        List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
-
-        Iterator<ChatChooseItem> iterator = Observable.from(formattedUsersWithoutMe)
-                .filter(entity -> TextUtils.equals(entity.getUser().status, "enabled"))
-                .map(formattedEntity -> {
-                    ChatChooseItem chatChooseItem = new ChatChooseItem();
-
-                    chatChooseItem.entityId(formattedEntity.getId())
-                            .statusMessage(formattedEntity.getUserStatusMessage())
-                            .name(formattedEntity.getName())
-                            .starred(formattedEntity.isStarred)
-                            .enabled(true)
-                            .owner(formattedEntity.isTeamOwner())
-                            .photoUrl(formattedEntity.getUserLargeProfileUrl());
-
-                    return chatChooseItem;
-                })
-                .toBlocking()
-                .getIterator();
-
-        while (iterator.hasNext()) {
-            chatChooseItems.add(iterator.next());
-        }
-
-        Collections.sort(chatChooseItems, getChatItemComparator());
-
-
-        return chatChooseItems;
-    }
-
-    private Comparator<ChatChooseItem> getChatItemComparator() {
+    private Func2<ChatChooseItem, ChatChooseItem, Integer> getChatItemComparator() {
         return (lhs, rhs) -> {
             int compareValue = 0;
             if (lhs.isEnabled()) {
@@ -86,7 +48,14 @@ public class ChatChooseModel {
 
             if (lhs.isStarred()) {
                 if (rhs.isStarred()) {
-                    return lhs.getName().compareTo(rhs.getName());
+
+                    if (lhs.isBot()) {
+                        return -1;
+                    } else if (rhs.isBot()) {
+                        return 1;
+                    } else {
+                        return lhs.getName().compareTo(rhs.getName());
+                    }
                 } else {
                     return -1;
                 }
@@ -94,7 +63,13 @@ public class ChatChooseModel {
                 if (rhs.isStarred()) {
                     return 1;
                 } else {
-                    return lhs.getName().compareTo(rhs.getName());
+                    if (lhs.isBot()) {
+                        return -1;
+                    } else if (rhs.isBot()) {
+                        return 1;
+                    } else {
+                        return lhs.getName().compareTo(rhs.getName());
+                    }
                 }
             }
         };
@@ -104,9 +79,9 @@ public class ChatChooseModel {
 
         List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe();
 
-        List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
+        List<ChatChooseItem> chatChooseItems = new ArrayList<>();
 
-        Iterator<ChatChooseItem> iterator = Observable.from(formattedUsersWithoutMe)
+        Observable.from(formattedUsersWithoutMe)
                 .filter(formattedEntity -> !TextUtils.isEmpty(formattedEntity.getName()) && formattedEntity.getName().toLowerCase().contains(name.toLowerCase()))
                 .map(formattedEntity -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
@@ -120,14 +95,19 @@ public class ChatChooseModel {
 
                     return chatChooseItem;
                 })
-                .toBlocking()
-                .getIterator();
-
-        while (iterator.hasNext()) {
-            chatChooseItems.add(iterator.next());
-        }
-
-        Collections.sort(chatChooseItems, getChatItemComparator());
+                .mergeWith(Observable.create(subscriber -> {
+                    // 잔디봇이 포함되어 있고 잔디봇의 이름이 포함되어 있는 경우 추가한다
+                    if (hasJandiBot()) {
+                        ChatChooseItem jandiBot = getJandiBot();
+                        if (jandiBot.getName().toLowerCase().contains(name.toLowerCase())) {
+                            subscriber.onNext(jandiBot);
+                        }
+                        subscriber.onCompleted();
+                    }
+                }))
+                .toSortedList(getChatItemComparator())
+                .collect(() -> chatChooseItems, List::addAll)
+                .subscribe();
 
 
         return chatChooseItems;
@@ -138,32 +118,49 @@ public class ChatChooseModel {
         return AccountRepository.getRepository().getSelectedTeamId();
     }
 
-    public boolean isStarred(int entityId) {
-        return EntityManager.getInstance().getEntityById(entityId).isStarred;
-    }
-
-    public boolean hasDisabledUsers() {
+    private boolean hasDisabledUsers() {
 
         List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe();
 
-        Boolean hasDisabled = Observable.from(formattedUsersWithoutMe)
+
+        return Observable.from(formattedUsersWithoutMe)
                 .filter(entity -> !TextUtils.equals(entity.getUser().status, "enabled"))
                 .map(entity -> true)
                 .firstOrDefault(false)
                 .toBlocking()
                 .first();
-
-
-        return hasDisabled;
     }
 
-    public List<ChatChooseItem> getDisableUsers() {
+    private int getDisabledUserCount() {
         List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe();
 
-        List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
-
-        Iterator<ChatChooseItem> iterator = Observable.from(formattedUsersWithoutMe)
+        return Observable.from(formattedUsersWithoutMe)
                 .filter(entity -> !TextUtils.equals(entity.getUser().status, "enabled"))
+                .count()
+                .toBlocking()
+                .first();
+
+    }
+
+    public List<ChatChooseItem> getUsers() {
+
+        List<ChatChooseItem> users = getEnableUsers();
+
+        boolean hasDisabledUsers = hasDisabledUsers();
+        if (hasDisabledUsers) {
+            users.add(new DisableDummyItem(getDisabledUserCount()));
+        }
+
+        return users;
+    }
+
+    private List<ChatChooseItem> getEnableUsers() {
+        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe();
+
+        List<ChatChooseItem> chatChooseItems = new ArrayList<>();
+
+        Observable.from(formattedUsersWithoutMe)
+                .filter(entity -> TextUtils.equals(entity.getUser().status, "enabled"))
                 .map(formattedEntity -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
 
@@ -171,42 +168,25 @@ public class ChatChooseModel {
                             .statusMessage(formattedEntity.getUserStatusMessage())
                             .name(formattedEntity.getName())
                             .starred(formattedEntity.isStarred)
-                            .enabled(false)
+                            .enabled(true)
+                            .owner(formattedEntity.isTeamOwner())
                             .photoUrl(formattedEntity.getUserLargeProfileUrl());
 
                     return chatChooseItem;
                 })
-                .toBlocking()
-                .getIterator();
+                .mergeWith(Observable.create(subscriber -> {
+                    if (hasJandiBot()) {
+                        subscriber.onNext(getJandiBot());
+                    }
 
-        while (iterator.hasNext()) {
-            chatChooseItems.add(iterator.next());
-        }
-
-        Collections.sort(chatChooseItems, getChatItemComparator());
+                    subscriber.onCompleted();
+                }))
+                .toSortedList(getChatItemComparator())
+                .collect(() -> chatChooseItems, List::addAll)
+                .subscribe();
 
 
         return chatChooseItems;
-    }
-
-    public List<ChatChooseItem> getUsers() {
-
-        List<ChatChooseItem> users = new ArrayList<ChatChooseItem>();
-
-        List<ChatChooseItem> enableUsers = getEnableUsers();
-        if (hasJandiBot()) {
-            users.add(0, getJandiBot());
-        }
-        users.addAll(enableUsers);
-
-        boolean hasDisabledUsers = hasDisabledUsers();
-        if (hasDisabledUsers) {
-            List<ChatChooseItem> disableUsers = getDisableUsers();
-            users.add(new DisableDummyItem(false, disableUsers.size()));
-            users.addAll(disableUsers);
-        }
-
-        return users;
     }
 
     private ChatChooseItem getJandiBot() {

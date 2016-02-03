@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/iv_disabled_folding_icon"
-        android:text="Disabled members"
+        android:text="@string/jandi_disabled_members"
         android:textColor="@color/jandi_text"
         android:textSize="@dimen/jandi_text_size_large" />
 

@@ -67,6 +67,7 @@
 	<string name="jandi_action_leave">"離開"</string>
 	<string name="jandi_action_login">"登入"</string>
 	<string name="jandi_action_menu_message_copy">"複製"</string>
+	<string name="jandi_action_more">"更多"</string>
 	<string name="jandi_action_rename">"重新命名"</string>
 	<string name="jandi_action_search">"搜尋"</string>
 	<string name="jandi_action_share">"分享"</string>
@@ -168,6 +169,7 @@
 	<string name="jandi_device_storage">"行動裝置"</string>
 	<string name="jandi_disable_external_link">"移除共享連結"</string>
 	<string name="jandi_disable_user_profile_explain">"此成員權限已被暫時關閉。\n欲知更多細節，請聯絡團隊管理員。"</string>
+	<string name="jandi_disabled_members">"關閉成員"</string>
 	<string name="jandi_disabled_team">"你已被剔除%1$s。進一步訊息，請聯絡團隊管理員。"</string>
 	<string name="jandi_disabled_user">"此成員權限已被暫時關閉"</string>
 	<string name="jandi_domain_is_already_taken">"網域名稱已經被使用"</string>

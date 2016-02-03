@@ -16,8 +16,8 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
-import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
+import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
@@ -37,20 +37,12 @@ public class ChatChooseAdapter extends BaseAdapter {
 
     public ChatChooseAdapter(Context context) {
         this.context = context;
-        chatChooseItems = new ArrayList<ChatChooseItem>();
+        chatChooseItems = new ArrayList<>();
     }
 
     @Override
     public int getCount() {
-
-        Pair<Integer, DisableDummyItem> item = getDisabledInfo();
-
-        if (item.first > 0 && item.second != null && !item.second.isExpand()) {
-            return chatChooseItems.size() - item.first;
-        } else {
-            return chatChooseItems.size();
-        }
-
+        return chatChooseItems.size();
     }
 
     private Pair<Integer, DisableDummyItem> getDisabledInfo() {
