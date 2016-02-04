@@ -50,8 +50,7 @@ public class TopicFolderSettingAdapter extends TopicFolderMainAdapter {
     }
 
     public void swap(int firstPosition, int secondPosition) {
-        if (getItemViewType(secondPosition) != TYPE_MAKE_NEW_FOLDER
-                || getItemViewType(secondPosition) != TYPE_REMOVE_FROM_FOLDER) {
+        if (getItemViewType(secondPosition) == TYPE_FOLDER_LIST) {
             Collections.swap(folders, firstPosition, secondPosition);
             notifyItemMoved(firstPosition, secondPosition);
         }
