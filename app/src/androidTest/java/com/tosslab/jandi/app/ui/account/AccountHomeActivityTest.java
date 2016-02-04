@@ -97,7 +97,6 @@ public class AccountHomeActivityTest {
                 .check(matches(isDisplayed()))
                 .check(matches(isSelected()));
 
-        assertThat(activity.teamLayout.getChildCount(), is(teams.size()));
     }
 
     @Test
