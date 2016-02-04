@@ -1216,7 +1216,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            int entityId = data.getIntExtra("EntityId", -1);
+            long entityId = data.getLongExtra("EntityId", -1);
             if (requestCode == INTENT_RETURN_TYPE_SHARE) {
                 fileDetailPresenter.shareMessage(fileMessage, entityId);
             } else if (requestCode == INTENT_RETURN_TYPE_UNSHARE) {
