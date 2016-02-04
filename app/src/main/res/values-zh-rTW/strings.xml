@@ -174,7 +174,7 @@
 	<string name="jandi_disabled_members">"關閉成員"</string>
 	<string name="jandi_disabled_team">"你已被剔除%1$s。進一步訊息，請聯絡團隊管理員。"</string>
 	<string name="jandi_disabled_user">"此成員權限已被暫時關閉"</string>
-	<string name="jandi_domain_is_already_taken">"網域名稱已經被使用"</string>
+	<string name="jandi_domain_is_already_taken">"網域為無效或已被使用"</string>
 	<string name="jandi_duplicate_email">"這電子郵件已被註冊"</string>
 	<string name="jandi_empty">"None"</string>
 	<string name="jandi_enable_external_link">"建立共享連結"</string>

@@ -174,7 +174,7 @@
 	<string name="jandi_disabled_members">"ブロックされたメンバー"</string>
 	<string name="jandi_disabled_team">"%1$sから無効化されました。チーム管理者にお問い合わせ下さい"</string>
 	<string name="jandi_disabled_user">"このメンバーは現在無効化されています"</string>
-	<string name="jandi_domain_is_already_taken">"ドメイン名が既に使用されています"</string>
+	<string name="jandi_domain_is_already_taken">"そのドメイン名はすでに利用されているか、正しい形式ではありません。"</string>
 	<string name="jandi_duplicate_email">"そのメールアドレスは既に使用されています"</string>
 	<string name="jandi_empty">"None"</string>
 	<string name="jandi_enable_external_link">"共有用リンクを作成する"</string>
