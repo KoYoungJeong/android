@@ -125,9 +125,13 @@ public class TopicFolderSettingPresenter {
     // 순서 및 이름 변경
     @Background
     public void modifyNameFolder(long folderId, String name, int seq) {
-        topicFolderSettingModel.renameFolder(folderId, name, seq);
-        onRefreshFolders(folderId);
-
+        try {
+            topicFolderSettingModel.renameFolder(folderId, name, seq);
+            onRefreshFolders(folderId);
+            view.showFolderRenamedToast();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // 순서 및 이름 변경
@@ -139,8 +143,13 @@ public class TopicFolderSettingPresenter {
 
     @Background
     public void removeFolder(long folderId) {
-        topicFolderSettingModel.deleteTopicFolder(folderId);
-        onRefreshFolders(folderId);
+        try {
+            topicFolderSettingModel.deleteTopicFolder(folderId);
+            onRefreshFolders(folderId);
+            view.showDeleteFolderToast();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public interface View {
@@ -157,6 +166,10 @@ public class TopicFolderSettingPresenter {
         void showRemoveFromFolderToast();
 
         void showAlreadyHasFolderToast();
+
+        void showFolderRenamedToast();
+
+        void showDeleteFolderToast();
     }
 
 }

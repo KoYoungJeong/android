@@ -158,8 +158,10 @@
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"Create"</string>
 	<string name="jandi_create_channel">"Create New Topic"</string>
+	<string name="jandi_create_folder">"Create a folder"</string>
 	<string name="jandi_create_privategroup">"Create New Private Topic"</string>
 	<string name="jandi_create_team_message">"Provide your email address below to create a JANDI team for free!"</string>
+	<string name="jandi_create_topic">"Create a topic"</string>
 	<string name="jandi_created_this_topic">"%s created this topic"</string>
 	<string name="jandi_decide_choose">"Select"</string>
 	<string name="jandi_delete_succeed">"%s has been deleted"</string>
@@ -368,6 +370,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_push_preview_public_only">"Public topics only"</string>
 	<string name="jandi_question_team_create">"Don't have a team on JANDI yet?"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"Are you sure you want to delete this email address?"</string>
+	<string name="jandi_reorder_from_long_press">"Drag and drop folders to adjust their order"</string>
 	<string name="jandi_retry">"Try again"</string>
 	<string name="jandi_retry_voice_search">"Didn\'t catch that, try speaking again"</string>
 	<string name="jandi_save">"Save"</string>
@@ -392,6 +395,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_set_passcode">"Set Passcode Lock"</string>
 	<string name="jandi_set_passcode_detail">"For your security, we cannot unlock this screen without the passcode. If you can't remember it, please reinstall the application to sign in again."</string>
 	<string name="jandi_setting_display">"Display"</string>
+	<string name="jandi_setting_folder">"Manage folders"</string>
 	<string name="jandi_setting_general">"GENERAL"</string>
 	<string name="jandi_setting_notification">"Notification Settings"</string>
 	<string name="jandi_setting_push">"NOTIFICATION PREFERENCES"</string>

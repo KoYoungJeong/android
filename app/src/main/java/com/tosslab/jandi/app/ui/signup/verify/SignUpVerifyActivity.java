@@ -237,7 +237,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     @Override
     public void moveToAccountHome() {
 
-        AdWordsConversionReporter.reportWithConversionId(getApplicationContext(),
+        AdWordsConversionReporter.reportWithConversionId(JandiApplication.getContext(),
                 "957512006", "M3MOCM6ij2MQxvLJyAM", "0.00", true);
 
 

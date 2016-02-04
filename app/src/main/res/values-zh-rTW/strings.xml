@@ -158,8 +158,10 @@
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"建立"</string>
 	<string name="jandi_create_channel">"建立新議題"</string>
+	<string name="jandi_create_folder">"建立議題資料夾"</string>
 	<string name="jandi_create_privategroup">"建立新私人議題"</string>
 	<string name="jandi_create_team_message">"請提供您的電子郵件地址以免費地建立新的JANDI團隊!"</string>
+	<string name="jandi_create_topic">"建立議題"</string>
 	<string name="jandi_created_this_topic">"%s建立了這議題"</string>
 	<string name="jandi_decide_choose">"選擇照片"</string>
 	<string name="jandi_delete_succeed">"%s已被刪除"</string>
@@ -368,6 +370,7 @@
 	<string name="jandi_push_preview_public_only">"僅限公開議題"</string>
 	<string name="jandi_question_team_create">"您的團隊還未使用JANDI嗎？"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"你確認要刪除這個電子郵件地址？"</string>
+	<string name="jandi_reorder_from_long_press">"拖拉資料夾更改排列順序"</string>
 	<string name="jandi_retry">"請再試一次"</string>
 	<string name="jandi_retry_voice_search">"沒有接收清楚您剛才説的，麻煩再說一次"</string>
 	<string name="jandi_save">"儲存"</string>
@@ -392,6 +395,7 @@
 	<string name="jandi_set_passcode">"設定密碼"</string>
 	<string name="jandi_set_passcode_detail">"如果你忘記密碼，將無法解鎖。請重新安裝JANDI，再重新登入。"</string>
 	<string name="jandi_setting_display">"螢幕顯示"</string>
+	<string name="jandi_setting_folder">"管理議題資料夾"</string>
 	<string name="jandi_setting_general">"一般"</string>
 	<string name="jandi_setting_notification">"通知設定"</string>
 	<string name="jandi_setting_push">"通知偏好"</string>

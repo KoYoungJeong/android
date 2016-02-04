@@ -186,11 +186,10 @@ public class MainMoreFragmentTest {
 
     @Test
     public void testOnClickUserInfoReport() throws Throwable {
-        rule.runOnUiThread(fragment::onClickUserInfoReport);
-        rule.runOnUiThread(fragment::onClickUserInfoReport);
-        rule.runOnUiThread(fragment::onClickUserInfoReport);
-        rule.runOnUiThread(fragment::onClickUserInfoReport);
-        rule.runOnUiThread(fragment::onClickUserInfoReport);
+        for (int idx = 0; idx < 5; idx++) {
+            rule.runOnUiThread(fragment::onClickUserInfoReport);
+            Thread.sleep(5);
+        }
 
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 

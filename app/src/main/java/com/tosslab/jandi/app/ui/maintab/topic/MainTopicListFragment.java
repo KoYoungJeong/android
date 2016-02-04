@@ -47,6 +47,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.JoinableTo
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -76,6 +77,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by tee on 15. 8. 26..
@@ -106,9 +108,18 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
     @Override
     public void onAttach(Context context) {
-        MainTabActivity mainTabActivity = (MainTabActivity) context;
-        floatingActionMenu = mainTabActivity.getFloatingActionMenu();
         super.onAttach(context);
+        MainTabActivity mainTabActivity = (MainTabActivity) context;
+
+        // orientation change시 activity instance가 충분히 실행되기 전에 실행되어 버려 죽는 현상을 막기 위해
+        // delay를 삽입함.
+        Observable.just(1)
+                .delay(200, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(Integer -> {
+                    floatingActionMenu = mainTabActivity.getFloatingActionMenu();
+                    setFloatingActionMenu();
+                });
     }
 
     @Override
@@ -130,26 +141,25 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
         expandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
         progressWheel = new ProgressWheel(getActivity());
-        setFloatingActionMenu();
     }
 
     public void setFloatingActionMenu() {
         floatingActionMenu.addItem(R.drawable.btn_fab_item_folder_setting,
-                "폴더 관리", () -> {
+                getResources().getString(R.string.jandi_setting_folder), () -> {
                     if (floatingActionMenu.isOpened()) {
                         floatingActionMenu.close();
                     }
                     launchFolderSettionActivity();
                 });
         floatingActionMenu.addItem(R.drawable.btn_fab_item_create_folder,
-                "폴더 만들기", () -> {
+                getResources().getString(R.string.jandi_create_folder), () -> {
                     if (floatingActionMenu.isOpened()) {
                         floatingActionMenu.close();
                     }
                     showCreateNewFolderDialog();
                 });
         floatingActionMenu.addItem(R.drawable.btn_fab_item_create_topic,
-                "토픽 만들기", () -> {
+                getResources().getString(R.string.jandi_create_topic), () -> {
                     if (floatingActionMenu.isOpened()) {
                         floatingActionMenu.close();
                     }
@@ -521,9 +531,11 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             builder.setView(rootView)
                     .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
                         mainTopicListPresenter.createNewFolder(etInput.getText().toString().trim());
+                        etInput.setText("");
                         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolder);
                     })
                     .setNegativeButton(R.string.jandi_cancel, (dialog, which) -> {
+                        etInput.setText("");
                         dialog.cancel();
                     });
 
@@ -544,5 +556,12 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         createFolderDialog.show();
         createFolderDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
     }
+
+    @Override
+    @UiThread
+    public void showAlreadyHasFolderToast() {
+        ColoredToast.show(getString(R.string.jandi_folder_alread_has_name));
+    }
+
 
 }

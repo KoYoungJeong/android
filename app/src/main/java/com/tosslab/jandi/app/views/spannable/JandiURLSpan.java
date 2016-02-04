@@ -29,7 +29,7 @@ public class JandiURLSpan extends UnderlineSpan implements ClickableSpannable {
     }
 
     public void onClick() {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getAvailableUrl(url)));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         try {
@@ -42,7 +42,22 @@ public class JandiURLSpan extends UnderlineSpan implements ClickableSpannable {
         }
     }
 
-    public String getUrl() {
-        return url;
+    String getAvailableUrl(String url) {
+
+        int protocolIndex = url.indexOf("://");
+        if (protocolIndex <= 0) {
+            return "http://" + url;
+        } else {
+            String protocol = url.substring(0, protocolIndex);
+            String uri = url.substring(protocolIndex);
+
+            StringBuilder builder = new StringBuilder();
+            builder.append(protocol.toLowerCase())
+                    .append(uri);
+
+            return builder.toString();
+        }
+
     }
+
 }

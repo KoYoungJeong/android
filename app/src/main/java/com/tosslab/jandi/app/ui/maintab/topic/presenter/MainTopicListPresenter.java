@@ -224,8 +224,13 @@ public class MainTopicListPresenter {
 
     @Background
     public void createNewFolder(String title) {
-        topicFolderChooseModel.createFolder(title);
-        view.notifyDatasetChanged();
+        try {
+            topicFolderChooseModel.createFolder(title);
+            view.notifyDatasetChanged();
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            view.showAlreadyHasFolderToast();
+        }
     }
 
     public interface View {
@@ -252,6 +257,8 @@ public class MainTopicListPresenter {
         void scrollAndAnimateForSelectedItem();
 
         void setFolderExpansion();
+
+        void showAlreadyHasFolderToast();
     }
 
 }

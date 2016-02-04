@@ -109,8 +109,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
                 tvTitle.setText(getResources().getString(R.string.jandi_folder_choose));
                 break;
             case FOLDER_SETTING:
-                //TODO
-                tvTitle.setText("롱클릭해서 옮겨라!");
+                tvTitle.setText(R.string.jandi_reorder_from_long_press);
                 TopicFolderSettingAdapter settingAdapter = (TopicFolderSettingAdapter) adapter;
                 ItemTouchHelper.Callback callback = new DragnDropTouchHelper(settingAdapter);
                 ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
@@ -173,8 +172,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
                 actionBar.setTitle(getString(R.string.jandi_folder_move_to));
                 break;
             case FOLDER_SETTING:
-                //TODO
-                actionBar.setTitle("폴더 설정");
+                actionBar.setTitle(R.string.jandi_setting_folder);
         }
 
     }
@@ -243,16 +241,31 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
         this.finish();
     }
 
+    @Override
     public void showMoveToFolderToast(String folderName) {
         ColoredToast.show(getString(R.string.jandi_folder_has_been_move_to, folderName));
     }
 
+    @Override
     public void showRemoveFromFolderToast() {
         ColoredToast.show(getString(R.string.jandi_folder_has_been_remove_from, currentItemFolderName));
     }
 
+    @Override
     public void showAlreadyHasFolderToast() {
         ColoredToast.show(getString(R.string.jandi_folder_alread_has_name));
+    }
+
+    @Override
+    @UiThread
+    public void showFolderRenamedToast() {
+        ColoredToast.show(getString(R.string.jandi_folder_renamed));
+    }
+
+    @Override
+    @UiThread
+    public void showDeleteFolderToast() {
+        ColoredToast.show(getString(R.string.jandi_folder_removed));
     }
 
     @Override

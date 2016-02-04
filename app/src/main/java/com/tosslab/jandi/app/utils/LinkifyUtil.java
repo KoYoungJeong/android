@@ -61,9 +61,18 @@ public class LinkifyUtil {
                     continue;
                 }
             }
-            String url = matcher.group(Regex.VALID_URL_GROUP_URL);
+            String url;
             int start = matcher.start(Regex.VALID_URL_GROUP_URL);
-            int end = matcher.end(Regex.VALID_URL_GROUP_URL);
+            int end;
+            Matcher spaceMatcher = Pattern.compile(" ").matcher(text);
+            if (spaceMatcher.find(start + 1)) {
+                end = spaceMatcher.start();
+            } else {
+                end = text.length();
+            }
+
+            url = text.subSequence(start, end).toString();
+
             Matcher tco_matcher = Regex.VALID_TCO_URL.matcher(url);
             if (tco_matcher.find()) {
                 // In the case of t.co URLs, don't allow additional path characters.

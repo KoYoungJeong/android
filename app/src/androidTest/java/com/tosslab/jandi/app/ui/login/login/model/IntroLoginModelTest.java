@@ -65,8 +65,8 @@ public class IntroLoginModelTest {
 
     @Test
     public void testLogin_Right_ID_Wrong_PW() throws Exception {
-        String rightId = "steve@tosslab.com";
-        String wrongPw = "dnrl~12AB1";
+        String rightId = BaseInitUtil.TEST_EMAIL;
+        String wrongPw = BaseInitUtil.TEST_PASSWORD + "dnrl~12AB1";
 
         try {
             introLoginModel.login(rightId, wrongPw);
@@ -79,8 +79,8 @@ public class IntroLoginModelTest {
 
     @Test
     public void testLogin_Right_Id_Right_Pw() throws Exception {
-        String rightId = "steve@tosslab.com";
-        String rightPw = "dnrl~12AB";
+        String rightId = BaseInitUtil.TEST_EMAIL;
+        String rightPw = BaseInitUtil.TEST_PASSWORD;
         try {
             ResAccessToken login = introLoginModel.login(rightId, rightPw);
             assertThat(login, is(notNullValue()));
