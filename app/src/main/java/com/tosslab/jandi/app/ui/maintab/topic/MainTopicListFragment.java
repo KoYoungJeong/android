@@ -47,6 +47,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.JoinableTo
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -528,9 +529,11 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             builder.setView(rootView)
                     .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
                         mainTopicListPresenter.createNewFolder(etInput.getText().toString().trim());
+                        etInput.setText("");
                         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolder);
                     })
                     .setNegativeButton(R.string.jandi_cancel, (dialog, which) -> {
+                        etInput.setText("");
                         dialog.cancel();
                     });
 
@@ -551,5 +554,12 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         createFolderDialog.show();
         createFolderDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
     }
+
+    @Override
+    @UiThread
+    public void showAlreadyHasFolderToast() {
+        ColoredToast.show(getString(R.string.jandi_folder_alread_has_name));
+    }
+
 
 }

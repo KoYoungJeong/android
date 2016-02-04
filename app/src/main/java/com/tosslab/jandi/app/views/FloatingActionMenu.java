@@ -80,6 +80,12 @@ public class FloatingActionMenu extends FrameLayout {
     private void init() {
         rootView = new RelativeLayout(getContext());
 
+        rootView.setOnClickListener(v -> {
+            if (isOpened()) {
+                close();
+            }
+        });
+
         LayoutParams params = new LayoutParams
                 (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         rootView.setLayoutParams(params);
