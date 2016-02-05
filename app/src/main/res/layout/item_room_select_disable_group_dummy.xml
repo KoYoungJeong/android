@@ -41,4 +41,10 @@
         android:layout_alignParentBottom="true"
         android:background="@color/jandi_more_bg" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/jandi_more_bg" />
+
 </RelativeLayout>
