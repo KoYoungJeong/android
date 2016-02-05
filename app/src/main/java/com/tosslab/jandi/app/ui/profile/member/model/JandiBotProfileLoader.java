@@ -64,8 +64,9 @@ public class JandiBotProfileLoader implements ProfileLoader {
 
     @Override
     public void setStarButton(View btnProfileStar, FormattedEntity member) {
-        btnProfileStar.setVisibility(View.INVISIBLE);
-        btnProfileStar.setEnabled(false);
+        btnProfileStar.setSelected(member.isStarred);
+        btnProfileStar.setVisibility(View.VISIBLE);
+        btnProfileStar.setEnabled(true);
     }
 
     @Override

@@ -169,7 +169,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
 
-            ivFavorite.setVisibility(item.isStarred() && !item.isBot() ? View.VISIBLE : View.GONE);
+            ivFavorite.setVisibility(item.isStarred() ? View.VISIBLE : View.GONE);
 
             vDisableLineThrough.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
             vDisableCover.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);

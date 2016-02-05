@@ -14,7 +14,6 @@ import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
 import com.tosslab.jandi.app.utils.UriFactory;
@@ -131,7 +130,7 @@ public class ChatChooseAdapter extends BaseAdapter {
         }
         chatCHooseViewHolder.tvAdditional.setText(item.getStatusMessage());
 
-        if (item.isStarred() && !EntityManager.getInstance().isBot(item.getEntityId())) {
+        if (item.isStarred()) {
             chatCHooseViewHolder.ivFavorite.setVisibility(View.VISIBLE);
         } else {
             chatCHooseViewHolder.ivFavorite.setVisibility(View.GONE);

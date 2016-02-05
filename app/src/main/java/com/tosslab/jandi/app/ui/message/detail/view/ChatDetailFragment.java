@@ -63,11 +63,6 @@ public class ChatDetailFragment extends Fragment {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         boolean isStarred = entity.isStarred;
         setStarred(isStarred);
-
-        if (EntityManager.getInstance().isBot(entityId)) {
-            vgStarred.setVisibility(View.GONE);
-        }
-
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MessageDescription);
 
     }
