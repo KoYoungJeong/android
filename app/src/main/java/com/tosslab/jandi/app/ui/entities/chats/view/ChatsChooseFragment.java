@@ -146,6 +146,7 @@ public class ChatsChooseFragment extends Fragment implements ChatChoosePresenter
         if (chatChooseItem instanceof DisableDummyItem) {
             DisabledEntityChooseActivity_.intent(ChatsChooseFragment.this)
                     .startForResult(REQ_DISABLED_MEMBERS);
+            getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
         } else {
             presenter.onMoveChatMessage(chatChooseItem.getEntityId());
         }

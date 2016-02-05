@@ -1,13 +1,12 @@
 package com.tosslab.jandi.app.ui.selector.room.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.drawable.ScalingUtils;
@@ -21,7 +20,6 @@ import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
-import com.tosslab.jandi.app.views.spannable.HighlightSpannable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +40,12 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public RoomRecyclerAdapter(Context context) {
         this.context = context;
         roomDatas = new ArrayList<>();
+        setHasStableIds(true);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     @Override
@@ -217,10 +221,17 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return roomDatas.size();
     }
 
-    public void addAll(List<ExpandRoomData> categorizableEntities) {
+    public void clear() {
         roomDatas.clear();
+    }
+    public void addAll(List<ExpandRoomData> categorizableEntities) {
         roomDatas.addAll(categorizableEntities);
     }
+
+    public void add(int position, ExpandRoomData expandRoomData) {
+        roomDatas.add(position, expandRoomData);
+    }
+
 
     public void setOnRecyclerItemClickListener(OnRecyclerItemClickListener onRecyclerItemClickListener) {
         this.onRecyclerItemClickListener = onRecyclerItemClickListener;
@@ -255,31 +266,35 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private static class DisabledGroupDummyViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView ivArrow;
         private TextView tvName;
-        private SimpleDraweeView ivIcon;
+        private ImageView ivIcon;
 
         public DisabledGroupDummyViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
-            ivIcon = (SimpleDraweeView) itemView.findViewById(R.id.iv_room_selector_item_icon);
+            ivIcon = (ImageView) itemView.findViewById(R.id.iv_room_selector_item_icon);
+            ivArrow = ((ImageView) itemView.findViewById(R.id.iv_room_selector_item_arrow));
         }
 
         public void setUp(ExpandRoomData item) {
             ExpandRoomData.DummyDisabledRoomData dummy = (ExpandRoomData.DummyDisabledRoomData) item;
-            ImageLoader.newBuilder()
-                    .placeHolder(R.drawable.icon_disabled_members, ScalingUtils.ScaleType.CENTER_INSIDE)
-                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                    .load(UriFactory.getResourceUri(R.drawable.icon_disabled_members))
-                    .into(ivIcon);
+
+            ivIcon.setImageResource(R.drawable.icon_disabled_members);
+
+            if (dummy.isExpanded()) {
+                ivArrow.setImageResource(R.drawable.icon_arrow_up_disabled_members);
+                itemView.setBackgroundColor(itemView.getResources().getColor(R.color.jandi_transparent_white_90p));
+            } else {
+                ivArrow.setImageResource(R.drawable.icon_arrow_disabled_members);
+                itemView.setBackgroundColor(itemView.getResources().getColor(R.color.jandi_more_bg));
+            }
+
 
             SpannableStringBuilder name = new SpannableStringBuilder();
             name.append(item.getName())
-                    .append(" ");
-
-            int start = name.length();
-            name.append(tvName.getResources().getString(R.string.jandi_count_with_brace, dummy.getCount()));
-            int end = name.length();
-            name.setSpan(new HighlightSpannable(Color.TRANSPARENT, 0xFFACACAC), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    .append(" ")
+                    .append(tvName.getResources().getString(R.string.jandi_count_with_brace, dummy.getCount()));
             tvName.setText(name);
         }
     }

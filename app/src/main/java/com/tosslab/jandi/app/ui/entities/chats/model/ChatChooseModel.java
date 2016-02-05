@@ -131,24 +131,13 @@ public class ChatChooseModel {
                 .first();
     }
 
-    private int getDisabledUserCount() {
-        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe();
-
-        return Observable.from(formattedUsersWithoutMe)
-                .filter(entity -> !TextUtils.equals(entity.getUser().status, "enabled"))
-                .count()
-                .toBlocking()
-                .first();
-
-    }
-
     public List<ChatChooseItem> getUsers() {
 
         List<ChatChooseItem> users = getEnableUsers();
 
         boolean hasDisabledUsers = hasDisabledUsers();
         if (hasDisabledUsers) {
-            users.add(new DisableDummyItem(getDisabledUserCount()));
+            users.add(new DisableDummyItem());
         }
 
         return users;

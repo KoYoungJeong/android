@@ -89,6 +89,7 @@ public class RoomSelectorImpl implements RoomSelector {
 
         topicView.setOnClickListener(v -> {
             setSelectType(0, selectableViews);
+            adapter.clear();
             adapter.addAll(getTopicDatas());
             adapter.notifyDataSetChanged();
             recyclerView.getLayoutManager().scrollToPosition(0);
@@ -96,6 +97,7 @@ public class RoomSelectorImpl implements RoomSelector {
 
         dmView.setOnClickListener(v -> {
             setSelectType(1, selectableViews);
+            adapter.clear();
             adapter.addAll(getRoomDatas());
             adapter.notifyDataSetChanged();
             recyclerView.getLayoutManager().scrollToPosition(0);
@@ -305,12 +307,12 @@ public class RoomSelectorImpl implements RoomSelector {
         List<FormattedEntity> users = getUsers();
         Observable<List<ExpandRoomData>> enabledUsers = Observable.from(users)
                 .filter(FormattedEntity::isEnabled)
-                .map(this::getRoomData)
+                .map(ExpandRoomData::newRoomData)
                 .toSortedList(this::getCompareRooms);
 
         Observable<List<ExpandRoomData>> disabledUsers = Observable.from(users)
                 .filter(entity -> !entity.isEnabled())
-                .map(this::getRoomData)
+                .map(ExpandRoomData::newRoomData)
                 .toSortedList(this::getCompareRooms);
 
         boolean hasDisabledUser = hasDisabledUser(users);
@@ -344,24 +346,6 @@ public class RoomSelectorImpl implements RoomSelector {
             return 1;
         }
         return lhs.getName().compareToIgnoreCase(rhs.getName());
-    }
-
-    @NonNull
-    private ExpandRoomData getRoomData(FormattedEntity entity) {
-        ExpandRoomData userData = new ExpandRoomData();
-        userData.setIsUser(true);
-        userData.setName(entity.getName());
-        userData.setEnabled(entity.isEnabled());
-        try {
-            userData.setProfileUrl(entity.getUserSmallProfileUrl());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        userData.setType(entity.type);
-        userData.setEntityId(entity.getId());
-        userData.setIsStarred(entity.isStarred);
-        userData.setIsFolder(false);
-        return userData;
     }
 
     private int getDisabledUserCount(List<FormattedEntity> users) {

@@ -5,13 +5,4 @@ package com.tosslab.jandi.app.ui.entities.chats.domain;
  */
 public class DisableDummyItem extends ChatChooseItem {
 
-    private int disabledCount;
-
-    public DisableDummyItem(int disabledCount) {
-        this.disabledCount = disabledCount;
-    }
-
-    public int getDisabledCount() {
-        return disabledCount;
-    }
 }

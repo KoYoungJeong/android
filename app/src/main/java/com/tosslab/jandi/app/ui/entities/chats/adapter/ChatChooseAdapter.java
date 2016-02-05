@@ -62,13 +62,13 @@ public class ChatChooseAdapter extends BaseAdapter {
         if (itemViewType == 0) {
             convertView = setChatChooseView(position, convertView, parent);
         } else {
-            convertView = setDisableFoldingView(position, convertView, parent);
+            convertView = setDisableFoldingView(convertView, parent);
         }
 
         return convertView;
     }
 
-    private View setDisableFoldingView(int position, View convertView, ViewGroup parent) {
+    private View setDisableFoldingView(View convertView, ViewGroup parent) {
 
         DisableFoldingViewHolder disableFoldingViewHolder;
 
@@ -79,17 +79,10 @@ public class ChatChooseAdapter extends BaseAdapter {
 
             disableFoldingViewHolder.ivIcon = (ImageView) convertView.findViewById(R.id.iv_disabled_folding_icon);
             disableFoldingViewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tv_disabled_folding_title);
-            disableFoldingViewHolder.tvCount = (TextView) convertView.findViewById(R.id.tv_disabled_folding_count);
 
             convertView.setTag(R.id.chatchoose_disable_folding, disableFoldingViewHolder);
-
-        } else {
-            disableFoldingViewHolder = (DisableFoldingViewHolder) convertView.getTag(R.id.chatchoose_disable_folding);
         }
 
-        DisableDummyItem item = ((DisableDummyItem) getItem(position));
-
-        disableFoldingViewHolder.tvCount.setText(context.getString(R.string.jandi_count_with_brace, item.getDisabledCount()));
 
         return convertView;
     }
@@ -225,6 +218,5 @@ public class ChatChooseAdapter extends BaseAdapter {
     static class DisableFoldingViewHolder {
         public TextView tvTitle;
         public ImageView ivIcon;
-        public TextView tvCount;
     }
 }

@@ -79,6 +79,12 @@ public class DisabledEntityChooseActivity extends BaseAppCompatActivity implemen
         finish();
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.ready, R.anim.slide_out_to_bottom);
+    }
+
     @ItemClick(R.id.lv_disabled_choose)
     void onMemberItemClick(int position) {
         ChatChooseItem item = adapter.getItem(position);
