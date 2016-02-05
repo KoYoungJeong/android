@@ -71,12 +71,12 @@ public interface MainRestApiClient {
     // 채널, PG, DM 리스트 획득
     @GET("/leftSideMenu")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResLeftSideMenu getInfosForSideMenu(@Query("teamId") int teamId);
+    ResLeftSideMenu getInfosForSideMenu(@Query("teamId") long teamId);
 
     // Entity별 badge 설정
     @POST("/entities/{entityId}/marker")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon setMarker(@Path("entityId") int entityId, @Body ReqSetMarker reqSetMarker);
+    ResCommon setMarker(@Path("entityId") long entityId, @Body ReqSetMarker reqSetMarker);
 
     /**
      * *********************************************************

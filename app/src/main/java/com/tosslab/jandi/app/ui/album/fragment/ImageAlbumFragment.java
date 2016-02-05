@@ -12,10 +12,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
 import com.soundcloud.android.crop.Crop;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.album.fragment.adapter.DefaultAlbumAdapter;
@@ -143,18 +145,6 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
         recyclerView.setLayoutManager(layoutManager);
         imagePictureAdapter = new ImagePictureAdapter(getActivity(), photoList, column);
         imagePictureAdapter.setMode(mode);
-        imagePictureAdapter.setOnRecyclerItemCheckClickListener((view, adapter1, position) -> {
-
-            ImagePicture item = ((ImagePictureAdapter) adapter1).getItem(position);
-
-            if (mode == ImageAlbumActivity.EXTRA_MODE_UPLOAD) {
-                imageAlbumPresenter.onSelectPicture(item, position);
-                imageAlbumPresenter.onSetupActionbar(buckerId);
-            } else {
-                callCropActivity(item);
-            }
-
-        });
 
         imagePictureAdapter.setOnRecyclerItemImageClickListener((view, adapter1, position) -> {
             ImagePicture item = ((ImagePictureAdapter) adapter1).getItem(position);
@@ -186,6 +176,12 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
 
     private void callCropActivity(ImagePicture item) {
         String imagePath = item.getImagePath();
+
+        if (TextUtils.isEmpty(imagePath) || imagePath.endsWith("gif")) {
+            showWarningToast(JandiApplication.getContext().getString(R.string.jandi_unsupported_type_picture));
+            return;
+        }
+
         try {
 
             Intent cropIntent = new Intent(getContext(), JandiCropImageActivity.class);

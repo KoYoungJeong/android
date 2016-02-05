@@ -16,6 +16,8 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.Collapse
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.CollapseLinkPreviewJandiBotViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.JandiBotViewHolder;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
+import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
+import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -208,7 +210,8 @@ public class BodyViewFactory {
         } else if (currentMessage instanceof ResMessages.FileMessage) {
 
             boolean isSharedFile = false;
-            Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities = ((ResMessages.FileMessage) currentMessage).shareEntities;
+            ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) currentMessage;
+            Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities = fileMessage.shareEntities;
 
             // ArrayList로 나오는 경우 아직 DB에 기록되지 않은 경우 - object가 자동갱신되지 않는 문제 해결
             if (shareEntities instanceof ArrayList) {
@@ -222,10 +225,11 @@ public class BodyViewFactory {
                 }
             }
 
-            String fileType = ((ResMessages.FileMessage) currentMessage).content.icon;
+            String fileType = fileMessage.content.icon;
 
             boolean isImage = !TextUtils.isEmpty(fileType)
                     && fileType.startsWith("image")
+                    && SourceTypeUtil.getSourceType(fileMessage.content.serverUrl) == MimeTypeUtil.SourceType.S3
                     && isSharedFile
                     && !TextUtils.equals(currentMessage.status, "archived");
 
@@ -257,7 +261,7 @@ public class BodyViewFactory {
                 return defaultType;
             }
         } else if (currentMessage instanceof ResMessages.CommentMessage || currentMessage instanceof ResMessages.CommentStickerMessage) {
-            int messageFeedbackId = currentLink.feedbackId;
+            long messageFeedbackId = currentLink.feedbackId;
 
             boolean isFeedbackOrFile = false;
 
@@ -361,12 +365,12 @@ public class BodyViewFactory {
         }
 
         @Override
-        public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
+        public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
 
         }
 
         @Override
-        public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
 
         }
 

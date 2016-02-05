@@ -119,7 +119,7 @@ public class MessageRepositoryTest {
 
     @Test
     public void testReadyMessage() throws Exception {
-        int roomId = 1;
+        long roomId = 1;
 
         ReadyMessage readyMessage = new ReadyMessage();
         String text = "asda";
@@ -128,7 +128,7 @@ public class MessageRepositoryTest {
         ReadyMessageRepository.getRepository().upsertReadyMessage(readyMessage);
 
         String newText = "qwe";
-        int newRoomId = 2;
+        long newRoomId = 2;
         readyMessage = new ReadyMessage();
         readyMessage.setRoomId(newRoomId);
         readyMessage.setText(newText);

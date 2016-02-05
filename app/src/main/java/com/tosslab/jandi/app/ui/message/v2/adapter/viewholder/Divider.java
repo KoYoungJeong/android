@@ -36,14 +36,14 @@ public class Divider implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
+    public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
         if (originBodyViewHolder != null) {
             originBodyViewHolder.bindData(link, teamId, roomId, entityId);
         }
     }
 
     @Override
-    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+    public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
         if (originBodyViewHolder != null) {
             originBodyViewHolder.setLastReadViewVisible(currentLinkId, lastReadLinkId);
         }

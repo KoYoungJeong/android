@@ -4,13 +4,13 @@ package com.tosslab.jandi.app.events.entities;
  * Created by Steve SeongUg Jung on 15. 5. 5..
  */
 public class MoveSharedEntityEvent {
-    private final int entityId;
+    private final long entityId;
 
-    public MoveSharedEntityEvent(int entityId) {
+    public MoveSharedEntityEvent(long entityId) {
         this.entityId = entityId;
     }
 
-    public int getEntityId() {
+    public long getEntityId() {
         return entityId;
     }
 }

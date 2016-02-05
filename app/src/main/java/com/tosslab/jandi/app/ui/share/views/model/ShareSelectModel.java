@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.ui.share.views.domain.ExpandRoomData;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
 
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,19 +33,19 @@ import rx.Observable;
 @EBean
 public class ShareSelectModel {
 
-    private Map<Integer, FormattedEntity> mJoinedTopics = new HashMap<>();
-    private Map<Integer, FormattedEntity> mUnjoinedTopics = new HashMap<>();
-    private Map<Integer, FormattedEntity> mUsers = new HashMap<>();
-    private Map<Integer, FormattedEntity> mJoinedUsers = new HashMap<>();
-    private Map<Integer, FormattedEntity> mGroups = new HashMap<>();
+    private Map<Long, FormattedEntity> mJoinedTopics = new HashMap<>();
+    private Map<Long, FormattedEntity> mUnjoinedTopics = new HashMap<>();
+    private Map<Long, FormattedEntity> mUsers = new HashMap<>();
+    private Map<Long, FormattedEntity> mJoinedUsers = new HashMap<>();
+    private Map<Long, FormattedEntity> mGroups = new HashMap<>();
 
-    private Map<Integer, FormattedEntity> mStarredJoinedTopics = new HashMap<>();
-    private Map<Integer, FormattedEntity> mStarredUsers = new HashMap<>();
-    private Map<Integer, FormattedEntity> mStarredGroups = new HashMap<>();
+    private Map<Long, FormattedEntity> mStarredJoinedTopics = new HashMap<>();
+    private Map<Long, FormattedEntity> mStarredUsers = new HashMap<>();
+    private Map<Long, FormattedEntity> mStarredGroups = new HashMap<>();
     private ResLeftSideMenu.Team currentTeam;
     private ResLeftSideMenu.User mMe;
 
-    public ResLeftSideMenu getLeftSideMenu(int teamId) throws RetrofitError {
+    public ResLeftSideMenu getLeftSideMenu(long teamId) throws RetrofitError {
         return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
     }
 
@@ -64,9 +62,9 @@ public class ShareSelectModel {
         this.mMe = resLeftSideMenu.user;
         this.currentTeam = resLeftSideMenu.team;
 
-        Collection<Integer> starredEntities =
+        Collection<Long> starredEntities =
                 (resLeftSideMenu.user.u_starredEntities != null)
-                        ? resLeftSideMenu.user.u_starredEntities : new ArrayList<Integer>();
+                        ? resLeftSideMenu.user.u_starredEntities : new ArrayList<>();
 
         for (ResLeftSideMenu.Entity entity : resLeftSideMenu.entities) {
             if (entity instanceof ResLeftSideMenu.Channel) {
@@ -115,7 +113,7 @@ public class ShareSelectModel {
     }
 
     // 폴더 정보 가져오기
-    public List<ResFolder> getTopicFolders(int teamId) throws RetrofitError {
+    public List<ResFolder> getTopicFolders(long teamId) throws RetrofitError {
         try {
             return RequestApiManager.getInstance().getFoldersByTeamApi(teamId);
         } catch (RetrofitError e) {
@@ -125,7 +123,7 @@ public class ShareSelectModel {
     }
 
     // 폴더 속 토픽 아이디 가져오기
-    public List<ResFolderItem> getTopicFolderItems(int teamId) throws RetrofitError {
+    public List<ResFolderItem> getTopicFolderItems(long teamId) throws RetrofitError {
         try {
             return RequestApiManager.getInstance().getFolderItemsByTeamApi(teamId);
         } catch (RetrofitError e) {
@@ -144,9 +142,9 @@ public class ShareSelectModel {
 
     public List<ExpandRoomData> getExpandRoomDatas(List<ResFolder> topicFolders,
                                                    List<ResFolderItem> topicFolderItems,
-                                                   LinkedHashMap<Integer, FormattedEntity> joinTopics) {
+                                                   LinkedHashMap<Long, FormattedEntity> joinTopics) {
         List<ExpandRoomData> topicDatas = new ArrayList<>();
-        LinkedHashMap<Integer, List<ExpandRoomData>> topicDataMap = new LinkedHashMap<>();
+        LinkedHashMap<Long, List<ExpandRoomData>> topicDataMap = new LinkedHashMap<>();
 
         for (ResFolder topicFolder : topicFolders) {
             if (!topicDataMap.containsKey(topicFolder.id)) {
@@ -167,7 +165,7 @@ public class ShareSelectModel {
                     topicData.setIsFolder(false);
                     topicData.setIsPublicTopic(topic.isPublicTopic());
                     topicData.setIsStarred(topic.isStarred);
-                    topicDataMap.get(new Integer(item.folderId)).add(topicData);
+                    topicDataMap.get(item.folderId).add(topicData);
                 });
 
         for (ResFolder folder : topicFolders) {
@@ -191,20 +189,20 @@ public class ShareSelectModel {
             folderdata.setIsUser(false);
             folderdata.setName(folder.name);
             topicDatas.add(folderdata);
-            for (ExpandRoomData roomData : topicDataMap.get(new Integer(folder.id))) {
+            for (ExpandRoomData roomData : topicDataMap.get(folder.id)) {
                 topicDatas.add(roomData);
             }
         }
 
-        Iterator joinTopicKeySets = joinTopics.keySet().iterator();
+        boolean firstAmongNoFolderItem = true;
 
-        boolean FirstAmongNoFolderItem = true;
-
-        while (joinTopicKeySets.hasNext()) {
-            FormattedEntity entity = joinTopics.get(joinTopicKeySets.next());
+        for (Long key : joinTopics.keySet()) {
+            FormattedEntity entity = joinTopics.get(key);
             ExpandRoomData topicData = new ExpandRoomData();
-            topicData.setIsFirstAmongNoFolderItem(FirstAmongNoFolderItem);
-            FirstAmongNoFolderItem = false;
+            if (firstAmongNoFolderItem) {
+                topicData.setIsFirstAmongNoFolderItem(true);
+                firstAmongNoFolderItem = false;
+            }
             topicData.setEntityId(entity.getId());
             topicData.setIsUser(false);
             topicData.setName(entity.getName());
@@ -216,15 +214,13 @@ public class ShareSelectModel {
             topicDatas.add(topicData);
         }
 
-        LogUtil.e("topicDatas", topicDatas.size() + "");
-
         return topicDatas;
     }
 
-    public LinkedHashMap<Integer, FormattedEntity> getJoinEntities() {
+    public LinkedHashMap<Long, FormattedEntity> getJoinEntities() {
         List<FormattedEntity> joinedChannels = getJoinedChannels();
         List<FormattedEntity> groups = getGroups();
-        LinkedHashMap<Integer, FormattedEntity> topicHashMap = new LinkedHashMap<>();
+        LinkedHashMap<Long, FormattedEntity> topicHashMap = new LinkedHashMap<>();
 
         Observable<FormattedEntity> observable = Observable.merge(Observable.from(joinedChannels), Observable.from(groups));
 
@@ -337,7 +333,7 @@ public class ShareSelectModel {
     }
 
     private List<Team> convertPedingTeamList(List<ResPendingTeamInfo> pedingTeamInfos) {
-        List<Team> teams = new ArrayList<Team>();
+        List<Team> teams = new ArrayList<>();
 
         if (pedingTeamInfos == null) {
             return teams;
@@ -351,7 +347,7 @@ public class ShareSelectModel {
     }
 
     private List<Team> convertJoinedTeamList(List<ResAccountInfo.UserTeam> memberships) {
-        List<Team> teams = new ArrayList<Team>();
+        List<Team> teams = new ArrayList<>();
 
         if (memberships == null) {
             return teams;
@@ -368,7 +364,15 @@ public class ShareSelectModel {
         return AccountRepository.getRepository().getSelectedTeamInfo();
     }
 
-    public FormattedEntity getEntityById(int entityId) {
+    public String getTeamName() {
+        return currentTeam.name;
+    }
+
+    public long getDefaultTopicId() {
+        return currentTeam.t_defaultChannelId;
+    }
+
+    public FormattedEntity getEntityById(long entityId) {
 
         return Observable.just(mStarredJoinedTopics, mJoinedTopics, mStarredGroups, mGroups, mStarredUsers, mUsers, mUnjoinedTopics)
                 .filter(integerFormattedEntityMap -> integerFormattedEntityMap.containsKey(entityId))

@@ -47,9 +47,6 @@ import java.util.List;
 import retrofit.RetrofitError;
 import rx.Observable;
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 8..
- */
 @EBean
 public class FileDetailModel {
 
@@ -62,31 +59,31 @@ public class FileDetailModel {
     @Bean
     EntityClientManager entityClientManager;
 
-    public void deleteFile(int fileId) throws RetrofitError {
+    public void deleteFile(long fileId) throws RetrofitError {
         entityClientManager.deleteFile(fileId);
     }
 
-    public ResFileDetail getFileDetailInfo(int fileId) throws RetrofitError {
+    public ResFileDetail getFileDetailInfo(long fileId) throws RetrofitError {
         return entityClientManager.getFileDetail(fileId);
     }
 
-    public void shareMessage(int fileId, int entityIdToBeShared) throws RetrofitError {
+    public void shareMessage(long fileId, long entityIdToBeShared) throws RetrofitError {
         entityClientManager.shareMessage(fileId, entityIdToBeShared);
     }
 
-    public void unshareMessage(int fileId, int entityIdToBeUnshared) throws RetrofitError {
+    public void unshareMessage(long fileId, long entityIdToBeUnshared) throws RetrofitError {
         entityClientManager.unshareMessage(fileId, entityIdToBeUnshared);
     }
 
-    public void sendMessageComment(int fileId, String message, List<MentionObject> mentions) throws RetrofitError {
+    public void sendMessageComment(long fileId, String message, List<MentionObject> mentions) throws RetrofitError {
         entityClientManager.sendMessageComment(fileId, message, mentions);
     }
 
-    public ResLeftSideMenu.User getUserProfile(int userEntityId) throws RetrofitError {
+    public ResLeftSideMenu.User getUserProfile(long userEntityId) throws RetrofitError {
         return entityClientManager.getUserProfile(userEntityId);
     }
 
-    public boolean isMyComment(int writerId) {
+    public boolean isMyComment(long writerId) {
         EntityManager entityManager = EntityManager.getInstance();
 
         if (entityManager == null) {
@@ -96,11 +93,11 @@ public class FileDetailModel {
         return me != null && me.getId() == writerId;
     }
 
-    public void deleteComment(int messageId, int feedbackId) throws RetrofitError {
+    public void deleteComment(long messageId, long feedbackId) throws RetrofitError {
         entityClientManager.deleteMessageComment(messageId, feedbackId);
     }
 
-    public void deleteStickerComment(int messageId, int messageType) throws RetrofitError {
+    public void deleteStickerComment(long messageId, int messageType) throws RetrofitError {
         messageManipulator.deleteSticker(messageId, messageType);
     }
 
@@ -164,9 +161,9 @@ public class FileDetailModel {
         }
     }
 
-    public void sendMessageCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment, List<MentionObject> mentions) throws RetrofitError {
+    public void sendMessageCommentWithSticker(long fileId, long stickerGroupId, String stickerId, String comment, List<MentionObject> mentions) throws RetrofitError {
         try {
-            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
             ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerGroupId, stickerId, teamId, fileId, "", comment, mentions);
             RequestApiManager.getInstance().sendStickerCommentByStickerApi(reqSendSticker);
         } catch (RetrofitError e) {
@@ -176,7 +173,7 @@ public class FileDetailModel {
         }
     }
 
-    public void trackFileShareSuccess(int topicId, int fileId) {
+    public void trackFileShareSuccess(long topicId, long fileId) {
 
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
@@ -202,7 +199,7 @@ public class FileDetailModel {
 
     }
 
-    public void trackFileUnShareSuccess(int topicId, int fileId) {
+    public void trackFileUnShareSuccess(long topicId, long fileId) {
 
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
@@ -228,7 +225,7 @@ public class FileDetailModel {
 
     }
 
-    public void trackFileDeleteSuccess(int topicId, int fileId) {
+    public void trackFileDeleteSuccess(long topicId, long fileId) {
 
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
@@ -254,7 +251,7 @@ public class FileDetailModel {
 
     }
 
-    public void registStarredMessage(int teamId, int messageId) throws RetrofitError {
+    public void registStarredMessage(long teamId, long messageId) throws RetrofitError {
         try {
             RequestApiManager.getInstance()
                     .registStarredMessageByTeamApi(teamId, messageId);
@@ -263,7 +260,7 @@ public class FileDetailModel {
         }
     }
 
-    public void unregistStarredMessage(int teamId, int messageId) throws RetrofitError {
+    public void unregistStarredMessage(long teamId, long messageId) throws RetrofitError {
         try {
             RequestApiManager.getInstance()
                     .unregistStarredMessageByTeamApi(teamId, messageId);
@@ -274,7 +271,7 @@ public class FileDetailModel {
         }
     }
 
-    public List<FileDetail> getFileDetail(int fileId) {
+    public List<FileDetail> getFileDetail(long fileId) {
         return FileDetailRepository.getRepository().getFileDetail(fileId);
     }
 
@@ -306,7 +303,7 @@ public class FileDetailModel {
                         FileDetailRepository.getRepository().upsertFileDetail(fileDetail));
     }
 
-    public int getMyId() {
+    public long getMyId() {
         return EntityManager.getInstance().getMe().getId();
     }
 
@@ -340,7 +337,7 @@ public class FileDetailModel {
         return sortedCommentMessages;
     }
 
-    public ResMessages.FileMessage getFileMessage(int fileId) {
+    public ResMessages.FileMessage getFileMessage(long fileId) {
 
         return MessageRepository.getRepository().getFileMessage(fileId);
     }
@@ -350,15 +347,15 @@ public class FileDetailModel {
     }
 
 
-    public int getTeamId() {
+    public long getTeamId() {
         return EntityManager.getInstance().getTeamId();
     }
 
-    public ResMessages.FileMessage enableExternalLink(int teamId, int fileId) {
+    public ResMessages.FileMessage enableExternalLink(long teamId, long fileId) {
         return RequestApiManager.getInstance().enableFileExternalLink(teamId, fileId);
     }
 
-    public ResMessages.FileMessage disableExternalLink(int teamId, int fileId) {
+    public ResMessages.FileMessage disableExternalLink(long teamId, long fileId) {
         return RequestApiManager.getInstance().disableFileExternalLink(teamId, fileId);
     }
 

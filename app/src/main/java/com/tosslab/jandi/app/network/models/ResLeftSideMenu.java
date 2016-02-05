@@ -39,10 +39,10 @@ public class ResLeftSideMenu {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     static public class Team {
-        public int id;
+        public long id;
         public String name;
         public String t_domain;
-        public int t_defaultChannelId;
+        public long t_defaultChannelId;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -57,8 +57,8 @@ public class ResLeftSideMenu {
             @JsonSubTypes.Type(value = PrivateGroup.class, name = "privateGroup"),
             @JsonSubTypes.Type(value = User.class, name = "user")})
     static public class Entity {
-        public int id;
-        public int teamId;
+        public long id;
+        public long teamId;
         public String type;
         public String name;
     }
@@ -66,9 +66,9 @@ public class ResLeftSideMenu {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     static public class Channel extends Entity {
-        public int ch_creatorId;
+        public long ch_creatorId;
         public Date ch_createTime;
-        public List<Integer> ch_members;
+        public List<Long> ch_members;
         public String description;
         public boolean autoJoin;
 
@@ -89,18 +89,18 @@ public class ResLeftSideMenu {
         public String u_photoUrl;
         public ResMessages.ThumbnailUrls u_photoThumbnailUrl;
         public List<MessageMarker> u_messageMarkers;
-        public List<Integer> u_starredEntities;
-        public List<Integer> u_joinEntities;
-        public List<Integer> u_starredMessages;
+        public List<Long> u_starredEntities;
+        public List<Long> u_joinEntities;
+        public List<Long> u_starredMessages;
         public String status;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     static public class PrivateGroup extends Entity {
-        public int pg_creatorId;
+        public long pg_creatorId;
         public Date pg_createTime;
-        public List<Integer> pg_members;
+        public List<Long> pg_members;
         public String description;
         public boolean autoJoin;
     }
@@ -109,8 +109,8 @@ public class ResLeftSideMenu {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     static public class MessageMarker {
         public String entityType;
-        public int entityId;
-        public int lastLinkId;
+        public long entityId;
+        public long lastLinkId;
         public int alarmCount;
         public boolean announcementOpened;
         public boolean subscribe = true;
@@ -128,16 +128,16 @@ public class ResLeftSideMenu {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class AlarmInfo {
         public String entityType;
-        public int entityId;
-        public int lastLinkId;
+        public long entityId;
+        public long lastLinkId;
         public int alarmCount;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Bot {
-        public int id;
-        public int teamId;
+        public long id;
+        public long teamId;
         public String botType;
         public String name;
         public Date updatedAt;

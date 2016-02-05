@@ -4,14 +4,14 @@ package com.tosslab.jandi.app.network.models;
  * Created by Steve SeongUg Jung on 15. 3. 11..
  */
 public class ReqMessageSearchQeury {
-    private final int teamId;
+    private final long teamId;
     private final String query;
     private final int perPage;
     private int page;
-    private int writerId;
-    private int entityId;
+    private long writerId;
+    private long entityId;
 
-    public ReqMessageSearchQeury(int teamId, String query, int page, int perPage) {
+    public ReqMessageSearchQeury(long teamId, String query, int page, int perPage) {
         this.teamId = teamId;
         this.query = query;
         this.page = page;
@@ -34,25 +34,25 @@ public class ReqMessageSearchQeury {
         return perPage;
     }
 
-    public int getWriterId() {
+    public long getWriterId() {
         return writerId;
     }
 
-    public ReqMessageSearchQeury writerId(int writerId) {
+    public ReqMessageSearchQeury writerId(long writerId) {
         this.writerId = writerId;
         return this;
     }
 
-    public int getEntityId() {
+    public long getEntityId() {
         return entityId;
     }
 
-    public ReqMessageSearchQeury entityId(int entityId) {
+    public ReqMessageSearchQeury entityId(long entityId) {
         this.entityId = entityId;
         return this;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 }

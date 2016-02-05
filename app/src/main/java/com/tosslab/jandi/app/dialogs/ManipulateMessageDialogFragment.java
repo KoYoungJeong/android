@@ -50,12 +50,12 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         ManipulateMessageDialogFragment frag = new ManipulateMessageDialogFragment();
         Bundle args = new Bundle();
         args.putString(TITLE, title);
-        args.putInt(MESSAGE_ID, item.getMessageId());
+        args.putLong(MESSAGE_ID, item.getMessageId());
         args.putInt(MESSAGE_TYPE, item.getContentType());
         args.putString(CURRENT_MESSAGE, item.getContentString());
         args.putBoolean(IS_MINE, isMine);
         if (item.getContentType() == MessageItem.TYPE_COMMENT) {
-            args.putInt(FEEDBACK_ID, item.getFeedbackId());
+            args.putLong(FEEDBACK_ID, item.getFeedbackId());
         }
         frag.setArguments(args);
         return frag;
@@ -68,7 +68,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         ManipulateMessageDialogFragment frag = new ManipulateMessageDialogFragment();
         Bundle args = new Bundle();
         args.putString(TITLE, title);
-        args.putInt(MESSAGE_ID, item.id);
+        args.putLong(MESSAGE_ID, item.id);
         args.putInt(MESSAGE_TYPE, MessageItem.TYPE_STRING);
         args.putString(CURRENT_MESSAGE, item.content.body);
         args.putBoolean(IS_MINE, isMine);
@@ -85,7 +85,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         ManipulateMessageDialogFragment frag = new ManipulateMessageDialogFragment();
         Bundle args = new Bundle();
         args.putString(TITLE, title);
-        args.putInt(MESSAGE_ID, item.id);
+        args.putLong(MESSAGE_ID, item.id);
         args.putInt(MESSAGE_TYPE, MessageItem.TYPE_STICKER);
         args.putString(CURRENT_MESSAGE, null);
         args.putBoolean(IS_MINE, isMine);
@@ -100,7 +100,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         ManipulateMessageDialogFragment frag = new ManipulateMessageDialogFragment();
         Bundle args = new Bundle();
         args.putString(TITLE, title);
-        args.putInt(MESSAGE_ID, item.id);
+        args.putLong(MESSAGE_ID, item.id);
         args.putInt(MESSAGE_TYPE, MessageItem.TYPE_STICKER_COMMNET);
         args.putString(CURRENT_MESSAGE, null);
         args.putBoolean(IS_MINE, isMine);
@@ -114,7 +114,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         ManipulateMessageDialogFragment frag = new ManipulateMessageDialogFragment();
         Bundle args = new Bundle();
         args.putString(TITLE, title);
-        args.putInt(MESSAGE_ID, item.id);
+        args.putLong(MESSAGE_ID, item.id);
         args.putInt(MESSAGE_TYPE, MessageItem.TYPE_COMMENT);
         args.putString(CURRENT_MESSAGE, item.content.body);
         args.putBoolean(IS_MINE, isMine);
@@ -133,9 +133,9 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final int messageId = getArguments().getInt(MESSAGE_ID);
+        final long messageId = getArguments().getLong(MESSAGE_ID);
         final int messageType = getArguments().getInt(MESSAGE_TYPE);
-        final int feedbackId = getArguments().getInt(FEEDBACK_ID, -1);
+        final long feedbackId = getArguments().getLong(FEEDBACK_ID, -1);
 
         final boolean isTextMessage = messageType == MessageItem.TYPE_STRING;
         final boolean isMine = getArguments().getBoolean(IS_MINE, false);

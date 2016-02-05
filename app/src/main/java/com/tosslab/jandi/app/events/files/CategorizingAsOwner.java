@@ -11,7 +11,7 @@ public class CategorizingAsOwner {
         this.userId = userId;
     }
 
-    public CategorizingAsOwner(int userId) {
+    public CategorizingAsOwner(long userId) {
         this.userId = userId + "";
     }
 }

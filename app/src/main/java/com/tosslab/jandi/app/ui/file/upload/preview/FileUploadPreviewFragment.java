@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
@@ -23,9 +24,6 @@ import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by Bill MinWook Heo on 15. 6. 15..
- */
 @EFragment(R.layout.fragment_file_upload_insert_comment)
 public class FileUploadPreviewFragment extends Fragment {
 
@@ -56,6 +54,7 @@ public class FileUploadPreviewFragment extends Fragment {
 
             ImageLoader.newBuilder()
                     .resize(width, height)
+                    .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
                     .load(uri)
                     .into(ivFileImage);
         } else {

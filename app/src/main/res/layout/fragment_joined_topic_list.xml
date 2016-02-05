@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/jandi_entities_bg"
-    android:orientation="vertical">
+    android:background="@color/jandi_entities_bg">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_main_topic"
@@ -12,15 +11,5 @@
         android:background="@color/white"
         android:scrollbars="vertical"
         android:smoothScrollbar="true" />
-
-    <ImageView
-        android:id="@+id/btn_main_topic_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="20dp"
-        android:background="@drawable/btn_chat_fab" />
-
 
 </RelativeLayout>

@@ -19,15 +19,12 @@ import java.util.List;
 
 import rx.Observable;
 
-/**
- * Created by Steve SeongUg Jung on 15. 7. 23..
- */
 public class StickerRepository {
 
-    public static final int DEFAULT_GROUP_ID_MOZZI = 100;
-    public static final int DEFAULT_GROUP_ID_DAY = 101;
-    public static final int DEFAULT_GROUP_ID_DAY_ZH_TW = 102;
-    public static final int DEFAULT_MOZZI_COUNT = 26;
+    public static final long DEFAULT_GROUP_ID_MOZZI = 100;
+    public static final long DEFAULT_GROUP_ID_DAY = 101;
+    public static final long DEFAULT_GROUP_ID_DAY_ZH_TW = 102;
+    public static final long DEFAULT_MOZZI_COUNT = 26;
     private static StickerRepository repository;
     private final OrmDatabaseHelper helper;
 
@@ -74,7 +71,7 @@ public class StickerRepository {
         }
     }
 
-    private void addStickerConetentIfNeed(Dao<ResMessages.StickerContent, ?> dao, String[] stickerAssetList, int stickerGroupId)
+    private void addStickerConetentIfNeed(Dao<ResMessages.StickerContent, ?> dao, String[] stickerAssetList, long stickerGroupId)
             throws SQLException {
         List<ResMessages.StickerContent> savedStickerList = dao.queryBuilder()
                 .where()
@@ -122,7 +119,7 @@ public class StickerRepository {
         return new ArrayList<>();
     }
 
-    public List<ResMessages.StickerContent> getStickers(int groupId) {
+    public List<ResMessages.StickerContent> getStickers(long groupId) {
         try {
             List<ResMessages.StickerContent> stickers = helper.getDao(ResMessages.StickerContent.class)
                     .queryBuilder()
@@ -169,7 +166,7 @@ public class StickerRepository {
 
     }
 
-    public boolean upsertRecentSticker(int groupId, String stickerId) {
+    public boolean upsertRecentSticker(long groupId, String stickerId) {
 
         try {
             Dao<ResMessages.StickerContent, ?> stickerContentDao = helper.getDao(ResMessages.StickerContent.class);

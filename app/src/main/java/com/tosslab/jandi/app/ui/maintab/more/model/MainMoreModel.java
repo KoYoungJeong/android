@@ -8,6 +8,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Pair;
 
+import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -15,6 +16,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResConfig;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -48,7 +50,7 @@ public class MainMoreModel {
 
     public int getOtherTeamBadge() {
         AccountRepository accountRepository = AccountRepository.getRepository();
-        int selectedTeamId = accountRepository.getSelectedTeamId();
+        long selectedTeamId = accountRepository.getSelectedTeamId();
         final int badgeCount[] = {0};
         Observable.from(accountRepository.getAccountTeams())
                 .filter(userTeam -> userTeam.getTeamId() != selectedTeamId)
@@ -132,6 +134,8 @@ public class MainMoreModel {
         userInfos.add(new Pair<>("Member Email", EntityManager.getInstance().getMe().getUserEmail()));
         userInfos.add(new Pair<>("Team", EntityManager.getInstance().getTeamName()));
         userInfos.add(new Pair<>("Team ID", String.valueOf(EntityManager.getInstance().getTeamId())));
+        userInfos.add(new Pair<>("Account ID", String.valueOf(AccountUtil.getAccountId(JandiApplication.getContext()))));
+        userInfos.add(new Pair<>("Device Token", String.valueOf(ParseInstallation.getCurrentInstallation().get("deviceToken"))));
 
         return userInfos;
     }

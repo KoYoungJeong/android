@@ -18,8 +18,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
-import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog;
-import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog_;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
@@ -102,7 +100,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                         return chatChooseItem.getName().toLowerCase().contains(s.toLowerCase());
                 })
                 .toSortedList((chatChooseItem, chatChooseItem2) -> {
-                    int myId = EntityManager.getInstance().getMe().getId();
+                    long myId = EntityManager.getInstance().getMe().getId();
                     if (chatChooseItem.isBot()) {
                         return -1;
                     } else if (chatChooseItem2.isBot()) {
@@ -116,12 +114,12 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                                 .compareTo(chatChooseItem2.getName().toLowerCase());
                     }
                 })
-                .subscribe(collection -> chatChooseItems.addAll(collection), Throwable::printStackTrace);
+                .subscribe(chatChooseItems::addAll, Throwable::printStackTrace);
         return chatChooseItems;
     }
 
     public List<ChatChooseItem> getChatChooseItems() {
-        int entityId = view.getEntityId();
+        long entityId = view.getEntityId();
         int type = view.getType();
         List<ChatChooseItem> members;
         if (type == MembersListActivity.TYPE_MEMBERS_LIST_TEAM) {
@@ -175,7 +173,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     }
 
     @Override
-    public void inviteMemberToTopic(int entityId) {
+    public void inviteMemberToTopic(long entityId) {
         invitationViewModel.inviteMembersToEntity(activity, entityId);
     }
 
@@ -196,7 +194,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     @Background
     @Override
-    public void inviteInBackground(List<Integer> invitedUsers, int entityId) {
+    public void inviteInBackground(List<Long> invitedUsers, long entityId) {
         try {
             FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
@@ -224,7 +222,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     }
 
     @Override
-    public void initKickableMode(int entityId) {
+    public void initKickableMode(long entityId) {
         boolean topicOwner = memberModel.isMyTopic(entityId);
         boolean teamOwner = memberModel.isTeamOwner();
         boolean isDefaultTopic = EntityManager.getInstance().getDefaultTopicId() == entityId;
@@ -233,7 +231,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     }
 
     @Override
-    public void onKickMemberClick(int topicId, ChatChooseItem item) {
+    public void onKickMemberClick(long topicId, ChatChooseItem item) {
         boolean isTopicOwner = memberModel.isTopicOwner(topicId, item.getEntityId());
         if (isTopicOwner) {
             view.showNeedToAssignTopicOwnerDialog();
@@ -245,13 +243,13 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     @Background
     @Override
-    public void onKickUser(int topicId, int userEntityId) {
+    public void onKickUser(long topicId, long userEntityId) {
         if (!NetworkCheckUtil.isConnected()) {
             view.showKickFailToast();
             return;
         }
 
-        int teamId = EntityManager.getInstance().getTeamId();
+        long teamId = EntityManager.getInstance().getTeamId();
         view.showProgressWheel();
         try {
             memberModel.kickUser(teamId, topicId, userEntityId);
@@ -272,7 +270,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     }
 
     @Override
-    public void onMemberClickForAssignOwner(int topicId, final ChatChooseItem item) {
+    public void onMemberClickForAssignOwner(long topicId, final ChatChooseItem item) {
         if (EntityManager.getInstance().isBot(item.getEntityId())) {
             //TODO
             return;
@@ -288,7 +286,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     @Background
     @Override
-    public void onAssignToTopicOwner(int topicId, int memberId) {
+    public void onAssignToTopicOwner(long topicId, long memberId) {
         if (!NetworkCheckUtil.isConnected()) {
             view.showAssignTopicOwnerFailToast();
             return;
@@ -296,7 +294,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
         view.showProgressWheel();
 
-        int teamId = EntityManager.getInstance().getTeamId();
+        long teamId = EntityManager.getInstance().getTeamId();
         try {
             memberModel.assignToTopicOwner(teamId, topicId, memberId);
             view.dismissProgressWheel();
@@ -314,7 +312,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         }
     }
 
-    private void trackTopicMemberInviteSuccess(int memberCount, int entityId) {
+    private void trackTopicMemberInviteSuccess(int memberCount, long entityId) {
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.TopicMemberInvite)

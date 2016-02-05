@@ -3,6 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -49,5 +50,11 @@
         android:layout_height="4dp"
         android:layout_below="@id/sliding_tabs"
         android:background="@drawable/menu_shadow" />
+
+    <com.tosslab.jandi.app.views.FloatingActionMenu
+        android:id="@+id/vg_fab_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 
 </RelativeLayout>

@@ -67,7 +67,7 @@ public class MarkerRepository {
         }
     }
 
-    public boolean upsertRoomMarker(int teamId, int roomId, int memberId, int lastLinkId) {
+    public boolean upsertRoomMarker(long teamId, long roomId, long memberId, long lastLinkId) {
         lock.lock();
         try {
 
@@ -115,7 +115,7 @@ public class MarkerRepository {
         }
     }
 
-    public Collection<ResRoomInfo.MarkerInfo> getRoomMarker(int teamId, int roomId) {
+    public Collection<ResRoomInfo.MarkerInfo> getRoomMarker(long teamId, long roomId) {
         lock.lock();
         try {
             Dao<ResRoomInfo, ?> roomInfoDao = helper.getDao(ResRoomInfo.class);
@@ -160,7 +160,7 @@ public class MarkerRepository {
         return 0;
     }
 
-    public ResRoomInfo.MarkerInfo getMyMarker(int roomId, int myId) {
+    public ResRoomInfo.MarkerInfo getMyMarker(long roomId, long myId) {
         lock.lock();
         ResRoomInfo.MarkerInfo markerInfo = null;
         try {

@@ -13,9 +13,6 @@ import java.util.Collection;
 import rx.Observable;
 import rx.functions.Func0;
 
-/**
- * Created by justinygchoi on 2014. 8. 12..
- */
 public class FormattedEntity {
     // 채널 일 경우
     public static final int TYPE_REAL_CHANNEL = JandiConstants.TYPE_PUBLIC_TOPIC;
@@ -34,7 +31,7 @@ public class FormattedEntity {
     public boolean isJoined;                        // if type is channel
     public boolean isSelectedToBeJoined = false;    // if type is user
     // MessageMarker
-    public int lastLinkId = -1;
+    public long lastLinkId = -1;
     public int alarmCount = 0;
     public boolean announcementOpened = false;
     // Starred
@@ -49,7 +46,7 @@ public class FormattedEntity {
         this.type = TYPE_REAL_CHANNEL;
     }
 
-    public FormattedEntity(ResLeftSideMenu.Channel channel, boolean isJoined, int alarmCount, int lastLinkId) {
+    public FormattedEntity(ResLeftSideMenu.Channel channel, boolean isJoined, int alarmCount, long lastLinkId) {
         this(channel, isJoined);
         this.alarmCount = alarmCount;
         this.lastLinkId = lastLinkId;
@@ -60,7 +57,7 @@ public class FormattedEntity {
         this.type = TYPE_REAL_PRIVATE_GROUP;
     }
 
-    public FormattedEntity(ResLeftSideMenu.PrivateGroup privateGroup, int alarmCount, int lastLinkId) {
+    public FormattedEntity(ResLeftSideMenu.PrivateGroup privateGroup, int alarmCount, long lastLinkId) {
         this(privateGroup);
         this.alarmCount = alarmCount;
         this.lastLinkId = lastLinkId;
@@ -71,7 +68,7 @@ public class FormattedEntity {
         this.type = TYPE_REAL_USER;
     }
 
-    public FormattedEntity(ResLeftSideMenu.User user, int alarmCount, int lastLinkId) {
+    public FormattedEntity(ResLeftSideMenu.User user, int alarmCount, long lastLinkId) {
         this(user);
         this.alarmCount = alarmCount;
         this.lastLinkId = lastLinkId;
@@ -115,7 +112,7 @@ public class FormattedEntity {
         return entity;
     }
 
-    public int getId() {
+    public long getId() {
         return getEntity().id;
     }
 
@@ -185,17 +182,17 @@ public class FormattedEntity {
         }
     }
 
-    public Collection<Integer> getMembers() {
+    public Collection<Long> getMembers() {
         if (this.type == TYPE_REAL_CHANNEL) {
             return Observable.from(getChannel().ch_members)
-                    .collect((Func0<ArrayList<Integer>>) ArrayList::new,
+                    .collect((Func0<ArrayList<Long>>) ArrayList::new,
                             ArrayList::add)
                     .toBlocking()
                     .first();
 
         } else if (this.type == TYPE_REAL_PRIVATE_GROUP) {
             return Observable.from(getPrivateGroup().pg_members)
-                    .collect((Func0<ArrayList<Integer>>) ArrayList::new,
+                    .collect((Func0<ArrayList<Long>>) ArrayList::new,
                             ArrayList::add)
                     .toBlocking()
                     .first();
@@ -314,12 +311,12 @@ public class FormattedEntity {
         return R.drawable.topiclist_icon_topic;
     }
 
-    public boolean hasGivenId(int entityId) {
+    public boolean hasGivenId(long entityId) {
         return (this.entity.id == entityId);
     }
 
-    public boolean hasGivenIds(Collection<Integer> entityIds) {
-        for (int entityId : entityIds) {
+    public boolean hasGivenIds(Collection<Long> entityIds) {
+        for (long entityId : entityIds) {
             if (hasGivenId(entityId)) {
                 return true;
             }
@@ -327,11 +324,11 @@ public class FormattedEntity {
         return false;
     }
 
-    public boolean isMine(int myId) {
+    public boolean isMine(long myId) {
         if (this.type == TYPE_REAL_CHANNEL) {
-            return (getChannel().ch_creatorId == myId) ? true : false;
+            return (getChannel().ch_creatorId == myId);
         } else if (this.type == TYPE_REAL_PRIVATE_GROUP) {
-            return (getPrivateGroup().pg_creatorId == myId) ? true : false;
+            return (getPrivateGroup().pg_creatorId == myId);
         } else {
             return false;
         }

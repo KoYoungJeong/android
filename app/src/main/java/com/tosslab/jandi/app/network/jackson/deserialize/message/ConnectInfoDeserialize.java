@@ -41,7 +41,7 @@ public class ConnectInfoDeserialize extends JsonDeserializer<ResMessages.Connect
                 if (!value.isNull()) {
                     connectInfo.description = value.getTextValue();
                 } else {
-                    connectInfo.description = String.valueOf(null);
+                    connectInfo.description = "null";
                 }
             }
         }

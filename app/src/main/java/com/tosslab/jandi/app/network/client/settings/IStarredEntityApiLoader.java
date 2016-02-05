@@ -9,8 +9,8 @@ import com.tosslab.jandi.app.network.models.ResCommon;
  */
 public interface IStarredEntityApiLoader {
 
-    IExecutor<ResCommon> loadEnableFavoriteByStarredEntityApi(ReqTeam reqTeam, int entityId);
+    IExecutor<ResCommon> loadEnableFavoriteByStarredEntityApi(ReqTeam reqTeam, long entityId);
 
-    IExecutor<ResCommon> loadDisableFavoriteByStarredEntityApi(int teamId, int entityId);
+    IExecutor<ResCommon> loadDisableFavoriteByStarredEntityApi(long teamId, long entityId);
 
 }

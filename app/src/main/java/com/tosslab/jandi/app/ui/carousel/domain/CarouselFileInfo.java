@@ -5,8 +5,8 @@ package com.tosslab.jandi.app.ui.carousel.domain;
  */
 public class CarouselFileInfo {
 
-    private final int entityId;
-    private final int fileLinkId;
+    private final long entityId;
+    private final long fileLinkId;
     private final String fileName;
     private final String fileType;
     private final String ext;
@@ -17,7 +17,7 @@ public class CarouselFileInfo {
     private final String fileCreateTime;
     private final String fileWriter;
 
-    private CarouselFileInfo(int entityId, int fileLinkId, String fileName, String fileType, String ext, long size, String fileLinkUrl, String fileThumbUrl, String fileOriginalUrl, String fileCreateTime, String fileWriter) {
+    private CarouselFileInfo(long entityId, long fileLinkId, String fileName, String fileType, String ext, long size, String fileLinkUrl, String fileThumbUrl, String fileOriginalUrl, String fileCreateTime, String fileWriter) {
         this.entityId = entityId;
         this.fileLinkId = fileLinkId;
         this.fileName = fileName;
@@ -51,11 +51,11 @@ public class CarouselFileInfo {
         return fileType;
     }
 
-    public int getEntityId() {
+    public long getEntityId() {
         return entityId;
     }
 
-    public int getFileLinkId() {
+    public long getFileLinkId() {
         return fileLinkId;
     }
 
@@ -76,8 +76,8 @@ public class CarouselFileInfo {
     }
 
     public static class Builder {
-        private int entityId;
-        private int fileLinkId;
+        private long entityId;
+        private long fileLinkId;
         private String fileName;
         private String fileLinkUrl;
         private String fileType;
@@ -114,12 +114,12 @@ public class CarouselFileInfo {
 
         }
 
-        public Builder entityId(int entityId) {
+        public Builder entityId(long entityId) {
             this.entityId = entityId;
             return this;
         }
 
-        public Builder fileLinkId(int fileLinkId) {
+        public Builder fileLinkId(long fileLinkId) {
             this.fileLinkId = fileLinkId;
             return this;
         }

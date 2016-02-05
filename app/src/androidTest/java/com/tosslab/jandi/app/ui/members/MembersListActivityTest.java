@@ -52,7 +52,7 @@ public class MembersListActivityTest {
     @Test
     public void testRemoveUser() throws Throwable {
         // Given
-        int entityId = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL);
+        long entityId = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL);
 
         // When
         rule.runOnUiThread(() -> activity.removeUser(entityId));
@@ -60,7 +60,7 @@ public class MembersListActivityTest {
         // Then
         MembersAdapter adapter = (MembersAdapter) activity.memberListView.getAdapter();
         for (int idx = 0; idx < adapter.getItemCount(); idx++) {
-            int entityId1 = adapter.getItem(idx).getEntityId();
+            long entityId1 = adapter.getItem(idx).getEntityId();
             if (entityId1 == entityId) {
                 fail("삭제 했는데 왜 있지?");
             }

@@ -27,7 +27,7 @@ public class JoinableTopicModel {
     public Observable<Topic> getUnjoinEntities(List<FormattedEntity> unjoinedChannels) {
         return Observable.from(unjoinedChannels).map(formattedEntity -> {
 
-            int creatorId = ((ResLeftSideMenu.Channel) formattedEntity.getEntity()).ch_creatorId;
+            long creatorId = ((ResLeftSideMenu.Channel) formattedEntity.getEntity()).ch_creatorId;
 
             return new Topic.Builder()
                     .entityId(formattedEntity.getId())
@@ -44,7 +44,7 @@ public class JoinableTopicModel {
         });
     }
 
-    public void joinPublicTopic(int id) throws RetrofitError {
+    public void joinPublicTopic(long id) throws RetrofitError {
         entityClientManager.joinChannel(id);
     }
 

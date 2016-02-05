@@ -5,24 +5,24 @@ package com.tosslab.jandi.app.ui.message.to;
  */
 public class MessageState {
 
-    private int lastUpdateLinkId = -1;
+    private long lastUpdateLinkId = -1;
 
-    private int firstItemId = -1;
+    private long firstItemId = -1;
     private boolean isFirstMessage = false;
 
-    public int getLastUpdateLinkId() {
+    public long getLastUpdateLinkId() {
         return lastUpdateLinkId;
     }
 
-    public void setLastUpdateLinkId(int lastUpdateLinkId) {
+    public void setLastUpdateLinkId(long lastUpdateLinkId) {
         this.lastUpdateLinkId = lastUpdateLinkId;
     }
 
-    public int getFirstItemId() {
+    public long getFirstItemId() {
         return firstItemId;
     }
 
-    public void setFirstItemId(int firstItemId) {
+    public void setFirstItemId(long firstItemId) {
         this.firstItemId = firstItemId;
     }
 

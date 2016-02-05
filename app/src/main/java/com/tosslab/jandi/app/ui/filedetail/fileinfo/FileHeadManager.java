@@ -21,9 +21,9 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
@@ -61,7 +61,7 @@ public class FileHeadManager {
     private ViewGroup vgDetailPhoto;
     private ImageView ivFileType;
     private LinearLayout vgFileInfo;
-    private int roomId;
+    private long roomId;
     private View vgDeleted;
     private TextView tvDeletedDate;
     private FileThumbLoader thumbLoader;
@@ -107,7 +107,7 @@ public class FileHeadManager {
             return;
         }
 
-        int teamId = mEntityManager.getTeamId();
+        long teamId = mEntityManager.getTeamId();
 
         if (resFileDetail.shareEntities != null && !resFileDetail.shareEntities.isEmpty()) {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
@@ -203,7 +203,7 @@ public class FileHeadManager {
 
             MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
 
-            String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
+            String fileSizeString = FileUtil.fileSizeCalculation(fileMessage.content.size);
             switch (sourceType) {
 
                 case S3:
@@ -235,7 +235,7 @@ public class FileHeadManager {
         drawFileWriterState(enabledUser);
     }
 
-    private boolean isEnabledUser(int writerId) {
+    private boolean isEnabledUser(long writerId) {
         EntityManager entityManager = EntityManager.getInstance();
         String userStatus = entityManager.getEntityById(writerId).getUser().status;
         return TextUtils.equals(userStatus, "enabled");
@@ -245,7 +245,7 @@ public class FileHeadManager {
         return btnFileDetailStarred;
     }
 
-    public void setRoomId(int roomId) {
+    public void setRoomId(long roomId) {
 
         this.roomId = roomId;
     }

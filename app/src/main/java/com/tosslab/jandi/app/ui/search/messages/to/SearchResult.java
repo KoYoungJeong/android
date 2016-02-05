@@ -14,8 +14,8 @@ public class SearchResult {
     private SpannableStringBuilder currentText;
     private SpannableStringBuilder nextText;
 
-    private int entityId;
-    private int linkId;
+    private long entityId;
+    private long linkId;
 
     public Date getDate() {
         return date;
@@ -62,19 +62,19 @@ public class SearchResult {
         return this;
     }
 
-    public int getLinkId() {
+    public long getLinkId() {
         return linkId;
     }
 
-    public void setLinkId(int linkId) {
+    public void setLinkId(long linkId) {
         this.linkId = linkId;
     }
 
-    public int getEntityId() {
+    public long getEntityId() {
         return entityId;
     }
 
-    public void setEntityId(int entityId) {
+    public void setEntityId(long entityId) {
         this.entityId = entityId;
     }
 }

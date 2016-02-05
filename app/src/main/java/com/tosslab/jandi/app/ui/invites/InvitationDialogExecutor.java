@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AlertUtil;
@@ -62,7 +63,7 @@ public class InvitationDialogExecutor {
         showProgressWheel();
 
         try {
-            ResTeamDetailInfo.InviteTeam inviteTeam = teamDomainInfoModel.getTeamInfo(entityManager.getTeamId());
+            ResTeamDetailInfo.InviteTeam inviteTeam = getTeamInfo(entityManager.getTeamId());
             AvailableState availableState = availableState(inviteTeam);
             switch (availableState) {
                 case AVAIL:
@@ -87,6 +88,12 @@ public class InvitationDialogExecutor {
 
         dismissProgressWheel();
     }
+
+    private ResTeamDetailInfo.InviteTeam getTeamInfo(long teamId) throws RetrofitError {
+        ResTeamDetailInfo.InviteTeam resTeamDetailInfo = RequestApiManager.getInstance().getTeamInfoByTeamApi(teamId);
+        return resTeamDetailInfo;
+    }
+
 
     private AvailableState availableState(ResTeamDetailInfo.InviteTeam inviteTeam) {
         String invitationUrl = inviteTeam.getInvitationUrl();

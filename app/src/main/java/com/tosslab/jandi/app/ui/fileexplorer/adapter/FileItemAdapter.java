@@ -39,7 +39,7 @@ public class FileItemAdapter extends ArrayAdapter<FileItem> {
             ImageView iconImageView = (ImageView) convertView.findViewById(R.id.img_file_explorer_icon);
 
             if (item.isDirectory()) {
-                iconImageView.setImageResource(R.drawable.tmp_directory_icon);
+                iconImageView.setImageResource(R.drawable.file_explore_icon_folder);
             } else {
                 iconImageView.setImageResource(FileExtensionsUtil.getFileTypeImageResource(item.getName()));
             }

@@ -24,6 +24,7 @@ import setup.BaseInitUtil;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertTrue;
@@ -51,9 +52,9 @@ public class MembersModelTest {
     @Test
     public void testRemoveMember() throws Exception {
         // Given
-        int topicId = EntityManager.getInstance().getDefaultTopicId();
+        long topicId = EntityManager.getInstance().getDefaultTopicId();
         List<ChatChooseItem> topicMembers = membersModel.getTopicMembers(topicId);
-        int entityId = topicMembers.get(0).getEntityId();
+        long entityId = topicMembers.get(0).getEntityId();
 
         // When
         boolean remove = membersModel.removeMember(topicId, entityId);
@@ -75,8 +76,8 @@ public class MembersModelTest {
     @Test
     public void testGetTopicMembers() throws Exception {
         // Given
-        int defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
-        Collection<Integer> members = EntityManager.getInstance().getEntityById(defaultTopicId).getMembers();
+        long defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
+        Collection<Long> members = EntityManager.getInstance().getEntityById(defaultTopicId).getMembers();
         // When
         List<ChatChooseItem> topicMembers = membersModel.getTopicMembers(defaultTopicId);
         // Then
@@ -106,13 +107,13 @@ public class MembersModelTest {
         List<ChatChooseItem> result = membersModel.getTeamMembers();
 
         // Then
-        assertThat(memberCnt, is(equalTo(result.size())));
+        assertThat(result.size(), is(greaterThanOrEqualTo(memberCnt)));
     }
 
     @Test
     public void testGetUnjoinedTopicMembers() throws Exception {
         // Given
-        int defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
+        long defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
         List<FormattedEntity> unJoinedMember = EntityManager.getInstance()
                 .getUnjoinedMembersOfEntity(defaultTopicId, JandiConstants.TYPE_PUBLIC_TOPIC);
         int memberCnt = 0;
@@ -136,16 +137,16 @@ public class MembersModelTest {
         BaseInitUtil.createDummyTopic();
         BaseInitUtil.inviteDummyMembers();
 
-        int topicId = BaseInitUtil.tempTopicId;
-        int teamId = EntityManager.getInstance().getTeamId();
+        long topicId = BaseInitUtil.tempTopicId;
+        long teamId = EntityManager.getInstance().getTeamId();
 
-        Collection<Integer> membersBefore = EntityManager.getInstance().getEntityById(topicId).getMembers();
+        Collection<Long> membersBefore = EntityManager.getInstance().getEntityById(topicId).getMembers();
 
         //When
-        membersModel.kickUser(teamId, topicId, Integer.valueOf(BaseInitUtil.getUserIdByEmail("androidtester2@gustr.com")));
+        membersModel.kickUser(teamId, topicId, BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL));
 
         BaseInitUtil.refreshLeftSideMenu();
-        Collection<Integer> membersAfter = EntityManager.getInstance().getEntityById(topicId).getMembers();
+        Collection<Long> membersAfter = EntityManager.getInstance().getEntityById(topicId).getMembers();
 
         BaseInitUtil.deleteDummyTopic();
 
@@ -161,17 +162,17 @@ public class MembersModelTest {
         BaseInitUtil.createDummyTopic();
         BaseInitUtil.inviteDummyMembers();
 
-        int topicId = BaseInitUtil.tempTopicId;
-        int teamId = EntityManager.getInstance().getTeamId();
+        long topicId = BaseInitUtil.tempTopicId;
+        long teamId = EntityManager.getInstance().getTeamId();
 
         // When
-        Integer memberId = Integer.valueOf(BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST3_EMAIL));
+        long memberId = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST3_EMAIL);
         membersModel.assignToTopicOwner(teamId, topicId, memberId);
 
         BaseInitUtil.refreshLeftSideMenu();
 
         // Then
-        Integer target = Integer.valueOf(BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL));
+        long target = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL);
         assertTrue(!EntityManager.getInstance().isTopicOwner(topicId, target));
 
         BaseInitUtil.deleteDummyTopic();

@@ -19,7 +19,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.contains;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(AndroidJUnit4.class)
@@ -97,7 +99,7 @@ public class MainMorePresenterImplTest {
             Thread.sleep(5);
         }
 
-        verify(mockView).showBugReportDialog(any(), EntityManager.getInstance().getMe().getName());
+        verify(mockView, times(1)).showBugReportDialog(any(), eq(EntityManager.getInstance().getMe().getName()));
 
     }
 }

@@ -49,7 +49,7 @@ public class LeftSideMenuRepository {
         }
 
         try {
-            int selectedTeamId = leftSideMenu.team.id;
+            long selectedTeamId = leftSideMenu.team.id;
 
             LeftSideMenu rawLeftSideMenu = new LeftSideMenu();
             String rawString = JacksonMapper.getInstance().getObjectMapper().writeValueAsString(leftSideMenu);
@@ -73,7 +73,7 @@ public class LeftSideMenuRepository {
     public ResLeftSideMenu getCurrentLeftSideMenu() {
         lock.lock();
         try {
-            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
 
             Dao<LeftSideMenu, ?> leftSideMenuDao = helper.getDao(LeftSideMenu.class);
             LeftSideMenu leftSideMenu = leftSideMenuDao.queryBuilder()
@@ -91,7 +91,7 @@ public class LeftSideMenuRepository {
         return null;
     }
 
-    public ResLeftSideMenu findLeftSideMenuByTeamId(int teamId) {
+    public ResLeftSideMenu findLeftSideMenuByTeamId(long teamId) {
         lock.lock();
         try {
             Dao<LeftSideMenu, ?> leftSideMenuDao = helper.getDao(LeftSideMenu.class);

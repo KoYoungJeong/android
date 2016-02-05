@@ -25,21 +25,21 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
     @Extra
     int entityType;
     @Extra
-    int entityId;
+    long entityId;
     @Extra
     boolean isFavorite = false;
     @Extra
     boolean isFromPush = false;
     @Extra
-    int teamId;
+    long teamId;
     @Extra
     boolean isFromSearch = false;
     @Extra
-    int lastMarker = -1;
+    long lastMarker = -1;
     @Extra
-    int roomId;
+    long roomId;
     @Extra
-    int firstCursorLinkId = -1;
+    long firstCursorLinkId = -1;
 
 
     private OnBackPressedListener onBackPressedListener;

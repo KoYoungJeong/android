@@ -11,8 +11,8 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 public class ResPendingTeamInfo {
 
     private String toEmail;
-    private int memberId;
-    private int teamId;
+    private long memberId;
+    private long teamId;
     private String teamName;
     private String teamDomain;
     private String token;
@@ -27,11 +27,11 @@ public class ResPendingTeamInfo {
         return toEmail;
     }
 
-    public int getMemberId() {
+    public long getMemberId() {
         return memberId;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 

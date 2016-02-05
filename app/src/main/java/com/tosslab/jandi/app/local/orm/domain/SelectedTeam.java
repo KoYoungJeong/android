@@ -13,7 +13,7 @@ public class SelectedTeam {
     private long _id = DEFAULT_ID;
 
     @DatabaseField
-    private int selectedTeamId = -1;
+    private long selectedTeamId = -1;
 
     public long get_id() {
         return _id;
@@ -23,11 +23,11 @@ public class SelectedTeam {
         this._id = _id;
     }
 
-    public int getSelectedTeamId() {
+    public long getSelectedTeamId() {
         return selectedTeamId;
     }
 
-    public void setSelectedTeamId(int selectedTeamId) {
+    public void setSelectedTeamId(long selectedTeamId) {
         this.selectedTeamId = selectedTeamId;
     }
 }

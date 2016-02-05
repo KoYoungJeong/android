@@ -22,7 +22,7 @@ import rx.Observable;
 
 public class MessageCursorListAdapter extends MessageAdapter {
 
-    private int firstCursorLinkId = -1;
+    private long firstCursorLinkId = -1;
 
     public MessageCursorListAdapter(Context context) {
         this.context = context;
@@ -47,8 +47,8 @@ public class MessageCursorListAdapter extends MessageAdapter {
 
     }
 
-    private int getToCursorLinkId(List<ResMessages.Link> links) {
-        int toCursorLinkId;
+    private long getToCursorLinkId(List<ResMessages.Link> links) {
+        long toCursorLinkId;
         if (!links.isEmpty()) {
             toCursorLinkId = links.get(0).id;
         } else {
@@ -57,9 +57,9 @@ public class MessageCursorListAdapter extends MessageAdapter {
         return toCursorLinkId;
     }
 
-    private void addAfterLinks(int roomId, List<ResMessages.Link> links) {
-        int afterLinkStartId = getAfterLinkStartId(links);
-        int afterLinkEndId = Integer.MAX_VALUE;
+    private void addAfterLinks(long roomId, List<ResMessages.Link> links) {
+        long afterLinkStartId = getAfterLinkStartId(links);
+        long afterLinkEndId = Integer.MAX_VALUE;
         int afterMessageCount = MessageRepository.getRepository().getMessagesCount(roomId, afterLinkStartId, afterLinkEndId);
         if (afterMessageCount > 0) {
             List<ResMessages.Link> afterLinks = MessageRepository.getRepository().getMessages(roomId, afterLinkStartId, afterLinkEndId);
@@ -67,8 +67,8 @@ public class MessageCursorListAdapter extends MessageAdapter {
         }
     }
 
-    private int getAfterLinkStartId(List<ResMessages.Link> links) {
-        int afterLinkStartId;
+    private long getAfterLinkStartId(List<ResMessages.Link> links) {
+        long afterLinkStartId;
         if (!links.isEmpty()) {
             afterLinkStartId = links.get(links.size() - 1).id + 1;
         } else {
@@ -77,7 +77,7 @@ public class MessageCursorListAdapter extends MessageAdapter {
         return afterLinkStartId;
     }
 
-    private void addDummyLink(int roomId, List<ResMessages.Link> links) {
+    private void addDummyLink(long roomId, List<ResMessages.Link> links) {
         Observable.from(SendMessageRepository.getRepository().getSendMessage(roomId))
                 .map(sendMessage -> getDummyMessageLink(EntityManager.getInstance().getMe().getId(), sendMessage))
                 .collect(() -> links, List::add)
@@ -97,8 +97,8 @@ public class MessageCursorListAdapter extends MessageAdapter {
         }
     }
 
-    private void addBeforeLinks(int roomId, int firstCursorLinkId, List<ResMessages.Link> links) {
-        int toCursorLinkId = getToCursorLinkId(links);
+    private void addBeforeLinks(long roomId, long firstCursorLinkId, List<ResMessages.Link> links) {
+        long toCursorLinkId = getToCursorLinkId(links);
         MessageRepository messageRepository = MessageRepository.getRepository();
         int beforeMessageCount = messageRepository.getMessagesCount(roomId, firstCursorLinkId, toCursorLinkId);
 
@@ -108,7 +108,7 @@ public class MessageCursorListAdapter extends MessageAdapter {
         }
     }
 
-    private DummyMessageLink getDummyMessageLink(int id, SendMessage link) {
+    private DummyMessageLink getDummyMessageLink(long id, SendMessage link) {
         List<MentionObject> mentionObjects = new ArrayList<>();
 
         Collection<MentionObject> savedMention = link.getMentionObjects();
@@ -138,7 +138,7 @@ public class MessageCursorListAdapter extends MessageAdapter {
     public void addAll(int position, List<ResMessages.Link> links) {
 
         if (position == 0 && links != null && !links.isEmpty()) {
-            int firstItemLinkId = links.get(0).id;
+            long firstItemLinkId = links.get(0).id;
             if (firstCursorLinkId > 0) {
                 firstCursorLinkId = Math.min(firstItemLinkId, firstCursorLinkId);
             } else {
@@ -165,7 +165,7 @@ public class MessageCursorListAdapter extends MessageAdapter {
 
     }
 
-    public void setFirstCursorLinkId(int firstCursorLinkId) {
+    public void setFirstCursorLinkId(long firstCursorLinkId) {
         this.firstCursorLinkId = firstCursorLinkId;
     }
 

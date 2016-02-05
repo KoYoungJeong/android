@@ -32,7 +32,7 @@ public class DummyMessageLink extends ResMessages.Link {
         this.mentions = mentions;
     }
 
-    public DummyMessageLink(long localId, String status, int stickerGroupId, String stickerId) {
+    public DummyMessageLink(long localId, String status, long stickerGroupId, String stickerId) {
         this.localId = localId;
 
         ResMessages.StickerMessage textMessage = new ResMessages.StickerMessage();
@@ -53,7 +53,7 @@ public class DummyMessageLink extends ResMessages.Link {
         return localId;
     }
 
-    public int getMessageId() {
+    public long getMessageId() {
         return messageId;
     }
 

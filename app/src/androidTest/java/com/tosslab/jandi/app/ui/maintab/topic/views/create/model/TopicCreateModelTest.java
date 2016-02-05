@@ -14,6 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Date;
+
 import retrofit.RetrofitError;
 import setup.BaseInitUtil;
 
@@ -76,8 +78,8 @@ public class TopicCreateModelTest {
 
         {
             // When
-            String topicName = "haha";
-            String topicDescription = "haha2";
+            String topicName = "haha" + new Date().toString();
+            String topicDescription = "haha2" + new Date().toString();
             ResCommon topic = topicCreateModel.createTopic(topicName, false, topicDescription, false);
             topicCreateModel.refreshEntity();
 

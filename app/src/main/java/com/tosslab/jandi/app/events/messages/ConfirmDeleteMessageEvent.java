@@ -5,10 +5,10 @@ package com.tosslab.jandi.app.events.messages;
  */
 public class ConfirmDeleteMessageEvent {
     public int messageType;
-    public int messageId;
-    public int feedbackId;
+    public long messageId;
+    public long feedbackId;
 
-    public ConfirmDeleteMessageEvent(int messageType, int messageId, int feedbackId) {
+    public ConfirmDeleteMessageEvent(int messageType, long messageId, long feedbackId) {
         this.messageType = messageType;
         this.messageId = messageId;
         this.feedbackId = feedbackId;

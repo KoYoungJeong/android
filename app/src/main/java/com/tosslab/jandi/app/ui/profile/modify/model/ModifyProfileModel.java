@@ -106,7 +106,7 @@ public class ModifyProfileModel {
         return entityClientManager.updateMemberEmail(entityManager.getMe().getId(), email);
     }
 
-    public boolean isMyId(int id) {
+    public boolean isMyId(long id) {
         return EntityManager.getInstance().getMe().getId() == id;
     }
 
