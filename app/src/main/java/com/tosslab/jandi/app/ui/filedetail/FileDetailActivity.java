@@ -576,7 +576,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                         } else {
                             roomId = -1;
                         }
-                        
+
                         moveToMessageListActivity(entityIdToBeShared, type, roomId, entity.isStarred);
                     }
                 })
@@ -1008,6 +1008,20 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         Bundle extras = new Bundle();
         extras.putParcelable(Intent.EXTRA_STREAM, Uri.fromFile(result));
         target.putExtras(extras);
+        try {
+            Intent chooser = Intent.createChooser(target, getString(R.string.jandi_export_to_app));
+            startActivity(chooser);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+            showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
+        }
+    }
+
+    @Override
+    public void exportIntentGoogleDriveFile(String fileUrl) {
+        Intent target = new Intent(Intent.ACTION_SEND);
+        target.putExtra(Intent.EXTRA_TEXT, fileUrl);
+        target.setType("text/plain");
         try {
             Intent chooser = Intent.createChooser(target, getString(R.string.jandi_export_to_app));
             startActivity(chooser);
