@@ -43,6 +43,7 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketConnectBotEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketFileCommentDeleteEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
@@ -69,7 +70,9 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
@@ -186,6 +189,31 @@ public class JandiSocketServiceModel {
                             socketFileEvent.getComment().getId()
                     ));
             JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void refreshFileCommentAtTargetRoom(Object object) {
+        try {
+            SocketFileCommentDeleteEvent socketCommentEvent =
+                    getObject(object.toString(), SocketFileCommentDeleteEvent.class);
+            FileCommentRefreshEvent event = new FileCommentRefreshEvent(socketCommentEvent.getEvent(),
+                    socketCommentEvent.getFile().getId(),
+                    socketCommentEvent.getComment().getId());
+
+            List<SocketFileCommentDeleteEvent.Room> rooms = socketCommentEvent.getRooms();
+            if (rooms != null && !rooms.isEmpty()) {
+                List<Long> sharedRooms = new ArrayList<>();
+                Observable.from(rooms)
+                        .collect(() -> sharedRooms, (list, room) -> list.add(room.getId()))
+                        .subscribe();
+                event.setSharedRooms(sharedRooms);
+            }
+
+            postEvent(event);
+
+            JandiPreference.setSocketConnectedLastTime(socketCommentEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -60,7 +60,7 @@ public class FileDetailAdapter extends MultiItemRecyclerAdapter {
             });
 
             holder.itemView.setOnLongClickListener(v -> {
-                EventBus.getDefault().post(new FileCommentClickEvent(true /* isLongClick */, item));
+                EventBus.getDefault().post(new FileCommentClickEvent(item, true /* isLongClick */));
                 return true;
             });
         }

@@ -78,7 +78,6 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.TextCutter;
-import com.tosslab.jandi.app.utils.ViewSlider;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -171,7 +170,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     private boolean isExternalShared;
 
     private StickerInfo stickerInfo = NULL_STICKER;
-    private LinearLayoutManager listLayoutManager;
 
     @AfterViews
     void initViews() {
@@ -269,10 +267,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     private void initFileInfoViews() {
-        listLayoutManager = new LinearLayoutManager(getBaseContext());
-        listView.setLayoutManager(listLayoutManager);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getBaseContext());
+        listView.setLayoutManager(layoutManager);
         listView.setAdapter(adapter = new FileDetailAdapter(roomId));
-        listView.addOnScrollListener(new ViewSlider(toolbar));
 
         fileDetailPresenter.setView(this);
         fileDetailPresenter.onInitializeFileDetail(fileId, true /* withProgress */);
@@ -576,11 +573,14 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showMoveToSharedTopicDialog(long entityId) {
-        AlertUtil.showConfirmDialog(this,
-                R.string.jandi_move_entity_after_share /* message */,
-                ((dialog, which) -> {
+        AlertUtil.showDialog(this,
+                -1, /* title */
+                R.string.jandi_move_entity_after_share, /* message */
+                R.string.jandi_confirm, ((dialog, which) -> {
                     moveToSharedEntity(entityId);
-                } /* positive click listener */),
+                }), /* positive */
+                -1, null,  /* neutral */
+                R.string.jandi_cancel, null, /* cancel */
                 true /* cancellable */);
     }
 
@@ -670,7 +670,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return;
         }
 
-        if (entity.isJoined) {
+        // 공개 토픽인 경우 참여하고 있는지 확인, 비공개토픽인 경우 바로 이동
+        if ((entity.isPublicTopic() && entity.isJoined)
+                || entity.isPrivateGroup()) {
             moveToMessageListActivity(entityId, entityType, entityId, isStarred);
         } else {
             fileDetailPresenter.joinAndMove(entity);
@@ -678,8 +680,16 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     public void onEvent(ShowMoreSharedEntitiesEvent event) {
+        ResMessages.FileMessage fileMessage = getFileMessageFromAdapter();
+        if (fileMessage == null || fileMessage.shareEntities == null) {
+            return;
+        }
+
+        long[] sharedEntitiesArray = getSharedEntitiesArray(fileMessage);
         FileUnshareActivity_.intent(this)
                 .fileId(fileId)
+                .mode(FileUnshareActivity.MODE_PICK)
+                .sharedEntities(sharedEntitiesArray)
                 .startForResult(REQUEST_CODE_PICK);
     }
 
@@ -717,7 +727,26 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     public void onEvent(FileCommentRefreshEvent event) {
-        reInitializeOnEvent(event.getFileId());
+        if (roomId <= 0) {
+            reInitializeOnEvent(event.getFileId());
+            return;
+        }
+
+        // 소켓 이벤트로 넘어온 이벤트중 같은 roomId 만 처리
+        List<Long> sharedRooms = event.getSharedRooms();
+        boolean has = sharedRooms != null && !sharedRooms.isEmpty();
+        if (has) {
+            boolean eventForThisRoom = false;
+            for (Long id : sharedRooms) {
+                if (id == roomId) {
+                    eventForThisRoom = true;
+                    break;
+                }
+            }
+            if (eventForThisRoom) {
+                reInitializeOnEvent(event.getFileId());
+            }
+        }
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {
@@ -725,13 +754,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return;
         }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("messageType = " + event.messageType);
-        sb.append("\n");
-        sb.append("messageId = " + event.messageId);
-        sb.append("\n");
-        sb.append("feedbackId = " + event.feedbackId);
-        ColoredToast.show(sb.toString());
         fileDetailPresenter.onDeleteComment(event.messageType, event.messageId, event.feedbackId);
     }
 
@@ -760,8 +782,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return;
         }
 
+
         if (fileId == entityId) {
-            fileDetailPresenter.onInitializeFileDetail(fileId, true);
+            fileDetailPresenter.onInitializeFileDetail(fileId, true /* withProgress */);
         }
     }
 
@@ -906,6 +929,17 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return;
         }
 
+        long[] sharedEntitiesArray = getSharedEntitiesArray(fileMessage);
+
+        FileUnshareActivity_.intent(this)
+                .fileId(fileId)
+                .sharedEntities(sharedEntitiesArray)
+                .startForResult(REQUEST_CODE_UNSHARE);
+
+        sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_UnShare);
+    }
+
+    private long[] getSharedEntitiesArray(ResMessages.FileMessage fileMessage) {
         List<Long> sharedEntities = new ArrayList<>();
         Observable.from(fileMessage.shareEntities)
                 .map(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
@@ -916,13 +950,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         for (int i = 0; i < sharedEntitiesArray.length; i++) {
             sharedEntitiesArray[i] = sharedEntities.get(i);
         }
-
-        FileUnshareActivity_.intent(this)
-                .fileId(fileId)
-                .sharedEntities(sharedEntitiesArray)
-                .startForResult(REQUEST_CODE_UNSHARE);
-
-        sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_UnShare);
+        return sharedEntitiesArray;
     }
 
     @OptionsItem(R.id.action_file_detail_export)
@@ -1096,13 +1124,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         if (resultCode != RESULT_OK
                 || data == null
                 || !data.hasExtra(FileShareActivity.KEY_ENTITY_ID)) {
-            LogUtil.i("tony", "has not result");
             return;
         }
 
         ResMessages.FileMessage fileMessage = getFileMessageFromAdapter();
         if (fileMessage == null) {
-            LogUtil.i("tony", "fileMessage == null");
             return;
         }
 

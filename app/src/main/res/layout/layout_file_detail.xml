@@ -74,7 +74,6 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/tv_file_detail_user_name"
             android:layout_alignLeft="@+id/tv_file_detail_user_name"
-            android:layout_alignRight="@+id/tv_file_detail_user_name"
             android:layout_alignTop="@+id/tv_file_detail_user_name"
             android:background="@drawable/line_gray"
             android:visibility="gone"/>

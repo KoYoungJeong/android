@@ -35,14 +35,10 @@ import rx.Observable;
 
 /**
  * Created by tonyjs on 16. 1. 19..
- * <p>
- * 파일에 대한 상세정보를 그린다.
- * 파일의 기본 정보 (올린 사람, 시간, 타입, 확장자, 사이즈 등등) 등을 "고정적으로" 그리고
- * 파일의 확장자와 연동된 클라우드 기준으로 이미지 리소스를 가져와서 이미지뷰에 붙여준다.
- * <p>
- * 만약 파일의 형태에 따라 컨텐츠 영역을 다르게 보여주거나 혹은 다른 형태의 뷰를 추가적으로 보여줘야 한다면,
- * 이 클래스를 상속 후 생성자 에서 컨텐츠 영역에 #getFileContentLayout()) 에 해당 레이아웃을
- * 집어넣고(addView) #bindFileContent(FileMessage) 메소드를 오버라이드 하여 구현한다.
+ *
+ * 파일의 기본 정보 (올린 사람, 시간, 타입, 확장자, 사이즈 등등) 등을 "고정적으로" 그린다.
+ * 파일의 형태에 따라 컨텐츠 영역을 다르게 보여주어야 하는데,
+ * 이 클래스를 상속 후 #addContentView 안에서 컨텐츠 레이아웃을 add 한 후 구현한다.
  */
 public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMessage> {
 
@@ -53,7 +49,6 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
     private View vUserProfileDisableIndicator;
     private TextView tvCreatedDate;
     private TextView tvFileInfo;
-    private SimpleDraweeView ivFileThumb;
     private ViewGroup vgFileInfo;
     private View btnStar;
     private ViewGroup vgFileContent;
@@ -83,7 +78,6 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
         tvDeletedDate = (TextView) itemView.findViewById(R.id.tv_file_detail_deleted_date);
 
         vgFileContent = (ViewGroup) itemView.findViewById(R.id.vg_file_detail_content);
-        ivFileThumb = (SimpleDraweeView) itemView.findViewById(R.id.iv_file_detail_thumb);
 
         tvSharedTopics =
                 (LinkedEllipsizeTextView) itemView.findViewById(R.id.tv_file_detail_shared_topics);
@@ -97,6 +91,8 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         return inflater.inflate(R.layout.layout_file_detail, parent, false);
     }
+
+    public abstract void addContentView(ViewGroup parent);
 
     @Override
     public void onBindView(ResMessages.FileMessage fileMessage) {
@@ -141,7 +137,7 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
             tvFileInfo.setText(fileMessage.content.ext);
         } else {
             String fileSize = FormatConverter.formatFileSize(content.size);
-            tvFileInfo.setText(String.format("%s %s", fileSize, content.ext));
+            tvFileInfo.setText(String.format("%s, %s", fileSize, content.ext));
         }
 
         bindFileContent(fileMessage);
@@ -163,15 +159,17 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
 
     protected void bindSharedTopics(
             Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities) {
+
+        Resources resources = context.getResources();
+
         if (shareEntities == null || shareEntities.isEmpty()) {
-            // TODO
+            tvSharedTopics.setText(resources.getString(R.string.jandi_nowhere_shared_file));
             return;
         }
 
         EntityManager entityManager = EntityManager.getInstance();
         final long teamId = entityManager.getTeamId();
 
-        Resources resources = context.getResources();
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         int sharedIndicatorSize = (int) resources.getDimension(R.dimen.jandi_text_size_small);
         int sharedIndicatorColor = resources.getColor(R.color.jandi_text_medium);
@@ -220,17 +218,11 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
         tvSharedTopics.setText(ssb);
     }
 
-    public abstract void addContentView(ViewGroup parent);
-
     public Context getContext() {
         return context;
     }
 
     public ViewGroup getFileContentLayout() {
         return vgFileContent;
-    }
-
-    public SimpleDraweeView getFileThumbnailImageView() {
-        return ivFileThumb;
     }
 }

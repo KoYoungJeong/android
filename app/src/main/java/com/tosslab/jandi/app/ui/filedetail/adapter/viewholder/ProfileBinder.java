@@ -3,12 +3,14 @@ package com.tosslab.jandi.app.ui.filedetail.adapter.viewholder;
 import android.content.res.Resources;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -44,6 +46,15 @@ public class ProfileBinder {
         ImageUtil.loadProfileImage(ivUserProfile, profileUrl, R.drawable.profile_img);
 
         tvUserName.setText(writer.getName());
+
+        tvUserName.post(() -> {
+            int gap = (int) UiUtils.getPixelFromDp(2);
+            int width = (int) tvUserName.getLayout().getLineWidth(0) + gap;
+
+            ViewGroup.LayoutParams params = vUserNameDisableIndicator.getLayoutParams();
+            params.width = width;
+            vUserNameDisableIndicator.setLayoutParams(params);
+        });
 
         boolean isDisabledUser = isDisabledUser(writer.getUser().status);
         vUserNameDisableIndicator.setVisibility(isDisabledUser ? View.VISIBLE : View.GONE);

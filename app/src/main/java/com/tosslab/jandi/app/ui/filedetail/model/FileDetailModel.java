@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.filedetail.model;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
@@ -12,7 +11,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.domain.FileDetail;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.FileDetailRepository;
@@ -32,7 +30,6 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.file.FileUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -66,7 +63,7 @@ public class FileDetailModel {
     @Bean
     EntityClientManager entityClientManager;
 
-    public boolean isNetworkdConneted() {
+    public boolean isNetworkConneted() {
         return NetworkCheckUtil.isConnected();
     }
 
@@ -110,6 +107,23 @@ public class FileDetailModel {
 
     public void deleteStickerComment(long messageId, int messageType) throws RetrofitError {
         messageManipulator.deleteSticker(messageId, messageType);
+    }
+
+    public List<ResMessages.OriginalMessage> getEnableMessages(
+            List<ResMessages.OriginalMessage> messages) {
+        List<ResMessages.OriginalMessage> filteredMessages = new ArrayList<>();
+        if (messages == null || messages.size() <= 0) {
+            return filteredMessages;
+        }
+
+        Observable.from(messages)
+                .filter(message ->
+                        (message instanceof ResMessages.FileMessage)
+                                || !("archived".equals(message.status)))
+                .collect(() -> filteredMessages, List::add)
+                .subscribe();
+
+        return filteredMessages;
     }
 
     public List<Long> getSharedTopicIds(ResMessages.OriginalMessage fileDetail) {
@@ -294,83 +308,9 @@ public class FileDetailModel {
         try {
             RequestApiManager.getInstance()
                     .unregistStarredMessageByTeamApi(teamId, messageId);
-            LogUtil.e("teamId", teamId + "");
-            LogUtil.e("messageId", messageId + "");
         } catch (RetrofitError e) {
             e.printStackTrace();
         }
-    }
-
-//    public List<FileDetail> getFileDetailFromCache(long fileId) {
-//        return FileDetailRepository.getRepository().getFileDetail(fileId);
-//    }
-
-    @Nullable
-    public ResFileDetail getFileDetailFromCache(final long fileId) {
-        List<FileDetail> fileDetail = FileDetailRepository.getRepository().getFileDetail(fileId);
-        if (fileDetail == null || fileDetail.isEmpty()) {
-            LogUtil.e("tony", "fileDetail is empty");
-            return null;
-        }
-
-        ResFileDetail resFileDetail = new ResFileDetail();
-        List<ResMessages.OriginalMessage> details = new ArrayList<>();
-        for (FileDetail detail : fileDetail) {
-            ResMessages.OriginalMessage message = null;
-            if (detail.getComment() != null) {
-                message = detail.getComment();
-            } else if (detail.getSticker() != null) {
-                message = detail.getSticker();
-            }
-
-            if (message != null) {
-                details.add(message);
-            }
-        }
-
-        ResMessages.FileMessage file = fileDetail.get(0).getFile();
-
-        LogUtil.e("tony", "fileMessage " + (file != null) + " content " + (file.content != null));
-        details.add(file);
-
-        resFileDetail.messageCount = details.size();
-        resFileDetail.messageDetails = details;
-        return resFileDetail;
-    }
-
-    public void saveFileDetailInfo(ResFileDetail resFileDetail) {
-        if (resFileDetail == null || resFileDetail.messageDetails.isEmpty()) {
-            return;
-        }
-
-        List<ResMessages.OriginalMessage> messageDetails = resFileDetail.messageDetails;
-
-        final ResMessages.FileMessage fileMessage =
-                (ResMessages.FileMessage) messageDetails.get(messageDetails.size() - 1);
-
-        LogUtil.e("tony", "fileMessage " + (fileMessage != null) + " content " + (fileMessage.content != null));
-
-        if (TextUtils.equals(fileMessage.status, "archived")) {
-            // 삭제 상태만 갱신하도록 수정
-            MessageRepository.getRepository().updateStatus(fileMessage.id, fileMessage.status);
-        }
-
-        Observable.from(messageDetails)
-                .filter(originalMessage -> !(originalMessage instanceof ResMessages.FileMessage))
-                .map(originalMessage -> {
-                    FileDetail fileDetail = new FileDetail();
-                    fileDetail.setFile(fileMessage);
-                    if (originalMessage instanceof ResMessages.CommentStickerMessage) {
-                        fileDetail.setSticker(((ResMessages.CommentStickerMessage) originalMessage));
-                    } else if (originalMessage instanceof ResMessages.CommentMessage) {
-                        fileDetail.setComment(((ResMessages.CommentMessage) originalMessage));
-                    } else {
-                        return null;
-                    }
-                    return fileDetail;
-                })
-                .subscribe(fileDetail ->
-                        FileDetailRepository.getRepository().upsertFileDetail(fileDetail));
     }
 
     public void sortByDate(List<ResMessages.OriginalMessage> messages) {
@@ -379,36 +319,6 @@ public class FileDetailModel {
 
     public long getMyId() {
         return EntityManager.getInstance().getMe().getId();
-    }
-
-    public ResMessages.FileMessage extractFileMssage(List<ResMessages.OriginalMessage> messageList) {
-
-        ResMessages.FileMessage defaultValue = new ResMessages.FileMessage();
-        ResMessages.FileMessage fileMessage = Observable.from(messageList)
-                .filter(originalMessage -> originalMessage instanceof ResMessages.FileMessage)
-                .firstOrDefault(defaultValue)
-                .map(originalMessage1 -> ((ResMessages.FileMessage) originalMessage1))
-                .toBlocking()
-                .first();
-
-        if (fileMessage == defaultValue) {
-            return null;
-        }
-
-        return fileMessage;
-
-    }
-
-    public List<ResMessages.OriginalMessage> extractCommentMessage(List<ResMessages.OriginalMessage> messageList) {
-
-        List<ResMessages.OriginalMessage> sortedCommentMessages = new ArrayList<>();
-
-        Observable.from(messageList)
-                .filter(originalMessage -> !(originalMessage instanceof ResMessages.FileMessage))
-                .toSortedList((lhs, rhs) -> lhs.createTime.compareTo(rhs.createTime))
-                .subscribe(originalMessages -> sortedCommentMessages.addAll(originalMessages));
-
-        return sortedCommentMessages;
     }
 
     public ResMessages.FileMessage getFileMessage(long fileId) {

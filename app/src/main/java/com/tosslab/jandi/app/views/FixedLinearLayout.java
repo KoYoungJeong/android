@@ -26,7 +26,7 @@ public class FixedLinearLayout extends LinearLayout {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
         int width = MeasureSpec.getSize(widthMeasureSpec) - getPaddingLeft() - getPaddingRight();
-
+        int height = 0;
         int childCount = getChildCount();
         if (childCount >= 2) {
             View firstChild = getChildAt(0);
@@ -41,6 +41,7 @@ public class FixedLinearLayout extends LinearLayout {
                     continue;
                 }
                 child.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+                height = child.getMeasuredHeight() > height ? child.getMeasuredHeight() : height;
                 LinearLayout.LayoutParams childParams = (LayoutParams) child.getLayoutParams();
 
                 rightSideWidth +=
@@ -58,5 +59,9 @@ public class FixedLinearLayout extends LinearLayout {
                 firstChild.measure(newWidthMeasureSpec, heightMeasureSpec);
             }
         }
+
+        // text 여백 위함
+        int gap = (int) (getResources().getDisplayMetrics().density * 1);
+        setMeasuredDimension(width, height + gap);
     }
 }

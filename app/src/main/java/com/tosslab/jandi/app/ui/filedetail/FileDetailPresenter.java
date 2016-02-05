@@ -3,15 +3,12 @@ package com.tosslab.jandi.app.ui.filedetail;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.util.Log;
+import android.util.Pair;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
@@ -31,7 +28,6 @@ import org.androidannotations.annotations.EBean;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -49,6 +45,7 @@ public class FileDetailPresenter {
     FileDetailModel fileDetailModel;
 
     private View view;
+    private PublishSubject<Pair<Long, Boolean>> initializePublishSubject;
     private PublishSubject<FileStarredInfo> starredStatePublishSubject;
 
     public void setView(View view) {
@@ -57,8 +54,21 @@ public class FileDetailPresenter {
 
     @AfterInject
     void initObjects() {
-        starredStatePublishSubject = PublishSubject.create();
+        initializePublishSubject = PublishSubject.create();
+        initializePublishSubject.throttleWithTimeout(500, TimeUnit.MILLISECONDS)
+                .onBackpressureBuffer()
+                .subscribeOn(Schedulers.io())
+                .subscribe(pair -> {
+                    boolean isNetworkConnected = fileDetailModel.isNetworkConneted();
+                    if (!isNetworkConnected) {
+                        view.showCheckNetworkDialog();
+                        return;
+                    }
 
+                    retrieveFileDetail(pair.first, pair.second);
+                });
+
+        starredStatePublishSubject = PublishSubject.create();
         starredStatePublishSubject.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.io())
@@ -68,18 +78,7 @@ public class FileDetailPresenter {
     }
 
     public void onInitializeFileDetail(long fileId, boolean withProgress) {
-        boolean isNetworkConnected = fileDetailModel.isNetworkdConneted();
-        if (!isNetworkConnected) {
-            view.showCheckNetworkDialog();
-            return;
-        }
-
-        onRetrieveFileDetail(fileId, withProgress);
-    }
-
-    @Background
-    void onRetrieveFileDetail(long fileId, boolean withProgress) {
-        retrieveFileDetail(fileId, withProgress);
+        initializePublishSubject.onNext(Pair.create(fileId, withProgress));
     }
 
     // 화면 진입시, 코멘트(스티커 포함) 보낼 때 사용되어 짐
@@ -95,15 +94,23 @@ public class FileDetailPresenter {
             LogUtil.e(TAG, Log.getStackTraceString(e));
         }
 
+        view.clearFileDetailAndComments();
+
         if (fileDetail == null || fileDetail.messageCount <= 0) {
             view.showUnexpectedErrorToast();
             view.finish();
             return;
         }
 
-        view.clearFileDetailAndComments();
+        List<ResMessages.OriginalMessage> messages =
+                fileDetailModel.getEnableMessages(fileDetail.messageDetails);
+        if (messages == null || messages.size() <= 0
+                || !(messages.get(messages.size() - 1) instanceof ResMessages.FileMessage)) {
+            view.showUnexpectedErrorToast();
+            view.finish();
+            return;
+        }
 
-        List<ResMessages.OriginalMessage> messages = fileDetail.messageDetails;
         // 파일의 상세정보는 API 로 부터 받아온 리스트의 마지막에 있다.
         int fileDetailPosition = messages.size() - 1;
         ResMessages.FileMessage fileMessage =
@@ -396,7 +403,6 @@ public class FileDetailPresenter {
                 fileDetailModel.deleteComment(messageId, feedbackId);
             }
 
-            view.dismissProgress();
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
             view.dismissProgress();
@@ -411,14 +417,14 @@ public class FileDetailPresenter {
 
         try {
             ResMessages.FileMessage fileMessage = fileDetailModel.enableExternalLink(teamId, fileId);
-            setFileDetailToView(fileMessage);
-            view.notifyDataSetChanged();
 
-            view.setExternalLinkToClipboard();
+            setFileDetailToView(fileMessage);
+
+            view.notifyDataSetChanged();
 
             view.dismissProgress();
 
-            view.showEnableExternalLinkSuccessToast();
+            view.setExternalLinkToClipboard();
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
             view.dismissProgress();
@@ -436,8 +442,6 @@ public class FileDetailPresenter {
             ResMessages.FileMessage fileMessage = fileDetailModel.disableExternalLink(teamId, fileId);
             setFileDetailToView(fileMessage);
             view.notifyDataSetChanged();
-
-            view.setExternalLinkToClipboard();
 
             view.dismissProgress();
 

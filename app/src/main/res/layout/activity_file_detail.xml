@@ -10,11 +10,11 @@
         android:id="@+id/lv_file_detail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar_file_detail"
         android:layout_above="@+id/space_file_detail_divider"
-        android:background="@color/jandi_file_detail_comments_bg"
+        android:background="@color/white"
         android:clipToPadding="false"
-        android:paddingBottom="8dp"
-        android:paddingTop="?attr/actionBarSize"/>
+        android:paddingBottom="8dp"/>
 
     <RelativeLayout
         android:id="@+id/vg_file_detail_preview_sticker"
@@ -48,7 +48,7 @@
         android:layout_height="1dp"
         android:layout_above="@+id/vg_file_detail_input_comment"
         android:layout_alignWithParentIfMissing="true"
-        android:background="@color/jandi_message_input_border"/>
+        android:background="@color/deactivate_text_color"/>
 
     <LinearLayout
         android:id="@+id/vg_file_detail_input_comment"

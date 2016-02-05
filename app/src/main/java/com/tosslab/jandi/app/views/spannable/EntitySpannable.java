@@ -38,6 +38,7 @@ public class EntitySpannable extends ClickableSpan {
 
     @Override
     public void updateDrawState(TextPaint ds) {
+        ds.setColor(color);
         ds.linkColor = color;
         ds.setUnderlineText(true);
         ds.setShadowLayer(10, 1, 1, Color.WHITE);

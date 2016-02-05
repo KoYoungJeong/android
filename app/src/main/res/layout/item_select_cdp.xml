@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="48dp"
     android:orientation="horizontal">
 
     <com.tosslab.jandi.app.views.FrescoImageView
-        android:id="@+id/img_select_cdp_icon"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_margin="10dp"
+        android:id="@+id/iv_select_cdp"
+        android:layout_gravity="center"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         fresco:placeholderImage="@drawable/topiclist_icon_topic" />
 
     <TextView
-        android:id="@+id/txt_select_cdp_name"
+        android:id="@+id/tv_select_cdp"
+        android:layout_marginLeft="32dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
+        android:textSize="16sp"
         android:text="User Name"
-        android:textColor="@color/black" />
+        android:textColor="@color/jandi_text_selector" />
 </LinearLayout>

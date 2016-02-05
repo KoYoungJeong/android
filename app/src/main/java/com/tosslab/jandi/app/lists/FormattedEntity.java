@@ -139,9 +139,11 @@ public class FormattedEntity {
 
     public int getIconImageResId() {
         if (isPublicTopic()) {
-            return R.drawable.topiclist_icon_topic;
+            return isStarred ? R.drawable.topiclist_icon_topic_fav : R.drawable.topiclist_icon_topic;
         } else if (isPrivateGroup()) {
-            return R.drawable.topiclist_icon_topic_private;
+            return isStarred
+                    ? R.drawable.topiclist_icon_topic_private_fav
+                    : R.drawable.topiclist_icon_topic_private;
         } else if (isDummy()) {
             return getDummyImageRes();
         } else {

@@ -15,60 +15,70 @@
         android:layout_height="@dimen/jandi_file_detail_comment_profile_size"
         fresco:placeholderImage="@drawable/profile_img_comment"/>
 
-    <TextView
-        android:id="@+id/tv_file_detail_comment_user_name"
-        android:layout_width="wrap_content"
+    <com.tosslab.jandi.app.views.FixedLinearLayout
+        android:id="@+id/vg_file_detail_comment_user_name"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="9dp"
-        android:layout_marginRight="9dp"
-        android:layout_toRightOf="@+id/iv_file_detail_comment_user_profile"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:text="UserName"
-        android:textColor="@color/jandi_text"
-        android:textSize="@dimen/jandi_file_detail_comment_name_text"
-        android:textStyle="bold"/>
+        android:layout_toRightOf="@+id/iv_file_detail_comment_user_profile">
 
-    <TextView
-        android:id="@+id/tv_file_detail_comment_create_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/tv_file_detail_comment_user_name"
-        android:layout_alignTop="@id/tv_file_detail_comment_user_name"
-        android:layout_toRightOf="@id/tv_file_detail_comment_user_name"
-        android:gravity="center"
-        android:text="01/14/2016, 08:59 pm"
-        android:textColor="@color/jandi_file_detail_date"
-        android:textSize="@dimen/jandi_file_detail_text_date"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="9dp">
 
-    <ImageView
-        android:id="@+id/v_file_detail_comment_user_name_disable_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/tv_file_detail_comment_user_name"
-        android:layout_alignLeft="@+id/tv_file_detail_comment_user_name"
-        android:layout_alignRight="@+id/tv_file_detail_comment_user_name"
-        android:layout_alignTop="@+id/tv_file_detail_comment_user_name"
-        android:src="@drawable/line_gray"/>
+            <TextView
+                android:id="@+id/tv_file_detail_comment_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User Name"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/jandi_text"
+                android:textSize="@dimen/jandi_file_detail_comment_name_text"
+                android:textStyle="bold"/>
+
+            <ImageView
+                android:id="@+id/v_file_detail_comment_user_name_disable_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tv_file_detail_comment_user_name"
+                android:layout_alignLeft="@+id/tv_file_detail_comment_user_name"
+                android:layout_alignRight="@+id/tv_file_detail_comment_user_name"
+                android:layout_alignTop="@+id/tv_file_detail_comment_user_name"
+                android:src="@drawable/line_gray"/>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_file_detail_comment_create_date"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="01/14/2016, 08:59 pm"
+            android:textColor="@color/jandi_file_detail_date"
+            android:textSize="@dimen/jandi_file_detail_text_date"/>
+
+    </com.tosslab.jandi.app.views.FixedLinearLayout>
 
     <View
         android:id="@+id/v_file_detail_comment_user_profile_disable_indicator"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/jandi_entity_item_height"
         android:layout_alignBottom="@+id/iv_file_detail_comment_user_profile"
         android:layout_alignLeft="@+id/iv_file_detail_comment_user_profile"
         android:layout_alignRight="@+id/iv_file_detail_comment_user_profile"
         android:layout_alignTop="@+id/iv_file_detail_comment_user_profile"
-        android:background="#99ffffff"
+        android:background="@color/jandi_member_profile_disabled"
         android:visibility="visible"/>
 
     <TextView
         android:id="@+id/tv_file_detail_comment_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tv_file_detail_comment_user_name"
-        android:layout_below="@+id/tv_file_detail_comment_user_name"
+        android:layout_alignLeft="@+id/vg_file_detail_comment_user_name"
+        android:layout_below="@+id/vg_file_detail_comment_user_name"
         android:layout_marginTop="2dp"
         android:lineSpacingExtra="2dp"
         android:text="HiHi\nThis is Comment"

@@ -63,17 +63,17 @@
                 android:layout_gravity="center">
 
                 <com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar
-                    android:id="@+id/progress_photoview"
+                    android:id="@+id/progress_file_detail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
 
                 <TextView
-                    android:id="@+id/tv_photoview_percentage"
+                    android:id="@+id/tv_file_detail_percentage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="0%"
-                    android:textColor="@color/white"
+                    android:textColor="@color/jandi_text_medium"
                     android:textSize="14dp"/>
             </FrameLayout>
 
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Downloading..."
-                android:textColor="@color/jandi_text_light"
+                android:textColor="@color/jandi_text_medium"
                 android:textSize="14dp"/>
 
         </LinearLayout>

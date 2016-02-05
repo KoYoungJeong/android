@@ -73,6 +73,7 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
         if (mode == MODE_PICK) {
+            actionBar.setTitle(getString(R.string.jandi_shared_in_room));
         } else {
             actionBar.setTitle(R.string.jandi_title_cdp_to_be_unshared);
         }

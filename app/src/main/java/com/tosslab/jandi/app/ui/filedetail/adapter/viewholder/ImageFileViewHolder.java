@@ -7,11 +7,9 @@ import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.TextView;
 
 import com.facebook.drawee.controller.BaseControllerListener;
@@ -68,8 +66,8 @@ public class ImageFileViewHolder extends FileViewHolder {
         ivFileThumb = (SimpleDraweeView) contentView.findViewById(R.id.iv_file_detail_thumb);
         btnTapToView = contentView.findViewById(R.id.vg_file_detail_tap_to_view);
         vgProgressBar = (ViewGroup) contentView.findViewById(R.id.vg_file_detail_progress);
-        progressBar = (CircleProgressBar) contentView.findViewById(R.id.progress_photoview);
-        tvPercentage = (TextView) contentView.findViewById(R.id.tv_photoview_percentage);
+        progressBar = (CircleProgressBar) contentView.findViewById(R.id.progress_file_detail);
+        tvPercentage = (TextView) contentView.findViewById(R.id.tv_file_detail_percentage);
         vUnavailableIndicator = contentView.findViewById(R.id.vg_file_detail_no_image);
 
         setupProgress();

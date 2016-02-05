@@ -15,7 +15,7 @@ public class FileCommentClickEvent {
         this.comment = comment;
     }
 
-    public FileCommentClickEvent(boolean isLongClick, ResMessages.OriginalMessage comment) {
+    public FileCommentClickEvent(ResMessages.OriginalMessage comment, boolean isLongClick) {
         this.isLongClick = isLongClick;
         this.comment = comment;
     }
