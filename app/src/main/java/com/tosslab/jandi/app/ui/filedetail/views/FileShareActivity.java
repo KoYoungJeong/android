@@ -34,6 +34,10 @@ import java.util.List;
 public class FileShareActivity extends BaseAppCompatActivity {
     public static final String KEY_ENTITY_ID = "entity_id";
 
+    public static final int REQUEST_CODE_SHARE = 0;
+    public static final int REQUEST_CODE_UNSHARE = 1;
+    public static final String KEY_ENTITY_ID = "entity_id";
+
     @Extra
     long fileId;
     @Bean
