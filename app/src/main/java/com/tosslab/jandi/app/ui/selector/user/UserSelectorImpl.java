@@ -64,7 +64,7 @@ public class UserSelectorImpl implements UserSelector {
                 .subscribe(adapter::addAll);
 
         if (EntityManager.getInstance().hasJandiBot()) {
-            adapter.add(0, ExpandRoomData.newRoomData(EntityManager.getInstance().getJandiBot()));
+            adapter.add(1, ExpandRoomData.newRoomData(EntityManager.getInstance().getJandiBot()));
         }
 
         ExpandRoomData dummyData = new ExpandRoomData();

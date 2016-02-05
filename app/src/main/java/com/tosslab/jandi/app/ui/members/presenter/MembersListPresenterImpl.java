@@ -100,14 +100,9 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                         return chatChooseItem.getName().toLowerCase().contains(s.toLowerCase());
                 })
                 .toSortedList((chatChooseItem, chatChooseItem2) -> {
-                    long myId = EntityManager.getInstance().getMe().getId();
                     if (chatChooseItem.isBot()) {
                         return -1;
                     } else if (chatChooseItem2.isBot()) {
-                        return 1;
-                    } else if (chatChooseItem.getEntityId() == myId) {
-                        return -1;
-                    } else if (chatChooseItem2.getEntityId() == myId) {
                         return 1;
                     } else {
                         return chatChooseItem.getName().toLowerCase()

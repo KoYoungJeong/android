@@ -187,7 +187,7 @@ public class ChatChooseModel {
                 .name(jandiBot.getName())
                 .owner(false)
                 .photoUrl(jandiBot.getUserMediumProfileUrl())
-                .starred(false);
+                .starred(jandiBot.isStarred);
     }
 
     private boolean hasJandiBot() {

@@ -87,64 +87,64 @@ public class ChatChooseAdapter extends BaseAdapter {
     }
 
     private View setChatChooseView(int position, View convertView, ViewGroup parent) {
-        ChatCHooseViewHolder chatCHooseViewHolder;
+        ChatCHooseViewHolder chatChooseViewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context)
                     .inflate(R.layout.item_entity_body_two_line, parent, false);
-            chatCHooseViewHolder = new ChatCHooseViewHolder();
-            chatCHooseViewHolder.tvName =
+            chatChooseViewHolder = new ChatCHooseViewHolder();
+            chatChooseViewHolder.tvName =
                     (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
-            chatCHooseViewHolder.ivIcon =
+            chatChooseViewHolder.ivIcon =
                     (SimpleDraweeView) convertView.findViewById(R.id.iv_entity_listitem_icon);
-            chatCHooseViewHolder.ivFavorite =
+            chatChooseViewHolder.ivFavorite =
                     (ImageView) convertView.findViewById(R.id.iv_entity_listitem_fav);
-            chatCHooseViewHolder.tvAdditional =
+            chatChooseViewHolder.tvAdditional =
                     (TextView) convertView.findViewById(R.id.tv_entity_listitem_user_count);
-            chatCHooseViewHolder.vDisableLineThrough =
+            chatChooseViewHolder.vDisableLineThrough =
                     convertView.findViewById(R.id.iv_entity_listitem_line_through);
-            chatCHooseViewHolder.vDisableCover =
+            chatChooseViewHolder.vDisableCover =
                     convertView.findViewById(R.id.v_entity_listitem_warning);
-            chatCHooseViewHolder.ivKick = convertView.findViewById(R.id.iv_entity_listitem_user_kick);
-            chatCHooseViewHolder.tvOwnerBadge =
+            chatChooseViewHolder.ivKick = convertView.findViewById(R.id.iv_entity_listitem_user_kick);
+            chatChooseViewHolder.tvOwnerBadge =
                     (TextView) convertView.findViewById(R.id.tv_owner_badge);
 
-            convertView.setTag(R.id.chatchoose_item, chatCHooseViewHolder);
+            convertView.setTag(R.id.chatchoose_item, chatChooseViewHolder);
 
         } else {
-            chatCHooseViewHolder = (ChatCHooseViewHolder) convertView.getTag(R.id.chatchoose_item);
+            chatChooseViewHolder = (ChatCHooseViewHolder) convertView.getTag(R.id.chatchoose_item);
         }
 
         ChatChooseItem item = getItem(position);
 
-        chatCHooseViewHolder.tvName.setText(item.getName());
-        chatCHooseViewHolder.ivKick.setVisibility(View.GONE);
+        chatChooseViewHolder.tvName.setText(item.getName());
+        chatChooseViewHolder.ivKick.setVisibility(View.GONE);
 
         Resources resources = context.getResources();
-        chatCHooseViewHolder.tvOwnerBadge.setText(resources.getString(R.string.jandi_team_owner));
-        chatCHooseViewHolder.tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
+        chatChooseViewHolder.tvOwnerBadge.setText(resources.getString(R.string.jandi_team_owner));
+        chatChooseViewHolder.tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
 
         if (!TextUtils.isEmpty(item.getStatusMessage())) {
-            chatCHooseViewHolder.tvAdditional.setVisibility(View.VISIBLE);
+            chatChooseViewHolder.tvAdditional.setVisibility(View.VISIBLE);
         } else {
-            chatCHooseViewHolder.tvAdditional.setVisibility(View.GONE);
+            chatChooseViewHolder.tvAdditional.setVisibility(View.GONE);
         }
-        chatCHooseViewHolder.tvAdditional.setText(item.getStatusMessage());
+        chatChooseViewHolder.tvAdditional.setText(item.getStatusMessage());
 
         if (item.isStarred()) {
-            chatCHooseViewHolder.ivFavorite.setVisibility(View.VISIBLE);
+            chatChooseViewHolder.ivFavorite.setVisibility(View.VISIBLE);
         } else {
-            chatCHooseViewHolder.ivFavorite.setVisibility(View.GONE);
+            chatChooseViewHolder.ivFavorite.setVisibility(View.GONE);
         }
 
         if (item.isEnabled()) {
-            chatCHooseViewHolder.vDisableLineThrough.setVisibility(View.GONE);
-            chatCHooseViewHolder.vDisableCover.setVisibility(View.GONE);
+            chatChooseViewHolder.vDisableLineThrough.setVisibility(View.GONE);
+            chatChooseViewHolder.vDisableCover.setVisibility(View.GONE);
         } else {
-            chatCHooseViewHolder.vDisableLineThrough.setVisibility(View.VISIBLE);
-            chatCHooseViewHolder.vDisableCover.setVisibility(View.VISIBLE);
+            chatChooseViewHolder.vDisableLineThrough.setVisibility(View.VISIBLE);
+            chatChooseViewHolder.vDisableCover.setVisibility(View.VISIBLE);
         }
 
-        SimpleDraweeView imageViewIcon = chatCHooseViewHolder.ivIcon;
+        SimpleDraweeView imageViewIcon = chatChooseViewHolder.ivIcon;
         imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
         boolean user = !item.isBot();
