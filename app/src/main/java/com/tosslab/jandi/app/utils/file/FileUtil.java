@@ -14,10 +14,10 @@ import java.text.DecimalFormat;
 public class FileUtil {
 
     /**
-     * @return /sdcard/DOWNLOAD/Jandi
+     * @return /sdcard/DOWNLOAD/
      */
     public static String getDownloadPath() {
-        String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS + "/Jandi";
+        String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS;
         File dir = new File(dirPath);
         if (!dir.exists()) {
             dir.mkdirs();

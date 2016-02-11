@@ -1,13 +1,13 @@
 package com.tosslab.jandi.app.services.download.domain;
 
 public class DownloadFileInfo {
-    final int fileId;
+    final long fileId;
     final String fileUrl;
     final String fileName;
     final String fileExt;
     final String fileType;
 
-    public DownloadFileInfo(int fileId, String fileUrl, String fileName, String fileExt, String fileType) {
+    public DownloadFileInfo(long fileId, String fileUrl, String fileName, String fileExt, String fileType) {
         this.fileId = fileId;
         this.fileUrl = fileUrl;
         this.fileName = fileName;
@@ -15,7 +15,7 @@ public class DownloadFileInfo {
         this.fileType = fileType;
     }
 
-    public int getFileId() {
+    public long getFileId() {
         return fileId;
     }
 
