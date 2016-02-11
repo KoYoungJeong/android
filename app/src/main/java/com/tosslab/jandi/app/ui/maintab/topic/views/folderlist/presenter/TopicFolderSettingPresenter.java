@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.presenter;
 
 import android.support.v7.widget.RecyclerView;
 
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter.TopicFolderMainAdapter;
@@ -66,7 +68,7 @@ public class TopicFolderSettingPresenter {
     }
 
     @Background
-    public void onCreateFolers(String title, int folderId) {
+    public void onCreateFolers(String title, long folderId) {
         try {
             topicFolderChooseModel.createFolder(title);
             onRefreshFolders(folderId);
@@ -87,13 +89,15 @@ public class TopicFolderSettingPresenter {
     }
 
     @Background
-    public void onAddTopicIntoFolder(long folderId, long topicId) {
+    public void onAddTopicIntoFolder(long folderId, long topicId, String name) {
         try {
             topicFolderChooseModel.addTopicIntoFolder(folderId, topicId);
+            view.showMoveToFolderToast(name);
+            view.finishAcitivty();
         } catch (RetrofitError retrofitError) {
             retrofitError.printStackTrace();
+            view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
         }
-        view.finishAcitivty();
     }
 
     public void onItemClick(RecyclerView.Adapter adapter, int position, int type, long folderId, long topicId) {
@@ -103,9 +107,8 @@ public class TopicFolderSettingPresenter {
             case TopicFolderSettingAdapter.TYPE_FOLDER_LIST:
                 long newfolderId = topicFolderAdapter.getItemById(position).id;
                 if (newfolderId != folderId) {
-                    onAddTopicIntoFolder(newfolderId, topicId);
-                    String name = ((TopicFolderMainAdapter) adapter).getFolders().get(position).name;
-                    view.showMoveToFolderToast(name);
+                    ResFolder folder = ((TopicFolderMainAdapter) adapter).getFolders().get(position);
+                    onAddTopicIntoFolder(newfolderId, topicId, folder.name);
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.ChooseFolder);
                 } else {
                     view.finishAcitivty();
@@ -170,6 +173,8 @@ public class TopicFolderSettingPresenter {
         void showFolderRenamedToast();
 
         void showDeleteFolderToast();
+
+        void showErrorToast(String message);
     }
 
 }

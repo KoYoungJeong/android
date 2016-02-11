@@ -24,7 +24,7 @@ public class TopicFolderMainAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public static final int TYPE_FOLDER_LIST = 0;
     protected OnRecyclerItemWithTypeCLickListener onRecyclerItemClickListener;
     List<ResFolder> folders = null;
-    private int folderId = -1;
+    private long folderId = -1;
 
     public List<ResFolder> getFolders() {
         if (folders != null) {
@@ -90,7 +90,7 @@ public class TopicFolderMainAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return folders.get(position);
     }
 
-    public void setFolderId(int folderId) {
+    public void setFolderId(long folderId) {
         this.folderId = folderId;
     }
 

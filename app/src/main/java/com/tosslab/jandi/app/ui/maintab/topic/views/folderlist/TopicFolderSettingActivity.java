@@ -59,10 +59,10 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     int mode = ITEM_FOLDER_CHOOSE;
 
     @Extra
-    int topicId;
+    long topicId;
 
     @Extra
-    int folderId;
+    long folderId;
     @Bean
     TopicFolderSettingPresenter topicFolderSettingPresentor;
 
@@ -190,6 +190,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showCreateNewFolderDialog() {
         if (alertDialog == null) {
@@ -241,11 +242,13 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
         this.finish();
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showMoveToFolderToast(String folderName) {
         ColoredToast.show(getString(R.string.jandi_folder_has_been_move_to, folderName));
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showRemoveFromFolderToast() {
         ColoredToast.show(getString(R.string.jandi_folder_has_been_remove_from, currentItemFolderName));
@@ -266,6 +269,12 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     @UiThread
     public void showDeleteFolderToast() {
         ColoredToast.show(getString(R.string.jandi_folder_removed));
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showErrorToast(String message) {
+        ColoredToast.showError(message);
     }
 
     @Override

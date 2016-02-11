@@ -400,9 +400,9 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     public void onEvent(TopicFolderMoveCallEvent event) {
         TopicFolderSettingActivity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .extra("mode", TopicFolderSettingActivity.ITEM_FOLDER_CHOOSE)
-                .extra("topicId", event.getTopicId())
-                .extra("folderId", event.getFolderId())
+                .mode(TopicFolderSettingActivity.ITEM_FOLDER_CHOOSE)
+                .topicId(event.getTopicId())
+                .folderId(event.getFolderId())
                 .start();
     }
 
