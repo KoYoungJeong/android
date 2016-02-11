@@ -11,10 +11,10 @@ import retrofit.RetrofitError;
  */
 public interface ICommentsApiAuth {
 
-    ResCommon sendMessageCommentByCommentsApi(int messageId, int teamId, ReqSendComment reqSendComment) throws RetrofitError;
+    ResCommon sendMessageCommentByCommentsApi(long messageId, long teamId, ReqSendComment reqSendComment) throws RetrofitError;
 
     ResCommon modifyMessageCommentByCommentsApi(ReqModifyComment comment, int messageId, int commentId) throws RetrofitError;
 
-    ResCommon deleteMessageCommentByCommentsApi(int teamId, int messageId, int commentId) throws RetrofitError;
+    ResCommon deleteMessageCommentByCommentsApi(long teamId, long messageId, long commentId) throws RetrofitError;
 
 }

@@ -13,7 +13,7 @@ public interface MainChatListPresenter {
 
     void setView(View view);
 
-    void onInitChatList(Context context, int selectedEntity);
+    void initChatList(Context context, long selectedEntity);
 
     void onReloadChatList(Context context);
 
@@ -32,9 +32,9 @@ public interface MainChatListPresenter {
 
         ChatItem getChatItem(int position);
 
-        void setSelectedItem(int selectedEntityId);
+        void setSelectedItem(long selectedEntityId);
 
-        void moveMessageActivity(int teamId, int entityId, int roomId, boolean isStarred, int lastLinkId);
+        void moveMessageActivity(long teamId, long entityId, long roomId, boolean isStarred, long lastLinkId);
 
         void scrollToPosition(int selectedEntityPosition);
 

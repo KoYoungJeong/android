@@ -13,7 +13,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @Version(1)
 public class SocketTopicKickedoutEvent {
     private String event;
-    private String version;
+    private int version;
     private Data data;
 
     private long ts;
@@ -35,11 +35,11 @@ public class SocketTopicKickedoutEvent {
         this.event = event;
     }
 
-    public String getVersion() {
+    public int getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(int version) {
         this.version = version;
     }
 

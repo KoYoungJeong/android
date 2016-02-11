@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.profile.modify.presenter;
 
 import android.app.Activity;
-import android.os.Bundle;
 
 import com.soundcloud.android.crop.Crop;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;

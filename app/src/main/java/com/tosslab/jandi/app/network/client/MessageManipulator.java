@@ -35,9 +35,9 @@ public class MessageManipulator {
     Context context;
 
     int entityType;
-    int entityId;
-    private int selectedTeamId;
-    private int roomId;
+    long entityId;
+    private long selectedTeamId;
+    private long roomId;
 
     @AfterInject
     void initSelectedTeam() {
@@ -48,12 +48,12 @@ public class MessageManipulator {
         selectedTeamId = selectedTeamInfo.getTeamId();
     }
 
-    public void initEntity(int entityType, int entityId) {
+    public void initEntity(int entityType, long entityId) {
         this.entityId = entityId;
         this.entityType = entityType;
     }
 
-    public ResMessages getMessages(final int firstItemId, int count) throws RetrofitError {
+    public ResMessages getMessages(final long firstItemId, int count) throws RetrofitError {
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -86,13 +86,13 @@ public class MessageManipulator {
 
     }
 
-    public List<ResMessages.Link> updateMessages(final int fromCurrentId) throws RetrofitError {
+    public List<ResMessages.Link> updateMessages(final long fromCurrentId) throws RetrofitError {
 
         return RequestApiManager.getInstance().getRoomUpdateMessageByMessagesApiAuth
                 (selectedTeamId, roomId, fromCurrentId);
     }
 
-    public ResCommon setMarker(final int lastLinkId) throws RetrofitError {
+    public ResCommon setMarker(final long lastLinkId) throws RetrofitError {
 
         String entityType;
         switch (this.entityType) {
@@ -130,7 +130,7 @@ public class MessageManipulator {
 
     }
 
-    public ResCommon deleteMessage(final int messageId) throws RetrofitError {
+    public ResCommon deleteMessage(final long messageId) throws RetrofitError {
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -145,7 +145,7 @@ public class MessageManipulator {
 
     }
 
-    public ResCommon deleteSticker(final int messageId, int messageType) throws RetrofitError {
+    public ResCommon deleteSticker(final long messageId, int messageType) throws RetrofitError {
 
         switch (messageType) {
             case MessageItem.TYPE_STICKER:
@@ -159,7 +159,7 @@ public class MessageManipulator {
     }
 
 
-    public ResMessages getBeforeMarkerMessage(int linkId) throws RetrofitError {
+    public ResMessages getBeforeMarkerMessage(long linkId) throws RetrofitError {
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -175,7 +175,7 @@ public class MessageManipulator {
 
     }
 
-    public ResMessages getAfterMarkerMessage(int linkId) throws RetrofitError {
+    public ResMessages getAfterMarkerMessage(long linkId) throws RetrofitError {
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -190,7 +190,7 @@ public class MessageManipulator {
         }
     }
 
-    public ResMessages getAfterMarkerMessage(int linkId, int count) {
+    public ResMessages getAfterMarkerMessage(long linkId, int count) {
         RequestApiManager apiManager = RequestApiManager.getInstance();
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -206,15 +206,15 @@ public class MessageManipulator {
 
     }
 
-    public ResMessages.OriginalMessage getMessage(int teamId, int messageId) throws RetrofitError {
+    public ResMessages.OriginalMessage getMessage(long teamId, long messageId) throws RetrofitError {
         return RequestApiManager.getInstance().getMessage(teamId, messageId);
     }
 
-    public void setRoomId(int roomId) {
+    public void setRoomId(long roomId) {
         this.roomId = roomId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.selectedTeamId = teamId;
     }
 }

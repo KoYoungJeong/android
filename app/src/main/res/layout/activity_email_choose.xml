@@ -10,6 +10,16 @@
         android:layout_height="?attr/actionBarSize"
         android:visibility="visible" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:text="@string/jandi_choose_email"
+        android:textColor="@color/jandi_text_light"
+        android:textSize="14sp" />
+
     <ListView
         android:id="@+id/lv_email_choose"
         android:layout_width="match_parent"

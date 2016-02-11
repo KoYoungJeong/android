@@ -49,9 +49,6 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 6..
- */
 @EFragment(R.layout.fragment_main_chat_list)
 @OptionsMenu(R.menu.main_activity_menu)
 public class MainChatListFragment extends Fragment implements MainChatListPresenter.View {
@@ -60,7 +57,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     MainChatListPresenter mainChatListPresenter;
 
     @FragmentArg
-    int selectedEntity;
+    long selectedEntity;
 
     @ViewById(R.id.lv_main_chat_list)
     ListView chatListView;
@@ -87,7 +84,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
 
         FAButtonUtil.setFAButtonController(chatListView, btnFAB);
 
-        mainChatListPresenter.onInitChatList(getActivity(), selectedEntity);
+        mainChatListPresenter.initChatList(getActivity(), selectedEntity);
 
     }
 
@@ -152,12 +149,12 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void setSelectedItem(int selectedEntityId) {
+    public void setSelectedItem(long selectedEntityId) {
         mainChatListAdapter.setSelectedEntity(selectedEntityId);
     }
 
     @Override
-    public void moveMessageActivity(int teamId, int entityId, int roomId, boolean isStarred, int lastLinkId) {
+    public void moveMessageActivity(long teamId, long entityId, long roomId, boolean isStarred, long lastLinkId) {
         MessageListV2Activity_.intent(getActivity())
                 .teamId(teamId)
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
@@ -269,7 +266,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
                 .show(getFragmentManager(), "dialog");
     }
 
-    @Click({R.id.btn_main_chat_fab, R.id.vg_member_empty})
+    @Click({R.id.btn_main_chat_fab, R.id.btn_chat_list_no_messages})
     void onAddClick(View view) {
         EntityChooseActivity_.intent(getActivity())
                 .type(EntityChooseActivity.Type.MESSAGES.name())

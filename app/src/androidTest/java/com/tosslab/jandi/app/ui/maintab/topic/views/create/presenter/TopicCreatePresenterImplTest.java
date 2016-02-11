@@ -17,9 +17,10 @@ import java.util.Date;
 import setup.BaseInitUtil;
 
 import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -60,19 +61,20 @@ public class TopicCreatePresenterImplTest {
 
     @Test
     public void testCreateTopic() throws Exception {
+        Mockito.reset(mockView);
         final boolean[] finish = {false};
         doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
         }).when(mockView).dismissProgressWheel();
 
-        final int[] teamId = {-1};
-        final int[] topicId = {-1};
+        final long[] teamId = {-1};
+        final long[] topicId = {-1};
         doAnswer(invocationOnMock -> {
-            topicId[0] = (Integer) invocationOnMock.getArguments()[1];
-            teamId[0] = (Integer) invocationOnMock.getArguments()[0];
+            topicId[0] = (Long) invocationOnMock.getArguments()[1];
+            teamId[0] = (Long) invocationOnMock.getArguments()[0];
             return invocationOnMock;
-        }).when(mockView).createTopicSuccess(anyInt(), anyInt(), anyString(), anyBoolean());
+        }).when(mockView).createTopicSuccess(anyLong(), anyLong(), anyString(), anyBoolean());
 
         // when
         String topicName = "aaaaa123zca" + new Date().toString();
@@ -81,7 +83,7 @@ public class TopicCreatePresenterImplTest {
         Awaitility.await().until(() -> finish[0]);
 
         // then
-        verify(mockView, times(1)).dismissProgressWheel();
+        verify(mockView, atLeast(1)).dismissProgressWheel();
         verify(mockView, times(1)).showProgressWheel();
         if (teamId[0] > 0) {
             verify(mockView, times(1)).createTopicSuccess(eq(teamId[0]), eq(topicId[0]), eq(topicName), eq(true));

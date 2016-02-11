@@ -183,8 +183,8 @@ public class JandiSocketServiceModel {
             postEvent(
                     new FileCommentRefreshEvent(socketFileEvent.getEvent(),
                             socketFileEvent.getFile().getId(),
-                            socketFileEvent.getComment().getId()
-                    ));
+                            socketFileEvent.getComment().getId(),
+                            TextUtils.equals(socketFileEvent.getEvent(), "file_comment_created")));
             JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
@@ -601,7 +601,7 @@ public class JandiSocketServiceModel {
             TeamLeaveEvent teamLeaveEvent = new TeamLeaveEvent(socketTeamLeaveEvent.getTeam().getId(), socketTeamLeaveEvent.getMember().getId());
 
             int leaveMemberId = socketTeamLeaveEvent.getMember().getId();
-            int myId = EntityManager.getInstance().getMe().getId();
+            long myId = EntityManager.getInstance().getMe().getId();
 
             if (leaveMemberId != myId) {
                 refreshEntity(teamLeaveEvent, false);

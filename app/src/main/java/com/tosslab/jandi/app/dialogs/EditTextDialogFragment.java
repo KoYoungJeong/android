@@ -60,7 +60,7 @@ public class EditTextDialogFragment extends DialogFragment {
     private final static String ARG_CURRENT_MGS = "currentMessage";
     private int actionType;
     private int topicType;
-    private int topicId;
+    private long topicId;
     private String currentMessage;
 
     /**
@@ -71,12 +71,12 @@ public class EditTextDialogFragment extends DialogFragment {
      * @param topicId
      * @return
      */
-    public static EditTextDialogFragment newInstance(int actionType, int topicType, int topicId) {
+    public static EditTextDialogFragment newInstance(int actionType, int topicType, long topicId) {
         EditTextDialogFragment frag = new EditTextDialogFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_ACTION_TYPE, actionType);
         args.putInt(ARG_TOPIC_TYPE, topicType);
-        args.putInt(ARG_TOPIC_ID, topicId);
+        args.putLong(ARG_TOPIC_ID, topicId);
         frag.setArguments(args);
         return frag;
     }
@@ -91,12 +91,12 @@ public class EditTextDialogFragment extends DialogFragment {
      * @return
      */
     public static EditTextDialogFragment newInstance(int actionType, int topicType,
-                                                     int topicId, String currentCdpName) {
+                                                     long topicId, String currentCdpName) {
         EditTextDialogFragment frag = new EditTextDialogFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_ACTION_TYPE, actionType);
         args.putInt(ARG_TOPIC_TYPE, topicType);
-        args.putInt(ARG_TOPIC_ID, topicId);
+        args.putLong(ARG_TOPIC_ID, topicId);
         args.putString(ARG_CURRENT_MGS, currentCdpName);
         frag.setArguments(args);
         return frag;
@@ -137,7 +137,7 @@ public class EditTextDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         actionType = getArguments().getInt(ARG_ACTION_TYPE);
         topicType = getArguments().getInt(ARG_TOPIC_TYPE);
-        topicId = getArguments().getInt(ARG_TOPIC_ID);
+        topicId = getArguments().getLong(ARG_TOPIC_ID);
         currentMessage = getArguments().getString(ARG_CURRENT_MGS, "");
 
         int titleStringId = obtainTitleByPurpose(actionType, topicType);

@@ -12,26 +12,26 @@ import java.util.List;
 public class StarMentionVO {
 
     private int contentType;
-    private int teamId;
+    private long teamId;
     private int isStarred;
-    private int linkId;
+    private long linkId;
     private String writerName;
     private String writerPictureUrl;
     private String body;
-    private int messageId;
+    private long messageId;
     //for type is text
     private String roomName;
-    private int roomId;
+    private long roomId;
     private int roomType;
     private StarMentionedMessageObject.Message.Content content;
 
     //for type is comment -  file
-    private int fileId;
+    private long fileId;
     private String fileName;
 
     private Date updatedAt;
     private List<MentionObject> mentions;
-    private int writerId;
+    private long writerId;
 
     public int getContentType() {
         return contentType;
@@ -97,11 +97,11 @@ public class StarMentionVO {
         this.mentions = mentions;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 
@@ -113,19 +113,19 @@ public class StarMentionVO {
         this.isStarred = isStarred;
     }
 
-    public int getLinkId() {
+    public long getLinkId() {
         return linkId;
     }
 
-    public void setLinkId(int linkId) {
+    public void setLinkId(long linkId) {
         this.linkId = linkId;
     }
 
-    public int getRoomId() {
+    public long getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(int roomId) {
+    public void setRoomId(long roomId) {
         this.roomId = roomId;
     }
 
@@ -137,19 +137,19 @@ public class StarMentionVO {
         this.roomType = roomType;
     }
 
-    public int getFileId() {
+    public long getFileId() {
         return fileId;
     }
 
-    public void setFileId(int fileId) {
+    public void setFileId(long fileId) {
         this.fileId = fileId;
     }
 
-    public int getMessageId() {
+    public long getMessageId() {
         return messageId;
     }
 
-    public void setMessageId(int messageId) {
+    public void setMessageId(long messageId) {
         this.messageId = messageId;
     }
 
@@ -182,11 +182,11 @@ public class StarMentionVO {
                 '}';
     }
 
-    public void setWriterId(int writerId) {
+    public void setWriterId(long writerId) {
         this.writerId = writerId;
     }
 
-    public int getWriterId() {
+    public long getWriterId() {
         return writerId;
     }
 

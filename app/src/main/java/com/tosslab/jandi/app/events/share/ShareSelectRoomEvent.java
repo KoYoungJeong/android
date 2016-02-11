@@ -5,15 +5,15 @@ package com.tosslab.jandi.app.events.share;
  */
 public class ShareSelectRoomEvent {
 
-    private int roomId;
+    private long roomId;
     private String roomName;
     private int roomType;
 
-    public int getRoomId() {
+    public long getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(int roomId) {
+    public void setRoomId(long roomId) {
         this.roomId = roomId;
     }
 

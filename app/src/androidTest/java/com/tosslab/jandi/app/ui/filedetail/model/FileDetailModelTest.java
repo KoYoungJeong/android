@@ -79,8 +79,8 @@ public class FileDetailModelTest {
 
     @Test
     public void testGetTeamId() throws Exception {
-        int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-        int teamId = fileDetailModel.getTeamId();
+        long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+        long teamId = fileDetailModel.getTeamId();
 
         assertThat(teamId, is(equalTo(selectedTeamId)));
 
@@ -90,7 +90,7 @@ public class FileDetailModelTest {
     public void testEnableExternalLink() throws Exception {
 
         // Given
-        int teamId = fileDetailModel.getTeamId();
+        long teamId = fileDetailModel.getTeamId();
         // When
         ResMessages.FileMessage fileMessage1 = fileDetailModel.enableExternalLink(teamId, fileMessage.id);
 
@@ -105,7 +105,7 @@ public class FileDetailModelTest {
     public void testDisableExternalLink() throws Exception {
 
         // Given
-        int teamId = fileDetailModel.getTeamId();
+        long teamId = fileDetailModel.getTeamId();
         fileDetailModel.enableExternalLink(teamId, this.fileMessage.id);
 
         // When

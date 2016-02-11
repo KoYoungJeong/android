@@ -13,8 +13,8 @@ public interface IStickerApiLoader {
 
     IExecutor<ResCommon> loadSendStickerCommentByStickerApi(ReqSendSticker reqSendSticker);
 
-    IExecutor<ResCommon> loadDeleteStickerCommentByStickerApi(int commentId, int teamId);
+    IExecutor<ResCommon> loadDeleteStickerCommentByStickerApi(long commentId, long teamId);
 
-    IExecutor<ResCommon> loadDeleteStickerByStickerApi(int messageId, int teamId);
+    IExecutor<ResCommon> loadDeleteStickerByStickerApi(long messageId, long teamId);
 
 }

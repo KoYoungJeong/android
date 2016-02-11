@@ -1,12 +1,17 @@
 package com.tosslab.jandi.app.ui.settings.push;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 
+import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
+import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.app.views.settings.SettingsBodyCheckView;
 import com.tosslab.jandi.app.views.settings.SettingsBodyView;
 
@@ -74,6 +79,31 @@ public class SettingsPushFragment extends Fragment {
         setUpPushEnabled(checked);
         setPushOnValue(checked);
         setPushOnSummary(checked);
+
+        setUpParseValue(checked);
+    }
+
+    private void setUpParseValue(boolean checked) {
+        String value = checked ? ParseUpdateUtil.PARSE_ACTIVATION_ON : ParseUpdateUtil.PARSE_ACTIVATION_OFF;
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        if (installation.containsKey(ParseUpdateUtil.PARSE_ACTIVATION)) {
+            String isPushOn = (String) installation.get(ParseUpdateUtil.PARSE_ACTIVATION);
+            if (TextUtils.equals(isPushOn, value)) {
+                return;
+            }
+        }
+
+        installation.put(ParseUpdateUtil.PARSE_ACTIVATION, value);
+        installation.saveEventually(e -> {
+            Activity activity = getActivity();
+            if (activity != null && !(activity.isFinishing())) {
+                if (checked) {
+                    ColoredToast.show(activity.getString(R.string.jandi_setting_push_subscription_ok));
+                } else {
+                    ColoredToast.show(activity.getString(R.string.jandi_setting_push_subscription_cancel));
+                }
+            }
+        });
     }
 
     private void setPushOnSummary(boolean checked) {
@@ -98,7 +128,7 @@ public class SettingsPushFragment extends Fragment {
 
     private void setSoundOnValue(boolean checked) {
         sharedPreferences.edit()
-                .putBoolean("setting_push_alarm_sound", true)
+                .putBoolean("setting_push_alarm_sound", checked)
                 .apply();
     }
 

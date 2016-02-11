@@ -10,10 +10,12 @@ import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
+import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -34,6 +36,21 @@ import retrofit.RetrofitError;
  */
 @EBean
 public class AccountHomeModel {
+
+    public ResTeamDetailInfo acceptOrDeclineInvite(String invitationId, String type) throws RetrofitError {
+
+        ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
+
+        if (accountInfo == null) {
+            return null;
+        }
+
+        ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore = new ReqInvitationAcceptOrIgnore(type);
+        return RequestApiManager.getInstance().
+                acceptOrDeclineInvitationByInvitationApi(invitationId, reqInvitationAcceptOrIgnore);
+
+    }
+
 
     public List<Team> getTeamInfos() throws RetrofitError {
 
@@ -90,11 +107,11 @@ public class AccountHomeModel {
         return RequestApiManager.getInstance().changeNameByAccountProfileApi(new ReqProfileName(newName));
     }
 
-    public void updateSelectTeam(int teamId) {
+    public void updateSelectTeam(long teamId) {
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
     }
 
-    public ResLeftSideMenu getEntityInfo(int teamId) throws RetrofitError {
+    public ResLeftSideMenu getEntityInfo(long teamId) throws RetrofitError {
         return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
     }
 
@@ -133,7 +150,7 @@ public class AccountHomeModel {
         return AccountRepository.getRepository().getAccountInfo() != null;
     }
 
-    public void trackLaunchTeamSuccess(int teamId) {
+    public void trackLaunchTeamSuccess(long teamId) {
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.LaunchTeam)

@@ -69,7 +69,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     MessageSearchPresenter messageSearchPresenter;
 
     @FragmentArg
-    int entityId;
+    long entityId;
 
     @ViewById(R.id.list_search_messages)
     RecyclerView searchListView;
@@ -356,7 +356,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     }
 
     @Override
-    public void startMessageListActivity(int currentTeamId, int entityId, int entityType, int roomId, boolean isStarred, int linkId) {
+    public void startMessageListActivity(long currentTeamId, long entityId, int entityType, long roomId, boolean isStarred, long linkId) {
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .teamId(currentTeamId)

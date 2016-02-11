@@ -38,12 +38,12 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
 
     @AfterInject
     void initObject() {
-        int currentTeamId = messageSearchModel.getCurrentTeamId();
+        long currentTeamId = messageSearchModel.getCurrentTeamId();
         searchQeuryInfo = new ReqMessageSearchQeury(currentTeamId, "", 1, ITEM_PER_PAGE);
     }
 
     @Override
-    public void onInitEntityId(int entityId) {
+    public void onInitEntityId(long entityId) {
         String entityName = messageSearchModel.getEntityName(entityId);
         onSelectEntity(entityId, entityName, "");
     }
@@ -135,7 +135,7 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
     }
 
     @Override
-    public void onSelectEntity(int entityId, String name, String searchText) {
+    public void onSelectEntity(long entityId, String name, String searchText) {
 
         view.setEntityName(name);
         searchQeuryInfo.entityId(entityId);
@@ -156,7 +156,7 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
     }
 
     @Override
-    public void onSelectMember(int memberId, String name, String searchText) {
+    public void onSelectMember(long memberId, String name, String searchText) {
         view.setMemberName(name);
         searchQeuryInfo.writerId(memberId);
 
@@ -178,17 +178,17 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
 
     @Override
     public void onRecordClick(SearchResult searchRecord) {
-        int entityId = searchRecord.getEntityId();
+        long entityId = searchRecord.getEntityId();
         if (!messageSearchModel.hasEntity(entityId)) {
             view.showInvalidateEntityToast();
             return;
         }
 
-        int currentTeamId = messageSearchModel.getCurrentTeamId();
+        long currentTeamId = messageSearchModel.getCurrentTeamId();
         int entityType = messageSearchModel.getEntityType(entityId);
-        int roomId = messageSearchModel.getRoomId(entityId);
+        long roomId = messageSearchModel.getRoomId(entityId);
         boolean isStarred = messageSearchModel.isStarredEntity(entityId);
-        int linkId = searchRecord.getLinkId();
+        long linkId = searchRecord.getLinkId();
 
 
         view.startMessageListActivity(currentTeamId, entityId, entityType, roomId,isStarred, linkId);

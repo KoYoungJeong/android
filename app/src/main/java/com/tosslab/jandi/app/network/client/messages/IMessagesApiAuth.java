@@ -13,14 +13,14 @@ import java.util.List;
  */
 public interface IMessagesApiAuth {
 
-    ResFileDetail getFileDetailByMessagesApiAuth(int teamId, int messageId);
+    ResFileDetail getFileDetailByMessagesApiAuth(long teamId, long messageId);
 
-    ResCommon shareMessageByMessagesApiAuth(ReqShareMessage share, int messageId);
+    ResCommon shareMessageByMessagesApiAuth(ReqShareMessage share, long messageId);
 
-    ResCommon unshareMessageByMessagesApiAuth(ReqUnshareMessage share, int messageId);
+    ResCommon unshareMessageByMessagesApiAuth(ReqUnshareMessage share, long messageId);
 
-    List<ResMessages.Link> getRoomUpdateMessageByMessagesApiAuth(int teamId,
-                                                                 int roomId,
-                                                                 int currentLinkId);
+    List<ResMessages.Link> getRoomUpdateMessageByMessagesApiAuth(long teamId,
+                                                                 long roomId,
+                                                                 long currentLinkId);
 
 }

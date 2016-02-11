@@ -66,6 +66,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
+import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -98,7 +99,8 @@ public class MainTabActivity extends BaseAppCompatActivity {
     public static final int CHAT_INDEX = 1;
     @Extra
     boolean fromPush = false;
-
+    @ViewById(R.id.vg_fab_menu)
+    FloatingActionMenu floatingActionMenu;
     @Bean
     EntityClientManager entityClientManager;
     @Bean
@@ -110,7 +112,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     @ViewById(R.id.vg_main_offline)
     View vgOffline;
-    int selectedEntity = -1;
+    long selectedEntity = -1;
     private OfflineLayer offlineLayer;
     private ProgressWheel mProgressWheel;
     private Context mContext;
@@ -172,13 +174,19 @@ public class MainTabActivity extends BaseAppCompatActivity {
                 LogUtil.d("onPageSelected at " + position);
                 trackScreenView(position);
                 switch (position) {
+                    case 0:
+                        setFABMenuVisibility(true);
+                        break;
                     case 1:
+                        setFABMenuVisibility(false);
                         TutorialCoachMarkUtil.showCoachMarkDirectMessageListIfNotShown(MainTabActivity.this);
                         break;
                     case 2:
+                        setFABMenuVisibility(false);
                         TutorialCoachMarkUtil.showCoachMarkFileListIfNotShown(MainTabActivity.this);
                         break;
                     case 3:
+                        setFABMenuVisibility(false);
                         TutorialCoachMarkUtil.showCoachMarkMoreIfNotShown(MainTabActivity.this);
                         break;
                 }
@@ -203,7 +211,6 @@ public class MainTabActivity extends BaseAppCompatActivity {
         if (NetworkCheckUtil.isConnected()) {
             getEntities();
         }
-
     }
 
     private void updateChatBadge() {
@@ -244,23 +251,17 @@ public class MainTabActivity extends BaseAppCompatActivity {
         final AlertDialog dialog = builder.setView(view)
                 .show();
 
-        view.findViewById(R.id.btn_invitation_popup_invite).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_POPUP);
-                invitationDialogExecutor.execute();
+        view.findViewById(R.id.btn_invitation_popup_invite).setOnClickListener(v -> {
+            dialog.dismiss();
+            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_POPUP);
+            invitationDialogExecutor.execute();
 
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.SendInvitations);
-            }
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.SendInvitations);
         });
 
-        view.findViewById(R.id.btn_invitation_popup_later).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.Later);
-            }
+        view.findViewById(R.id.btn_invitation_popup_later).setOnClickListener(v -> {
+            dialog.dismiss();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.Later);
         });
 
     }
@@ -451,7 +452,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     private int getOtherTeamMessageCount() {
         final int[] messageCount = {0};
-        int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+        long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
         Observable.from(AccountRepository.getRepository().getAccountTeams())
                 .filter(userTeam -> userTeam.getTeamId() != selectedTeamId)
                 .map(ResAccountInfo.UserTeam::getUnread)
@@ -574,5 +575,24 @@ public class MainTabActivity extends BaseAppCompatActivity {
             return 0;
         }
     }
+
+    public void setFABMenuVisibility(boolean visibility) {
+        if (floatingActionMenu == null) {
+            return;
+        }
+        if (visibility) {
+            floatingActionMenu.setVisibility(View.VISIBLE);
+        } else {
+            floatingActionMenu.setVisibility(View.INVISIBLE);
+            if (floatingActionMenu.isOpened()) {
+                floatingActionMenu.dismissMenuItems();
+            }
+        }
+    }
+
+    public FloatingActionMenu getFloatingActionMenu() {
+        return floatingActionMenu;
+    }
+
 
 }

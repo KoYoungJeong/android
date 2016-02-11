@@ -10,10 +10,10 @@ public class FileUploadVO implements Serializable {
 
     private final String filePath;
     private final String fileName;
-    private int entity;
+    private long entity;
     private String comment;
 
-    public FileUploadVO(String filePath, String fileName, int entity, String comment) {
+    public FileUploadVO(String filePath, String fileName, long entity, String comment) {
         this.filePath = filePath;
         this.fileName = fileName;
         this.entity = entity;
@@ -28,11 +28,11 @@ public class FileUploadVO implements Serializable {
         return fileName;
     }
 
-    public int getEntity() {
+    public long getEntity() {
         return entity;
     }
 
-    public FileUploadVO setEntity(int entity) {
+    public FileUploadVO setEntity(long entity) {
         this.entity = entity;
         return this;
     }
@@ -49,7 +49,7 @@ public class FileUploadVO implements Serializable {
     public static class Builder {
         private String filePath;
         private String fileName;
-        private int entity;
+        private long entity;
         private String comment;
 
         public Builder filePath(String filePath) {
@@ -62,7 +62,7 @@ public class FileUploadVO implements Serializable {
             return this;
         }
 
-        public Builder entity(int entity) {
+        public Builder entity(long entity) {
             this.entity = entity;
             return this;
         }

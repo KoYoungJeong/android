@@ -28,7 +28,7 @@ import android.widget.TextView;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
-import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
+import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -78,7 +78,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     public static final int REQUEST_CODE = 17863;
     public static final String KEY_SINGLE_FILE_UPLOADVO = "file_uploadvo";
     @Extra
-    int selectedEntityIdToBeShared;    // Share 할 chat-room
+    long selectedEntityIdToBeShared;    // Share 할 chat-room
 
     @Extra
     boolean singleUpload = false;
@@ -193,7 +193,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         super.onPause();
     }
 
-    public void onEvent(SelectedMemberInfoForMensionEvent event) {
+    public void onEvent(SelectedMemberInfoForMentionEvent event) {
 
         SearchedItemVO searchedItemVO = new SearchedItemVO();
         searchedItemVO.setId(event.getId());
@@ -430,7 +430,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     }
 
     @Override
-    public void setShareEntity(int entityId, boolean isUser) {
+    public void setShareEntity(long entityId, boolean isUser) {
         this.selectedEntityIdToBeShared = entityId;
 
         if (!isUser) {

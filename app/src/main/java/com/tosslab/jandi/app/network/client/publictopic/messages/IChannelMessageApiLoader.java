@@ -12,22 +12,22 @@ import com.tosslab.jandi.app.network.models.ResUpdateMessages;
  */
 public interface IChannelMessageApiLoader {
 
-    IExecutor<ResMessages> loadGetPublicTopicMessagesByChannelMessageApi(int teamId, int channelId, int fromId, int count);
+    IExecutor<ResMessages> loadGetPublicTopicMessagesByChannelMessageApi(long teamId, long channelId, long fromId, int count);
 
     IExecutor<ResMessages> loadGetPublicTopicMessagesByChannelMessageApi(int teamId, int channelId);
 
     IExecutor<ResUpdateMessages> loadGetPublicTopicUpdatedMessagesByChannelMessageApi(int teamId, int channelId, int currentLinkId);
 
-    IExecutor<ResMessages> loadGetPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(int teamId, int channelId, int currentLinkId);
+    IExecutor<ResMessages> loadGetPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(long teamId, long channelId, long currentLinkId);
 
-    IExecutor<ResMessages> loadGetPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(int teamId, int channelId, int currentLinkId, int count);
+    IExecutor<ResMessages> loadGetPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(long teamId, long channelId, long currentLinkId, int count);
 
-    IExecutor<ResMessages> loadGetPublicTopicMarkerMessagesByChannelMessageApi(int teamId, int channelId, int currentLinkId);
+    IExecutor<ResMessages> loadGetPublicTopicMarkerMessagesByChannelMessageApi(long teamId, long channelId, long currentLinkId);
 
-    IExecutor<ResCommon> loadSendPublicTopicMessageByChannelMessageApi(int channelId, int teamId, ReqSendMessageV3 reqSendMessageV3);
+    IExecutor<ResCommon> loadSendPublicTopicMessageByChannelMessageApi(long channelId, long teamId, ReqSendMessageV3 reqSendMessageV3);
 
     IExecutor<ResCommon> loadModifyPublicTopicMessageByChannelMessageApi(ReqModifyMessage message, int channelId, int messageId);
 
-    IExecutor<ResCommon> loadDeletePublicTopicMessageByChannelMessageApi(int teamId, int channelId, int messageId);
+    IExecutor<ResCommon> loadDeletePublicTopicMessageByChannelMessageApi(long teamId, long channelId, long messageId);
 
 }

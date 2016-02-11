@@ -19,7 +19,7 @@ public class AccountUtil {
         return accountInfo != null ? accountInfo.getId() : null;
     }
 
-    public static int getMemberId(Context context) {
+    public static long getMemberId(Context context) {
         if (context == null) {
             return -1;
         }

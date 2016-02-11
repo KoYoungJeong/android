@@ -279,7 +279,7 @@ public class ImageUtil {
         }
     }
 
-    public static String getLocalFilePath(int messageId) {
+    public static String getLocalFilePath(long messageId) {
         String localPath = UploadedFileInfoRepository.getRepository()
                 .getUploadedFileInfo(messageId).getLocalPath();
         return new File(localPath).exists() ? localPath : "";

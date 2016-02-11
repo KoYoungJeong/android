@@ -40,7 +40,7 @@ public class ChatRepository {
 
     public boolean upsertChats(List<ResChat> chats) {
         try {
-            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
 
             Dao<ResChat, ?> chatDao = helper.getDao(ResChat.class);
             UpdateBuilder<ResChat, ?> updateBuilder = chatDao.updateBuilder();
@@ -63,7 +63,7 @@ public class ChatRepository {
 
     public List<ResChat> getChats() {
         try {
-            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             Dao<ResChat, ?> chatDao = helper.getDao(ResChat.class);
             return chatDao.queryBuilder()
                     .orderBy("order", true)
@@ -79,9 +79,9 @@ public class ChatRepository {
         return new ArrayList<>();
     }
 
-    public ResChat getChat(int userId) {
+    public ResChat getChat(long userId) {
         try {
-            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             return helper.getDao(ResChat.class)
                     .queryBuilder()
                     .where()
@@ -95,7 +95,7 @@ public class ChatRepository {
         return new ResChat();
     }
 
-    public int deleteChat(int roomId) {
+    public int deleteChat(long roomId) {
         try {
             Dao<ResChat, ?> dao = helper.getDao(ResChat.class);
             DeleteBuilder<ResChat, ?> deleteBuilder = dao.deleteBuilder();
@@ -111,9 +111,9 @@ public class ChatRepository {
         return 0;
     }
 
-    public ResChat getChatByRoom(int roomId) {
+    public ResChat getChatByRoom(long roomId) {
         try {
-            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             Dao<ResChat, ?> chatDao = helper.getDao(ResChat.class);
             return chatDao.queryBuilder()
                     .orderBy("order", true)

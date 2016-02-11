@@ -17,7 +17,7 @@ public interface TopicCreatePresenter {
 
         void dismissProgressWheel();
 
-        void createTopicSuccess(int teamId, int id, String topicTitle, boolean isPublic);
+        void createTopicSuccess(long teamId, long id, String topicTitle, boolean isPublic);
 
         void createTopicFailed(int err_entity_duplicated_name);
     }

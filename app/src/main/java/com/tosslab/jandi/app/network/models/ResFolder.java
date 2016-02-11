@@ -18,15 +18,15 @@ import java.util.Date;
 public class ResFolder {
 
     @DatabaseField(id = true)
-    public int id;
+    public long id;
     @DatabaseField
     public String name;
     @DatabaseField
     public int seq;
     @DatabaseField
-    public int memberId;
+    public long memberId;
     @DatabaseField
-    public int teamId;
+    public long teamId;
     @DatabaseField
     public Date createdAt;
     @DatabaseField
@@ -52,19 +52,16 @@ public class ResFolder {
         ResFolder resFolder = (ResFolder) o;
 
         if (id != resFolder.id) return false;
-        if (seq != resFolder.seq) return false;
         if (memberId != resFolder.memberId) return false;
-        if (teamId != resFolder.teamId) return false;
-        return name.equals(resFolder.name);
+        return teamId == resFolder.teamId;
+
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + name.hashCode();
-        result = 31 * result + seq;
-        result = 31 * result + memberId;
-        result = 31 * result + teamId;
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (int) (memberId ^ (memberId >>> 32));
+        result = 31 * result + (int) (teamId ^ (teamId >>> 32));
         return result;
     }
 }

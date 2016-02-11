@@ -4,31 +4,31 @@ package com.tosslab.jandi.app.network.models;
  * Created by tee on 15. 9. 2..
  */
 public class ResUpdateFolder {
-    private int folderId;
-    private int memberId;
-    private int teamId;
+    private long folderId;
+    private long memberId;
+    private long teamId;
 
-    public int getFolderId() {
+    public long getFolderId() {
         return folderId;
     }
 
-    public void setFolderId(int folderId) {
+    public void setFolderId(long folderId) {
         this.folderId = folderId;
     }
 
-    public int getMemberId() {
+    public long getMemberId() {
         return memberId;
     }
 
-    public void setMemberId(int memberId) {
+    public void setMemberId(long memberId) {
         this.memberId = memberId;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 

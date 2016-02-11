@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.services.upload;
 import android.content.Context;
 
 import com.google.gson.JsonObject;
-import com.koushikdutta.ion.ProgressCallback;
 import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.FileUploadProgressEvent;
 import com.tosslab.jandi.app.events.files.FileUploadStartEvent;
@@ -22,8 +21,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.functions.Action2;
-import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -39,7 +36,7 @@ public class FileUploadManager {
 
     private FileUploadManager(Context context) {
         this.context = context.getApplicationContext();
-        fileUploadDTOList = new CopyOnWriteArrayList<FileUploadDTO>();
+        fileUploadDTOList = new CopyOnWriteArrayList<>();
 
         objectPublishSubject = PublishSubject.create();
         objectPublishSubject.onBackpressureBuffer()
@@ -49,15 +46,19 @@ public class FileUploadManager {
                     EventBus.getDefault().post(new FileUploadStartEvent(fileUploadDTO.getEntity()));
                     FilePickerModel filePickerModel = FilePickerModel_.getInstance_(context);
 
-                    boolean isPublicTopic = filePickerModel.isPublicEntity(context, fileUploadDTO.getEntity());
+                    boolean isPublicTopic = filePickerModel.isPublicEntity(fileUploadDTO.getEntity());
 
                     try {
-                        JsonObject result = filePickerModel.uploadFile(FileUploadManager.this.context, fileUploadDTO.getFilePath(), isPublicTopic, fileUploadDTO.getFileName(), fileUploadDTO.getEntity(), fileUploadDTO.getComment(), fileUploadDTO.getMentions(), new ProgressCallback() {
-                            @Override
-                            public void onProgress(long downloaded, long total) {
-                                EventBus.getDefault().post(new FileUploadProgressEvent(fileUploadDTO.getEntity(), (int) (downloaded * 100 / total)));
-                            }
-                        });
+                        JsonObject result = filePickerModel.uploadFile(FileUploadManager.this.context,
+                                fileUploadDTO.getFilePath(),
+                                isPublicTopic, fileUploadDTO.getFileName(),
+                                fileUploadDTO.getEntity(),
+                                fileUploadDTO.getComment(),
+                                fileUploadDTO.getMentions(),
+                                (downloaded, total) -> {
+                                    FileUploadProgressEvent event = new FileUploadProgressEvent(fileUploadDTO.getEntity(), (int) (downloaded * 100 / total));
+                                    EventBus.getDefault().post(event);
+                                });
 
                         if (result.get("code") == null) {
                             try {
@@ -103,7 +104,7 @@ public class FileUploadManager {
         fileUploadDTOList.remove(fileUploadDTO);
     }
 
-    public void retryAsFailed(int entityId) {
+    public void retryAsFailed(long entityId) {
         FileUploadDTO temp;
         for (int idx = 0, size = fileUploadDTOList.size(); idx < size; idx++) {
             temp = fileUploadDTOList.get(idx);
@@ -119,22 +120,12 @@ public class FileUploadManager {
         item.setUploadState(FileUploadDTO.UploadState.IDLE);
     }
 
-    public List<FileUploadDTO> getUploadInfos(int entityId) {
+    public List<FileUploadDTO> getUploadInfos(long entityId) {
 
-        List<FileUploadDTO> list = new ArrayList<FileUploadDTO>();
+        List<FileUploadDTO> list = new ArrayList<>();
         Observable.from(fileUploadDTOList)
                 .filter(fileUploadDTO -> fileUploadDTO.getEntity() == entityId)
-                .collect(new Func0<List<FileUploadDTO>>() {
-                    @Override
-                    public List<FileUploadDTO> call() {
-                        return list;
-                    }
-                }, new Action2<List<FileUploadDTO>, FileUploadDTO>() {
-                    @Override
-                    public void call(List<FileUploadDTO> fileUploadDTOList, FileUploadDTO fileUploadDTO1) {
-                        fileUploadDTOList.add(fileUploadDTO1);
-                    }
-                })
+                .collect(() -> list, List::add)
                 .subscribe();
 
 

@@ -47,7 +47,7 @@ public class ReadyMessageRepository {
         return false;
     }
 
-    public int deleteReadyMessage(int roomId) {
+    public int deleteReadyMessage(long roomId) {
         try {
             Dao<ReadyMessage, ?> readyMessageDao = helper.getDao(ReadyMessage.class);
             DeleteBuilder<ReadyMessage, ?> deleteBuilder = readyMessageDao.deleteBuilder();
@@ -61,7 +61,7 @@ public class ReadyMessageRepository {
         return 0;
     }
 
-    public ReadyMessage getReadyMessage(int roomId) {
+    public ReadyMessage getReadyMessage(long roomId) {
         try {
             Dao<ReadyMessage, ?> readyMessageDao = helper.getDao(ReadyMessage.class);
             ReadyMessage readyMessage = readyMessageDao.queryBuilder()

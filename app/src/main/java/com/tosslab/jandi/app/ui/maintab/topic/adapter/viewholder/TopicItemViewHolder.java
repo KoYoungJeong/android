@@ -6,7 +6,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.utils.AbstractExpandableItemViewHolder;
+import com.tosslab.jandi.app.libraries.advancerecyclerview.utils.AbstractExpandableItemViewHolder;
 import com.tosslab.jandi.app.views.FixedLinearLayout;
 
 /**

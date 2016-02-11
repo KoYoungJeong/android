@@ -7,41 +7,41 @@ import java.util.Date;
  */
 public class ResRegistFolderItem {
 
-    private int folderId;
-    private int memberId;
-    private int roomId;
-    private int teamId;
+    private long folderId;
+    private long memberId;
+    private long roomId;
+    private long teamId;
     private Date createdAt;
 
-    public int getFolderId() {
+    public long getFolderId() {
         return folderId;
     }
 
-    public void setFolderId(int folderId) {
+    public void setFolderId(long folderId) {
         this.folderId = folderId;
     }
 
-    public int getMemberId() {
+    public long getMemberId() {
         return memberId;
     }
 
-    public void setMemberId(int memberId) {
+    public void setMemberId(long memberId) {
         this.memberId = memberId;
     }
 
-    public int getRoomId() {
+    public long getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(int roomId) {
+    public void setRoomId(long roomId) {
         this.roomId = roomId;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 

@@ -34,7 +34,6 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
     private final List<ImagePicture> photoList;
 
     private OnRecyclerItemClickListener onRecyclerItemImageClickListener;
-    private OnRecyclerItemClickListener onRecyclerItemCheckClickListener;
 
     private OnLoadMoreCallback onLoadMoreCallback;
     private int enqueueLoadingImageId;
@@ -168,11 +167,6 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
 
     public void setOnRecyclerItemImageClickListener(OnRecyclerItemClickListener onRecyclerItemImageClickListener) {
         this.onRecyclerItemImageClickListener = onRecyclerItemImageClickListener;
-    }
-
-    public ImagePictureAdapter setOnRecyclerItemCheckClickListener(OnRecyclerItemClickListener onRecyclerItemCheckClickListener) {
-        this.onRecyclerItemCheckClickListener = onRecyclerItemCheckClickListener;
-        return this;
     }
 
     public void setOnLoadMoreCallback(OnLoadMoreCallback onLoadMoreCallback) {

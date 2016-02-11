@@ -71,7 +71,7 @@ public class StarMentionListPresentor {
             if (formattedEntity != EntityManager.UNKNOWN_USER_ENTITY) {
 
                 if (!formattedEntity.isUser() && !(formattedEntity instanceof BotEntity)) {
-                    for (Integer memberId : formattedEntity.getMembers()) {
+                    for (long memberId : formattedEntity.getMembers()) {
                         if (memberId == entityManager.getMe().getId()) {
                             isJoinedTopic = true;
                         }
@@ -115,7 +115,7 @@ public class StarMentionListPresentor {
     }
 
     @Background
-    public void unregistStarredMessage(int teamId, int messageId, int position) {
+    public void unregistStarredMessage(long teamId, long messageId, int position) {
         try {
             starMentionListModel.unregistStarredMessage(teamId, messageId);
             view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
@@ -151,7 +151,7 @@ public class StarMentionListPresentor {
         return starMentionListModel.isEmpty();
     }
 
-    public void onTopicDeleteEvent(int teamId, int topicId) {
+    public void onTopicDeleteEvent(long teamId, long topicId) {
         if (teamId == starMentionListModel.getTeamId()) {
             view.deleteItemOfTopic(topicId);
         }
@@ -169,7 +169,7 @@ public class StarMentionListPresentor {
 
         void onSetReadyMoreState();
 
-        void onShowDialog(int teamId, int messageId, int position);
+        void onShowDialog(long teamId, long messageId, int position);
 
         void onRemoveItem(int position);
 
@@ -177,7 +177,7 @@ public class StarMentionListPresentor {
 
         void showCheckNetworkDialog();
 
-        void deleteItemOfTopic(int topicId);
+        void deleteItemOfTopic(long topicId);
     }
 
 }

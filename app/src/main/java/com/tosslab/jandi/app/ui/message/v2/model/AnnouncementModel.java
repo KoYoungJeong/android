@@ -37,12 +37,12 @@ public class AnnouncementModel {
         isActionFromUser = fromUser;
     }
 
-    public boolean isAnnouncementOpened(int entityId) {
+    public boolean isAnnouncementOpened(long entityId) {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         return entity.announcementOpened;
     }
 
-    public ResAnnouncement getAnnouncement(int teamId, int topicId) {
+    public ResAnnouncement getAnnouncement(long teamId, long topicId) {
         ResAnnouncement announcement = null;
         try {
 
@@ -58,7 +58,7 @@ public class AnnouncementModel {
         return announcement;
     }
 
-    public void createAnnouncement(int teamId, int topicId, int messageId) {
+    public void createAnnouncement(long teamId, long topicId, long messageId) {
         try {
             ReqCreateAnnouncement reqCreateAnnouncement = new ReqCreateAnnouncement(messageId);
             RequestApiManager.getInstance().createAnnouncement(teamId, topicId, reqCreateAnnouncement);
@@ -68,8 +68,8 @@ public class AnnouncementModel {
     }
 
     @Background
-    public void updateAnnouncementStatus(int teamId, int topicId, boolean isOpened) {
-        int memberId = EntityManager.getInstance().getMe().getUser().id;
+    public void updateAnnouncementStatus(long teamId, long topicId, boolean isOpened) {
+        long memberId = EntityManager.getInstance().getMe().getUser().id;
 
         try {
             ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus =
@@ -81,7 +81,7 @@ public class AnnouncementModel {
         }
     }
 
-    public void deleteAnnouncement(int teamId, int topicId) {
+    public void deleteAnnouncement(long teamId, long topicId) {
         try {
             ResCommon resCommon = RequestApiManager.getInstance().deleteAnnouncement(teamId, topicId);
             if (resCommon != null) {

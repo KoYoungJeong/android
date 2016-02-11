@@ -41,7 +41,7 @@ public class EntityManagerTest {
     @Ignore
     public void testHasNewChatMessage() throws Exception {
 
-        int teamId = AccountRepository.getRepository().getAccountTeams().get(0).getTeamId();
+        long teamId = AccountRepository.getRepository().getAccountTeams().get(0).getTeamId();
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);

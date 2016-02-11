@@ -170,11 +170,11 @@ public class FilePickerModel {
         return false;
     }
 
-    public boolean isPublicEntity(Context context, int entityId) {
+    public boolean isPublicEntity(long entityId) {
         return EntityManager.getInstance().getEntityById(entityId).isPublicTopic();
     }
 
-    public JsonObject uploadFile(Context context, ProgressDialog progressDialog, String realFilePath, boolean isPublicTopic, String title, int entityId, String comment) throws ExecutionException, InterruptedException {
+    public JsonObject uploadFile(Context context, ProgressDialog progressDialog, String realFilePath, boolean isPublicTopic, String title, long entityId, String comment) throws ExecutionException, InterruptedException {
 
         File uploadFile = new File(realFilePath);
         String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/file";
@@ -209,7 +209,7 @@ public class FilePickerModel {
     public JsonObject uploadFile(Context context,
                                  String realFilePath,
                                  boolean isPublicTopic,
-                                 String title, int entityId,
+                                 String title, long entityId,
                                  String comment, List<MentionObject> mentions,
                                  ProgressCallback progressCallback) throws ExecutionException, InterruptedException {
         File uploadFile = new File(realFilePath);
@@ -245,7 +245,7 @@ public class FilePickerModel {
 
     }
 
-    public void trackUploadingFile(Context context, int entityId, JsonObject result) {
+    public void trackUploadingFile(Context context, long entityId, JsonObject result) {
 
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 

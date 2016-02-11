@@ -52,7 +52,7 @@ public class ShareSelectModelTest {
     @Test
     public void testInitFormattedEntities() throws Exception {
 
-        int teamId = AccountRepository.getRepository().getAccountTeams().get(0).getTeamId();
+        long teamId = AccountRepository.getRepository().getAccountTeams().get(0).getTeamId();
 
         ResLeftSideMenu currentLeftSideMenu = LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
         shareSelectModel.initFormattedEntities(currentLeftSideMenu);

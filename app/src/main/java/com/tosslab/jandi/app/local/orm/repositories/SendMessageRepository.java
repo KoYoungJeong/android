@@ -68,7 +68,7 @@ public class SendMessageRepository {
 
     }
 
-    public List<SendMessage> getSendMessage(int roomId) {
+    public List<SendMessage> getSendMessage(long roomId) {
         try {
             Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
             return dao.queryBuilder()
@@ -141,7 +141,7 @@ public class SendMessageRepository {
 
     }
 
-    public int updateSendMessageStatus(long localId, int messageId, SendMessage.Status status) {
+    public int updateSendMessageStatus(long localId, long messageId, SendMessage.Status status) {
         try {
             Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
             UpdateBuilder<SendMessage, ?> updateBuilder = dao.updateBuilder();
@@ -156,14 +156,14 @@ public class SendMessageRepository {
         return 0;
     }
 
-    public void deleteCompletedMessages(List<Integer> messageIds) {
+    public void deleteCompletedMessages(List<Long> messageIds) {
         try {
             Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
 
 
             dao.callBatchTasks(() -> {
 
-                for (Integer messageId : messageIds) {
+                for (long messageId : messageIds) {
                     DeleteBuilder<SendMessage, ?> deleteBuilder = dao.deleteBuilder();
                     deleteBuilder.where().eq("messageId", messageId);
                     deleteBuilder.delete();
@@ -183,6 +183,24 @@ public class SendMessageRepository {
             Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
             DeleteBuilder<SendMessage, ?> deleteBuilder = dao.deleteBuilder();
             deleteBuilder.where().eq("status", SendMessage.Status.COMPLETE.name());
+            return deleteBuilder.delete();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+
+    }
+
+    public int deleteCompletedMessageOfRoom(long roomId) {
+        try {
+            Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
+            DeleteBuilder<SendMessage, ?> deleteBuilder = dao.deleteBuilder();
+            deleteBuilder.where()
+                    .eq("status", SendMessage.Status.COMPLETE.name())
+                    .and()
+                    .eq("roomId", roomId);
             return deleteBuilder.delete();
 
         } catch (SQLException e) {
