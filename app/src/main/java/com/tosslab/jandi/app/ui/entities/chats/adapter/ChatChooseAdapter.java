@@ -87,11 +87,11 @@ public class ChatChooseAdapter extends BaseAdapter {
     }
 
     private View setChatChooseView(int position, View convertView, ViewGroup parent) {
-        ChatCHooseViewHolder chatChooseViewHolder;
+        ChatChooseViewHolder chatChooseViewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context)
                     .inflate(R.layout.item_entity_body_two_line, parent, false);
-            chatChooseViewHolder = new ChatCHooseViewHolder();
+            chatChooseViewHolder = new ChatChooseViewHolder();
             chatChooseViewHolder.tvName =
                     (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
             chatChooseViewHolder.ivIcon =
@@ -111,7 +111,7 @@ public class ChatChooseAdapter extends BaseAdapter {
             convertView.setTag(R.id.chatchoose_item, chatChooseViewHolder);
 
         } else {
-            chatChooseViewHolder = (ChatCHooseViewHolder) convertView.getTag(R.id.chatchoose_item);
+            chatChooseViewHolder = (ChatChooseViewHolder) convertView.getTag(R.id.chatchoose_item);
         }
 
         ChatChooseItem item = getItem(position);
@@ -202,7 +202,7 @@ public class ChatChooseAdapter extends BaseAdapter {
         chatChooseItems.remove(chatChooseItem);
     }
 
-    static class ChatCHooseViewHolder {
+    static class ChatChooseViewHolder {
         public Context context;
         public SimpleDraweeView ivIcon;
         public ImageView ivFavorite;
