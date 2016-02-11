@@ -24,7 +24,7 @@
 
     <string-array name="jandi_pref_orientation">
         <item>@string/jandi_screen_auto</item>
-        <item>@string/jandi_screen_vertical</item>
+        <item>@string/jandi_screen_vertical</item>mu
     </string-array>
 
     <string-array name="jandi_pref_orientation_values">

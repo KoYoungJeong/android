@@ -34,6 +34,6 @@ public interface MainMorePresenter {
 
         void setLatestVersion(int latestVersionCode);
 
-        void showBugReportDialog(SpannableStringBuilder userInfoSpans);
+        void showBugReportDialog(SpannableStringBuilder userInfoSpans, String userName);
     }
 }

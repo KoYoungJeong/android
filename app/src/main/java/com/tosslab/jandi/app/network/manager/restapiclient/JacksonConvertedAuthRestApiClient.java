@@ -64,6 +64,9 @@ import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ReqMember;
 import com.tosslab.jandi.app.network.models.ReqModifyComment;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicAutoJoin;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicDescription;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicName;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqNull;
@@ -205,9 +208,21 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon modifyPublicTopicNameByChannelApi(ReqCreateTopic channel, long channelId) throws RetrofitError {
+    public ResCommon modifyPublicTopicNameByChannelApi(ReqModifyTopicName channel, long channelId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(ChannelApiV2Client.class).create()
                 .modifyPublicTopicName(channel.teamId, channel, channelId);
+    }
+
+    @Override
+    public ResCommon modifyPublicTopicDescriptionByChannelApi(ReqModifyTopicDescription description, long channelId) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(ChannelApiV2Client.class).create()
+                .modifyPublicTopicDescription(description.teamId, description, channelId);
+    }
+
+    @Override
+    public ResCommon modifyPublicTopicAutoJoinByChannelApi(ReqModifyTopicAutoJoin topicAutoJoin, long channelId) {
+        return RestAdapterBuilder.newInstance(ChannelApiV2Client.class).create()
+                .modifyPublicTopicAutoJoin(topicAutoJoin.teamId, topicAutoJoin, channelId);
     }
 
     @Override
@@ -355,8 +370,8 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon modifyGroupByGroupApi(ReqCreateTopic channel, long groupId) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(GroupApiV2Client.class).create().modifyGroup
+    public ResCommon modifyGroupNameByGroupApi(ReqModifyTopicName channel, long groupId) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(GroupApiV2Client.class).create().modifyGroupName
                 (channel.teamId, channel, groupId);
     }
 
@@ -373,6 +388,11 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     @Override
     public ResCommon inviteGroupByGroupApi(long groupId, ReqInviteTopicUsers inviteUsers) throws RetrofitError {
         return RestAdapterBuilder.newInstance(GroupApiV2Client.class).create().inviteGroup(groupId, inviteUsers);
+    }
+
+    @Override
+    public ResCommon modifyGroupDescriptionByGroupApi(ReqModifyTopicDescription description, long entityId) {
+        return RestAdapterBuilder.newInstance(GroupApiV2Client.class).create().modifyGroupDescription(description.teamId, description, entityId);
     }
 
     @Override

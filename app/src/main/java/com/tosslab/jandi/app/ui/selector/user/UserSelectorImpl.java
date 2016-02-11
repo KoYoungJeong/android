@@ -146,7 +146,11 @@ public class UserSelectorImpl implements UserSelector {
             SimpleDraweeView ivIcon = holder.ivIcon;
             if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
                 holder.tvName.setText(R.string.jandi_file_category_everyone);
-                ivIcon.setImageURI(UriFactory.getResourceUri(R.drawable.icon_search_all_members));
+                ImageLoader.newBuilder()
+                        .placeHolder(R.drawable.icon_search_all_members, ScalingUtils.ScaleType.CENTER_INSIDE)
+                        .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                        .load(UriFactory.getResourceUri(R.drawable.icon_search_all_members))
+                        .into(ivIcon);
             } else {
                 boolean user = !EntityManager.getInstance().isBot(item.getId());
 

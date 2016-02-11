@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -191,6 +192,7 @@ public class AccountHomePresenterImplTest {
         RequestApiManager.getInstance().changeNameByAccountProfileApi(new ReqProfileName(originName));
     }
 
+    @Ignore
     @Test
     public void testOnTeamCreateAcceptResult() throws Exception {
 

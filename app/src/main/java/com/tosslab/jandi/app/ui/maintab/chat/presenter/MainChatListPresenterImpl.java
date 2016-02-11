@@ -76,7 +76,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
     @Background
     @Override
-    public void onInitChatList(Context context, long selectedEntity) {
+    public void initChatList(Context context, long selectedEntity) {
         long memberId = mainChatListModel.getMemberId();
         long teamId = mainChatListModel.getTeamId();
 

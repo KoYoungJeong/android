@@ -1179,5 +1179,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void finish() {
         super.finish();
+        overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
     }
 }

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
@@ -93,10 +94,11 @@ public class EntityMenuDialogFragment extends DialogFragment {
             btnNotification.setText(notificationText);
 
             btnNotification.setOnClickListener(v -> {
-                if (entityMenuDialogModel.isGlobalPushOff()) {
+                if (!entityMenuDialogModel.isGlobalPushOff() && !isTopicPushOn) {
                     showGlobalPushSetupDialog();
+                } else {
+                    entityMenuDialogModel.updateNotificationOnOff(entityId, !isTopicPushOn);
                 }
-                entityMenuDialogModel.updateNotificationOnOff(entityId, !isTopicPushOn);
                 dismiss();
             });
         }
@@ -125,13 +127,14 @@ public class EntityMenuDialogFragment extends DialogFragment {
     }
 
     private void movePushSettingActivity() {
-        Intent mainSettingIntent = SettingsActivity_
-                .intent(EntityMenuDialogFragment.this)
-                .get();
-        Intent pushSettingIntent = SettingPushActivity_
-                .intent(EntityMenuDialogFragment.this)
-                .get();
-        getActivity().startActivities(new Intent[]{mainSettingIntent, pushSettingIntent});
+        SettingsActivity_
+                .intent(JandiApplication.getContext())
+                .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .start();
+        SettingPushActivity_
+                .intent(JandiApplication.getContext())
+                .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .start();
     }
 
     public void setStarredButtonText(boolean isStarred) {

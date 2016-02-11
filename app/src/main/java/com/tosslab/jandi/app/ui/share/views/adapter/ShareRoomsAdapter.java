@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -14,6 +15,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.share.views.domain.ExpandRoomData;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
@@ -101,7 +103,11 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         SimpleDraweeView ivIcon = roomholder.ivIcon;
         if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-            ivIcon.setImageURI(UriFactory.getResourceUri(R.drawable.icon_search_all));
+            ImageLoader.newBuilder()
+                    .placeHolder(R.drawable.icon_search_all, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .load(UriFactory.getResourceUri(R.drawable.icon_search_all))
+                    .into(ivIcon);
             roomholder.tvName.setText(R.string.jandi_file_category_everywhere);
         } else if (item.isUser()) {
             String fileUrl = ImageUtil.getImageFileUrl(item.getProfileUrl());
@@ -112,14 +118,22 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             if (!item.isStarred()) {
                 resId = R.drawable.topiclist_icon_topic;
             }
-            ivIcon.setImageURI(UriFactory.getResourceUri(resId));
+            ImageLoader.newBuilder()
+                    .placeHolder(resId, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .load(UriFactory.getResourceUri(resId))
+                    .into(ivIcon);
             roomholder.tvName.setText(item.getName());
         } else {
             int resId = R.drawable.topiclist_icon_topic_private_fav;
             if (!item.isStarred()) {
                 resId = R.drawable.topiclist_icon_topic_private;
             }
-            ivIcon.setImageURI(UriFactory.getResourceUri(resId));
+            ImageLoader.newBuilder()
+                    .placeHolder(resId, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .load(UriFactory.getResourceUri(resId))
+                    .into(ivIcon);
             roomholder.tvName.setText(item.getName());
         }
 

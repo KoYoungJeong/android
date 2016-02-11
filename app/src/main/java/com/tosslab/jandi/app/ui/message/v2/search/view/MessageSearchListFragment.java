@@ -765,6 +765,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissOldLoadingProgress() {
 
@@ -791,7 +792,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @Override
     public void setDisabledUser() {
-        sendLayoutVisibleGone();
+        sendLayoutInvisible();
         vDisabledUser.setVisibility(View.VISIBLE);
     }
 
@@ -975,9 +976,9 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     }
 
-    public void sendLayoutVisibleGone() {
+    public void sendLayoutInvisible() {
         if (vgMessageInput != null) {
-            vgMessageInput.setVisibility(View.GONE);
+            vgMessageInput.setVisibility(View.INVISIBLE);
         }
     }
 

@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
+import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -43,6 +44,9 @@ public class MainTopicListPresenter {
 
     @Bean(MainTopicModel.class)
     MainTopicModel mainTopicModel;
+
+    @Bean
+    TopicFolderSettingModel topicFolderChooseModel;
 
     View view;
 
@@ -218,6 +222,17 @@ public class MainTopicListPresenter {
         return repository.getFolderExpands();
     }
 
+    @Background
+    public void createNewFolder(String title) {
+        try {
+            topicFolderChooseModel.createFolder(title);
+            view.notifyDatasetChanged();
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            view.showAlreadyHasFolderToast();
+        }
+    }
+
     public interface View {
         void showList(TopicFolderListDataProvider topicFolderListDataProvider);
 
@@ -242,6 +257,8 @@ public class MainTopicListPresenter {
         void scrollAndAnimateForSelectedItem();
 
         void setFolderExpansion();
+
+        void showAlreadyHasFolderToast();
     }
 
 }

@@ -192,4 +192,22 @@ public class SendMessageRepository {
         return 0;
 
     }
+
+    public int deleteCompletedMessageOfRoom(long roomId) {
+        try {
+            Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
+            DeleteBuilder<SendMessage, ?> deleteBuilder = dao.deleteBuilder();
+            deleteBuilder.where()
+                    .eq("status", SendMessage.Status.COMPLETE.name())
+                    .and()
+                    .eq("roomId", roomId);
+            return deleteBuilder.delete();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+
+    }
 }

@@ -1,13 +1,11 @@
 package com.tosslab.jandi.app.ui.team.info.model;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
-import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.validation.ResValidation;
@@ -18,24 +16,15 @@ import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.SupposeBackground;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import retrofit.RetrofitError;
 import rx.Observable;
 
-/**
- * Created by Steve SeongUg Jung on 14. 12. 18..
- */
 @EBean
 public class TeamDomainInfoModel {
-
-    @RootContext
-    Context context;
 
     public ResTeamDetailInfo createNewTeam(String name, String teamDomain) throws RetrofitError {
 
@@ -51,51 +40,22 @@ public class TeamDomainInfoModel {
     public List<ResAccountInfo.UserEmail> initUserEmailInfo() {
 
         List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
+        List<ResAccountInfo.UserEmail> filteredUserEmails = new ArrayList<>();
 
-        Iterator<ResAccountInfo.UserEmail> confirmed = Observable.from(userEmails)
+        Observable.from(userEmails)
                 .filter(userEmail -> TextUtils.equals(userEmail.getStatus(), "confirmed"))
-                .toBlocking()
-                .getIterator();
-
-        List<ResAccountInfo.UserEmail> filteredUserEmails = new ArrayList<ResAccountInfo.UserEmail>();
-
-        while (confirmed.hasNext()) {
-            filteredUserEmails.add(confirmed.next());
-        }
+                .collect(() -> filteredUserEmails, List::add)
+                .subscribe();
 
         return filteredUserEmails;
     }
 
-    @SupposeBackground
-    public ResTeamDetailInfo acceptOrDclineInvite(String invitationId, String type) throws RetrofitError {
-
-        ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
-
-        if (accountInfo == null) {
-            return null;
-        }
-
-        ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore = new ReqInvitationAcceptOrIgnore(type);
-        ResTeamDetailInfo resTeamDetailInfos = RequestApiManager.getInstance().
-                acceptOrDeclineInvitationByInvitationApi(invitationId, reqInvitationAcceptOrIgnore);
-        return resTeamDetailInfos;
-
-    }
-
-    public ResTeamDetailInfo.InviteTeam getTeamInfo(long teamId) throws RetrofitError {
-        ResTeamDetailInfo.InviteTeam resTeamDetailInfo = RequestApiManager.getInstance().getTeamInfoByTeamApi(teamId);
-        return resTeamDetailInfo;
-    }
 
     public void updateTeamInfo(long teamId) {
 
         ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
-    }
-
-    public String getUserName() {
-        return AccountRepository.getRepository().getAccountInfo().getName();
     }
 
     public void trackCreateTeamSuccess(long teamId) {

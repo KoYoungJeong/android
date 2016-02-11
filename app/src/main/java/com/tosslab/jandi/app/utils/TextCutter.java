@@ -9,7 +9,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.spannable.MentionMessageSpannable;
 
 import java.util.regex.Matcher;
@@ -120,10 +119,11 @@ public class TextCutter {
 
                 textView.removeTextChangedListener(this);
 
+                int selectionStart = textView.getSelectionStart();
                 CharSequence text = cutText(s);
                 textView.setText(text);
 
-                setCursorIfNeed();
+                setCursorIfNeed(selectionStart, maxLength);
                 dismissDropDownIfNeed();
 
                 textView.addTextChangedListener(this);
@@ -133,12 +133,10 @@ public class TextCutter {
         @VisibleForTesting
         CharSequence cutText(CharSequence text) {
             if (TextUtils.isEmpty(text)) {
-                LogUtil.i(TAG, "text is empty");
                 return "";
             }
 
             if (text.length() <= maxLength) {
-                LogUtil.i(TAG, stringForLog(text));
                 return text;
             }
 
@@ -161,28 +159,27 @@ public class TextCutter {
                 start = matcher.start();
                 end = matcher.end();
             }
-            LogUtil.i(TAG, String.format("targetText start - %d, end - %s", start, end));
 
-            if (end > 0) {
-                String targetText = stringForLog(result.subSequence(start, end));
-                LogUtil.e(TAG, targetText);
-
+            if (end >= maxLength) {
                 result = result.subSequence(0, start);
+            } else {
+                result = result.subSequence(0, maxLength);
             }
 
-            LogUtil.i(TAG, String.format("originLength(%d), resultLength(%d)", text.length(), result.length()));
-            LogUtil.i(TAG, String.format("%s\n%s", stringForLog(text), stringForLog(result)));
             return result;
         }
 
-        private String stringForLog(CharSequence text) {
-            return text.toString().replace(" ", "&npsp;").replace("\\u2063", "|");
-        }
-
-        private void setCursorIfNeed() {
+        private void setCursorIfNeed(int selectionStart, int maxLength) {
             if (textView instanceof EditText) {
+
                 EditText editText = (EditText) this.textView;
-                editText.setSelection(editText.getText().length());
+                if (selectionStart >= maxLength) {
+
+                    editText.setSelection(editText.getText().length());
+                } else {
+                    editText.setSelection(selectionStart);
+                }
+
             }
         }
 

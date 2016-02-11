@@ -186,8 +186,8 @@ public class JandiSocketServiceModel {
             postEvent(
                     new FileCommentRefreshEvent(socketFileEvent.getEvent(),
                             socketFileEvent.getFile().getId(),
-                            socketFileEvent.getComment().getId()
-                    ));
+                            socketFileEvent.getComment().getId(),
+                            TextUtils.equals(socketFileEvent.getEvent(), "file_comment_created")));
             JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
@@ -200,7 +200,8 @@ public class JandiSocketServiceModel {
                     getObject(object.toString(), SocketFileCommentDeleteEvent.class);
             FileCommentRefreshEvent event = new FileCommentRefreshEvent(socketCommentEvent.getEvent(),
                     socketCommentEvent.getFile().getId(),
-                    socketCommentEvent.getComment().getId());
+                    socketCommentEvent.getComment().getId(),
+                    TextUtils.equals(socketCommentEvent.getEvent(), "file_comment_created"));
 
             List<SocketFileCommentDeleteEvent.Room> rooms = socketCommentEvent.getRooms();
             if (rooms != null && !rooms.isEmpty()) {

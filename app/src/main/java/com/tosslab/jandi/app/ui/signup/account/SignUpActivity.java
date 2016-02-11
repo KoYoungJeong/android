@@ -7,6 +7,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 
+import com.google.ads.conversiontracking.AdWordsConversionReporter;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -188,6 +190,9 @@ public class SignUpActivity extends BaseAppCompatActivity {
     void clickSignUp() {
 
         LogUtil.d("Click : clickSignUp");
+
+        AdWordsConversionReporter.reportWithConversionId(JandiApplication.getContext(),
+                "957512006", "fVnsCMKD_GEQxvLJyAM", "0.00", true);
 
         signUp();
 

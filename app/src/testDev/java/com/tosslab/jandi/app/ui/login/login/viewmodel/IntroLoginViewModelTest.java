@@ -135,10 +135,10 @@ public class IntroLoginViewModelTest {
     @Test
     public void testHideKeypad() throws Exception {
 
-        // when : hide keypad
+        // when : close keypad
         introLoginViewModel.hideKeypad();
 
-////        // then : check to hide keypad
+////        // then : check to close keypad
 ////        ShadowInputMethodManager shadowInputMethodManager = Shadows.shadowOf(introLoginViewModel.imm);
 //        assertThat(shadowInputMethodManager.isSoftInputVisible(), is(false));
 

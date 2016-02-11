@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.events.files;
 
-import android.support.annotation.Nullable;
-
 import com.tosslab.jandi.app.network.models.ResMessages;
 
 /**

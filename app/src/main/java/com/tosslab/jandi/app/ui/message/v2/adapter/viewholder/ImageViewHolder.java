@@ -231,7 +231,12 @@ public class ImageViewHolder implements BodyViewHolder {
             String serverUrl = fileContent.serverUrl;
             String icon = fileContent.icon;
             int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, icon);
-            ivFileImage.setImageURI(UriFactory.getResourceUri(mimeTypeIconImage));
+            ImageLoader.newBuilder()
+                    .placeHolder(mimeTypeIconImage, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .load(UriFactory.getResourceUri(mimeTypeIconImage))
+                    .into(ivFileImage);
+
             tvFileType.setText(fileContent.ext);
         } else {
             String fileSize = FileUtil.fileSizeCalculation(fileContent.size);

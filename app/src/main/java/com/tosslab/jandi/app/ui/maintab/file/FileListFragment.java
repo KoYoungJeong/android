@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.CreateFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
+import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
@@ -312,7 +313,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
             if (justGetFilesSize < ReqSearchFile.MAX) {
 
-                fileListPresenter.showWarningToast(getString(R.string.warn_no_more_files));
+                fileListPresenter.showWarningToast(JandiApplication.getContext().getString(R.string.warn_no_more_files));
                 searchedFileItemListAdapter.setNoMoreLoad();
             } else {
                 searchedFileItemListAdapter.setReadyMore();
@@ -321,10 +322,10 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         } catch (RetrofitError e) {
             e.printStackTrace();
             LogUtil.e("fail to get searched files.", e);
-            fileListPresenter.showErrorToast(getString(R.string.err_file_search));
+            fileListPresenter.showErrorToast(JandiApplication.getContext().getString(R.string.err_file_search));
         } catch (Exception e) {
             e.printStackTrace();
-            fileListPresenter.showErrorToast(getString(R.string.err_file_search));
+            fileListPresenter.showErrorToast(JandiApplication.getContext().getString(R.string.err_file_search));
         } finally {
             fileListPresenter.dismissMoreProgressBar();
         }
@@ -783,6 +784,34 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             }
         }
 
+    }
+
+    public void onEvent(FileCommentRefreshEvent event) {
+        if (searchedFileItemListAdapter == null) {
+            return;
+        }
+        int fileId = event.getFileId();
+        int position = searchedFileItemListAdapter.findPositionByFileId(fileId);
+        if (position < 0) {
+            return;
+        }
+
+        boolean added = event.isAdded();
+
+        ResMessages.FileMessage item = searchedFileItemListAdapter.getItem(position);
+        if (added) {
+            item.commentCount++;
+        } else {
+            item.commentCount--;
+        }
+
+        justRefresh();
+
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void justRefresh() {
+        searchedFileItemListAdapter.notifyDataSetChanged();
     }
 
     private void setHeaderTextViewColor(ViewGroup parentView, int color) {

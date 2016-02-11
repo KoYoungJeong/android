@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/white"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/jandi_more_bottom_bg"
             android:clipToPadding="false"
             android:orientation="vertical">
 
@@ -126,29 +126,26 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"/>
+                android:layout_height="1dp"
+                android:background="#fff1f4f8" />
 
-            <RelativeLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
-                android:background="@color/jandi_background_default">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="17dp"
-                    android:paddingBottom="10dp"
-                    android:text="JANDI Setting"
-                    android:textColor="@color/jandi_text_medium"
-                    android:textSize="14sp" />
-            </RelativeLayout>
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:gravity="bottom"
+                android:paddingBottom="10dp"
+                android:paddingLeft="17dp"
+                android:text="JANDI Setting"
+                android:textColor="@color/jandi_text_medium"
+                android:textSize="@dimen/jandi_text_size_medium" />
 
             <RelativeLayout
                 android:id="@+id/rl_more_help"
                 android:layout_width="match_parent"
-                android:layout_height="43dp">
+                android:layout_height="43dp"
+                android:background="@color/white">
 
                 <ImageView
                     android:id="@+id/iv_icon_help"
@@ -187,7 +184,8 @@
             <RelativeLayout
                 android:id="@+id/rl_more_setting"
                 android:layout_width="match_parent"
-                android:layout_height="43dp">
+                android:layout_height="43dp"
+                android:background="@color/white">
 
                 <ImageView
                     android:id="@+id/iv_icon_setting"
@@ -225,7 +223,8 @@
 
             <RelativeLayout
                 android:id="@+id/vg_more_version"
-                style="@style/JandiMore.Setting">
+                style="@style/JandiMore.Setting"
+                android:background="@color/white">
 
                 <ImageView
                     android:id="@+id/iv_icon_version"
@@ -263,51 +262,6 @@
 
             </RelativeLayout>
 
-            <FrameLayout
-                android:id="@+id/vg_more_bottom_wrapper"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/jandi_more_bottom_bg"
-                android:paddingBottom="30dp"
-                android:paddingTop="30dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_more_additional_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:lineSpacingExtra="1dp"
-                        android:textColor="@color/jandi_text_light"
-                        android:textSize="10dp" />
-
-                    <FrameLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="7dp">
-
-                        <ImageView
-                            android:id="@+id/iv_more_additional_image"
-                            android:layout_width="23dp"
-                            android:layout_height="33dp"
-                            android:scaleType="fitCenter" />
-
-                        <ImageView
-                            android:id="@+id/iv_more_additional_image_cover"
-                            android:layout_width="23dp"
-                            android:layout_height="33dp"
-                            android:scaleType="fitCenter" />
-                    </FrameLayout>
-
-                </LinearLayout>
-
-            </FrameLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

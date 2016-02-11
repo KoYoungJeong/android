@@ -1,17 +1,13 @@
 package com.tosslab.jandi.app.ui.maintab.topic.domain;
 
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.provider.AbstractExpandableDataProvider;
-
 /**
  * Created by tee on 15. 8. 27..
  */
-public class TopicItemData extends AbstractExpandableDataProvider.ChildData {
+public class TopicItemData {
 
-    private final int swipeReaction;
     private long id;
 
     private long creatorId;
-    private boolean pinnedToSwipeLeft;
     private String name;
     private boolean isStarred;
     private boolean isJoined;
@@ -25,15 +21,12 @@ public class TopicItemData extends AbstractExpandableDataProvider.ChildData {
     private boolean isPushOn;
 
     public TopicItemData() {
-        swipeReaction = 0;
     }
 
-    public TopicItemData(long id, int swipeReaction, long creatorId, String name, boolean isStarred,
+    public TopicItemData(long id, long creatorId, String name, boolean isStarred,
                          boolean isJoined, long entityId, int unreadCount, long markerLinkId, boolean isPushOn,
                          boolean selected, String description, boolean isPublic, int memberCount) {
-        this.swipeReaction = swipeReaction;
         this.id = id;
-
         this.creatorId = creatorId;
         this.name = name;
         this.isStarred = isStarred;
@@ -48,13 +41,13 @@ public class TopicItemData extends AbstractExpandableDataProvider.ChildData {
         this.memberCount = memberCount;
     }
 
-    public static TopicItemData newInstance(long id, int swipeReaction, long creatorId, String name,
+    public static TopicItemData newInstance(long id, long creatorId, String name,
                                             boolean isStarred, boolean isJoined, long entityId,
                                             int unreadCount, long markerLinkId, boolean isPushOn,
                                             boolean selected, String description, boolean isPublic,
                                             int memberCount) {
 
-        return new TopicItemData(id, swipeReaction, creatorId, name, isStarred, isJoined, entityId,
+        return new TopicItemData(id, creatorId, name, isStarred, isJoined, entityId,
                 unreadCount, markerLinkId, isPushOn, selected, description, isPublic, memberCount);
 
     }
@@ -64,28 +57,12 @@ public class TopicItemData extends AbstractExpandableDataProvider.ChildData {
         return new TopicItemData();
     }
 
-    @Override
-    public boolean isPinnedToSwipeLeft() {
-        return pinnedToSwipeLeft;
-    }
-
-    @Override
-    public void setPinnedToSwipeLeft(boolean pinnedToSwipeLeft) {
-        this.pinnedToSwipeLeft = pinnedToSwipeLeft;
-    }
-
-    @Override
     public long getChildId() {
         return id;
     }
 
     public void setChildId(long id) {
         this.id = id;
-    }
-
-    @Override
-    public int getSwipeReactionType() {
-        return swipeReaction;
     }
 
     public long getCreatorId() {

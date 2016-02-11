@@ -24,6 +24,7 @@ import setup.BaseInitUtil;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertTrue;
@@ -106,7 +107,7 @@ public class MembersModelTest {
         List<ChatChooseItem> result = membersModel.getTeamMembers();
 
         // Then
-        assertThat(memberCnt, is(equalTo(result.size())));
+        assertThat(result.size(), is(greaterThanOrEqualTo(memberCnt)));
     }
 
     @Test
@@ -142,7 +143,7 @@ public class MembersModelTest {
         Collection<Long> membersBefore = EntityManager.getInstance().getEntityById(topicId).getMembers();
 
         //When
-        membersModel.kickUser(teamId, topicId, BaseInitUtil.getUserIdByEmail("androidtester2@gustr.com"));
+        membersModel.kickUser(teamId, topicId, BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL));
 
         BaseInitUtil.refreshLeftSideMenu();
         Collection<Long> membersAfter = EntityManager.getInstance().getEntityById(topicId).getMembers();

@@ -79,7 +79,7 @@ public class LinkedEllipsizeTextView extends TextView {
         CharSequence text = getText();
 
         final int lineCount = layout.getLineCount();
-        LogUtil.d("tony", "result = " + lineCount);
+        LogUtil.d(TAG, "lineCount = " + lineCount);
 
         if (lineCount <= 3) {
             return;
@@ -89,12 +89,12 @@ public class LinkedEllipsizeTextView extends TextView {
         float textSize = layout.getPaint().getTextSize();
 
         int maxTextCountFromLine = (int) Math.floor(lineMax / textSize);
-        LogUtil.d("tony", "" + maxTextCountFromLine);
+        LogUtil.d(TAG, "maxTextCountFromLine = " + maxTextCountFromLine);
 
         int lineStart = layout.getLineStart(2);
         int lineEnd = layout.getLineEnd(2);
 
-        LogUtil.e("tony", String.format("%f, %d, %d", lineMax, lineStart, lineEnd));
+        LogUtil.e(TAG, String.format("lineMax = %f, lineStart = %d, lineEnd = %d", lineMax, lineStart, lineEnd));
 
         if ((lineEnd - lineStart) + moreSpannable.length() < maxTextCountFromLine) {
             SpannableStringBuilder sb = new SpannableStringBuilder(text);

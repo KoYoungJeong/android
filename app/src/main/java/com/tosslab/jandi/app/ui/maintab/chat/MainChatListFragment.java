@@ -84,7 +84,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
 
         FAButtonUtil.setFAButtonController(chatListView, btnFAB);
 
-        mainChatListPresenter.onInitChatList(getActivity(), selectedEntity);
+        mainChatListPresenter.initChatList(getActivity(), selectedEntity);
 
     }
 
@@ -266,7 +266,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
                 .show(getFragmentManager(), "dialog");
     }
 
-    @Click({R.id.btn_main_chat_fab, R.id.vg_member_empty})
+    @Click({R.id.btn_main_chat_fab, R.id.btn_chat_list_no_messages})
     void onAddClick(View view) {
         EntityChooseActivity_.intent(getActivity())
                 .type(EntityChooseActivity.Type.MESSAGES.name())

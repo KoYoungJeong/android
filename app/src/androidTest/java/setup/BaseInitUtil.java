@@ -55,15 +55,19 @@ public class BaseInitUtil {
     public static long tempTopicId = -1;
     public static int topicState = STATE_TEMP_TOPIC_NOT_CREATED;
 
-    public static String TEST_EMAIL = "androidtester1@gustr.com";
+    public static String TEST1_EMAIL = "ekuvekez-9240@yopmail.com";
+    public static String TEST2_EMAIL = "xutycaji-3985@yopmail.com";
+    public static String TEST3_EMAIL = "issytovix-5024@yopmail.com";
+
+    public static String TEST_EMAIL = TEST1_EMAIL;
     public static String TEST_PASSWORD = "1234asdf";
 
-    public static String TEST1_EMAIL = "androidtester1@gustr.com";
-    public static String TEST2_EMAIL = "androidtester2@gustr.com";
-    public static String TEST3_EMAIL = "androidtester3@gustr.com";
     private static Context ORIGIN_CONTEXT;
 
     public static void initData() {
+        if (ORIGIN_CONTEXT != null) {
+            restoreContext();
+        }
         turnOnWifi();
         userSignin();
     }
@@ -107,7 +111,7 @@ public class BaseInitUtil {
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         long result = accountInfo.getMemberships().iterator().next().getMemberId();
         accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
-                ReqAccessToken.createPasswordReqToken("androidtester1@gustr.com", TEST_PASSWORD));
+                ReqAccessToken.createPasswordReqToken(TEST1_EMAIL, TEST_PASSWORD));
         TokenUtil.saveTokenInfoByPassword(accessToken);
         return result;
     }
@@ -119,7 +123,7 @@ public class BaseInitUtil {
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         String result = accountInfo.getMemberships().iterator().next().getName();
         accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
-                ReqAccessToken.createPasswordReqToken("androidtester1@gustr.com", TEST_PASSWORD));
+                ReqAccessToken.createPasswordReqToken(TEST1_EMAIL, TEST_PASSWORD));
         TokenUtil.saveTokenInfoByPassword(accessToken);
         return result;
     }
@@ -128,7 +132,7 @@ public class BaseInitUtil {
 
         clear();
         if (TextUtils.isEmpty(testId)) {
-            testId = "androidtester1@gustr.com";
+            testId = TEST1_EMAIL;
         }
 
         String testPasswd = TEST_PASSWORD;

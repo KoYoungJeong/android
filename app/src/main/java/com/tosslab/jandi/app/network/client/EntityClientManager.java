@@ -9,6 +9,9 @@ import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicAutoJoin;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicDescription;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicName;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
@@ -89,17 +92,17 @@ public class EntityClientManager {
     }
 
     public ResCommon modifyChannelName(final long id, String name) throws RetrofitError {
-        final ReqCreateTopic entityInfo = new ReqCreateTopic();
+        ReqModifyTopicName entityInfo = new ReqModifyTopicName();
         entityInfo.teamId = selectedTeamId;
         entityInfo.name = name;
         return RequestApiManager.getInstance().modifyPublicTopicNameByChannelApi(entityInfo, id);
     }
 
     public ResCommon modifyPrivateGroupName(final long id, String name) throws RetrofitError {
-        final ReqCreateTopic entityInfo = new ReqCreateTopic();
+        ReqModifyTopicName entityInfo = new ReqModifyTopicName();
         entityInfo.teamId = selectedTeamId;
         entityInfo.name = name;
-        return RequestApiManager.getInstance().modifyGroupByGroupApi(entityInfo, id);
+        return RequestApiManager.getInstance().modifyGroupNameByGroupApi(entityInfo, id);
     }
 
     public ResCommon deleteChannel(final long id) throws RetrofitError {
@@ -222,24 +225,24 @@ public class EntityClientManager {
     }
 
     public ResCommon modifyChannelDescription(long entityId, String description) throws RetrofitError {
-        final ReqCreateTopic entityInfo = new ReqCreateTopic();
+        ReqModifyTopicDescription entityInfo = new ReqModifyTopicDescription();
         entityInfo.teamId = selectedTeamId;
         entityInfo.description = description;
-        return RequestApiManager.getInstance().modifyPublicTopicNameByChannelApi(entityInfo, entityId);
+        return RequestApiManager.getInstance().modifyPublicTopicDescriptionByChannelApi(entityInfo, entityId);
     }
 
     public ResCommon modifyPrivateGroupDescription(long entityId, String description) throws RetrofitError {
-        final ReqCreateTopic entityInfo = new ReqCreateTopic();
+        ReqModifyTopicDescription entityInfo = new ReqModifyTopicDescription();
         entityInfo.teamId = selectedTeamId;
         entityInfo.description = description;
-        return RequestApiManager.getInstance().modifyGroupByGroupApi(entityInfo, entityId);
+        return RequestApiManager.getInstance().modifyGroupDescriptionByGroupApi(entityInfo, entityId);
     }
 
-    public ResCommon modifyChannelAutoJoin(long teamId, long entityId, boolean autoJoin) {
-        final ReqCreateTopic entityInfo = new ReqCreateTopic();
-        entityInfo.teamId = selectedTeamId;
-        entityInfo.autoJoin = autoJoin;
-        return RequestApiManager.getInstance().modifyPublicTopicNameByChannelApi(entityInfo, entityId);
+    public ResCommon modifyChannelAutoJoin(long entityId, boolean autoJoin) {
+        ReqModifyTopicAutoJoin topicAutoJoin = new ReqModifyTopicAutoJoin();
+        topicAutoJoin.teamId = selectedTeamId;
+        topicAutoJoin.autoJoin = autoJoin;
+        return RequestApiManager.getInstance().modifyPublicTopicAutoJoinByChannelApi(topicAutoJoin, entityId);
     }
 
     public long getSelectedTeamId() {

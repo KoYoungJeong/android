@@ -32,7 +32,7 @@ public interface TopicDetailPresenter {
 
     void onAutoJoin(long entityId, boolean autoJoin);
 
-    void onPushClick(Context context, long teamId, long entityId, boolean checked);
+    void onPushClick(long teamId, long entityId, boolean checked);
 
     interface View {
 
