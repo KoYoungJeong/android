@@ -18,12 +18,14 @@ import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.album.imagealbum.adapter.DefaultAlbumAdapter;
 import com.tosslab.jandi.app.ui.album.imagealbum.adapter.ImagePictureAdapter;
 import com.tosslab.jandi.app.ui.album.imagealbum.presenter.ImageAlbumPresenter;
 import com.tosslab.jandi.app.ui.album.imagealbum.presenter.ImageAlbumPresenterImpl;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
+import com.tosslab.jandi.app.ui.album.imagecrop.ImageCropPickerActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.AnimationModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
