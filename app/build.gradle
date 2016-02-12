@@ -5,7 +5,8 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'android-apt'     // Android-Annotation
 apply plugin: 'me.tatarka.retrolambda'  //RetroLamda
 apply from: 'valid.gradle'       // Gradle Propertie Valid Check
-apply from: 'scripts/string-resource-crawler.gradle'
+apply from: 'scripts/resources/strings/string-resource-crawler.gradle'
+apply from: 'scripts/resources/images/image-resource-crawler.gradle'
 apply from: 'apk-name-changer.gradle'
 
 configurations {
@@ -39,6 +40,9 @@ task checkstyles(type: Checkstyle) {
     ignoreFailures = true
 
 }
+
+task resourceRefresh
+resourceRefresh.dependsOn (stringResourceRefresh, imageResourceRefresh)
 
 checkstyle {
     toolVersion = "6.2"
@@ -209,6 +213,7 @@ android {
             res.srcDirs = ['src/dev/res']
         }
 
+        main.res.srcDirs += 'src/main/res-crawrer'
     }
 
     packagingOptions.excludes = [

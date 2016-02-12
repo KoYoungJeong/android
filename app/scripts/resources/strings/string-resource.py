@@ -1,5 +1,6 @@
 import os
 import urllib2
+import warnings
 import collections
 from openpyxl import load_workbook
 import sys
@@ -14,13 +15,9 @@ def download(url):
     try:
         response = urllib2.urlopen(url)
 
-        print "Download Start...."
-
         downloadedFilePath = os.path.basename(DOWNLOAD_FILE_NAME)
         with open(downloadedFilePath, "wb") as local_file:
             local_file.write(response.read())
-
-        print "Download Finish...."
 
         return downloadedFilePath
 
@@ -33,7 +30,8 @@ def download(url):
 
 
 def parsing(filePath):
-    print "Start Parsing Resource File"
+
+    warnings.simplefilter("ignore")
 
     workbook = load_workbook(filePath)
 
@@ -106,6 +104,7 @@ def main():
     if len(sys.argv) <= 1:
         print "Please Set Argv Resource Path"
         return
+
     resourcePath = sys.argv[1]
     absResourcePath = os.path.abspath(resourcePath)
 
