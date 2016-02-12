@@ -581,11 +581,11 @@ public class FileDetailPresenter {
     }
 
     public void onExportFile(ResMessages.FileMessage fileMessage, ProgressDialog progressDialog) {
-        if (fileMessage.content.serverUrl.equals("google")) {
+        if (fileMessage.content.serverUrl.equals("google") || fileMessage.content.serverUrl.equals("dropbox")) {
             progressDialog.dismiss();
             String fileUrl = fileMessage.content.fileUrl;
             if (fileUrl != null) {
-                view.exportIntentGoogleDriveFile(fileUrl);
+                view.exportIntentIntegrationFile(fileUrl);
             } else {
                 view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
             }
@@ -765,7 +765,7 @@ public class FileDetailPresenter {
 
         void exportIntentFile(File result, String type);
 
-        void exportIntentGoogleDriveFile(String fileUrl);
+        void exportIntentIntegrationFile(String fileUrl);
 
         void setFileMessage(ResMessages.FileMessage fileMessage2);
 

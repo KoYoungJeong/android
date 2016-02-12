@@ -994,7 +994,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     @Override
-    public void exportIntentGoogleDriveFile(String fileUrl) {
+    public void exportIntentIntegrationFile(String fileUrl) {
         Intent target = new Intent(Intent.ACTION_SEND);
         target.putExtra(Intent.EXTRA_TEXT, fileUrl);
         target.setType("text/plain");
