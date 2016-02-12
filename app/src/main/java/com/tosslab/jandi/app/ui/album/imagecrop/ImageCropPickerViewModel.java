@@ -34,11 +34,13 @@ public class ImageCropPickerViewModel {
         Bitmap returnedBitmap = null;
         try {
             in = context.getContentResolver().openInputStream(uri);
-
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(in, null, o);
+
             in.close();
+            in = null;
+
             int scale = 1;
             if (o.outHeight > IMAGE_MAX_SIZE || o.outWidth > IMAGE_MAX_SIZE) {
                 scale = (int) Math.pow(2, (int) Math.round(Math.log(IMAGE_MAX_SIZE / (double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
@@ -48,7 +50,9 @@ public class ImageCropPickerViewModel {
             o2.inSampleSize = scale;
             in = context.getContentResolver().openInputStream(uri);
             Bitmap bitmap = BitmapFactory.decodeStream(in, null, o2);
+
             in.close();
+            in = null;
 
             ExifInterface ei = new ExifInterface(uri.getPath());
             int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
@@ -74,6 +78,16 @@ public class ImageCropPickerViewModel {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (OutOfMemoryError e) {
+            e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return null;
     }

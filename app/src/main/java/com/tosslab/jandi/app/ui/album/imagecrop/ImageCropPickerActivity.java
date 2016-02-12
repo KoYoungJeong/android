@@ -62,12 +62,14 @@ public class ImageCropPickerActivity extends BaseAppCompatActivity {
 
     private void initImage() {
         Bitmap bitmap = imageCropPickerViewModel.getBitmap(originUri);
-        Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-        float minScale = ivPhoto.setMinimumScaleToFit(drawable);
-        ivPhoto.setMaximumScale(minScale * 3);
-        ivPhoto.setMediumScale(minScale * 2);
-        ivPhoto.setScale(minScale);
-        ivPhoto.setImageDrawable(drawable);
+        if (bitmap != null) {
+            Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+            float minScale = ivPhoto.setMinimumScaleToFit(drawable);
+            ivPhoto.setMaximumScale(minScale * 3);
+            ivPhoto.setMediumScale(minScale * 2);
+            ivPhoto.setScale(minScale);
+            ivPhoto.setImageDrawable(drawable);
+        }
     }
 
     private void saveUploadCroppedImage() {
