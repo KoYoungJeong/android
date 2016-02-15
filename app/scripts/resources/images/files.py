@@ -72,7 +72,7 @@ def unarchive(file, absResourcePath):
             continue
         elif fileName == 'Thumbs.db':
             continue
-        elif re.compile("^[a-z][a-zA-Z0-9_]+\.png$").match(fileName) is None:
+        elif re.compile("^[a-z][a-zA-Z0-9_]+(\.png|\.9.png)$").match(fileName) is None:
             continue
         output = open(drawablePath + '/' + fileName, 'wb')
         output.write(zips.read(file.filename))

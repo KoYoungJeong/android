@@ -154,7 +154,7 @@
 	<string name="jandi_confirm">"OK"</string>
 	<string name="jandi_confirm_new_passcode">"Confirm new passcode"</string>
 	<string name="jandi_confirm_passcode">"Confirm Passcode"</string>
-	<string name="jandi_copy_link">"Copy link"</string>
+	<string name="jandi_copy_link">"Copy Link"</string>
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"Create"</string>
 	<string name="jandi_create_channel">"Create New Topic"</string>
