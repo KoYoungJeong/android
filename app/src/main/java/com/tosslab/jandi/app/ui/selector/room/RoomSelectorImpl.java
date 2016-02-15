@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.selector.room;
 
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.PopupWindowCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupWindow;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -21,6 +23,7 @@ import com.tosslab.jandi.app.ui.selector.room.adapter.RoomRecyclerAdapter;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -62,10 +65,19 @@ public class RoomSelectorImpl implements RoomSelector {
         RoomRecyclerAdapter adapter = new RoomRecyclerAdapter(context);
 
         adapter.setOnRecyclerItemClickListener((view, adapter1, position) -> {
-            if (onRoomSelectListener != null) {
-                ExpandRoomData roomData = adapter.getItem(position);
+            ExpandRoomData roomData = adapter.getItem(position);
+
+            if (roomData instanceof ExpandRoomData.DummyDisabledRoomData) {
+                ExpandRoomData.DummyDisabledRoomData dummy = (ExpandRoomData.DummyDisabledRoomData) roomData;
+                boolean expanded = !dummy.isExpanded();
+                dummy.setExpanded(expanded);
+                adapter.notifyDataSetChanged();
+
+                ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(position, 0);
+            } else if (onRoomSelectListener != null) {
                 onRoomSelectListener.onRoomSelect(roomData);
             }
+
         });
 
         recyclerView.setAdapter(adapter);
@@ -77,6 +89,7 @@ public class RoomSelectorImpl implements RoomSelector {
 
         topicView.setOnClickListener(v -> {
             setSelectType(0, selectableViews);
+            adapter.clear();
             adapter.addAll(getTopicDatas());
             adapter.notifyDataSetChanged();
             recyclerView.getLayoutManager().scrollToPosition(0);
@@ -84,6 +97,7 @@ public class RoomSelectorImpl implements RoomSelector {
 
         dmView.setOnClickListener(v -> {
             setSelectType(1, selectableViews);
+            adapter.clear();
             adapter.addAll(getRoomDatas());
             adapter.notifyDataSetChanged();
             recyclerView.getLayoutManager().scrollToPosition(0);
@@ -290,34 +304,65 @@ public class RoomSelectorImpl implements RoomSelector {
             roomDatas.add(dummyData);
         }
 
-        Observable.from(getUsers())
+        List<FormattedEntity> users = getUsers();
+        Observable<List<ExpandRoomData>> enabledUsers = Observable.from(users)
                 .filter(FormattedEntity::isEnabled)
-                .map(entity -> {
-                    ExpandRoomData userData = new ExpandRoomData();
-                    userData.setIsUser(true);
-                    userData.setName(entity.getName());
-                    try {
-                        userData.setProfileUrl(entity.getUserSmallProfileUrl());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    userData.setType(entity.type);
-                    userData.setEntityId(entity.getId());
-                    userData.setIsStarred(entity.isStarred);
-                    userData.setIsFolder(false);
-                    return userData;
-                })
-                .toSortedList((lhs, rhs) -> {
-                    if (EntityManager.getInstance().isBot(lhs.getEntityId())) {
-                        return -1;
-                    } else if (EntityManager.getInstance().isBot(rhs.getEntityId())) {
-                        return 1;
-                    }
-                    return lhs.getName().compareToIgnoreCase(rhs.getName());
-                })
-                .collect(() -> roomDatas, List::addAll)
+                .map(ExpandRoomData::newRoomData)
+                .toSortedList(this::getCompareRooms);
+
+        Observable<List<ExpandRoomData>> disabledUsers = Observable.from(users)
+                .filter(entity -> !entity.isEnabled())
+                .map(ExpandRoomData::newRoomData)
+                .toSortedList(this::getCompareRooms);
+
+        boolean hasDisabledUser = hasDisabledUser(users);
+
+        Observable<List<ExpandRoomData>> roomObservable;
+        if (hasDisabledUser) {
+            ExpandRoomData.DummyDisabledRoomData dummyDisabledRoomData =
+                    new ExpandRoomData.DummyDisabledRoomData(getDisabledUserCount(users));
+
+            String disabledMember = JandiApplication.getContext().getString(R.string.jandi_disabled_members);
+            dummyDisabledRoomData.setName(disabledMember);
+
+            roomObservable = Observable.concat(enabledUsers,
+                    Observable.just(Arrays.asList(dummyDisabledRoomData)),
+                    disabledUsers);
+        } else {
+            roomObservable = enabledUsers;
+        }
+
+        roomObservable.collect(() -> roomDatas, List::addAll)
                 .subscribe();
+
         return roomDatas;
+    }
+
+    @NonNull
+    private Integer getCompareRooms(ExpandRoomData lhs, ExpandRoomData rhs) {
+        if (EntityManager.getInstance().isBot(lhs.getEntityId())) {
+            return -1;
+        } else if (EntityManager.getInstance().isBot(rhs.getEntityId())) {
+            return 1;
+        }
+        return lhs.getName().compareToIgnoreCase(rhs.getName());
+    }
+
+    private int getDisabledUserCount(List<FormattedEntity> users) {
+        return Observable.from(users)
+                .filter(formattedEntity -> !formattedEntity.isEnabled())
+                .count()
+                .toBlocking()
+                .first();
+    }
+
+    private boolean hasDisabledUser(List<FormattedEntity> users) {
+        return Observable.from(users)
+                .filter(formattedEntity -> !formattedEntity.isEnabled())
+                .map(formattedEntity1 -> true)
+                .firstOrDefault(false)
+                .toBlocking()
+                .first();
     }
 
 }

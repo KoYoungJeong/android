@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.selector.room.domain;
 
 import android.support.annotation.Nullable;
 
+import com.tosslab.jandi.app.lists.FormattedEntity;
+
 /**
  * Created by tee on 15. 9. 30..
  */
@@ -14,8 +16,34 @@ public class ExpandRoomData {
     private boolean isStarred;
     private boolean isPublicTopic;
     private String profileUrl;
+    private boolean enabled;
     private int type;
     private boolean isFirstAmongNoFolderItem;
+
+    public static ExpandRoomData newRoomData(FormattedEntity entity) {
+        ExpandRoomData userData = new ExpandRoomData();
+        userData.setIsUser(true);
+        userData.setName(entity.getName());
+        userData.setEnabled(entity.isEnabled());
+        try {
+            userData.setProfileUrl(entity.getUserSmallProfileUrl());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        userData.setType(entity.type);
+        userData.setEntityId(entity.getId());
+        userData.setIsStarred(entity.isStarred);
+        userData.setIsFolder(false);
+        return userData;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     public long getEntityId() {
         return entityId;
@@ -102,5 +130,32 @@ public class ExpandRoomData {
                 ", type=" + type +
                 ", isFirstAmongNoFolderItem=" + isFirstAmongNoFolderItem +
                 '}';
+    }
+
+    public static class DummyDisabledRoomData extends ExpandRoomData {
+        private boolean expanded;
+        private int count;
+
+        public DummyDisabledRoomData(int count) {
+            this.count = count;
+            setEnabled(false);
+            setIsUser(true);
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public void setCount(int count) {
+            this.count = count;
+        }
+
+        public boolean isExpanded() {
+            return expanded;
+        }
+
+        public void setExpanded(boolean expanded) {
+            this.expanded = expanded;
+        }
     }
 }

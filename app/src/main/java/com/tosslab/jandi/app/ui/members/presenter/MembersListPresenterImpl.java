@@ -15,7 +15,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
@@ -100,14 +100,9 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                         return chatChooseItem.getName().toLowerCase().contains(s.toLowerCase());
                 })
                 .toSortedList((chatChooseItem, chatChooseItem2) -> {
-                    long myId = EntityManager.getInstance().getMe().getId();
                     if (chatChooseItem.isBot()) {
                         return -1;
                     } else if (chatChooseItem2.isBot()) {
-                        return 1;
-                    } else if (chatChooseItem.getEntityId() == myId) {
-                        return -1;
-                    } else if (chatChooseItem2.getEntityId() == myId) {
                         return 1;
                     } else {
                         return chatChooseItem.getName().toLowerCase()

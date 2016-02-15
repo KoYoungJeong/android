@@ -17,9 +17,11 @@ public interface MainChatListPresenter {
 
     void onReloadChatList(Context context);
 
-    void onMoveDirectMessage(Context context, int userId);
+    void onMoveDirectMessage(Context context, long userId);
 
     void onEntityItemClick(Context context, int position);
+
+    void onEntityStarredUpdate(long entityId);
 
     interface View {
         void refreshListView();
@@ -39,5 +41,7 @@ public interface MainChatListPresenter {
         void scrollToPosition(int selectedEntityPosition);
 
         void startSelectedItemAnimation();
+
+        void setStarred(long entityId, boolean isStarred);
     }
 }

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.entities.chats.to;
+package com.tosslab.jandi.app.ui.entities.chats.domain;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 14..

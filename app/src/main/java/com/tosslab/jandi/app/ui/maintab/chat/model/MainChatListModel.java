@@ -115,13 +115,13 @@ public class MainChatListModel {
         ChatRepository.getRepository().upsertChats(chatItems);
     }
 
-    public long getRoomId(int userId) {
+    public long getRoomId(long userId) {
 
         return ChatRepository.getRepository().getChat(userId).getEntityId();
 
     }
 
-    public boolean isStarred(Context context, int entityId) {
+    public boolean isStarred(long entityId) {
         return EntityManager.getInstance().getEntityById(entityId).isStarred;
     }
 

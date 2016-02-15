@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.selector.user;
 
 import android.view.View;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
 
 public interface UserSelector {
 
@@ -15,7 +15,7 @@ public interface UserSelector {
     void setOnUserDismissListener(OnUserDismissListener onUserDismissListener);
 
     interface OnUserSelectListener {
-        void onUserSelect(FormattedEntity item);
+        void onUserSelect(ExpandRoomData item);
     }
 
     interface OnUserDismissListener {

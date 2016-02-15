@@ -41,7 +41,7 @@ public class MainChatListAdapter extends BaseAdapter {
 
     public MainChatListAdapter(Context context) {
         this.context = context;
-        entities = new ArrayList<ChatItem>();
+        entities = new ArrayList<>();
     }
 
     @Override
@@ -86,9 +86,7 @@ public class MainChatListAdapter extends BaseAdapter {
 
         viewHolder.tvName.setText(item.getName());
 
-        boolean isUser = !EntityManager.getInstance().isBot(item.getEntityId());
-
-        if (item.isStarred() && isUser) {
+        if (item.isStarred()) {
             viewHolder.ivFavorite.setVisibility(View.VISIBLE);
         } else {
             viewHolder.ivFavorite.setVisibility(View.INVISIBLE);
@@ -143,14 +141,16 @@ public class MainChatListAdapter extends BaseAdapter {
         ivIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
         ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
-        if (isUser) {
+
+        boolean isBot = EntityManager.getInstance().isBot(item.getEntityId());
+        if (!isBot) {
             layoutParams.height = layoutParams.width;
         } else {
             layoutParams.height = layoutParams.width * 5 / 4;
         }
         ivIcon.setLayoutParams(layoutParams);
 
-        if (isUser) {
+        if (!isBot) {
             ImageUtil.loadProfileImage(ivIcon, Uri.parse(item.getPhoto()), R.drawable.profile_img);
         } else {
             ImageLoader.newBuilder()
@@ -187,6 +187,17 @@ public class MainChatListAdapter extends BaseAdapter {
         if (animStatus == AnimStatus.IDLE) {
             animStatus = AnimStatus.READY;
         }
+    }
+
+    public int findPosition(long entityId) {
+        int count = getCount();
+        for (int idx = 0; idx < count; idx++) {
+            if (getItem(idx).getEntityId() == entityId) {
+                return idx;
+            }
+        }
+
+        return -1;
     }
 
     private enum AnimStatus {

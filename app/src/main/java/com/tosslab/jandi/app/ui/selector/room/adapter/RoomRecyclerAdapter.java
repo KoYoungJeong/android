@@ -2,10 +2,11 @@ package com.tosslab.jandi.app.ui.selector.room.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.drawable.ScalingUtils;
@@ -30,6 +31,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     final int TYPE_FOLDER = 1;
     final int TYPE_ROOM = 2;
+    final int TYPE_DUMMY_DISABLE = 3;
 
     private final Context context;
     private List<ExpandRoomData> roomDatas;
@@ -38,6 +40,12 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public RoomRecyclerAdapter(Context context) {
         this.context = context;
         roomDatas = new ArrayList<>();
+        setHasStableIds(true);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     @Override
@@ -46,28 +54,24 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (viewType == TYPE_ROOM) {
             itemView = LayoutInflater.from(context)
                     .inflate(R.layout.item_room_select, parent, false);
-            RoomViewHolder viewHolder = new RoomViewHolder(itemView);
-            viewHolder.tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
-            viewHolder.ivIcon =
-                    (SimpleDraweeView) itemView.findViewById(R.id.iv_room_selector_item_icon);
-            viewHolder.vgLine = itemView.findViewById(R.id.v_line_use_for_first_no_folder_item);
-            viewHolder.vgContent = (LinearLayout) itemView.findViewById(R.id.vg_room_selector_content);
-            return viewHolder;
+            return new RoomViewHolder(itemView);
         } else if (viewType == TYPE_FOLDER) {
             itemView = LayoutInflater.from(context)
                     .inflate(R.layout.item_room_select_folder, parent, false);
-            FolderViewHolder viewHolder = new FolderViewHolder(itemView);
-            viewHolder.tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
-            viewHolder.viewLine = itemView.findViewById(R.id.view_line);
-            return viewHolder;
+            return new FolderViewHolder(itemView);
+        } else if (viewType == TYPE_DUMMY_DISABLE) {
+            itemView = LayoutInflater.from(context)
+                    .inflate(R.layout.item_room_select_disable_group_dummy, parent, false);
+            return new DisabledGroupDummyViewHolder(itemView);
         }
         return null;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        int itemViewType = getItemViewType(position);
         ExpandRoomData item = getItem(position);
-        if (getItemViewType(position) == TYPE_FOLDER) {
+        if (itemViewType == TYPE_FOLDER) {
             FolderViewHolder folderViewHolder = (FolderViewHolder) holder;
             folderViewHolder.tvName.setText(item.getName());
             folderViewHolder.itemView.setClickable(false);
@@ -78,9 +82,23 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 folderViewHolder.viewLine.setVisibility(View.VISIBLE);
             }
             return;
+        } else if (itemViewType == TYPE_DUMMY_DISABLE) {
+            DisabledGroupDummyViewHolder disabledGroupDummyViewHolder = (DisabledGroupDummyViewHolder) holder;
+            disabledGroupDummyViewHolder.setUp(item);
+
+            holder.itemView.setOnClickListener(v -> {
+                if (onRecyclerItemClickListener != null) {
+                    onRecyclerItemClickListener
+                            .onItemClick(v, RoomRecyclerAdapter.this, position);
+                }
+            });
+            return;
         }
 
         RoomViewHolder roomholder = (RoomViewHolder) holder;
+
+        roomholder.vLineThrough.setVisibility(View.GONE);
+        roomholder.vDisableCover.setVisibility(View.GONE);
 
         // 폴더가 없는 첫번째 폴더는 상단에 라인이 그려져야 함.
         if (item.isFirstAmongNoFolderItem()) {
@@ -115,16 +133,24 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
             ivIcon.setLayoutParams(layoutParams);
 
+            SpannableStringBuilder name = new SpannableStringBuilder();
             if (jandiBot) {
                 ImageLoader.newBuilder()
                         .placeHolder(R.drawable.bot_32x40, ScalingUtils.ScaleType.CENTER_INSIDE)
                         .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
                         .load(UriFactory.getResourceUri(R.drawable.bot_32x40))
                         .into(ivIcon);
+                name.append(item.getName());
             } else {
                 ImageUtil.loadProfileImage(ivIcon, fileUrl, R.drawable.profile_img_comment);
+                name.append(item.getName());
+
+                if (!item.isEnabled()) {
+                    roomholder.vDisableCover.setVisibility(View.VISIBLE);
+                    roomholder.vLineThrough.setVisibility(View.VISIBLE);
+                }
             }
-            roomholder.tvName.setText(item.getName());
+            roomholder.tvName.setText(name);
         } else if (item.isPublicTopic()) {
             int resId = R.drawable.topiclist_icon_topic_fav;
             if (!item.isStarred()) {
@@ -164,22 +190,48 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemViewType(int position) {
-        if (getItem(position).isFolder()) {
+        ExpandRoomData item = getItem(position);
+        if (item.isFolder()) {
             return TYPE_FOLDER;
         } else {
-            return TYPE_ROOM;
+            if (item instanceof ExpandRoomData.DummyDisabledRoomData) {
+                return TYPE_DUMMY_DISABLE;
+            } else {
+                return TYPE_ROOM;
+            }
         }
     }
 
     @Override
     public int getItemCount() {
+        for (int idx = roomDatas.size() - 1; idx >= 0; idx--) {
+            ExpandRoomData roomData = roomDatas.get(idx);
+            if (roomData.isEnabled()) {
+                return roomDatas.size();
+            } else {
+                if (roomData instanceof ExpandRoomData.DummyDisabledRoomData) {
+                    if (((ExpandRoomData.DummyDisabledRoomData) roomData).isExpanded()) {
+                        return roomDatas.size();
+                    } else {
+                        return idx + 1;
+                    }
+                }
+            }
+        }
         return roomDatas.size();
     }
 
-    public void addAll(List<ExpandRoomData> categorizableEntities) {
+    public void clear() {
         roomDatas.clear();
+    }
+    public void addAll(List<ExpandRoomData> categorizableEntities) {
         roomDatas.addAll(categorizableEntities);
     }
+
+    public void add(int position, ExpandRoomData expandRoomData) {
+        roomDatas.add(position, expandRoomData);
+    }
+
 
     public void setOnRecyclerItemClickListener(OnRecyclerItemClickListener onRecyclerItemClickListener) {
         this.onRecyclerItemClickListener = onRecyclerItemClickListener;
@@ -189,10 +241,16 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private TextView tvName;
         private SimpleDraweeView ivIcon;
         private View vgLine;
-        private LinearLayout vgContent;
+        private View vLineThrough;
+        private View vDisableCover;
 
         public RoomViewHolder(View itemView) {
             super(itemView);
+            tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
+            ivIcon = (SimpleDraweeView) itemView.findViewById(R.id.iv_room_selector_item_icon);
+            vgLine = itemView.findViewById(R.id.v_line_use_for_first_no_folder_item);
+            vLineThrough = itemView.findViewById(R.id.iv_room_selector_item_name_line_through);
+            vDisableCover = itemView.findViewById(R.id.v_room_selector_disabled_warning);
         }
     }
 
@@ -202,7 +260,42 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         public FolderViewHolder(View itemView) {
             super(itemView);
+            tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
+            viewLine = itemView.findViewById(R.id.view_line);
         }
     }
 
+    private static class DisabledGroupDummyViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView ivArrow;
+        private TextView tvName;
+        private ImageView ivIcon;
+
+        public DisabledGroupDummyViewHolder(View itemView) {
+            super(itemView);
+            tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
+            ivIcon = (ImageView) itemView.findViewById(R.id.iv_room_selector_item_icon);
+            ivArrow = ((ImageView) itemView.findViewById(R.id.iv_room_selector_item_arrow));
+        }
+
+        public void setUp(ExpandRoomData item) {
+            ExpandRoomData.DummyDisabledRoomData dummy = (ExpandRoomData.DummyDisabledRoomData) item;
+
+            ivIcon.setImageResource(R.drawable.icon_disabled_members);
+
+            if (dummy.isExpanded()) {
+                ivArrow.setImageResource(R.drawable.icon_arrow_up_disabled_members);
+                itemView.setBackgroundColor(itemView.getResources().getColor(R.color.jandi_transparent_white_90p));
+            } else {
+                ivArrow.setImageResource(R.drawable.icon_arrow_disabled_members);
+                itemView.setBackgroundColor(itemView.getResources().getColor(R.color.jandi_more_bg));
+            }
+
+
+            SpannableStringBuilder name = new SpannableStringBuilder();
+            name.append(item.getName())
+                    .append(" ")
+                    .append(tvName.getResources().getString(R.string.jandi_count_with_brace, dummy.getCount()));
+            tvName.setText(name);
+        }
+    }
 }

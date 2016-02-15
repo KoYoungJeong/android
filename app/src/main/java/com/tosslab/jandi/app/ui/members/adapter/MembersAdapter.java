@@ -17,7 +17,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -169,7 +169,8 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
 
-            ivFavorite.setVisibility(item.isStarred() && !item.isBot() ? View.VISIBLE : View.GONE);
+//            ivFavorite.setVisibility(item.isStarred() ? View.VISIBLE : View.GONE);
+            ivFavorite.setVisibility(View.GONE);
 
             vDisableLineThrough.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
             vDisableCover.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
@@ -226,7 +227,8 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             tvAdditional.setVisibility(!TextUtils.isEmpty(item.getStatusMessage()) ? View.VISIBLE : View.GONE);
             tvAdditional.setText(item.getStatusMessage());
 
-            ivFavorite.setVisibility(item.isStarred() && !item.isBot() ? View.VISIBLE : View.GONE);
+//            ivFavorite.setVisibility(item.isStarred() ? View.VISIBLE : View.GONE);
+            ivFavorite.setVisibility(View.GONE);
 
             vDisableLineThrough.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
             vDisableCover.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
