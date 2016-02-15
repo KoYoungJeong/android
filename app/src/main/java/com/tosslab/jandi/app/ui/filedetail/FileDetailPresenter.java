@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 
@@ -220,16 +222,16 @@ public class FileDetailPresenter {
                 fileId);
     }
 
-    public void downloadFile(String url, String fileName, final String fileType, String ext,
+    private void downloadFile(String url, String fileName, final String fileType, String ext,
                              long fileId) {
         Permissions.getChecker()
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .hasPermission(() -> {
+                    downloadFileImpl(url, fileName, fileType, ext, fileId);
+                })
                 .noPermission(() -> {
                     view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                })
-                .hasPermission(() -> {
-                    downloadFileImpl(url, fileName, fileType, ext, fileId);
                 }).check();
     }
 
@@ -239,9 +241,21 @@ public class FileDetailPresenter {
     }
 
     public void onExportFile(ResMessages.FileMessage fileMessage, ProgressDialog progressDialog) {
+        if (fileDetailModel.isFileFromGoogleOrDropbox(fileMessage.content)) {
+            view.dismissDialog(progressDialog);
+
+            if (TextUtils.isEmpty(fileMessage.content.fileUrl)) {
+                view.showUnexpectedErrorToast();
+            } else {
+                view.exportLink(fileMessage.content.fileUrl);
+            }
+
+            return;
+        }
         Permissions.getChecker()
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .hasPermission(() -> downloadFileAndManage(FileManageType.EXPORT, fileMessage, progressDialog))
+                .hasPermission(() ->
+                        downloadFileAndManage(FileManageType.EXPORT, fileMessage, progressDialog))
                 .noPermission(() -> {
                     view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION_EXPORT,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -479,6 +493,8 @@ public class FileDetailPresenter {
 
         void dismissProgress();
 
+        void dismissDialog(Dialog dialog);
+
         void showUnexpectedErrorToast();
 
         void showStarredSuccessToast();
@@ -506,6 +522,8 @@ public class FileDetailPresenter {
         void showKeyboard();
 
         void hideKeyboard();
+
+        void exportLink(String link);
 
         void copyToClipboard(String text);
 

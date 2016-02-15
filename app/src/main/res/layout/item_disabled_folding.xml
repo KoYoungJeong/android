@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/jandi_entity_item_title_margin_left"
-    android:background="#FFF2F2F2">
+    android:background="#FFF2F2F2"
+    android:gravity="center"
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/iv_disabled_folding_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="18.5dp"
-        android:layout_marginRight="17dp"
+        android:layout_marginRight="8dp"
         android:src="@drawable/icon_disabled_members" />
 
     <TextView
@@ -19,29 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/iv_disabled_folding_icon"
-        android:text="Disabled members"
+        android:text="@string/jandi_disabled_members"
         android:textColor="@color/jandi_text"
         android:textSize="@dimen/jandi_text_size_large" />
 
-    <TextView
-        android:id="@+id/tv_disabled_folding_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="4dp"
-        android:layout_toLeftOf="@+id/iv_disabled_folding_arrow"
-        android:layout_toRightOf="@+id/tv_disabled_folding_title"
-        android:text="(3)"
-        android:textColor="#FFACACAC"
-        android:textSize="@dimen/jandi_text_size_large" />
-
-    <ImageView
-        android:id="@+id/iv_disabled_folding_arrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="25dp"
-        android:src="@drawable/icon_arrow_disabled_members" />
-
-</RelativeLayout>
+</LinearLayout>

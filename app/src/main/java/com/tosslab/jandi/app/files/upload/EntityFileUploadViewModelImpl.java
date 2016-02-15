@@ -13,7 +13,7 @@ import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
-import com.tosslab.jandi.app.ui.album.ImageAlbumActivity_;
+import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;

@@ -420,4 +420,12 @@ public class FileDetailModel {
             return mimeTypeMap.getExtensionFromMimeType(fileType.toLowerCase());
         }
     }
+
+    public boolean isFileFromGoogleOrDropbox(ResMessages.FileContent fileContent) {
+        if (fileContent == null) {
+            return false;
+        }
+        return TextUtils.equals(fileContent.serverUrl, "google")
+                || TextUtils.equals(fileContent.serverUrl, "dropbox");
+    }
 }

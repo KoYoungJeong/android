@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.entities.chats.adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.v4.util.Pair;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +14,8 @@ import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
-import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
+import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
@@ -37,41 +35,12 @@ public class ChatChooseAdapter extends BaseAdapter {
 
     public ChatChooseAdapter(Context context) {
         this.context = context;
-        chatChooseItems = new ArrayList<ChatChooseItem>();
+        chatChooseItems = new ArrayList<>();
     }
 
     @Override
     public int getCount() {
-
-        Pair<Integer, DisableDummyItem> item = getDisabledInfo();
-
-        if (item.first > 0 && item.second != null && !item.second.isExpand()) {
-            return chatChooseItems.size() - item.first;
-        } else {
-            return chatChooseItems.size();
-        }
-
-    }
-
-    private Pair<Integer, DisableDummyItem> getDisabledInfo() {
-
-        DisableDummyItem disableDummyItem = null;
-        int disableCount = 0;
-
-        for (int idx = chatChooseItems.size() - 1; idx >= 0; idx--) {
-            ChatChooseItem chatChooseItem = chatChooseItems.get(idx);
-            if (chatChooseItem.isEnabled()) {
-                break;
-            } else if (!(chatChooseItem instanceof DisableDummyItem)) {
-                ++disableCount;
-            }
-
-            if (chatChooseItem instanceof DisableDummyItem) {
-                disableDummyItem = (DisableDummyItem) chatChooseItem;
-            }
-        }
-
-        return new Pair<Integer, DisableDummyItem>(disableCount, disableDummyItem);
+        return chatChooseItems.size();
     }
 
     @Override
@@ -92,13 +61,13 @@ public class ChatChooseAdapter extends BaseAdapter {
         if (itemViewType == 0) {
             convertView = setChatChooseView(position, convertView, parent);
         } else {
-            convertView = setDisableFoldingView(position, convertView, parent);
+            convertView = setDisableFoldingView(convertView, parent);
         }
 
         return convertView;
     }
 
-    private View setDisableFoldingView(int position, View convertView, ViewGroup parent) {
+    private View setDisableFoldingView(View convertView, ViewGroup parent) {
 
         DisableFoldingViewHolder disableFoldingViewHolder;
 
@@ -108,82 +77,74 @@ public class ChatChooseAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_disabled_folding, parent, false);
 
             disableFoldingViewHolder.ivIcon = (ImageView) convertView.findViewById(R.id.iv_disabled_folding_icon);
-            disableFoldingViewHolder.ivArrow = (ImageView) convertView.findViewById(R.id.iv_disabled_folding_arrow);
             disableFoldingViewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tv_disabled_folding_title);
-            disableFoldingViewHolder.tvCount = (TextView) convertView.findViewById(R.id.tv_disabled_folding_count);
 
             convertView.setTag(R.id.chatchoose_disable_folding, disableFoldingViewHolder);
-
-        } else {
-            disableFoldingViewHolder = (DisableFoldingViewHolder) convertView.getTag(R.id.chatchoose_disable_folding);
         }
 
-        DisableDummyItem item = ((DisableDummyItem) getItem(position));
-
-        disableFoldingViewHolder.tvCount.setText(context.getString(R.string.jandi_count_with_brace, item.getDisabledCount()));
 
         return convertView;
     }
 
     private View setChatChooseView(int position, View convertView, ViewGroup parent) {
-        ChatCHooseViewHolder chatCHooseViewHolder;
+        ChatChooseViewHolder chatChooseViewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context)
                     .inflate(R.layout.item_entity_body_two_line, parent, false);
-            chatCHooseViewHolder = new ChatCHooseViewHolder();
-            chatCHooseViewHolder.tvName =
+            chatChooseViewHolder = new ChatChooseViewHolder();
+            chatChooseViewHolder.tvName =
                     (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
-            chatCHooseViewHolder.ivIcon =
+            chatChooseViewHolder.ivIcon =
                     (SimpleDraweeView) convertView.findViewById(R.id.iv_entity_listitem_icon);
-            chatCHooseViewHolder.ivFavorite =
+            chatChooseViewHolder.ivFavorite =
                     (ImageView) convertView.findViewById(R.id.iv_entity_listitem_fav);
-            chatCHooseViewHolder.tvAdditional =
+            chatChooseViewHolder.tvAdditional =
                     (TextView) convertView.findViewById(R.id.tv_entity_listitem_user_count);
-            chatCHooseViewHolder.vDisableLineThrough =
+            chatChooseViewHolder.vDisableLineThrough =
                     convertView.findViewById(R.id.iv_entity_listitem_line_through);
-            chatCHooseViewHolder.vDisableCover =
+            chatChooseViewHolder.vDisableCover =
                     convertView.findViewById(R.id.v_entity_listitem_warning);
-            chatCHooseViewHolder.ivKick = convertView.findViewById(R.id.iv_entity_listitem_user_kick);
-            chatCHooseViewHolder.tvOwnerBadge =
+            chatChooseViewHolder.ivKick = convertView.findViewById(R.id.iv_entity_listitem_user_kick);
+            chatChooseViewHolder.tvOwnerBadge =
                     (TextView) convertView.findViewById(R.id.tv_owner_badge);
 
-            convertView.setTag(R.id.chatchoose_item, chatCHooseViewHolder);
+            convertView.setTag(R.id.chatchoose_item, chatChooseViewHolder);
 
         } else {
-            chatCHooseViewHolder = (ChatCHooseViewHolder) convertView.getTag(R.id.chatchoose_item);
+            chatChooseViewHolder = (ChatChooseViewHolder) convertView.getTag(R.id.chatchoose_item);
         }
 
         ChatChooseItem item = getItem(position);
 
-        chatCHooseViewHolder.tvName.setText(item.getName());
-        chatCHooseViewHolder.ivKick.setVisibility(View.GONE);
+        chatChooseViewHolder.tvName.setText(item.getName());
+        chatChooseViewHolder.ivKick.setVisibility(View.GONE);
 
         Resources resources = context.getResources();
-        chatCHooseViewHolder.tvOwnerBadge.setText(resources.getString(R.string.jandi_team_owner));
-        chatCHooseViewHolder.tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
+        chatChooseViewHolder.tvOwnerBadge.setText(resources.getString(R.string.jandi_team_owner));
+        chatChooseViewHolder.tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
 
         if (!TextUtils.isEmpty(item.getStatusMessage())) {
-            chatCHooseViewHolder.tvAdditional.setVisibility(View.VISIBLE);
+            chatChooseViewHolder.tvAdditional.setVisibility(View.VISIBLE);
         } else {
-            chatCHooseViewHolder.tvAdditional.setVisibility(View.GONE);
+            chatChooseViewHolder.tvAdditional.setVisibility(View.GONE);
         }
-        chatCHooseViewHolder.tvAdditional.setText(item.getStatusMessage());
+        chatChooseViewHolder.tvAdditional.setText(item.getStatusMessage());
 
-        if (item.isStarred() && !EntityManager.getInstance().isBot(item.getEntityId())) {
-            chatCHooseViewHolder.ivFavorite.setVisibility(View.VISIBLE);
+        if (item.isStarred()) {
+            chatChooseViewHolder.ivFavorite.setVisibility(View.VISIBLE);
         } else {
-            chatCHooseViewHolder.ivFavorite.setVisibility(View.GONE);
+            chatChooseViewHolder.ivFavorite.setVisibility(View.GONE);
         }
 
         if (item.isEnabled()) {
-            chatCHooseViewHolder.vDisableLineThrough.setVisibility(View.GONE);
-            chatCHooseViewHolder.vDisableCover.setVisibility(View.GONE);
+            chatChooseViewHolder.vDisableLineThrough.setVisibility(View.GONE);
+            chatChooseViewHolder.vDisableCover.setVisibility(View.GONE);
         } else {
-            chatCHooseViewHolder.vDisableLineThrough.setVisibility(View.VISIBLE);
-            chatCHooseViewHolder.vDisableCover.setVisibility(View.VISIBLE);
+            chatChooseViewHolder.vDisableLineThrough.setVisibility(View.VISIBLE);
+            chatChooseViewHolder.vDisableCover.setVisibility(View.VISIBLE);
         }
 
-        SimpleDraweeView imageViewIcon = chatCHooseViewHolder.ivIcon;
+        SimpleDraweeView imageViewIcon = chatChooseViewHolder.ivIcon;
         imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
         boolean user = !item.isBot();
@@ -241,7 +202,7 @@ public class ChatChooseAdapter extends BaseAdapter {
         chatChooseItems.remove(chatChooseItem);
     }
 
-    static class ChatCHooseViewHolder {
+    static class ChatChooseViewHolder {
         public Context context;
         public SimpleDraweeView ivIcon;
         public ImageView ivFavorite;
@@ -256,7 +217,5 @@ public class ChatChooseAdapter extends BaseAdapter {
     static class DisableFoldingViewHolder {
         public TextView tvTitle;
         public ImageView ivIcon;
-        public ImageView ivArrow;
-        public TextView tvCount;
     }
 }

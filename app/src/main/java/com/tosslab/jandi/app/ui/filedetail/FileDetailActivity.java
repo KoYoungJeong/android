@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.filedetail;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -493,6 +494,14 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void dismissDialog(Dialog dialog) {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
     @Override
     public void showUnexpectedErrorToast() {
         showToast(getString(R.string.jandi_err_unexpected), true /* isError */);
@@ -601,6 +610,21 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public void hideKeyboard() {
         if (inputMethodManager.isAcceptingText()) {
             inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void exportLink(String link) {
+        Intent target = new Intent(Intent.ACTION_SEND);
+        target.putExtra(Intent.EXTRA_TEXT, link);
+        target.setType("text/plain");
+        try {
+            Intent chooser = Intent.createChooser(target, getString(R.string.jandi_export_to_app));
+            startActivity(chooser);
+        } catch (ActivityNotFoundException e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
+            showToast(getString(R.string.jandi_err_unexpected), true);
         }
     }
 
@@ -873,15 +897,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             intent.setAction(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile(file), fileType);
             startActivity(intent);
-            ColoredToast.show(getString(R.string.jandi_file_downloaded_into, file.getPath()));
+            showToast(getString(R.string.jandi_file_downloaded_into, file.getPath()), false);
         } catch (ActivityNotFoundException e) {
-            String rawString = getString(R.string.err_unsupported_file_type);
-            String formatString = String.format(rawString, file);
-            ColoredToast.showError(formatString);
+            showToast(getString(R.string.err_unsupported_file_type, file), true);
         } catch (SecurityException e) {
-            String rawString = getString(R.string.err_unsupported_file_type);
-            String formatString = String.format(rawString, file);
-            ColoredToast.showError(formatString);
+            showToast(getString(R.string.err_unsupported_file_type, file), true);
         }
     }
 

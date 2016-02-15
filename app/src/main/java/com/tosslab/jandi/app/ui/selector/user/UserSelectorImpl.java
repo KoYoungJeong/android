@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.selector.user;
 
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.PopupWindowCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,16 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.view.SimpleDraweeView;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.utils.UriFactory;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.ui.selector.room.adapter.RoomRecyclerAdapter;
+import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,16 +50,39 @@ public class UserSelectorImpl implements UserSelector {
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_user_selector);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-        UserRecyclerAdapter adapter = new UserRecyclerAdapter(context);
-        getUsers().subscribe(adapter::addAll);
+        RoomRecyclerAdapter adapter = new RoomRecyclerAdapter(context);
+        getUsers()
+                .concatWith(Observable.create(subscriber -> {
+                    if (hasDisabledMembers()) {
+                        subscriber.onNext(getDummyRoomData());
+                        getDisabledMembers()
+                                .subscribe(subscriber::onNext);
+                    }
+
+                    subscriber.onCompleted();
+                }))
+                .subscribe(adapter::addAll);
 
         if (EntityManager.getInstance().hasJandiBot()) {
-            adapter.add(0, EntityManager.getInstance().getJandiBot());
+            adapter.add(1, ExpandRoomData.newRoomData(EntityManager.getInstance().getJandiBot()));
         }
 
-        adapter.add(0, new FormattedEntity(FormattedEntity.TYPE_EVERYWHERE));
+        ExpandRoomData dummyData = new ExpandRoomData();
+        dummyData.setType(FormattedEntity.TYPE_EVERYWHERE);
+        adapter.add(0, dummyData);
 
-        adapter.setOnRoomSelectListener(onRoomSelectListener);
+        adapter.setOnRecyclerItemClickListener((view, adapter1, position) -> {
+            ExpandRoomData item = adapter.getItem(position);
+            if (item instanceof ExpandRoomData.DummyDisabledRoomData) {
+                ExpandRoomData.DummyDisabledRoomData dummy = (ExpandRoomData.DummyDisabledRoomData) item;
+                dummy.setExpanded(!dummy.isExpanded());
+                adapter1.notifyDataSetChanged();
+                ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(position, 0);
+
+            } else if (onRoomSelectListener != null) {
+                onRoomSelectListener.onUserSelect(item);
+            }
+        });
         recyclerView.setAdapter(adapter);
 
         popupWindow.setAnimationStyle(R.style.PopupAnimation);
@@ -74,16 +95,46 @@ public class UserSelectorImpl implements UserSelector {
 
     }
 
-    protected Observable<List<FormattedEntity>> getUsers() {
+    @NonNull
+    private List<ExpandRoomData> getDummyRoomData() {
+        List<ExpandRoomData> t = new ArrayList<>();
+        ExpandRoomData.DummyDisabledRoomData dummy = new ExpandRoomData.DummyDisabledRoomData(getDisabledMembers().toBlocking().firstOrDefault(new ArrayList<>()).size());
+        dummy.setName(JandiApplication.getContext().getString(R.string.jandi_disabled_members));
+        t.add(dummy);
+        return t;
+    }
+
+    private boolean hasDisabledMembers() {
+        return Observable.from(EntityManager.getInstance().getFormattedUsers())
+                .filter(formattedEntity -> !TextUtils.equals(formattedEntity.getUser().status, "enabled"))
+                .map(formattedEntity1 -> true)
+                .firstOrDefault(false)
+                .toBlocking()
+                .first();
+
+    }
+
+    private Observable<List<ExpandRoomData>> getDisabledMembers() {
+        return Observable.from(EntityManager.getInstance().getFormattedUsers())
+                .filter(formattedEntity -> !TextUtils.equals(formattedEntity.getUser().status, "enabled"))
+                .map(ExpandRoomData::newRoomData)
+                .toSortedList((lhs, rhs) -> {
+                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                });
+
+    }
+
+    protected Observable<List<ExpandRoomData>> getUsers() {
 
         EntityManager entityManager = EntityManager.getInstance();
         long myId = entityManager.getMe().getId();
         return Observable.from(entityManager.getFormattedUsers())
                 .filter(formattedEntity -> TextUtils.equals(formattedEntity.getUser().status, "enabled"))
+                .map(ExpandRoomData::newRoomData)
                 .toSortedList((lhs, rhs) -> {
-                    if (lhs.getId() == myId) {
+                    if (lhs.getEntityId() == myId) {
                         return -1;
-                    } else if (rhs.getId() == myId) {
+                    } else if (rhs.getEntityId() == myId) {
                         return 1;
                     } else {
                         return lhs.getName().compareToIgnoreCase(rhs.getName());
@@ -109,104 +160,4 @@ public class UserSelectorImpl implements UserSelector {
         this.onUserDismissListener = onUserDismissListener;
     }
 
-    private static class UserRecyclerAdapter extends RecyclerView.Adapter<UserViewHolder> {
-        private final Context context;
-        private List<FormattedEntity> entities;
-        private OnUserSelectListener onRoomSelectListener;
-
-        public UserRecyclerAdapter(Context context) {
-            this.context = context;
-            entities = new ArrayList<>();
-        }
-
-        public void addAll(List<FormattedEntity> entities) {
-            this.entities.clear();
-            this.entities.addAll(entities);
-        }
-
-        @Override
-        public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-            View itemView = LayoutInflater.from(context)
-                    .inflate(R.layout.item_room_select, parent, false);
-
-            UserViewHolder viewHolder = new UserViewHolder(itemView);
-
-            viewHolder.tvName = (TextView) itemView.findViewById(R.id.tv_room_selector_item_name);
-            viewHolder.ivIcon =
-                    (SimpleDraweeView) itemView.findViewById(R.id.iv_room_selector_item_icon);
-
-            return viewHolder;
-        }
-
-        @Override
-        public void onBindViewHolder(UserViewHolder holder, int position) {
-            FormattedEntity item = getItem(position);
-
-            SimpleDraweeView ivIcon = holder.ivIcon;
-            if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
-                holder.tvName.setText(R.string.jandi_file_category_everyone);
-                ImageLoader.newBuilder()
-                        .placeHolder(R.drawable.icon_search_all_members, ScalingUtils.ScaleType.CENTER_INSIDE)
-                        .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                        .load(UriFactory.getResourceUri(R.drawable.icon_search_all_members))
-                        .into(ivIcon);
-            } else {
-                boolean user = !EntityManager.getInstance().isBot(item.getId());
-
-                ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
-                if (user) {
-                    layoutParams.height = layoutParams.width;
-                } else {
-                    layoutParams.height = layoutParams.width * 5 / 4;
-                }
-
-                if (user) {
-                    ImageUtil.loadProfileImage(ivIcon,
-                            item.getUserSmallProfileUrl(), R.drawable.profile_img_comment);
-                } else {
-                    ImageLoader.newBuilder()
-                            .placeHolder(R.drawable.bot_32x40, ScalingUtils.ScaleType.CENTER_INSIDE)
-                            .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                            .load(UriFactory.getResourceUri(R.drawable.bot_32x40))
-                            .into(ivIcon);
-
-                }
-                holder.tvName.setText(item.getName());
-            }
-
-            holder.itemView.setOnClickListener(v -> {
-                if (onRoomSelectListener != null) {
-                    onRoomSelectListener.onUserSelect(item);
-                }
-            });
-
-        }
-
-        private FormattedEntity getItem(int position) {
-            return entities.get(position);
-        }
-
-        @Override
-        public int getItemCount() {
-            return entities.size();
-        }
-
-        public void setOnRoomSelectListener(OnUserSelectListener onRoomSelectListener) {
-            this.onRoomSelectListener = onRoomSelectListener;
-        }
-
-        public void add(int position, FormattedEntity entity) {
-            entities.add(position, entity);
-        }
-    }
-
-    private static class UserViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvName;
-        public SimpleDraweeView ivIcon;
-
-        public UserViewHolder(View itemView) {
-            super(itemView);
-        }
-    }
 }

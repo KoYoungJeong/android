@@ -779,8 +779,8 @@ public class MessageListPresenter {
     @UiThread
     public void setUpNewMessage(List<ResMessages.Link> linkList, long myId, boolean firstLoad) {
 
-        int location = linkList.size() - 1;
-        if (location < 0) {
+        int lastPosition = linkList.size() - 1;
+        if (lastPosition < 0) {
             return;
         }
 
@@ -789,12 +789,14 @@ public class MessageListPresenter {
 
         addAll(lastItemPosition, linkList);
 
-        ResMessages.Link lastUpdatedMessage = linkList.get(location);
+        ResMessages.Link lastUpdatedMessage = linkList.get(lastPosition);
         if (!firstLoad
                 && visibleLastItemPosition >= 0
                 && visibleLastItemPosition < lastItemPosition - 1
                 && lastUpdatedMessage.fromEntity != myId) {
-            showPreviewIfNotLastItem();
+            if (!TextUtils.equals(lastUpdatedMessage.status, "archived")) {
+                showPreviewIfNotLastItem();
+            }
         } else {
             long messageId = lastUpdatedMessage.messageId;
             if (firstLoad) {

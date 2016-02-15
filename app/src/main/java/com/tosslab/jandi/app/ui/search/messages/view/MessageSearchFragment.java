@@ -293,18 +293,15 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         setUpCategoryView(vgMember, memberTextView, true);
 
         UserSelector userSelector = new UserSelectorImpl();
-        userSelector.setOnUserSelectListener(new UserSelector.OnUserSelectListener() {
-            @Override
-            public void onUserSelect(FormattedEntity item) {
-                if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
-                    EventBus.getDefault().post(new SelectMemberEvent(-1, getString(R.string.jandi_file_category_everyone)));
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
-                } else {
-                    EventBus.getDefault().post(new SelectMemberEvent(item.getId(), item.getName()));
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
-                }
-                userSelector.dismiss();
+        userSelector.setOnUserSelectListener(item -> {
+            if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+                EventBus.getDefault().post(new SelectMemberEvent(-1, getString(R.string.jandi_file_category_everyone)));
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
+            } else {
+                EventBus.getDefault().post(new SelectMemberEvent(item.getEntityId(), item.getName()));
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
             }
+            userSelector.dismiss();
         });
 
         userSelector.setOnUserDismissListener(
