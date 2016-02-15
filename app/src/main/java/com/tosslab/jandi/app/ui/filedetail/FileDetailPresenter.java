@@ -462,10 +462,12 @@ public class FileDetailPresenter {
             ReadyComment readyComment = ReadyCommentRepository.getRepository().getReadyComment(fileMessage.id);
             mentionControlViewModel.setUpMention(readyComment.getText());
             mentionControlViewModel.setOnMentionShowingListener(isShowing -> {
-                if (isShowing) {
-                    view.dismissMentionButton();
-                } else {
-                    view.showMentionButton();
+                if (mentionControlViewModel.getAllSelectableMembers().size() > 0) {
+                    if (isShowing) {
+                        view.dismissMentionButton();
+                    } else {
+                        view.showMentionButton();
+                    }
                 }
             });
 

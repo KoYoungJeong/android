@@ -86,7 +86,7 @@ public class TopicFolderMainAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return getFolders().size();
     }
 
-    public ResFolder getItemById(int position) {
+    public ResFolder getItem(int position) {
         return folders.get(position);
     }
 
@@ -96,6 +96,18 @@ public class TopicFolderMainAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public void setOnRecyclerItemClickListener(OnRecyclerItemWithTypeCLickListener onRecyclerItemClickListener) {
         this.onRecyclerItemClickListener = onRecyclerItemClickListener;
+    }
+
+    public ResFolder getItemById(long folderId) {
+        int count = getItemCount();
+        for (int idx = 0; idx < count; idx++) {
+            ResFolder item = getItem(idx);
+            if (item.id == folderId) {
+                return item;
+            }
+        }
+
+        return null;
     }
 
     static class FolderAdapterViewHolder extends RecyclerView.ViewHolder {

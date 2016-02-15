@@ -79,13 +79,15 @@ public class TopicFolderSettingPresenter {
     }
 
     @Background
-    public void onDeleteItemFromFolder(long folderId, long topicId) {
+    public void onDeleteItemFromFolder(long folderId, long topicId, String name) {
         try {
             topicFolderChooseModel.deleteItemFromFolder(folderId, topicId);
+            view.showRemoveFromFolderToast(name);
+            view.finishAcitivty();
         } catch (RetrofitError retrofitError) {
             retrofitError.printStackTrace();
+            view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
         }
-        view.finishAcitivty();
     }
 
     @Background
@@ -100,23 +102,29 @@ public class TopicFolderSettingPresenter {
         }
     }
 
-    public void onItemClick(RecyclerView.Adapter adapter, int position, int type, long folderId, long topicId) {
+    public void onItemClick(RecyclerView.Adapter adapter, int position, int type, long originFolderId, long topicId) {
         TopicFolderMainAdapter topicFolderAdapter = (TopicFolderMainAdapter) adapter;
-        view.setCurrentTopicFolderName(topicFolderAdapter.getItemById(position).name);
+        ResFolder item = topicFolderAdapter.getItem(position);
+        view.setCurrentTopicFolderName(item.name);
         switch (type) {
             case TopicFolderSettingAdapter.TYPE_FOLDER_LIST:
-                long newfolderId = topicFolderAdapter.getItemById(position).id;
-                if (newfolderId != folderId) {
-                    ResFolder folder = ((TopicFolderMainAdapter) adapter).getFolders().get(position);
-                    onAddTopicIntoFolder(newfolderId, topicId, folder.name);
+                long newfolderId = item.id;
+                if (newfolderId != originFolderId) {
+                    onAddTopicIntoFolder(newfolderId, topicId, item.name);
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.ChooseFolder);
                 } else {
                     view.finishAcitivty();
                 }
                 break;
             case TopicFolderSettingAdapter.TYPE_REMOVE_FROM_FOLDER:
-                onDeleteItemFromFolder(folderId, topicId);
-                view.showRemoveFromFolderToast();
+                ResFolder itemById = topicFolderAdapter.getItemById(originFolderId);
+                String folderName;
+                if (itemById == null) {
+                    folderName = "";
+                } else {
+                    folderName = itemById.name;
+                }
+                onDeleteItemFromFolder(originFolderId, topicId, folderName);
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.RemoveFromThisFolder);
                 break;
             case TopicFolderSettingAdapter.TYPE_MAKE_NEW_FOLDER:
@@ -166,7 +174,7 @@ public class TopicFolderSettingPresenter {
 
         void showMoveToFolderToast(String folderName);
 
-        void showRemoveFromFolderToast();
+        void showRemoveFromFolderToast(String name);
 
         void showAlreadyHasFolderToast();
 

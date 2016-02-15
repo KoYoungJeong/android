@@ -20,7 +20,7 @@ public class TopicFolderSettingAdapter extends TopicFolderMainAdapter {
         super.onBindViewHolder(holder, position);
         if (holder.getItemViewType() == TYPE_FOLDER_LIST) {
             FolderAdapterViewHolder viewHolder = (FolderAdapterViewHolder) holder;
-            ResFolder resFolder = getItemById(position);
+            ResFolder resFolder = getItem(position);
             viewHolder.btRemoveFolder.setOnClickListener(v -> {
                 onRemoveFolderListener.onRemove(resFolder.id);
             });

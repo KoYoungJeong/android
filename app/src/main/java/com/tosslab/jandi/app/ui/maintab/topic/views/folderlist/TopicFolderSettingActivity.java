@@ -79,6 +79,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     private TopicFolderMainAdapter adapter;
     private AlertDialog alertDialog;
 
+    @Override
     public void setCurrentTopicFolderName(String currentItemFolderName) {
         this.currentItemFolderName = currentItemFolderName;
     }
@@ -250,8 +251,8 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void showRemoveFromFolderToast() {
-        ColoredToast.show(getString(R.string.jandi_folder_has_been_remove_from, currentItemFolderName));
+    public void showRemoveFromFolderToast(String name) {
+        ColoredToast.show(getString(R.string.jandi_folder_has_been_remove_from, name));
     }
 
     @Override
