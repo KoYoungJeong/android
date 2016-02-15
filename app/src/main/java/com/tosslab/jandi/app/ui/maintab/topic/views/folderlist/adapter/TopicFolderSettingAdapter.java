@@ -16,6 +16,19 @@ public class TopicFolderSettingAdapter extends TopicFolderMainAdapter {
     private OnFolderSeqChangeLisener onFolderSeqChangeLisener;
 
     @Override
+    protected void addDummyFolders() {
+        folders.add(new ResFolder());
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == getItemCount() - 1) {
+            return TYPE_MAKE_NEW_FOLDER;
+        }
+        return TYPE_FOLDER_LIST;
+    }
+
+    @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         if (holder.getItemViewType() == TYPE_FOLDER_LIST) {
