@@ -12,12 +12,13 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
+import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
+import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
-import com.tosslab.jandi.app.ui.entities.EntityChooseActivity;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenter;
@@ -182,6 +183,16 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         mainChatListAdapter.notifyDataSetChanged();
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void setStarred(long entityId, boolean isStarred) {
+        int position = mainChatListAdapter.findPosition(entityId);
+        if (position >= 0) {
+            mainChatListAdapter.getItem(position).starred(isStarred);
+            mainChatListAdapter.notifyDataSetChanged();
+        }
+    }
+
 
     public void onEventMainThread(ShowProfileEvent event) {
         if (foreground) {
@@ -238,6 +249,14 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         }
     }
 
+    public void onEvent(TopicInfoUpdateEvent event) {
+        mainChatListPresenter.onEntityStarredUpdate(event.getId());
+    }
+
+    public void onEvent(MemberStarredEvent event) {
+        mainChatListPresenter.onEntityStarredUpdate(event.getId());
+    }
+
     @OptionsItem(R.id.action_main_search)
     void onSearchOptionSelect() {
         SearchActivity_.intent(getActivity())
@@ -269,7 +288,6 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     @Click({R.id.btn_main_chat_fab, R.id.btn_chat_list_no_messages})
     void onAddClick(View view) {
         EntityChooseActivity_.intent(getActivity())
-                .type(EntityChooseActivity.Type.MESSAGES.name())
                 .start();
         getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
 

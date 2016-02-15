@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.members.presenter;
 
-import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 
 import java.util.List;
 

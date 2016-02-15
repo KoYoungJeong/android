@@ -33,8 +33,14 @@ public class TeamDomainInfoModel {
 
     }
 
-    public ResValidation validDomain(String domain) throws RetrofitError {
-        return RequestApiManager.getInstance().validDomain(domain);
+    public ResValidation validDomain(String domain) {
+        try {
+            return RequestApiManager.getInstance().validDomain(domain);
+        } catch (RetrofitError retrofitError) {
+            ResValidation resValidation = new ResValidation();
+            resValidation.setIsValidate(false);
+            return resValidation;
+        }
     }
 
     public List<ResAccountInfo.UserEmail> initUserEmailInfo() {

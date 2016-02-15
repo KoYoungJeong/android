@@ -10,8 +10,8 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import java.util.List;
 
@@ -53,8 +53,8 @@ public class EntitySimpleListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_select_cdp, viewGroup, false);
             holder = new ViewHolder();
-            holder.textView = (TextView) convertView.findViewById(R.id.txt_select_cdp_name);
-            holder.imageView = (SimpleDraweeView) convertView.findViewById(R.id.img_select_cdp_icon);
+            holder.textView = (TextView) convertView.findViewById(R.id.tv_select_cdp);
+            holder.imageView = (SimpleDraweeView) convertView.findViewById(R.id.iv_select_cdp);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -77,7 +77,9 @@ public class EntitySimpleListAdapter extends BaseAdapter {
             ImageUtil.loadProfileImage(imageView,
                     entity.getUserSmallProfileUrl(), R.drawable.profile_img_comment);
         } else {
-            imageView.setImageURI(UriFactory.getResourceUri(entity.getIconImageResId()));
+            ImageLoader.newBuilder()
+                    .load(entity.getIconImageResId())
+                    .into(imageView);
         }
 
         return convertView;

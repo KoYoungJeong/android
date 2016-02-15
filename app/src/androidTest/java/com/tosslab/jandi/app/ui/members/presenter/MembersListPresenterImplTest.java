@@ -4,7 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 
 import org.junit.After;
 import org.junit.Before;

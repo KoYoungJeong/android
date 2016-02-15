@@ -28,7 +28,9 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -78,82 +80,48 @@ public class FileDetailPresenterTest {
         await().until(() -> finish[0]);
 
         // Then
-        verify(mockView).exportIntentFile(any(), eq(fileMessage.content.type));
-    }
-
-    @Test
-    public void testOnCopyExternLink() throws Exception {
-        {
-            reset(mockView);
-            final boolean[] finish = {false};
-            doAnswer(invocationOnMock -> {
-                finish[0] = true;
-                return invocationOnMock;
-            }).when(mockView).dismissProgress();
-
-            fileDetailPresenter.onCopyExternLink(fileMessage, false);
-
-            await().until(() -> finish[0]);
-
-            verify(mockView).showProgress();
-            verify(mockView).setExternalShared(eq(true));
-            verify(mockView).copyToClipboard(anyString());
-            verify(mockView).showToast(eq(JandiApplication.getContext().getResources().getString(R.string.jandi_success_copy_clipboard_external_link)));
-            verify(mockView).dismissProgress();
-        }
-
-        {
-
-            reset(mockView);
-            fileDetailPresenter.onCopyExternLink(fileMessage, true);
-
-            verify(mockView).copyToClipboard(anyString());
-            verify(mockView).showToast(eq(JandiApplication.getContext().getResources().getString(R.string.jandi_success_copy_clipboard_external_link)));
-        }
-
+        verify(mockView).startExportedFileViewerActivity(any(), anyString());
     }
 
     @Test
     public void testEnableExternalLink() throws Exception {
+        reset(mockView);
         final boolean[] finish = {false};
         doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
-        }).when(mockView).dismissProgress();
+        }).when(mockView).setExternalLinkToClipboard();
 
-        fileDetailPresenter.enableExternalLink(fileMessage);
+        fileDetailPresenter.onEnableExternalLink(fileMessage.id);
 
         await().until(() -> finish[0]);
 
         verify(mockView).showProgress();
-        verify(mockView).setExternalShared(eq(true));
-        verify(mockView).copyToClipboard(anyString());
-        verify(mockView).showToast(eq(JandiApplication.getContext().getResources().getString(R.string.jandi_success_copy_clipboard_external_link)));
+        verify(mockView).setFileDetail(any(), anyList(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean());
+        verify(mockView).notifyDataSetChanged();
         verify(mockView).dismissProgress();
-
-
     }
 
     @Test
-    public void testOnDisableExternLink() throws Exception {
+    public void testOnDisableExternalLink() throws Exception {
         // Given
         final boolean[] finish = {false};
         doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
-        }).when(mockView).dismissProgress();
+        }).when(mockView).showDisableExternalLinkSuccessToast();
 
-        fileDetailPresenter.fileDetailModel.enableExternalLink(fileMessage.teamId, fileMessage.id);
 
         // When
-        fileDetailPresenter.onDisableExternLink(fileMessage);
+        fileDetailPresenter.onDisableExternalLink(fileMessage.id);
 
         await().until(() -> finish[0]);
 
         verify(mockView).showProgress();
-        verify(mockView).setExternalShared(eq(false));
-        verify(mockView).showToast(eq(JandiApplication.getContext().getResources().getString(R.string.jandi_success_disable_external_link)));
+        verify(mockView).setFileDetail(any(), anyList(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean());
+        verify(mockView).notifyDataSetChanged();
         verify(mockView).dismissProgress();
+        verify(mockView).showDisableExternalLinkSuccessToast();
     }
 
     @Test
@@ -163,12 +131,13 @@ public class FileDetailPresenterTest {
         fileMessage.shareEntities = getSharedEntities();
 
         // When
-        List<Long> sharedTopicIds = fileDetailPresenter.getSharedTopicIds(fileMessage);
+//        fileDetailPresenter.onShareAction();
+//        List<Long> sharedTopicIds = fileDetailPresenter.getSharedTopicIds(fileMessage);
 
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(sharedTopicIds.get(0));
+//        FormattedEntity entity = EntityManager.getInstance().getEntityById(sharedTopicIds.get(0));
         // Then
-        assertThat(sharedTopicIds.size(), is(equalTo(1)));
-        assertThat(entity.isUser(), is(false));
+//        assertThat(sharedTopicIds.size(), is(equalTo(1)));
+//        assertThat(entity.isUser(), is(false));
 
 
     }

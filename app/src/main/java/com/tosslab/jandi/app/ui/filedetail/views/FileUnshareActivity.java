@@ -35,12 +35,19 @@ import rx.Subscriber;
 
 @EActivity(R.layout.activity_file_unshare_entity_choose)
 public class FileUnshareActivity extends BaseAppCompatActivity {
+    public static final String KEY_ENTITY_ID = "entity_id";
+
+    public static final int MODE_UNSHARE = 0;
+    public static final int MODE_PICK = 1;
 
     @Extra
     long fileId;
 
     @Extra
     long[] sharedEntities;
+
+    @Extra
+    int mode = MODE_UNSHARE;
 
     @ViewById(R.id.lv_shared_entity)
     ListView lvSharedEntities;
@@ -65,7 +72,11 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle(R.string.jandi_title_cdp_to_be_unshared);
+        if (mode == MODE_PICK) {
+            actionBar.setTitle(getString(R.string.jandi_shared_in_room));
+        } else {
+            actionBar.setTitle(R.string.jandi_title_cdp_to_be_unshared);
+        }
     }
 
     @Override
@@ -81,9 +92,7 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
     public void showList() {
         long myId = fileDetailModel.getMyId();
 
-        List<FormattedEntity> entities = new ArrayList<>();
-        EntityManager entityManager = EntityManager.getInstance();
-
+        List<Long> sharedEntityWithoutMe = new ArrayList<>();
         Observable.create(new Observable.OnSubscribe<Long>() {
             @Override
             public void call(Subscriber<? super Long> subscriber) {
@@ -93,16 +102,27 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
                 subscriber.onCompleted();
             }
         }).filter(integerWrapper -> integerWrapper != myId)
-                .map(entityManager::getEntityById)
-                .collect(() -> entities, List::add)
+                .collect(() -> sharedEntityWithoutMe, List::add)
                 .subscribe();
 
-        if (!entities.isEmpty()) {
-            final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, entities);
+        EntityManager entityManager = EntityManager.getInstance();
+
+        final List<FormattedEntity> sharedEntities = entityManager.retrieveGivenEntities(sharedEntityWithoutMe);
+
+        List<FormattedEntity> unjoinedChannels = entityManager.getUnjoinedChannels();
+
+        for (FormattedEntity unjoinedEntity : unjoinedChannels) {
+            if (unjoinedEntity.hasGivenIds(sharedEntityWithoutMe)) {
+                sharedEntities.add(unjoinedEntity);
+            }
+        }
+
+        if (!sharedEntities.isEmpty()) {
+            final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, sharedEntities);
             lvSharedEntities.setAdapter(adapter);
             lvSharedEntities.setOnItemClickListener((adapterView, view, i, l) -> {
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("EntityId", entities.get(i).getId());
+                returnIntent.putExtra(KEY_ENTITY_ID, sharedEntities.get(i).getEntity().id);
                 setResult(RESULT_OK, returnIntent);
                 finish();
             });

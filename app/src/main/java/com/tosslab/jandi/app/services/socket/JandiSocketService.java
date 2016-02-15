@@ -223,11 +223,16 @@ public class JandiSocketService extends Service {
 
         EventListener unshareFileListener = objects -> jandiSocketServiceModel.unshareFile(objects[0]);
         eventHashMap.put("file_unshared", unshareFileListener);
-
-        EventListener fileCommentRefreshListener = objects ->
+        
+        EventListener shareFileListener = objects -> jandiSocketServiceModel.shareFile(objects[0]);
+        eventHashMap.put("file_shared", shareFileListener);
+        
+        EventListener fileCommentCreatedListener = objects ->
                 jandiSocketServiceModel.refreshFileComment(objects[0]);
-        eventHashMap.put("file_comment_created", fileCommentRefreshListener);
-        eventHashMap.put("file_comment_deleted", fileCommentRefreshListener);
+        eventHashMap.put("file_comment_created", fileCommentCreatedListener);
+        EventListener fileCommentDeletedListener = objects ->
+                jandiSocketServiceModel.refreshFileCommentAtTargetRoom(objects[0]);
+        eventHashMap.put("file_comment_deleted", fileCommentDeletedListener);
 
         eventHashMap.put("check_connect_team", objects -> {
             LogUtil.d(TAG, "check_connect_team");

@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.ui.members.presenter;
 
 import com.jayway.awaitility.Awaitility;
-import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;

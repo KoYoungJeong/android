@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
 import com.tosslab.jandi.app.events.files.CreateFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
+import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
@@ -43,9 +44,11 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketConnectBotEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketFileCommentDeleteEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketFileShareEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
@@ -69,7 +72,9 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
@@ -191,6 +196,32 @@ public class JandiSocketServiceModel {
         }
     }
 
+    public void refreshFileCommentAtTargetRoom(Object object) {
+        try {
+            SocketFileCommentDeleteEvent socketCommentEvent =
+                    getObject(object.toString(), SocketFileCommentDeleteEvent.class);
+            FileCommentRefreshEvent event = new FileCommentRefreshEvent(socketCommentEvent.getEvent(),
+                    socketCommentEvent.getFile().getId(),
+                    socketCommentEvent.getComment().getId(),
+                    TextUtils.equals(socketCommentEvent.getEvent(), "file_comment_created"));
+
+            List<SocketFileCommentDeleteEvent.Room> rooms = socketCommentEvent.getRooms();
+            if (rooms != null && !rooms.isEmpty()) {
+                List<Long> sharedRooms = new ArrayList<>();
+                Observable.from(rooms)
+                        .collect(() -> sharedRooms, (list, room) -> list.add(room.getId()))
+                        .subscribe();
+                event.setSharedRooms(sharedRooms);
+            }
+
+            postEvent(event);
+
+            JandiPreference.setSocketConnectedLastTime(socketCommentEvent.getTs());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void refreshMessage(Object object) {
         try {
             String content = object.toString();
@@ -282,6 +313,19 @@ public class JandiSocketServiceModel {
             e.printStackTrace();
         }
     }
+
+    public void shareFile(Object object) {
+        try {
+            SocketFileShareEvent socketFileShareEvent =
+                    getObject(object.toString(), SocketFileShareEvent.class);
+            long teamId = socketFileShareEvent.getTeamId();
+            long fileId = socketFileShareEvent.getFile().getId();
+            postEvent(new ShareFileEvent(teamId, fileId));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void updateMarker(Object object) {
         try {

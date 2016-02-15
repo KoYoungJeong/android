@@ -202,39 +202,35 @@ public class FileListPresenter {
 
 
         UserSelector userSelector = new UserSelectorImpl();
-        userSelector.setOnUserSelectListener(new UserSelector.OnUserSelectListener() {
-            @Override
-            public void onUserSelect(FormattedEntity item) {
+        userSelector.setOnUserSelectListener(item -> {
 
+            if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+                mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everyone);
+                textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
+                EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
+            } else if (item.getEntityId() ==
+                    EntityManager.getInstance().getMe().getId()) {
+                mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_my_files);
+                textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
+                EventBus.getDefault().post(new CategorizingAsOwner(item.getEntityId()));
+            } else {
+                mCurrentUserNameCategorizingAccodingBy = item.getName();
+                textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
+                EventBus.getDefault().post(new CategorizingAsOwner(item.getEntityId()));
+            }
+            userSelector.dismiss();
 
-                if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
-                    mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everyone);
-                    textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
-                    EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
-                } else if (item.getId() ==
-                        EntityManager.getInstance().getMe().getId()) {
-                    mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_my_files);
-                    textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
-                    EventBus.getDefault().post(new CategorizingAsOwner(item.getId()));
+            if (context instanceof SearchActivity) {
+                if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
                 } else {
-                    mCurrentUserNameCategorizingAccodingBy = item.getName();
-                    textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
-                    EventBus.getDefault().post(new CategorizingAsOwner(item.getId()));
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
                 }
-                userSelector.dismiss();
-
-                if (context instanceof SearchActivity) {
-                    if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
-                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
-                    } else {
-                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
-                    }
+            } else {
+                if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
                 } else {
-                    if (item.type == FormattedEntity.TYPE_EVERYWHERE) {
-                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
-                    } else {
-                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
-                    }
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
                 }
             }
         });

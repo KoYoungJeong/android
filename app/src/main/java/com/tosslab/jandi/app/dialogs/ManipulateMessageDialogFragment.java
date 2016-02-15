@@ -101,6 +101,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         Bundle args = new Bundle();
         args.putString(TITLE, title);
         args.putLong(MESSAGE_ID, item.id);
+        args.putLong(FEEDBACK_ID, item.feedbackId);
         args.putInt(MESSAGE_TYPE, MessageItem.TYPE_STICKER_COMMNET);
         args.putString(CURRENT_MESSAGE, null);
         args.putBoolean(IS_MINE, isMine);
@@ -116,6 +117,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         args.putString(TITLE, title);
         args.putLong(MESSAGE_ID, item.id);
         args.putInt(MESSAGE_TYPE, MessageItem.TYPE_COMMENT);
+        args.putLong(FEEDBACK_ID, item.feedbackId);
         args.putString(CURRENT_MESSAGE, item.content.body);
         args.putBoolean(IS_MINE, isMine);
         args.putBoolean(IS_STARRED, item.isStarred);

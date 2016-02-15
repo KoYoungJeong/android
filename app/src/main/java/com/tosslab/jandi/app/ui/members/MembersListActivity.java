@@ -18,7 +18,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.members.adapter.MembersAdapter;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment;

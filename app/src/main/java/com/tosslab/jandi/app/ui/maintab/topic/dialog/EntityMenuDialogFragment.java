@@ -77,7 +77,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
         boolean isBot = entityMenuDialogModel.isBot(entityId);
         boolean isDirectMessage = entity.isUser() || isBot;
         if (isDirectMessage) {
-            if (!entity.isEnabled() || isBot) {
+            if (!entity.isEnabled()) {
                 btnStarred.setVisibility(View.GONE);
             }
             btnMoveFolder.setVisibility(View.GONE);

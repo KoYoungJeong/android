@@ -11,6 +11,7 @@
     <color name="jandi_tab_sliding_indicator">@color/white</color>
 
     <color name="jandi_disable_user_color">#D7D7D7</color>
+    <color name="jandi_transparent_white_90p">#E5FFFFFF</color>
     <color name="jandi_transparent_white_75p">#DDFFFFFF</color>
     <color name="jandi_transparent_white_50p">#7FFFFFFF</color>
     <color name="jandi_transparent_white_30p">#4CFFFFFF</color>
@@ -92,7 +93,7 @@
     <color name="jandi_tab_underline">#e5e5e5</color>
     <color name="jandi_entities_divider">#E5E5E5</color>
     <color name="jandi_entities_bg">#f0f0f0</color>
-    <color name="jandi_more_bg">#f2f2f2</color>
+    <color name="jandi_more_bg">#FFF2F2F2</color>
     <color name="jandi_more_bottom_bg">#FFF4F4F4</color>
     <color name="jandi_list_item_background_pressed">#FFDCDCDC</color>
     <color name="jandi_list_item_background">#FFFFFFFF</color>
@@ -139,7 +140,7 @@
     <color name="jandi_member_profile_user_name">#FF1A1A1A</color>
     <color name="jandi_member_profile_img_overlay">#7F000000</color>
     <color name="jandi_member_profile_img_overlay_default">#FFF3B14C</color>
-
+    <color name="jandi_member_profile_disabled">#99FFFFFF</color>
     <!-- File detail -->
     <color name="jandi_file_detail_bg">#FFFFFF</color>
     <color name="jandi_file_detail_date">#999999</color>

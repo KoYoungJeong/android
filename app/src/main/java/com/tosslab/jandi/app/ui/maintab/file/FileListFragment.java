@@ -28,7 +28,6 @@ import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
-import com.tosslab.jandi.app.events.files.CreateFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
@@ -273,8 +272,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
     }
 
-    public void onEventMainThread(ShareFileEvent event) {
-
+    public void onEvent(ShareFileEvent event) {
         if (isInSearchActivity()) {
             return;
         }
@@ -282,12 +280,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
-
         int itemCount = searchedFileItemListAdapter.getItemCount();
-        searchedFileItemListAdapter.clearAdapter();
-        initSearchSubject.onNext(itemCount + 1);
+        initSearchSubject.onNext(itemCount);
     }
-
 
     @Background
     void getPreviousFile() {
@@ -449,18 +444,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
         // 토픽이 삭제되거나 나간 경우 해당 토픽의 파일 접근 여부를 알 수 없으므로
         // 리로드하도록 처리함
-        int itemCount = searchedFileItemListAdapter.getItemCount();
-        initSearchSubject.onNext(itemCount);
-    }
-
-    public void onEvent(CreateFileEvent event) {
-        if (isInSearchActivity()) {
-            return;
-        }
-
-        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
-            return;
-        }
         int itemCount = searchedFileItemListAdapter.getItemCount();
         initSearchSubject.onNext(itemCount);
     }

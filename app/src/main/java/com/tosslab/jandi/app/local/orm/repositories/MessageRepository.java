@@ -324,6 +324,40 @@ public class MessageRepository {
         return null;
     }
 
+    public List<ResMessages.CommentMessage> getCommentMessages(long fileId) {
+        lock.lock();
+        try {
+            Dao<ResMessages.CommentMessage, ?> dao = helper.getDao(ResMessages.CommentMessage.class);
+            return dao.queryBuilder()
+                    .where()
+                    .eq("feedbackId", fileId)
+                    .query();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+        return null;
+    }
+
+    public List<ResMessages.CommentStickerMessage> getStickerCommentMessages(long fileId) {
+        lock.lock();
+        try {
+            Dao<ResMessages.CommentStickerMessage, ?> dao =
+                    helper.getDao(ResMessages.CommentStickerMessage.class);
+            return dao.queryBuilder()
+                    .where()
+                    .eq("feedbackId", fileId)
+                    .query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+        return null;
+    }
+
     /**
      * Only For Test!!!
      *

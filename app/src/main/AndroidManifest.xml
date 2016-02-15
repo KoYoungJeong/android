@@ -152,7 +152,7 @@
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
-            android:name=".ui.album.ImageAlbumActivity_"
+            android:name=".ui.album.imagealbum.ImageAlbumActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <activity
@@ -327,8 +327,22 @@
         </activity>
 
         <activity
+            android:name=".ui.album.imagecrop.ImageCropPickerActivity_"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".dummy.JandiDummyActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
+
+        <activity
+            android:name=".ui.entities.disabled.view.DisabledEntityChooseActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_disabled_members" />
 
         <service android:name=".services.socket.JandiSocketService" />
 

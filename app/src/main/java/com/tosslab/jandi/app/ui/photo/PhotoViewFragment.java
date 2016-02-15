@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.photo;
 
-import android.animation.Animator;
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -20,16 +19,15 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
-import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
-import com.tosslab.jandi.app.utils.image.listener.BaseOnResourceReadyCallback;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
+import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
+import com.tosslab.jandi.app.utils.image.ImageDownloadTracker;
+import com.tosslab.jandi.app.utils.image.listener.BaseOnResourceReadyCallback;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.listener.BaseOnResourceReadyCallback;
 import com.tosslab.jandi.app.utils.image.listener.ClosableAttachStateChangeListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -126,7 +124,12 @@ public class PhotoViewFragment extends Fragment {
             loadImage(Uri.parse(thumbUrl));
         } else {
             final Uri originalUri = Uri.parse(originalUrl);
-            if (ImageUtil.hasCache(originalUri)) {
+
+            boolean hasDownloadHistory = ImageUtil.hasCache(originalUri) ||
+                    (ImageDownloadTracker.getInstance()
+                            .getStatus(originalUri) != ImageDownloadTracker.Status.PENDING);
+
+            if (hasDownloadHistory) {
                 loadImage(originalUri);
             } else {
                 // PhotoView 그려진 이미지(Drawable)이 없으면 ViewTapListener 가 동작하지 않는다.
@@ -170,18 +173,7 @@ public class PhotoViewFragment extends Fragment {
             progressBar.setProgress(100);
             tvPercentage.setText(100 + "%");
         }
-
-        vgProgress.animate()
-                .alpha(0.0f)
-                .setDuration(300)
-                .setListener(new SimpleEndAnimatorListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        if (vgProgress != null) {
-                            vgProgress.setVisibility(View.GONE);
-                        }
-                    }
-                });
+        vgProgress.setVisibility(View.GONE);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -193,12 +185,15 @@ public class PhotoViewFragment extends Fragment {
 
         ResizeOptions resizeOptions = new ResizeOptions(width, height);
 
+        ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.IN_PROGRESS);
         ImageLoader.loadWithCallback(uri, resizeOptions, new BaseOnResourceReadyCallback() {
             @Override
             public void onReady(Drawable drawable, CloseableReference reference) {
                 hideProgress();
 
                 setImageResource(drawable, reference);
+
+                ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.COMPLETED);
             }
 
             @Override
