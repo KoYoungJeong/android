@@ -33,3 +33,5 @@ build/
 *.iml
 
 gradle.properties
+
+venv/
