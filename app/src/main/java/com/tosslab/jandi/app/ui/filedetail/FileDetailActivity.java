@@ -994,6 +994,20 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     @Override
+    public void exportIntentIntegrationFile(String fileUrl) {
+        Intent target = new Intent(Intent.ACTION_SEND);
+        target.putExtra(Intent.EXTRA_TEXT, fileUrl);
+        target.setType("text/plain");
+        try {
+            Intent chooser = Intent.createChooser(target, getString(R.string.jandi_export_to_app));
+            startActivity(chooser);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+            showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
+        }
+    }
+
+    @Override
     public void setFileMessage(ResMessages.FileMessage fileMessage) {
         this.fileMessage = fileMessage;
     }

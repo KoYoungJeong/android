@@ -583,20 +583,30 @@ public class FileDetailPresenter {
     }
 
     public void onExportFile(ResMessages.FileMessage fileMessage, ProgressDialog progressDialog) {
-        String downloadFilePath = fileDetailModel.getDownloadFilePath(fileMessage.content.title);
-        String downloadUrl = fileDetailModel.getDownloadUrl(fileMessage.content.fileUrl);
-
-        fileDetailModel.downloadFile(downloadUrl, downloadFilePath, (downloaded, total) -> {
-            progressDialog.setProgress((int) (downloaded * 100 / total));
-        }, (e, result) -> {
+        if (fileMessage.content.serverUrl.equals("google") || fileMessage.content.serverUrl.equals("dropbox")) {
             progressDialog.dismiss();
-
-            if (e == null && result != null) {
-                view.exportIntentFile(result, fileMessage.content.type);
+            String fileUrl = fileMessage.content.fileUrl;
+            if (fileUrl != null) {
+                view.exportIntentIntegrationFile(fileUrl);
             } else {
                 view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
             }
-        });
+        } else {
+            String downloadFilePath = fileDetailModel.getDownloadFilePath(fileMessage.content.title);
+            String downloadUrl = fileDetailModel.getDownloadUrl(fileMessage.content.fileUrl);
+
+            fileDetailModel.downloadFile(downloadUrl, downloadFilePath, (downloaded, total) -> {
+                progressDialog.setProgress((int) (downloaded * 100 / total));
+            }, (e, result) -> {
+                progressDialog.dismiss();
+
+                if (e == null && result != null) {
+                    view.exportIntentFile(result, fileMessage.content.type);
+                } else {
+                    view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
+                }
+            });
+        }
     }
 
     public void onCopyExternLink(ResMessages.FileMessage fileMessage, boolean isExternalShared) {
@@ -756,6 +766,8 @@ public class FileDetailPresenter {
         void setExternalShared(boolean externalShared);
 
         void exportIntentFile(File result, String type);
+
+        void exportIntentIntegrationFile(String fileUrl);
 
         void setFileMessage(ResMessages.FileMessage fileMessage2);
 
