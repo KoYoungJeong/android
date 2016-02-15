@@ -152,7 +152,7 @@
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
-            android:name=".ui.album.ImageAlbumActivity_"
+            android:name=".ui.album.imagealbum.ImageAlbumActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <activity
@@ -319,6 +319,15 @@
 
         <activity
             android:name=".ui.profile.defaultimage.ProfileImageSelectorActivity_"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.album.imagecrop.ImageCropPickerActivity_"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW" />

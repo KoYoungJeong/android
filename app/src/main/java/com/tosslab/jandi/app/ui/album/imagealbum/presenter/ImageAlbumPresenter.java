@@ -1,7 +1,7 @@
-package com.tosslab.jandi.app.ui.album.fragment.presenter;
+package com.tosslab.jandi.app.ui.album.imagealbum.presenter;
 
-import com.tosslab.jandi.app.ui.album.fragment.vo.ImageAlbum;
-import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
+import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImageAlbum;
+import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
 
 import java.util.List;
 

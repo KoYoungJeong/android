@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.album.fragment.vo;
+package com.tosslab.jandi.app.ui.album.imagealbum.vo;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 15..

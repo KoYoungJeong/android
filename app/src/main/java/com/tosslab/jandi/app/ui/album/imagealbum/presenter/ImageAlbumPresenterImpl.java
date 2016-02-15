@@ -1,12 +1,12 @@
-package com.tosslab.jandi.app.ui.album.fragment.presenter;
+package com.tosslab.jandi.app.ui.album.imagealbum.presenter;
 
 import android.content.Context;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.album.fragment.model.ImageAlbumModel;
-import com.tosslab.jandi.app.ui.album.fragment.vo.ImageAlbum;
-import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
-import com.tosslab.jandi.app.ui.album.fragment.vo.SelectPictures;
+import com.tosslab.jandi.app.ui.album.imagealbum.model.ImageAlbumModel;
+import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImageAlbum;
+import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
+import com.tosslab.jandi.app.ui.album.imagealbum.vo.SelectPictures;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.album.fragment.model;
+package com.tosslab.jandi.app.ui.album.imagealbum.model;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -8,9 +8,9 @@ import android.provider.MediaStore;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.album.fragment.ImageAlbumFragment;
-import com.tosslab.jandi.app.ui.album.fragment.vo.ImageAlbum;
-import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
-import com.tosslab.jandi.app.ui.album.fragment.vo.SelectPictures;
+import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImageAlbum;
+import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
+import com.tosslab.jandi.app.ui.album.imagealbum.vo.SelectPictures;
 
 import org.androidannotations.annotations.EBean;
 

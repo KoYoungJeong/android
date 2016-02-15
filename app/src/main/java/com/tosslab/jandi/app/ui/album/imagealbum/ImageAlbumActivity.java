@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.album;
+package com.tosslab.jandi.app.ui.album.imagealbum;
 
 import android.Manifest;
 import android.app.Activity;
@@ -14,8 +14,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.album.fragment.ImageAlbumFragment_;
-import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
-import com.tosslab.jandi.app.ui.album.fragment.vo.SelectPictures;
+import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
+import com.tosslab.jandi.app.ui.album.imagealbum.vo.SelectPictures;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
@@ -56,7 +56,6 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
 
     @AfterViews
     void initViews() {
-
         SelectPictures.getSelectPictures().clear();
 
         setupActionbar();
@@ -95,7 +94,6 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
     }
 
     private void setupActionbar() {
-
         if (getSupportActionBar() == null) {
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_image_album);
             setSupportActionBar(toolbar);
@@ -108,7 +106,6 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.jandi_select_gallery);
-
     }
 
     @Override
@@ -130,7 +127,6 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
 
     @OptionsItem(R.id.action_select_picture)
     void onSelectPicture() {
-
         ArrayList<String> selectedPicturesPathList = getSelectedPicturesPathList();
 
         if (!isOverFileSize(selectedPicturesPathList)) {
@@ -142,12 +138,9 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
         } else {
             ColoredToast.showError(getString(R.string.err_file_upload_failed));
         }
-
-
     }
 
     private boolean isOverFileSize(List<String> selectedPicturesPathList) {
-
         File uploadFile;
         for (String filePath : selectedPicturesPathList) {
             uploadFile = new File(filePath);
@@ -158,7 +151,6 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
             }
 
         }
-
         return false;
     }
 
