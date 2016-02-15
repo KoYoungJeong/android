@@ -451,29 +451,14 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             if (!TextUtils.isEmpty(userPhoneNumber)) {
                 vgProfileTeamButtons.addView(
                         getButton(R.drawable.icon_profile_mobile,
-                                getString(R.string.jandi_member_profile_call), v -> {
-                                    Permissions.getChecker()
-                                            .permission(() -> Manifest.permission.CALL_PHONE)
-                                            .hasPermission(() -> {
-                                                call(userPhoneNumber);
-                                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Profile_Cellphone);
-                                            })
-                                            .noPermission(() -> {
-                                                String[] permissions = {Manifest.permission.CALL_PHONE};
-                                                requestPermissions(permissions, REQ_CALL_PERMISSION);
-                                            })
-                                            .check();
-                                }));
+                                getString(R.string.jandi_member_profile_call), v -> callIfHasPermission()));
             }
 
             final String userEmail = member.getUserEmail();
             if (!TextUtils.isEmpty(userEmail)) {
                 vgProfileTeamButtons.addView(
                         getButton(R.drawable.icon_profile_mail,
-                                getString(R.string.jandi_member_profile_email), (v) -> {
-                                    sendEmail(userEmail);
-                                    AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Email);
-                                }));
+                                getString(R.string.jandi_member_profile_email), (v) -> sendEmail()));
             }
 
             vgProfileTeamButtons.addView(
@@ -486,6 +471,21 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                                 AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.DirectMessage);
                             }));
         }
+    }
+
+    @Click(R.id.tv_member_profile_phone)
+    void callIfHasPermission() {
+        Permissions.getChecker()
+                .permission(() -> Manifest.permission.CALL_PHONE)
+                .hasPermission(() -> {
+                    call(EntityManager.getInstance().getEntityById(memberId).getUserPhoneNumber());
+                    AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Profile_Cellphone);
+                })
+                .noPermission(() -> {
+                    String[] permissions = {Manifest.permission.CALL_PHONE};
+                    requestPermissions(permissions, REQ_CALL_PERMISSION);
+                })
+                .check();
     }
 
     @Override
@@ -540,13 +540,20 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .start();
     }
 
-    private void sendEmail(String userEmail) {
+    @Click(R.id.tv_member_profile_email)
+    void sendEmail() {
+        String userEmail = EntityManager.getInstance().getEntityById(memberId).getUserEmail();
+        AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Email);
         if (TextUtils.isEmpty(userEmail)) {
             return;
         }
         String uri = "mailto:" + userEmail;
         Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse(uri));
-        startActivity(intent);
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void call(String userPhoneNumber) {
