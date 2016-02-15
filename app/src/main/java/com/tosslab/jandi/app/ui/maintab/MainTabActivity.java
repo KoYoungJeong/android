@@ -585,8 +585,17 @@ public class MainTabActivity extends BaseAppCompatActivity {
         } else {
             floatingActionMenu.setVisibility(View.INVISIBLE);
             if (floatingActionMenu.isOpened()) {
-                floatingActionMenu.dismissMenuItems();
+                floatingActionMenu.close();
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (floatingActionMenu != null && floatingActionMenu.isOpened()) {
+            floatingActionMenu.close();
+        } else {
+            super.onBackPressed();
         }
     }
 

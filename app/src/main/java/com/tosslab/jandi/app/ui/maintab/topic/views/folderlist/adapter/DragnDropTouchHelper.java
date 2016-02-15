@@ -53,7 +53,7 @@ public class DragnDropTouchHelper extends ItemTouchHelper.SimpleCallback {
     @Override
     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
         if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
-            startFolderId = topicFolderSettingAdapter.getItemById(viewHolder.getAdapterPosition()).id;
+            startFolderId = topicFolderSettingAdapter.getItem(viewHolder.getAdapterPosition()).id;
             dropPosition = viewHolder.getAdapterPosition();
             viewHolder.itemView.setBackgroundResource(R.drawable.list_move_shadow);
         } else if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) {

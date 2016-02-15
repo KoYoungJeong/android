@@ -187,7 +187,7 @@ public class FloatingActionMenu extends FrameLayout {
     }
 
     // 버튼이 4개 이상 필요한 경우 ids.xml에 아이디 추가후 아래 케이스를 추가하여 사용하도록 한다.
-    public int getButtonId() {
+    private int getButtonId() {
         switch (buttonCnt) {
             case 0:
                 return R.id.fab_menu_button;
@@ -208,7 +208,7 @@ public class FloatingActionMenu extends FrameLayout {
         return gestureDetector.onTouchEvent(event);
     }
 
-    public void setOnMenuButtonClicked() {
+    private void setOnMenuButtonClicked() {
         setOnMenuAnimation();
         btMenu.setOnClickListener(v -> {
             if (isOpened) {
@@ -231,7 +231,7 @@ public class FloatingActionMenu extends FrameLayout {
         setBackground(isOpened);
     }
 
-    public void showMenu() {
+    private void showMenu() {
         isOpened = true;
         if (closeAnimatorSet.isRunning()) {
             closeAnimatorSet.cancel();
@@ -239,7 +239,7 @@ public class FloatingActionMenu extends FrameLayout {
         openAnimatorSet.start();
     }
 
-    public void dismissMenu() {
+    private void dismissMenu() {
         isOpened = false;
         if (openAnimatorSet.isRunning()) {
             openAnimatorSet.cancel();
@@ -248,7 +248,7 @@ public class FloatingActionMenu extends FrameLayout {
     }
 
     // 135도 돌리는 애니메이션 set
-    public void setOnMenuAnimation() {
+    private void setOnMenuAnimation() {
         ObjectAnimator expandAnimator = ObjectAnimator.ofFloat(
                 btMenuIcon,
                 "rotation",
@@ -273,7 +273,7 @@ public class FloatingActionMenu extends FrameLayout {
         closeAnimatorSet.setDuration(ANIMATION_DURATION);
     }
 
-    public void showMenuItems() {
+    private void showMenuItems() {
         int timer = 0;
         for (int i = 0; i < buttonCnt; i++) {
             final View btItem = btItems.get(i);
@@ -294,7 +294,7 @@ public class FloatingActionMenu extends FrameLayout {
         }
     }
 
-    public void dismissMenuItems() {
+    private void dismissMenuItems() {
         int timer = 0;
         for (int i = buttonCnt - 1; i >= 0; i--) {
             final View btItem = btItems.get(i);
@@ -328,7 +328,7 @@ public class FloatingActionMenu extends FrameLayout {
         }
     }
 
-    public void setBackground(boolean isOpened) {
+    private void setBackground(boolean isOpened) {
         if (isOpened) {
             rootView.setBackgroundResource(R.color.jandi_transparent_black_50p);
         } else {
@@ -336,7 +336,7 @@ public class FloatingActionMenu extends FrameLayout {
         }
     }
 
-    public int dpToPx(int dp) {
+    private int dpToPx(int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 dp, getResources().getDisplayMetrics());
     }
