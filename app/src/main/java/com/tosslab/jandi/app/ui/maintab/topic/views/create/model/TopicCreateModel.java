@@ -53,7 +53,7 @@ public class TopicCreateModel {
         return TextUtils.isEmpty(topicTitle) || TextUtils.getTrimmedLength(topicTitle) <= 0;
     }
 
-    public void trackTopicCreateSuccess(int topicId) {
+    public void trackTopicCreateSuccess(long topicId) {
         Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.TopicCreate)

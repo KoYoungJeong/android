@@ -88,7 +88,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     //TODO 진입 시점에 네트워크 체킹 ?
     @Background
     @Override
-    public void onJoinedTeamSelect(int teamId, boolean firstJoin) {
+    public void onJoinedTeamSelect(long teamId, boolean firstJoin) {
         view.showProgressWheel();
         try {
             accountHomeModel.updateSelectTeam(teamId);
@@ -179,7 +179,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showProgressWheel();
 
         try {
-            teamDomainInfoModel.acceptOrDclineInvite(
+            accountHomeModel.acceptOrDeclineInvite(
                     selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.ACCEPT.getType());
             teamDomainInfoModel.updateTeamInfo(selectedTeam.getTeamId());
             MixpanelMemberAnalyticsClient.getInstance(context, null)
@@ -236,7 +236,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showProgressWheel();
 
         try {
-            teamDomainInfoModel.acceptOrDclineInvite(
+            accountHomeModel.acceptOrDeclineInvite(
                     selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
             view.dismissProgressWheel();
             view.removePendingTeamView(selectedTeam);

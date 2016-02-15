@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.commonviewmodels.mention.model;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -27,7 +26,6 @@ import setup.BaseInitUtil;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -62,13 +60,9 @@ public class SearchMemberModelTest {
         ResAccountInfo.UserTeam userTeam = AccountRepository.getRepository().getAccountTeams().get(0);
         ResLeftSideMenu leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(userTeam.getTeamId());
 
-        LinkedHashMap<Integer, SearchedItemVO> searchedItemVOLinkedHashMap = searchMemberModel.refreshSelectableMembers(userTeam.getTeamId(), Arrays.asList(leftSideMenu.team.t_defaultChannelId), MentionControlViewModel.MENTION_TYPE_MESSAGE);
+        LinkedHashMap<Long, SearchedItemVO> searchedItemVOLinkedHashMap = searchMemberModel.refreshSelectableMembers(userTeam.getTeamId(), Arrays.asList(leftSideMenu.team.t_defaultChannelId), MentionControlViewModel.MENTION_TYPE_MESSAGE);
 
         assertThat(searchedItemVOLinkedHashMap.size(), is(greaterThan(0)));
 
-        EntityManager manager = EntityManager.getInstance();
-        LinkedHashMap<Integer, SearchedItemVO> integerSearchedItemVOLinkedHashMap = searchMemberModel.refreshSelectableMembers(manager.getTeamId(), Arrays.asList(manager.getDefaultTopicId()), MentionControlViewModel.MENTION_TYPE_MESSAGE);
-
-        assertThat(integerSearchedItemVOLinkedHashMap.size(), is(equalTo(manager.getEntityById(manager.getDefaultTopicId()).getMembers().size())));
     }
 }

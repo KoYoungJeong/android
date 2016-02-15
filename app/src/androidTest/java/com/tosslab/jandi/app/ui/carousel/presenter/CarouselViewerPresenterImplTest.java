@@ -43,9 +43,9 @@ public class CarouselViewerPresenterImplTest {
 
     private CarouselViewerPresenter presenter;
     private CarouselViewerPresenter.View mockView;
-    private int teamId;
-    private int roomId;
-    private int lastImageMessageId;
+    private long teamId;
+    private long roomId;
+    private long lastImageMessageId;
 
     @Before
     public void setUp() throws Exception {

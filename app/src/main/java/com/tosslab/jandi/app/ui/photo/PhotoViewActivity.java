@@ -74,8 +74,8 @@ public class PhotoViewActivity extends BaseAppCompatActivity implements OnSwipeE
 
         if (isFullScreen) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                systemUiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                systemUiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // close nav bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // close status bar
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
             } else {
                 // Do Nothing

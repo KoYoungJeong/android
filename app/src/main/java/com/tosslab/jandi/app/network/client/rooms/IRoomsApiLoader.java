@@ -8,6 +8,6 @@ import com.tosslab.jandi.app.network.models.ResRoomInfo;
  */
 public interface IRoomsApiLoader {
 
-    IExecutor<ResRoomInfo> loadGetRoomInfoByRoomsApi(int teamId, int roomId);
+    IExecutor<ResRoomInfo> loadGetRoomInfoByRoomsApi(long teamId, long roomId);
 
 }

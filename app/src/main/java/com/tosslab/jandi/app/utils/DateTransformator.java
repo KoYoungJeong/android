@@ -2,12 +2,15 @@ package com.tosslab.jandi.app.utils;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
+
 import org.codehaus.jackson.map.util.ISO8601DateFormat;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
@@ -67,6 +70,17 @@ public class DateTransformator {
     }
 
     public static String getTimeStringForSimple(Date date) {
-        return getTimeString(date, "a h:mm");
+        Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
+
+        String langCode = locale.getLanguage();
+
+        if (TextUtils.equals(langCode, Locale.KOREA.getLanguage())
+                || TextUtils.equals(langCode, Locale.JAPAN.getLanguage())) {
+
+            return getTimeString(date, "a h:mm");
+        } else {
+            return getTimeString(date, "h:mm a");
+        }
+
     }
 }

@@ -167,10 +167,10 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
 
                 if (selectedEmail != null && clickedItem != selectedEmail) {
                     selectedEmail.setSelected(!selectedEmail.isSelected());
+                    clickedItem.setSelected(!clickedItem.isSelected());
+                    emailChoosePresenter.refreshListView();
                 }
 
-                clickedItem.setSelected(!clickedItem.isSelected());
-                emailChoosePresenter.refreshListView();
             } else {
                 // non-case...
                 emailChoosePresenter.showRetryEmailDialog(selectedEmail.getEmail());

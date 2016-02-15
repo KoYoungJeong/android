@@ -42,8 +42,8 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
-        int fromEntityId = link.fromEntity;
+    public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
+        long fromEntityId = link.fromEntity;
 
         ResMessages.CommentStickerMessage stickerMessage = (ResMessages.CommentStickerMessage) link.message;
 
@@ -82,7 +82,7 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+    public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
         if (currentLinkId == lastReadLinkId) {
             lastReadView.setVisibility(View.VISIBLE);
         } else {

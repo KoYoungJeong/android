@@ -67,7 +67,7 @@ public class BaseChatListFragment extends Fragment {
         moveToMessageActivity(entity.getId(), type, entity.isStarred);
     }
 
-    private void moveToMessageActivity(final int entityId, final int entityType, final boolean isStarred) {
+    private void moveToMessageActivity(final long entityId, final int entityType, final boolean isStarred) {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override

@@ -14,7 +14,7 @@ public interface AccountHomePresenter {
 
     void setView(View view);
 
-    void onJoinedTeamSelect(int teamId, boolean firstJoin);
+    void onJoinedTeamSelect(long teamId, boolean firstJoin);
 
     void onCreateTeamSelect();
 

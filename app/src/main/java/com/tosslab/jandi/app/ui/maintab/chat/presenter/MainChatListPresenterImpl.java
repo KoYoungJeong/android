@@ -48,8 +48,8 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
                 .onBackpressureBuffer()
                 .map(integer -> {
 
-                    int memberId = mainChatListModel.getMemberId();
-                    int teamId = mainChatListModel.getTeamId();
+                    long memberId = mainChatListModel.getMemberId();
+                    long teamId = mainChatListModel.getTeamId();
 
                     List<ResChat> chatList = mainChatListModel.getChatList(memberId);
                     mainChatListModel.saveChatList(teamId, chatList);
@@ -76,9 +76,9 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
     @Background
     @Override
-    public void onInitChatList(Context context, int selectedEntity) {
-        int memberId = mainChatListModel.getMemberId();
-        int teamId = mainChatListModel.getTeamId();
+    public void initChatList(Context context, long selectedEntity) {
+        long memberId = mainChatListModel.getMemberId();
+        long teamId = mainChatListModel.getTeamId();
 
         if (memberId < 0 || teamId < 0) {
             return;
@@ -129,8 +129,8 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
     @Override
     public void onReloadChatList(Context context) {
-        int memberId = mainChatListModel.getMemberId();
-        int teamId = mainChatListModel.getTeamId();
+        long memberId = mainChatListModel.getMemberId();
+        long teamId = mainChatListModel.getTeamId();
 
         if (memberId < 0 || teamId < 0) {
             return;
@@ -143,12 +143,12 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
     @Override
     public void onMoveDirectMessage(Context context, int entityId) {
         EntityManager entityManager = EntityManager.getInstance();
-        int roomId = mainChatListModel.getRoomId(entityId);
+        long roomId = mainChatListModel.getRoomId(entityId);
 
-        view.moveMessageActivity(entityManager.getTeamId()
-                , entityId
-                , roomId
-                , mainChatListModel.isStarred(context, entityId), -1);
+        view.moveMessageActivity(entityManager.getTeamId(),
+                entityId,
+                roomId,
+                mainChatListModel.isStarred(context, entityId), -1);
     }
 
     @Override
@@ -162,7 +162,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         view.setSelectedItem(chatItem.getRoomId());
         EventBus.getDefault().post(new MainSelectTopicEvent(chatItem.getEntityId()));
 
-        int teamId = mainChatListModel.getTeamId();
+        long teamId = mainChatListModel.getTeamId();
         BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
         int badgeCount = badgeCountRepository.findBadgeCountByTeamId(teamId) - unread;
         if (badgeCount <= 0) {
@@ -174,7 +174,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         int unreadCount = mainChatListModel.getUnreadCount(view.getChatItems());
         EventBus.getDefault().post(new ChatBadgeEvent(unreadCount > 0, unreadCount));
 
-        int entityId = chatItem.getEntityId();
+        long entityId = chatItem.getEntityId();
 
         boolean isStarred = EntityManager.getInstance()
                 .getEntityById(entityId)

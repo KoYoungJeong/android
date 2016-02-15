@@ -28,9 +28,6 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 14..
- */
 public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int OWNER_TYPE_TEAM = 0;
     public static final int OWNER_TYPE_TOPIC = 1;
@@ -78,7 +75,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (isCheckMode) {
             ((MemberChoiceViewHolder) holder).bindView(item);
         } else {
-            int myId = EntityManager.getInstance().getMe().getId();
+            long myId = EntityManager.getInstance().getMe().getId();
             ((MemberViewHolder) holder).bindView(item, ownerType, kickMode, myId, v -> {
                 if (onKickClickListener != null) {
                     onKickClickListener.onKickClick(MembersAdapter.this, holder, position);
@@ -113,8 +110,8 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         isCheckMode = true;
     }
 
-    public List<Integer> getSelectedUserIds() {
-        List<Integer> selectedUserIds = new ArrayList<Integer>();
+    public List<Long> getSelectedUserIds() {
+        List<Long> selectedUserIds = new ArrayList<>();
         for (ChatChooseItem item : memberChooseItems) {
             if (item.isChooseItem()) {
                 selectedUserIds.add(item.getEntityId());
@@ -215,7 +212,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             tvOwnerBadge = (TextView) itemView.findViewById(R.id.tv_owner_badge);
         }
 
-        public void bindView(ChatChooseItem item, int ownerType, boolean kickMode, int myId,
+        public void bindView(ChatChooseItem item, int ownerType, boolean kickMode, long myId,
                              View.OnClickListener onKickClickListener) {
             tvName.setText(item.getName());
 

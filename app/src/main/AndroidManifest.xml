@@ -79,8 +79,8 @@
 
         <activity
             android:name=".ui.filedetail.FileDetailActivity_"
-            android:label="@string/title_file_detail"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_file_detail"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
@@ -252,7 +252,7 @@
         </activity>
 
         <activity
-            android:name=".ui.maintab.topic.views.choosefolderlist.TopicFolderChooseActivity_"
+            android:name=".ui.maintab.topic.views.folderlist.TopicFolderSettingActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_folder_move_to">
 
@@ -326,6 +326,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".dummy.JandiDummyActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
+
         <service android:name=".services.socket.JandiSocketService" />
 
         <receiver
@@ -337,8 +341,11 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".JandiReceiver">
+        <receiver android:name=".dummy.JandiDummyReceiver">
             <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
                 <action android:name="android.intent.action.PACKAGE_RESTARTED" />
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
             </intent-filter>
@@ -354,8 +361,18 @@
         </receiver>
         <!-- Google Play Campaign Measurement -->
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+
         <receiver
             android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+            android:exported="true"
+            android:permission="android.permission.INSTALL_PACKAGES">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="com.google.ads.conversiontracking.InstallReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />

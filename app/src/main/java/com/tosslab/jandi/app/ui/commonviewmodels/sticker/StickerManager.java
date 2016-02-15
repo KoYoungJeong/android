@@ -21,9 +21,6 @@ import java.util.List;
 
 import rx.Observable;
 
-/**
- * Created by Steve SeongUg Jung on 15. 6. 8..
- */
 public class StickerManager {
 
     public static final String ASSET_SCHEMA = "asset:///";
@@ -31,10 +28,10 @@ public class StickerManager {
     private static final LoadOptions DEFAULT_OPTIONS = new LoadOptions();
     private static StickerManager stickerManager;
 
-    private HashSet<Integer> localStickerGroupIds;
+    private HashSet<Long> localStickerGroupIds;
 
     private StickerManager() {
-        this.localStickerGroupIds = new HashSet<Integer>();
+        this.localStickerGroupIds = new HashSet<>();
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_MOZZI);
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DAY);
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DAY_ZH_TW);
@@ -48,12 +45,12 @@ public class StickerManager {
         return stickerManager;
     }
 
-    public void loadStickerDefaultOption(SimpleDraweeView view, int groupId, String stickerId) {
+    public void loadStickerDefaultOption(SimpleDraweeView view, long groupId, String stickerId) {
 
         loadSticker(view, groupId, stickerId, DEFAULT_OPTIONS);
     }
 
-    public void loadStickerNoOption(SimpleDraweeView view, int groupId, String stickerId) {
+    public void loadStickerNoOption(SimpleDraweeView view, long groupId, String stickerId) {
 
         LoadOptions loadOptions = new LoadOptions();
         loadOptions.isClickImage = false;
@@ -63,9 +60,9 @@ public class StickerManager {
     }
 
     public void loadSticker(SimpleDraweeView view,
-                            int groupId, String stickerId, LoadOptions options) {
+                            long groupId, String stickerId, LoadOptions options) {
 
-        String stickerAssetPath = null;
+        String stickerAssetPath;
         if (isLocalSticker(groupId)) {
             stickerAssetPath = getStickerAssetPath(groupId, stickerId);
         } else {
@@ -97,11 +94,11 @@ public class StickerManager {
                 .into(view);
     }
 
-    private boolean isLocalSticker(int groupId) {
+    private boolean isLocalSticker(long groupId) {
         return localStickerGroupIds.contains(groupId);
     }
 
-    public String getStickerAssetPath(int groupId, String stickerId) {
+    public String getStickerAssetPath(long groupId, String stickerId) {
         List<ResMessages.StickerContent> stickers = StickerRepository.getRepository().getStickers(groupId);
         ResMessages.StickerContent defaultSticker = new ResMessages.StickerContent();
         ResMessages.StickerContent stickerItem = Observable.from(stickers)
@@ -110,7 +107,7 @@ public class StickerManager {
                 .toBlocking().first();
 
         if (stickerItem != defaultSticker) {
-            StringBuffer assetPathBuffer = new StringBuffer();
+            StringBuilder assetPathBuffer = new StringBuilder();
             assetPathBuffer
                     .append(STICKER_ASSET_PATH)
                     .append("/").append(getGroupName(stickerItem.groupId))
@@ -124,24 +121,16 @@ public class StickerManager {
     }
 
     @NonNull
-    private String getGroupName(int groupId) {
+    private String getGroupName(long groupId) {
         String group;
-        switch (groupId) {
-            case StickerRepository.DEFAULT_GROUP_ID_MOZZI:
-                group = "mozzi";
-                break;
-
-            case StickerRepository.DEFAULT_GROUP_ID_DAY:
-                group = "day";
-                break;
-
-            case StickerRepository.DEFAULT_GROUP_ID_DAY_ZH_TW:
-                group = "day/zh_tw";
-                break;
-
-            default:
-                group = "mozzi";
-                break;
+        if (groupId == StickerRepository.DEFAULT_GROUP_ID_MOZZI) {
+            group = "mozzi";
+        } else if (groupId == StickerRepository.DEFAULT_GROUP_ID_DAY) {
+            group = "day";
+        } else if (groupId == StickerRepository.DEFAULT_GROUP_ID_DAY_ZH_TW) {
+            group = "day/zh_tw";
+        } else {
+            group = "mozzi";
         }
         return group;
     }

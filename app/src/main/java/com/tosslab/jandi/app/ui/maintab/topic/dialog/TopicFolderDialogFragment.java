@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.TopicFolderDialogModel;
+import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -35,7 +35,7 @@ import retrofit.RetrofitError;
 public class TopicFolderDialogFragment extends DialogFragment {
 
     @FragmentArg
-    int folderId;
+    long folderId;
     @FragmentArg
     String folderName;
     @FragmentArg
@@ -44,7 +44,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
     TextView tvFolderTitle;
 
     @Bean
-    TopicFolderDialogModel topicFolderDialogModel;
+    TopicFolderSettingModel topicFolderDialogModel;
 
     @NonNull
     @Override
@@ -55,10 +55,12 @@ public class TopicFolderDialogFragment extends DialogFragment {
         view.findViewById(R.id.tv_folder_rename).setOnClickListener(v -> {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolder_Rename);
             clickFolderRename();
+            dismiss();
         });
         view.findViewById(R.id.tv_folder_delete).setOnClickListener(v -> {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolder_Delete);
             clickFolderDelete();
+            dismiss();
         });
 
         return new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_280)
@@ -84,7 +86,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
         showDeleteFolderDialog(folderId);
     }
 
-    private void showRenameFolderDialog(int folderId, String name, int seq) {
+    private void showRenameFolderDialog(long folderId, String name, int seq) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
 
@@ -102,10 +104,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
                 .setPositiveButton(getActivity().getString(R.string.jandi_confirm), (dialog, which) -> {
                     renameFolder(folderId, input.getText().toString().trim(), seq);
                 })
-                .setNegativeButton(getActivity().getString(R.string.jandi_cancel), (dialog, which) -> {
-                    dialog.cancel();
-                    TopicFolderDialogFragment.this.dismiss();
-                })
+                .setNegativeButton(getActivity().getString(R.string.jandi_cancel), null)
                 .setOnCancelListener(dialog -> TopicFolderDialogFragment.this.dismiss());
         AlertDialog alertDialog = builder.create();
         alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -123,7 +122,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
         });
     }
 
-    private void showDeleteFolderDialog(int folderId) {
+    private void showDeleteFolderDialog(long folderId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
 
@@ -131,16 +130,13 @@ public class TopicFolderDialogFragment extends DialogFragment {
                 .setPositiveButton(getActivity().getString(R.string.jandi_confirm), (dialog, which) -> {
                     deleteTopicFolder(folderId);
                 })
-                .setNegativeButton(getActivity().getString(R.string.jandi_cancel), (dialog, which) -> {
-                    dialog.cancel();
-                    TopicFolderDialogFragment.this.dismiss();
-                })
+                .setNegativeButton(getActivity().getString(R.string.jandi_cancel), null)
                 .setOnCancelListener(dialog -> TopicFolderDialogFragment.this.dismiss());
         builder.show();
     }
 
     @Background
-    public void deleteTopicFolder(int folderId) {
+    public void deleteTopicFolder(long folderId) {
         try {
             topicFolderDialogModel.deleteTopicFolder(folderId);
             showDeleteFolderToast();
@@ -151,7 +147,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
     }
 
     @Background
-    public void renameFolder(int folderId, String name, int seq) {
+    public void renameFolder(long folderId, String name, int seq) {
         try {
             topicFolderDialogModel.renameFolder(folderId, name, seq);
             showRenameFolderToast();

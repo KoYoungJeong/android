@@ -45,7 +45,7 @@ import retrofit.RetrofitError;
 public class ShareSelectRoomActivity extends BaseAppCompatActivity implements ShareRoomsAdapter.OnItemClickListener {
 
     @Extra
-    int teamId;
+    long teamId;
 
     @Bean
     ShareSelectModel shareSelectModel;
@@ -130,7 +130,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
     void getTopics() {
         List<ResFolder> topicFolders = shareSelectModel.getTopicFolders(teamId);
         List<ResFolderItem> topicFolderItems = shareSelectModel.getTopicFolderItems(teamId);
-        LinkedHashMap<Integer, FormattedEntity> joinEntities = shareSelectModel.getJoinEntities();
+        LinkedHashMap<Long, FormattedEntity> joinEntities = shareSelectModel.getJoinEntities();
 
         List<ExpandRoomData> topicDatas =
                 shareSelectModel.getExpandRoomDatas(topicFolders, topicFolderItems, joinEntities);
@@ -211,7 +211,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
     }
 
     @Override
-    public void onItemClick(int roomId, String roomName, int roomType) {
+    public void onItemClick(long roomId, String roomName, int roomType) {
         ShareSelectRoomEvent event = new ShareSelectRoomEvent();
         event.setRoomId(roomId);
         event.setRoomName(roomName);

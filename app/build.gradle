@@ -45,6 +45,7 @@ checkstyle {
 }
 
 def supportLibVersion = "23.0.+"
+def playServiceVersion = "7.0.0"
 
 dependencies {
 
@@ -57,7 +58,7 @@ dependencies {
     }
 
     compile(name: 'photoview-expand-release_2015_1118_1108', ext: 'aar')
-    compile(name: 'sprinkler-android-release_2015_1123_1820', ext: 'aar')
+    compile(name: 'sprinkler-android-release_2016_0120_1510', ext: 'aar')
 
 //    compile project(':sprinkler-android')
 //    compile project(':photoview-expand')
@@ -68,8 +69,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     // Google
-    compile 'com.google.android.gms:play-services-analytics:7.0.0'
-    compile 'com.google.android.gms:play-services-gcm:7.0.0'
+    compile "com.google.android.gms:play-services-analytics:${playServiceVersion}"
+    compile "com.google.android.gms:play-services-gcm:${playServiceVersion}"
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:support-v4:${supportLibVersion}"
     compile "com.android.support:support-v13:${supportLibVersion}"
@@ -94,7 +95,7 @@ dependencies {
 
     // Cache
     compile 'com.koushikdutta.ion:ion:2.1.+'
-    compile 'com.facebook.fresco:fresco:0.8.+'
+    compile 'com.facebook.fresco:fresco:0.8.0+'
 
     // Sliqte ORM
     compile 'com.j256.ormlite:ormlite-android:4.+'

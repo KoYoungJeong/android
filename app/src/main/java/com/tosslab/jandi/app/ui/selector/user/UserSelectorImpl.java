@@ -77,7 +77,7 @@ public class UserSelectorImpl implements UserSelector {
     protected Observable<List<FormattedEntity>> getUsers() {
 
         EntityManager entityManager = EntityManager.getInstance();
-        int myId = entityManager.getMe().getId();
+        long myId = entityManager.getMe().getId();
         return Observable.from(entityManager.getFormattedUsers())
                 .filter(formattedEntity -> TextUtils.equals(formattedEntity.getUser().status, "enabled"))
                 .toSortedList((lhs, rhs) -> {

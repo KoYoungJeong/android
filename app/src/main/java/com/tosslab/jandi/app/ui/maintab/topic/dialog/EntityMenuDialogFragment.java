@@ -42,10 +42,10 @@ import retrofit.RetrofitError;
 public class EntityMenuDialogFragment extends DialogFragment {
 
     @FragmentArg
-    int entityId;
+    long entityId;
 
     @FragmentArg
-    int folderId;
+    long folderId;
 
     TextView btnStarred;
 
@@ -265,7 +265,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
         builder.create().show();
     }
 
-    private void showPrivateTopicLeaveDialog(final int entityId, String entityName) {
+    private void showPrivateTopicLeaveDialog(final long entityId, String entityName) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(entityName)
@@ -281,7 +281,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
     }
 
     @Background
-    void leaveEntity(int entityId, boolean publicTopic, boolean isUser) {
+    void leaveEntity(long entityId, boolean publicTopic, boolean isUser) {
         try {
             FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
 
@@ -292,7 +292,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
             if (!isUser) {
                 entityMenuDialogModel.requestLeaveEntity(entityId, publicTopic);
             } else {
-                int memberId = EntityManager.getInstance().getMe().getId();
+                long memberId = EntityManager.getInstance().getMe().getId();
                 entityMenuDialogModel.requestDeleteChat(memberId, entityId);
             }
             entityMenuDialogModel.refreshEntities();

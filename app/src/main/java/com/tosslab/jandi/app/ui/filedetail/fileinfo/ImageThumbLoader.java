@@ -47,12 +47,12 @@ public class ImageThumbLoader implements FileThumbLoader {
     private final CircleProgressBar progressBar;
     private final TextView tvPercentage;
 
-    private final int roomId;
+    private final long roomId;
     private Context context;
     private CountDownTimer progressTimer;
 
     public ImageThumbLoader(ImageView ivFileTypeIcon, ViewGroup vgDetailPhoto, SimpleDraweeView ivFilePhoto,
-                            ViewGroup vgTapToViewOriginal, int roomId) {
+                            ViewGroup vgTapToViewOriginal, long roomId) {
         this.ivFileTypeIcon = ivFileTypeIcon;
         this.vgDetailPhoto = vgDetailPhoto;
         this.ivFilePhoto = ivFilePhoto;
@@ -124,7 +124,7 @@ public class ImageThumbLoader implements FileThumbLoader {
             return;
         }
 
-        final int fileMessageId = fileMessage.id;
+        final long fileMessageId = fileMessage.id;
 
         String localFilePath = ImageUtil.getLocalFilePath(fileMessage.id);
 
@@ -176,7 +176,7 @@ public class ImageThumbLoader implements FileThumbLoader {
     }
 
     private void showTapToViewLayout(final Uri originalUri,
-                                     int fileMessageId, ResMessages.FileContent content) {
+                                     long fileMessageId, ResMessages.FileContent content) {
 
         vgTapToViewOriginal.setVisibility(View.VISIBLE);
 
@@ -291,7 +291,7 @@ public class ImageThumbLoader implements FileThumbLoader {
         return new Pair<>(layoutParams.width, layoutParams.height);
     }
 
-    private void moveToPhotoViewer(int fileMessageId, ResMessages.FileContent content) {
+    private void moveToPhotoViewer(long fileMessageId, ResMessages.FileContent content) {
         if (roomId > 0) {
             CarouselViewerActivity_.intent(context)
                     .roomId(roomId)

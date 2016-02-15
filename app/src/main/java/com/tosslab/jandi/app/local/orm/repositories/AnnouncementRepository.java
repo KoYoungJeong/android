@@ -48,7 +48,7 @@ public class AnnouncementRepository {
         return false;
     }
 
-    public ResAnnouncement getAnnounce(int roomId) {
+    public ResAnnouncement getAnnounce(long roomId) {
         try {
             Dao<ResAnnouncement, ?> announcementDao = helper.getDao(ResAnnouncement.class);
             return announcementDao.queryBuilder()
@@ -61,7 +61,7 @@ public class AnnouncementRepository {
         return new ResAnnouncement();
     }
 
-    public int deleteAnnouncement(int roomId) {
+    public int deleteAnnouncement(long roomId) {
         try {
             Dao<ResAnnouncement, ?> announcementDao = helper.getDao(ResAnnouncement.class);
             DeleteBuilder<ResAnnouncement, ?> deleteBuilder = announcementDao.deleteBuilder();

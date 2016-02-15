@@ -61,7 +61,7 @@ public class FileHeadManager {
     private ViewGroup vgDetailPhoto;
     private ImageView ivFileType;
     private LinearLayout vgFileInfo;
-    private int roomId;
+    private long roomId;
     private View vgDeleted;
     private TextView tvDeletedDate;
     private FileThumbLoader thumbLoader;
@@ -107,7 +107,7 @@ public class FileHeadManager {
             return;
         }
 
-        int teamId = mEntityManager.getTeamId();
+        long teamId = mEntityManager.getTeamId();
 
         if (resFileDetail.shareEntities != null && !resFileDetail.shareEntities.isEmpty()) {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
@@ -235,7 +235,7 @@ public class FileHeadManager {
         drawFileWriterState(enabledUser);
     }
 
-    private boolean isEnabledUser(int writerId) {
+    private boolean isEnabledUser(long writerId) {
         EntityManager entityManager = EntityManager.getInstance();
         String userStatus = entityManager.getEntityById(writerId).getUser().status;
         return TextUtils.equals(userStatus, "enabled");
@@ -245,7 +245,7 @@ public class FileHeadManager {
         return btnFileDetailStarred;
     }
 
-    public void setRoomId(int roomId) {
+    public void setRoomId(long roomId) {
 
         this.roomId = roomId;
     }

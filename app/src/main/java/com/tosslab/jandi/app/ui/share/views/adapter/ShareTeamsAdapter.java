@@ -77,7 +77,7 @@ public class ShareTeamsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public interface OnItemClickListener {
-        void onItemClick(int teamId, String teamName);
+        void onItemClick(long teamId, String teamName);
     }
 
     class TeamViewHolder extends RecyclerView.ViewHolder {

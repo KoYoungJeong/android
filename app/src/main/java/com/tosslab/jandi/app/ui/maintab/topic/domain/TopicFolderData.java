@@ -1,57 +1,35 @@
 package com.tosslab.jandi.app.ui.maintab.topic.domain;
 
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.provider.AbstractExpandableDataProvider;
-
 /**
  * Created by tee on 15. 8. 27..
  */
-public class TopicFolderData extends AbstractExpandableDataProvider.GroupData {
+public class TopicFolderData {
 
     private final long id;
-    private final int swipeReaction;
     private long nextChildId;
-
     private long childBadgeCnt = 0;
     private int itemCount = 0;
     private int seq;
     private String title;
-    private int folderId;
-    private boolean pinnedToSwipeLeft;
+    private long folderId;
     private boolean isFakeFolder = false;
 
-    public TopicFolderData(long id, String title, int folderId, int swipeReaction) {
+    public TopicFolderData(long id, String title, long folderId) {
         this.id = id;
         this.title = title;
         this.folderId = folderId;
-        this.swipeReaction = swipeReaction;
         nextChildId = 0;
     }
 
-    @Override
     public long getGroupId() {
         return id;
-    }
-
-    @Override
-    public int getSwipeReactionType() {
-        return swipeReaction;
-    }
-
-    @Override
-    public boolean isPinnedToSwipeLeft() {
-        return pinnedToSwipeLeft;
-    }
-
-    @Override
-    public void setPinnedToSwipeLeft(boolean pinnedToSwipeLeft) {
-        this.pinnedToSwipeLeft = pinnedToSwipeLeft;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public int getFolderId() {
+    public long getFolderId() {
         return folderId;
     }
 

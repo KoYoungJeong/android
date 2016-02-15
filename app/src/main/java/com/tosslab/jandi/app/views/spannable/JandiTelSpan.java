@@ -6,6 +6,8 @@ import android.text.TextPaint;
 import android.text.style.UnderlineSpan;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.ColoredToast;
 
 /**
  * Created by tonyjs on 15. 8. 26..
@@ -35,6 +37,7 @@ public class JandiTelSpan extends UnderlineSpan implements ClickableSpannable {
         try {
             JandiApplication.getContext().startActivity(callIntent);
         } catch (Exception e) {
+            ColoredToast.show(R.string.jandi_err_unexpected);
             e.printStackTrace();
         }
     }

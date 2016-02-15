@@ -11,9 +11,9 @@ import de.greenrobot.event.EventBus;
  */
 public class ClickableMentionMessageSpannable extends MentionMessageSpannable implements ClickableSpannable {
 
-    private int entityId;
+    private long entityId;
 
-    public ClickableMentionMessageSpannable(String entityName, int entityId, float textSize,
+    public ClickableMentionMessageSpannable(String entityName, long entityId, float textSize,
                                             int textColor, int backgroundColor) {
         super(entityName, textSize, textColor, backgroundColor);
         this.entityId = entityId;

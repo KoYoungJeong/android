@@ -14,26 +14,26 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class StarMentionedMessageObject {
-    private int teamId;
-    private int linkId;
+    private long teamId;
+    private long linkId;
     private Date createdAt;
-    private int starredId;
+    private long starredId;
     private Room room;
     private Message message;
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 
-    public int getLinkId() {
+    public long getLinkId() {
         return linkId;
     }
 
-    public void setLinkId(int linkId) {
+    public void setLinkId(long linkId) {
         this.linkId = linkId;
     }
 
@@ -61,11 +61,11 @@ public class StarMentionedMessageObject {
         this.message = message;
     }
 
-    public int getStarredId() {
+    public long getStarredId() {
         return starredId;
     }
 
-    public void setStarredId(int starredId) {
+    public void setStarredId(long starredId) {
         this.starredId = starredId;
     }
 
@@ -83,7 +83,7 @@ public class StarMentionedMessageObject {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Room {
-        public int id;
+        public long id;
         public String type;
         public String name;
 
@@ -103,12 +103,12 @@ public class StarMentionedMessageObject {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Message {
-        public int id;
-        public int writerId;
+        public long id;
+        public long writerId;
         public String contentType;
 
         public List<MentionObject> mentions;
-        public int feedbackId;
+        public long feedbackId;
         public String feedbackTitle;
         public int commentCount;
         public Date createdAt;

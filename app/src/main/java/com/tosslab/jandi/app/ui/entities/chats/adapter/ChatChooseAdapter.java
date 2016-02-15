@@ -209,7 +209,7 @@ public class ChatChooseAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private View.OnClickListener getProfileClickListener(int entityId) {
+    private View.OnClickListener getProfileClickListener(long entityId) {
         return v -> {
             EventBus.getDefault().post(new ShowProfileEvent(entityId, ShowProfileEvent.From.Image));
         };

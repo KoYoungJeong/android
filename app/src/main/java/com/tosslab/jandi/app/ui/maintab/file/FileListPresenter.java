@@ -79,12 +79,12 @@ public class FileListPresenter {
     @ViewById(R.id.progress_file_list)
     ProgressBar moreLoadingProgressBar;
 
-    int entityIdForCategorizing = -1;
+    long entityIdForCategorizing = -1;
     String mCurrentEntityCategorizingAccodingBy = null;
     private String mCurrentUserNameCategorizingAccodingBy = null;
     private String mCurrentFileTypeCategorizingAccodingBy = null;
 
-    public void setEntityIdForCategorizing(int entityIdForCategorizing) {
+    public void setEntityIdForCategorizing(long entityIdForCategorizing) {
         this.entityIdForCategorizing = entityIdForCategorizing;
     }
 
@@ -276,7 +276,7 @@ public class FileListPresenter {
 
         RoomSelector roomSelector = new RoomSelectorImpl(allTopics, users);
         roomSelector.setOnRoomSelectListener(item -> {
-            int sharedEntityId = CategorizingAsEntity.EVERYWHERE;
+            long sharedEntityId = CategorizingAsEntity.EVERYWHERE;
             if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
                 // 첫번째는 "Everywhere"인 더미 entity
                 mCurrentEntityCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everywhere);

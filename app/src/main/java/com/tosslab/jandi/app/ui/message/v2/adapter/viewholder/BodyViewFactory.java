@@ -261,7 +261,7 @@ public class BodyViewFactory {
                 return defaultType;
             }
         } else if (currentMessage instanceof ResMessages.CommentMessage || currentMessage instanceof ResMessages.CommentStickerMessage) {
-            int messageFeedbackId = currentLink.feedbackId;
+            long messageFeedbackId = currentLink.feedbackId;
 
             boolean isFeedbackOrFile = false;
 
@@ -365,12 +365,12 @@ public class BodyViewFactory {
         }
 
         @Override
-        public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
+        public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
 
         }
 
         @Override
-        public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
 
         }
 

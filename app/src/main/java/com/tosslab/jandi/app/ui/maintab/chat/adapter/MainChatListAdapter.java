@@ -36,7 +36,7 @@ public class MainChatListAdapter extends BaseAdapter {
     private Context context;
 
     private List<ChatItem> entities;
-    private int selectedEntity = -1;
+    private long selectedEntity = -1;
     private AnimStatus animStatus = AnimStatus.READY;
 
     public MainChatListAdapter(Context context) {
@@ -163,7 +163,7 @@ public class MainChatListAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private View.OnClickListener getProfileClickListener(int entityId) {
+    private View.OnClickListener getProfileClickListener(long entityId) {
         return v -> {
             EventBus.getDefault().post(new ShowProfileEvent(entityId, ShowProfileEvent.From.Image));
         };
@@ -178,7 +178,7 @@ public class MainChatListAdapter extends BaseAdapter {
         return entities;
     }
 
-    public void setSelectedEntity(int selectedEntity) {
+    public void setSelectedEntity(long selectedEntity) {
         this.selectedEntity = selectedEntity;
         animStatus = AnimStatus.IDLE;
     }

@@ -20,19 +20,19 @@ public interface MembersListPresenter {
 
     void onDestroy();
 
-    void inviteMemberToTopic(int entityId);
+    void inviteMemberToTopic(long entityId);
 
-    void inviteInBackground(List<Integer> invitedUsers, int entityId);
+    void inviteInBackground(List<Long> invitedUsers, long entityId);
 
-    void initKickableMode(int entityId);
+    void initKickableMode(long entityId);
 
-    void onKickMemberClick(int topicId, final ChatChooseItem item);
+    void onKickMemberClick(long topicId, final ChatChooseItem item);
 
-    void onKickUser(int topicId, int userEntityId);
+    void onKickUser(long topicId, long userEntityId);
 
-    void onMemberClickForAssignOwner(int topicId, final ChatChooseItem item);
+    void onMemberClickForAssignOwner(long topicId, final ChatChooseItem item);
 
-    void onAssignToTopicOwner(int topicId, int memberId);
+    void onAssignToTopicOwner(long topicId, long memberId);
 
     interface View {
         void showProgressWheel();
@@ -41,11 +41,11 @@ public interface MembersListPresenter {
 
         void showListMembers(List<ChatChooseItem> topicMembers);
 
-        int getEntityId();
+        long getEntityId();
 
         int getType();
 
-        void moveDirectMessageActivity(int teamId, int userId, boolean isStarred);
+        void moveDirectMessageActivity(long teamId, long userId, boolean isStarred);
 
         String getSearchText();
 
@@ -55,11 +55,11 @@ public interface MembersListPresenter {
 
         void setKickMode(boolean owner);
 
-        void removeUser(int userEntityId);
+        void removeUser(long userEntityId);
 
         void refreshMemberList();
 
-        void showKickDialog(String userName, String userProfileUrl, int memberId);
+        void showKickDialog(String userName, String userProfileUrl, long memberId);
 
         void showKickSuccessToast();
 
@@ -69,13 +69,13 @@ public interface MembersListPresenter {
 
         void showNeedToAssignTopicOwnerDialog();
 
-        void showConfirmAssignTopicOwnerDialog(String userName, String userProfileUrl, int memberId);
+        void showConfirmAssignTopicOwnerDialog(String userName, String userProfileUrl, long memberId);
 
         void showAssignTopicOwnerSuccessToast();
 
         void showAssignTopicOwnerFailToast();
 
-        void setResultAndFinish(int memberId);
+        void setResultAndFinish(long memberId);
     }
 
 }

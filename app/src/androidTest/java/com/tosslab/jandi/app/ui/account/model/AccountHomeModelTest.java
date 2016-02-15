@@ -99,21 +99,21 @@ public class AccountHomeModelTest {
     public void testUpdateSelectTeam() throws Exception {
 
         // Given
-        int originSelectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-        int newTeamId = getNewTeamId(originSelectedTeamId);
+        long originSelectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+        long newTeamId = getNewTeamId(originSelectedTeamId);
 
         // When
         accountHomeModel.updateSelectTeam(newTeamId);
 
         // Then
-        int newSavedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+        long newSavedTeamId = AccountRepository.getRepository().getSelectedTeamId();
 
         assertThat(originSelectedTeamId, is(not(equalTo(newSavedTeamId))));
         assertThat(newTeamId, is(equalTo(newSavedTeamId)));
     }
 
-    private int getNewTeamId(int originSelectedTeamId) {
-        int newTeamId = -1;
+    private long getNewTeamId(long originSelectedTeamId) {
+        long newTeamId = -1;
         List<ResAccountInfo.UserTeam> accountTeams = AccountRepository.getRepository().getAccountTeams();
         for (ResAccountInfo.UserTeam userTeam : accountTeams) {
             if (originSelectedTeamId != userTeam.getTeamId()) {
@@ -127,7 +127,7 @@ public class AccountHomeModelTest {
     @Test
     public void testGetEntityInfo() throws Exception {
         // Given
-        int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+        long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
         ResLeftSideMenu currentLeftSideMenu = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu();
 
         // When
@@ -147,7 +147,7 @@ public class AccountHomeModelTest {
 
         // Given
         List<ResAccountInfo.UserTeam> accountTeams = AccountRepository.getRepository().getAccountTeams();
-        int teamId = accountTeams.get(accountTeams.size() - 1).getTeamId();
+        long teamId = accountTeams.get(accountTeams.size() - 1).getTeamId();
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
         ResLeftSideMenu leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
 

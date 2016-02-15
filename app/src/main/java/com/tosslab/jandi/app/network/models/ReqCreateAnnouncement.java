@@ -5,17 +5,17 @@ package com.tosslab.jandi.app.network.models;
  */
 
 public class ReqCreateAnnouncement {
-    private int messageId;
+    private long messageId;
 
-    public ReqCreateAnnouncement(int messageId) {
+    public ReqCreateAnnouncement(long messageId) {
         this.messageId = messageId;
     }
 
-    public int getMessageId() {
+    public long getMessageId() {
         return messageId;
     }
 
-    public void setMessageId(int messageId) {
+    public void setMessageId(long messageId) {
         this.messageId = messageId;
     }
 }

@@ -5,7 +5,6 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.lists.libs.advancerecyclerview.provider.AbstractExpandableDataProvider;
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -69,12 +68,12 @@ public class MainTopicModel {
     }
 
     // Join된 Topic에 관한 정보를 가져오기
-    public LinkedHashMap<Integer, Topic> getJoinEntities() {
+    public LinkedHashMap<Long, Topic> getJoinEntities() {
 
         EntityManager entityManager = EntityManager.getInstance();
         List<FormattedEntity> joinedChannels = entityManager.getJoinedChannels();
         List<FormattedEntity> groups = entityManager.getGroups();
-        LinkedHashMap<Integer, Topic> topicHashMap = new LinkedHashMap<>();
+        LinkedHashMap<Long, Topic> topicHashMap = new LinkedHashMap<>();
 
         Observable<Topic> observable = Observable.merge(Observable.from(joinedChannels), Observable.from(groups))
                 .map(formattedEntity -> new Topic.Builder()
@@ -114,11 +113,9 @@ public class MainTopicModel {
 
     // 리스트에 보여 줄 Data Provider 가져오기
     public TopicFolderListDataProvider getDataProvider(List<ResFolder> topicFolders, List<ResFolderItem> topicFolderItems) {
-
         if (topicFolders == null || topicFolderItems == null) {
             return new TopicFolderListDataProvider(new LinkedList<>());
         }
-
 
         final List<ResFolder> orderedFolders = new ArrayList<>();
 
@@ -126,16 +123,16 @@ public class MainTopicModel {
                 .toSortedList((lhs, rhs) -> lhs.seq - rhs.seq)
                 .subscribe(orderedFolders::addAll);
 
-        List<Pair<AbstractExpandableDataProvider.GroupData,
-                List<AbstractExpandableDataProvider.ChildData>>> datas = new LinkedList<>();
+        List<Pair<TopicFolderData,
+                List<TopicItemData>>> datas = new LinkedList<>();
 
-        LinkedHashMap<Integer, Topic> joinTopics = getJoinEntities();
+        LinkedHashMap<Long, Topic> joinTopics = getJoinEntities();
 
         long folderIndex = 0;
 
-        Map<Integer, List<TopicItemData>> topicItemMap = new HashMap<>();
-        Map<Integer, TopicFolderData> folderMap = new LinkedHashMap<>();
-        Map<Integer, Integer> badgeCountMap = new HashMap<>();
+        Map<Long, List<TopicItemData>> topicItemMap = new HashMap<>();
+        Map<Long, TopicFolderData> folderMap = new LinkedHashMap<>();
+        Map<Long, Integer> badgeCountMap = new HashMap<>();
 
         for (ResFolder topicFolder : orderedFolders) {
             if (!topicItemMap.containsKey(topicFolder.id)) {
@@ -145,7 +142,7 @@ public class MainTopicModel {
                 badgeCountMap.put(topicFolder.id, 0);
             }
             if (!folderMap.containsKey(topicFolder.id)) {
-                TopicFolderData topicFolderData = new TopicFolderData(folderIndex, topicFolder.name, topicFolder.id, -1);
+                TopicFolderData topicFolderData = new TopicFolderData(folderIndex, topicFolder.name, topicFolder.id);
                 topicFolderData.setSeq(topicFolder.seq);
                 folderMap.put(topicFolder.id, topicFolderData);
             }
@@ -159,27 +156,27 @@ public class MainTopicModel {
 
                     Topic topic = joinTopics.remove(topicFolderItem.roomId);
 
-                    long itemIndex = folderMap.get(new Integer(topicFolderItem.folderId)).generateNewChildId();
+                    long itemIndex = folderMap.get(topicFolderItem.folderId).generateNewChildId();
 
                     TopicItemData topicItemData = TopicItemData.newInstance(
-                            itemIndex, -1, topic.getCreatorId(), topic.getName(),
+                            itemIndex, topic.getCreatorId(), topic.getName(),
                             topic.isStarred(), topic.isJoined(), topic.getEntityId(),
                             topic.getUnreadCount(), topic.getMarkerLinkId(), topic.isPushOn(),
                             topic.isSelected(), topic.getDescription(), topic.isPublic(),
                             topic.getMemberCount());
 
-                    topicItemMap.get(new Integer(topicFolderItem.folderId)).add(topicItemData);
+                    topicItemMap.get(topicFolderItem.folderId).add(topicItemData);
 
-                    int badgeCount = badgeCountMap.get(new Integer(topicFolderItem.folderId));
-                    badgeCountMap.put(new Integer(topicFolderItem.folderId), badgeCount + topicItemData
+                    int badgeCount = badgeCountMap.get(topicFolderItem.folderId);
+                    badgeCountMap.put(topicFolderItem.folderId, badgeCount + topicItemData
                             .getUnreadCount());
 
                 }, Throwable::printStackTrace);
 
-        for (Integer folderId : folderMap.keySet()) {
+        for (Long folderId : folderMap.keySet()) {
 
             List<TopicItemData> topicItemDatas = topicItemMap.get(folderId);
-            List<AbstractExpandableDataProvider.ChildData> providerTopicItemDatas = new ArrayList<>();
+            List<TopicItemData> providerTopicItemDatas = new ArrayList<>();
 
             Collections.sort(topicItemDatas, (lhs, rhs) -> {
                 if (lhs.isStarred() && rhs.isStarred()) {
@@ -206,13 +203,13 @@ public class MainTopicModel {
 
         // 폴더가 없는 토픽 데이터 셋팅
         TopicFolderData fakeFolder = getFakeFolder(folderIndex);
-        List<AbstractExpandableDataProvider.ChildData> noFolderTopicItemDatas = new ArrayList<>();
+        List<TopicItemData> noFolderTopicItemDatas = new ArrayList<>();
         Observable.from(joinTopics.keySet())
                 .map(topicId -> {
                     long itemIndex = fakeFolder.generateNewChildId();
                     Topic topic = joinTopics.get(topicId);
                     return TopicItemData.newInstance(
-                            itemIndex, -1, topic.getCreatorId(), topic.getName(),
+                            itemIndex, topic.getCreatorId(), topic.getName(),
                             topic.isStarred(), topic.isJoined(), topic.getEntityId(),
                             topic.getUnreadCount(), topic.getMarkerLinkId(), topic.isPushOn(),
                             topic.isSelected(), topic.getDescription(), topic.isPublic(), topic.getMemberCount());
@@ -236,12 +233,12 @@ public class MainTopicModel {
 
     // 그룹이 없는 Topic 들을 담아낼 더미 그룹 생성
     public TopicFolderData getFakeFolder(long lastFolderIndex) {
-        TopicFolderData topicFolderData = new TopicFolderData(lastFolderIndex, "fakeFolder", -1, -1);
+        TopicFolderData topicFolderData = new TopicFolderData(lastFolderIndex, "fakeFolder", -1);
         topicFolderData.setIsFakeFolder(true);
         return topicFolderData;
     }
 
-    public void resetBadge(int entityId) {
+    public void resetBadge(long entityId) {
         EntityManager.getInstance().getEntityById(entityId).alarmCount = 0;
     }
 
@@ -285,13 +282,13 @@ public class MainTopicModel {
         if (folders1.size() != folders2.size()) {
             return false;
         } else {
-            Map<Integer, ResFolder> folderMap1 = new LinkedHashMap<>();
-            Map<Integer, ResFolder> folderMap2 = new HashMap<>();
+            Map<Long, ResFolder> folderMap1 = new LinkedHashMap<>();
+            Map<Long, ResFolder> folderMap2 = new HashMap<>();
             for (int i = 0; i < folders1.size(); i++) {
-                folderMap1.put(Integer.valueOf(folders1.get(i).id), folders1.get(i));
-                folderMap2.put(Integer.valueOf(folders2.get(i).id), folders2.get(i));
+                folderMap1.put(folders1.get(i).id, folders1.get(i));
+                folderMap2.put(folders2.get(i).id, folders2.get(i));
             }
-            for (Integer i : folderMap1.keySet()) {
+            for (Long i : folderMap1.keySet()) {
                 ResFolder folder1 = folderMap1.get(i);
                 ResFolder folder2 = folderMap2.get(i);
                 if (!folder1.equals(folder2)) {
@@ -306,13 +303,13 @@ public class MainTopicModel {
         if (folderItems1.size() != folderItems2.size()) {
             return false;
         } else {
-            Map<Integer, ResFolderItem> folderItemMap1 = new LinkedHashMap<>();
-            Map<Integer, ResFolderItem> folderItemMap2 = new HashMap<>();
+            Map<Long, ResFolderItem> folderItemMap1 = new LinkedHashMap<>();
+            Map<Long, ResFolderItem> folderItemMap2 = new HashMap<>();
             for (int i = 0; i < folderItems1.size(); i++) {
-                folderItemMap1.put(Integer.valueOf(folderItems1.get(i).roomId), folderItems1.get(i));
-                folderItemMap2.put(Integer.valueOf(folderItems2.get(i).roomId), folderItems2.get(i));
+                folderItemMap1.put(folderItems1.get(i).roomId, folderItems1.get(i));
+                folderItemMap2.put(folderItems2.get(i).roomId, folderItems2.get(i));
             }
-            for (Integer i : folderItemMap1.keySet()) {
+            for (Long i : folderItemMap1.keySet()) {
                 ResFolderItem folderItem1 = folderItemMap1.get(i);
                 ResFolderItem folderItem2 = folderItemMap2.get(i);
                 if (!folderItem1.equals(folderItem2)) {

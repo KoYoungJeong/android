@@ -67,9 +67,9 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
+    public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
 
-        int fromEntityId = link.fromEntity;
+        long fromEntityId = link.fromEntity;
 
         FormattedEntity entity = EntityManager.getInstance().getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
@@ -173,7 +173,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+    public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
         if (currentLinkId == lastReadLinkId) {
             vLastRead.setVisibility(View.VISIBLE);
         } else {

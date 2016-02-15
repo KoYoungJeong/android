@@ -5,22 +5,22 @@ package com.tosslab.jandi.app.ui.maintab.topic.domain;
  */
 public class Topic {
 
-    private final int creatorId;
+    private final long creatorId;
     private String name;
     private boolean isStarred;
     private boolean isJoined;
-    private int entityId;
+    private long entityId;
     private int memberCount;
     private int unreadCount;
     private boolean isPublic;
     private String description;
     private boolean selected;
-    private int markerLinkId;
+    private long markerLinkId;
     private boolean isPushOn;
     private int type;
 
-    public Topic(String name, boolean isStarred, boolean isJoined, int entityId, int memberCount, int unreadCount,
-                 boolean isPublic, String description, int creatorId, int markerLinkId, boolean isPushOn) {
+    public Topic(String name, boolean isStarred, boolean isJoined, long entityId, int memberCount, int unreadCount,
+                 boolean isPublic, String description, long creatorId, long markerLinkId, boolean isPushOn) {
         this.name = name;
         this.isStarred = isStarred;
         this.isJoined = isJoined;
@@ -34,11 +34,11 @@ public class Topic {
         this.isPushOn = isPushOn;
     }
 
-    public int getMarkerLinkId() {
+    public long getMarkerLinkId() {
         return markerLinkId;
     }
 
-    public void setMarkerLinkId(int markerLinkId) {
+    public void setMarkerLinkId(long markerLinkId) {
         this.markerLinkId = markerLinkId;
     }
 
@@ -66,11 +66,11 @@ public class Topic {
         this.isJoined = isJoined;
     }
 
-    public int getEntityId() {
+    public long getEntityId() {
         return entityId;
     }
 
-    public void setEntityId(int entityId) {
+    public void setEntityId(long entityId) {
         this.entityId = entityId;
     }
 
@@ -106,7 +106,7 @@ public class Topic {
         this.description = description;
     }
 
-    public int getCreatorId() {
+    public long getCreatorId() {
         return creatorId;
     }
 
@@ -138,13 +138,13 @@ public class Topic {
         private String name;
         private boolean isStarred;
         private boolean isJoined;
-        private int entityId;
+        private long entityId;
         private int memberCount;
         private int unreadCount;
         private boolean isPublic;
         private String description;
-        private int creatorId;
-        private int markerLinkId;
+        private long creatorId;
+        private long markerLinkId;
         private boolean isPushOn;
 
         public Builder name(String name) {
@@ -162,7 +162,7 @@ public class Topic {
             return this;
         }
 
-        public Builder entityId(int entityId) {
+        public Builder entityId(long entityId) {
             this.entityId = entityId;
             return this;
         }
@@ -187,12 +187,12 @@ public class Topic {
             return this;
         }
 
-        public Builder creatorId(int creatorId) {
+        public Builder creatorId(long creatorId) {
             this.creatorId = creatorId;
             return this;
         }
 
-        public Builder markerLinkId(int markerLinkId) {
+        public Builder markerLinkId(long markerLinkId) {
             this.markerLinkId = markerLinkId;
             return this;
         }

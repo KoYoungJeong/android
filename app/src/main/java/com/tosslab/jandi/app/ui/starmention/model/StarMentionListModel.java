@@ -26,7 +26,7 @@ public class StarMentionListModel {
 
     public static final int DEFAULT_COUNT = 20;
 
-    protected int lastId = 0;
+    protected long lastId = 0;
     protected boolean isFirstDatas = true;
     protected boolean hasMore = false;
     protected boolean isEmpty = false;
@@ -47,7 +47,7 @@ public class StarMentionListModel {
         return starMentionList;
     }
 
-    public void unregistStarredMessage(int teamId, int messageId) throws RetrofitError {
+    public void unregistStarredMessage(long teamId, long messageId) throws RetrofitError {
         try {
             RequestApiManager.getInstance().unregistStarredMessageByTeamApi(teamId, messageId);
         } catch (RetrofitError e) {
@@ -55,14 +55,14 @@ public class StarMentionListModel {
         }
     }
 
-    protected ResStarMentioned getMentionRawDatas(Integer messageId, int count) throws RetrofitError {
-        int teamId = getTeamId();
+    protected ResStarMentioned getMentionRawDatas(long messageId, int count) throws RetrofitError {
+        long teamId = getTeamId();
         return RequestApiManager.getInstance().getMentionedMessagesByTeamApi(teamId, messageId, count);
     }
 
-    protected ResStarMentioned getStarredRawDatas(String categoryType, Integer starredId,
+    protected ResStarMentioned getStarredRawDatas(String categoryType, long starredId,
                                                   int count) throws RetrofitError {
-        int teamId = getTeamId();
+        long teamId = getTeamId();
         if (categoryType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
             return RequestApiManager.getInstance().getStarredMessagesByTeamApi(
                     teamId, starredId, count, "file");
@@ -75,13 +75,13 @@ public class StarMentionListModel {
         ResStarMentioned resStarMentioned;
         if (categoryType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
             if (isFirstDatas) {
-                resStarMentioned = getMentionRawDatas(null, count);
+                resStarMentioned = getMentionRawDatas(-1, count);
             } else {
                 resStarMentioned = getMentionRawDatas(lastId, count);
             }
         } else {
             if (isFirstDatas) {
-                resStarMentioned = getStarredRawDatas(categoryType, null, count);
+                resStarMentioned = getStarredRawDatas(categoryType, -1, count);
             } else {
                 resStarMentioned = getStarredRawDatas(categoryType, lastId, count);
             }
@@ -96,7 +96,7 @@ public class StarMentionListModel {
             StarMentionVO starMentionVO = new StarMentionVO();
             String type = starMentionedMessageObject.getMessage().contentType;
 
-            int messageId = getMessageId(categoryType, starMentionedMessageObject);
+            long messageId = getMessageId(categoryType, starMentionedMessageObject);
 
             FormattedEntity entity = EntityManager.getInstance()
                     .getEntityById(starMentionedMessageObject.getMessage().writerId);
@@ -156,7 +156,7 @@ public class StarMentionListModel {
         isFirstDatas = false;
     }
 
-    protected void setLastMessageId(String categoryType, StarMentionedMessageObject starMentionedMessageObject, int messageId) {
+    protected void setLastMessageId(String categoryType, StarMentionedMessageObject starMentionedMessageObject, long messageId) {
         if (categoryType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
             lastId = messageId;
         } else {
@@ -164,8 +164,8 @@ public class StarMentionListModel {
         }
     }
 
-    protected int getMessageId(String categoryType, StarMentionedMessageObject starMentionedMessageObject) {
-        int messageId;
+    protected long getMessageId(String categoryType, StarMentionedMessageObject starMentionedMessageObject) {
+        long messageId;
         if (categoryType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
             messageId = starMentionedMessageObject.getMessage().id;
         } else {
@@ -193,7 +193,7 @@ public class StarMentionListModel {
         return hasMore;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
     }
 

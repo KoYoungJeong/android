@@ -21,7 +21,7 @@ public class ResMyTeam {
     }
 
     public static class Team {
-        public int teamId;
+        public long teamId;
         public String type;
         public String name;
         public String status;

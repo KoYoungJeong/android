@@ -4,10 +4,10 @@ package com.tosslab.jandi.app.events.search;
  * Created by Steve SeongUg Jung on 15. 3. 11..
  */
 public class SelectEntityEvent {
-    private final int entityId;
+    private final long entityId;
     private final String name;
 
-    public SelectEntityEvent(int entityId, String name) {
+    public SelectEntityEvent(long entityId, String name) {
 
         this.entityId = entityId;
         this.name = name;
@@ -17,7 +17,7 @@ public class SelectEntityEvent {
         return name;
     }
 
-    public int getEntityId() {
+    public long getEntityId() {
         return entityId;
     }
 }

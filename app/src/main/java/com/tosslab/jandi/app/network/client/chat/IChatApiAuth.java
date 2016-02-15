@@ -12,8 +12,8 @@ import retrofit.RetrofitError;
  */
 public interface IChatApiAuth {
 
-    List<ResChat> getChatListByChatApi(int memberId) throws RetrofitError;
+    List<ResChat> getChatListByChatApi(long memberId) throws RetrofitError;
 
-    ResCommon deleteChatByChatApi(int memberId, int entityId) throws RetrofitError;
+    ResCommon deleteChatByChatApi(long memberId, long entityId) throws RetrofitError;
 
 }

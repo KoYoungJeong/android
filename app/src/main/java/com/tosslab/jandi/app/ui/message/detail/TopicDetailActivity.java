@@ -23,9 +23,9 @@ public class TopicDetailActivity extends BaseAppCompatActivity {
     public static final int REQUEST_DETAIL = 0x11;
     public static final String EXTRA_LEAVE = "leave";
     @Extra
-    int entityId;
+    long entityId;
     @Extra
-    int teamId;
+    long teamId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

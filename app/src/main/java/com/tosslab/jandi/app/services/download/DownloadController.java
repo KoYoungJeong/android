@@ -184,7 +184,7 @@ public class DownloadController {
         view.setLastNotificationTime(0);
     }
 
-    void trackFileDownloadSuccess(int fileId, String fileType, String fileExt, int fileSize) {
+    void trackFileDownloadSuccess(long fileId, String fileType, String fileExt, int fileSize) {
         Context context = JandiApplication.getContext();
         Sprinkler.with(context)
                 .track(new FutureTrack.Builder()

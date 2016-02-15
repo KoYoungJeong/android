@@ -131,7 +131,7 @@ class EntityManagerLockProxy extends EntityManager {
     }
 
     @Override
-    public int getDefaultTopicId() {
+    public long getDefaultTopicId() {
         lock.lock();
         try {
             return super.getDefaultTopicId();
@@ -141,7 +141,7 @@ class EntityManagerLockProxy extends EntityManager {
     }
 
     @Override
-    public int getTeamId() {
+    public long getTeamId() {
         lock.lock();
         try {
             return super.getTeamId();
@@ -151,7 +151,7 @@ class EntityManagerLockProxy extends EntityManager {
     }
 
     @Override
-    public List<FormattedEntity> retrieveGivenEntities(List<Integer> givenEntityIds) {
+    public List<FormattedEntity> retrieveGivenEntities(List<Long> givenEntityIds) {
         lock.lock();
         try {
             return super.retrieveGivenEntities(givenEntityIds);
@@ -161,7 +161,7 @@ class EntityManagerLockProxy extends EntityManager {
     }
 
     @Override
-    public List<FormattedEntity> retrieveExclusivedEntities(List<Integer> givenEntityIds) {
+    public List<FormattedEntity> retrieveExclusivedEntities(List<Long> givenEntityIds) {
         lock.lock();
         try {
             return super.retrieveExclusivedEntities(givenEntityIds);
@@ -181,7 +181,7 @@ class EntityManagerLockProxy extends EntityManager {
     }
 
     @Override
-    public FormattedEntity getEntityById(int entityId) {
+    public FormattedEntity getEntityById(long entityId) {
         lock.lock();
         try {
             return super.getEntityById(entityId);
@@ -191,7 +191,7 @@ class EntityManagerLockProxy extends EntityManager {
     }
 
     @Override
-    public String getEntityNameById(int entityId) {
+    public String getEntityNameById(long entityId) {
         lock.lock();
         try {
             return super.getEntityNameById(entityId);
@@ -201,7 +201,7 @@ class EntityManagerLockProxy extends EntityManager {
     }
 
     @Override
-    public List<FormattedEntity> getUnjoinedMembersOfEntity(int entityId, int entityType) {
+    public List<FormattedEntity> getUnjoinedMembersOfEntity(long entityId, int entityType) {
         lock.lock();
         try {
             return super.getUnjoinedMembersOfEntity(entityId, entityType);
@@ -211,7 +211,7 @@ class EntityManagerLockProxy extends EntityManager {
     }
 
     @Override
-    public boolean isMyTopic(int entityId) {
+    public boolean isMyTopic(long entityId) {
         lock.lock();
         try {
             return super.isMyTopic(entityId);
@@ -221,7 +221,7 @@ class EntityManagerLockProxy extends EntityManager {
     }
 
     @Override
-    public boolean isTopicOwner(int entityId, int userId) {
+    public boolean isTopicOwner(long entityId, long userId) {
         lock.lock();
         try {
             return super.isTopicOwner(entityId, userId);
@@ -231,7 +231,7 @@ class EntityManagerLockProxy extends EntityManager {
     }
 
     @Override
-    public boolean isMe(int userId) {
+    public boolean isMe(long userId) {
         lock.lock();
         try {
             return super.isMe(userId);

@@ -59,7 +59,7 @@ public class InternalWebPresenter {
     }
 
 
-    public void sendMessageToRoom(int entityId, int entityType, String text, Activity activity) throws RetrofitError {
+    public void sendMessageToRoom(long entityId, int entityType, String text, Activity activity) throws RetrofitError {
         MessageManipulator messageManipulator = MessageManipulator_.getInstance_(activity);
         messageManipulator.initEntity(entityType, entityId);
         messageManipulator.sendMessage(text, null);
@@ -79,7 +79,7 @@ public class InternalWebPresenter {
     public void sendMessage(Activity activity, String title, String Url, ShareSelectRoomEvent event) {
         Context context = JandiApplication.getContext();
         view.showProgressWheel();
-        int entityId = event.getRoomId();
+        long entityId = event.getRoomId();
         int entityType = event.getRoomType();
         try {
             String message = createMessage(title, Url);

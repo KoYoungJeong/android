@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.CreateFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
+import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
@@ -100,7 +101,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     @Bean
     SearchedFileItemListAdapter searchedFileItemListAdapter;
     @FragmentArg
-    int entityIdForCategorizing = -1;
+    long entityIdForCategorizing = -1;
     @FragmentArg
     String mCurrentEntityCategorizingAccodingBy = null;
 
@@ -121,7 +122,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     /**
      * File tab 을 위한 액션바와 카테고리 선택 다이얼로그, 이벤트 전달
      */
-    private int selectedTeamId;
+    private long selectedTeamId;
     private boolean isSearchLayoutFirst = true;
     private boolean isForeground;
     private PublishSubject<Integer> initSearchSubject;
@@ -431,7 +432,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             return;
         }
 
-        int fileId = event.getId();
+        long fileId = event.getId();
         int positionByFileId = searchedFileItemListAdapter.findPositionByFileId(fileId);
         if (positionByFileId >= 0) {
             removeItem(positionByFileId);
@@ -656,7 +657,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
     }
 
-    private void moveToFileDetailActivity(int fileId, int mSearchEntity) {
+    private void moveToFileDetailActivity(long fileId, long mSearchEntity) {
         FileDetailActivity_
                 .intent(this)
                 .fileId(fileId)
@@ -785,6 +786,34 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     }
 
+    public void onEvent(FileCommentRefreshEvent event) {
+        if (searchedFileItemListAdapter == null) {
+            return;
+        }
+        int fileId = event.getFileId();
+        int position = searchedFileItemListAdapter.findPositionByFileId(fileId);
+        if (position < 0) {
+            return;
+        }
+
+        boolean added = event.isAdded();
+
+        ResMessages.FileMessage item = searchedFileItemListAdapter.getItem(position);
+        if (added) {
+            item.commentCount++;
+        } else {
+            item.commentCount--;
+        }
+
+        justRefresh();
+
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void justRefresh() {
+        searchedFileItemListAdapter.notifyDataSetChanged();
+    }
+
     private void setHeaderTextViewColor(ViewGroup parentView, int color) {
         if (parentView == null) {
             return;
@@ -828,8 +857,8 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         private String mSearchFileType;
         private String mSearchUser;
         private String mKeyword;
-        private int mSearchEntity;
-        private int mStartMessageId;
+        private long mSearchEntity;
+        private long mStartMessageId;
 
         public SearchQuery() {
             mSearchEntity = ReqSearchFile.ALL_ENTITIES;
@@ -858,7 +887,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             mSearchUser = userEntityId;
         }
 
-        public void setSharedEntity(int entityId) {
+        public void setSharedEntity(long entityId) {
             setToFirst();
             mSearchEntity = entityId;
         }

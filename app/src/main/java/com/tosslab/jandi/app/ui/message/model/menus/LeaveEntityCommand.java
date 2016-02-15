@@ -70,7 +70,7 @@ class LeaveEntityCommand implements MenuCommand {
             } else if (chattingInfomations.isPrivateTopic()) {
                 mEntityClientManager.leavePrivateGroup(chattingInfomations.entityId);
             } else if (chattingInfomations.isDirectMessage()) {
-                int memberId = EntityManager.getInstance().getMe().getId();
+                long memberId = EntityManager.getInstance().getMe().getId();
                 RequestApiManager.getInstance().deleteChatByChatApi(memberId, chattingInfomations.entityId);
             }
             trackLeavingEntity(chattingInfomations.entityType);

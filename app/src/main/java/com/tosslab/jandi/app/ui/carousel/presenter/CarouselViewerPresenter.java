@@ -13,17 +13,17 @@ public interface CarouselViewerPresenter {
 
     void onInitImageFiles();
 
-    void onBeforeImageFiles(int fileLinkId, int count);
+    void onBeforeImageFiles(long fileLinkId, int count);
 
-    void onAfterImageFiles(int fileLinkId, int count);
+    void onAfterImageFiles(long fileLinkId, int count);
 
     void onFileDownload(CarouselFileInfo fileInfo);
 
     void onFileDatail();
 
-    void setFileId(int startLinkId);
+    void setFileId(long startLinkId);
 
-    void setRoomId(int roomId);
+    void setRoomId(long roomId);
 
     interface View {
 

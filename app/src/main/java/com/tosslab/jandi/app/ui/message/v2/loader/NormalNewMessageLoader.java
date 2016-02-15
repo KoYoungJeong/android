@@ -54,7 +54,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
     }
 
     @Override
-    public void load(int roomId, int linkId) {
+    public void load(long roomId, long linkId) {
         if (linkId <= 0) {
             // 첫 메세지로 간주함
             return;
@@ -116,7 +116,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
             saveToDatabase(roomId, messages);
 
             Collections.sort(messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
-            int lastLinkId = newMessage.get(newMessage.size() - 1).id;
+            long lastLinkId = newMessage.get(newMessage.size() - 1).id;
             messageState.setLastUpdateLinkId(lastLinkId);
             messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), lastLinkId);
             updateMarker(roomId);
@@ -132,7 +132,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         }
     }
 
-    private List<ResMessages.Link> getResUpdateMessages(final int linkId) {
+    private List<ResMessages.Link> getResUpdateMessages(final long linkId) {
         List<ResMessages.Link> messages = new ArrayList<>();
 
         Observable.create(new Observable.OnSubscribe<ResMessages>() {
@@ -183,7 +183,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         return messages;
     }
 
-    private void saveToDatabase(int roomId, List<ResMessages.Link> messages) {
+    private void saveToDatabase(long roomId, List<ResMessages.Link> messages) {
 
         if (!cacheMode) {
             return;
@@ -209,7 +209,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 .collect((Func0<List<ResMessages.Link>>) ArrayList::new, List::add)
                 .subscribe(links -> {
 
-                    List<Integer> messageIds = new ArrayList<Integer>();
+                    List<Long> messageIds = new ArrayList<>();
                     for (ResMessages.Link link : links) {
                         messageIds.add(link.messageId);
                     }
@@ -221,7 +221,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 });
     }
 
-    private void updateMarker(int roomId) {
+    private void updateMarker(long roomId) {
         if (messageState.getLastUpdateLinkId() <= 0) {
             // 마지막 메세지 정보가 갱신되지 않은 것으로 간주함
             return;

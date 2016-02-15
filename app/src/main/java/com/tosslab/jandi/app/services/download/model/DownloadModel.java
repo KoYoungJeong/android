@@ -28,7 +28,7 @@ import java.util.Random;
 public class DownloadModel {
 
     public static DownloadFileInfo getDownloadInfo(Intent intent) {
-        final int fileId = intent.getIntExtra(DownloadService.KEY_FILE_ID, DownloadService.NONE_FILE_ID);
+        final long fileId = intent.getLongExtra(DownloadService.KEY_FILE_ID, DownloadService.NONE_FILE_ID);
         final String fileUrl = intent.getStringExtra(DownloadService.KEY_FILE_URL);
         final String fileName = intent.getStringExtra(DownloadService.KEY_FILE_NAME);
         final String fileExt = intent.getStringExtra(DownloadService.KEY_FILE_EXTENSIONS);
