@@ -174,7 +174,7 @@
 	<string name="jandi_disabled_members">"Disabled Members"</string>
 	<string name="jandi_disabled_team">"You are a disabled member of %1$s. Please contact the team administrator."</string>
 	<string name="jandi_disabled_user">"This member has been temporarily disabled"</string>
-	<string name="jandi_domain_is_already_taken">"That domain is already taken"</string>
+	<string name="jandi_domain_is_already_taken">"Domain is already taken or invalid."</string>
 	<string name="jandi_duplicate_email">"That email is already registered"</string>
 	<string name="jandi_empty">"None"</string>
 	<string name="jandi_enable_external_link">"Create public link"</string>
