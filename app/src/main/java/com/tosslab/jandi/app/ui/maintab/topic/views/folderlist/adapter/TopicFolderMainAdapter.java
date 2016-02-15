@@ -17,14 +17,14 @@ import java.util.List;
 /**
  * Created by tee on 16. 1. 26..
  */
-public class TopicFolderMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public abstract class TopicFolderMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public static final int TYPE_REMOVE_FROM_FOLDER = 1;
     public static final int TYPE_MAKE_NEW_FOLDER = 2;
     public static final int TYPE_FOLDER_LIST = 0;
     protected OnRecyclerItemWithTypeCLickListener onRecyclerItemClickListener;
     List<ResFolder> folders = null;
-    private long folderId = -1;
+    long folderId = -1;
 
     public List<ResFolder> getFolders() {
         if (folders != null) {
@@ -39,13 +39,10 @@ public class TopicFolderMainAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public void addAll(List<ResFolder> folders) {
         this.folders = folders;
-
-        //for dummy items (remove from/ make folder)
-        if (folderId != -1) {
-            folders.add(new ResFolder());
-        }
-        folders.add(new ResFolder());
+        addDummyFolders();
     }
+
+    protected abstract void addDummyFolders();
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -67,18 +64,6 @@ public class TopicFolderMainAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             FolderAdapterViewHolder viewHolder = (FolderAdapterViewHolder) holder;
             viewHolder.tvChooseFolder.setText(getFolders().get(position).name);
         }
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if (position == getItemCount() - 2) {
-            if (folderId != -1) {
-                return TYPE_REMOVE_FROM_FOLDER;
-            }
-        } else if (position == getItemCount() - 1) {
-            return TYPE_MAKE_NEW_FOLDER;
-        }
-        return TYPE_FOLDER_LIST;
     }
 
     @Override
