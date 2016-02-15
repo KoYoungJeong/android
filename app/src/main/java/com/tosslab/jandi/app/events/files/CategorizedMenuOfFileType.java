@@ -20,7 +20,7 @@ public class CategorizedMenuOfFileType {
     };
     public static final int[] drawableResourceList = {      // 위에랑 hash map으로 합칠까...
             R.drawable.icon_search_all_files,
-            R.drawable.jandi_fl_icon_set_googledocs,
+            R.drawable.file_icon_set_googledocs,
             R.drawable.file_icon_txt,
             R.drawable.file_icon_ppt,
             R.drawable.file_icon_exel,

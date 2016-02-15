@@ -93,7 +93,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="57dp"
-                android:src="@drawable/jandi_fl_icon_deleted" />
+                android:src="@drawable/file_icon_deleted" />
 
             <TextView
                 android:id="@+id/tv_file_detail_deleted_date"

@@ -192,7 +192,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
                 ImageLoader.newBuilder()
                         .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                        .load(R.drawable.jandi_fl_icon_deleted)
+                        .load(R.drawable.file_icon_deleted)
                         .into(ivFileImage);
 
                 ivFileImage.setOnClickListener(null);
@@ -229,7 +229,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
                     ivFileImage.setClickable(false);
 
-                    int resId = R.drawable.file_icon_unshared_141;
+                    int resId = R.drawable.file_icon_unshared;
                     if (isPublicTopic) {
                         resId = MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
                     }

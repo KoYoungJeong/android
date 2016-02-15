@@ -231,7 +231,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         if (type == TYPE_MEMBERS_LIST_TOPIC) {
             menuItem.setVisible(false);
         } else if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
-            menuItem.setIcon(R.drawable.icon_actionbar_check);
+            menuItem.setIcon(R.drawable.actionbar_icon_check);
             menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
