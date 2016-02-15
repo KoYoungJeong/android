@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
 import com.tosslab.jandi.app.events.files.CreateFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
+import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
@@ -46,6 +47,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketConnectBotEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketFileShareEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
@@ -282,6 +284,19 @@ public class JandiSocketServiceModel {
             e.printStackTrace();
         }
     }
+
+    public void shareFile(Object object) {
+        try {
+            SocketFileShareEvent socketFileShareEvent =
+                    getObject(object.toString(), SocketFileShareEvent.class);
+            long teamId = socketFileShareEvent.getTeamId();
+            long fileId = socketFileShareEvent.getFile().getId();
+            postEvent(new ShareFileEvent(teamId, fileId));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void updateMarker(Object object) {
         try {
