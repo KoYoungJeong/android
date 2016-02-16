@@ -15,11 +15,14 @@ public class JandiURLSpan extends UnderlineSpan implements ClickableSpannable {
     private final Context context;
     private final String url;
     private final int color;
-
     public JandiURLSpan(Context context, String url, int color) {
         this.context = context;
         this.url = url;
         this.color = color;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     @Override
@@ -28,6 +31,7 @@ public class JandiURLSpan extends UnderlineSpan implements ClickableSpannable {
         ds.setColor(color);
     }
 
+    @Override
     public void onClick() {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getAvailableUrl(url)));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
