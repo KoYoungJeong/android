@@ -1094,6 +1094,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Click(R.id.btn_show_mention)
     void onMentionClick() {
         etMessage.requestFocus();
+        keyboardHeightModel.showKeyboard();
         BaseInputConnection inputConnection = new BaseInputConnection(etMessage, true);
         if (messageListModel.needSpace(etMessage.getSelectionStart(), etMessage.getText().toString())) {
             inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SPACE));
