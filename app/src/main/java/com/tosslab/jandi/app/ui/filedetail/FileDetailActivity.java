@@ -66,8 +66,8 @@ import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.filedetail.adapter.FileDetailAdapter;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
-import com.tosslab.jandi.app.ui.filedetail.views.FileUnshareActivity;
-import com.tosslab.jandi.app.ui.filedetail.views.FileUnshareActivity_;
+import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
+import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity_;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -202,7 +202,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
             if (isShow) {
-                scrollToLastComment();
+                int keyboardHeight = JandiPreference.getKeyboardHeight(getApplicationContext());
+                listView.smoothScrollBy(0, keyboardHeight);
             }
         });
 
@@ -248,6 +249,13 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
 
         stickerViewModel.setType(StickerViewModel.TYPE_FILE_DETAIL);
+
+        stickerViewModel.setOnStickerLayoutShowListener(isShow -> {
+            if (isShow) {
+                int keyboardHeight = JandiPreference.getKeyboardHeight(getApplicationContext());
+                listView.smoothScrollBy(0, keyboardHeight);
+            }
+        });
 
         stickerViewModel.setStickerButton(findViewById(R.id.btn_message_sticker));
     }
@@ -350,9 +358,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     @Override
-    protected void onStop() {
+    protected void onPause() {
         isForeground = false;
-        super.onStop();
+
+        dismissStickerPreview();
+        dismissStickerSelectorIfShow();
+        super.onPause();
     }
 
     @Override
@@ -710,9 +721,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
 
         long[] sharedEntitiesArray = getSharedEntitiesArray(fileMessage);
-        FileUnshareActivity_.intent(this)
+        FileSharedEntityChooseActivity_.intent(this)
                 .fileId(fileId)
-                .mode(FileUnshareActivity.MODE_PICK)
+                .mode(FileSharedEntityChooseActivity.MODE_PICK)
                 .sharedEntities(sharedEntitiesArray)
                 .startForResult(REQUEST_CODE_PICK);
     }
@@ -951,7 +962,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         long[] sharedEntitiesArray = getSharedEntitiesArray(fileMessage);
 
-        FileUnshareActivity_.intent(this)
+        FileSharedEntityChooseActivity_.intent(this)
                 .fileId(fileId)
                 .sharedEntities(sharedEntitiesArray)
                 .startForResult(REQUEST_CODE_UNSHARE);
@@ -1088,8 +1099,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, uri);
                 startActivityForResult(intent, REQ_WINDOW_PERMISSION);
             }
-
-            scrollToLastComment();
         }
 
         sendAnalyticsEvent(AnalyticsValue.Action.Sticker);
@@ -1113,8 +1122,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         BaseInputConnection inputConnection = new BaseInputConnection(etComment, true);
         inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, keyEvent));
 
+        dismissStickerSelectorIfShow();
+    }
+
+    private void dismissStickerSelectorIfShow() {
         if (stickerViewModel.isShow()) {
-            stickerViewModel.dismissStickerWindow();
+            stickerViewModel.dismissStickerSelector(true);
         }
     }
 
@@ -1160,11 +1173,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     void onPickResult(int resultCode, Intent data) {
         if (resultCode != RESULT_OK
                 || data == null
-                || !data.hasExtra(FileUnshareActivity.KEY_ENTITY_ID)) {
+                || !data.hasExtra(FileSharedEntityChooseActivity.KEY_ENTITY_ID)) {
             return;
         }
 
-        long entityId = data.getLongExtra(FileUnshareActivity.KEY_ENTITY_ID, -1);
+        long entityId = data.getLongExtra(FileSharedEntityChooseActivity.KEY_ENTITY_ID, -1);
         moveToSharedEntity(entityId);
     }
 
@@ -1172,7 +1185,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     void onUnshareResult(int resultCode, Intent data) {
         if (resultCode != RESULT_OK
                 || data == null
-                || !data.hasExtra(FileUnshareActivity.KEY_ENTITY_ID)) {
+                || !data.hasExtra(FileSharedEntityChooseActivity.KEY_ENTITY_ID)) {
             return;
         }
 
@@ -1181,7 +1194,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return;
         }
 
-        long entityId = data.getLongExtra(FileUnshareActivity.KEY_ENTITY_ID, -1);
+        long entityId = data.getLongExtra(FileSharedEntityChooseActivity.KEY_ENTITY_ID, -1);
         fileDetailPresenter.onUnshareAction(entityId, fileMessage.id);
     }
 

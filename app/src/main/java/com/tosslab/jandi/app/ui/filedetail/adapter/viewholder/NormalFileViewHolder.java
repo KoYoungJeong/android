@@ -24,6 +24,7 @@ import de.greenrobot.event.EventBus;
  * Created by tonyjs on 16. 2. 1..
  */
 public class NormalFileViewHolder extends FileViewHolder {
+    private View vContent;
     private ImageView ivFileThumb;
 
     private NormalFileViewHolder(View itemView) {
@@ -36,9 +37,9 @@ public class NormalFileViewHolder extends FileViewHolder {
 
     @Override
     public void addContentView(ViewGroup parent) {
-        View contentView = LayoutInflater.from(parent.getContext())
+        vContent = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_file_detail_file_content, parent, true);
-        ivFileThumb = (ImageView) contentView.findViewById(R.id.iv_file_detail_thumb);
+        ivFileThumb = (ImageView) vContent.findViewById(R.id.iv_file_detail_thumb);
     }
 
     @Override
@@ -55,10 +56,10 @@ public class NormalFileViewHolder extends FileViewHolder {
 
         String fileUrl = ImageUtil.getImageFileUrl(content.fileUrl);
         if (TextUtils.isEmpty(fileUrl)) {
-            ivFileThumb.setOnClickListener(null);
+            vContent.setOnClickListener(null);
         } else {
             final MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
-            ivFileThumb.setOnClickListener(v -> {
+            vContent.setOnClickListener(v -> {
                 if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
                     getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fileUrl)));
                 } else {

@@ -18,7 +18,7 @@
     <com.tosslab.jandi.app.views.FixedLinearLayout
         android:id="@+id/vg_file_detail_comment_user_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="17dp"
         android:layout_marginLeft="9dp"
         android:layout_toRightOf="@+id/iv_file_detail_comment_user_profile">
 
@@ -31,7 +31,7 @@
                 android:id="@+id/tv_file_detail_comment_user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="User Name"
+                android:text="User NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser Name"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:singleLine="true"
