@@ -51,4 +51,15 @@
         <item>@string/jandi_hi_apk_store</item>
     </string-array>
 
+    <string-array name="jandi_profile_tel_actions">
+        <item>@string/jandi_action_menu_message_copy</item>
+        <item>@string/jandi_add_to_contacts</item>
+        <item>@string/jandi_member_profile_call</item>
+    </string-array>
+
+    <string-array name="jandi_profile_email_actions">
+        <item>@string/jandi_action_menu_message_copy</item>
+        <item>@string/jandi_send_to_email</item>
+    </string-array>
+
 </resources>

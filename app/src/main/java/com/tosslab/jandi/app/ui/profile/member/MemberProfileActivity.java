@@ -4,6 +4,9 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -12,6 +15,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +46,7 @@ import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -474,6 +480,57 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     @Click(R.id.tv_member_profile_phone)
+    void onPhoneNumberClick() {
+        new AlertDialog.Builder(MemberProfileActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_280)
+                .setItems(R.array.jandi_profile_tel_actions, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            copyPhoneToClipboard();
+                            break;
+                        case 1:
+                            addToContacts();
+                            break;
+                        default:
+                        case 2:
+                            callIfHasPermission();
+                            break;
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    private void addToContacts() {
+        try {
+            FormattedEntity entity = EntityManager.getInstance().getEntityById(memberId);
+            String name = entity.getName();
+            String phoneNumber = entity.getUserPhoneNumber();
+            String userEmail = entity.getUserEmail();
+
+            Intent insertIntent = new Intent(ContactsContract.Intents.Insert.ACTION);
+            insertIntent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
+            insertIntent.putExtra(ContactsContract.Intents.Insert.NAME, name)
+                    .putExtra(ContactsContract.Intents.Insert.PHONE, phoneNumber)
+                    .putExtra(ContactsContract.Intents.Insert.PHONE_TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_WORK)
+                    .putExtra(ContactsContract.Intents.Insert.EMAIL, userEmail)
+                    .putExtra(ContactsContract.Intents.Insert.EMAIL_TYPE, ContactsContract.CommonDataKinds.Email.TYPE_WORK);
+            startActivity(insertIntent);
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void copyPhoneToClipboard() {
+        try {
+            String userPhoneNumber = EntityManager.getInstance()
+                    .getEntityById(memberId)
+                    .getUserPhoneNumber();
+            ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboardManager.setPrimaryClip(ClipData.newPlainText(null, userPhoneNumber));
+            ColoredToast.show(R.string.jandi_copied_to_clipboard);
+        } catch (Exception ignored) {
+        }
+    }
+
     void callIfHasPermission() {
         Permissions.getChecker()
                 .permission(() -> Manifest.permission.CALL_PHONE)
@@ -541,6 +598,35 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     @Click(R.id.tv_member_profile_email)
+    void onEmailClick() {
+        new AlertDialog.Builder(MemberProfileActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_280)
+                .setItems(R.array.jandi_profile_email_actions, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            copyEmailToClipboard();
+                            break;
+                        default:
+                        case 1:
+                            sendEmail();
+                            break;
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    private void copyEmailToClipboard() {
+        try {
+            String userPhoneNumber = EntityManager.getInstance()
+                    .getEntityById(memberId)
+                    .getUserEmail();
+            ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboardManager.setPrimaryClip(ClipData.newPlainText(null, userPhoneNumber));
+            ColoredToast.show(R.string.jandi_copied_to_clipboard);
+        } catch (Exception ignored) {
+        }
+    }
+
     void sendEmail() {
         String userEmail = EntityManager.getInstance().getEntityById(memberId).getUserEmail();
         AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Email);
