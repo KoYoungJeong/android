@@ -211,7 +211,7 @@ public class ImageViewHolder implements BodyViewHolder {
 
         if (TextUtils.equals(fileMessage.status, "archived")) {
             tvFileName.setText(R.string.jandi_deleted_file);
-            ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.jandi_fview_icon_deleted));
+            ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.file_icon_deleted));
             tvFileType.setText("");
             return;
         }

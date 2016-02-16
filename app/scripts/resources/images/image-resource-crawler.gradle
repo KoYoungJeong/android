@@ -1,0 +1,13 @@
+task imageResourceRefresh(type: Exec) {
+
+    doFirst {
+        println ":::::::::::::" + "Start to get Image Resources..." + ":::::::::::::"
+    }
+
+    commandLine 'python', 'scripts/resources/images/crawrer.py', './src/main/res-crawrer'
+
+    doLast{
+        println ":::::::::::::" + "Finish to get Image Resources..." + ":::::::::::::"
+    }
+
+}

@@ -5,138 +5,138 @@
     android:visible="true">
 
     <item
-        android:drawable="@drawable/progress_01"
+        android:drawable="@drawable/indicator_01"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_02"
+        android:drawable="@drawable/indicator_02"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_03"
+        android:drawable="@drawable/indicator_03"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_04"
+        android:drawable="@drawable/indicator_04"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_05"
+        android:drawable="@drawable/indicator_05"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_06"
+        android:drawable="@drawable/indicator_06"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_07"
+        android:drawable="@drawable/indicator_07"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_08"
+        android:drawable="@drawable/indicator_08"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_09"
+        android:drawable="@drawable/indicator_09"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_10"
+        android:drawable="@drawable/indicator_10"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_11"
+        android:drawable="@drawable/indicator_11"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_12"
+        android:drawable="@drawable/indicator_12"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_13"
+        android:drawable="@drawable/indicator_13"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_14"
+        android:drawable="@drawable/indicator_14"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_15"
+        android:drawable="@drawable/indicator_15"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_16"
+        android:drawable="@drawable/indicator_16"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_17"
+        android:drawable="@drawable/indicator_17"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_18"
+        android:drawable="@drawable/indicator_18"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_19"
+        android:drawable="@drawable/indicator_19"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_20"
+        android:drawable="@drawable/indicator_20"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_21"
+        android:drawable="@drawable/indicator_21"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_22"
+        android:drawable="@drawable/indicator_22"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_23"
+        android:drawable="@drawable/indicator_23"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_24"
+        android:drawable="@drawable/indicator_24"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_25"
+        android:drawable="@drawable/indicator_25"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_26"
+        android:drawable="@drawable/indicator_26"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_27"
+        android:drawable="@drawable/indicator_27"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_28"
+        android:drawable="@drawable/indicator_28"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_29"
+        android:drawable="@drawable/indicator_29"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_30"
+        android:drawable="@drawable/indicator_30"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_31"
+        android:drawable="@drawable/indicator_31"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_32"
+        android:drawable="@drawable/indicator_32"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_33"
+        android:drawable="@drawable/indicator_33"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_34"
+        android:drawable="@drawable/indicator_34"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_35"
+        android:drawable="@drawable/indicator_35"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_36"
+        android:drawable="@drawable/indicator_36"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_37"
+        android:drawable="@drawable/indicator_37"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_38"
+        android:drawable="@drawable/indicator_38"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_39"
+        android:drawable="@drawable/indicator_39"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_40"
+        android:drawable="@drawable/indicator_40"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_41"
+        android:drawable="@drawable/indicator_41"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_42"
+        android:drawable="@drawable/indicator_42"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_43"
+        android:drawable="@drawable/indicator_43"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_44"
+        android:drawable="@drawable/indicator_44"
         android:duration="10" />
     <item
-        android:drawable="@drawable/progress_45"
+        android:drawable="@drawable/indicator_45"
         android:duration="10" />
 </animation-list>

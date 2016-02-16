@@ -1,0 +1,13 @@
+task stringResourceRefresh(type: Exec) {
+
+    doFirst {
+        println ":::::::::::::" + "Start to get L10N Resources..." + ":::::::::::::"
+    }
+
+    commandLine 'python', 'scripts/resources/strings/string-resource.py', './src/main/res-crawrer'
+
+    doLast {
+        println ":::::::::::::" + "Finish to get L10N Resources..." + ":::::::::::::"
+    }
+
+}

@@ -164,7 +164,7 @@ public class FileViewHolder implements BodyViewHolder {
 
                 tvFileName.setText(R.string.jandi_deleted_file);
                 fileNameTextSizePX = tvFileName.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_medium);
-                ivFileImage.setImageResource(R.drawable.jandi_fl_icon_deleted);
+                ivFileImage.setImageResource(R.drawable.file_icon_deleted);
                 tvFileType.setVisibility(View.GONE);
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
                         .jandi_text_light));
@@ -179,7 +179,7 @@ public class FileViewHolder implements BodyViewHolder {
                                     fileMessage.content.serverUrl, fileMessage.content.icon);
                     ivFileImage.setImageResource(mimeTypeIconImage);
                 } else {
-                    ivFileImage.setImageResource(R.drawable.file_icon_unshared_141);
+                    ivFileImage.setImageResource(R.drawable.file_icon_unshared);
                 }
 
                 ivFileImage.setClickable(false);
