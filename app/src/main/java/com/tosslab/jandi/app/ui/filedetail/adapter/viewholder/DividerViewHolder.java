@@ -23,7 +23,8 @@ public class DividerViewHolder extends BaseViewHolder<ResMessages.OriginalMessag
         int width = ViewGroup.LayoutParams.MATCH_PARENT;
         int height = (int) UiUtils.getPixelFromDp(1);
 
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(width, height);
+        ViewGroup.MarginLayoutParams layoutParams = new ViewGroup.MarginLayoutParams(width, height);
+        layoutParams.bottomMargin = (int) UiUtils.getPixelFromDp(3);
         itemView.setLayoutParams(layoutParams);
 
         int color = parent.getResources().getColor(R.color.jandi_file_search_item_divider);
