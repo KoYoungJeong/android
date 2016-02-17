@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.johnpersano.supertoasts.SuperToast;
@@ -160,6 +161,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     ViewGroup vgOptionSpace;
     @ViewById(R.id.btn_show_mention)
     View ivMention;
+    @ViewById(R.id.btn_file_detail_action)
+    ImageView btnAction;
+
     private MentionControlViewModel mentionControlViewModel;
     private FileDetailAdapter adapter;
 
@@ -202,8 +206,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
             if (isShow) {
-                int keyboardHeight = JandiPreference.getKeyboardHeight(getApplicationContext());
-                listView.smoothScrollBy(0, keyboardHeight);
+                btnAction.setSelected(false);
             }
         });
 
@@ -249,15 +252,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
 
         stickerViewModel.setType(StickerViewModel.TYPE_FILE_DETAIL);
-
-        stickerViewModel.setOnStickerLayoutShowListener(isShow -> {
-            if (isShow) {
-                int keyboardHeight = JandiPreference.getKeyboardHeight(getApplicationContext());
-                listView.smoothScrollBy(0, keyboardHeight);
-            }
-        });
-
-        stickerViewModel.setStickerButton(findViewById(R.id.btn_message_sticker));
     }
 
     private void dismissStickerPreview() {
@@ -613,7 +607,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showKeyboard() {
-        inputMethodManager.showSoftInput(etComment, InputMethodManager.SHOW_IMPLICIT);
+        inputMethodManager.showSoftInput(getCurrentFocus(), 0);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -1074,13 +1068,18 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         etComment.setText("");
     }
 
-    @Click(R.id.btn_message_sticker)
-    void onStickerClick(View view) {
+    @Click(R.id.btn_file_detail_action)
+    void onActionButtonClick(View view) {
         boolean selected = view.isSelected();
+        view.setSelected(!selected);
+
         if (selected) {
             stickerViewModel.dismissStickerSelector(true);
-        } else {
 
+            if (!keyboardHeightModel.isOpened()) {
+                showKeyboard();
+            }
+        } else {
             boolean canDraw;
             if (SdkUtils.isMarshmallow()) {
                 canDraw = Settings.canDrawOverlays(FileDetailActivity.this);
@@ -1099,9 +1098,16 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, uri);
                 startActivityForResult(intent, REQ_WINDOW_PERMISSION);
             }
+
         }
 
         sendAnalyticsEvent(AnalyticsValue.Action.Sticker);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        LogUtil.d("tony", "onKeyDown - " + keyCode);
+        return super.onKeyDown(keyCode, event);
     }
 
     @Click(R.id.iv_file_detail_preview_sticker_close)
@@ -1200,10 +1206,10 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @Override
     public void onBackPressed() {
-        if (!stickerViewModel.isShow()) {
-            super.onBackPressed();
-        } else {
+        if (stickerViewModel.isShow()) {
             stickerViewModel.dismissStickerSelector(true);
+        } else {
+            super.onBackPressed();
         }
     }
 

@@ -57,8 +57,9 @@
         android:layout_alignWithParentIfMissing="true">
 
         <ImageView
-            android:id="@+id/btn_message_sticker"
-            style="@style/JandiChat.ActionButton.Sticker"
+            android:id="@+id/btn_file_detail_action"
+            style="@style/JandiChat.ActionButton"
+            android:src="@drawable/selector_file_detail_action"
             android:layout_gravity="bottom"/>
 
         <LinearLayout
