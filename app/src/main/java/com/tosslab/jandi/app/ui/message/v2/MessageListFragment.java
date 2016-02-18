@@ -144,6 +144,7 @@ import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNull
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.BackPressCatchEditText;
+import com.tosslab.jandi.app.views.KeyboardVisibleChangeDetectView;
 import com.tosslab.jandi.app.views.eastereggs.SnowView;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -223,6 +224,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     ViewGroup vgOptionSpace;
     @ViewById(R.id.vg_easteregg_snow)
     FrameLayout vgEasterEggSnow;
+    @ViewById(R.id.v_messages_keyboard_visible_change_detector)
+    KeyboardVisibleChangeDetectView vgKeyboardVisibleChangeDetectView;
 
     @Bean
     MessageListPresenter messageListPresenter;
@@ -254,7 +257,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     private File photoFileByCamera;
     private StickerInfo stickerInfo = NULL_STICKER;
     private boolean isRoomInit;
-    private ButtonAction buttonAction = ButtonAction.KEYBOARD;
+    private ButtonAction currentShowingAction = ButtonAction.KEYBOARD;
 
     @AfterInject
     void initObject() {
@@ -337,7 +340,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             if (keyboardHeightModel.isOpened()) {
                 keyboardHeightModel.hideKeyboard();
             }
-            buttonAction = ButtonAction.KEYBOARD;
+            currentShowingAction = ButtonAction.KEYBOARD;
             setActionButtons();
         });
 
@@ -387,6 +390,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         initStickerViewModel();
 
         initUploadViewModel();
+
+        initKeyboardChangedDetectView();
 
         insertEmptyMessage();
 
@@ -448,7 +453,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                                 uploadMenuViewModel.dismissUploadSelector(false);
                             }
                         });
-                buttonAction = ButtonAction.STICKER;
+                currentShowingAction = ButtonAction.STICKER;
                 setActionButtons();
             } else {
                 // Android M (23) 부터 적용되는 시나리오
@@ -477,7 +482,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     private void dismissStickerSelectorIfShow() {
         if (stickerViewModel.isShow()) {
             stickerViewModel.dismissStickerSelector(true);
-            buttonAction = ButtonAction.KEYBOARD;
+            currentShowingAction = ButtonAction.KEYBOARD;
             setActionButtons();
         }
     }
@@ -496,7 +501,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                                             stickerViewModel.dismissStickerSelector(false);
                                         }
                                     });
-                            buttonAction = ButtonAction.UPLOAD;
+                            currentShowingAction = ButtonAction.UPLOAD;
                             setActionButtons();
                             AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Upload);
                         })
@@ -515,7 +520,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     private void dismissUploadSelectorIfShow() {
         if (uploadMenuViewModel.isShow()) {
             uploadMenuViewModel.dismissUploadSelector(true);
-            buttonAction = ButtonAction.KEYBOARD;
+            currentShowingAction = ButtonAction.KEYBOARD;
             setActionButtons();
         }
     }
@@ -576,6 +581,20 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     private void initUploadViewModel() {
         uploadMenuViewModel.setOptionSpace(vgOptionSpace);
+    }
+
+    private void initKeyboardChangedDetectView() {
+        vgKeyboardVisibleChangeDetectView.setOnKeyboardVisibleChangeListener(isShow -> {
+            if (!isShow) {
+                if (stickerViewModel != null && stickerViewModel.isShow()) {
+                    dismissStickerSelectorIfShow();
+                }
+
+                if (uploadMenuViewModel != null && uploadMenuViewModel.isShow()) {
+                    dismissUploadSelectorIfShow();
+                }
+            }
+        });
     }
 
     private void initMessageList() {
@@ -1100,15 +1119,15 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
 
         inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_AT));
-        if (buttonAction != ButtonAction.KEYBOARD) {
-            if (buttonAction == ButtonAction.STICKER || buttonAction == ButtonAction.UPLOAD) {
+        if (currentShowingAction != ButtonAction.KEYBOARD) {
+            if (currentShowingAction == ButtonAction.STICKER || currentShowingAction == ButtonAction.UPLOAD) {
                 if (keyboardHeightModel.isOpened()) {
                     dismissStickerSelectorIfShow();
                     dismissUploadSelectorIfShow();
                 } else {
                     keyboardHeightModel.showKeyboard();
                 }
-                buttonAction = ButtonAction.KEYBOARD;
+                currentShowingAction = ButtonAction.KEYBOARD;
                 setActionButtons();
             }
         }
@@ -1994,7 +2013,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Click(R.id.btn_message_action_button_1)
     public void handleActionButton1() {
         int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity().getApplicationContext());
-        switch (buttonAction) {
+        switch (currentShowingAction) {
             case KEYBOARD:
                 showUploadMenuSelectorIfNotShow(keyboardHeight);
                 break;
@@ -2015,7 +2034,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Click(R.id.btn_message_action_button_2)
     public void handleActionButton2() {
         int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity().getApplicationContext());
-        switch (buttonAction) {
+        switch (currentShowingAction) {
             case KEYBOARD:
                 showStickerSelectorIfNotShow(keyboardHeight);
                 break;
@@ -2036,7 +2055,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setActionButtons() {
-        switch (buttonAction) {
+        switch (currentShowingAction) {
             case STICKER:
                 btnActionButton1.setImageResource(R.drawable.chat_icon_upload);
                 btnActionButton2.setImageResource(R.drawable.chat_icon_keypad);

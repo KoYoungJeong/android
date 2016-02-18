@@ -6,6 +6,11 @@
     android:background="@android:color/white"
     android:orientation="vertical">
 
+    <com.tosslab.jandi.app.views.KeyboardVisibleChangeDetectView
+        android:id="@+id/v_messages_keyboard_visible_change_detector"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/layout_search_bar"
         android:layout_width="match_parent"
