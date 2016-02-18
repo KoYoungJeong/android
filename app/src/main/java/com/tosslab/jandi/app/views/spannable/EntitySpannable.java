@@ -3,8 +3,7 @@ package com.tosslab.jandi.app.views.spannable;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.TextPaint;
-import android.text.style.ClickableSpan;
-import android.view.View;
+import android.text.style.UnderlineSpan;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.MoveSharedEntityEvent;
@@ -14,7 +13,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Steve SeongUg Jung on 15. 2. 12..
  */
-public class EntitySpannable extends ClickableSpan {
+public class EntitySpannable extends UnderlineSpan implements ClickableSpannable {
 
     private final boolean isStarred;
     private Context context;
@@ -46,9 +45,7 @@ public class EntitySpannable extends ClickableSpan {
     }
 
     @Override
-    public void onClick(View widget) {
-
+    public void onClick() {
         EventBus.getDefault().post(new MoveSharedEntityEvent(entityId));
-
     }
 }
