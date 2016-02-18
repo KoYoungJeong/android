@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.johnpersano.supertoasts.SuperToast;
@@ -84,6 +85,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.BackPressCatchEditText;
+import com.tosslab.jandi.app.views.KeyboardVisibleChangeDetectView;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -158,8 +160,13 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     SimpleDraweeView ivStickerPreview;
     @ViewById(R.id.vg_option_space)
     ViewGroup vgOptionSpace;
+    @ViewById(R.id.v_file_detail_keyboard_visible_change_detector)
+    KeyboardVisibleChangeDetectView vgKeyboardVisibleChangeDetectView;
     @ViewById(R.id.btn_show_mention)
     View ivMention;
+    @ViewById(R.id.btn_file_detail_action)
+    ImageView btnAction;
+
     private MentionControlViewModel mentionControlViewModel;
     private FileDetailAdapter adapter;
 
@@ -179,6 +186,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         initCommentEditText();
 
         initStickers();
+
+        initKeyboardChangedDetectView();
 
         initProgressWheel();
 
@@ -202,8 +211,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
             if (isShow) {
-                int keyboardHeight = JandiPreference.getKeyboardHeight(getApplicationContext());
-                listView.smoothScrollBy(0, keyboardHeight);
+                btnAction.setSelected(false);
             }
         });
 
@@ -223,6 +231,17 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @AfterTextChange(R.id.et_message)
     void onCommentTextChange(Editable editable) {
         setCommentSendButtonEnabled();
+    }
+
+    private void initKeyboardChangedDetectView() {
+        vgKeyboardVisibleChangeDetectView.setOnKeyboardVisibleChangeListener(isShow -> {
+            if (!isShow) {
+                if (stickerViewModel != null && stickerViewModel.isShow()) {
+                    stickerViewModel.dismissStickerSelector(true);
+                }
+                btnAction.setSelected(false);
+            }
+        });
     }
 
     private void initStickers() {
@@ -249,15 +268,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
 
         stickerViewModel.setType(StickerViewModel.TYPE_FILE_DETAIL);
-
-        stickerViewModel.setOnStickerLayoutShowListener(isShow -> {
-            if (isShow) {
-                int keyboardHeight = JandiPreference.getKeyboardHeight(getApplicationContext());
-                listView.smoothScrollBy(0, keyboardHeight);
-            }
-        });
-
-        stickerViewModel.setStickerButton(findViewById(R.id.btn_message_sticker));
     }
 
     private void dismissStickerPreview() {
@@ -613,7 +623,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showKeyboard() {
-        inputMethodManager.showSoftInput(etComment, InputMethodManager.SHOW_IMPLICIT);
+        inputMethodManager.showSoftInput(getCurrentFocus(), 0);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -666,20 +676,16 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity me = entityManager.getMe();
 
-        boolean shouldShowDialog = me != null
+        boolean isMine = me != null
                 && (me.getId() == comment.writerId || me.isTeamOwner());
-
-        if (!shouldShowDialog) {
-            return;
-        }
 
         if (comment instanceof ResMessages.CommentMessage) {
             ManipulateMessageDialogFragment.newInstanceByCommentMessage(
-                    (ResMessages.CommentMessage) comment, true)
+                    (ResMessages.CommentMessage) comment, isMine)
                     .show(getSupportFragmentManager(), "choose_dialog");
         } else {
             ManipulateMessageDialogFragment.newInstanceByStickerCommentMessage(
-                    (ResMessages.CommentStickerMessage) comment, true)
+                    (ResMessages.CommentStickerMessage) comment, isMine)
                     .show(getSupportFragmentManager(), "choose_dialog");
         }
     }
@@ -1074,13 +1080,20 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         etComment.setText("");
     }
 
-    @Click(R.id.btn_message_sticker)
-    void onStickerClick(View view) {
-        boolean selected = view.isSelected();
-        if (selected) {
-            stickerViewModel.dismissStickerSelector(true);
-        } else {
+    @Click(R.id.btn_file_detail_action)
+    void onActionButtonClick(View view) {
+        boolean selected = !view.isSelected();
+        view.setSelected(selected);
 
+        if (!selected) {
+            if (stickerViewModel.isShow()) {
+                stickerViewModel.dismissStickerSelector(true);
+            }
+
+            if (!keyboardHeightModel.isOpened()) {
+                showKeyboard();
+            }
+        } else {
             boolean canDraw;
             if (SdkUtils.isMarshmallow()) {
                 canDraw = Settings.canDrawOverlays(FileDetailActivity.this);
@@ -1099,6 +1112,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, uri);
                 startActivityForResult(intent, REQ_WINDOW_PERMISSION);
             }
+
         }
 
         sendAnalyticsEvent(AnalyticsValue.Action.Sticker);
@@ -1200,10 +1214,10 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @Override
     public void onBackPressed() {
-        if (!stickerViewModel.isShow()) {
-            super.onBackPressed();
-        } else {
+        if (stickerViewModel.isShow()) {
             stickerViewModel.dismissStickerSelector(true);
+        } else {
+            super.onBackPressed();
         }
     }
 
