@@ -699,8 +699,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                     (ResMessages.CommentMessage) comment, isMine)
                     .show(getSupportFragmentManager(), "choose_dialog");
         } else {
+            if (!isMine) {
+                return;
+            }
+
             ManipulateMessageDialogFragment.newInstanceByStickerCommentMessage(
-                    (ResMessages.CommentStickerMessage) comment, isMine)
+                    (ResMessages.CommentStickerMessage) comment, true)
                     .show(getSupportFragmentManager(), "choose_dialog");
         }
     }

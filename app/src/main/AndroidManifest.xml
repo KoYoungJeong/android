@@ -81,7 +81,8 @@
             android:name=".ui.filedetail.FileDetailActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_file_detail"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+            />
+            <!--android:windowSoftInputMode="stateAlwaysHidden|adjustResize" -->
 
         <activity
             android:name=".ui.fileexplorer.FileExplorerActivity"
