@@ -62,7 +62,7 @@ public class RoomSelectorImpl implements RoomSelector {
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_room_selector);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        RoomRecyclerAdapter adapter = new RoomRecyclerAdapter(context);
+        RoomRecyclerAdapter adapter = new RoomRecyclerAdapter(context, RoomRecyclerAdapter.FROM_ROOM_SELECTOR);
 
         adapter.setOnRecyclerItemClickListener((view, adapter1, position) -> {
             ExpandRoomData roomData = adapter.getItem(position);
