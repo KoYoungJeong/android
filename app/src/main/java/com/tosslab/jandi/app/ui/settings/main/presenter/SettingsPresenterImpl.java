@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
+import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.SignOutUtil;
@@ -90,7 +91,7 @@ public class SettingsPresenterImpl implements SettingsPresenter {
 
     @Override
     public void onInitViews() {
-        String value = PreferenceManager.getDefaultSharedPreferences(JandiApplication.getContext()).getString("setting_orientation", "0");
+        String value = PreferenceManager.getDefaultSharedPreferences(JandiApplication.getContext()).getString(Settings.SETTING_ORIENTATION, "0");
         onSetUpOrientation(value);
     }
 }

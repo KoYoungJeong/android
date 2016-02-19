@@ -77,7 +77,7 @@
 	<string name="jandi_action_update">"更新"</string>
 	<string name="jandi_add">"增加"</string>
 	<string name="jandi_add_an_email_address">"增加一个电子邮件地址"</string>
-	<string name="jandi_add_to_contacts">"None"</string>
+	<string name="jandi_add_to_contacts">"NEW KEY"</string>
 	<string name="jandi_alert_already_topic_owenr">"你已是此议题的管理员"</string>
 	<string name="jandi_all_of_topic_members">"@All (议题成员)"</string>
 	<string name="jandi_already_in_team">"此电子邮箱已为 %s 的成员"</string>
@@ -326,8 +326,10 @@
 	<string name="jandi_no_preview_push_message">"你收到一则新信息"</string>
 	<string name="jandi_no_recent_stickers">"无最近使用的贴图"</string>
 	<string name="jandi_no_topic_to_join">"没有可加入的议题"</string>
+	<string name="jandi_normally_topic_messages">"议题信息"</string>
 	<string name="jandi_notification_off">"关闭推送通知"</string>
 	<string name="jandi_notification_on">"开启推送通知"</string>
+	<string name="jandi_notification_sounds">"通知音效"</string>
 	<string name="jandi_notify_download">"开始下载，可透过通知栏查询下载进度"</string>
 	<string name="jandi_notify_download_complete">"完成下载"</string>
 	<string name="jandi_nowhere_shared_file">"文件尚未分享到其它议题"</string>
@@ -430,6 +432,16 @@
 	<string name="jandi_signup_verification_code">"我们寄送了一组密码至你的电子邮箱\n请在此处输入密码进行帐户验证"</string>
 	<string name="jandi_signup_verify_title">"验证码认证"</string>
 	<string name="jandi_sounds">"声音"</string>
+	<string name="jandi_sounds_air_pop">"爆米花"</string>
+	<string name="jandi_sounds_arise">"双音"</string>
+	<string name="jandi_sounds_chime_bel_ding">"单音"</string>
+	<string name="jandi_sounds_chimey">"风铃"</string>
+	<string name="jandi_sounds_mouse">"叮"</string>
+	<string name="jandi_sounds_nursey">"三全音"</string>
+	<string name="jandi_sounds_on_point">"竹筒"</string>
+	<string name="jandi_sounds_super">"木琴"</string>
+	<string name="jandi_sounds_system">"NEW KEY"</string>
+	<string name="jandi_sounds_think_ping">"马林巴琴"</string>
 	<string name="jandi_starmention_no_longer_in_topic">"你已不在此标记的议题内"</string>
 	<string name="jandi_starred">"取消标记"</string>
 	<string name="jandi_starred_all">"全部类别"</string>

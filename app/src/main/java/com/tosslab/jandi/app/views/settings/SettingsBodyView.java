@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.views.settings;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -53,10 +54,13 @@ public class SettingsBodyView extends LinearLayout {
 
         CharSequence title = a.getText(R.styleable.SettingsBodyView_sbvTitle);
         CharSequence summary = a.getText(R.styleable.SettingsBodyView_sbvSummary);
+        ColorStateList summaryColor = a.getColorStateList(R.styleable.SettingsBodyView_sbvSummaryColor);
 
         setTitle(title);
 
         setSummary(summary);
+        setSummaryColor(summaryColor);
+
 
         if (!TextUtils.isEmpty(summary)) {
             tvSummary.setText(summary);
@@ -70,11 +74,18 @@ public class SettingsBodyView extends LinearLayout {
 
     }
 
+    public void setSummaryColor(ColorStateList summaryColor) {
+        if (summaryColor != null) {
+            tvSummary.setTextColor(summaryColor);
+        }
+    }
+
     public void setTitle(CharSequence title) {
         if (!TextUtils.isEmpty(title)) {
             tvTitle.setText(title);
         }
     }
+
     public void setTitle(int titleResId) {
         setTitle(getResources().getText(titleResId));
     }
@@ -89,6 +100,13 @@ public class SettingsBodyView extends LinearLayout {
         }
 
         requestLayout();
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        tvTitle.setEnabled(enabled);
+        tvSummary.setEnabled(enabled);
     }
 
     public void setSummary(int summaryResId) {

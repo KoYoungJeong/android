@@ -62,4 +62,29 @@
         <item>@string/jandi_send_to_email</item>
     </string-array>
 
+    <string-array name="jandi_notification_array_text">
+        <item>@string/jandi_sounds_system</item>
+        <item>@string/jandi_sounds_air_pop</item>
+        <item>@string/jandi_sounds_chime_bel_ding</item>
+        <item>@string/jandi_sounds_chimey</item>
+        <item>@string/jandi_sounds_mouse</item>
+        <item>@string/jandi_sounds_nursey</item>
+        <item>@string/jandi_sounds_on_point</item>
+        <item>@string/jandi_sounds_think_ping</item>
+        <item>@string/jandi_sounds_super</item>
+        <item>@string/jandi_sounds_arise</item>
+    </string-array>
+
+    <string-array name="jandi_notification_array_file">
+        <item>air_pop</item>
+        <item>chime_bell_ding</item>
+        <item>chimey</item>
+        <item>mouse</item>
+        <item>nursery</item>
+        <item>on_point</item>
+        <item>think_ping</item>
+        <item>super_</item>
+        <item>arise</item>
+    </string-array>
+
 </resources>
