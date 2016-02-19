@@ -8,6 +8,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -106,6 +107,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by justinygchoi on 2014. 7. 19..
@@ -374,6 +376,19 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         dismissStickerPreview();
         dismissStickerSelectorIfShow();
         super.onPause();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Observable.just(1)
+                .delay(200, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(integer -> {
+                    mentionControlViewModel.onConfigurationChanged();
+                    adapter.notifyDataSetChanged();
+                    stickerViewModel.onConfigurationChanged();
+                });
     }
 
     @Override
@@ -684,8 +699,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                     (ResMessages.CommentMessage) comment, isMine)
                     .show(getSupportFragmentManager(), "choose_dialog");
         } else {
+            if (!isMine) {
+                return;
+            }
+
             ManipulateMessageDialogFragment.newInstanceByStickerCommentMessage(
-                    (ResMessages.CommentStickerMessage) comment, isMine)
+                    (ResMessages.CommentStickerMessage) comment, true)
                     .show(getSupportFragmentManager(), "choose_dialog");
         }
     }
