@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.markdown.analysis;
+package com.tosslab.jandi.app.spannable.analysis;
 
 import android.support.test.runner.AndroidJUnit4;
 import android.text.SpannableStringBuilder;
@@ -14,7 +14,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
-public class LinkAnalysisTest {
+public class HyperLinkAnalysisTest {
 
     private static final String[] TEST_MARKDOWNS = {
             "[aehe](aaaa)",
@@ -34,12 +34,12 @@ public class LinkAnalysisTest {
 
     @Before
     public void setUp() throws Exception {
-        analysis = new LinkAnalysis();
+        analysis = new HyperLinkAnalysis();
 
     }
 
     @Test
-    public void testAnalysis() throws Exception {
+    public void testHyperLinkAnalysis() throws Exception {
         for (String testMarkdown : TEST_MARKDOWNS) {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(testMarkdown);
             analysis.analysis(JandiApplication.getContext(), spannableStringBuilder, false);

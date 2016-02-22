@@ -9,12 +9,11 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.markdown.MarkdownLookUp;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
+import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
@@ -44,51 +43,55 @@ public class PureMessageViewHolder implements BodyViewHolder {
         ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
         String message = textMessage.content.body;
 
-        SpannableStringBuilder builder = new SpannableStringBuilder();
-        builder.append(!TextUtils.isEmpty(message) ? message : "");
+        SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
+        messageStringBuilder.append(!TextUtils.isEmpty(message) ? message : "");
 
         Context context = tvMessage.getContext();
 
-        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                tvMessage, builder, textMessage.mentions,
-                EntityManager.getInstance().getMe().getId());
-        builder = generateMentionMessageUtil.generate(true);
+        EntityManager entityManager = EntityManager.getInstance();
+        long myId = entityManager.getMe().getId();
+        MentionAnalysisInfo mentionInfo = MentionAnalysisInfo.newBuilder(myId, textMessage.mentions)
+                .textSize(tvMessage.getTextSize())
+                .clickable(true)
+                .build();
 
-        MarkdownLookUp.text(builder).lookUp(tvMessage.getContext());
-
-        MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvMessage, builder, false);
-        markdownViewModel.execute();
-
-        LinkifyUtil.addLinks(context, builder);
+        SpannableLookUp.text(messageStringBuilder)
+                .hyperLink(false)
+                .markdown(false)
+                .webLink(false)
+                .telLink(false)
+                .emailLink(false)
+                .mention(mentionInfo, false)
+                .lookUp(tvMessage.getContext());
         LinkifyUtil.setOnLinkClick(tvMessage);
 
-        builder.append(" ");
+        messageStringBuilder.append(" ");
 
-        int startIndex = builder.length();
-        builder.append(DateTransformator.getTimeStringForSimple(link.message.createTime));
-        int endIndex = builder.length();
+        int startIndex = messageStringBuilder.length();
+        messageStringBuilder.append(DateTransformator.getTimeStringForSimple(link.message.createTime));
+        int endIndex = messageStringBuilder.length();
 
         DateViewSpannable spannable =
                 new DateViewSpannable(tvMessage.getContext(),
                         DateTransformator.getTimeStringForSimple(link.message.createTime));
-        builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        messageStringBuilder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
+                link.id, link.fromEntity, entityManager.getMe().getId());
 
         if (unreadCount > 0) {
             NameSpannable unreadCountSpannable =
                     new NameSpannable(
                             context.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_small)
                             , context.getResources().getColor(R.color.jandi_accent_color));
-            int beforeLength = builder.length();
-            builder.append(" ");
-            builder.append(String.valueOf(unreadCount))
-                    .setSpan(unreadCountSpannable, beforeLength, builder.length(),
+            int beforeLength = messageStringBuilder.length();
+            messageStringBuilder.append(" ");
+            messageStringBuilder.append(String.valueOf(unreadCount))
+                    .setSpan(unreadCountSpannable, beforeLength, messageStringBuilder.length(),
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        tvMessage.setText(builder);
+        tvMessage.setText(messageStringBuilder);
 
         linkPreviewViewModel.bindData(link);
     }

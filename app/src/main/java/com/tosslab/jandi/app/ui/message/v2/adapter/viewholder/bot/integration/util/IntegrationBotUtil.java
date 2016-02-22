@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.markdown.MarkdownLookUp;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -76,14 +76,22 @@ public class IntegrationBotUtil {
                 info = iterator.next();
                 if (!TextUtils.isEmpty(info.title)) {
                     titleVisible = View.VISIBLE;
-                    title.append(MarkdownLookUp.text(info.title).lookUp(vgConnectInfo.getContext()));
+                    SpannableStringBuilder spannableStringBuilder =
+                            SpannableLookUp.text(info.title)
+                                    .hyperLink(false)
+                                    .lookUp(vgConnectInfo.getContext());
+                    title.append(spannableStringBuilder);
                     LinkifyUtil.addLinks(tvTitle.getContext(), title);
                 } else {
                     titleVisible = View.GONE;
                 }
 
                 if (!TextUtils.isEmpty(info.description)) {
-                    description.append(MarkdownLookUp.text(info.description).lookUp(vgConnectInfo.getContext()));
+                    SpannableStringBuilder spannableStringBuilder =
+                            SpannableLookUp.text(info.description)
+                                    .hyperLink(false)
+                                    .lookUp(vgConnectInfo.getContext());
+                    description.append(spannableStringBuilder);
                     LinkifyUtil.addLinks(tvDescription.getContext(), description);
 
                     descriptionVisible = View.VISIBLE;

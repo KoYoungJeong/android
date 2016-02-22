@@ -49,7 +49,7 @@ public class LinkifyUtil {
     public static boolean addWebLinks(Context context, Spannable text) {
         boolean hasLink = false;
 
-        Matcher matcher = Regex.VALID_URL.matcher(text);
+        Matcher matcher = Regex.VALID_URL_PATTERN.matcher(text);
         int color = context.getResources().getColor(R.color.jandi_accent_color);
         while (matcher.find()) {
 
@@ -91,7 +91,7 @@ public class LinkifyUtil {
     public static boolean addPhoneLinks(Context context, Spannable text) {
         boolean hasLink = false;
 
-        Matcher matcher = TelRegex.VALID_PHONE_NUMBER.matcher(text);
+        Matcher matcher = TelRegex.VALID_TEL_PATTERN.matcher(text);
 
         int color = context.getResources().getColor(R.color.jandi_accent_color);
 

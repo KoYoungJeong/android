@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.search.MoreSearchRequestEvent;
-import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
@@ -79,28 +79,33 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
 
             if (!TextUtils.isEmpty(item.getPreviewText())) {
                 viewHolder.prevTextView.setVisibility(View.VISIBLE);
-                MarkdownViewModel markdownViewModel =
-                        new MarkdownViewModel(viewHolder.prevTextView, item.getPreviewText(), true);
-                markdownViewModel.execute();
-                viewHolder.prevTextView.setText(item.getPreviewText());
+
+                SpannableStringBuilder previewText = item.getPreviewText();
+                SpannableLookUp.text(previewText)
+                        .markdown(false)
+                        .lookUp(context);
+                viewHolder.prevTextView.setText(previewText);
             } else {
                 viewHolder.prevTextView.setVisibility(View.GONE);
             }
 
             if (!(TextUtils.isEmpty(item.getCurrentText()))) {
-                MarkdownViewModel markdownViewModel =
-                        new MarkdownViewModel(viewHolder.currentTextView, item.getCurrentText(), true);
-                markdownViewModel.execute();
+                SpannableStringBuilder currentText = item.getCurrentText();
+                SpannableLookUp.text(currentText)
+                        .markdown(false)
+                        .lookUp(context);
+                viewHolder.currentTextView.setText(currentText);
                 viewHolder.dateTextView.setText(DateTransformator.getTimeString(item.getDate()));
-                viewHolder.currentTextView.setText(item.getCurrentText());
             }
 
             if (!TextUtils.isEmpty(item.getNextText())) {
-                MarkdownViewModel markdownViewModel =
-                        new MarkdownViewModel(viewHolder.nextTextView, item.getNextText(), true);
-                markdownViewModel.execute();
                 viewHolder.nextTextView.setVisibility(View.VISIBLE);
-                viewHolder.nextTextView.setText(item.getNextText());
+
+                SpannableStringBuilder nextText = item.getNextText();
+                SpannableLookUp.text(nextText)
+                        .markdown(false)
+                        .lookUp(context);
+                viewHolder.nextTextView.setText(nextText);
             } else {
                 viewHolder.nextTextView.setVisibility(View.GONE);
             }

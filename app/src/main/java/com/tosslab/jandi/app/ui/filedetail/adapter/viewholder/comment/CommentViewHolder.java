@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.comment;
 
-import android.content.res.Resources;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,19 +8,15 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.markdown.MarkdownLookUp;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
-import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.ProfileBinder;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 
 /**
  * Created by tonyjs on 16. 1. 28..
@@ -77,17 +71,20 @@ public class CommentViewHolder extends BaseViewHolder<ResMessages.CommentMessage
 
         long myId = EntityManager.getInstance().getMe().getId();
 
-        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                tvCommentContent, spannableStringBuilder, commentMessage.mentions, myId)
-                .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
-        spannableStringBuilder = generateMentionMessageUtil.generate(true);
+        MentionAnalysisInfo mentionAnalysisInfo =
+                MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
+                        .textSizeFromResource(R.dimen.jandi_mention_comment_item_font_size)
+                        .build();
 
-        MarkdownLookUp.text(spannableStringBuilder).lookUp(tvCommentContent.getContext());
+        SpannableLookUp.text(spannableStringBuilder)
+                .hyperLink(false)
+                .webLink(false)
+                .emailLink(false)
+                .telLink(false)
+                .markdown(false)
+                .mention(mentionAnalysisInfo, false)
+                .lookUp(tvCommentContent.getContext());
 
-        new MarkdownViewModel(tvCommentContent, spannableStringBuilder, false)
-                .execute();
-
-        LinkifyUtil.addLinks(tvCommentContent.getContext(), spannableStringBuilder);
         LinkifyUtil.setOnLinkClick(tvCommentContent);
 
         tvCommentContent.setText(spannableStringBuilder);

@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.view.View;
@@ -10,9 +9,9 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
+import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
-import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
@@ -40,21 +39,20 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
 
         Context context = tvMessage.getContext();
 
-        boolean hasLink = LinkifyUtil.addLinks(context, builder);
-        if (hasLink) {
-            Spannable linkSpannable = Spannable.Factory.getInstance().newSpannable(builder);
-            builder.setSpan(linkSpannable, 0, message.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            LinkifyUtil.setOnLinkClick(tvMessage);
-        }
+        long myId = EntityManager.getInstance().getMe().getId();
+        MentionAnalysisInfo mentionAnalysisInfo =
+                MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
+                        .textSizeFromResource(R.dimen.jandi_mention_comment_item_font_size)
+                        .build();
 
-        builder.append(" ");
-
-        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                tvMessage, builder, commentMessage.mentions,
-                EntityManager.getInstance().getMe().getId())
-                .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
-        builder = generateMentionMessageUtil.generate(true);
-
+        SpannableLookUp.text(builder)
+                .hyperLink(false)
+                .markdown(false)
+                .webLink(false)
+                .emailLink(false)
+                .telLink(false)
+                .mention(mentionAnalysisInfo, false)
+                .lookUp(context);
 
         int startIndex = builder.length();
         builder.append(DateTransformator.getTimeStringForSimple(commentMessage.createTime));
@@ -66,7 +64,7 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
         builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
+                link.id, link.fromEntity, myId);
 
         if (unreadCount > 0) {
             NameSpannable unreadCountSpannable =
