@@ -115,6 +115,19 @@ public class SearchMemberModel {
                 }
             }
 
+        } else if (TextUtils.equals(mentionType, MentionControlViewModel.MENTION_TYPE_FILE_COMMENT)
+                && EntityManager.getInstance().hasJandiBot()) {
+            BotEntity botEntity = (BotEntity) EntityManager.getInstance().getJandiBot();
+            if (botEntity.isEnabled()) {
+                SearchedItemVO jandiBot = new SearchedItemVO();
+                jandiBot.setId(botEntity.getId())
+                        .setName(botEntity.getName())
+                        .setEnabled(true)
+                        .setStarred(false)
+                        .setBot(true)
+                        .setType(SearchType.member.name());
+                selectableMembersLinkedHashMap.put(jandiBot.getId(), jandiBot);
+            }
         }
 
         return selectableMembersLinkedHashMap;
