@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -15,7 +14,7 @@ import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 18..
@@ -112,10 +111,7 @@ public class LinkPreviewViewModel {
                 return;
             }
 
-            InternalWebActivity_.intent(context)
-                    .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    .url(linkUrl)
-                    .start();
+            ApplicationUtil.startWebBrowser(context, linkUrl);
 
             if (context instanceof Activity) {
                 Activity activity = ((Activity) context);
