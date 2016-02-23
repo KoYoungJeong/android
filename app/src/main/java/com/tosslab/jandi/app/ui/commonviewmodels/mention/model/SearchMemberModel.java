@@ -96,7 +96,7 @@ public class SearchMemberModel {
             SearchedItemVO searchedItemForAll = new SearchedItemVO();
             searchedItemForAll
                     .setId(topicIds.get(0))
-                    .setName("All")
+                    .setName("all")
                     .setType(SearchType.room.name());
 
             selectableMembersLinkedHashMap.put(searchedItemForAll.getId(), searchedItemForAll);

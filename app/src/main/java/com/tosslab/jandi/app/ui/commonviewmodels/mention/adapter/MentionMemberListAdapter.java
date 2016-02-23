@@ -76,7 +76,7 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
 
         ivIcon.setLayoutParams(layoutParams);
 
-        if (item.getName().equals("All") && item.getType().equals("room")) {
+        if (item.getName().equals("all") && item.getType().equals("room")) {
             ImageLoader.newBuilder().load(R.drawable.thum_all_member).into(ivIcon);
             holder.getTvName().setText(R.string.jandi_all_of_topic_members);
         } else if (isBot) {
