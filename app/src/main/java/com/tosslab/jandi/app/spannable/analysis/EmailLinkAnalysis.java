@@ -14,16 +14,16 @@ import java.util.regex.Pattern;
  * Created by tonyjs on 16. 2. 19..
  */
 public class EmailLinkAnalysis implements RuleAnalysis {
-    private static final Pattern pattern;
+    private static final Pattern sPattern;
 
     static {
-        pattern = Pattern.compile("[_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(\\.[a-zA-Z]{2,4})");
+        sPattern = Pattern.compile("[_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(\\.[a-zA-Z]{2,4})");
     }
 
     @Override
     public void analysis(Context context,
                          SpannableStringBuilder spannableStringBuilder, boolean plainText) {
-        Matcher matcher = pattern.matcher(spannableStringBuilder);
+        Matcher matcher = sPattern.matcher(spannableStringBuilder);
 
         int color = context.getResources().getColor(R.color.jandi_accent_color);
         while (matcher.find()) {

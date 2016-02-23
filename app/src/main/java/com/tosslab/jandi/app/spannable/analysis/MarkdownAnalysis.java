@@ -16,35 +16,44 @@ import java.util.regex.Pattern;
  * Created by tonyjs on 16. 2. 19..
  */
 public class MarkdownAnalysis implements RuleAnalysis {
-    private static final Pattern pattern;
+    private static final Pattern sPattern;
 
     static {
-        pattern = Pattern.compile("((\\~{2})([^~*\n]+)\\~{2})|((\\*{3})([^~*\n]+)\\*{3})|((\\*{2})([^~*\n]+)\\*{2})|((\\*)([^~*\n]+)\\*)");
+        sPattern = Pattern.compile(
+                "(( \\~{2}[^ ])([^~\n]+)\\~{2})" +
+                        "|((\\*{3})([^*\n]+)\\*{3})" +
+                        "|((\\*{2})([^*\n]+)\\*{2})" +
+                        "|((\\*)([^*\n]+)\\*)");
     }
 
     @Override
     public void analysis(Context context,
                          SpannableStringBuilder spannableStringBuilder, boolean plainText) {
-        Matcher matcher = pattern.matcher(spannableStringBuilder);
+        Matcher matcher = sPattern.matcher(spannableStringBuilder);
         while (matcher.find()) {
             TextStyle style = getStyle(matcher);
 
             int startIndex = matcher.start(style.getStartIndex());
             int endIndex = matcher.end(style.getEndIndex());
             int needCharacterLength = style.getNeedCharacterLength();
+            int beforeWhiteSpaces = style.getBeforeWhiteSpaces();
+            int afterWhiteSpaces = style.getAfterWhiteSpaces();
 
             CharSequence sequence = spannableStringBuilder.subSequence(
-                    startIndex + needCharacterLength, endIndex - needCharacterLength);
+                    startIndex + needCharacterLength + beforeWhiteSpaces,
+                    endIndex - needCharacterLength - afterWhiteSpaces);
             spannableStringBuilder.replace(startIndex, endIndex, sequence);
 
             if (plainText) {
                 return;
             }
 
+            endIndex = startIndex + sequence.length();
+
             CharacterStyle span = style.getSpan();
 
             spannableStringBuilder.setSpan(span,
-                    startIndex, endIndex - needCharacterLength * 2,
+                    startIndex, endIndex,
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             matcher.reset(spannableStringBuilder);
@@ -66,18 +75,22 @@ public class MarkdownAnalysis implements RuleAnalysis {
     }
 
     public enum TextStyle {
-        BOLD_ITALIC(3, 4, 4, new StyleSpan(Typeface.BOLD | Typeface.ITALIC)),
-        ITALIC(1, 10, 10, new StyleSpan(Typeface.ITALIC)),
-        BOLD(2, 7, 7, new StyleSpan(Typeface.BOLD)),
-        STRIKE(2, 1, 1, new StrikethroughSpan());
+        BOLD_ITALIC(3, 4, 4, 0, 0, new StyleSpan(Typeface.BOLD | Typeface.ITALIC)),
+        ITALIC(1, 10, 10, 0, 0, new StyleSpan(Typeface.ITALIC)),
+        BOLD(2, 7, 7, 0, 0, new StyleSpan(Typeface.BOLD)),
+        STRIKE(2, 1, 1, 1, 0, new StrikethroughSpan());
 
-        int needCharacterLength, startIndex, endIndex;
+        int needCharacterLength, startIndex, endIndex, beforeWhiteSpaces, afterWhiteSpaces;
         CharacterStyle span;
 
-        TextStyle(int needCharacterLength, int startIndex, int endIndex, CharacterStyle span) {
+        TextStyle(int needCharacterLength, int startIndex, int endIndex,
+                  int beforeWhiteSpaces, int afterWhiteSpaces,
+                  CharacterStyle span) {
             this.needCharacterLength = needCharacterLength;
             this.startIndex = startIndex;
             this.endIndex = endIndex;
+            this.beforeWhiteSpaces = beforeWhiteSpaces;
+            this.afterWhiteSpaces = afterWhiteSpaces;
             this.span = span;
         }
 
@@ -91,6 +104,14 @@ public class MarkdownAnalysis implements RuleAnalysis {
 
         public int getEndIndex() {
             return endIndex;
+        }
+
+        public int getBeforeWhiteSpaces() {
+            return beforeWhiteSpaces;
+        }
+
+        public int getAfterWhiteSpaces() {
+            return afterWhiteSpaces;
         }
 
         public CharacterStyle getSpan() {

@@ -12,15 +12,15 @@ import java.util.regex.Pattern;
 
 public class HyperLinkAnalysis implements RuleAnalysis {
 
-    private static final Pattern pattern;
+    private static final Pattern sPattern;
 
     static {
-        pattern = Pattern.compile("(\\[((?:\\[[^\\]]*\\]|[^\\[\\]])*)\\]\\([ \\t]*()<?((?:\\([^)]*\\)|[^()\\s])*?)>?[ \\t]*((['\"])(.*?)\\6[ \\t]*)?\\))");
+        sPattern = Pattern.compile("(\\[((?:\\[[^\\]]*\\]|[^\\[\\]])*)\\]\\([ \\t]*()<?((?:\\([^)]*\\)|[^()\\s])*?)>?[ \\t]*((['\"])(.*?)\\6[ \\t]*)?\\))");
     }
 
     @Override
     public void analysis(Context context, SpannableStringBuilder stringBuilder, boolean plainText) {
-        Matcher matcher = pattern.matcher(stringBuilder);
+        Matcher matcher = sPattern.matcher(stringBuilder);
         int color = context.getResources().getColor(R.color.jandi_accent_color);
         while (matcher.find()) {
             // 노출되는 텍스트 영역
