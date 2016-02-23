@@ -276,8 +276,8 @@ public class StickerViewModel {
         vgStickerSelector.setLayoutParams(layoutParams);
         vgOptionSpace.setLayoutParams(vgSpaceLayoutParams);
 
-        setupGroupState(1, vgStickerGroups);
-        updateStickerItems(1, pagerStickerItems);
+        setupGroupState(STICKER_GROUP_RECENT, vgStickerGroups);
+        updateStickerItems(STICKER_GROUP_RECENT, pagerStickerItems);
 
         vgStickerSelector.setVisibility(View.VISIBLE);
 
