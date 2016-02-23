@@ -283,4 +283,20 @@ public class TopicFolderRepository {
 
     }
 
+    public ResFolderItem getFolderOfTopic(long entityId) {
+        lock.lock();
+        try {
+            Dao<ResFolderItem, ?> dao = helper.getDao(ResFolderItem.class);
+            return dao.queryBuilder()
+                    .where()
+                    .eq("roomId", entityId)
+                    .queryForFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+
+        return new ResFolderItem();
+    }
 }

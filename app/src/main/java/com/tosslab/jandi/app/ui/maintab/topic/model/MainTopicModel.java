@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
@@ -31,10 +32,6 @@ import java.util.Map;
 
 import retrofit.RetrofitError;
 import rx.Observable;
-
-/**
- * Created by tee on 15. 8. 26..
- */
 
 @EBean
 public class MainTopicModel {
@@ -247,7 +244,6 @@ public class MainTopicModel {
     }
 
     public void updateMessageCount(SocketMessageEvent event, List<TopicItemData> joinedTopics) {
-        TopicItemData dummyInstance = TopicItemData.getDummyInstance();
         Observable.from(joinedTopics)
                 .filter(topicItemData -> {
                     if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
@@ -274,8 +270,47 @@ public class MainTopicModel {
                 })
                 .doOnNext(topicItemData -> topicItemData.setUnreadCount(topicItemData.getUnreadCount() + 1))
                 .doOnNext(topicItemData -> EntityManager.getInstance().getEntityById(topicItemData.getEntityId()).alarmCount++)
-                .firstOrDefault(dummyInstance)
                 .subscribe();
+    }
+
+    public void updateMessageCountForUpdated(SocketMessageEvent event, List<Topic> items) {
+        Observable.from(items)
+                .filter(topic -> {
+                    if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
+                        if (TextUtils.equals(event.getMessageType(), "topic_join")
+                                || TextUtils.equals(event.getMessageType(), "topic_invite")
+                                || TextUtils.equals(event.getMessageType(), "topic_leave")
+                                || TextUtils.equals(event.getMessageType(), "message_delete")
+                                || TextUtils.equals(event.getMessageType(), "file_unshare")) {
+                            return false;
+                        } else {
+                            return topic.getEntityId() == event.getRoom().getId();
+                        }
+                    } else if (TextUtils.equals(event.getMessageType(), "link_preview_create")) {
+                        // 단순 메세지 업데이트인 경우
+                        return false;
+                    } else {
+                        for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
+                            if (topic.getEntityId() == messageRoom.getId()) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                })
+//                .doOnNext(topic -> topic.setUnreadCount(topic.getUnreadCount() + 1))
+                .filter(topic -> event.getLinkId() > 0)
+                .doOnNext(topic -> {
+                    long entityId = topic.getEntityId();
+                    if (topic.isPublic()) {
+                        ResLeftSideMenu.Channel channel = EntityManager.getInstance().getEntityById(entityId).getChannel();
+                        channel.lastLinkId = event.getLinkId();
+                    } else {
+                        ResLeftSideMenu.PrivateGroup group = EntityManager.getInstance().getEntityById(entityId).getPrivateGroup();
+                        group.lastLinkId = event.getLinkId();
+                    }
+                })
+                .subscribe(topic -> {}, t -> {});
     }
 
     public boolean isFolderSame(List<ResFolder> folders1, List<ResFolder> folders2) {
@@ -299,6 +334,7 @@ public class MainTopicModel {
         }
     }
 
+
     public boolean isFolderItemSame(List<ResFolderItem> folderItems1, List<ResFolderItem> folderItems2) {
         if (folderItems1.size() != folderItems2.size()) {
             return false;
@@ -320,4 +356,69 @@ public class MainTopicModel {
         }
     }
 
+    public Observable<List<Topic>> getUpdatedTopicList() {
+        EntityManager entityManager = EntityManager.getInstance();
+        return Observable.from(entityManager.getJoinedChannels())
+                .map(entity -> {
+                    ResLeftSideMenu.Channel channel = entity.getChannel();
+                    return new Topic.Builder()
+                            .name(entity.getName())
+                            .isStarred(entity.isStarred)
+                            .isJoined(true)
+                            .entityId(entity.getId())
+                            .memberCount(entity.getMemberCount())
+                            .unreadCount(entity.alarmCount)
+                            .isPublic(true)
+                            .description(entity.getDescription())
+                            .creatorId(channel.ch_creatorId)
+                            .markerLinkId(entity.lastLinkId)
+                            .lastLinkId(channel.lastLinkId)
+                            .isPushOn(entity.isTopicPushOn)
+                            .build();
+                })
+                .mergeWith(Observable.from(entityManager.getGroups())
+                        .map(entity -> {
+                            ResLeftSideMenu.PrivateGroup privateGroup = entity.getPrivateGroup();
+                            return new Topic.Builder()
+                                    .name(entity.getName())
+                                    .isStarred(entity.isStarred)
+                                    .isJoined(true)
+                                    .entityId(entity.getId())
+                                    .memberCount(entity.getMemberCount())
+                                    .unreadCount(entity.alarmCount)
+                                    .isPublic(false)
+                                    .description(entity.getDescription())
+                                    .creatorId(privateGroup.pg_creatorId)
+                                    .markerLinkId(entity.lastLinkId)
+                                    .lastLinkId(privateGroup.lastLinkId)
+                                    .isPushOn(entity.isTopicPushOn)
+                                    .build();
+                        }))
+                .toSortedList((lhs, rhs) -> {
+                    long lhsLastLinkId = lhs.getLastLinkId();
+                    long rhsLastLinkId = rhs.getLastLinkId();
+                    if (lhsLastLinkId > rhsLastLinkId) {
+                        return -1;
+                    } else if (lhsLastLinkId < rhsLastLinkId) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+
+
+    }
+
+    public int getUnreadCount() {
+        final int[] unreadCount = {0};
+        EntityManager entityManager = EntityManager.getInstance();
+        Observable.merge(Observable.from(entityManager.getJoinedChannels()), Observable.from(entityManager.getGroups()))
+                .subscribe(entity -> unreadCount[0] += entity.alarmCount, t -> {});
+
+        return unreadCount[0];
+    }
+
+    public long findFolderId(long entityId) {
+        return TopicFolderRepository.getRepository().getFolderOfTopic(entityId).folderId;
+    }
 }

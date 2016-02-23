@@ -9,7 +9,80 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
+        android:clipToPadding="false"
+        android:paddingTop="40dp"
         android:scrollbars="vertical"
         android:smoothScrollbar="true" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#FFF5F5F5">
+
+        <ImageView
+            android:id="@+id/iv_main_topic_order_left_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:src="@drawable/more_icon_arrow_left" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/vg_main_topic_order_title"
+            android:layout_toRightOf="@+id/iv_main_topic_order_left_arrow"
+            android:background="@color/jandi_entities_divider" />
+
+        <LinearLayout
+            android:id="@+id/vg_main_topic_order_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center_vertical"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp">
+
+            <TextView
+                android:id="@+id/tv_main_topic_order_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:duplicateParentState="true"
+                android:text="@string/jandi_sort_folder"
+                android:textColor="@color/jandi_text_light"
+                android:textSize="@dimen/jandi_mention_star_list_item_font_size" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:duplicateParentState="true"
+                android:src="@drawable/btn_topic_sort_dropdown_arrow" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/iv_main_topic_order_right_arrow"
+            android:layout_toRightOf="@+id/vg_main_topic_order_title"
+            android:background="@color/jandi_entities_divider" />
+
+        <ImageView
+            android:id="@+id/iv_main_topic_order_right_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:src="@drawable/more_icon_arrow_right" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="#FFDFDFDF" />
+    </RelativeLayout>
 
 </RelativeLayout>

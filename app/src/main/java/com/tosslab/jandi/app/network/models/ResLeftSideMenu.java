@@ -68,6 +68,7 @@ public class ResLeftSideMenu {
     static public class Channel extends Entity {
         public long ch_creatorId;
         public Date ch_createTime;
+        public long lastLinkId;
         public List<Long> ch_members;
         public String description;
         public boolean autoJoin;
@@ -100,6 +101,7 @@ public class ResLeftSideMenu {
     static public class PrivateGroup extends Entity {
         public long pg_creatorId;
         public Date pg_createTime;
+        public long lastLinkId;
         public List<Long> pg_members;
         public String description;
         public boolean autoJoin;
