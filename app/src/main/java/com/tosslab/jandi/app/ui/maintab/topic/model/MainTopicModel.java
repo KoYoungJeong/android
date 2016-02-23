@@ -301,14 +301,7 @@ public class MainTopicModel {
 //                .doOnNext(topic -> topic.setUnreadCount(topic.getUnreadCount() + 1))
                 .filter(topic -> event.getLinkId() > 0)
                 .doOnNext(topic -> {
-                    long entityId = topic.getEntityId();
-                    if (topic.isPublic()) {
-                        ResLeftSideMenu.Channel channel = EntityManager.getInstance().getEntityById(entityId).getChannel();
-                        channel.lastLinkId = event.getLinkId();
-                    } else {
-                        ResLeftSideMenu.PrivateGroup group = EntityManager.getInstance().getEntityById(entityId).getPrivateGroup();
-                        group.lastLinkId = event.getLinkId();
-                    }
+                    EntityManager.getInstance().getEntityById(topic.getEntityId()).setTopicGlobalLastLinkId(event.getLinkId());
                 })
                 .subscribe(topic -> {}, t -> {});
     }
@@ -372,7 +365,7 @@ public class MainTopicModel {
                             .description(entity.getDescription())
                             .creatorId(channel.ch_creatorId)
                             .markerLinkId(entity.lastLinkId)
-                            .lastLinkId(channel.lastLinkId)
+                            .lastLinkId(entity.getTopicGlobalLastLink())
                             .isPushOn(entity.isTopicPushOn)
                             .build();
                 })
@@ -390,7 +383,7 @@ public class MainTopicModel {
                                     .description(entity.getDescription())
                                     .creatorId(privateGroup.pg_creatorId)
                                     .markerLinkId(entity.lastLinkId)
-                                    .lastLinkId(privateGroup.lastLinkId)
+                                    .lastLinkId(entity.getTopicGlobalLastLink())
                                     .isPushOn(entity.isTopicPushOn)
                                     .build();
                         }))
