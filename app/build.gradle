@@ -119,7 +119,7 @@ dependencies {
     // Test : Robolectric, Junit4
     testCompile 'org.robolectric:robolectric:3.0'
     testCompile 'org.robolectric:shadows-httpclient:3.0'
-    testCompile 'com.jayway.awaitility:awaitility:1.6.+'
+    testCompile 'com.jayway.awaitility:awaitility:1.7.+'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-all:1.10.+'
     testCompile 'com.google.guava:guava:18.+'
