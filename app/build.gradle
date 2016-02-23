@@ -48,7 +48,7 @@ checkstyle {
     toolVersion = "6.2"
 }
 
-def supportLibVersion = "23.0.+"
+def supportLibVersion = "23.1.1"
 def playServiceVersion = "7.0.0"
 
 dependencies {
