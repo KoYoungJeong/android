@@ -305,7 +305,7 @@
         </activity>
 
         <activity
-            android:name=".ui.filedetail.views.FileUnshareActivity_"
+            android:name=".ui.filedetail.views.FileSharedEntityChooseActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_title_cdp_to_be_unshared">
             <intent-filter>

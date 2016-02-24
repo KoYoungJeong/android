@@ -203,7 +203,7 @@ public class FileDetailPresenter {
         }
     }
 
-    public void onDownloadAction(long fileId, ResMessages.FileContent fileContent) {
+    public void onDownloadAction(final long fileId, final ResMessages.FileContent fileContent) {
         if (fileContent == null) {
             return;
         }
@@ -215,19 +215,14 @@ public class FileDetailPresenter {
             return;
         }
 
-        downloadFile(ImageUtil.getImageFileUrl(fileContent.fileUrl),
-                fileContent.title,
-                fileContent.type,
-                fileContent.ext,
-                fileId);
-    }
-
-    private void downloadFile(String url, String fileName, final String fileType, String ext,
-                             long fileId) {
         Permissions.getChecker()
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .hasPermission(() -> {
-                    downloadFileImpl(url, fileName, fileType, ext, fileId);
+                    DownloadService.start(fileId,
+                            ImageUtil.getImageFileUrl(fileContent.fileUrl),
+                            fileContent.title,
+                            fileContent.ext,
+                            fileContent.type);
                 })
                 .noPermission(() -> {
                     view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION,
@@ -235,12 +230,8 @@ public class FileDetailPresenter {
                 }).check();
     }
 
-    private void downloadFileImpl(String url, String fileName, final String fileType, String ext,
-                                  long fileId) {
-        DownloadService.start(fileId, url, fileName, ext, fileType);
-    }
-
-    public void onExportFile(ResMessages.FileMessage fileMessage, ProgressDialog progressDialog) {
+    public void onExportFile(final ResMessages.FileMessage fileMessage,
+                             final ProgressDialog progressDialog) {
         if (fileDetailModel.isFileFromGoogleOrDropbox(fileMessage.content)) {
             view.dismissDialog(progressDialog);
 
@@ -262,8 +253,17 @@ public class FileDetailPresenter {
                 }).check();
     }
 
-    public void onOpenFile(ResMessages.FileMessage fileMessage, ProgressDialog progressDialog) {
-        downloadFileAndManage(FileManageType.OPEN, fileMessage, progressDialog);
+    public void onOpenFile(final ResMessages.FileMessage fileMessage,
+                           final ProgressDialog progressDialog) {
+        Permissions.getChecker()
+                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .hasPermission(() -> {
+                    downloadFileAndManage(FileManageType.OPEN, fileMessage, progressDialog);
+                })
+                .noPermission(() -> {
+                    view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                }).check();
     }
 
     void downloadFileAndManage(final FileManageType type,

@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.widget.LinkedEllipsizeTextView;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
+import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.EntitySpannable;
@@ -215,7 +216,14 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }, Throwable::printStackTrace);
 
-        tvSharedTopics.setText(ssb);
+        // Check if empty
+        if (firstLength == ssb.length()) {
+            tvSharedTopics.setText(resources.getString(R.string.jandi_nowhere_shared_file));
+        } else {
+            tvSharedTopics.setText(ssb);
+            LinkifyUtil.setOnLinkClick(tvSharedTopics);
+        }
+
     }
 
     public Context getContext() {

@@ -29,16 +29,21 @@ import java.util.List;
  */
 public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    final int TYPE_FOLDER = 1;
-    final int TYPE_ROOM = 2;
-    final int TYPE_DUMMY_DISABLE = 3;
+    private static final int TYPE_FOLDER = 1;
+    private static final int TYPE_ROOM = 2;
+    private static final int TYPE_DUMMY_DISABLE = 3;
+
+    public static final int FROM_ROOM_SELECTOR = 0x01;
+    public static final int FROM_USER_SELECTOR = 0x02;
 
     private final Context context;
+    private final int from;
     private List<ExpandRoomData> roomDatas;
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
 
-    public RoomRecyclerAdapter(Context context) {
+    public RoomRecyclerAdapter(Context context, int from) {
         this.context = context;
+        this.from = from;
         roomDatas = new ArrayList<>();
         setHasStableIds(true);
     }
@@ -114,12 +119,22 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-            ImageLoader.newBuilder()
-                    .placeHolder(R.drawable.icon_search_all_rooms, ScalingUtils.ScaleType.CENTER_INSIDE)
-                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                    .load(UriFactory.getResourceUri(R.drawable.icon_search_all_rooms))
-                    .into(ivIcon);
-            roomholder.tvName.setText(R.string.jandi_file_category_everywhere);
+            if (from == FROM_ROOM_SELECTOR) {
+                ImageLoader.newBuilder()
+                        .placeHolder(R.drawable.icon_search_all_rooms, ScalingUtils.ScaleType.CENTER_INSIDE)
+                        .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                        .load(UriFactory.getResourceUri(R.drawable.icon_search_all_rooms))
+                        .into(ivIcon);
+                roomholder.tvName.setText(R.string.jandi_file_category_everywhere);
+            } else {
+                ImageLoader.newBuilder()
+                        .placeHolder(R.drawable.icon_search_all_rooms, ScalingUtils.ScaleType.CENTER_INSIDE)
+                        .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                        .load(UriFactory.getResourceUri(R.drawable.icon_search_all_members))
+                        .into(ivIcon);
+
+                roomholder.tvName.setText(R.string.jandi_file_category_everyone);
+            }
 
         } else if (item.isUser()) {
             String fileUrl = ImageUtil.getImageFileUrl(item.getProfileUrl());

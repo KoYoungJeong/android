@@ -103,7 +103,7 @@
         </LinearLayout>
 
         <RelativeLayout
-            android:id="@+id/rl_entity_listitem_badge"
+            android:id="@+id/vg_entity_listitem_badge"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_alignParentRight="true"

@@ -81,6 +81,7 @@ public class TopicCreateModelTest {
             String topicName = "haha" + new Date().toString();
             String topicDescription = "haha2" + new Date().toString();
             ResCommon topic = topicCreateModel.createTopic(topicName, false, topicDescription, false);
+            Thread.sleep(200);
             topicCreateModel.refreshEntity();
 
             // Then
