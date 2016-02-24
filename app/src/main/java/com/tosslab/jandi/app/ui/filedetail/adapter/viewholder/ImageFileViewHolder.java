@@ -150,12 +150,7 @@ public class ImageFileViewHolder extends FileViewHolder {
                     ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.COMPLETED);
                 }
             });
-            int widthPixels = Math.min(
-                    ivFileThumb.getResources().getDisplayMetrics().widthPixels,
-                    ImageUtil.STANDARD_IMAGE_SIZE);
-            int height = ivFileThumb.getHeight();
-            builder.resize(widthPixels, height)
-                    .load(uri)
+            builder.load(uri)
                     .into(ivFileThumb);
             ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.IN_PROGRESS);
         }
@@ -223,12 +218,7 @@ public class ImageFileViewHolder extends FileViewHolder {
                 ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.COMPLETED);
             }
         });
-        int widthPixels = Math.min(
-                ivFileThumb.getResources().getDisplayMetrics().widthPixels,
-                ImageUtil.STANDARD_IMAGE_SIZE);
-        int height = ivFileThumb.getHeight();
-        builder.resize(widthPixels, height)
-                .load(uri)
+        builder.load(uri)
                 .into(ivFileThumb);
         ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.IN_PROGRESS);
 

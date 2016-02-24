@@ -104,6 +104,7 @@ public class FileSharedEntityChooseActivity extends BaseAppCompatActivity {
                 subscriber.onCompleted();
             }
         })
+                .distinct()
                 .filter(integerWrapper -> integerWrapper != myId)
                 .filter(entityId -> entityManager.getEntityById(entityId) != EntityManager.UNKNOWN_USER_ENTITY)
                 .map(entityManager::getEntityById)
