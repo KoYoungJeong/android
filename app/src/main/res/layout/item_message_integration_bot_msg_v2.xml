@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.tosslab.jandi.app.views.LongClickableRelativeLayout
+    <RelativeLayout
         android:id="@+id/vg_message_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -111,7 +111,7 @@
             android:layout_alignRight="@+id/vg_message_sub_menu"
             android:layout_below="@+id/vg_message_sub_menu" />
 -->
-    </com.tosslab.jandi.app.views.LongClickableRelativeLayout>
+    </RelativeLayout>
 
     <include
         android:id="@+id/vg_message_last_read"

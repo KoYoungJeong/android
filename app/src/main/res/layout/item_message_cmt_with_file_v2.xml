@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.tosslab.jandi.app.views.LongClickableRelativeLayout
+    <RelativeLayout
         android:id="@+id/vg_message_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -180,7 +180,7 @@
                 android:src="@drawable/icon_comment_arrow" />
         </RelativeLayout>
 
-    </com.tosslab.jandi.app.views.LongClickableRelativeLayout>
+    </RelativeLayout>
 
     <include layout="@layout/item_message_divider" />
 
