@@ -8,6 +8,7 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -34,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -200,6 +202,26 @@ public class FileDetailPresenter {
             view.notifyDataSetChanged();
         } catch (RetrofitError e) {
             Log.getStackTraceString(e);
+        }
+    }
+
+    @Background
+    public void onChangeFileCommentStarredState(long messageId, boolean starred) {
+        try {
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
+            if (starred) {
+                fileDetailModel.registStarredMessage(teamId, messageId);
+                view.showCommentStarredSuccessToast();
+            } else {
+                fileDetailModel.unregistStarredMessage(teamId, messageId);
+                view.showCommentUnStarredSuccessToast();
+            }
+
+            view.modifyCommentStarredState(messageId, starred);
+
+            EventBus.getDefault().post(new StarredInfoChangeEvent());
+        } catch (RetrofitError e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
         }
     }
 
@@ -500,6 +522,12 @@ public class FileDetailPresenter {
         void showStarredSuccessToast();
 
         void showUnstarredSuccessToast();
+
+        void showCommentStarredSuccessToast();
+
+        void showCommentUnStarredSuccessToast();
+
+        void modifyCommentStarredState(long messageId, boolean starred);
 
         void showShareErrorToast();
 

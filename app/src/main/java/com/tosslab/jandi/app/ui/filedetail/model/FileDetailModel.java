@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.filedetail.model;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.koushikdutta.async.future.FutureCallback;
@@ -30,6 +31,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.file.FileUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -53,6 +55,7 @@ import rx.functions.Func2;
 
 @EBean
 public class FileDetailModel {
+    public static final String TAG = FileDetailModel.class.getSimpleName();
 
     @RootContext
     Context context;
@@ -299,8 +302,9 @@ public class FileDetailModel {
         try {
             RequestApiManager.getInstance()
                     .registStarredMessageByTeamApi(teamId, messageId);
+            MessageRepository.getRepository().updateStarred(messageId, true);
         } catch (RetrofitError e) {
-            e.printStackTrace();
+            LogUtil.e(TAG, Log.getStackTraceString(e));
         }
     }
 
@@ -308,8 +312,9 @@ public class FileDetailModel {
         try {
             RequestApiManager.getInstance()
                     .unregistStarredMessageByTeamApi(teamId, messageId);
+            MessageRepository.getRepository().updateStarred(messageId, false);
         } catch (RetrofitError e) {
-            e.printStackTrace();
+            LogUtil.e(TAG, Log.getStackTraceString(e));
         }
     }
 
