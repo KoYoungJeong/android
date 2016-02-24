@@ -46,6 +46,7 @@ import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.events.files.FileStarredStateChangeEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
+import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
@@ -554,6 +555,23 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     @Override
+    public void showCommentStarredSuccessToast() {
+        showToast(getString(R.string.jandi_message_starred), false /* isError */);
+    }
+
+    @Override
+    public void showCommentUnStarredSuccessToast() {
+        showToast(getString(R.string.jandi_unpinned_message), true /* isError */);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void modifyCommentStarredState(long messageId, boolean starred) {
+        adapter.modifyStarredStateByMessageId(messageId, starred);
+        notifyDataSetChanged();
+    }
+
+    @Override
     public void showShareErrorToast() {
         showToast(getString(R.string.err_share), true /* isError */);
     }
@@ -766,6 +784,25 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     public void onEvent(FileStarredStateChangeEvent event) {
         fileDetailPresenter.onChangeStarredState(fileId, event.getStarredState());
+    }
+
+    public void onEvent(MessageStarredEvent event) {
+        if (!isForeground) {
+            return;
+        }
+
+        long messageId = event.getMessageId();
+
+        switch (event.getAction()) {
+            case STARRED:
+                fileDetailPresenter.onChangeFileCommentStarredState(messageId, true);
+                sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap_Star);
+                break;
+            case UNSTARRED:
+                fileDetailPresenter.onChangeFileCommentStarredState(messageId, false);
+                sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap_Unstar);
+                break;
+        }
     }
 
     public void onEvent(SocketMessageStarEvent event) {

@@ -45,6 +45,7 @@ public class LinkedEllipsizeTextView extends TextView {
     void init() {
         setMovementMethod(LinkMovementMethod.getInstance());
 
+        setVerticalScrollBarEnabled(false);
         setMaxLines(3);
 
         String more = "... " + getResources().getString(R.string.jandi_action_more);
@@ -85,23 +86,23 @@ public class LinkedEllipsizeTextView extends TextView {
             return;
         }
 
-        float lineMax = layout.getWidth();
-        float textSize = layout.getPaint().getTextSize();
-
-        int maxTextCountFromLine = (int) Math.floor(lineMax / textSize);
-        LogUtil.d(TAG, "maxTextCountFromLine = " + maxTextCountFromLine);
-
         int lineStart = layout.getLineStart(2);
         int lineEnd = layout.getLineEnd(2);
+        float lineMax = layout.getLineMax(2);
 
-        LogUtil.e(TAG, String.format("lineMax = %f, lineStart = %d, lineEnd = %d", lineMax, lineStart, lineEnd));
+        SpannableStringBuilder determineBrokenText = new SpannableStringBuilder(text.subSequence(lineStart, lineEnd));
+        determineBrokenText.append(moreSpannable);
 
-        if ((lineEnd - lineStart) + moreSpannable.length() < maxTextCountFromLine) {
+        int length = determineBrokenText.length();
+        int breakPoint = layout.getPaint().breakText(determineBrokenText.toString(), true, lineMax, null);
+        LogUtil.i(TAG, "length - " + length + " breakPoint - " + breakPoint);
+        // ... 더보기 라는 글자를 추가하면 넘친다.
+        if (breakPoint < length) {
+            text = text.subSequence(0, lineEnd - moreSpannable.length() -1 - 1/* 여백을 위해 한렝스 더 줄인다 */);
             SpannableStringBuilder sb = new SpannableStringBuilder(text);
             sb.append(moreSpannable);
             setText(sb);
         } else {
-            text = text.subSequence(0, lineEnd - moreSpannable.length() - 1);
             SpannableStringBuilder sb = new SpannableStringBuilder(text);
             sb.append(moreSpannable);
             setText(sb);
