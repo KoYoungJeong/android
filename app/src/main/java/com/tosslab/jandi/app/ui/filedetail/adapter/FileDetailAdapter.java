@@ -65,4 +65,20 @@ public class FileDetailAdapter extends MultiItemRecyclerAdapter {
             });
         }
     }
+
+    public void modifyStarredStateByMessageId(long messageId, boolean starred) {
+        int itemCount = getItemCount();
+        for (int i = 0; i < itemCount; i++) {
+            ResMessages.OriginalMessage message = getItem(i);
+            if (message != null
+                    &&
+                    (message instanceof ResMessages.CommentMessage
+                            || message instanceof ResMessages.CommentStickerMessage)
+                    && message.id == messageId) {
+                message.isStarred = starred;
+                break;
+            }
+        }
+    }
+
 }
