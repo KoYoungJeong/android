@@ -517,6 +517,7 @@ public class JandiSocketServiceModel {
                 .filter(event -> event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId())
                 .throttleWithTimeout(1000 * 3, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
+                .observeOn(Schedulers.io())
                 .subscribe(event -> {
                     ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
                     AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
