@@ -119,7 +119,7 @@ dependencies {
     // Test : Robolectric, Junit4
     testCompile 'org.robolectric:robolectric:3.0'
     testCompile 'org.robolectric:shadows-httpclient:3.0'
-    testCompile 'com.jayway.awaitility:awaitility:1.6.+'
+    testCompile 'com.jayway.awaitility:awaitility:1.7.+'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-all:1.10.+'
     testCompile 'com.google.guava:guava:18.+'
@@ -130,7 +130,8 @@ dependencies {
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.1'
     androidTestCompile 'com.crittercism.dexmaker:dexmaker-mockito:1.4'
-    androidTestCompile 'com.crittercism.dexmaker:dexmaker-dx:1.4'
+    androidTestCompile 'com.jayway.awaitility:awaitility:1.7.+'
+
     androidTestCompile 'com.jayway.awaitility:awaitility:1.6.5'
 
     compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {

@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
+import com.tosslab.jandi.app.network.models.ResCommonError;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -229,7 +230,16 @@ public class MainTopicListPresenter {
             view.notifyDatasetChanged();
         } catch (RetrofitError e) {
             e.printStackTrace();
-            view.showAlreadyHasFolderToast();
+            if (e.getResponse() != null) {
+                try {
+                    ResCommonError error = (ResCommonError) e.getBodyAs(ResCommonError.class);
+                    if (error.getCode() == 40008) {
+                        view.showAlreadyHasFolderToast();
+                    }
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
         }
     }
 

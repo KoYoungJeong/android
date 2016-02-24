@@ -117,6 +117,7 @@ public class JandiApplication extends MultiDexApplication {
         ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
                 .setBitmapMemoryCacheParamsSupplier(new BitmapMemoryCacheSupplier(this))
                 .setMainDiskCacheConfig(getMainDiskConfig())
+                .setDownsampleEnabled(true)
                 .build();
 
         Fresco.initialize(context, config);

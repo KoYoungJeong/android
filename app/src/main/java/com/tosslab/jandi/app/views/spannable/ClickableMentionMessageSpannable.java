@@ -24,7 +24,8 @@ public class ClickableMentionMessageSpannable extends MentionMessageSpannable im
         FormattedEntity entity = EntityManager.getInstance()
                 .getEntityById(entityId);
 
-        if (entity != EntityManager.UNKNOWN_USER_ENTITY && entity.isUser()) {
+        if (entity != EntityManager.UNKNOWN_USER_ENTITY
+                && (entity.isUser() || EntityManager.getInstance().isJandiBot(entityId))) {
             EventBus.getDefault().post(new ShowProfileEvent(entityId, ShowProfileEvent.From.Mention));
         }
 

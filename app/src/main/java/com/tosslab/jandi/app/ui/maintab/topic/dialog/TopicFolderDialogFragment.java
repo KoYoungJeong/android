@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.models.ResCommonError;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -151,15 +152,29 @@ public class TopicFolderDialogFragment extends DialogFragment {
         try {
             topicFolderDialogModel.renameFolder(folderId, name, seq);
             showRenameFolderToast();
-            dismiss();
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            if (e.getResponse() != null) {
+                try {
+                    ResCommonError error = (ResCommonError) e.getBodyAs(ResCommonError.class);
+                    if (error.getCode() == 40008) {
+                        showFailedRenameFolderToast();
+                    }
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
         }
     }
 
     @UiThread
     public void showRenameFolderToast() {
         ColoredToast.show(JandiApplication.getContext().getString(R.string.jandi_folder_renamed));
+    }
+
+    @UiThread
+    public void showFailedRenameFolderToast() {
+        ColoredToast.showWarning(JandiApplication.getContext().getString(R.string.jandi_folder_alread_has_name));
     }
 
     @UiThread
