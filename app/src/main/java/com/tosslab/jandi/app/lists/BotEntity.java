@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.lists;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class BotEntity extends FormattedEntity {
 
     @Override
     public int getIconImageResId() {
-        return 0;
+        return R.drawable.bot_80x100;
     }
 
     @Override

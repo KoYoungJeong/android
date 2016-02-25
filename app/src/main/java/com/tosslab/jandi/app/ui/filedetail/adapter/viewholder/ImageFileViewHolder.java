@@ -135,9 +135,9 @@ public class ImageFileViewHolder extends FileViewHolder {
 
         } else {
             final ImageLoader.Builder builder = ImageLoader.newBuilder();
-            builder.placeHolder(R.drawable.comment_image_preview_download, ScalingUtils.ScaleType.FIT_XY);
-            builder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-            builder.error(R.drawable.file_noimage, ScalingUtils.ScaleType.FIT_CENTER);
+            builder.placeHolder(R.drawable.comment_image_preview_download, ScalingUtils.ScaleType.FIT_XY)
+                    .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                    .error(R.drawable.file_noimage, ScalingUtils.ScaleType.FIT_CENTER);
 
             final Uri uri = !TextUtils.isEmpty(localFilePath)
                     ? UriFactory.getFileUri(localFilePath)
@@ -150,7 +150,8 @@ public class ImageFileViewHolder extends FileViewHolder {
                     ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.COMPLETED);
                 }
             });
-            builder.load(uri).into(ivFileThumb);
+            builder.load(uri)
+                    .into(ivFileThumb);
             ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.IN_PROGRESS);
         }
     }
@@ -217,8 +218,8 @@ public class ImageFileViewHolder extends FileViewHolder {
                 ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.COMPLETED);
             }
         });
-
-        builder.load(uri).into(ivFileThumb);
+        builder.load(uri)
+                .into(ivFileThumb);
         ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.IN_PROGRESS);
 
         progressTimer.start();

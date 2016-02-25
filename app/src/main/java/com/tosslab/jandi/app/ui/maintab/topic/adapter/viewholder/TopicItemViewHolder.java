@@ -39,7 +39,7 @@ public class TopicItemViewHolder extends AbstractExpandableItemViewHolder {
         tvTopicUserCnt = (TextView) itemView.findViewById(R.id.tv_entity_listitem_additional);
         vPushOff = itemView.findViewById(R.id.v_push_off);
         tvTopicDescription = (TextView) itemView.findViewById(R.id.tv_entity_listitem_description);
-        vgTopicBadge = (RelativeLayout) itemView.findViewById(R.id.rl_entity_listitem_badge);
+        vgTopicBadge = (RelativeLayout) itemView.findViewById(R.id.vg_entity_listitem_badge);
         tvTopicBadge = (TextView) itemView.findViewById(R.id.tv_entity_listitem_badge);
         ivDefaultUnderline = (ImageView) itemView.findViewById(R.id.iv_default_underline);
         ivFolderItemUnderline = (ImageView) itemView.findViewById(R.id.iv_folder_item_underline);

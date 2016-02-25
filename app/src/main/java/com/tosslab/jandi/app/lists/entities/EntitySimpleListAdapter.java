@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
@@ -69,17 +70,24 @@ public class EntitySimpleListAdapter extends BaseAdapter {
             holder.textView.setText(entity.getName());
         }
 
-        SimpleDraweeView imageView = holder.imageView;
-        imageView.clearColorFilter();
+        SimpleDraweeView ivIcon = holder.imageView;
+        ivIcon.clearColorFilter();
         // user 는 개별 프로필 사진이 존재하기에 별도로 가져온다.
+        ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
+        if (!EntityManager.getInstance().isBot(entity.getId())) {
+            layoutParams.height = layoutParams.width;
+        } else {
+            layoutParams.height = layoutParams.width * 5 / 4;
+        }
+        ivIcon.setLayoutParams(layoutParams);
         if (entity.isUser()) {
             // 프로필 사진
-            ImageUtil.loadProfileImage(imageView,
+            ImageUtil.loadProfileImage(ivIcon,
                     entity.getUserSmallProfileUrl(), R.drawable.profile_img_comment);
         } else {
             ImageLoader.newBuilder()
                     .load(entity.getIconImageResId())
-                    .into(imageView);
+                    .into(ivIcon);
         }
 
         return convertView;

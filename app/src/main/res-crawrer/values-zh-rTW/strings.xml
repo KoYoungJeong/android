@@ -77,6 +77,7 @@
 	<string name="jandi_action_update">"更新"</string>
 	<string name="jandi_add">"增加"</string>
 	<string name="jandi_add_an_email_address">"增加一個電子郵件地址"</string>
+	<string name="jandi_add_to_contacts">"None"</string>
 	<string name="jandi_alert_already_topic_owenr">"你已是此議題的管理員"</string>
 	<string name="jandi_all_of_topic_members">"@All (議題成員)"</string>
 	<string name="jandi_already_in_team">"此電子郵箱已為 %s 的成員"</string>
@@ -154,6 +155,7 @@
 	<string name="jandi_confirm">"確定"</string>
 	<string name="jandi_confirm_new_passcode">"確認新密碼"</string>
 	<string name="jandi_confirm_passcode">"確認密碼"</string>
+	<string name="jandi_copied_to_clipboard">"複製至剪貼板"</string>
 	<string name="jandi_copy_link">"複製連結"</string>
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"建立"</string>
