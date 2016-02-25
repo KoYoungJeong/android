@@ -12,9 +12,7 @@ import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.spannable.rule.SpannableRule;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import rx.Observable;
@@ -98,13 +96,7 @@ public class SpannableLookUp {
                     RuleAnalysis analysis = pair.first;
                     Boolean isPlainText = pair.second;
 
-                    long start = System.currentTimeMillis();
-                    LogUtil.w(TAG, "name - " + analysis.getClass().getSimpleName());
-                    LogUtil.d(TAG, "start - " + new SimpleDateFormat("hh:mm:ss SSS").format(new Date(start)));
                     analysis.analysis(context, stringBuilder, isPlainText);
-                    long end = System.currentTimeMillis();
-                    LogUtil.i(TAG, "end - " + new SimpleDateFormat("hh:mm:ss SSS").format(new Date(end)));
-                    LogUtil.e(TAG, "gap - " + (end - start));
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
                 });
