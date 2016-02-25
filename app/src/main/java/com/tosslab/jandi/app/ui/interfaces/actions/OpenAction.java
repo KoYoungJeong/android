@@ -17,7 +17,6 @@ import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -42,22 +41,26 @@ public class OpenAction implements Action {
     }
 
     @Override
-    public void execute(Uri uri) {
-        checkSession(uri);
+    public void execute(Uri data) {
+
+        showProgress();
+
+        if (data != null) {
+            String access_token = data.getQueryParameter("access_token");
+            String refresh_token = data.getQueryParameter("refresh_token");
+
+            if (TextUtils.isEmpty(access_token) || TextUtils.isEmpty(refresh_token)) {
+                startIntroActivity();
+            } else {
+                checkSession(access_token, refresh_token);
+            }
+        } else {
+            startIntroActivity();
+        }
     }
 
     @Background
-    void checkSession(Uri data) {
-        showProgress();
-
-        String access_token = data.getQueryParameter("access_token");
-        String refresh_token = data.getQueryParameter("refresh_token");
-
-        if (TextUtils.isEmpty(access_token) || TextUtils.isEmpty(refresh_token)) {
-
-            startIntroActivity();
-            return;
-        }
+    void checkSession(String access_token, String refresh_token) {
 
         ResAccessToken accessToken = new ResAccessToken();
         accessToken.setAccessToken(access_token);
@@ -79,27 +82,20 @@ public class OpenAction implements Action {
             TokenUtil.clearTokenInfo();
             AccountRepository.getRepository().clearAccountData();
             failAccessToken();
-            LogUtil.d(e.getMessage());
-        } finally {
-            startIntroActivity();
-            dismissProgress();
         }
+        startIntroActivity();
 
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     void showProgress() {
 
-        if (progressWheel != null && progressWheel.isShowing()) {
-            progressWheel.dismiss();
-        }
-
-        if (progressWheel != null) {
+        if (progressWheel != null && !progressWheel.isShowing()) {
             progressWheel.show();
         }
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     void dismissProgress() {
 
         if (progressWheel != null && progressWheel.isShowing()) {
@@ -120,6 +116,7 @@ public class OpenAction implements Action {
 
     @UiThread
     void startIntroActivity() {
+        dismissProgress();
         IntroActivity_.intent(activity)
                 .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .startForInvite(true)
