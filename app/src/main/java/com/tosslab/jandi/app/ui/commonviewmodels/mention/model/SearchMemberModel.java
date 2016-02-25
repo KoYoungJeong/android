@@ -26,7 +26,7 @@ import rx.functions.Func2;
 public class SearchMemberModel {
 
 
-    LinkedHashMap<Long, SearchedItemVO> selectableMembersLinkedHashMap;
+    LinkedHashMap<Long, SearchedItemVO> selectableMembersLinkedHashMap = new LinkedHashMap<>();
 
     public List<SearchedItemVO> getUserSearchByName(String subNameString) {
 
@@ -56,7 +56,7 @@ public class SearchMemberModel {
                                                                         List<Long> topicIds,
                                                                         String mentionType) {
 
-        selectableMembersLinkedHashMap = new LinkedHashMap<>();
+        selectableMembersLinkedHashMap.clear();
 
         ShareSelectModel_ shareSelectModel = ShareSelectModel_
                 .getInstance_(JandiApplication.getContext());
@@ -126,7 +126,7 @@ public class SearchMemberModel {
     }
 
     public void clear() {
-        selectableMembersLinkedHashMap = new LinkedHashMap<>();
+        selectableMembersLinkedHashMap.clear();
     }
 
     private Func2<SearchedItemVO, SearchedItemVO, Integer> getChatItemComparator() {

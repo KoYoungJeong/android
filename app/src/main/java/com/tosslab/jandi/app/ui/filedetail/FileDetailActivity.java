@@ -307,13 +307,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             ReadyComment readyComment = ReadyCommentRepository.getRepository().getReadyComment(messageId);
             mentionControlViewModel.setUpMention(readyComment.getText());
             mentionControlViewModel.setOnMentionShowingListener(isShowing -> {
-                ivMention.setVisibility(isShowing ? View.GONE : View.VISIBLE);
+                if (mentionControlViewModel.hasMentionMember()) {
+                    ivMention.setVisibility(isShowing ? View.GONE : View.VISIBLE);
+                }
             });
         } else {
             mentionControlViewModel.refreshMembers(sharedTopicIds);
         }
 
-        boolean isEmpty = mentionControlViewModel.getAllSelectableMembers().size() == 0;
+        boolean isEmpty = !mentionControlViewModel.hasMentionMember();
         ivMention.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
 
         removeClipboardListenerForMention();
@@ -376,6 +378,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         dismissStickerPreview();
         dismissStickerSelectorIfShow();
+        ReadyCommentRepository.getRepository().upsertReadyComment(new ReadyComment(fileId, etComment.getText().toString()));
         super.onPause();
     }
 
