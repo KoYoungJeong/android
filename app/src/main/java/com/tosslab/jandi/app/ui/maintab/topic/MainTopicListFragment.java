@@ -560,7 +560,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     @Override
     @UiThread
     public void showAlreadyHasFolderToast() {
-        ColoredToast.show(getString(R.string.jandi_folder_alread_has_name));
+        ColoredToast.showWarning(getString(R.string.jandi_folder_alread_has_name));
     }
 
 

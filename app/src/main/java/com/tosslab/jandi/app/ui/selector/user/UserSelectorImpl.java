@@ -50,7 +50,7 @@ public class UserSelectorImpl implements UserSelector {
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_user_selector);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-        RoomRecyclerAdapter adapter = new RoomRecyclerAdapter(context);
+        RoomRecyclerAdapter adapter = new RoomRecyclerAdapter(context, RoomRecyclerAdapter.FROM_USER_SELECTOR);
         getUsers()
                 .concatWith(Observable.create(subscriber -> {
                     if (hasDisabledMembers()) {

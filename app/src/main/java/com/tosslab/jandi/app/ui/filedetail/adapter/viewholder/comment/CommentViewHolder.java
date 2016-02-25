@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.comment;
 
-import android.content.res.Resources;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +8,6 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.markdown.MarkdownLookUp;
@@ -21,8 +18,6 @@ import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.ProfileBinder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 
 /**
  * Created by tonyjs on 16. 1. 28..
@@ -90,6 +85,6 @@ public class CommentViewHolder extends BaseViewHolder<ResMessages.CommentMessage
         LinkifyUtil.addLinks(tvCommentContent.getContext(), spannableStringBuilder);
         LinkifyUtil.setOnLinkClick(tvCommentContent);
 
-        tvCommentContent.setText(spannableStringBuilder);
+        tvCommentContent.setText(spannableStringBuilder, TextView.BufferType.SPANNABLE);
     }
 }

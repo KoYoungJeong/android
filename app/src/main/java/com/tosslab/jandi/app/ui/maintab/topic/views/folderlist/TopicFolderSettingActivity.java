@@ -255,9 +255,10 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
         ColoredToast.show(getString(R.string.jandi_folder_has_been_remove_from, name));
     }
 
+    @UiThread
     @Override
     public void showAlreadyHasFolderToast() {
-        ColoredToast.show(getString(R.string.jandi_folder_alread_has_name));
+        ColoredToast.showWarning(getString(R.string.jandi_folder_alread_has_name));
     }
 
     @Override

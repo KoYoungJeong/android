@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
+import com.tosslab.jandi.app.network.models.ResCommonError;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter.TopicFolderMainAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter.TopicFolderSettingAdapter;
@@ -140,8 +141,18 @@ public class TopicFolderSettingPresenter {
             topicFolderSettingModel.renameFolder(folderId, name, seq);
             onRefreshFolders(folderId);
             view.showFolderRenamedToast();
-        } catch (Exception e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
+            if (e.getResponse() != null) {
+                try {
+                    ResCommonError error = (ResCommonError) e.getBodyAs(ResCommonError.class);
+                    if (error.getCode() == 40008) {
+                        view.showAlreadyHasFolderToast();
+                    }
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
         }
     }
 

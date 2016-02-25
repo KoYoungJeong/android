@@ -1,16 +1,15 @@
 package com.tosslab.jandi.app.ui.filedetail.adapter;
 
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.events.files.FileCommentClickEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
-import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.NormalFileViewHolder;
-import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.comment.CommentViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.DividerViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.ImageFileViewHolder;
+import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.NormalFileViewHolder;
+import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.comment.CommentViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.comment.StickerViewHolder;
 
 import de.greenrobot.event.EventBus;
@@ -27,6 +26,7 @@ public class FileDetailAdapter extends MultiItemRecyclerAdapter {
     public static final int VIEW_TYPE_STICKER = 4;
 
     private long roomId;
+
     public FileDetailAdapter(long roomId) {
         this.roomId = roomId;
     }
@@ -65,4 +65,20 @@ public class FileDetailAdapter extends MultiItemRecyclerAdapter {
             });
         }
     }
+
+    public void modifyStarredStateByMessageId(long messageId, boolean starred) {
+        int itemCount = getItemCount();
+        for (int i = 0; i < itemCount; i++) {
+            ResMessages.OriginalMessage message = getItem(i);
+            if (message != null
+                    &&
+                    (message instanceof ResMessages.CommentMessage
+                            || message instanceof ResMessages.CommentStickerMessage)
+                    && message.id == messageId) {
+                message.isStarred = starred;
+                break;
+            }
+        }
+    }
+
 }

@@ -50,6 +50,7 @@ checkstyle {
 
 def supportLibVersion = "23.0.+"
 def playServiceVersion = "7.0.0"
+def dexmakerVersion = "1.4"
 
 dependencies {
 
@@ -116,21 +117,15 @@ dependencies {
     // facebook SDK
     compile 'com.facebook.android:facebook-android-sdk:4.5.+'
 
-    // Test : Robolectric, Junit4
-    testCompile 'org.robolectric:robolectric:3.0'
-    testCompile 'org.robolectric:shadows-httpclient:3.0'
-    testCompile 'com.jayway.awaitility:awaitility:1.6.+'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-all:1.10.+'
-    testCompile 'com.google.guava:guava:18.+'
-
     // Force usage of support annotations in the test app, since it is internally used by the runner module.
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.1'
-    androidTestCompile 'com.crittercism.dexmaker:dexmaker-mockito:1.4'
-    androidTestCompile 'com.crittercism.dexmaker:dexmaker-dx:1.4'
+    androidTestCompile "com.crittercism.dexmaker:dexmaker-mockito:${dexmakerVersion}"
+    androidTestCompile "com.crittercism.dexmaker:dexmaker-dx:${dexmakerVersion}"
+    androidTestCompile 'com.jayway.awaitility:awaitility:1.7.+'
+
     androidTestCompile 'com.jayway.awaitility:awaitility:1.6.5'
 
     compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
@@ -160,7 +155,7 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 111
+        versionCode 113
         versionName '1.8.2'
 
         // for Ui Testing

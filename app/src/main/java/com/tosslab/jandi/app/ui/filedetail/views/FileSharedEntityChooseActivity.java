@@ -32,9 +32,8 @@ import rx.Subscriber;
 /**
  * Created by tee on 15. 9. 30..
  */
-
 @EActivity(R.layout.activity_file_unshare_entity_choose)
-public class FileUnshareActivity extends BaseAppCompatActivity {
+public class FileSharedEntityChooseActivity extends BaseAppCompatActivity {
     public static final String KEY_ENTITY_ID = "entity_id";
 
     public static final int MODE_UNSHARE = 0;
@@ -93,36 +92,33 @@ public class FileUnshareActivity extends BaseAppCompatActivity {
         long myId = fileDetailModel.getMyId();
 
         List<Long> sharedEntityWithoutMe = new ArrayList<>();
+        EntityManager entityManager = EntityManager.getInstance();
+        List<FormattedEntity> sharedEntities = new ArrayList<>();
+
         Observable.create(new Observable.OnSubscribe<Long>() {
             @Override
             public void call(Subscriber<? super Long> subscriber) {
-                for (long sharedEntity : sharedEntities) {
+                for (long sharedEntity : FileSharedEntityChooseActivity.this.sharedEntities) {
                     subscriber.onNext(sharedEntity);
                 }
                 subscriber.onCompleted();
             }
-        }).filter(integerWrapper -> integerWrapper != myId)
-                .collect(() -> sharedEntityWithoutMe, List::add)
+        })
+                .distinct()
+                .filter(integerWrapper -> integerWrapper != myId)
+                .filter(entityId -> entityManager.getEntityById(entityId) != EntityManager.UNKNOWN_USER_ENTITY)
+                .map(entityManager::getEntityById)
+                .toSortedList((lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()))
+                .collect(() -> sharedEntities, List::addAll)
                 .subscribe();
 
-        EntityManager entityManager = EntityManager.getInstance();
-
-        final List<FormattedEntity> sharedEntities = entityManager.retrieveGivenEntities(sharedEntityWithoutMe);
-
-        List<FormattedEntity> unjoinedChannels = entityManager.getUnjoinedChannels();
-
-        for (FormattedEntity unjoinedEntity : unjoinedChannels) {
-            if (unjoinedEntity.hasGivenIds(sharedEntityWithoutMe)) {
-                sharedEntities.add(unjoinedEntity);
-            }
-        }
-
         if (!sharedEntities.isEmpty()) {
+
             final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, sharedEntities);
             lvSharedEntities.setAdapter(adapter);
             lvSharedEntities.setOnItemClickListener((adapterView, view, i, l) -> {
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra(KEY_ENTITY_ID, sharedEntities.get(i).getEntity().id);
+                returnIntent.putExtra(KEY_ENTITY_ID, sharedEntities.get(i).getId());
                 setResult(RESULT_OK, returnIntent);
                 finish();
             });

@@ -64,7 +64,7 @@ public class LinkifyUtil {
             String url;
             int start = matcher.start(Regex.VALID_URL_GROUP_URL);
             int end;
-            Matcher spaceMatcher = Pattern.compile(" ").matcher(text);
+            Matcher spaceMatcher = Pattern.compile("( |\n)").matcher(text);
             if (spaceMatcher.find(start + 1)) {
                 end = spaceMatcher.start();
             } else {
