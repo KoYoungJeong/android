@@ -20,11 +20,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import rx.Observable;
 
-public class MessageCursorListAdapter extends MessageAdapter {
+public class MainMessageListAdapter extends MessageAdapter {
 
     private long firstCursorLinkId = -1;
 
-    public MessageCursorListAdapter(Context context) {
+    public MainMessageListAdapter(Context context) {
         this.context = context;
         oldMoreState = MoreState.Idle;
         links = new CopyOnWriteArrayList<>();
@@ -32,7 +32,6 @@ public class MessageCursorListAdapter extends MessageAdapter {
         registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-
                 if (roomId == -1 || firstCursorLinkId == -1) {
                     links.clear();
                     return;
@@ -44,7 +43,6 @@ public class MessageCursorListAdapter extends MessageAdapter {
                 addDummyLink(roomId, links);
             }
         });
-
     }
 
     private long getToCursorLinkId(List<ResMessages.Link> links) {
@@ -154,15 +152,14 @@ public class MessageCursorListAdapter extends MessageAdapter {
                         }
 
                         if (TextUtils.equals(link.message.contentType, "file")) {
-                            ResMessages.Link originLink = MessageCursorListAdapter.this.links.get(searchedPosition);
+                            ResMessages.Link originLink = MainMessageListAdapter.this.links.get(searchedPosition);
                             originLink.message = link.message;
                             originLink.status = "archived";
                         } else {
-                            MessageCursorListAdapter.this.links.remove(searchedPosition);
+                            MainMessageListAdapter.this.links.remove(searchedPosition);
                         }
                     });
         }
-
     }
 
     public void setFirstCursorLinkId(long firstCursorLinkId) {

@@ -64,7 +64,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
+import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListSearchAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
@@ -185,7 +185,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     private boolean isForeground;
     private boolean isRoomInit;
-    private MessageListAdapter messageAdapter;
+    private MessageListSearchAdapter messageAdapter;
     private OfflineLayer offlineLayer;
     private ProgressWheel progressWheelForAction;
 
@@ -197,7 +197,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
         SendMessageRepository.getRepository().deleteAllOfCompletedMessages();
 
-        messageAdapter = new MessageListAdapter(getActivity());
+        messageAdapter = new MessageListSearchAdapter(getActivity());
 
         messageAdapter.setMarker(lastMarker);
         messageAdapter.setMoreFromNew(true);
@@ -450,7 +450,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
                 .teamId(teamId)
                 .roomId(roomId)
                 .firstCursorLinkId(firstCursorLinkId)
-                .lastMarker(EntityManager.getInstance().getEntityById(entityId).lastLinkId)
+                .lastReadLinkId(EntityManager.getInstance().getEntityById(entityId).lastLinkId)
                 .start();
         getActivity().overridePendingTransition(0, 0);
     }

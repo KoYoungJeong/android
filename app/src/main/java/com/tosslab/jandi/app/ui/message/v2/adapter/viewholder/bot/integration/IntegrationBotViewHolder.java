@@ -95,7 +95,6 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
-
         Context context = tvMessage.getContext();
 
         SpannableStringBuilder messageStringBuilder = MarkdownLookUp

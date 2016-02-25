@@ -35,7 +35,7 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
     @Extra
     boolean isFromSearch = false;
     @Extra
-    long lastMarker = -1;
+    long lastReadLinkId = -1;
     @Extra
     long roomId;
     @Extra
@@ -72,14 +72,14 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
         if (messageListFragment == null) {
             if (!isFromSearch) {
 
-                messageListFragment = MessageListFragment_.builder()
+                messageListFragment = MessageListV2Fragment_.builder()
                         .entityId(entityId)
                         .roomId(roomId)
                         .entityType(entityType)
                         .isFavorite(isFavorite)
                         .isFromPush(isFromPush)
                         .teamId(teamId)
-                        .lastMarker(lastMarker)
+                        .lastReadLinkId(lastReadLinkId)
                         .firstCursorLinkId(firstCursorLinkId)
                         .build();
             } else {
@@ -89,7 +89,7 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
                         .entityType(entityType)
                         .isFavorite(isFavorite)
                         .teamId(teamId)
-                        .lastMarker(lastMarker)
+                        .lastMarker(lastReadLinkId)
                         .build();
             }
             getSupportFragmentManager().beginTransaction()
@@ -144,4 +144,5 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
     public interface OnKeyPressListener {
         boolean onKey(int keyCode, KeyEvent event);
     }
+
 }

@@ -41,6 +41,7 @@ public class UploadMenuViewModel {
 
     @Bean
     KeyboardHeightModel keyboardHeightModel;
+
     ImageView ivUploadImage;
     ImageView ivUploadCamera;
     ImageView ivUploadFile;

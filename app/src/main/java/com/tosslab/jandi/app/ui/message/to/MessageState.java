@@ -8,6 +8,7 @@ public class MessageState {
     private long lastUpdateLinkId = -1;
 
     private long firstItemId = -1;
+
     private boolean isFirstMessage = false;
 
     public long getLastUpdateLinkId() {
@@ -30,7 +31,8 @@ public class MessageState {
         return isFirstMessage;
     }
 
-    public void setFirstMessage(boolean isFirstMessage) {
+    public void setIsFirstMessage(boolean isFirstMessage) {
         this.isFirstMessage = isFirstMessage;
     }
+
 }

@@ -10,9 +10,9 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageListAdapter extends MessageAdapter {
+public class MessageListSearchAdapter extends MessageAdapter {
 
-    public MessageListAdapter(Context context) {
+    public MessageListSearchAdapter(Context context) {
         this.context = context;
         this.links = new ArrayList<>();
         oldMoreState = MoreState.Idle;

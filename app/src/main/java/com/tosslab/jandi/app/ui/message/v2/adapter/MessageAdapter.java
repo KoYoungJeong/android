@@ -35,8 +35,8 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
     MoreState oldMoreState;
     MoreState newMoreState;
 
-    MessageListAdapter.OnItemClickListener onItemClickListener;
-    MessageListAdapter.OnItemLongClickListener onItemLongClickListener;
+    MessageListSearchAdapter.OnItemClickListener onItemClickListener;
+    MessageListSearchAdapter.OnItemLongClickListener onItemLongClickListener;
 
     long teamId;
     long roomId = -1;
@@ -67,7 +67,7 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
         }
 
         if (item.id == lastMarker) {
-            if (markerAnimState == MessageCursorListAdapter.AnimState.Idle) {
+            if (markerAnimState == MainMessageListAdapter.AnimState.Idle) {
                 final View view = viewHolder.itemView;
                 Integer colorFrom = context.getResources().getColor(R.color.jandi_transparent_white_1f);
                 Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_1f);
@@ -80,11 +80,11 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
                 colorAnimation.addListener(new SimpleEndAnimatorListener() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        markerAnimState = MessageCursorListAdapter.AnimState.End;
+                        markerAnimState = MainMessageListAdapter.AnimState.End;
                     }
                 });
                 colorAnimation.start();
-                markerAnimState = MessageCursorListAdapter.AnimState.Loading;
+                markerAnimState = MainMessageListAdapter.AnimState.Loading;
             }
         }
 
@@ -94,12 +94,20 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
             bodyViewHolder.setLastReadViewVisible(0, -1);
         }
 
-        if (position <= getItemCount() / 10 && oldMoreState == MessageCursorListAdapter.MoreState.Idle) {
-            oldMoreState = MessageCursorListAdapter.MoreState.Loading;
-            EventBus.getDefault().post(new RefreshOldMessageEvent());
-        } else if (moreFromNew && position == getItemCount() - 1 && newMoreState == MessageCursorListAdapter.MoreState.Idle) {
-            newMoreState = MessageCursorListAdapter.MoreState.Loading;
-            EventBus.getDefault().post(new RefreshNewMessageEvent());
+        if (position <= getItemCount() / 10 && oldMoreState == MainMessageListAdapter.MoreState.Idle) {
+            oldMoreState = MainMessageListAdapter.MoreState.Loading;
+            synchronized (this) {
+                if (oldMoreState != MainMessageListAdapter.MoreState.Idle) {
+                    EventBus.getDefault().post(new RefreshOldMessageEvent());
+                }
+            }
+        } else if (moreFromNew && position == getItemCount() - 1 && newMoreState == MainMessageListAdapter.MoreState.Idle) {
+            newMoreState = MainMessageListAdapter.MoreState.Loading;
+            synchronized (this) {
+                if (oldMoreState != MainMessageListAdapter.MoreState.Idle) {
+                    EventBus.getDefault().post(new RefreshNewMessageEvent());
+                }
+            }
         }
 
         bodyViewHolder.setOnItemClickListener(v -> {

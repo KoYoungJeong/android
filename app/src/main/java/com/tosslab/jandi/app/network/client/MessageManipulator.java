@@ -92,7 +92,7 @@ public class MessageManipulator {
                 (selectedTeamId, roomId, fromCurrentId);
     }
 
-    public ResCommon setMarker(final long lastLinkId) throws RetrofitError {
+    public ResCommon setLastReadLinkId(final long lastLinkId) throws RetrofitError {
 
         String entityType;
         switch (this.entityType) {

@@ -69,8 +69,8 @@ import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileUnshareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileUnshareActivity_;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
@@ -924,8 +924,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void deliverResultToMessageList() {
         Intent data = new Intent();
-        data.putExtra(MessageListFragment.EXTRA_FILE_DELETE, true);
-        data.putExtra(MessageListFragment.EXTRA_FILE_ID, fileId);
+        data.putExtra(MessageListV2Fragment.EXTRA_FILE_DELETE, true);
+        data.putExtra(MessageListV2Fragment.EXTRA_FILE_ID, fileId);
         setResult(RESULT_OK, data);
         finish();
     }

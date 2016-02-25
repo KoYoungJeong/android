@@ -20,7 +20,7 @@ public class ProgressWheelUtil {
         return new ProgressWheelUtil();
     }
 
-    public void init(Activity activity) {
+    private void init(Activity activity) {
         progressWheel = new ProgressWheel(activity);
     }
 

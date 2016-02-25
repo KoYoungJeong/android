@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersAdapter;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.views.eastereggs.SnowView;
 
@@ -49,7 +49,7 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
             viewHolder.dateTextView.setText(DateTransformator.getTimeStringForDivider(headerId));
         }
 
-        if (MessageListFragment.SNOWING_EASTEREGG_STARTED) {
+        if (MessageListV2Fragment.SNOWING_EASTEREGG_STARTED) {
             viewHolder.vgHeaderWrapper.setBackgroundColor(SnowView.BACKGROUND_COLOR);
         } else {
             viewHolder.vgHeaderWrapper.setBackgroundColor(Color.WHITE);

@@ -160,8 +160,6 @@ public class MessageListModel {
         } catch (RetrofitError e) {
             e.printStackTrace();
         }
-
-
         return -1;
     }
 
@@ -250,8 +248,8 @@ public class MessageListModel {
         return requestFuture.get();
     }
 
-    public void updateMarker(long lastUpdateLinkId) throws RetrofitError {
-        messageManipulator.setMarker(lastUpdateLinkId);
+    public void updateLastLinkId(long lastUpdateLinkId) throws RetrofitError {
+        messageManipulator.setLastReadLinkId(lastUpdateLinkId);
     }
 
     public void saveTempMessage(long roomId, String sendEditText) {
@@ -383,7 +381,6 @@ public class MessageListModel {
 
     @Background
     public void updateMarkerInfo(long teamId, long roomId) {
-
         if (teamId <= 0 || roomId <= 0) {
             return;
         }

@@ -159,7 +159,7 @@ public class MainTopicListPresenter {
 
         int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
         view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
-                item.getMarkerLinkId());
+                item.getLastReadLinkId());
         view.setSelectedItem(item.getEntityId());
         view.notifyDatasetChanged();
     }

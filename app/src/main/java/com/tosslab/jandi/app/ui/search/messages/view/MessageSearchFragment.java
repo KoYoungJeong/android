@@ -362,7 +362,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                 .roomId(roomId)
                 .isFavorite(isStarred)
                 .isFromSearch(true)
-                .lastMarker(linkId)
+                .lastReadLinkId(linkId)
                 .start();
     }
 
