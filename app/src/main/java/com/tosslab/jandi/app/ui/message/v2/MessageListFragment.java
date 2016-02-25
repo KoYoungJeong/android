@@ -584,7 +584,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     private void initKeyboardChangedDetectView() {
-        vgKeyboardVisibleChangeDetectView.setOnKeyboardVisibleChangeListener(isShow -> {
+        vgKeyboardVisibleChangeDetectView.setOnKeyboardVisibleChangeListener((isShow, height) -> {
             if (!isShow) {
                 if (stickerViewModel != null && stickerViewModel.isShow()) {
                     dismissStickerSelectorIfShow();

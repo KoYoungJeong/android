@@ -9,8 +9,10 @@ import android.view.View;
  */
 public class KeyboardVisibleChangeDetectView extends View {
 
+    private boolean isShowing;
+
     public interface OnKeyboardVisibleChangeListener {
-        void onKeyboardVisibleChange(boolean isShow);
+        void onKeyboardVisibleChange(boolean isShow, int height);
     }
 
     private int initializedHeight;
@@ -45,8 +47,11 @@ public class KeyboardVisibleChangeDetectView extends View {
             return;
         }
 
-        boolean isShow = initializedHeight != getMeasuredHeight();
-        onKeyboardVisibleChangeListener.onKeyboardVisibleChange(isShow);
+        isShowing = initializedHeight != getMeasuredHeight();
+        onKeyboardVisibleChangeListener.onKeyboardVisibleChange(isShowing, h - oldh);
     }
 
+    public boolean isShowing() {
+        return isShowing;
+    }
 }
