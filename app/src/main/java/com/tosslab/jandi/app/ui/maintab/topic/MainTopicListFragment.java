@@ -357,7 +357,9 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     @Override
     public void onResume() {
         super.onResume();
-        if (expandableTopicAdapter != null && hasOnResumed) {
+        if (expandableTopicAdapter != null
+                && isCurrentFolder()
+                && hasOnResumed) {
             scrollAndAnimateForSelectedItem();
         }
         hasOnResumed = true;
