@@ -237,12 +237,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     private void initKeyboardChangedDetectView() {
-        vgKeyboardVisibleChangeDetectView.setOnKeyboardVisibleChangeListener(isShow -> {
+        vgKeyboardVisibleChangeDetectView.setOnKeyboardVisibleChangeListener((isShow, height) -> {
             if (!isShow) {
                 if (stickerViewModel != null && stickerViewModel.isShow()) {
                     stickerViewModel.dismissStickerSelector(true);
                 }
                 btnAction.setSelected(false);
+                listView.smoothScrollBy(0, -height);
+            } else {
+                listView.smoothScrollBy(0, -height);
             }
         });
     }
@@ -269,6 +272,20 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         });
 
         stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
+
+        stickerViewModel.setOnStickerLayoutShowListener(isShow -> {
+            int keyboardHeight = JandiPreference.getKeyboardHeight(getApplicationContext());
+            if (isShow) {
+                if (!vgKeyboardVisibleChangeDetectView.isShowing()) {
+                    listView.post(() -> listView.smoothScrollBy(0, keyboardHeight));
+                }
+            } else {
+                if (!vgKeyboardVisibleChangeDetectView.isShowing()) {
+                    listView.post(() -> listView.smoothScrollBy(0, -keyboardHeight));
+                    btnAction.setSelected(false);
+                }
+            }
+        });
 
         stickerViewModel.setType(StickerViewModel.TYPE_FILE_DETAIL);
     }
