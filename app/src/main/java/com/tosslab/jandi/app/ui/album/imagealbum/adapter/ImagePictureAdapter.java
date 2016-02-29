@@ -95,7 +95,7 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
 
         setImage(ivPicture, uri);
 
-        ivPicture.setOnClickListener(v -> {
+        holder.itemView.setOnClickListener(v -> {
             if (onRecyclerItemImageClickListener != null) {
                 onRecyclerItemImageClickListener.onItemClick(v, ImagePictureAdapter.this, position);
             }

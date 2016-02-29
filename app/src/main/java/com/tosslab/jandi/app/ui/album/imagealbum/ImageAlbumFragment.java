@@ -16,6 +16,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
+import com.crashlytics.android.Crashlytics;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
@@ -150,7 +151,6 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
 
             if (mode == ImageAlbumActivity.EXTRA_MODE_UPLOAD) {
 
-
                 imageAlbumPresenter.onSelectPicture(item, position);
                 imageAlbumPresenter.onSetupActionbar(buckerId);
             } else {
@@ -189,6 +189,8 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
             startActivityForResult(cropIntent, ModifyProfileActivity.REQUEST_CROP);
         } catch (IOException e) {
             e.printStackTrace();
+            Crashlytics.logException(e);
+            showWarningToast(JandiApplication.getContext().getString(R.string.jandi_unsupported_type_picture));
         }
     }
 
