@@ -79,7 +79,7 @@
 	<string name="jandi_add_an_email_address">"メールアドレスを追加する"</string>
 	<string name="jandi_add_to_contacts">"NEW KEY"</string>
 	<string name="jandi_alert_already_topic_owenr">"あなたはすでにこのトピックの管理者です。"</string>
-	<string name="jandi_all_of_topic_members">"@All（トピック内）"</string>
+	<string name="jandi_all_of_topic_members">"@all（トピック内）"</string>
 	<string name="jandi_already_in_team">"このメールはすでに%sのメンバーです"</string>
 	<string name="jandi_already_linked_email">"このメールアドレスは既にアカウントに登録されています"</string>
 	<string name="jandi_announcement_create">"告知に登録する"</string>
