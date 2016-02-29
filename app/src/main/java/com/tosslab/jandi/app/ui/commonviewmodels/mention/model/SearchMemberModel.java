@@ -100,21 +100,20 @@ public class SearchMemberModel {
                     .setType(SearchType.room.name());
 
             selectableMembersLinkedHashMap.put(searchedItemForAll.getId(), searchedItemForAll);
+        }
 
-            if (EntityManager.getInstance().hasJandiBot()) {
-                BotEntity botEntity = (BotEntity) EntityManager.getInstance().getJandiBot();
-                if (botEntity.isEnabled()) {
-                    SearchedItemVO jandiBot = new SearchedItemVO();
-                    jandiBot.setId(botEntity.getId())
-                            .setName(botEntity.getName())
-                            .setEnabled(true)
-                            .setStarred(false)
-                            .setBot(true)
-                            .setType(SearchType.member.name());
-                    selectableMembersLinkedHashMap.put(jandiBot.getId(), jandiBot);
-                }
+        if (EntityManager.getInstance().hasJandiBot()) {
+            BotEntity botEntity = (BotEntity) EntityManager.getInstance().getJandiBot();
+            if (botEntity.isEnabled()) {
+                SearchedItemVO jandiBot = new SearchedItemVO();
+                jandiBot.setId(botEntity.getId())
+                        .setName(botEntity.getName())
+                        .setEnabled(true)
+                        .setStarred(false)
+                        .setBot(true)
+                        .setType(SearchType.member.name());
+                selectableMembersLinkedHashMap.put(jandiBot.getId(), jandiBot);
             }
-
         }
 
         return selectableMembersLinkedHashMap;
