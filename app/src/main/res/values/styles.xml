@@ -529,6 +529,10 @@
         <item name="android:layout_width">match_parent</item>
     </style>
 
+    <style name="JandiSettings.Body.Sub">
+        <item name="android:paddingLeft">16dp</item>
+    </style>
+
     <style name="JandiSettings.Body.Text">
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">16dp</item>

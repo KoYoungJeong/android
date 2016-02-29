@@ -2,8 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="@color/jandi_settings_background"
     android:layout_height="match_parent"
+    android:background="@color/jandi_settings_background"
     android:orientation="vertical">
 
     <LinearLayout
@@ -28,6 +28,40 @@
             app:sbvChcked="true"
             app:sbvSummary="@string/jandi_on"
             app:sbvTitle="@string/jandi_sounds" />
+
+        <LinearLayout
+            android:id="@+id/vg_settings_push_sound_sub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <com.tosslab.jandi.app.views.settings.SettingsBodyView
+                android:id="@+id/vg_settings_push_sound_sub_topic_message"
+                style="@style/JandiSettings.Body"
+                app:sbvChcked="true"
+                app:sbvSummary="@string/jandi_on"
+                app:sbvSummaryColor="@color/text_color_setting_summary_notification_sound"
+                app:sbvTitle="@string/jandi_normally_topic_messages" />
+
+
+            <com.tosslab.jandi.app.views.settings.SettingsBodyView
+                android:id="@+id/vg_settings_push_sound_sub_direct_message"
+                style="@style/JandiSettings.Body"
+                app:sbvChcked="true"
+                app:sbvSummary="@string/jandi_on"
+                app:sbvSummaryColor="@color/text_color_setting_summary_notification_sound"
+                app:sbvTitle="@string/jandi_member_profile_dm" />
+
+
+            <com.tosslab.jandi.app.views.settings.SettingsBodyView
+                android:id="@+id/vg_settings_push_sound_sub_mentions"
+                style="@style/JandiSettings.Body"
+                app:sbvChcked="true"
+                app:sbvSummary="@string/jandi_on"
+                app:sbvSummaryColor="@color/text_color_setting_summary_notification_sound"
+                app:sbvTitle="@string/jandi_mention_mentions" />
+        </LinearLayout>
 
 
         <View style="@style/JandiSettings.Divider" />

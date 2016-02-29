@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:gravity="center_vertical"
+    android:paddingLeft="24dp"
+    android:paddingRight="30dp"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_item_notification_sound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/message_controller_popup_text_color"
+        android:textSize="@dimen/jandi_text_size_larger_2" />
+
+    <ImageView
+        android:id="@+id/iv_item_notification_sound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:src="@drawable/btn_radio_selector" />
+</LinearLayout>

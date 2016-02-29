@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
+import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.main.presenter.SettingsPresenter;
 import com.tosslab.jandi.app.ui.settings.main.presenter.SettingsPresenterImpl;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
@@ -120,7 +121,7 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
 
     private void showOrientationDialog() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String value = sharedPreferences.getString("setting_orientation", "0");
+        String value = sharedPreferences.getString(Settings.SETTING_ORIENTATION, "0");
         String[] values = getResources().getStringArray(R.array.jandi_pref_orientation_values);
         int preselect = Math.max(0, Arrays.asList(values).indexOf(value));
 
@@ -131,7 +132,7 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
                     if (which >= 0 && values != null) {
                         String selectedValue = values[which];
                         sharedPreferences.edit()
-                                .putString("setting_orientation", selectedValue)
+                                .putString(Settings.SETTING_ORIENTATION, selectedValue)
                                 .commit();
 
                         settingsPresenter.onSetUpOrientation(selectedValue);

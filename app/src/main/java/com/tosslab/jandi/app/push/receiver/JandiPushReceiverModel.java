@@ -5,9 +5,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -28,6 +31,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
+import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -253,14 +257,12 @@ public class JandiPushReceiverModel {
 
     private NotificationCompat.Builder getNotification(Context context,
                                                        String notificationTitle,
-                                                       int teamId, int roomId, String roomType, int roomTypeInt, String roomName,
+                                                       String roomName,
                                                        String message, Bitmap writerProfile,
-                                                       int badgeCount) {
+                                                       int badgeCount, PendingIntent pendingIntent) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        builder.setContentTitle(notificationTitle);
-
-        builder.setDefaults(getNotificationDefaults(context))
+        builder.setContentTitle(notificationTitle)
                 .setSmallIcon(R.drawable.icon_push_notification)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
@@ -269,15 +271,8 @@ public class JandiPushReceiverModel {
                 .setContentTitle(notificationTitle)
                 .setContentText(message)
                 .setNumber(badgeCount)
-                .setStyle(getBigTextStyle(notificationTitle, message, roomName));
-
-        // 노티를 터치할 경우엔 자동 삭제되나, 노티를 삭제하지 않고 앱으로 진입했을 때,
-        // 해당 채팅 방에 들어갈 때만 이 노티가 삭제되도록...
-        JandiPreference.setChatIdFromPush(context, roomId);
-
-        // 노티를 터치할 경우 실행 intent 설정
-        PendingIntent pendingIntent = generatePendingIntent(context, roomId, roomTypeInt, teamId, roomType);
-        builder.setContentIntent(pendingIntent);
+                .setStyle(getBigTextStyle(notificationTitle, message, roomName))
+                .setContentIntent(pendingIntent);
 
         if (writerProfile != null) {    // 작성자의 프로필 사진
             builder.setLargeIcon(writerProfile);
@@ -286,7 +281,7 @@ public class JandiPushReceiverModel {
         return builder;
     }
 
-    private int getNotificationDefaults(Context context) {
+    private void setUpNotificationEffect(NotificationCompat.Builder notificationBuilder, Context context, boolean isMentionMessage, int roomTypeInt) {
         int led = 0;
 
         if (JandiPreference.isAlarmLED(context)) {
@@ -296,9 +291,39 @@ public class JandiPushReceiverModel {
         int sound = 0;
 
         if (JandiPreference.isAlarmSound(context)) {
+            int soundEffecSetting = -1;
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
             if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
-                sound = Notification.DEFAULT_SOUND;
+                if (isMentionMessage) {
+                    soundEffecSetting = preferences.getInt(Settings.SETTING_PUSH_ALARM_SOUND_MENTION, 0);
+                } else if (roomTypeInt == JandiConstants.TYPE_DIRECT_MESSAGE) {
+                    soundEffecSetting = preferences.getInt(Settings.SETTING_PUSH_ALARM_SOUND_DM, 0);
+                } else {
+                    soundEffecSetting = preferences.getInt(Settings.SETTING_PUSH_ALARM_SOUND_TOPIC, 0);
+                }
             }
+
+            if (soundEffecSetting == 0) {
+                sound = Notification.DEFAULT_SOUND;
+            } else if (soundEffecSetting > 0) {
+                String[] fileNames = context.getResources().getStringArray(R.array.jandi_notification_array_file);
+
+                if (soundEffecSetting < fileNames.length) {
+                    int rawId = context.getResources().getIdentifier(fileNames[soundEffecSetting - 1], "raw", context.getPackageName());
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("android.resource://")
+                            .append(context.getPackageName())
+                            .append("/")
+                            .append(rawId);
+                    notificationBuilder.setSound(Uri.parse(builder.toString()));
+                    sound = 0;
+                } else {
+                    sound = Notification.DEFAULT_SOUND;
+                }
+            } else {
+                sound = 0;
+            }
+
         }
 
         int vibrate = 0;
@@ -307,7 +332,7 @@ public class JandiPushReceiverModel {
             vibrate = Notification.DEFAULT_VIBRATE;
         }
 
-        return led | sound | vibrate;
+        notificationBuilder.setDefaults(led | sound | vibrate);
     }
 
     private NotificationCompat.BigTextStyle getBigTextStyle(String title, String message, String summary) {
@@ -369,10 +394,17 @@ public class JandiPushReceiverModel {
 
         NotificationCompat.Builder notificationBuilder =
                 getNotification(context, notificationTitle,
-                        teamId, roomId, roomType, roomTypeInt, roomName,
-                        outMessage, profileImage,
-                        badgeCount);
+                        roomName, outMessage, profileImage, badgeCount,
+                        generatePendingIntent(context, roomId, roomTypeInt, teamId, roomType));
+
+        setUpNotificationEffect(notificationBuilder, context, isMentionMessage, roomTypeInt);
+
         PushMonitor.getInstance().setLastNotificationBuilder(notificationBuilder);
+
+
+        // 노티를 터치할 경우엔 자동 삭제되나, 노티를 삭제하지 않고 앱으로 진입했을 때,
+        // 해당 채팅 방에 들어갈 때만 이 노티가 삭제되도록...
+        JandiPreference.setChatIdFromPush(context, roomId);
 
         sendNotification(context, notificationBuilder.build());
     }
