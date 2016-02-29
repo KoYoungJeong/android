@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.tosslab.jandi.app.views.LongClickableRelativeLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:background="?android:attr/selectableItemBackground"
@@ -95,4 +95,4 @@
         android:layout_alignParentTop="true"
         android:background="@drawable/bg_topic_selector"/>
 
-</com.tosslab.jandi.app.views.LongClickableRelativeLayout>
+</RelativeLayout>

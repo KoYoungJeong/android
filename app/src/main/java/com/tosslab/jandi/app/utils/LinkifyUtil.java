@@ -6,6 +6,9 @@ import android.text.Spannable;
 import android.text.Spanned;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -132,6 +135,7 @@ public class LinkifyUtil {
     public static void setOnLinkClick(TextView textView) {
         textView.setOnTouchListener(new View.OnTouchListener() {
 
+            private boolean isInLongClickProcess = false;
             private ClickableSpannable clickableSpannable;
 
             @Override
@@ -174,7 +178,26 @@ public class LinkifyUtil {
                     return false;
                 }
 
+                if (action == MotionEvent.ACTION_MOVE) {
+                    long onTouchTime = event.getEventTime() - event.getDownTime();
+                    if (onTouchTime >= ViewConfiguration.getLongPressTimeout()) {
+                        if (isInLongClickProcess) {
+                            return false;
+                        }
+                        isInLongClickProcess = true;
+                        findParentAndPerformLongClickIfNeed(textView.getParent());
+                        return false;
+                    }
+                }
+
                 if (action == MotionEvent.ACTION_UP) {
+                    if (isInLongClickProcess) {
+                        isInLongClickProcess = false;
+                        if (clickableSpannable != null) {
+                            clickableSpannable = null;
+                        }
+                        return false;
+                    }
                     if (clickableSpannable != null) {
                         clickableSpannable.onClick();
                         clickableSpannable = null;
@@ -183,6 +206,13 @@ public class LinkifyUtil {
                 }
 
                 if (action == MotionEvent.ACTION_CANCEL) {
+                    if (isInLongClickProcess) {
+                        isInLongClickProcess = false;
+                        if (clickableSpannable != null) {
+                            clickableSpannable = null;
+                        }
+                        return false;
+                    }
                     if (clickableSpannable != null) {
                         clickableSpannable = null;
                     }
@@ -190,7 +220,28 @@ public class LinkifyUtil {
 
                 return false;
             }
+
+            private void findParentAndPerformLongClickIfNeed(ViewParent parent) {
+                if (parent == null) {
+                    return;
+                }
+
+                if (!(parent instanceof ViewGroup)) {
+                    return;
+                }
+
+                ViewGroup viewGroup = (ViewGroup) parent;
+                if (viewGroup.isLongClickable()) {
+                    viewGroup.setPressed(true);
+                    viewGroup.performLongClick();
+                    viewGroup.setPressed(false);
+                    return;
+                }
+
+                findParentAndPerformLongClickIfNeed(viewGroup.getParent());
+            }
         });
 
     }
+
 }
