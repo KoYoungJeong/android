@@ -1,9 +1,6 @@
-package com.tosslab.jandi.app.views.spannable;
+package com.tosslab.jandi.app.utils;
 
-import android.graphics.Color;
 import android.support.test.runner.AndroidJUnit4;
-
-import com.tosslab.jandi.app.JandiApplication;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +10,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
-public class JandiURLSpanTest {
+public class ApplicationUtilTest {
 
     private static final String[] HTTP_URLS = {
             "http://www.jandi.com",
@@ -35,8 +32,7 @@ public class JandiURLSpanTest {
     @Test
     public void testGetAvailableUrl_HTTP() throws Exception {
         for (String url : HTTP_URLS) {
-            JandiURLSpan span = new JandiURLSpan(JandiApplication.getContext(), url, Color.WHITE);
-            String availableUrl = span.getAvailableUrl(url);
+            String availableUrl = ApplicationUtil.getAvailableUrl(url);
             assertThat(HTTP_URLS[0], is(equalTo(availableUrl)));
         }
     }
@@ -45,8 +41,7 @@ public class JandiURLSpanTest {
     public void testGetAvailableUrl_FTP() throws Exception {
 
         for (String url : FTP_URLS) {
-            JandiURLSpan span = new JandiURLSpan(JandiApplication.getContext(), url, Color.WHITE);
-            String availableUrl = span.getAvailableUrl(url);
+            String availableUrl = ApplicationUtil.getAvailableUrl(url);
             assertThat(FTP_URLS[0], is(equalTo(availableUrl)));
         }
     }
