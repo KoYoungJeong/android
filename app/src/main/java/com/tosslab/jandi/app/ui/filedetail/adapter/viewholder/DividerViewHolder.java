@@ -1,15 +1,11 @@
 package com.tosslab.jandi.app.ui.filedetail.adapter.viewholder;
 
-import android.graphics.Color;
-import android.support.v7.internal.widget.ViewUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
-import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
 
 /**
