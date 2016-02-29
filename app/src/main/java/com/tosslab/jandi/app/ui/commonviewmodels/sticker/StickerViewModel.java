@@ -276,8 +276,10 @@ public class StickerViewModel {
         vgStickerSelector.setLayoutParams(layoutParams);
         vgOptionSpace.setLayoutParams(vgSpaceLayoutParams);
 
-        setupGroupState(1, vgStickerGroups);
-        updateStickerItems(1, pagerStickerItems);
+        int tabIndex = getStickerTabIndex();
+
+        setupGroupState(tabIndex, vgStickerGroups);
+        updateStickerItems(tabIndex, pagerStickerItems);
 
         vgStickerSelector.setVisibility(View.VISIBLE);
 
@@ -296,6 +298,15 @@ public class StickerViewModel {
         if (onStickerLayoutShowListener != null) {
             onStickerLayoutShowListener.onStickerLayoutShow(true);
         }
+    }
+
+    private int getStickerTabIndex() {
+        List<ResMessages.StickerContent> recentStickers =
+                StickerRepository.getRepository().getRecentStickers();
+        if (recentStickers != null && !recentStickers.isEmpty()) {
+            return STICKER_GROUP_RECENT;
+        }
+        return STICKER_GROUP_DAY;
     }
 
     public void showStickerWindow(int height) {
