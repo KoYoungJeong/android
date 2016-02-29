@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.services.download;
 
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
@@ -133,17 +132,6 @@ public class DownloadController {
             Intent openFileViewerIntent = getFileViewerIntent(file, downloadFileInfo.getFileType());
             view.notifyComplete(downloadFileInfo.getFileName(), notificationId, openFileViewerIntent);
 
-            // download app 리스트 목록에서 다운받은 파일을 확인할 수 있도록 처리
-            DownloadManager downloadManager =
-                    (DownloadManager) view.getServiceContext().getSystemService(Context.DOWNLOAD_SERVICE);
-            String name = file.getName();
-            String description = file.getAbsolutePath();
-            String fileType = downloadFileInfo.getFileType();
-            long length = file.length();
-            downloadManager.addCompletedDownload(name, description,
-                    true, fileType,
-                    file.getAbsolutePath(), length, false);
-
             trackFileDownloadSuccess(downloadFileInfo.getFileId(),
                     downloadFileInfo.getFileType(),
                     downloadFileInfo.getFileExt(),
@@ -235,6 +223,5 @@ public class DownloadController {
 
         void showErrorToast(int resId);
 
-        Context getServiceContext();
     }
 }
