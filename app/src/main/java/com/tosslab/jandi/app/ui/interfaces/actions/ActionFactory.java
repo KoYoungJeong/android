@@ -11,6 +11,10 @@ public class ActionFactory {
 
     public static Action getAction(Context context, Uri data) {
 
+        if (data == null) {
+            return UnknownAction.create(context);
+        }
+
         if (isUnkownAction(data.getAuthority())) {
             return UnknownAction.create(context);
         }
