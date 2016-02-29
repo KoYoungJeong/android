@@ -212,6 +212,7 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
     @Override
     protected void onResume() {
         super.onResume();
+        webView.onResume();
     }
 
     @Override
