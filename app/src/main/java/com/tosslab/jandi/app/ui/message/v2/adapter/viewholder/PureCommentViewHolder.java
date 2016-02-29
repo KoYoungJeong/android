@@ -10,12 +10,12 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.markdown.MarkdownLookUp;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
+import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
+import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 
 import de.greenrobot.event.EventBus;
@@ -82,23 +82,27 @@ public class PureCommentViewHolder implements BodyViewHolder {
             tvComment.setText(commentMessage.content.body);
 
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-            spannableStringBuilder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
+            spannableStringBuilder.append(
+                    !TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
 
-            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                    tvComment, spannableStringBuilder, commentMessage.mentions, entityManager.getMe().getId())
-                    .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
-            spannableStringBuilder = generateMentionMessageUtil.generate(true);
+            long myId = EntityManager.getInstance().getMe().getId();
+            MentionAnalysisInfo mentionAnalysisInfo =
+                    MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
+                            .textSizeFromResource(R.dimen.jandi_mention_comment_item_font_size)
+                            .build();
 
-            MarkdownLookUp.text(spannableStringBuilder).lookUp(tvComment.getContext());
+            SpannableLookUp.text(spannableStringBuilder)
+                    .hyperLink(false)
+                    .markdown(false)
+                    .webLink(false)
+                    .emailLink(false)
+                    .telLink(false)
+                    .mention(mentionAnalysisInfo, false)
+                    .lookUp(tvComment.getContext());
 
-            MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvComment, spannableStringBuilder, false);
-            markdownViewModel.execute();
-
-            LinkifyUtil.addLinks(context, spannableStringBuilder);
             LinkifyUtil.setOnLinkClick(tvComment);
 
             tvComment.setText(spannableStringBuilder);
-
 
         }
 

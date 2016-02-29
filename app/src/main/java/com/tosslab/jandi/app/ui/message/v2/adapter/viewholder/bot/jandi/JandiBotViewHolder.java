@@ -15,12 +15,12 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
+import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.UnreadCountUtil;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
@@ -86,15 +86,21 @@ public class JandiBotViewHolder implements BodyViewHolder {
             SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
             messageStringBuilder.append(!TextUtils.isEmpty(textMessage.content.body) ? textMessage.content.body : "");
 
-            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                    tvMessage, messageStringBuilder, textMessage.mentions, entityManager.getMe().getId());
-            messageStringBuilder = generateMentionMessageUtil.generate(true);
+            long myId = entityManager.getMe().getId();
+            MentionAnalysisInfo mentionAnalysisInfo =
+                    MentionAnalysisInfo.newBuilder(myId, textMessage.mentions)
+                            .textSize(tvMessage.getTextSize())
+                            .build();
 
-            MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvMessage, messageStringBuilder, false);
-            markdownViewModel.execute();
+            SpannableLookUp.text(messageStringBuilder)
+                    .hyperLink(false)
+                    .markdown(false)
+                    .emailLink(false)
+                    .webLink(false)
+                    .telLink(false)
+                    .mention(mentionAnalysisInfo, false)
+                    .lookUp(context);
 
-
-            LinkifyUtil.addLinks(context, messageStringBuilder);
             LinkifyUtil.setOnLinkClick(tvMessage);
 
             messageStringBuilder.append(" ");

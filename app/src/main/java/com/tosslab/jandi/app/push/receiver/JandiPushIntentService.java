@@ -55,12 +55,13 @@ public class JandiPushIntentService extends IntentService {
             return;
         }
 
-        jandiPushReceiverModel.convertPlainMarkdownContent(pushTO);
+        Context context = getApplicationContext();
+
+        jandiPushReceiverModel.convertPlainMarkdownContent(context, pushTO);
 
         LogUtil.i(TAG, pushTO.toString());
 
         PushTO.PushInfo pushTOInfo = pushTO.getInfo();
-        Context context = getApplicationContext();
         // writerId 가 본인 ID 면 작성자가 본인인 노티이기 때문에 무시한다.
         if (jandiPushReceiverModel.isMyEntityId(pushTOInfo.getWriterId())) {
             return;

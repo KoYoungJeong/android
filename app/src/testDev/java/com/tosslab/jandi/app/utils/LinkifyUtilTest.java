@@ -161,7 +161,7 @@ public class LinkifyUtilTest {
     @Test
     public void testURLMatcher() throws Exception {
 
-        Pattern testPattern = Regex.VALID_URL;
+        Pattern testPattern = Regex.VALID_URL_PATTERN;
 
         for (String testUrl : TEST_URLS) {
             Matcher matcher = testPattern.matcher(testUrl);

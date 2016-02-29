@@ -1,15 +1,15 @@
 package com.tosslab.jandi.app.ui.starmention.adapter.viewholder;
 
+import android.graphics.Color;
 import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.markdown.MarkdownLookUp;
-import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
+import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
-import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 
 /**
  * Created by tee on 15. 7. 29..
@@ -40,20 +40,19 @@ public class CommentStarMentionViewHolder extends CommonStarMentionViewHolder {
         tvFileName.setText(starMentionVO.getFileName());
         SpannableStringBuilder commentStringBuilder = new SpannableStringBuilder(starMentionVO.getBody());
 
+        long myId = EntityManager.getInstance().getMe().getId();
+        MentionAnalysisInfo mentionAnalysisInfo =
+                MentionAnalysisInfo.newBuilder(myId, starMentionVO.getMentions())
+                        .textSizeFromResource(R.dimen.jandi_mention_star_list_item_font_size)
+                        .forMeBackgroundColor(Color.parseColor("#FF01A4E7"))
+                        .forMeTextColor(Color.WHITE)
+                        .build();
 
-        GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                tvComment, commentStringBuilder, starMentionVO.getMentions(),
-                EntityManager.getInstance().getMe().getId())
-                .setMeBackgroundColor(0xFF01a4e7)
-                .setMeTextColor(0xFFffffff)
-                .setPxSize(R.dimen.jandi_mention_star_list_item_font_size);
-        commentStringBuilder = generateMentionMessageUtil.generate(false);
-
-        MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvFileName, commentStringBuilder, true);
-        markdownViewModel.execute();
-
-        MarkdownLookUp.text(commentStringBuilder).lookUp(tvComment.getContext());
-
+        SpannableLookUp.text(commentStringBuilder)
+                .hyperLink(false)
+                .markdown(false)
+                .mention(mentionAnalysisInfo, false)
+                .lookUp(tvFileName.getContext());
 
         // for single spannable
         commentStringBuilder.append(" ");

@@ -28,7 +28,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
-import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -153,11 +153,12 @@ public class JandiPushReceiverModel {
         }
     }
 
-    public void convertPlainMarkdownContent(PushTO pushTO) {
+    public void convertPlainMarkdownContent(Context context, PushTO pushTO) {
         String content = pushTO.getInfo().getMessageContent();
         SpannableStringBuilder contentWrapper = new SpannableStringBuilder(content);
-        MarkdownViewModel markdownViewModel = new MarkdownViewModel(contentWrapper, true);
-        markdownViewModel.execute();
+        SpannableLookUp.text(contentWrapper)
+                .markdown(true)
+                .lookUp(context);
         pushTO.getInfo().setMessageContent(contentWrapper.toString());
     }
 

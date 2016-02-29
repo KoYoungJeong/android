@@ -35,9 +35,8 @@ import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.markdown.MarkdownLookUp;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
@@ -517,10 +516,10 @@ public class MessageListPresenter {
         }
         SpannableStringBuilder builder = new SpannableStringBuilder(TextUtils.isEmpty(message) ? "" : message);
 
-        MarkdownLookUp.text(builder)
-                .plainText(true)
+        SpannableLookUp.text(builder)
+                .hyperLink(true)
+                .markdown(true)
                 .lookUp(tvPreviewContent.getContext());
-        new MarkdownViewModel(builder, true).execute();
 
         builder.removeSpan(JandiURLSpan.class);
         tvPreviewContent.setText(builder);

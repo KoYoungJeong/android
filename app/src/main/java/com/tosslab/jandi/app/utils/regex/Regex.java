@@ -36,7 +36,7 @@ public class Regex {
      * platform.
      */
 
-    public static final Pattern VALID_URL;
+    public static final Pattern VALID_URL_PATTERN;
     public static final int VALID_URL_GROUP_ALL = 1;
     public static final int VALID_URL_GROUP_BEFORE = 2;
     public static final int VALID_URL_GROUP_URL = 3;
@@ -169,7 +169,7 @@ public class Regex {
             ")";
     private static final String URL_VALID_URL_QUERY_CHARS = "[a-z0-9!?\\*'\\(\\);:&=\\+\\$/%#\\[\\]\\-_\\.,~\\|@]";
     private static final String URL_VALID_URL_QUERY_ENDING_CHARS = "[a-z0-9_&=#/]";
-    private static final String VALID_URL_PATTERN_STRING =
+    public static final String VALID_URL_PATTERN_STRING =
             "(" +                                                            //  $1 total match
                     "(" + URL_VALID_PRECEEDING_CHARS + ")" +                       //  $2 Preceeding chracter
                     "(" +                                                          //  $3 URL
@@ -199,7 +199,7 @@ public class Regex {
             INVALID_MENTION_MATCH_END = Pattern.compile("^(?:[" + AT_SIGNS_CHARS + LATIN_ACCENTS_CHARS + "]|://)");
             INVALID_URL_WITHOUT_PROTOCOL_MATCH_BEGIN = Pattern.compile("[-_./]$");
 
-            VALID_URL = Pattern.compile(VALID_URL_PATTERN_STRING, Pattern.CASE_INSENSITIVE);
+            VALID_URL_PATTERN = Pattern.compile(VALID_URL_PATTERN_STRING, Pattern.CASE_INSENSITIVE);
             VALID_TCO_URL = Pattern.compile("^https?:\\/\\/t\\.co\\/[a-z0-9]+", Pattern.CASE_INSENSITIVE);
             VALID_CASHTAG = Pattern.compile("(^|" + UNICODE_SPACES + ")(" + DOLLAR_SIGN_CHAR + ")(" + CASHTAG + ")" + "(?=$|\\s|\\p{Punct})", Pattern.CASE_INSENSITIVE);
             VALID_DOMAIN = Pattern.compile(URL_VALID_DOMAIN, Pattern.CASE_INSENSITIVE);
