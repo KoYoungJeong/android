@@ -78,7 +78,7 @@
 	<string name="jandi_add">"Add"</string>
 	<string name="jandi_add_an_email_address">"Add an Email Address"</string>
 	<string name="jandi_add_to_contacts">"Add to contacts"</string>
-	<string name="jandi_alert_already_topic_owenr">"You already are this topic's admin."</string>
+	<string name="jandi_alert_already_topic_owenr">"You are already the admin of this topic"</string>
 	<string name="jandi_all_of_topic_members">"@all (topic members)"</string>
 	<string name="jandi_already_in_team">"This email is already a member of %s"</string>
 	<string name="jandi_already_linked_email">"This email is already linked to your account"</string>
@@ -187,7 +187,7 @@
 	<string name="jandi_entity_unjoined_topic">"Other Topics"</string>
 	<string name="jandi_err_unexpected">"There was an unexpected error. "</string>
 	<string name="jandi_error_web_token">"We encountered an issue during sign in. Please try again."</string>
-	<string name="jandi_exceeded_max_text_length">"You can write up to 5,000 characters."</string>
+	<string name="jandi_exceeded_max_text_length">"You can enter up to 5,000 characters"</string>
 	<string name="jandi_expired_invitation_link">"This invitation has expired. Please request a new invitation from the team member who invited you."</string>
 	<string name="jandi_explain_global_push_off">"JANDI app push notification is disabled. Turn on notification in More > Settings to receive notification."</string>
 	<string name="jandi_explain_topic_description">"Description (optional)"</string>
@@ -237,7 +237,7 @@
 	<string name="jandi_go_to_latest">"Go to the most recent messages"</string>
 	<string name="jandi_go_to_setting">"Go to Settings"</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
-	<string name="jandi_guide_to_assign_topic_owner">"Please transfer topic adminin permission in Topic Info before you force quit this member."</string>
+	<string name="jandi_guide_to_assign_topic_owner">"Please designate another member to transfer the topic admin permission to before you remove this member from this topic."</string>
 	<string name="jandi_has_joined">"%s has joined"</string>
 	<string name="jandi_have_an_account_already">"Already have an account?"</string>
 	<string name="jandi_help">"Help"</string>
@@ -317,7 +317,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_msg_network_offline_warn">"It seems you are not connected to the Internet."</string>
 	<string name="jandi_my_files">"<b>My Files</b>"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
-	<string name="jandi_need_to_assign_topic_owner">"You are this topic's admin. Please transfer topic adminin permission in Topic Info before you leave."</string>
+	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic. "</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
 	<string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>
 	<string name="jandi_no_long_team_member">"%s is no longer a team member."</string>
@@ -374,8 +374,8 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_push_preview_public_only">"Public topics only"</string>
 	<string name="jandi_question_team_create">"Don't have a team on JANDI yet?"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"Are you sure you want to delete this email address?"</string>
-	<string name="jandi_reorder_from_long_press">"Drag and drop folders to adjust their order"</string>
-	<string name="jandi_retry">"Try again"</string>
+	<string name="jandi_reorder_from_long_press">"Drag and drop folders to rearrange the order"</string>
+	<string name="jandi_retry">"Please try again"</string>
 	<string name="jandi_retry_voice_search">"Didn\'t catch that, try speaking again"</string>
 	<string name="jandi_save">"Save"</string>
 	<string name="jandi_screen_auto">"Auto"</string>
@@ -387,7 +387,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_sdcard_storage_unmounted">"SD Card unmounted"</string>
 	<string name="jandi_search_ing">"<![CDATA[Searching <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%2$d</font></b> matches for <b><font color=#404040>%1$s</font></b>]]>"</string>
-	<string name="jandi_select_character">"Use a JANDI character"</string>
+	<string name="jandi_select_character">"Select a JANDI character"</string>
 	<string name="jandi_select_direct_messages">"Select Direct Message"</string>
 	<string name="jandi_select_gallery">"Select Pictures"</string>
 	<string name="jandi_select_maximum_10">"You can select up to 10 photos."</string>
@@ -432,7 +432,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_signup_verification_code">"We sent a code to your inbox.\nEnter it here to verify your account."</string>
 	<string name="jandi_signup_verify_title">"Code Verification"</string>
 	<string name="jandi_sort_folder">"Folder"</string>
-	<string name="jandi_sort_updated">"Updated"</string>
+	<string name="jandi_sort_updated">"Sort by updated date"</string>
 	<string name="jandi_sounds">"Sounds"</string>
 	<string name="jandi_sounds_air_pop">"Pop"</string>
 	<string name="jandi_sounds_arise">"Arise"</string>
@@ -498,7 +498,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_topic_no_member_2">"Tap the button below to invite other members to the conversation."</string>
 	<string name="jandi_topic_notification">"Notifications"</string>
 	<string name="jandi_topic_owner">"Topic admin"</string>
-	<string name="jandi_topic_owner_title">"This member is Topic admin"</string>
+	<string name="jandi_topic_owner_title">"This member is the topic administrator"</string>
 	<string name="jandi_topic_paricipants">"Participants"</string>
 	<string name="jandi_topic_private">"Private"</string>
 	<string name="jandi_topic_public">"Public"</string>
