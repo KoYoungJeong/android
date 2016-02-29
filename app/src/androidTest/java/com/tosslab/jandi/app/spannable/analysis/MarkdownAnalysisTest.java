@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * Created by tonyjs on 16. 2. 22..
@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 public class MarkdownAnalysisTest {
 
     static final String[] TEST_MARKDOWNS = {
-            "*Hello World*", "~~GoodBye World~~", "**Thanks World**", "***Sorry World***"
+            "*Hello World*", " ~~GoodBye World~~", "**Thanks World**", "***Sorry World***"
     };
 
     static final String[] TEST_MARKDOWNS_WITH_WHITESPACE = {
