@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.maintab.topic.adapter.viewholder;
+package com.tosslab.jandi.app.ui.maintab.topic.adapter.folder.viewholder;
 
 import android.view.View;
 import android.widget.ImageView;

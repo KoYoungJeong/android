@@ -62,4 +62,9 @@
         <item>@string/jandi_send_to_email</item>
     </string-array>
 
+    <string-array name="jandi_topic_sort">
+        <item>@string/jandi_sort_folder</item>
+        <item>@string/jandi_sort_updated</item>
+    </string-array>
+
 </resources>

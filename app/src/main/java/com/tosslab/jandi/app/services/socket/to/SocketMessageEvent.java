@@ -23,6 +23,7 @@ public class SocketMessageEvent {
     private int writer;
     private List<MessageRoom> rooms;
     private CommentInfo comment;
+    private long linkId;
     private long ts;
 
     public long getTs() {
@@ -119,6 +120,14 @@ public class SocketMessageEvent {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public long getLinkId() {
+        return linkId;
+    }
+
+    public void setLinkId(long linkId) {
+        this.linkId = linkId;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

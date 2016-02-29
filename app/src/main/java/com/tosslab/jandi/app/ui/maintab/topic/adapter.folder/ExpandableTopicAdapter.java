@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.maintab.topic.adapter;
+package com.tosslab.jandi.app.ui.maintab.topic.adapter.folder;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -19,9 +19,9 @@ import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
 import com.tosslab.jandi.app.libraries.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.tosslab.jandi.app.libraries.advancerecyclerview.utils.AbstractExpandableItemAdapter;
 import com.tosslab.jandi.app.libraries.advancerecyclerview.utils.ExpandableViewUtils;
-import com.tosslab.jandi.app.ui.maintab.topic.adapter.viewholder.TopicFolderViewHolder;
-import com.tosslab.jandi.app.ui.maintab.topic.adapter.viewholder.TopicItemViewHolder;
-import com.tosslab.jandi.app.ui.maintab.topic.adapter.viewholder.TopicJoinButtonViewHolder;
+import com.tosslab.jandi.app.ui.maintab.topic.adapter.folder.viewholder.TopicFolderViewHolder;
+import com.tosslab.jandi.app.ui.maintab.topic.adapter.folder.viewholder.TopicItemViewHolder;
+import com.tosslab.jandi.app.ui.maintab.topic.adapter.folder.viewholder.TopicJoinButtonViewHolder;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
