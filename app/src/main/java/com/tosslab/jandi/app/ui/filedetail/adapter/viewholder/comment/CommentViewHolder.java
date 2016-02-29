@@ -62,7 +62,7 @@ public class CommentViewHolder extends BaseViewHolder<ResMessages.CommentMessage
 
     public void bindComment(ResMessages.CommentMessage commentMessage) {
         // 날짜
-        String createTime = DateTransformator.getTimeString(commentMessage.createTime);
+        String createTime = DateTransformator.getTimeStringForSimple(commentMessage.createTime);
         tvCreatedDate.setText(createTime);
 
         // 댓글 내용

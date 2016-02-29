@@ -59,7 +59,7 @@ public class StickerViewHolder extends BaseViewHolder<ResMessages.CommentSticker
 
     public void bindComment(ResMessages.CommentStickerMessage stickerMessage) {
         // 날짜
-        String createTime = DateTransformator.getTimeString(stickerMessage.createTime);
+        String createTime = DateTransformator.getTimeStringForSimple(stickerMessage.createTime);
         tvCreatedDate.setText(createTime);
 
         // 댓글 내용
