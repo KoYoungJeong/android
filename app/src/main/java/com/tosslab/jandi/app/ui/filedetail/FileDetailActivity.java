@@ -1205,11 +1205,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Click(R.id.btn_show_mention)
     void onMentionClick() {
         etComment.requestFocus();
+        keyboardHeightModel.showKeyboard();
 
         boolean needSpace = needSpace(etComment.getSelectionStart(), etComment.getText().toString());
-        int keyEvent = needSpace ? KeyEvent.KEYCODE_SPACE : KeyEvent.KEYCODE_AT;
+        int keyEvent = KeyEvent.KEYCODE_AT;
 
         BaseInputConnection inputConnection = new BaseInputConnection(etComment, true);
+        if (needSpace) {
+            inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SPACE));
+        }
         inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, keyEvent));
 
         dismissStickerSelectorIfShow();
