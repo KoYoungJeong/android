@@ -16,7 +16,13 @@ public class BlurPostprocessor extends BasePostprocessor {
 
     @Override
     public void process(Bitmap dest, Bitmap bitmap) {
-        bitmap = BitmapUtil.getBlurBitmap(bitmap, 10);
+        try {
+            bitmap = BitmapUtil.getBlurBitmap(bitmap, 10);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } catch (OutOfMemoryError e) {
+            e.printStackTrace();
+        }
         super.process(dest, bitmap);
     }
 }
