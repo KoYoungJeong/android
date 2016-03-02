@@ -128,7 +128,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
                 .subscribe(Integer -> {
                     floatingActionMenu = mainTabActivity.getFloatingActionMenu();
                     setFloatingActionMenu();
-                }, t -> {});
+                }, t -> {
+                });
     }
 
     @Override
@@ -206,6 +207,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         Observable.just(1)
                 .delay(250, TimeUnit.MILLISECONDS)
                 .subscribe(i -> {
+                    selectedEntity = -2;
+                    setSelectedItem(selectedEntity);
                     TopicCreateActivity_
                             .intent(MainTopicListFragment.this)
                             .start();
@@ -220,6 +223,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         Observable.just(1)
                 .delay(250, TimeUnit.MILLISECONDS)
                 .subscribe(i -> {
+                    selectedEntity = -2;
+                    setSelectedItem(selectedEntity);
                     TopicFolderSettingActivity_.intent(getActivity())
                             .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                             .extra("mode", TopicFolderSettingActivity.FOLDER_SETTING)
