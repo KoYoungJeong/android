@@ -78,14 +78,14 @@ public class ImageAlbumModel {
         return albumName;
     }
 
-    public List<ImagePicture> getPhotoList(Context context, int buckerId, int offset) {
+    public List<ImagePicture> getPhotoList(Context context, int buckerId, int fromImageId) {
         // which image properties are we querying
         String[] projection = {
                 MediaStore.Images.ImageColumns._ID,
                 MediaStore.Images.ImageColumns.BUCKET_ID,
                 MediaStore.Images.ImageColumns.DATA};
 
-        String orderBy = String.format("%s DESC", MediaStore.Images.ImageColumns.DATE_TAKEN);
+        String orderBy = String.format("%s DESC", MediaStore.Images.ImageColumns._ID);
 
         // Get the base URI for the People table in the Contacts content provider.
         Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -96,13 +96,13 @@ public class ImageAlbumModel {
         // Make the query.
         String bucketIdSelection = String.format("%s = ?", MediaStore.Images.ImageColumns.BUCKET_ID);
         StringBuilder sb = new StringBuilder(bucketIdSelection);
-        if (offset > 0) {
+        if (fromImageId > 0) {
             sb.append(String.format(" and %s < ?", MediaStore.Images.ImageColumns._ID));
         }
 
         String selection = sb.toString();
-        String[] selectionArgs = offset > 0
-                ? new String[]{String.valueOf(buckerId), String.valueOf(offset)}
+        String[] selectionArgs = fromImageId > 0
+                ? new String[]{String.valueOf(buckerId), String.valueOf(fromImageId)}
                 : new String[]{String.valueOf(buckerId)};
 
         ContentResolver contentResolver = context.getContentResolver();
@@ -264,7 +264,7 @@ public class ImageAlbumModel {
         return buckerId == ImageAlbumFragment.BUCKET_ALL_IMAGE_ALBUM;
     }
 
-    public List<ImagePicture> getAllPhotoList(Context context, int offset) {
+    public List<ImagePicture> getAllPhotoList(Context context, int fromIndexId) {
         // which image properties are we querying
         String[] projection = {
                 MediaStore.Images.ImageColumns._ID,
@@ -281,9 +281,9 @@ public class ImageAlbumModel {
 
         String selection = null;
         String[] selectionArgs = null;
-        if (offset > 0) {
+        if (fromIndexId > 0) {
             selection = String.format("%s < ?", MediaStore.Images.ImageColumns._ID);
-            selectionArgs = new String[]{String.valueOf(offset)};
+            selectionArgs = new String[]{String.valueOf(fromIndexId)};
         }
 
         ContentResolver contentResolver = context.getContentResolver();
