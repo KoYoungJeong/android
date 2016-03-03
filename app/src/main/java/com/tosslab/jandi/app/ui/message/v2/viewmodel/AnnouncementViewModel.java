@@ -150,7 +150,7 @@ public class AnnouncementViewModel {
         });
 
         String date = DateTransformator.getTimeStringFromISO(
-                writtenAt, DateTransformator.FORMAT_YYYYMMDD_HHMM_A);
+                writtenAt);
         String announcementInfo = String.format("%s %s", fromEntity.getName(), date);
         tvAnnouncementInfo.setText(announcementInfo);
 
