@@ -152,7 +152,7 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
 
     private String getDeletedDate(Date updateTime) {
         String time = DateTransformator.getTimeString(
-                updateTime, DateTransformator.FORMAT_YYYYMMDD_HHMM_A);
+                updateTime, DateTransformator.FORMAT_YYYYMMDD_HHMM_A_KOREA);
         return context.getResources().getString(R.string.jandi_file_deleted_with_date, time);
     }
 
