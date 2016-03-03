@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.domain.RecentSticker;
@@ -45,6 +46,16 @@ public class StickerRepository {
      */
     public static void release() {
         repository = null;
+    }
+
+    public void removeRecentSticker() {
+        try {
+            Dao<RecentSticker, ?> dao = helper.getDao(RecentSticker.class);
+            DeleteBuilder<RecentSticker, ?> deleteBuilder = dao.deleteBuilder();
+            deleteBuilder.delete();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void prepareStickerContent() {
@@ -191,7 +202,6 @@ public class StickerRepository {
         return false;
 
     }
-
 
     public List<ResMessages.StickerContent> getRecentStickers() {
         List<ResMessages.StickerContent> stickerContents = new ArrayList<>();

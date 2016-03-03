@@ -9,8 +9,8 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -35,7 +35,6 @@ public class PureMessageViewHolder implements BodyViewHolder {
         linkPreviewViewModel = new LinkPreviewViewModel(rootView.getContext());
         linkPreviewViewModel.initView(rootView);
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);
-
     }
 
     @Override
@@ -68,12 +67,13 @@ public class PureMessageViewHolder implements BodyViewHolder {
         messageStringBuilder.append(" ");
 
         int startIndex = messageStringBuilder.length();
-        messageStringBuilder.append(DateTransformator.getTimeStringForSimple(link.message.createTime));
+        String createTimeString = DateTransformator.getTimeStringForSimple(link.message.createTime);
+        messageStringBuilder.append(createTimeString);
         int endIndex = messageStringBuilder.length();
 
         DateViewSpannable spannable =
                 new DateViewSpannable(tvMessage.getContext(),
-                        DateTransformator.getTimeStringForSimple(link.message.createTime));
+                        createTimeString);
         messageStringBuilder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,

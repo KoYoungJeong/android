@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.tosslab.jandi.app.local.orm.persister.DateConverter;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -27,9 +28,9 @@ public class ResFolder {
     public long memberId;
     @DatabaseField
     public long teamId;
-    @DatabaseField
+    @DatabaseField(persisterClass = DateConverter.class)
     public Date createdAt;
-    @DatabaseField
+    @DatabaseField(persisterClass = DateConverter.class)
     public Date updatedAt;
 
     @Override

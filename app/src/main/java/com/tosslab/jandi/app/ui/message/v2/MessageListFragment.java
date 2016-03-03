@@ -369,7 +369,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         String tempMessage;
         if (messageListModel.isUser(entityId)) {
-
             if (roomId > 0) {
                 tempMessage = messageListModel.getReadyMessage(roomId);
             } else {
@@ -377,7 +376,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             }
         } else {
             tempMessage = messageListModel.getReadyMessage(entityId);
-
         }
         messageListPresenter.setSendEditText(tempMessage);
 

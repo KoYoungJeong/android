@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.local.orm.dao.event.CreateEventDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.InviteEventDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.PrivateCreateInfoDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.PublicCreateInfoDaoImpl;
+import com.tosslab.jandi.app.local.orm.persister.DateConverter;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.EventInfoDeserialize;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.InviteInfoDeserializer;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.LinkShareEntityDeserializer;
@@ -75,7 +76,7 @@ public class ResMessages {
         public long roomId;
         @DatabaseField
         public long fromEntity;
-        @DatabaseField
+        @DatabaseField(persisterClass = DateConverter.class)
         public Date time;
         @DatabaseField
         public long messageId;
@@ -148,9 +149,9 @@ public class ResMessages {
         public long teamId;
         @DatabaseField
         public long writerId;
-        @DatabaseField
+        @DatabaseField(persisterClass = DateConverter.class)
         public Date createTime;
-        @DatabaseField
+        @DatabaseField(persisterClass = DateConverter.class)
         public Date updateTime;
         @DatabaseField
         public String contentType;
@@ -713,7 +714,7 @@ public class ResMessages {
         @DatabaseField
         @JsonProperty("ch_creatorId")
         public long creatorId;
-        @DatabaseField
+        @DatabaseField(persisterClass = DateConverter.class)
         @JsonProperty("ch_createTime")
         public Date createTime;
         @DatabaseField
@@ -770,7 +771,7 @@ public class ResMessages {
         @DatabaseField
         @JsonProperty("pg_creatorId")
         public long creatorId;
-        @DatabaseField
+        @DatabaseField(persisterClass = DateConverter.class)
         @JsonProperty("pg_createTime")
         public Date createTime;
         @DatabaseField
