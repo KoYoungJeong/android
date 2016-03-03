@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2.model;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -42,8 +43,15 @@ import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
+import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader_;
+import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader_;
+import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -55,6 +63,7 @@ import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -65,6 +74,7 @@ import java.io.File;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -85,7 +95,6 @@ public class MessageListModel {
     EntityClientManager entityClientManager;
     @RootContext
     AppCompatActivity activity;
-
 
     public void setEntityInfo(int entityType, long entityId) {
         messageManipulator.initEntity(entityType, entityId);
@@ -153,7 +162,7 @@ public class MessageListModel {
                 .build(item);
     }
 
-    public long initRoomId() {
+    public long getRoomId() {
         try {
             ResMessages oldMessage = getOldMessage(-1, 1);
             return oldMessage.entityId;
@@ -163,6 +172,9 @@ public class MessageListModel {
         return -1;
     }
 
+    public void setRoomId(long roomId) {
+        messageManipulator.setRoomId(roomId);
+    }
 
     public long sendMessage(long localId, String message, List<MentionObject> mentions) {
 
@@ -370,7 +382,6 @@ public class MessageListModel {
         return messageManipulator.getBeforeMarkerMessage(linkId);
     }
 
-
     public ResMessages getAfterMarkerMessage(long linkId) throws RetrofitError {
         return messageManipulator.getAfterMarkerMessage(linkId);
     }
@@ -511,6 +522,14 @@ public class MessageListModel {
         return ReadyMessageRepository.getRepository().getReadyMessage(roomId).getText();
     }
 
+    public ResMessages.Link getLastLinkMessage(long roomId) {
+        return MessageRepository.getRepository().getLastMessage(roomId);
+    }
+
+    public void clearLinks(long teamId, long roomId) {
+        MessageRepository.getRepository().clearLinks(teamId, roomId);
+    }
+
     public void upsertMessages(ResMessages messages) {
         Observable.from(messages.records)
                 .subscribe(link -> {
@@ -519,10 +538,6 @@ public class MessageListModel {
 
         MessageRepository.getRepository().upsertMessages(messages.records);
 
-    }
-
-    public void setRoomId(long roomId) {
-        messageManipulator.setRoomId(roomId);
     }
 
     public long getLastReadLinkId(long roomId, long entityId) {
@@ -548,6 +563,33 @@ public class MessageListModel {
                 .first();
 
         return lastLinkId;
+    }
+
+    @Nullable
+    public List<ResMessages.Link> loadOldMessages(long roomId, long linkId,
+                                                  int currentItemCountWithoutDummy,
+                                                  int offset) {
+
+        List<ResMessages.Link> oldMessages;
+        if (currentItemCountWithoutDummy > 0) {
+            // 처음 로드 아니면 현재 링크 - 1 ~ 이전 itemCount 로드
+            oldMessages =
+                    MessageRepository.getRepository().getOldMessages(roomId, linkId, offset);
+        } else {
+            // 처음 로드면 현재 링크 ~ 이전 20개 로드
+            oldMessages =
+                    MessageRepository.getRepository().getOldMessages(roomId, linkId + 1, offset);
+        }
+
+        return oldMessages;
+    }
+
+    public void sortByTime(List<ResMessages.Link> records) {
+        Collections.sort(records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
+    }
+
+    public void deleteCompletedSendingMessage(long roomId) {
+        SendMessageRepository.getRepository().deleteCompletedMessageOfRoom(roomId);
     }
 
     public long getMyId() {

@@ -111,8 +111,6 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 showEmptyViewIfNeed();
 
                 if (firstLoad) {
-                    presenter.setUpLastReadLinkIdIfPosition();
-                    presenter.moveLastReadLink();
                     view.justRefresh();
                     firstLoad = false;
                 }
@@ -125,13 +123,11 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
             Collections.sort(messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
             long lastLinkId = newMessage.get(newMessage.size() - 1).id;
             messageState.setLastUpdateLinkId(lastLinkId);
-            messageListModel.upsertMyMarker(presenter.getRoomId(), lastLinkId);
+//            messageListModel.upsertMyMarker(presenter.getRoomId(), lastLinkId);
             updateMarker(roomId);
 
-            presenter.setUpNewMessage(messages, messageListModel.getMyId(), moveToLinkId);
             firstLoad = false;
 
-            presenter.setEmptyViewIfNeed();
         } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -141,77 +137,76 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showEmptyViewIfNeed() {
-        int originItemCount = presenter.getItemCount();
-        int itemCountWithoutEvent = getItemCountWithoutEvent();
-        int eventCount = originItemCount - itemCountWithoutEvent;
-        if (itemCountWithoutEvent > 0 || eventCount > 1) {
-            // create 이벤트외에 다른 이벤트가 생성된 경우
-            view.setEmptyLayoutVisible(false);
-        } else {
-            // 아예 메세지가 없거나 create 이벤트 외에는 생성된 이벤트가 없는 경우
-            view.setEmptyLayoutVisible(true);
-        }
+//        int originItemCount = presenter.getItemCount();
+//        int itemCountWithoutEvent = getItemCountWithoutEvent();
+//        int eventCount = originItemCount - itemCountWithoutEvent;
+//        if (itemCountWithoutEvent > 0 || eventCount > 1) {
+//            // create 이벤트외에 다른 이벤트가 생성된 경우
+//            view.setEmptyLayoutVisible(false);
+//        } else {
+//            // 아예 메세지가 없거나 create 이벤트 외에는 생성된 이벤트가 없는 경우
+//            view.setEmptyLayoutVisible(true);
+//        }
     }
 
     public int getItemCountWithoutEvent() {
-        int itemCount = presenter.getItemCount();
-        for (int idx = itemCount - 1; idx >= 0; --idx) {
-            if (presenter.getItemViewType(idx) == BodyViewHolder.Type.Event.ordinal()) {
-                itemCount--;
-            }
-        }
-        return itemCount;
+//        int itemCount = presenter.getItemCount();
+//        for (int idx = itemCount - 1; idx >= 0; --idx) {
+//            if (presenter.getItemViewType(idx) == BodyViewHolder.Type.Event.ordinal()) {
+//                itemCount--;
+//            }
+//        }
+//        return itemCount;
+        return 0;
     }
 
     private List<ResMessages.Link> getResUpdateMessages(final long linkId) {
         List<ResMessages.Link> messages = new ArrayList<>();
-
-        Observable.create(new Observable.OnSubscribe<ResMessages>() {
-            @Override
-            public void call(Subscriber<? super ResMessages> subscriber) {
-
-                // 300 개씩 요청함
-                presenter.setMoreNewFromAdapter(false);
-
-                ResMessages afterMarkerMessage = null;
-
-                try {
-                    afterMarkerMessage = messageListModel.getAfterMarkerMessage(linkId, MessageManipulator.MAX_OF_MESSAGES);
-                    int messageCount = afterMarkerMessage.records.size();
-                    boolean isEndOfRequest = messageCount < MessageManipulator.MAX_OF_MESSAGES;
-                    if (isEndOfRequest) {
-                        ResMessages.Link lastItem;
-                        if (messageCount == 0) {
-                            // 기존 리스트에서 마지막 링크 정보 가져옴
-                            lastItem = presenter.getLastItemWithoutDummy();
-                        } else {
-                            lastItem = afterMarkerMessage.records.get(messageCount - 1);
-                            // 새로 불러온 정보에서 마지막 링크 정보 가져옴
-                        }
-                        if (lastItem != null) {
-                            historyLoad = !DateComparatorUtil.isBefore30Days(lastItem.time);
-                        } else {
-                            // 알 수 없는 경우에도 히스토리 로드 하지 않기
-                            historyLoad = false;
-                        }
-                        presenter.setNewNoMoreLoading();
-                    } else {
-                        presenter.setMoreNewFromAdapter(true);
-                        presenter.setNewLoadingComplete();
-                    }
-                } catch (RetrofitError retrofitError) {
-                    retrofitError.printStackTrace();
-                    presenter.setMoreNewFromAdapter(true);
-                    presenter.setNewLoadingComplete();
-                }
-
-                subscriber.onNext(afterMarkerMessage);
-                subscriber.onCompleted();
-            }
-        }).collect(() -> messages,
-                (resUpdateMessages, o) -> messages.addAll(o.records))
-                .subscribe(resUpdateMessages -> {
-                }, Throwable::printStackTrace);
+//
+//        Observable.create(new Observable.OnSubscribe<ResMessages>() {
+//            @Override
+//            public void call(Subscriber<? super ResMessages> subscriber) {
+//
+//                // 300 개씩 요청함
+//                ResMessages afterMarkerMessage = null;
+//
+//                try {
+//                    afterMarkerMessage = messageListModel.getAfterMarkerMessage(linkId, MessageManipulator.MAX_OF_MESSAGES);
+//                    int messageCount = afterMarkerMessage.records.size();
+//                    boolean isEndOfRequest = messageCount < MessageManipulator.MAX_OF_MESSAGES;
+//                    if (isEndOfRequest) {
+//                        ResMessages.Link lastItem;
+//                        if (messageCount == 0) {
+//                            // 기존 리스트에서 마지막 링크 정보 가져옴
+//                            lastItem = presenter.getLastItemWithoutDummy();
+//                        } else {
+//                            lastItem = afterMarkerMessage.records.get(messageCount - 1);
+//                            // 새로 불러온 정보에서 마지막 링크 정보 가져옴
+//                        }
+//                        if (lastItem != null) {
+//                            historyLoad = !DateComparatorUtil.isBefore30Days(lastItem.time);
+//                        } else {
+//                            // 알 수 없는 경우에도 히스토리 로드 하지 않기
+//                            historyLoad = false;
+//                        }
+//                        presenter.setNewNoMoreLoading();
+//                    } else {
+//                        presenter.setMoreNewFromAdapter(true);
+//                        presenter.setNewLoadingComplete();
+//                    }
+//                } catch (RetrofitError retrofitError) {
+//                    retrofitError.printStackTrace();
+//                    presenter.setMoreNewFromAdapter(true);
+//                    presenter.setNewLoadingComplete();
+//                }
+//
+//                subscriber.onNext(afterMarkerMessage);
+//                subscriber.onCompleted();
+//            }
+//        }).collect(() -> messages,
+//                (resUpdateMessages, o) -> messages.addAll(o.records))
+//                .subscribe(resUpdateMessages -> {
+//                }, Throwable::printStackTrace);
         return messages;
     }
 

@@ -67,7 +67,7 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
         }
 
         if (item.id == lastMarker) {
-            if (markerAnimState == MainMessageListAdapter.AnimState.Idle) {
+            if (markerAnimState == MessageListAdapter.AnimState.Idle) {
                 final View view = viewHolder.itemView;
                 Integer colorFrom = context.getResources().getColor(R.color.jandi_transparent_white_1f);
                 Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_1f);
@@ -80,11 +80,11 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
                 colorAnimation.addListener(new SimpleEndAnimatorListener() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        markerAnimState = MainMessageListAdapter.AnimState.End;
+                        markerAnimState = MessageListAdapter.AnimState.End;
                     }
                 });
                 colorAnimation.start();
-                markerAnimState = MainMessageListAdapter.AnimState.Loading;
+                markerAnimState = MessageListAdapter.AnimState.Loading;
             }
         }
 
@@ -94,17 +94,17 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
             bodyViewHolder.setLastReadViewVisible(0, -1);
         }
 
-        if (position <= getItemCount() / 10 && oldMoreState == MainMessageListAdapter.MoreState.Idle) {
-            oldMoreState = MainMessageListAdapter.MoreState.Loading;
+        if (position <= getItemCount() / 10 && oldMoreState == MessageListAdapter.MoreState.Idle) {
+            oldMoreState = MessageListAdapter.MoreState.Loading;
             synchronized (this) {
-                if (oldMoreState != MainMessageListAdapter.MoreState.Idle) {
+                if (oldMoreState != MessageListAdapter.MoreState.Idle) {
                     EventBus.getDefault().post(new RefreshOldMessageEvent());
                 }
             }
-        } else if (moreFromNew && position == getItemCount() - 1 && newMoreState == MainMessageListAdapter.MoreState.Idle) {
-            newMoreState = MainMessageListAdapter.MoreState.Loading;
+        } else if (moreFromNew && position == getItemCount() - 1 && newMoreState == MessageListAdapter.MoreState.Idle) {
+            newMoreState = MessageListAdapter.MoreState.Loading;
             synchronized (this) {
-                if (oldMoreState != MainMessageListAdapter.MoreState.Idle) {
+                if (oldMoreState != MessageListAdapter.MoreState.Idle) {
                     EventBus.getDefault().post(new RefreshNewMessageEvent());
                 }
             }

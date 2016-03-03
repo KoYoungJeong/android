@@ -141,7 +141,7 @@ public class MessageLoadHandler {
         }
 
         if (this.roomId <= 0) {
-            view.showFailToast(JandiApplication.getContext().getString(R.string.err_messages_invaild_entity));
+//            view.showFailToast(JandiApplication.getContext().getString(R.string.err_messages_invaild_entity));
             view.finish();
             return;
         }
@@ -161,24 +161,24 @@ public class MessageLoadHandler {
                 NormalNewMessageLoader newsMessageLoader = (NormalNewMessageLoader) this.newsMessageLoader;
                 newsMessageLoader.setHistoryLoad(false);
             }
-            presenter.setMoreNewFromAdapter(true);
-            presenter.setNewLoadingComplete();
+//            presenter.setMoreNewFromAdapter(true);
+//            presenter.setNewLoadingComplete();
         }
 
         if (roomId > 0) {
-            presenter.setMarkerInfo(teamId, roomId);
+//            presenter.setMarkerInfo(teamId, roomId);
             model.updateMarkerInfo(teamId, roomId);
             model.setRoomId(roomId);
-            presenter.setLastReadLinkId(model.getLastReadLinkId(roomId, model.getMyId()));
+//            presenter.setLastReadLinkId(model.getLastReadLinkId(roomId, model.getMyId()));
         } else {
-            presenter.setLastReadLinkId(lastReadEntityId);
+//            presenter.setLastReadLinkId(lastReadEntityId);
         }
 
         messageHandlingPush(new OldMessageQueue(messageState));
 
-        if (view.isForeground()) {
+//        if (view.isForeground()) {
             messageHandlingPush(new NewMessageQueue(messageState));
-        }
+//        }
 
         isRoomInit = true;
     }
@@ -196,7 +196,7 @@ public class MessageLoadHandler {
 
             if (resMessages != null && roomId <= 0) {
                 roomId = resMessages.entityId;
-                presenter.setMarkerInfo(teamId, roomId);
+//                presenter.setMarkerInfo(teamId, roomId);
                 model.updateMarkerInfo(teamId, roomId);
                 model.setRoomId(roomId);
             }
@@ -245,17 +245,17 @@ public class MessageLoadHandler {
 
     public void updateLinkPreviewMessage(ResMessages.TextMessage message) {
         long messageId = message.id;
-        int index = presenter.getPosition(messageId);
+//        int index = presenter.getPosition(messageId);
 
-        if (index < 0) {
-            return;
-        }
+//        if (index < 0) {
+//            return;
+//        }
 
-        ResMessages.Link link = presenter.getItem(index);
-        if (!(link.message instanceof ResMessages.TextMessage)) {
-            return;
-        }
-        link.message = message;
+//        ResMessages.Link link = presenter.getItem(index);
+//        if (!(link.message instanceof ResMessages.TextMessage)) {
+//            return;
+//        }
+//        link.message = message;
     }
 
     public void refreshNewMessages() {

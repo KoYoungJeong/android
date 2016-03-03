@@ -220,16 +220,16 @@
 //    private StickerInfo stickerInfo = NULL_STICKER;
 //    private boolean isRoomInit;
 //    private ButtonAction buttonAction = ButtonAction.KEYBOARD;
-
+//
 //    @AfterInject
 //    void initObject() {
-
+//
 //        SendMessageRepository.getRepository().deleteAllOfCompletedMessages();
-
+//
 //        messageListPresenter.initAdapter(false);
 //        messageListPresenter.setFirstCursorLinkId(firstCursorLinkId);
 //        SNOWING_EASTEREGG_STARTED = false;
-
+//
 //        messageState = new MessageState();
 //
 //        messagePublishSubject = PublishSubject.create();
@@ -276,10 +276,10 @@
 //        this.oldMessageLoader = oldMessageLoader;
 //
 //        messageState.setFirstItemId(lastReadLinkId);
-
+//
 //        messageListPresenter.setEntityInfo(entityId);
 //        fileUploadStateViewModel.setEntityId(entityId);
-
+//
 //        keyboardHeightModel.addOnKeyboardShowListener((isShowing) -> {
 //            boolean visibility = keyboardHeightModel.isOpened()
 //                    || stickerViewModel.isShow() || uploadMenuViewModel.isShow();
@@ -308,12 +308,12 @@
 //
 //        JandiPreference.setKeyboardHeight(getActivity(), -1);
 //    }
-
+//
 //    @AfterViews
 //    void initViews() {
 //        int screenView = messageListModel.isPublicTopic(entityType)
 //                ? ScreenViewProperty.PUBLIC_TOPIC : ScreenViewProperty.PRIVATE_TOPIC;
-
+//
 //        Sprinkler.with(JandiApplication.getContext())
 //                .track(new FutureTrack.Builder()
 //                        .event(Event.ScreenView)
@@ -324,11 +324,11 @@
 //
 //        setUpActionbar();
 //        setHasOptionsMenu(true);
-
+//
 //        initMessageList();
 //
 //        messageListModel.setEntityInfo(entityType, entityId);
-
+//
 //        String tempMessage;
 //        if (messageListModel.isUser(entityId)) {
 //
@@ -342,34 +342,34 @@
 //
 //        }
 //        messageListPresenter.setSendEditText(tempMessage);
-
+//
 //        if (!messageListModel.isEnabledIfUser(entityId)) {
 //            messageListPresenter.disableChat();
 //        }
-
+//
 //        initKeyboardEvent();
 //
 //        initStickerViewModel();
-
+//
 //        initUploadViewModel();
 //
 //        setEmptyMessageViewControl();
-
+//
 //        initAnnouncementListeners();
 //
 //        getInitMessage();
-
+//
 //        setUpListTouchListener();
-
+//
 //        TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(entityType == JandiConstants.TYPE_DIRECT_MESSAGE, getActivity());
-
+//
 //        AnalyticsUtil.sendScreenName(messageListModel.getScreen(entityId));
-
+//
 //        setEditTextListeners();
 //
 //        setEditTextTouchEvent();
 //    }
-
+//
 //    private void setUpListTouchListener() {
 //        messageListPresenter.setListTouchListener((v, event) -> {
 //            if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -380,7 +380,7 @@
 //            return false;
 //        });
 //    }
-
+//
 //    private void setEditTextListeners() {
 //        etMessage.setOnBackPressListener(() -> {
 //            if (keyboardHeightModel.isOpened()) {
@@ -401,7 +401,7 @@
 //                    ColoredToast.showError(R.string.jandi_exceeded_max_text_length);
 //                });
 //    }
-
+//
 //    private void showStickerSelectorIfNotShow(int height) {
 //        if (!stickerViewModel.isShow()) {
 //            if (isCanDrawWindowOverlay()) {
@@ -421,7 +421,7 @@
 //            }
 //        }
 //    }
-
+//
 //    private boolean isCanDrawWindowOverlay() {
 //        boolean canDraw;
 //        if (SdkUtils.isMarshmallow()) {
@@ -431,14 +431,14 @@
 //        }
 //        return canDraw;
 //    }
-
+//
 //    private void requestWindowPermission() {
 //        String packageName = JandiApplication.getContext().getPackageName();
 //        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + packageName));
 //        startActivityForResult(intent, REQ_WINDOW_PERMISSION);
 //
 //    }
-
+//
 //    private void dismissStickerSelectorIfShow() {
 //        if (stickerViewModel.isShow()) {
 //            stickerViewModel.dismissStickerSelector(true);
@@ -446,7 +446,7 @@
 //            setActionButtons();
 //        }
 //    }
-
+//
 //    private void showUploadMenuSelectorIfNotShow(int height) {
 //        if (!uploadMenuViewModel.isShow()) {
 //            if (isCanDrawWindowOverlay()) {
@@ -476,7 +476,7 @@
 //            }
 //        }
 //    }
-
+//
 //    private void dismissUploadSelectorIfShow() {
 //        if (uploadMenuViewModel.isShow()) {
 //            uploadMenuViewModel.dismissUploadSelector(true);
@@ -484,14 +484,14 @@
 //            setActionButtons();
 //        }
 //    }
-
+//
 //    private void setEditTextTouchEvent() {
 //        etMessage.setOnClickListener(v -> {
 //            dismissStickerSelectorIfShow();
 //            dismissUploadSelectorIfShow();
 //        });
 //    }
-
+//
 //    private void initKeyboardEvent() {
 //        etMessage.setOnKeyListener((v, keyCode, event) -> {
 //            LogUtil.d("In etMessage KeyCode : " + keyCode);
@@ -519,7 +519,7 @@
 //            return false;
 //        });
 //    }
-
+//
 //    private void initStickerViewModel() {
 //        stickerViewModel.setOptionSpace(vgOptionSpace);
 //        stickerViewModel.setOnStickerClick((groupId, stickerId) -> {
@@ -538,11 +538,11 @@
 //
 //        stickerViewModel.setStickerButton(btnActionButton2);
 //    }
-
+//
 //    private void initUploadViewModel() {
 //        uploadMenuViewModel.setOptionSpace(vgOptionSpace);
 //    }
-
+//
 //    private void initMessageList() {
 //        // 아이템 클릭 했을 때의 액션
 //        messageListPresenter.setOnItemClickListener((adapter, position) -> {
@@ -586,8 +586,8 @@
 //
 //            return true;
 //        });
-
-        // 스크롤 했을 때 동작
+//
+//         스크롤 했을 때 동작
 //        messageListView.setOnScrollListener(new RecyclerView.OnScrollListener() {
 //            @Override
 //            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -600,7 +600,7 @@
 //            }
 //        });
 //    }
-
+//
 //    @Override
 //    public void onConfigurationChanged(Configuration newConfig) {
 //        super.onConfigurationChanged(newConfig);
@@ -627,7 +627,7 @@
 //                });
 //
 //    }
-
+//
 //    @Background
 //    void getInitMessage() {
 //        if (roomId <= 0) {
@@ -703,7 +703,7 @@
 ////
 ////        return -1;
 ////    }
-
+//
 //    private void loadOldMessage(MessageQueue messageQueue) {
 //        if (oldMessageLoader != null) {
 //            ResMessages resMessages = oldMessageLoader.load(roomId, ((MessageState) messageQueue
@@ -717,7 +717,7 @@
 //            }
 //        }
 //    }
-
+//
 //    private void loadNewMessage(MessageQueue messageQueue) {
 //
 //        if (newsMessageLoader != null) {
@@ -731,7 +731,7 @@
 //            newsMessageLoader.load(roomId, lastUpdateLinkId);
 //        }
 //    }
-
+//
 //    private void sendMessage(MessageQueue messageQueue) {
 //        SendingMessage data = (SendingMessage) messageQueue.getData();
 //        long linkId;
@@ -749,13 +749,13 @@
 //        }
 //        messageListPresenter.refreshAll();
 //    }
-
+//
 //    private void getAnnouncement() {
 //        ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, roomId);
 //        messageListPresenter.dismissProgressWheel();
 //        announcementViewModel.setAnnouncement(announcement, announcementModel.isAnnouncementOpened(entityId));
 //    }
-
+//
 //    private void updateLinkPreview(MessageQueue messageQueue) {
 //        int messageId = (Integer) messageQueue.getData();
 //
@@ -767,7 +767,7 @@
 //            messageListPresenter.justRefresh();
 //        }
 //    }
-
+//
 //    private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
 //        messageListPresenter.showStickerPreview();
 //        if (oldSticker.getStickerGroupId() != stickerInfo.getStickerGroupId()
@@ -775,7 +775,7 @@
 //            messageListPresenter.loadSticker(stickerInfo);
 //        }
 //    }
-
+//
 //    @Click(R.id.iv_messages_preview_sticker_close)
 //    void onStickerPreviewClose() {
 //        MessageListFragment.this.stickerInfo = NULL_STICKER;
@@ -793,16 +793,16 @@
 //
 //        AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Sticker_cancel);
 //    }
-
+//
 //    @Click(R.id.vg_messages_preview_sticker)
 //    void onNonAction() {
 //    }
-
+//
 //    @Click(R.id.vg_message_offline)
 //    void onOfflineLayerClick() {
 //        messageListPresenter.dismissOfflineLayer();
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    void setEmptyMessageViewControl() {
 //        EntityManager entityManager = EntityManager.getInstance();
@@ -823,13 +823,13 @@
 //            insertMessageEmptyLayout();
 //        }
 //    }
-
+//
 //    private void sendMessagePublisherEvent(MessageQueue messageQueue) {
 //        if (!messageHandlingQueue.isUnsubscribed()) {
 //            messagePublishSubject.onNext(messageQueue);
 //        }
 //    }
-
+//
 //    private void setUpActionbar() {
 //        AppCompatActivity activity = (AppCompatActivity) getActivity();
 //        if (activity.getSupportActionBar() == null) {
@@ -844,7 +844,7 @@
 //
 //        actionBar.setTitle(EntityManager.getInstance().getEntityNameById(entityId));
 //    }
-
+//
 //    @Override
 //    public void onPrepareOptionsMenu(Menu menu) {
 //        super.onPrepareOptionsMenu(menu);
@@ -855,7 +855,7 @@
 //        inflater.inflate(R.menu.message_list_menu_basic, menu);
 //
 //    }
-
+//
 //    @Override
 //    public boolean onOptionsItemSelected(MenuItem item) {
 //        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
@@ -869,7 +869,7 @@
 //
 //        return super.onOptionsItemSelected(item);
 //    }
-
+//
 //    @Override
 //    public void onCreate(Bundle savedInstanceState) {
 //        super.onCreate(savedInstanceState);
@@ -878,7 +878,7 @@
 //            photoFileByCamera = (File) savedInstanceState.getSerializable(EXTRA_NEW_PHOTO_FILE);
 //        }
 //    }
-
+//
 //    @Override
 //    public void onDestroy() {
 //        messageHandlingQueue.unsubscribe();
@@ -886,7 +886,7 @@
 //        super.onDestroy();
 //
 //    }
-
+//
 //    @Override
 //    public void onSaveInstanceState(Bundle outState) {
 //        super.onSaveInstanceState(outState);
@@ -894,7 +894,7 @@
 //            outState.putSerializable(EXTRA_NEW_PHOTO_FILE, filePickerViewModel.getUploadedFile());
 //        }
 //    }
-
+//
 //    @Override
 //    public void onResume() {
 //        super.onResume();
@@ -944,7 +944,7 @@
 //        }
 //
 //    }
-
+//
 //    @Override
 //    public void onPause() {
 //
@@ -967,7 +967,7 @@
 //
 //        super.onPause();
 //    }
-
+//
 //    @Background
 //    public void updateMarker() {
 //        try {
@@ -982,13 +982,13 @@
 //            LogUtil.e("set marker failed", e);
 //        }
 //    }
-
+//
 //    @Click(R.id.vg_messages_preview_last_item)
 //    void onPreviewClick() {
 //        messageListPresenter.setPreviewVisibleGone();
 //        messageListPresenter.moveLastPage();
 //    }
-
+//
 //    //todo
 //    @Override
 //    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -1004,7 +1004,7 @@
 //                                }, Throwable::printStackTrace))
 //                .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
 //    }
-
+//
 //    @Click(R.id.btn_send_message)
 //    void onSendClick() {
 //
@@ -1059,7 +1059,7 @@
 //
 //        AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.Send);
 //    }
-
+//
 //    @Click(R.id.btn_show_mention)
 //    void onMentionClick() {
 //        etMessage.requestFocus();
@@ -1082,7 +1082,7 @@
 //            }
 //        }
 //    }
-
+//
 //    private void handleEasterEggSnowing(String message) {
 //        if (isEasterEggMessage(message)) {
 //            if (vgEasterEggSnow.getChildCount() > 0) {
@@ -1113,7 +1113,7 @@
 //                || message.contains("雪")
 //                || message.toLowerCase().contains("snow");
 //    }
-
+//
 //    private void sendSticker() {
 //        long localId = messageListModel.insertSendingMessageIfCan(entityId, roomId, stickerInfo);
 //        if (localId > 0) {
@@ -1139,7 +1139,7 @@
 //
 //        }
 //    }
-
+//
 //    public void onEvent(SocketServiceStopEvent event) {
 //        ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
 //        if (!TextUtils.isEmpty(accessToken.getRefreshToken())) {
@@ -1220,7 +1220,7 @@
 //
 //        }
 //    }
-
+//
 //    @Override
 //    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 //        UnLockPassCodeManager.getInstance().setUnLocked(true);
@@ -1272,7 +1272,7 @@
 //                break;
 //        }
 //    }
-
+//
 //    @TextChange(R.id.et_message)
 //    void onMessageEditChange(TextView tv, CharSequence text) {
 //
@@ -1280,12 +1280,12 @@
 //        messageListPresenter.setEnableSendButton(!isEmptyText);
 //
 //    }
-
+//
 //    @Click(R.id.et_message)
 //    void onMessageInputClick() {
 //        AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MessageInputField);
 //    }
-
+//
 //    @EditorAction(R.id.et_message)
 //    boolean onMessageDoneClick(TextView tv, int actionId) {
 //        LogUtil.d(tv.toString() + " ::: " + actionId);
@@ -1296,7 +1296,7 @@
 //
 //        return false;
 //    }
-
+//
 //    void onMessageItemClick(ResMessages.Link link, long entityId) {
 //        if (link instanceof DummyMessageLink) {
 //            DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
@@ -1325,7 +1325,7 @@
 //        }
 //
 //    }
-
+//
 //    @OnActivityResult(TopicDetailActivity.REQUEST_DETAIL)
 //    void onTopicDetailResult(int resultCode, Intent data) {
 //        if (resultCode != Activity.RESULT_OK) {
@@ -1351,7 +1351,7 @@
 //            sendMessagePublisherEvent(new NewMessageQueue(messageState));
 //        }
 //    }
-
+//
 //    void onMessageItemLongClick(ResMessages.Link link) {
 //
 //        if (link instanceof DummyMessageLink) {
@@ -1384,7 +1384,7 @@
 //            messageListPresenter.showStickerMessageMenuDialog(isMyMessage, stickerMessage);
 //        }
 //    }
-
+//
 //    public void onEvent(DummyRetryEvent event) {
 //        if (!isForeground) {
 //            return;
@@ -1416,7 +1416,7 @@
 //        }
 //
 //    }
-
+//
 //    public void onEvent(DummyDeleteEvent event) {
 //        if (!isForeground) {
 //            return;
@@ -1436,7 +1436,7 @@
 //        AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MsgLongTap_Delete);
 //
 //    }
-
+//
 //    public void onEvent(ConfirmCopyMessageEvent event) {
 //        if (!isForeground) {
 //            return;
@@ -1444,7 +1444,7 @@
 //        messageListPresenter.copyToClipboard(event.contentString);
 //        AnalyticsUtil.sendEvent(messageListModel.getScreen(entityId), AnalyticsValue.Action.MsgLongTap_Copy);
 //    }
-
+//
 //    public void onEvent(ConfirmFileUploadEvent event) {
 //        LogUtil.d("List fragment onEvent");
 //        if (!isForeground) {
@@ -1453,22 +1453,22 @@
 //
 //        startFileUpload(event.title, event.entityId, event.realFilePath, event.comment);
 //    }
-
+//
 //    private void startFileUpload(String title, long entityId, String filePath, String comment) {
 //        filePickerViewModel.startUpload(getActivity(), title, entityId, filePath, comment);
 //    }
-
+//
 //    public void onEvent(ConfirmDeleteTopicEvent event) {
 //        if (!isForeground) {
 //            return;
 //        }
 //        deleteTopic();
 //    }
-
+//
 //    public void onEvent(FileUploadFinishEvent event) {
 //        messageListPresenter.justRefresh();
 //    }
-
+//
 //    public void onEvent(final RequestMoveDirectMessageEvent event) {
 //
 //        if (!isForeground) {
@@ -1485,7 +1485,7 @@
 //                .isFromPush(isFromPush)
 //                .start();
 //    }
-
+//
 //    @Background
 //    void deleteTopic() {
 //
@@ -1502,7 +1502,7 @@
 //        }
 //
 //    }
-
+//
 //    @Background
 //    void deleteMessage(int messageType, long messageId) {
 //        messageListPresenter.showProgressWheel();
@@ -1530,7 +1530,7 @@
 //        }
 //        messageListPresenter.dismissProgressWheel();
 //    }
-
+//
 //    public void onEvent(RefreshOldMessageEvent event) {
 //        if (!isForeground) {
 //            return;
@@ -1563,7 +1563,7 @@
 //            sendMessagePublisherEvent(new NewMessageQueue(messageState));
 //        }
 //    }
-
+//
 //    public void onEvent(TeamLeaveEvent event) {
 //        if (!messageListModel.isCurrentTeam(event.getTeamId())) {
 //            return;
@@ -1575,7 +1575,7 @@
 //            messageListPresenter.setDisableUser();
 //        }
 //    }
-
+//
 //    public void onEvent(SocketMessageStarEvent event) {
 //        int messageId = event.getMessageId();
 //        boolean starred = event.isStarred();
@@ -1621,7 +1621,7 @@
 //            }
 //        }
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    void updateMentionInfo() {
 //        mentionControlViewModel.refreshMembers(Arrays.asList(roomId));
@@ -1635,7 +1635,7 @@
 //
 //        sendMessagePublisherEvent(new UpdateLinkPreviewMessageQueue(messageId));
 //    }
-
+//
 //    void updateRoomInfo() {
 //        messageListModel.updateMarkerInfo(teamId, roomId);
 //        setEmptyMessageViewControl();
@@ -1644,7 +1644,7 @@
 //            sendMessagePublisherEvent(new NewMessageQueue(messageState));
 //        }
 //    }
-
+//
 //    public void onEvent(RoomMarkerEvent event) {
 //        if (!isForeground) {
 //            return;
@@ -1664,7 +1664,7 @@
 //            messageListPresenter.justRefresh();
 //        }
 //    }
-
+//
 //    public void onEvent(ShowProfileEvent event) {
 //        if (!isForeground) {
 //            return;
@@ -1683,7 +1683,7 @@
 //        }
 //
 //    }
-
+//
 //    public void onEventMainThread(ChatCloseEvent event) {
 //        if (entityId == event.getCompanionId()) {
 //            getActivity().finish();
@@ -1704,7 +1704,7 @@
 //            messageListPresenter.showFailToast(msg);
 //        }
 //    }
-
+//
 //    public void onEvent(TopicInfoUpdateEvent event) {
 //        if (event.getId() == entityId) {
 //            FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
@@ -1715,7 +1715,7 @@
 //            }
 //        }
 //    }
-
+//
 //    @UiThread
 //    void closeDialogFragment() {
 //        android.app.Fragment dialogFragment = getActivity().getFragmentManager().findFragmentByTag("dialog");
@@ -1723,7 +1723,7 @@
 //            ((android.app.DialogFragment) dialogFragment).dismiss();
 //        }
 //    }
-
+//
 //    public void onEvent(MemberStarredEvent memberStarredEvent) {
 //        if (memberStarredEvent.getId() == entityId) {
 //            FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
@@ -1731,13 +1731,13 @@
 //            refreshActionbar();
 //        }
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    void refreshActionbar() {
 //        setUpActionbar();
 //        getActivity().invalidateOptionsMenu();
 //    }
-
+//
 //    public void onEvent(ProfileChangeEvent event) {
 //        messageListPresenter.justRefresh();
 //    }
@@ -1754,7 +1754,7 @@
 //
 //        modifyEntity(event);
 //    }
-
+//
 //    @Background
 //    void modifyEntity(ConfirmModifyTopicEvent event) {
 //        messageListPresenter.showProgressWheel();
@@ -1775,12 +1775,12 @@
 //            messageListPresenter.dismissProgressWheel();
 //        }
 //    }
-
+//
 //    @UiThread
 //    void modifyEntitySucceed(String changedEntityName) {
 //        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(changedEntityName);
 //    }
-
+//
 //    /*
 //    Announcement
 //     */
@@ -1842,7 +1842,7 @@
 //                break;
 //        }
 //    }
-
+//
 //    @Background
 //    public void onEvent(MessageStarredEvent event) {
 //        if (!isForeground) {
@@ -1876,7 +1876,7 @@
 //                break;
 //        }
 //    }
-
+//
 //    public void onEvent(SelectedMemberInfoForMentionEvent event) {
 //
 //        if (!isForeground) {
@@ -1889,11 +1889,11 @@
 //        searchedItemVO.setType(event.getType());
 //        mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
 //    }
-
+//
 //    public void onEvent(UnshareFileEvent event) {
 //        messageListPresenter.justRefresh();
 //    }
-
+//
 //    @Background
 //    void checkAnnouncementExistsAndCreate(long messageId) {
 //        ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, roomId);
@@ -1917,7 +1917,7 @@
 //            getAnnouncement();
 //        }
 //    }
-
+//
 //    @Background
 //    void deleteAnnouncement() {
 //        messageListPresenter.showProgressWheel();
@@ -1928,7 +1928,7 @@
 //            getAnnouncement();
 //        }
 //    }
-
+//
 //    @Override
 //    public boolean onBackPressed() {
 //        if (stickerViewModel.isShow()) {
@@ -1942,7 +1942,7 @@
 //        }
 //        return false;
 //    }
-
+//
 //    @Override
 //    public boolean onKey(int keyCode, KeyEvent event) {
 //
@@ -1958,8 +1958,8 @@
 //
 //        return false;
 //    }
-
-
+//
+//
 //    @Click(R.id.btn_message_action_button_1)
 //    public void handleActionButton1() {
 //        int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity().getApplicationContext());
@@ -2002,7 +2002,7 @@
 //                break;
 //        }
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void setActionButtons() {
 //        switch (buttonAction) {

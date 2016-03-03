@@ -39,7 +39,7 @@
 //import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 //import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 //import com.tosslab.jandi.app.ui.message.v2.adapter.MessageAdapter;
-//import com.tosslab.jandi.app.ui.message.v2.adapter.MainMessageListAdapter;
+//import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 //import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListSearchAdapter;
 //import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 //import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
@@ -159,7 +159,7 @@
 //    void initObject() {
 //        progressWheelForAction = new ProgressWheel(activity);
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void setEmptyViewIfNeed() {
 //        int originItemCount = getItemCount();
@@ -173,10 +173,10 @@
 //            layoutEmpty.setVisibility(View.VISIBLE);
 //        }
 //    }
-
+//
 //    @AfterViews
 //    void initViews() {
-
+//
 // 프로그레스를 좀 더 부드럽게 보여주기 위해서 애니메이션
 //        vgProgressForMessageList.setAlpha(0f);
 //        vgProgressForMessageList.animate()
@@ -199,13 +199,13 @@
 //                .build();
 //
 //        lvMessages.addItemDecoration(stickyHeadersItemDecoration);
-
+//
 //        setListTouchListener(listTouchListener);
-
+//
 //        if (isDisabled) {
 //            setDisableUser();
 //        }
-
+//
 //        if (sendLayoutVisible) {
 //            sendLayoutVisibleGone();
 //        }
@@ -213,7 +213,7 @@
 //        if (gotoLatestLayoutVisible) {
 //            setGotoLatestLayoutVisible();
 //        }
-
+//
 //        offlineLayer = new OfflineLayer(vgOffline);
 //
 //        if (!NetworkCheckUtil.isConnected()) {
@@ -221,20 +221,20 @@
 //        }
 //
 //    }
-
+//
 //    public void sendLayoutVisibleGone() {
 //        sendLayoutVisible = true;
 //        if (vgMessageInput != null) {
 //            vgMessageInput.setVisibility(View.GONE);
 //        }
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void addAll(int position, List<ResMessages.Link> messages) {
 //        messageAdapter.addAll(position, messages);
 //        messageAdapter.notifyDataSetChanged();
 //    }
-
+//
 //    @UiThread
 //    public void showProgressWheel() {
 //        if (progressWheelForAction != null && progressWheelForAction.isShowing()) {
@@ -245,14 +245,14 @@
 //            progressWheelForAction.show();
 //        }
 //    }
-
+//
 //    @UiThread
 //    public void dismissProgressWheel() {
 //        if (progressWheelForAction != null && progressWheelForAction.isShowing()) {
 //            progressWheelForAction.dismiss();
 //        }
 //    }
-
+//
 //    public void setEnableSendButton(boolean enabled) {
 //        sendButton.setEnabled(enabled);
 //    }
@@ -260,14 +260,14 @@
 //    public int getLastItemPosition() {
 //        return messageAdapter.getItemCount();
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void moveLastPage() {
 //        if (lvMessages != null) {
 //            lvMessages.getLayoutManager().scrollToPosition(messageAdapter.getItemCount() - 1);
 //        }
 //    }
-
+//
 //    public void setOldLoadingComplete() {
 //        messageAdapter.setOldLoadingComplete();
 //    }
@@ -275,7 +275,7 @@
 //    public void setOldNoMoreLoading() {
 //        messageAdapter.setOldNoMoreLoading();
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void moveToMessage(long messageId, int firstVisibleItemTop) {
 //        int itemPosition = messageAdapter.indexByMessageId(messageId);
@@ -287,7 +287,7 @@
 //        int itemPosition = messageAdapter.indexOfLinkId(linkId);
 //        ((LinearLayoutManager) lvMessages.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
 //    }
-
+//
 //    public long getFirstVisibleItemLinkId() {
 //        if (messageAdapter.getItemCount() > 0) {
 //            int firstVisibleItemPosition = ((LinearLayoutManager) lvMessages.getLayoutManager()).findFirstVisibleItemPosition();
@@ -309,12 +309,12 @@
 //            return 0;
 //        }
 //    }
-
+//
 //    @UiThread
 //    public void showNoMoreMessage() {
 //        ColoredToast.showWarning(activity.getString(R.string.warn_no_more_messages));
 //    }
-
+//
 //    public void moveFileDetailActivity(Fragment fragment, long messageId, long roomId, long selectMessageId) {
 //        FileDetailActivity_
 //                .intent(fragment)
@@ -324,11 +324,11 @@
 //                .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
 //        activity.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
 //    }
-
+//
 //    public ResMessages.Link getItem(int position) {
 //        return messageAdapter.getItem(position);
 //    }
-
+//
 //    public String getSendEditText() {
 //        return etMessage.getText().toString();
 //    }
@@ -339,12 +339,12 @@
 //            etMessage.setText(tempMessage);
 //        }
 //    }
-
+//
 //    @UiThread
 //    public void showFailToast(String message) {
 //        ColoredToast.showError(message);
 //    }
-
+//
 //    public void showMessageMenuDialog(boolean isDirectMessage, boolean myMessage,
 //                                      ResMessages.TextMessage textMessage) {
 //        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByTextMessage(
@@ -364,17 +364,17 @@
 //                (commentMessage, false);
 //        newFragment.show(activity.getSupportFragmentManager(), "dioalog");
 //    }
-
+//
 //    @UiThread
 //    public void showSuccessToast(String message) {
 //        ColoredToast.show(message);
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void clearMessages() {
 //        messageAdapter.clear();
 //    }
-
+//
 //    public ResMessages.Link getLastItemWithoutDummy() {
 //        int count = messageAdapter.getItemCount();
 //        for (int idx = count - 1; idx >= 0; --idx) {
@@ -386,17 +386,17 @@
 //
 //        return null;
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void finish() {
 //        activity.finish();
 //    }
-
+//
 //    public void copyToClipboard(String contentString) {
 //        final ClipData clipData = ClipData.newPlainText("", contentString);
 //        clipboardManager.setPrimaryClip(clipData);
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void changeToArchive(long messageId) {
 //        int position = messageAdapter.indexByMessageId(messageId);
@@ -421,7 +421,7 @@
 //            messageAdapter.notifyItemRangeChanged(0, messageAdapter.getItemCount());
 //        }
 //    }
-
+//
 //    public void updateLinkPreviewMessage(ResMessages.TextMessage message) {
 //        long messageId = message.id;
 //        int index = messageAdapter.indexByMessageId(messageId);
@@ -435,29 +435,29 @@
 //        }
 //        link.message = message;
 //    }
-
+//
 //    public void showDummyMessageDialog(long localId) {
 //        DummyMessageDialog_.builder()
 //                .localId(localId)
 //                .build()
 //                .show(activity.getFragmentManager(), "dialog");
 //    }
-
+//
 //    public DummyMessageLink getDummyMessage(long localId) {
 //        int position = messageAdapter.getDummeMessagePositionByLocalId(localId);
 //        return ((DummyMessageLink) messageAdapter.getItem(position));
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void refreshAll() {
 //        messageAdapter.notifyDataSetChanged();
 //    }
-
+//
 //    private boolean isVisibleLastItem() {
 //        return ((LinearLayoutManager) lvMessages.getLayoutManager())
 //                .findFirstVisibleItemPosition() == messageAdapter.getItemCount() - 1;
 //    }
-
+//
 //    @UiThread
 //    public void showPreviewIfNotLastItem() {
 //
@@ -517,34 +517,34 @@
 //
 //        vgPreview.setVisibility(View.VISIBLE);
 //    }
-
+//
 //    public void setPreviewVisibleGone() {
 //        if (vgPreview != null) {
 //            vgPreview.setVisibility(View.GONE);
 //        }
 //    }
-
+//
 //    public void disableChat() {
 //        isDisabled = true;
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void dismissLoadingView() {
 //        vgProgressForMessageList.animate()
 //                .alpha(0f)
 //                .setDuration(250);
 //    }
-
+//
 //    public void setMarker(int lastMarker) {
 //        if (messageAdapter != null) {
 //            messageAdapter.setMarker(lastMarker);
 //        }
 //    }
-
+//
 //    public void setMoreNewFromAdapter(boolean isMoreNew) {
 //        messageAdapter.setMoreFromNew(isMoreNew);
 //    }
-
+//
 //    public void setNewLoadingComplete() {
 //        messageAdapter.setNewLoadingComplete();
 //    }
@@ -552,7 +552,7 @@
 //    public void setNewNoMoreLoading() {
 //        messageAdapter.setNewNoMoreLoading();
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void setGotoLatestLayoutVisible() {
 //        gotoLatestLayoutVisible = true;
@@ -560,7 +560,7 @@
 //            vgMoveToLatest.setVisibility(View.VISIBLE);
 //        }
 //    }
-
+//
 //    public void setOnItemClickListener(MessageAdapter.OnItemClickListener onItemClickListener) {
 //        messageAdapter.setOnItemClickListener(onItemClickListener);
 //    }
@@ -568,16 +568,16 @@
 //    public void setOnItemLongClickListener(MessageAdapter.OnItemLongClickListener onItemLongClickListener) {
 //        messageAdapter.setOnItemLongClickListener(onItemLongClickListener);
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void showEmptyView() {
 //        layoutEmpty.setVisibility(View.VISIBLE);
 //    }
-
+//
 //    public int getLastVisibleItemPosition() {
 //        return ((LinearLayoutManager) lvMessages.getLayoutManager()).findLastVisibleItemPosition();
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void justRefresh() {
 //        int itemCount = messageAdapter.getItemCount();
@@ -585,14 +585,14 @@
 //            messageAdapter.notifyItemRangeChanged(0, itemCount);
 //        }
 //    }
-
+//
 //    @UiThread
 //    public void setMarkerInfo(long teamId, long roomId) {
 //        messageAdapter.setTeamId(teamId);
 //        messageAdapter.setRoomId(roomId);
 //        messageAdapter.notifyDataSetChanged();
 //    }
-
+//
 //    @UiThread
 //    public void insertMessageEmptyLayout() {
 //
@@ -603,7 +603,7 @@
 //
 //        LayoutInflater.from(activity).inflate(R.layout.view_message_list_empty, layoutEmpty, true);
 //    }
-
+//
 //    @UiThread
 //    public void insertTeamMemberEmptyLayout() {
 //
@@ -619,7 +619,7 @@
 //        view.findViewById(R.id.img_chat_choose_member_empty).setOnClickListener(onClickListener);
 //        view.findViewById(R.id.btn_chat_choose_member_empty).setOnClickListener(onClickListener);
 //    }
-
+//
 //    private String getOwnerName() {
 //        List<FormattedEntity> users = EntityManager.getInstance().getFormattedUsers();
 //        FormattedEntity tempDefaultEntity = new FormattedEntity();
@@ -630,7 +630,7 @@
 //                .first();
 //        return owner.getUser().name;
 //    }
-
+//
 //    @UiThread
 //    public void insertTopicMemberEmptyLayout() {
 //
@@ -644,7 +644,7 @@
 //        view.findViewById(R.id.btn_chat_choose_member_empty).setOnClickListener(v -> EventBus.getDefault().post(new TopicInviteEvent()));
 //
 //    }
-
+//
 //    public int getItemCountWithoutEvent() {
 //
 //        int itemCount = messageAdapter.getItemCount();
@@ -656,14 +656,14 @@
 //
 //        return itemCount;
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void clearEmptyMessageLayout() {
 //        if (layoutEmpty != null) {
 //            layoutEmpty.removeAllViews();
 //        }
 //    }
-
+//
 //    public int getItemCount() {
 //        return messageAdapter.getItemCount();
 //    }
@@ -671,7 +671,7 @@
 //    public int getItemCountWithoutDummy() {
 //        return messageAdapter.getItemCount() - messageAdapter.getDummyMessageCount();
 //    }
-
+//
 //    public long getRoomId() {
 //        return messageAdapter.getRoomId();
 //    }
@@ -681,7 +681,7 @@
 //            inputMethodManager.hideSoftInputFromWindow(etMessage.getWindowToken(), 0);
 //        }
 //    }
-
+//
 //    public void showStickerPreview() {
 //        vgStickerPreview.setVisibility(View.VISIBLE);
 //    }
@@ -699,17 +699,17 @@
 //    public void setEntityInfo(long entityId) {
 //        messageAdapter.setEntityId(entityId);
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void modifyStarredInfo(long messageId, boolean isStarred) {
 //        int position = messageAdapter.indexByMessageId(messageId);
 //        messageAdapter.modifyStarredStateByPosition(position, isStarred);
 //    }
-
+//
 //    public void setLastReadLinkId(long lastReadLinkId) {
 //        messageAdapter.setLastReadLinkId(lastReadLinkId);
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void moveLastReadLink() {
 //        long lastReadLinkId = messageAdapter.getLastReadLinkId();
@@ -735,7 +735,7 @@
 //        }
 //
 //    }
-
+//
 //    @UiThread
 //    public void setUpOldMessage(List<ResMessages.Link> linkList,
 //                                int currentItemCount, boolean isFirstMessage) {
@@ -765,7 +765,7 @@
 //            setOldNoMoreLoading();
 //        }
 //    }
-
+//
 //    @UiThread
 //    public void setUpNewMessage(List<ResMessages.Link> linkList, long myId, boolean firstLoad) {
 //
@@ -804,7 +804,7 @@
 //        }
 //
 //    }
-
+//
 //    private void setUpLastReadLink(long myId) {
 //        long lastReadLinkId = messageAdapter.getLastReadLinkId();
 //        int indexOfLinkId = messageAdapter.indexOfLinkId(lastReadLinkId);
@@ -826,7 +826,7 @@
 //        }
 //
 //    }
-
+//
 //    public void updateMessageStarred(int messageId, boolean starred) {
 //        int itemCount = messageAdapter.getItemCount();
 //        for (int idx = 0; idx > itemCount; ++idx) {
@@ -837,14 +837,14 @@
 //            }
 //        }
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void deleteLinkByMessageId(long messageId) {
 //        int position = messageAdapter.indexByMessageId(messageId);
 //        messageAdapter.remove(position);
 //        messageAdapter.notifyDataSetChanged();
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void dismissOfflineLayer() {
 //        offlineLayer.dismissOfflineView();
@@ -854,7 +854,7 @@
 //    public void showOfflineLayer() {
 //        offlineLayer.showOfflineView();
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void showGrayToast(String message) {
 //        ColoredToast.showGray(message);
@@ -867,14 +867,14 @@
 //
 //        AlertUtil.showConfirmDialog(activity, msg, null, false);
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void setDisableUser() {
 //        sendLayoutVisibleGone();
 //        vDisabledUser.setVisibility(View.VISIBLE);
 //        setPreviewVisibleGone();
 //    }
-
+//
 //    public void setListTouchListener(View.OnTouchListener touchListener) {
 //        if (lvMessages != null) {
 //            lvMessages.setOnTouchListener(touchListener);
@@ -892,23 +892,23 @@
 //            messageAdapter.setLastReadLinkId(-1);
 //        }
 //    }
-
+//
 //    public void initAdapter(boolean isFromSearch) {
 //
 //        if (isFromSearch) {
 //            messageAdapter = new MessageListSearchAdapter(activity);
 //        } else {
-//            messageAdapter = new MainMessageListAdapter(activity);
+//            messageAdapter = new MessageListAdapter(activity);
 //        }
 //
 //    }
-
+//
 //    public void setFirstCursorLinkId(long firstCursorLinkId) {
-//        if (messageAdapter instanceof MainMessageListAdapter) {
-//            ((MainMessageListAdapter) messageAdapter).setFirstCursorLinkId(firstCursorLinkId);
+//        if (messageAdapter instanceof MessageListAdapter) {
+//            ((MessageListAdapter) messageAdapter).setFirstCursorLinkId(firstCursorLinkId);
 //        }
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void showOldLoadProgress() {
 //
@@ -928,7 +928,7 @@
 //
 //        oldProgressBar.startAnimation(inAnim);
 //    }
-
+//
 //    @UiThread(propagation = UiThread.Propagation.REUSE)
 //    public void dismissOldLoadProgress() {
 //

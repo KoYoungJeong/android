@@ -8,11 +8,13 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 public class NewMessageQueue implements MessageQueue {
 
     private final MessageState messageState;
-
+    private long teamId;
+    private long roomId;
+    private int currentItemCount;
+    private boolean loadHistory;
     public NewMessageQueue(MessageState messageState) {
         this.messageState = messageState;
     }
-
 
     @Override
     public LoadType getQueueType() {
@@ -24,4 +26,35 @@ public class NewMessageQueue implements MessageQueue {
         return messageState;
     }
 
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
+    }
+
+    public long getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(long roomId) {
+        this.roomId = roomId;
+    }
+
+    public int getCurrentItemCount() {
+        return currentItemCount;
+    }
+
+    public void setCurrentItemCount(int currentItemCount) {
+        this.currentItemCount = currentItemCount;
+    }
+
+    public void setLoadHistory(boolean loadHistory) {
+        this.loadHistory = loadHistory;
+    }
+
+    public boolean loadHistory() {
+        return loadHistory;
+    }
 }

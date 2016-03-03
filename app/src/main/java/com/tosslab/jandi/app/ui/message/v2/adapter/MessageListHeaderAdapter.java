@@ -49,11 +49,7 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
             viewHolder.dateTextView.setText(DateTransformator.getTimeStringForDivider(headerId));
         }
 
-        if (MessageListV2Fragment.SNOWING_EASTEREGG_STARTED) {
-            viewHolder.vgHeaderWrapper.setBackgroundColor(SnowView.BACKGROUND_COLOR);
-        } else {
-            viewHolder.vgHeaderWrapper.setBackgroundColor(Color.WHITE);
-        }
+        viewHolder.vgHeaderWrapper.setBackgroundColor(Color.WHITE);
     }
 
     @Override

@@ -56,48 +56,48 @@ public class NormalOldMessageLoader implements OldMessageLoader {
     public ResMessages load(long roomId, long linkId) {
         ResMessages oldMessage = null;
         // 모든 요청은 dummy 가 아닌 실제 데이터 기준...
-        int currentItemCount = presenter.getItemCountWithoutDummy();
-
-        if (currentItemCount > 0) {
-            view.showOldLoadProgress();
-        }
-
-        try {
-            int itemCount = Math.min(
-                    Math.max(MessageManipulator.NUMBER_OF_MESSAGES, currentItemCount),
-                    MessageManipulator.MAX_OF_MESSAGES);
-
-            oldMessage = getOldMessages(roomId, linkId, currentItemCount, itemCount);
-
-            if (oldMessage == null || oldMessage.records == null || oldMessage.records.isEmpty()) {
-                checkItemCountIfException(currentItemCount);
-                return oldMessage;
-            }
-
-            Collections.sort(oldMessage.records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
-
-            long firstLinkIdInMessage = oldMessage.records.get(0).id;
-            messageState.setFirstItemId(firstLinkIdInMessage);
-            boolean isFirstMessage = oldMessage.firstLinkId == firstLinkIdInMessage;
-            messageState.setIsFirstMessage(isFirstMessage);
-
-            if (currentItemCount <= 0) {
-                // 처음인 경우 로드된 데이터의 마지막 것으로 설정 ( New Load 와 관련있음)
-                messageState.setLastUpdateLinkId(
-                        oldMessage.records.get(oldMessage.records.size() - 1).id);
-            }
-
-            presenter.setUpOldMessage(oldMessage.records, currentItemCount, isFirstMessage);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            checkItemCountIfException(currentItemCount);
-        } catch (Exception e) {
-            checkItemCountIfException(currentItemCount);
-        } finally {
-            view.dismissProgressWheel();
-            view.dismissLoadingView();
-            view.dismissOldLoadProgress();
-        }
+//        int currentItemCount = presenter.getItemCountWithoutDummy();
+//
+//        if (currentItemCount > 0) {
+//            view.showOldLoadProgress();
+//        }
+//
+//        try {
+//            int itemCount = Math.min(
+//                    Math.max(MessageManipulator.NUMBER_OF_MESSAGES, currentItemCount),
+//                    MessageManipulator.MAX_OF_MESSAGES);
+//
+//            oldMessage = getOldMessages(roomId, linkId, currentItemCount, itemCount);
+//
+//            if (oldMessage == null || oldMessage.records == null || oldMessage.records.isEmpty()) {
+//                checkItemCountIfException(currentItemCount);
+//                return oldMessage;
+//            }
+//
+//            Collections.sort(oldMessage.records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
+//
+//            long firstLinkIdInMessage = oldMessage.records.get(0).id;
+//            messageState.setFirstItemId(firstLinkIdInMessage);
+//            boolean isFirstMessage = oldMessage.firstLinkId == firstLinkIdInMessage;
+//            messageState.setIsFirstMessage(isFirstMessage);
+//
+//            if (currentItemCount <= 0) {
+//                // 처음인 경우 로드된 데이터의 마지막 것으로 설정 ( New Load 와 관련있음)
+//                messageState.setLastUpdateLinkId(
+//                        oldMessage.records.get(oldMessage.records.size() - 1).id);
+//            }
+//
+//            presenter.setUpOldMessage(oldMessage.records, currentItemCount, isFirstMessage);
+//        } catch (RetrofitError e) {
+//            e.printStackTrace();
+//            checkItemCountIfException(currentItemCount);
+//        } catch (Exception e) {
+//            checkItemCountIfException(currentItemCount);
+//        } finally {
+//            view.dismissProgressWheel();
+//            view.dismissLoadingView();
+//            view.dismissOldLoadProgress();
+//        }
 
         return oldMessage;
     }
@@ -145,7 +145,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                 oldMessage = messageListModel.getBeforeMarkerMessage(linkId);
                 if (hasMessage(oldMessage)) {
                     if (oldMessage.records.get(oldMessage.records.size() - 1).id == linkId) {
-                        presenter.setLastReadLinkId(-1);
+//                        presenter.setLastReadLinkId(-1);
                     }
                     updateMarker(teamId, oldMessage.entityId, oldMessage.lastLinkId);
                     deleteCompletedSendingMessage(oldMessage.entityId);
@@ -192,7 +192,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
     void checkItemCountIfException(int currentItemCount) {
         boolean hasItem = currentItemCount > 0;
         if (!hasItem) {
-            view.dismissLoadingView();
+//            view.dismissLoadingView();
             view.setEmptyLayoutVisible(true);
         }
     }

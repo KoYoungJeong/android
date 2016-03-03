@@ -41,7 +41,6 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
     @Extra
     long firstCursorLinkId = -1;
 
-
     private OnBackPressedListener onBackPressedListener;
     private OnKeyPressListener onKeyPressListener;
 
@@ -71,7 +70,6 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
 
         if (messageListFragment == null) {
             if (!isFromSearch) {
-
                 messageListFragment = MessageListV2Fragment_.builder()
                         .entityId(entityId)
                         .roomId(roomId)
@@ -92,10 +90,9 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
                         .lastMarker(lastReadLinkId)
                         .build();
             }
+
             getSupportFragmentManager().beginTransaction()
-                    .add(android.R.id.content,
-                            messageListFragment,
-                            TAG_LIST)
+                    .add(android.R.id.content, messageListFragment, TAG_LIST)
                     .commit();
         }
 

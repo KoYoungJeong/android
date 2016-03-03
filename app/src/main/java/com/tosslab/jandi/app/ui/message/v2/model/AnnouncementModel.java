@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.model;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -42,6 +43,7 @@ public class AnnouncementModel {
         return entity.announcementOpened;
     }
 
+    @Nullable
     public ResAnnouncement getAnnouncement(long teamId, long topicId) {
         ResAnnouncement announcement = null;
         try {

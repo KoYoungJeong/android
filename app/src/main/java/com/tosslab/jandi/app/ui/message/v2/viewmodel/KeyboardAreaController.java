@@ -88,19 +88,19 @@ public class KeyboardAreaController {
         keyboardHeightModel.addOnKeyboardShowListener((isShowing) -> {
             boolean visibility = keyboardHeightModel.isOpened()
                     || stickerViewModel.isShow() || uploadMenuViewModel.isShow();
-            presenter.setAnnouncementVisible(!visibility);
+//            presenter.setAnnouncementVisible(!visibility);
         });
 
         stickerViewModel.setOnStickerLayoutShowListener(isShow -> {
             boolean visibility = keyboardHeightModel.isOpened()
                     || stickerViewModel.isShow() || uploadMenuViewModel.isShow();
-            presenter.setAnnouncementVisible(!visibility);
+//            presenter.setAnnouncementVisible(!visibility);
         });
 
         uploadMenuViewModel.setOnUploadLayoutShowListener(isShow -> {
             boolean visibility = keyboardHeightModel.isOpened()
                     || stickerViewModel.isShow() || uploadMenuViewModel.isShow();
-            presenter.setAnnouncementVisible(!visibility);
+//            presenter.setAnnouncementVisible(!visibility);
         });
 
         uploadMenuViewModel.setOnClickUploadEventListener(() -> {
@@ -118,15 +118,15 @@ public class KeyboardAreaController {
             StickerInfo newStickerInfo = new StickerInfo();
             newStickerInfo.setStickerGroupId(groupId);
             newStickerInfo.setStickerId(stickerId);
-            presenter.showStickerPreview(newStickerInfo);
-            view.setEnableSendButton(true);
-            presenter.sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Select);
+//            presenter.showStickerPreview(newStickerInfo);
+//            view.setEnableSendButton(true);
+//            presenter.sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Select);
         });
 
-        stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId)
-                -> presenter.sendMessage(etMessage.getText().toString()));
+//        stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId)
+//                -> presenter.sendMessage(etMessage.getText().toString()));
 
-        stickerViewModel.setType(presenter.getChatTypeForSticker());
+//        stickerViewModel.setType(presenter.getChatTypeForSticker());
 
         stickerViewModel.setStickerButton(btnActionButton2);
     }
@@ -164,7 +164,7 @@ public class KeyboardAreaController {
                     showStickerSelectorIfNotShow();
                     break;
                 case STICKER:
-                    presenter.sendAnalyticsEvent(AnalyticsValue.Action.Sticker);
+//                    presenter.sendAnalyticsEvent(AnalyticsValue.Action.Sticker);
                     if (keyboardHeightModel.isOpened()) {
                         dismissStickerSelectorIfShow();
                     } else {
@@ -235,7 +235,7 @@ public class KeyboardAreaController {
                                     });
                             buttonAction = ButtonAction.UPLOAD;
                             setActionButtons();
-                            presenter.sendAnalyticsEvent(AnalyticsValue.Action.Upload);
+//                            presenter.sendAnalyticsEvent(AnalyticsValue.Action.Upload);
                         })
                         .noPermission(() -> {
                             String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
