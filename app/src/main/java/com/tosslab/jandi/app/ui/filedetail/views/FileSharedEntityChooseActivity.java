@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -108,7 +109,7 @@ public class FileSharedEntityChooseActivity extends BaseAppCompatActivity {
                 .filter(integerWrapper -> integerWrapper != myId)
                 .filter(entityId -> entityManager.getEntityById(entityId) != EntityManager.UNKNOWN_USER_ENTITY)
                 .map(entityManager::getEntityById)
-                .toSortedList((lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()))
+                .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()))
                 .collect(() -> sharedEntities, List::addAll)
                 .subscribe();
 

@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
@@ -514,7 +515,7 @@ public class EntityManager {
     private List<FormattedEntity> sortFormattedEntityList(Collection<FormattedEntity> naiveEntities) {
         List<FormattedEntity> sortedEntities = new ArrayList<>(naiveEntities);
         Collections.sort(sortedEntities, (formattedEntity, formattedEntity2) ->
-                formattedEntity.getName().compareToIgnoreCase(formattedEntity2.getName()));
+                StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName()));
 
         return sortedEntities;
     }

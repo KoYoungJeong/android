@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import org.androidannotations.annotations.EBean;
 
@@ -35,11 +36,9 @@ public class FileUploadModel {
                 .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
                 .toSortedList((formattedEntity, formattedEntity2) -> {
                     if (formattedEntity.isUser() && formattedEntity2.isUser()) {
-                        return formattedEntity.getName()
-                                .compareToIgnoreCase(formattedEntity2.getName());
+                        return StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
                     } else if (!formattedEntity.isUser() && !formattedEntity2.isUser()) {
-                        return formattedEntity.getName()
-                                .compareToIgnoreCase(formattedEntity2.getName());
+                        return StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
                     } else {
                         if (formattedEntity.isUser()) {
                             return 1;

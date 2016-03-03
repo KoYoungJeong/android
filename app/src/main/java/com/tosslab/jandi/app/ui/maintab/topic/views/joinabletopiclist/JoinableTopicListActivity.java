@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.presenter.
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -115,15 +116,15 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
     public void setEntities(Observable<Topic> unjoinEntities) {
         adapter.clear();
         unjoinEntities
-                .toSortedList((lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()))
+                .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()))
                 .subscribe(entities -> {
-                    if (entities.size() == 0) {
-                        JoinableTopicListActivity.this.finish();
-                        showToast(getString(R.string.jandi_no_topic_to_join));
-                    } else {
-                        adapter.addAll(entities);
-                    }
-                });
+            if (entities.size() == 0) {
+                JoinableTopicListActivity.this.finish();
+                showToast(getString(R.string.jandi_no_topic_to_join));
+            } else {
+                adapter.addAll(entities);
+            }
+        });
         adapter.notifyDataSetChanged();
     }
 

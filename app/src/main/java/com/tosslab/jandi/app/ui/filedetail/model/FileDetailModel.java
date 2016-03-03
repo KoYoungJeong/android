@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.file.FileUtil;
@@ -161,11 +162,9 @@ public class FileDetailModel {
                 .filter(formattedEntity -> formattedEntity.getId() != entityManager.getMe().getId())
                 .toSortedList((formattedEntity, formattedEntity2) -> {
                     if (formattedEntity.isUser() && formattedEntity2.isUser()) {
-                        return formattedEntity.getName()
-                                .compareToIgnoreCase(formattedEntity2.getName());
+                        return  StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
                     } else if (!formattedEntity.isUser() && !formattedEntity2.isUser()) {
-                        return formattedEntity.getName()
-                                .compareToIgnoreCase(formattedEntity2.getName());
+                        return  StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
                     } else {
                         if (formattedEntity.isUser()) {
                             return 1;

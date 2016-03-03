@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.ui.selector.room.adapter.RoomRecyclerAdapter;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -188,13 +189,13 @@ public class RoomSelectorImpl implements RoomSelector {
                 .toSortedList((lhs, rhs) -> {
 
                     if (lhs.isStarred && rhs.isStarred) {
-                        return lhs.getName().compareToIgnoreCase(rhs.getName());
+                        return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                     } else if (lhs.isStarred) {
                         return -1;
                     } else if (rhs.isStarred) {
                         return 1;
                     } else {
-                        return lhs.getName().compareToIgnoreCase(rhs.getName());
+                        return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                     }
 
                 }).subscribe(topics -> {
@@ -252,13 +253,13 @@ public class RoomSelectorImpl implements RoomSelector {
         for (ResFolder folder : topicFolders) {
             Collections.sort(topicDataMap.get(folder.id), (lhs, rhs) -> {
                 if (lhs.isStarred() && rhs.isStarred()) {
-                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                    return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                 } else if (lhs.isStarred()) {
                     return -1;
                 } else if (rhs.isStarred()) {
                     return 1;
                 } else {
-                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                    return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                 }
             });
         }
@@ -345,7 +346,7 @@ public class RoomSelectorImpl implements RoomSelector {
         } else if (EntityManager.getInstance().isBot(rhs.getEntityId())) {
             return 1;
         }
-        return lhs.getName().compareToIgnoreCase(rhs.getName());
+        return StringCompareUtil.compare(lhs.getName(), rhs.getName());
     }
 
     private int getDisabledUserCount(List<FormattedEntity> users) {
