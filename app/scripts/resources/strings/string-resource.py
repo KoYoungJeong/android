@@ -89,6 +89,8 @@ def makeXml(dic, absResourcePath):
         for resourceKey in dic[languageKey]:
             if resourceKey is None:
                 continue
+            if dic[languageKey][resourceKey] is None:
+                dic[languageKey][resourceKey] = ""
             output += "\n"
             output +="\t<string name=\"%s\">\"%s\"</string>" % (resourceKey, dic[languageKey][resourceKey])
 
