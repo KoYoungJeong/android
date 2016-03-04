@@ -3,18 +3,24 @@ package com.tosslab.jandi.app.ui.message.v2;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.exception.ExceptionData;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
+import com.tosslab.jandi.app.ui.message.to.SendingMessage;
+import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
-import com.tosslab.jandi.app.ui.message.v2.domain.Room;
+import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
@@ -28,6 +34,7 @@ import org.androidannotations.annotations.EBean;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
@@ -52,14 +59,9 @@ public class MessageListV2Presenter {
     private PublishSubject<MessageQueue> messageLoadPublishSubject;
     private Subscription messageLoadSubscription;
     private MessageState currentMessageState;
-    private Room room;
 
     public void setView(View view) {
         this.view = view;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
     }
 
     public void onInitMessageState(long lastReadEntityId) {
@@ -67,8 +69,8 @@ public class MessageListV2Presenter {
         currentMessageState.setFirstItemId(lastReadEntityId);
     }
 
-    public void setEntityInfo() {
-        messageListModel.setEntityInfo(room.getEntityType(), room.getEntityId());
+    public void setEntityInfo(int entityType, long entityId) {
+        messageListModel.setEntityInfo(entityType, entityId);
     }
 
     @AfterInject
@@ -96,7 +98,7 @@ public class MessageListV2Presenter {
                             loadNewMessage((NewMessageQueue) messageQueue);
                             break;
                         case Send:
-//                            sendMessage(messageQueue);
+                            sendMessage((SendingMessageQueue) messageQueue);
                             break;
                         case UpdateLinkPreview:
 //                            updateLinkPreview(messageQueue);
@@ -109,18 +111,18 @@ public class MessageListV2Presenter {
                 });
     }
 
-    public void onDetermineUserStatus() {
-        if (messageListModel.isEnabledIfUser(room.getEntityId())) {
+    public void onDetermineUserStatus(long entityId) {
+        if (messageListModel.isEnabledIfUser(entityId)) {
             view.showDisabledUserLayer();
         }
     }
 
     @Background
-    public void onInitAnnouncement() {
-        ResAnnouncement announcement = announcementModel.getAnnouncement(room.getTeamId(), room.getEntityId());
+    public void onInitAnnouncement(long teamId, long entityId) {
+        ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, entityId);
         view.dismissProgressWheel();
         if (announcement != null) {
-            view.setAnnouncement(announcement, announcementModel.isAnnouncementOpened(room.getEntityId()));
+            view.setAnnouncement(announcement, announcementModel.isAnnouncementOpened(entityId));
         }
     }
 
@@ -130,7 +132,7 @@ public class MessageListV2Presenter {
             view.showProgressView();
         }
 
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(room.getEntityId());
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         boolean isInTopic = !entity.isUser() && !(entity instanceof BotEntity);
         if (isInTopic) {
             if (entityId <= 0) {
@@ -140,28 +142,24 @@ public class MessageListV2Presenter {
                 view.showInvalidEntityToast();
                 view.finish();
             } else {
-                room.setRoomId(entityId);
                 view.setRoomId(entityId, withProgress);
-                onRetrieveReadyMessage();
             }
-        } else {
-
-            long roomId = messageListModel.getRoomId();
-            if (roomId <= 0) {
-                if (withProgress) {
-                    view.dismissProgressView();
-                }
-                view.showInvalidEntityToast();
-                view.finish();
-            } else {
-                room.setRoomId(roomId);
-                view.setRoomId(roomId, withProgress);
-                onRetrieveReadyMessage();
-            }
+            return;
         }
 
+        long roomId = messageListModel.getRoomId();
+        if (roomId <= 0) {
+            if (withProgress) {
+                view.dismissProgressView();
+            }
+            view.showInvalidEntityToast();
+            view.finish();
+        } else {
+            view.setRoomId(roomId, withProgress);
+        }
     }
 
+    @Background
     public void onInitMessages(long teamId, long roomId, long entityId,
                                int currentItemCountWithoutDummy,
                                boolean withProgress) {
@@ -169,6 +167,9 @@ public class MessageListV2Presenter {
         if (roomId <= 0) {
             view.retrieveRoomId(withProgress);
             return;
+        } else {
+            String readyMessage = messageListModel.getReadyMessage(roomId);
+            view.initRoomInfo(roomId, readyMessage);
         }
 
         if (withProgress) {
@@ -221,8 +222,13 @@ public class MessageListV2Presenter {
         }
     }
 
-    public void addNewMessageQueue() {
-        addQueue(new NewMessageQueue(currentMessageState));
+    public void addNewMessageQueue(long teamId, long roomId, int currentItemCount, boolean cacheMode) {
+        NewMessageQueue messageQueue = new NewMessageQueue(currentMessageState);
+        messageQueue.setTeamId(teamId);
+        messageQueue.setRoomId(roomId);
+        messageQueue.setCurrentItemCount(currentItemCount);
+        messageQueue.setCacheMode(cacheMode);
+        addQueue(messageQueue);
     }
 
     private void loadOldMessage(long teamId, long roomId, long linkId, int currentItemCount,
@@ -401,7 +407,11 @@ public class MessageListV2Presenter {
 
         boolean moveToLink = data.isFirstLoadNewMessage();
 
-        if (currentMessageState.loadHistory()) {
+        boolean loadHistory = currentMessageState.loadHistory();
+
+        LogUtil.e("tony", "loadHistory = " + loadHistory);
+
+        if (loadHistory) {
 
             try {
                 newMessages = messageListModel.getNewMessage(lastUpdateLinkId);
@@ -432,19 +442,22 @@ public class MessageListV2Presenter {
         }
 
         if (newMessages == null || newMessages.isEmpty()) {
+            LogUtil.e("tony", "newMessages are empty.");
             view.setEmptyLayoutVisible(true);
 
             if (currentMessageState.isFirstLoadNewMessage()) {
                 view.setUpLastReadLinkIdIfPosition();
                 view.moveLastReadLink();
-                view.justRefresh();
+                view.notifyDataSetChanged();
                 currentMessageState.setIsFirstLoadNewMessage(false);
             }
 
             return;
         }
 
-        if (messageQueue.isCacheMode()) {
+        boolean cacheMode = messageQueue.isCacheMode();
+        LogUtil.i("tony", "cacheMode - " + cacheMode);
+        if (cacheMode) {
             messageListModel.upsertMessages(roomId, newMessages);
         }
 
@@ -476,7 +489,10 @@ public class MessageListV2Presenter {
 
                 ResMessages afterMarkerMessage = null;
                 try {
-                    afterMarkerMessage = messageListModel.getAfterMarkerMessage(linkId, MessageManipulator.MAX_OF_MESSAGES);
+                    afterMarkerMessage =
+                            messageListModel.getAfterMarkerMessage(
+                                    linkId, MessageManipulator.MAX_OF_MESSAGES);
+
                     int messageCount = afterMarkerMessage.records.size();
                     boolean isEndOfRequest = messageCount < MessageManipulator.MAX_OF_MESSAGES;
                     if (isEndOfRequest) {
@@ -517,7 +533,8 @@ public class MessageListV2Presenter {
     }
 
     @Background
-    public void updateRoomInfo(long teamId, long roomId, long entityId) {
+    public void updateRoomInfo(long teamId, long roomId, long entityId,
+                               int currentItemCount, boolean cacheMode) {
         messageListModel.updateMarkerInfo(teamId, roomId);
 
         EntityManager entityManager = EntityManager.getInstance();
@@ -542,6 +559,10 @@ public class MessageListV2Presenter {
 
         if (roomId > 0) {
             NewMessageQueue newMessageQueue = new NewMessageQueue(currentMessageState);
+            newMessageQueue.setTeamId(teamId);
+            newMessageQueue.setRoomId(roomId);
+            newMessageQueue.setCurrentItemCount(currentItemCount);
+            newMessageQueue.setCacheMode(cacheMode);
             addQueue(newMessageQueue);
         }
 
@@ -570,17 +591,68 @@ public class MessageListV2Presenter {
         messageListModel.updateMarkerInfo(teamId, roomId);
     }
 
-    public void onRetrieveReadyMessage() {
-        if (messageListModel.isUser(room.getEntityId())) {
-            if (room.getRoomId() <= 0) {
-                // FIXME roomId 가 설정된 이후에 메소드가 호출 되어야 한다.
-                return;
-            }
+    @Background
+    public void sendStickerMessage(long teamId, long roomId, long entityId,
+                                   StickerInfo stickerInfo) {
+        long localId = messageListModel.insertSendingMessageIfCan(entityId, roomId, stickerInfo);
+        if (localId > 0) {
+            view.notifyDataSetChanged();
+            view.moveLastPage();
 
-            view.setReadyMessage(messageListModel.getReadyMessage(room.getRoomId()));
-        } else {
-            view.setReadyMessage(messageListModel.getReadyMessage(room.getEntityId()));
+            StickerInfo reqStickerInfo = new StickerInfo(stickerInfo);
+            ArrayList<MentionObject> mentions = new ArrayList<>();
+            SendingMessage sendingMessage = new SendingMessage(localId, "", reqStickerInfo, mentions);
+
+            SendingMessageQueue messageQueue = new SendingMessageQueue(sendingMessage);
+            messageQueue.setTeamId(teamId);
+            messageQueue.setEntityId(entityId);
+
+            addQueue(messageQueue);
         }
+    }
+
+    @Background
+    public void sendTextMessage(long teamId, long roomId, long entityId,
+                                String message, List<MentionObject> mentions,
+                                ReqSendMessageV3 reqSendMessage) {
+        long localId = messageListModel.insertSendingMessageIfCan(entityId, roomId, message, mentions);
+
+        if (localId > 0) {
+            // insert to ui
+            view.notifyDataSetChanged();
+            view.moveLastPage();
+            // networking...
+            SendingMessage sendingMessage = new SendingMessage(localId, reqSendMessage);
+
+            SendingMessageQueue messageQueue = new SendingMessageQueue(sendingMessage);
+            messageQueue.setTeamId(teamId);
+            messageQueue.setEntityId(entityId);
+
+            addQueue(messageQueue);
+        }
+    }
+
+    private void sendMessage(SendingMessageQueue messageQueue) {
+        SendingMessage data = (SendingMessage) messageQueue.getData();
+        long linkId;
+        if (data.getStickerInfo() != null) {
+            linkId = messageListModel.sendStickerMessage(
+                    messageQueue.getTeamId(), messageQueue.getEntityId(),
+                    data.getStickerInfo(), data.getLocalId());
+        } else {
+            List<MentionObject> mentions = data.getMentions();
+            linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage(), mentions);
+
+            LogUtil.d("tony", "sendMessage Success");
+        }
+        if (linkId > 0) {
+            if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
+                // 소켓이 안 붙어 있으면 임의로 갱신 요청
+                EventBus.getDefault().post(new RefreshNewMessageEvent());
+            }
+        }
+
+        view.notifyDataSetChanged();
     }
 
     public interface View {
@@ -597,6 +669,8 @@ public class MessageListV2Presenter {
         void dismissProgressView();
 
         void retrieveRoomId(boolean withProgress);
+
+        void initRoomInfo(long roomId, String readyMessage);
 
         void setRoomId(long roomId, boolean shouldShowProgress);
 
@@ -621,9 +695,7 @@ public class MessageListV2Presenter {
 
         void setEmptyLayoutVisible(boolean visible);
 
-        void justRefresh();
-
-        void refreshAll();
+        void notifyDataSetChanged();
 
         void dismissOfflineLayer();
 
@@ -636,8 +708,6 @@ public class MessageListV2Presenter {
         void scrollToPosition(int itemPosition);
 
         void moveLastPage();
-
-        void setReadyMessage(String text);
 
         void dismissOldLoadProgress();
 

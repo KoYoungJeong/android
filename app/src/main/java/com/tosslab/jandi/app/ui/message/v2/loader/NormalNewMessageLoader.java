@@ -6,14 +6,11 @@ import android.util.Log;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
-import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.exception.ExceptionData;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Presenter;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
-import com.tosslab.jandi.app.utils.DateComparatorUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
@@ -26,7 +23,6 @@ import java.util.List;
 
 import retrofit.RetrofitError;
 import rx.Observable;
-import rx.Subscriber;
 import rx.functions.Func0;
 
 /**
@@ -111,7 +107,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 showEmptyViewIfNeed();
 
                 if (firstLoad) {
-                    view.justRefresh();
+                    view.notifyDataSetChanged();
                     firstLoad = false;
                 }
                 return;

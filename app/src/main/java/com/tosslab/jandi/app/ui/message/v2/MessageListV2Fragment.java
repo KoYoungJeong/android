@@ -27,23 +27,29 @@ import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu.UploadMenuViewModel;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
+import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
+import com.tosslab.jandi.app.ui.message.v2.adapter.MainMessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageAdapter;
-import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
-import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
@@ -64,15 +70,18 @@ import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -199,7 +208,7 @@ public class MessageListV2Fragment extends Fragment implements
 
     private boolean isForeground = true;
     private LinearLayoutManager layoutManager;
-    private Room room;
+    private String tempMessage;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -208,14 +217,23 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        isForeground = true;
+        PushMonitor.getInstance().register(roomId);
+    }
+
+    @Override
+    public void onPause() {
+        isForeground = false;
+        PushMonitor.getInstance().unregister(roomId);
+        super.onPause();
+    }
+
+    @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
-    }
-
-    @AfterInject
-    void initObject(){
-        room = Room.create(entityId, roomId, isFromPush);
     }
 
     @AfterViews
@@ -250,9 +268,8 @@ public class MessageListV2Fragment extends Fragment implements
 
     private void initPresenter() {
         messageListPresenter.setView(this);
-        messageListPresenter.setRoom(room);
         messageListPresenter.onInitMessageState(lastReadLinkId);
-        messageListPresenter.setEntityInfo();
+        messageListPresenter.setEntityInfo(entityType, entityId);
     }
 
     private void setUpActionbar() {
@@ -266,11 +283,11 @@ public class MessageListV2Fragment extends Fragment implements
         ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle(EntityManager.getInstance().getEntityNameById(room.getEntityId()));
+        actionBar.setTitle(EntityManager.getInstance().getEntityNameById(entityId));
     }
 
     private void trackScreenView() {
-        int screenView = room.getEntityType() == JandiConstants.TYPE_PUBLIC_TOPIC
+        int screenView = entityType == JandiConstants.TYPE_PUBLIC_TOPIC
                 ? ScreenViewProperty.PUBLIC_TOPIC : ScreenViewProperty.PRIVATE_TOPIC;
 
         Sprinkler.with(JandiApplication.getContext())
@@ -301,7 +318,7 @@ public class MessageListV2Fragment extends Fragment implements
                     && getResources().getConfiguration().keyboard != Configuration.KEYBOARD_NOKEYS) {
 
                 if (!event.isShiftPressed()) {
-//                    onSendClick();
+//                    sendMessage();
                     return true;
                 } else {
                     return false;
@@ -351,11 +368,11 @@ public class MessageListV2Fragment extends Fragment implements
             stickerInfo.setStickerGroupId(groupId);
             stickerInfo.setStickerId(stickerId);
 //            showStickerPreview(oldSticker, stickerInfo);
-//            messageListPresenter.setEnableSendButton(true);
+//            messageListPresenter.setSendButtonEnabled(true);
             sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Select);
         });
 
-//        stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> onSendClick());
+//        stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendMessage());
 
         stickerViewModel.setType(isInDirectMessage()
                 ? StickerViewModel.TYPE_MESSAGE : StickerViewModel.TYPE_TOPIC);
@@ -390,12 +407,12 @@ public class MessageListV2Fragment extends Fragment implements
         });
 
         if (!isInDirectMessage()) {
-            messageListPresenter.onInitAnnouncement();
+            messageListPresenter.onInitAnnouncement(teamId, entityId);
         }
     }
 
     private void initMessageListView() {
-        messageAdapter = new MessageListAdapter(getActivity().getBaseContext());
+        messageAdapter = new MainMessageListAdapter(getActivity().getBaseContext());
         MessageListHeaderAdapter messageListHeaderAdapter =
                 new MessageListHeaderAdapter(getContext(), messageAdapter);
         lvMessages.setAdapter(messageAdapter);
@@ -450,21 +467,46 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void initUserStatus() {
-        messageListPresenter.onDetermineUserStatus();
+        messageListPresenter.onDetermineUserStatus(entityId);
     }
 
     private void initMessages(boolean withProgress) {
-        if (room.getRoomId() <= 0) {
+        if (roomId <= 0) {
             retrieveRoomId(withProgress);
             return;
         }
 
-        int currentItemCountWithoutDummy = messageAdapter != null
-                ? (messageAdapter.getItemCount() - messageAdapter.getDummyMessageCount())
-                : 0;
+        int currentItemCountWithoutDummy = getCurrentItemCountWithoutDummy();
 
         messageListPresenter.onInitMessages(
                 teamId, roomId, entityId, currentItemCountWithoutDummy, withProgress);
+    }
+
+    private void initMentionControlViewModel(String readyMessage) {
+        List<Long> roomIds = new ArrayList<>();
+        roomIds.add(roomId);
+
+        if (mentionControlViewModel == null) {
+            mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(),
+                    etMessage,
+                    roomIds,
+                    MentionControlViewModel.MENTION_TYPE_MESSAGE);
+            mentionControlViewModel.setOnMentionShowingListener(
+                    isShowing -> btnShowMention.setVisibility(!isShowing ? View.VISIBLE : View.GONE));
+
+            mentionControlViewModel.setUpMention(readyMessage);
+        } else {
+            mentionControlViewModel.refreshSelectableMembers(teamId, roomIds);
+        }
+
+        // copy txt from mentioned edittext message
+        mentionControlViewModel.registClipboardListener();
+    }
+
+    private int getCurrentItemCountWithoutDummy() {
+        return messageAdapter != null
+                ? (messageAdapter.getItemCount() - messageAdapter.getDummyMessageCount())
+                : 0;
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -520,9 +562,15 @@ public class MessageListV2Fragment extends Fragment implements
 
         LogUtil.e("tony", "roomId = " + roomId);
 
-        initReadyMessageInToEditText();
-
         initMessages(withProgress);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void initRoomInfo(long roomId, String readyMessage) {
+        etMessage.setText(readyMessage);
+
+        initMentionControlViewModel(readyMessage);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -602,6 +650,7 @@ public class MessageListV2Fragment extends Fragment implements
         int lastItemPosition = getLastItemPosition();
 
         messageAdapter.addAll(lastItemPosition, records);
+        notifyDataSetChanged();
 
         ResMessages.Link lastUpdatedMessage = records.get(location);
         if (!isFirstLoad
@@ -611,11 +660,12 @@ public class MessageListV2Fragment extends Fragment implements
 //            showPreviewIfNotLastItem();
         } else {
             long messageId = lastUpdatedMessage.messageId;
+
             if (isFirstLoad) {
+
                 moveLastReadLink();
                 setUpLastReadLink(myId);
 
-                justRefresh();
             } else if (messageId <= 0) {
                 if (lastUpdatedMessage.fromEntity != myId) {
                     moveToMessageById(lastUpdatedMessage.id, 0);
@@ -687,6 +737,89 @@ public class MessageListV2Fragment extends Fragment implements
         layoutManager.scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
+    @TextChange(R.id.et_message)
+    void onMessageChanged(TextView tv, CharSequence text) {
+
+        boolean isEmptyText = TextUtils.isEmpty(text.toString().trim()) && stickerInfo == NULL_STICKER;
+        setSendButtonEnabled(!isEmptyText);
+
+    }
+
+    @Click(R.id.btn_send_message)
+    void sendMessage() {
+        String message = etMessage.getText().toString();
+
+        List<MentionObject> mentions = new ArrayList<>();
+        ResultMentionsVO mentionVO = getMentionVO();
+        if (mentionVO != null) {
+            message = mentionVO.getMessage();
+            mentions.addAll(mentionVO.getMentions());
+        }
+
+        message = message.trim();
+
+        ReqSendMessageV3 reqSendMessageV3 = null;
+        if (!TextUtils.isEmpty(message)) {
+            reqSendMessageV3 =
+                    (!isInDirectMessage() && mentionControlViewModel.hasMentionMember())
+                            ? new ReqSendMessageV3(message, mentions)
+                            : new ReqSendMessageV3(message, new ArrayList<>());
+        }
+
+        if (stickerInfo != null && stickerInfo != NULL_STICKER) {
+            sendStickerMessage();
+            if (!TextUtils.isEmpty(message)) {
+                sendTextMessage(message, mentions, reqSendMessageV3);
+            }
+        } else {
+            if (!TextUtils.isEmpty(message)) {
+                sendTextMessage(message, mentions, reqSendMessageV3);
+            }
+        }
+
+        dismissStickerPreview();
+        stickerInfo = NULL_STICKER;
+        setSendButtonEnabled(false);
+        setMessageIntoEditText("");
+
+        sendAnalyticsEvent(AnalyticsValue.Action.Send);
+    }
+
+    private void sendStickerMessage() {
+        long stickerGroupId = stickerInfo.getStickerGroupId();
+        String stickerId = stickerInfo.getStickerId();
+        StickerRepository.getRepository().upsertRecentSticker(stickerGroupId, stickerId);
+
+        messageListPresenter.sendStickerMessage(teamId, roomId, entityId, stickerInfo);
+
+        sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Send);
+    }
+
+    private void sendTextMessage(String message,
+                                 List<MentionObject> mentions,
+                                 ReqSendMessageV3 reqSendMessage) {
+        messageListPresenter.sendTextMessage(
+                teamId, roomId, entityId, message, mentions, reqSendMessage);
+    }
+
+    public void dismissStickerPreview() {
+        vgStickerPreview.setVisibility(View.GONE);
+    }
+
+    public void setSendButtonEnabled(boolean enabled) {
+        sendButton.setEnabled(enabled);
+    }
+
+    public void setMessageIntoEditText(String text) {
+        tempMessage = text;
+        etMessage.setText(tempMessage);
+    }
+
+    @Nullable
+    private ResultMentionsVO getMentionVO() {
+        return !isInDirectMessage() ? mentionControlViewModel.getMentionInfoObject() : null;
+    }
+
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showOldLoadProgress() {
@@ -701,14 +834,9 @@ public class MessageListV2Fragment extends Fragment implements
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void justRefresh() {
+    public void notifyDataSetChanged() {
+        LogUtil.i("tony", "notifyDataSetChanged");
         messageAdapter.notifyDataSetChanged();
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void refreshAll() {
-
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -744,13 +872,7 @@ public class MessageListV2Fragment extends Fragment implements
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveLastPage() {
-
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void setReadyMessage(String text) {
-
+        layoutManager.scrollToPosition(messageAdapter.getItemCount() - 1);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -784,11 +906,14 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
+        int currentItemCountWithoutDummy = getCurrentItemCountWithoutDummy();
+
         if (TextUtils.equals(messageType, "topic_leave") ||
                 TextUtils.equals(messageType, "topic_join") ||
                 TextUtils.equals(messageType, "topic_invite")) {
 
-            messageListPresenter.updateRoomInfo(teamId, roomId, entityId);
+            messageListPresenter.updateRoomInfo(
+                    teamId, roomId, entityId, currentItemCountWithoutDummy, true);
 
             updateMentionInfo();
         } else {
@@ -798,14 +923,27 @@ public class MessageListV2Fragment extends Fragment implements
             }
 
             if (roomId > 0) {
-                messageListPresenter.addNewMessageQueue();
+                LogUtil.e("tony", "call new message");
+                messageListPresenter.addNewMessageQueue(
+                        teamId, roomId, currentItemCountWithoutDummy, true);
             }
+        }
+    }
+
+    public void onEvent(RefreshNewMessageEvent event) {
+        if (!isForeground) {
+            return;
+        }
+
+        if (roomId > 0) {
+            messageListPresenter.addNewMessageQueue(
+                    teamId, roomId, getCurrentItemCountWithoutDummy(), true);
         }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void updateMentionInfo() {
-//        mentionControlViewModel.refreshMembers(Arrays.asList(roomId));
+        mentionControlViewModel.refreshMembers(Arrays.asList(roomId));
     }
 
     @Nullable
@@ -857,18 +995,13 @@ public class MessageListV2Fragment extends Fragment implements
 
     }
 
-    // roomId 가 설정 된 이후 불려야 함
-    private void initReadyMessageInToEditText() {
-        messageListPresenter.onRetrieveReadyMessage();
-    }
-
     private void showCoachMarkIfNeed() {
         TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(
-                room.getEntityType() == JandiConstants.TYPE_DIRECT_MESSAGE, getActivity());
+                entityType == JandiConstants.TYPE_DIRECT_MESSAGE, getActivity());
     }
 
     private boolean isInDirectMessage() {
-        return room.getEntityType() == JandiConstants.TYPE_DIRECT_MESSAGE;
+        return entityType == JandiConstants.TYPE_DIRECT_MESSAGE;
     }
 
     @Override

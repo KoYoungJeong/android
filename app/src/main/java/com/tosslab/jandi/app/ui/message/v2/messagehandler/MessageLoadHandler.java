@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.messagehandler;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -233,14 +232,14 @@ public class MessageLoadHandler {
                 EventBus.getDefault().post(new RefreshNewMessageEvent());
             }
         }
-        view.refreshAll();
+        view.notifyDataSetChanged();
     }
 
     private void updateLinkPreview(MessageQueue messageQueue) {
         int messageId = (Integer) messageQueue.getData();
         ResMessages.TextMessage textMessage = MessageRepository.getRepository().getTextMessage(messageId);
         updateLinkPreviewMessage(textMessage);
-        view.justRefresh();
+        view.notifyDataSetChanged();
     }
 
     public void updateLinkPreviewMessage(ResMessages.TextMessage message) {
