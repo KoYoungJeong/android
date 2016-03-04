@@ -1,0 +1,27 @@
+package com.tosslab.jandi.app.ui.message.v2.domain;
+
+public class MessagePointer {
+    private long firstCursorLinkId;
+    private long lastReadLinkId;
+
+    public MessagePointer(long firstCursorLinkId, long lastReadLinkId) {
+        this.firstCursorLinkId = firstCursorLinkId;
+        this.lastReadLinkId = lastReadLinkId;
+    }
+
+    public long getFirstCursorLinkId() {
+        return firstCursorLinkId;
+    }
+
+    public void setFirstCursorLinkId(long firstCursorLinkId) {
+        this.firstCursorLinkId = firstCursorLinkId;
+    }
+
+    public long getLastReadLinkId() {
+        return lastReadLinkId;
+    }
+
+    public void setLastReadLinkId(long lastReadLinkId) {
+        this.lastReadLinkId = lastReadLinkId;
+    }
+}

@@ -40,16 +40,15 @@ import com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu.UploadMenuViewModel;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
-import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageAdapter;
+import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
+import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TextCutter;
@@ -65,6 +64,7 @@ import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
@@ -73,7 +73,6 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -200,6 +199,7 @@ public class MessageListV2Fragment extends Fragment implements
 
     private boolean isForeground = true;
     private LinearLayoutManager layoutManager;
+    private Room room;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -211,6 +211,11 @@ public class MessageListV2Fragment extends Fragment implements
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+    @AfterInject
+    void initObject(){
+        room = Room.create(entityId, roomId, isFromPush);
     }
 
     @AfterViews
@@ -245,8 +250,9 @@ public class MessageListV2Fragment extends Fragment implements
 
     private void initPresenter() {
         messageListPresenter.setView(this);
+        messageListPresenter.setRoom(room);
         messageListPresenter.onInitMessageState(lastReadLinkId);
-        messageListPresenter.setEntityInfo(entityType, entityId);
+        messageListPresenter.setEntityInfo();
     }
 
     private void setUpActionbar() {
@@ -260,11 +266,11 @@ public class MessageListV2Fragment extends Fragment implements
         ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle(EntityManager.getInstance().getEntityNameById(entityId));
+        actionBar.setTitle(EntityManager.getInstance().getEntityNameById(room.getEntityId()));
     }
 
     private void trackScreenView() {
-        int screenView = entityType == JandiConstants.TYPE_PUBLIC_TOPIC
+        int screenView = room.getEntityType() == JandiConstants.TYPE_PUBLIC_TOPIC
                 ? ScreenViewProperty.PUBLIC_TOPIC : ScreenViewProperty.PRIVATE_TOPIC;
 
         Sprinkler.with(JandiApplication.getContext())
@@ -384,7 +390,7 @@ public class MessageListV2Fragment extends Fragment implements
         });
 
         if (!isInDirectMessage()) {
-            messageListPresenter.onInitAnnouncement(teamId, entityId);
+            messageListPresenter.onInitAnnouncement();
         }
     }
 
@@ -444,11 +450,11 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void initUserStatus() {
-        messageListPresenter.onDetermineUserStatus(entityId);
+        messageListPresenter.onDetermineUserStatus();
     }
 
     private void initMessages(boolean withProgress) {
-        if (roomId <= 0) {
+        if (room.getRoomId() <= 0) {
             retrieveRoomId(withProgress);
             return;
         }
@@ -853,16 +859,16 @@ public class MessageListV2Fragment extends Fragment implements
 
     // roomId 가 설정 된 이후 불려야 함
     private void initReadyMessageInToEditText() {
-        messageListPresenter.onRetrieveReadyMessage(roomId, entityId);
+        messageListPresenter.onRetrieveReadyMessage();
     }
 
     private void showCoachMarkIfNeed() {
         TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(
-                entityType == JandiConstants.TYPE_DIRECT_MESSAGE, getActivity());
+                room.getEntityType() == JandiConstants.TYPE_DIRECT_MESSAGE, getActivity());
     }
 
     private boolean isInDirectMessage() {
-        return entityType == JandiConstants.TYPE_DIRECT_MESSAGE;
+        return room.getEntityType() == JandiConstants.TYPE_DIRECT_MESSAGE;
     }
 
     @Override
