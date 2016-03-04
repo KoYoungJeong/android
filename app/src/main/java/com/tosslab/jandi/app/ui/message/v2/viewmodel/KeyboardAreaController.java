@@ -119,7 +119,7 @@ public class KeyboardAreaController {
             newStickerInfo.setStickerGroupId(groupId);
             newStickerInfo.setStickerId(stickerId);
 //            presenter.showStickerPreview(newStickerInfo);
-//            view.setEnableSendButton(true);
+//            view.setSendButtonEnabled(true);
 //            presenter.sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Select);
         });
 

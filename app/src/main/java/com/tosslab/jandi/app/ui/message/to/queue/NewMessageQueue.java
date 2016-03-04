@@ -11,7 +11,7 @@ public class NewMessageQueue implements MessageQueue {
     private long teamId;
     private long roomId;
     private int currentItemCount;
-    private boolean cacheMode;
+    private boolean cacheMode = true;
     public NewMessageQueue(MessageState messageState) {
         this.messageState = messageState;
     }
