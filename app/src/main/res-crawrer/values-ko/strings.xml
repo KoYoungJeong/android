@@ -178,7 +178,7 @@
 	<string name="jandi_disabled_user">"차단된 멤버입니다"</string>
 	<string name="jandi_domain_is_already_taken">"이미 사용하고 있는 도메인이거나 알맞은 형식의 도메인 이름이 아닙니다."</string>
 	<string name="jandi_duplicate_email">"이미 사용중인 이메일입니다"</string>
-	<string name="jandi_empty">"None"</string>
+	<string name="jandi_empty">""</string>
 	<string name="jandi_enable_external_link">"외부 공유용 링크 생성"</string>
 	<string name="jandi_enter_new_passcode">"변경할 비밀번호를 입력해주세요."</string>
 	<string name="jandi_enter_passcode">"비밀번호 입력"</string>
