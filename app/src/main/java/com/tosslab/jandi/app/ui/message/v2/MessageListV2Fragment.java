@@ -2,12 +2,15 @@ package com.tosslab.jandi.app.ui.message.v2;
 
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,11 +32,15 @@ import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu.UploadMenuViewModel;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
+import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
@@ -66,9 +73,11 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 /**
@@ -110,6 +119,8 @@ public class MessageListV2Fragment extends Fragment implements
     AnnouncementModel announcementModel;
     @Bean
     AnnouncementViewModel announcementViewModel;
+
+    MentionControlViewModel mentionControlViewModel;
 
     @FragmentArg
     int entityType;
@@ -189,6 +200,18 @@ public class MessageListV2Fragment extends Fragment implements
 
     private boolean isForeground = true;
     private LinearLayoutManager layoutManager;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
 
     @AfterViews
     void initViews() {
@@ -447,7 +470,7 @@ public class MessageListV2Fragment extends Fragment implements
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setAnnouncement(ResAnnouncement announcement, boolean shouldOpenAnnouncement) {
-
+        announcementViewModel.setAnnouncement(announcement, shouldOpenAnnouncement);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -559,6 +582,78 @@ public class MessageListV2Fragment extends Fragment implements
         }
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void setUpNewMessage(List<ResMessages.Link> records, long myId,
+                                boolean isFirstLoad,
+                                boolean moveToLinkId) {
+        int location = records.size() - 1;
+        if (location < 0) {
+            return;
+        }
+
+        int visibleLastItemPosition = getLastVisibleItemPosition();
+        int lastItemPosition = getLastItemPosition();
+
+        messageAdapter.addAll(lastItemPosition, records);
+
+        ResMessages.Link lastUpdatedMessage = records.get(location);
+        if (!isFirstLoad
+                && visibleLastItemPosition >= 0
+                && visibleLastItemPosition < lastItemPosition - 1
+                && lastUpdatedMessage.fromEntity != myId) {
+//            showPreviewIfNotLastItem();
+        } else {
+            long messageId = lastUpdatedMessage.messageId;
+            if (isFirstLoad) {
+                moveLastReadLink();
+                setUpLastReadLink(myId);
+
+                justRefresh();
+            } else if (messageId <= 0) {
+                if (lastUpdatedMessage.fromEntity != myId) {
+                    moveToMessageById(lastUpdatedMessage.id, 0);
+                }
+            } else {
+                moveToMessage(messageId, 0);
+            }
+        }
+    }
+
+    private int getLastItemPosition() {
+        return messageAdapter.getItemCount();
+    }
+
+    private int getLastVisibleItemPosition() {
+        return layoutManager.findLastVisibleItemPosition();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void moveToMessageById(long linkId, int firstVisibleItemTop) {
+        int itemPosition = messageAdapter.indexOfLinkId(linkId);
+        layoutManager.scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
+    }
+
+    private void setUpLastReadLink(long myId) {
+        long lastReadLinkId = messageAdapter.getLastReadLinkId();
+        int indexOfLinkId = messageAdapter.indexOfLinkId(lastReadLinkId);
+
+        if (indexOfLinkId < 0) {
+            return;
+        }
+
+        if (indexOfLinkId >= messageAdapter.getItemCount() - 1) {
+            // 라스트 링크가 마지막 아이템인경우
+            messageAdapter.setLastReadLinkId(-1);
+        } else {
+            ResMessages.Link item = messageAdapter.getItem(indexOfLinkId + 1);
+            if (item instanceof DummyMessageLink) {
+                // 마지막 아이템은 아니지만 다음 아이템이 더미인경우 마지막 아이템으로 간주
+                messageAdapter.setLastReadLinkId(-1);
+            }
+        }
+    }
+
     private long getFirstVisibleItemLinkId() {
         if (messageAdapter.getItemCount() > 0) {
             int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
@@ -595,13 +690,13 @@ public class MessageListV2Fragment extends Fragment implements
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setEmptyLayoutVisible(boolean visible) {
-        AlertUtil.showConfirmDialog(getActivity(), "Hello", null, true);
+//        AlertUtil.showConfirmDialog(getActivity(), "Hello", null, true);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void justRefresh() {
-
+        messageAdapter.notifyDataSetChanged();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -658,9 +753,102 @@ public class MessageListV2Fragment extends Fragment implements
 
     }
 
+    @Override
+    public void setNewNoMoreLoading() {
+
+    }
+
+    public void onEvent(SocketMessageEvent event) {
+        boolean isSameRoomId = false;
+        String messageType = event.getMessageType();
+
+        if (!TextUtils.equals(messageType, "file_comment")) {
+
+            isSameRoomId = event.getRoom().getId() == roomId;
+        } else {
+            for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
+                if (roomId == messageRoom.getId()) {
+                    isSameRoomId = true;
+                    break;
+                }
+            }
+        }
+
+        if (!isSameRoomId) {
+            return;
+        }
+
+        if (TextUtils.equals(messageType, "topic_leave") ||
+                TextUtils.equals(messageType, "topic_join") ||
+                TextUtils.equals(messageType, "topic_invite")) {
+
+            messageListPresenter.updateRoomInfo(teamId, roomId, entityId);
+
+            updateMentionInfo();
+        } else {
+            if (!isForeground) {
+                messageListPresenter.updateMarker(teamId, roomId);
+                return;
+            }
+
+            if (roomId > 0) {
+                messageListPresenter.addNewMessageQueue();
+            }
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void updateMentionInfo() {
+//        mentionControlViewModel.refreshMembers(Arrays.asList(roomId));
+    }
+
+    @Nullable
+    @Override
+    public synchronized ResMessages.Link getLastItemFromAdapterWithoutDummy() {
+        int count = messageAdapter.getItemCount();
+        for (int idx = count - 1; idx >= 0; --idx) {
+            if (messageAdapter.getItem(idx) instanceof DummyMessageLink) {
+                continue;
+            }
+            return messageAdapter.getItem(idx);
+        }
+
+        return null;
+    }
+
+    @Override
+    public void setUpLastReadLinkIdIfPosition() {
+
+    }
+
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finish() {
+    }
+
+    @Override
+    public void moveLastReadLink() {
+
+    }
+
+    @Override
+    public void insertTeamMemberEmptyLayout() {
+
+    }
+
+    @Override
+    public void insertTopicMemberEmptyLayout() {
+
+    }
+
+    @Override
+    public void clearEmptyMessageLayout() {
+
+    }
+
+    @Override
+    public void insertMessageEmptyLayout() {
+
     }
 
     // roomId 가 설정 된 이후 불려야 함

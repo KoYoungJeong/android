@@ -1,9 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.SpannableStringBuilder;
 
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -13,12 +11,12 @@ import com.tosslab.jandi.app.network.exception.ExceptionData;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
-import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
+import com.tosslab.jandi.app.utils.DateComparatorUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -26,9 +24,12 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.RetrofitError;
+import rx.Observable;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -38,6 +39,7 @@ import rx.subjects.PublishSubject;
  */
 @EBean
 public class MessageListV2Presenter {
+    public static final String TAG = MessageListV2Presenter.class.getSimpleName();
 
     @Bean
     MessageListModel messageListModel;
@@ -172,6 +174,7 @@ public class MessageListV2Presenter {
         NewMessageQueue newMessageQueue = new NewMessageQueue(currentMessageState);
         newMessageQueue.setTeamId(teamId);
         newMessageQueue.setRoomId(roomId);
+        newMessageQueue.setCacheMode(true);
         newMessageQueue.setCurrentItemCount(currentItemCountWithoutDummy);
 
         OldMessageQueue oldMessageQueue = new OldMessageQueue(currentMessageState);
@@ -185,7 +188,7 @@ public class MessageListV2Presenter {
                 || (lastLinkMessage.id > 0 && messageListModel.isBefore30Days(lastLinkMessage.time))) {
             messageListModel.clearLinks(teamId, roomId);
 
-            newMessageQueue.setLoadHistory(false);
+            currentMessageState.setLoadHistory(false);
 
             view.setMoreNewFromAdapter(true);
             view.setNewLoadingComplete();
@@ -205,6 +208,10 @@ public class MessageListV2Presenter {
         if (!messageLoadSubscription.isUnsubscribed()) {
             messageLoadPublishSubject.onNext(messageQueue);
         }
+    }
+
+    public void addNewMessageQueue() {
+        addQueue(new NewMessageQueue(currentMessageState));
     }
 
     private void loadOldMessage(long teamId, long roomId, long linkId, int currentItemCount,
@@ -379,41 +386,161 @@ public class MessageListV2Presenter {
             loadOldMessage(teamId, roomId, lastUpdateLinkId, currentItemCount, true);
         }
 
-        List<ResMessages.Link> newMessage = null;
-        if (messageQueue.loadHistory()) {
+        List<ResMessages.Link> newMessages = null;
+
+        boolean moveToLink = data.isFirstLoadNewMessage();
+
+        if (currentMessageState.loadHistory()) {
 
             try {
-                newMessage = messageListModel.getNewMessage(lastUpdateLinkId);
+                newMessages = messageListModel.getNewMessage(lastUpdateLinkId);
             } catch (RetrofitError e) {
                 e.printStackTrace();
 
                 if (e.getKind() == RetrofitError.Kind.NETWORK) {
 
 
-
                 } else if (e.getKind() == RetrofitError.Kind.HTTP) {
-
                     try {
                         ExceptionData exceptionData = (ExceptionData) e.getBodyAs(ExceptionData.class);
-
-
+                        LogUtil.e(TAG, "errorCode = " + exceptionData.getCode());
+                        if (exceptionData.getCode() == 40017 || exceptionData.getCode() == 40018) {
+                            moveToLink = true;
+                            newMessages = getResUpdateMessages(lastUpdateLinkId);
+                        }
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
-
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            moveToLink = true;
+            newMessages = getResUpdateMessages(lastUpdateLinkId);
+        }
+
+        if (newMessages == null || newMessages.isEmpty()) {
+            view.setEmptyLayoutVisible(true);
+
+            if (currentMessageState.isFirstLoadNewMessage()) {
+                view.setUpLastReadLinkIdIfPosition();
+                view.moveLastReadLink();
+                view.justRefresh();
+                currentMessageState.setIsFirstLoadNewMessage(false);
+            }
+
+            return;
+        }
+
+        if (messageQueue.isCacheMode()) {
+            messageListModel.upsertMessages(roomId, newMessages);
+        }
+
+        messageListModel.sortByTime(newMessages);
+
+        long lastLinkId = newMessages.get(newMessages.size() - 1).id;
+        currentMessageState.setLastUpdateLinkId(lastLinkId);
+
+        messageListModel.upsertMyMarker(roomId, lastLinkId);
+        updateMarker(messageQueue.getTeamId(), roomId, lastUpdateLinkId);
+
+        view.setUpNewMessage(newMessages, messageListModel.getMyId(),
+                currentMessageState.isFirstLoadNewMessage(), moveToLink);
+
+        currentMessageState.setIsFirstLoadNewMessage(false);
+
+        view.setEmptyLayoutVisible(true);
+    }
+
+    private List<ResMessages.Link> getResUpdateMessages(final long linkId) {
+        List<ResMessages.Link> messages = new ArrayList<>();
+
+        Observable.create(new Observable.OnSubscribe<ResMessages>() {
+            @Override
+            public void call(Subscriber<? super ResMessages> subscriber) {
+
+                // 300 개씩 요청함
+                view.setMoreNewFromAdapter(false);
+
+                ResMessages afterMarkerMessage = null;
+                try {
+                    afterMarkerMessage = messageListModel.getAfterMarkerMessage(linkId, MessageManipulator.MAX_OF_MESSAGES);
+                    int messageCount = afterMarkerMessage.records.size();
+                    boolean isEndOfRequest = messageCount < MessageManipulator.MAX_OF_MESSAGES;
+                    if (isEndOfRequest) {
+                        ResMessages.Link lastItem;
+                        if (messageCount == 0) {
+                            // 기존 리스트에서 마지막 링크 정보 가져옴
+                            lastItem = view.getLastItemFromAdapterWithoutDummy();
+                        } else {
+                            lastItem = afterMarkerMessage.records.get(messageCount - 1);
+                            // 새로 불러온 정보에서 마지막 링크 정보 가져옴
+                        }
+                        if (lastItem != null) {
+                            boolean before30Days = !DateComparatorUtil.isBefore30Days(lastItem.time);
+                            currentMessageState.setLoadHistory(before30Days);
+                        } else {
+                            // 알 수 없는 경우에도 히스토리 로드 하지 않기
+                            currentMessageState.setLoadHistory(false);
+                        }
+
+                        view.setNewNoMoreLoading();
+                    } else {
+                        view.setMoreNewFromAdapter(true);
+                        view.setNewLoadingComplete();
+                    }
+                } catch (RetrofitError retrofitError) {
+                    retrofitError.printStackTrace();
+                    view.setMoreNewFromAdapter(true);
+                    view.setNewLoadingComplete();
+                }
+
+                subscriber.onNext(afterMarkerMessage);
+                subscriber.onCompleted();
+            }
+        }).collect(() -> messages, (resUpdateMessages, o) -> messages.addAll(o.records))
+                .subscribe(resUpdateMessages -> {
+                }, Throwable::printStackTrace);
+        return messages;
+    }
+
+    @Background
+    public void updateRoomInfo(long teamId, long roomId, long entityId) {
+        messageListModel.updateMarkerInfo(teamId, roomId);
+
+        EntityManager entityManager = EntityManager.getInstance();
+        FormattedEntity entity = entityManager.getEntityById(entityId);
+
+        boolean isTopic = messageListModel.isTopic(entity);
+        if (isTopic) {
+            int topicMemberCount = entity.getMemberCount();
+            int teamMemberCount = entityManager.getFormattedUsersWithoutMe().size();
+
+            if (teamMemberCount <= 0) {
+                view.insertTeamMemberEmptyLayout();
+            } else if (topicMemberCount <= 1) {
+                view.insertTopicMemberEmptyLayout();
+            } else {
+                view.clearEmptyMessageLayout();
+            }
 
         } else {
+            view.insertMessageEmptyLayout();
+        }
 
+        if (roomId > 0) {
+            NewMessageQueue newMessageQueue = new NewMessageQueue(currentMessageState);
+            addQueue(newMessageQueue);
         }
 
     }
 
     private void updateMarker(long teamId, long roomId, long lastUpdateLinkId) {
+        if (currentMessageState.getLastUpdateLinkId() <= 0) {
+            return;
+        }
+
         try {
             if (lastUpdateLinkId > 0) {
                 messageListModel.updateLastLinkId(lastUpdateLinkId);
@@ -426,6 +553,10 @@ public class MessageListV2Presenter {
             e.printStackTrace();
             LogUtil.e("set marker failed", e);
         }
+    }
+
+    public void updateMarker(long teamId, long roomId) {
+        messageListModel.updateMarkerInfo(teamId, roomId);
     }
 
     public void onRetrieveReadyMessage(long roomId, long entityId) {
@@ -468,7 +599,12 @@ public class MessageListV2Presenter {
 
         void setLastReadLinkId(long lastReadLinkId);
 
-        void setUpOldMessage(List<ResMessages.Link> records, int currentItemCount, boolean isFirstMessage);
+        void setUpOldMessage(List<ResMessages.Link> records, int currentItemCount,
+                             boolean isFirstMessage);
+
+        void setUpNewMessage(List<ResMessages.Link> records, long myId,
+                             boolean isFirstLoad,
+                             boolean moveToLinkId);
 
         void showOldLoadProgress();
 
@@ -494,7 +630,23 @@ public class MessageListV2Presenter {
 
         void dismissOldLoadProgress();
 
+        void setNewNoMoreLoading();
+
+        ResMessages.Link getLastItemFromAdapterWithoutDummy();
+
+        void setUpLastReadLinkIdIfPosition();
+
         void finish();
+
+        void moveLastReadLink();
+
+        void insertTeamMemberEmptyLayout();
+
+        void insertTopicMemberEmptyLayout();
+
+        void clearEmptyMessageLayout();
+
+        void insertMessageEmptyLayout();
     }
 
 }

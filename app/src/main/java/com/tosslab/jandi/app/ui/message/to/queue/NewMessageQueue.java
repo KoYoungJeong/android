@@ -11,7 +11,7 @@ public class NewMessageQueue implements MessageQueue {
     private long teamId;
     private long roomId;
     private int currentItemCount;
-    private boolean loadHistory;
+    private boolean cacheMode;
     public NewMessageQueue(MessageState messageState) {
         this.messageState = messageState;
     }
@@ -50,11 +50,11 @@ public class NewMessageQueue implements MessageQueue {
         this.currentItemCount = currentItemCount;
     }
 
-    public void setLoadHistory(boolean loadHistory) {
-        this.loadHistory = loadHistory;
+    public boolean isCacheMode() {
+        return cacheMode;
     }
 
-    public boolean loadHistory() {
-        return loadHistory;
+    public void setCacheMode(boolean cacheMode) {
+        this.cacheMode = cacheMode;
     }
 }

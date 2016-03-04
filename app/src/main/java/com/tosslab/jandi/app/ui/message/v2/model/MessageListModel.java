@@ -82,6 +82,7 @@ import java.util.concurrent.ExecutionException;
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.Observable;
+import rx.functions.Func0;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -95,6 +96,10 @@ public class MessageListModel {
     EntityClientManager entityClientManager;
     @RootContext
     AppCompatActivity activity;
+
+    public boolean isTopic(FormattedEntity entity) {
+        return entity != EntityManager.UNKNOWN_USER_ENTITY && !entity.isUser();
+    }
 
     public void setEntityInfo(int entityType, long entityId) {
         messageManipulator.initEntity(entityType, entityId);
@@ -390,7 +395,6 @@ public class MessageListModel {
         return messageManipulator.getAfterMarkerMessage(linkId, count);
     }
 
-    @Background
     public void updateMarkerInfo(long teamId, long roomId) {
         if (teamId <= 0 || roomId <= 0) {
             return;
@@ -596,13 +600,47 @@ public class MessageListModel {
         return EntityManager.getInstance().getMe().getId();
     }
 
-
     public boolean isTeamOwner() {
         return EntityManager.getInstance().getMe().isTeamOwner();
     }
 
     public boolean isCurrentTeam(long teamId) {
         return AccountRepository.getRepository().getSelectedTeamId() == teamId;
+    }
+
+    public void upsertMessages(long roomId, List<ResMessages.Link> messages) {
+        Observable.from(messages)
+                .doOnNext(link -> link.roomId = roomId)
+                .doOnNext(link -> {
+                    // event 가 아니고 삭제된 파일/코멘트/메세지만 처리
+                    if (!TextUtils.equals(link.status, "event")
+                            && TextUtils.equals(link.status, "archived")) {
+                        if (!(link.message instanceof ResMessages.FileMessage)) {
+                            MessageRepository.getRepository().deleteMessage(link.messageId);
+                        } else {
+                            MessageRepository.getRepository()
+                                    .upsertFileMessage((ResMessages.FileMessage) link.message);
+                        }
+                    }
+                })
+                .filter(link -> {
+                    // 이벤트와 삭제된 메세지는 처리 됐으므로..
+                    return TextUtils.equals(link.status, "event")
+                            || !TextUtils.equals(link.status, "archived");
+                })
+                .collect((Func0<List<ResMessages.Link>>) ArrayList::new, List::add)
+                .subscribe(links -> {
+
+                    List<Long> messageIds = new ArrayList<>();
+                    for (ResMessages.Link link : links) {
+                        messageIds.add(link.messageId);
+                    }
+
+                    // sending 메세지 삭제
+                    SendMessageRepository.getRepository().deleteCompletedMessages(messageIds);
+
+                    MessageRepository.getRepository().upsertMessages(links);
+                });
     }
 
     public AnalyticsValue.Screen getScreen(long entityId) {
