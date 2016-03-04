@@ -46,10 +46,10 @@ import com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu.UploadMenuViewModel;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MainMessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
+import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
@@ -70,6 +70,7 @@ import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
@@ -210,6 +211,8 @@ public class MessageListV2Fragment extends Fragment implements
     private LinearLayoutManager layoutManager;
     private String tempMessage;
 
+    private Room room;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -234,6 +237,11 @@ public class MessageListV2Fragment extends Fragment implements
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+    @AfterInject
+    void initObjects() {
+        room = Room.create(entityId, roomId, isFromPush);
     }
 
     @AfterViews
@@ -269,7 +277,8 @@ public class MessageListV2Fragment extends Fragment implements
     private void initPresenter() {
         messageListPresenter.setView(this);
         messageListPresenter.onInitMessageState(lastReadLinkId);
-        messageListPresenter.setEntityInfo(entityType, entityId);
+        messageListPresenter.setRoom(room);
+        messageListPresenter.setEntityInfo();
     }
 
     private void setUpActionbar() {
@@ -283,7 +292,7 @@ public class MessageListV2Fragment extends Fragment implements
         ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle(EntityManager.getInstance().getEntityNameById(entityId));
+        actionBar.setTitle(EntityManager.getInstance().getEntityNameById(room.getEntityId()));
     }
 
     private void trackScreenView() {
@@ -407,7 +416,7 @@ public class MessageListV2Fragment extends Fragment implements
         });
 
         if (!isInDirectMessage()) {
-            messageListPresenter.onInitAnnouncement(teamId, entityId);
+            messageListPresenter.onInitAnnouncement();
         }
     }
 
@@ -467,19 +476,18 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void initUserStatus() {
-        messageListPresenter.onDetermineUserStatus(entityId);
+        messageListPresenter.onDetermineUserStatus();
     }
 
     private void initMessages(boolean withProgress) {
-        if (roomId <= 0) {
+        if (room.getRoomId() <= 0) {
             retrieveRoomId(withProgress);
             return;
         }
 
         int currentItemCountWithoutDummy = getCurrentItemCountWithoutDummy();
 
-        messageListPresenter.onInitMessages(
-                teamId, roomId, entityId, currentItemCountWithoutDummy, withProgress);
+        messageListPresenter.onInitMessages(currentItemCountWithoutDummy, withProgress);
     }
 
     private void initMentionControlViewModel(String readyMessage) {
@@ -552,7 +560,7 @@ public class MessageListV2Fragment extends Fragment implements
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void retrieveRoomId(boolean withProgress) {
-        messageListPresenter.onRetrieveRoomId(entityId, withProgress);
+        messageListPresenter.onRetrieveRoomId(withProgress);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -790,7 +798,7 @@ public class MessageListV2Fragment extends Fragment implements
         String stickerId = stickerInfo.getStickerId();
         StickerRepository.getRepository().upsertRecentSticker(stickerGroupId, stickerId);
 
-        messageListPresenter.sendStickerMessage(teamId, roomId, entityId, stickerInfo);
+        messageListPresenter.sendStickerMessage(stickerInfo);
 
         sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Send);
     }
@@ -798,8 +806,7 @@ public class MessageListV2Fragment extends Fragment implements
     private void sendTextMessage(String message,
                                  List<MentionObject> mentions,
                                  ReqSendMessageV3 reqSendMessage) {
-        messageListPresenter.sendTextMessage(
-                teamId, roomId, entityId, message, mentions, reqSendMessage);
+        messageListPresenter.sendTextMessage(message, mentions, reqSendMessage);
     }
 
     public void dismissStickerPreview() {
@@ -912,20 +919,18 @@ public class MessageListV2Fragment extends Fragment implements
                 TextUtils.equals(messageType, "topic_join") ||
                 TextUtils.equals(messageType, "topic_invite")) {
 
-            messageListPresenter.updateRoomInfo(
-                    teamId, roomId, entityId, currentItemCountWithoutDummy, true);
+            messageListPresenter.updateRoomInfo(currentItemCountWithoutDummy, true);
 
             updateMentionInfo();
         } else {
             if (!isForeground) {
-                messageListPresenter.updateMarker(teamId, roomId);
+                messageListPresenter.updateMarker();
                 return;
             }
 
             if (roomId > 0) {
                 LogUtil.e("tony", "call new message");
-                messageListPresenter.addNewMessageQueue(
-                        teamId, roomId, currentItemCountWithoutDummy, true);
+                messageListPresenter.addNewMessageQueue(currentItemCountWithoutDummy, true);
             }
         }
     }
@@ -937,7 +942,7 @@ public class MessageListV2Fragment extends Fragment implements
 
         if (roomId > 0) {
             messageListPresenter.addNewMessageQueue(
-                    teamId, roomId, getCurrentItemCountWithoutDummy(), true);
+                    getCurrentItemCountWithoutDummy(), true);
         }
     }
 

@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
+import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
@@ -59,9 +60,14 @@ public class MessageListV2Presenter {
     private PublishSubject<MessageQueue> messageLoadPublishSubject;
     private Subscription messageLoadSubscription;
     private MessageState currentMessageState;
+    private Room room;
 
     public void setView(View view) {
         this.view = view;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     public void onInitMessageState(long lastReadEntityId) {
@@ -69,8 +75,8 @@ public class MessageListV2Presenter {
         currentMessageState.setFirstItemId(lastReadEntityId);
     }
 
-    public void setEntityInfo(int entityType, long entityId) {
-        messageListModel.setEntityInfo(entityType, entityId);
+    public void setEntityInfo() {
+        messageListModel.setEntityInfo(room.getEntityType(), room.getEntityId());
     }
 
     @AfterInject
@@ -111,26 +117,28 @@ public class MessageListV2Presenter {
                 });
     }
 
-    public void onDetermineUserStatus(long entityId) {
-        if (messageListModel.isEnabledIfUser(entityId)) {
+    public void onDetermineUserStatus() {
+        if (messageListModel.isEnabledIfUser(room.getEntityId())) {
             view.showDisabledUserLayer();
         }
     }
 
     @Background
-    public void onInitAnnouncement(long teamId, long entityId) {
-        ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, entityId);
+    public void onInitAnnouncement() {
+        ResAnnouncement announcement = announcementModel.getAnnouncement(room.getTeamId(), room.getEntityId());
         view.dismissProgressWheel();
         if (announcement != null) {
-            view.setAnnouncement(announcement, announcementModel.isAnnouncementOpened(entityId));
+            view.setAnnouncement(announcement, announcementModel.isAnnouncementOpened(room.getEntityId()));
         }
     }
 
     @Background
-    public void onRetrieveRoomId(long entityId, boolean withProgress) {
+    public void onRetrieveRoomId(boolean withProgress) {
         if (withProgress) {
             view.showProgressView();
         }
+
+        long entityId = room.getEntityId();
 
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         boolean isInTopic = !entity.isUser() && !(entity instanceof BotEntity);
@@ -160,9 +168,11 @@ public class MessageListV2Presenter {
     }
 
     @Background
-    public void onInitMessages(long teamId, long roomId, long entityId,
-                               int currentItemCountWithoutDummy,
+    public void onInitMessages(int currentItemCountWithoutDummy,
                                boolean withProgress) {
+        long roomId = room.getRoomId();
+        long teamId = room.getTeamId();
+        long entityId = room.getEntityId();
         LogUtil.i("tony", "roomId = " + roomId);
         if (roomId <= 0) {
             view.retrieveRoomId(withProgress);
@@ -222,7 +232,9 @@ public class MessageListV2Presenter {
         }
     }
 
-    public void addNewMessageQueue(long teamId, long roomId, int currentItemCount, boolean cacheMode) {
+    public void addNewMessageQueue(int currentItemCount, boolean cacheMode) {
+        long roomId = room.getRoomId();
+        long teamId = room.getTeamId();
         NewMessageQueue messageQueue = new NewMessageQueue(currentMessageState);
         messageQueue.setTeamId(teamId);
         messageQueue.setRoomId(roomId);
@@ -533,8 +545,10 @@ public class MessageListV2Presenter {
     }
 
     @Background
-    public void updateRoomInfo(long teamId, long roomId, long entityId,
-                               int currentItemCount, boolean cacheMode) {
+    public void updateRoomInfo(int currentItemCount, boolean cacheMode) {
+        long entityId = room.getEntityId();
+        long roomId = room.getRoomId();
+        long teamId = room.getTeamId();
         messageListModel.updateMarkerInfo(teamId, roomId);
 
         EntityManager entityManager = EntityManager.getInstance();
@@ -587,13 +601,17 @@ public class MessageListV2Presenter {
         }
     }
 
-    public void updateMarker(long teamId, long roomId) {
+    public void updateMarker() {
+        long roomId = room.getRoomId();
+        long teamId = room.getTeamId();
         messageListModel.updateMarkerInfo(teamId, roomId);
     }
 
     @Background
-    public void sendStickerMessage(long teamId, long roomId, long entityId,
-                                   StickerInfo stickerInfo) {
+    public void sendStickerMessage(StickerInfo stickerInfo) {
+        long entityId = room.getEntityId();
+        long roomId = room.getRoomId();
+        long teamId = room.getTeamId();
         long localId = messageListModel.insertSendingMessageIfCan(entityId, roomId, stickerInfo);
         if (localId > 0) {
             view.notifyDataSetChanged();
@@ -612,9 +630,11 @@ public class MessageListV2Presenter {
     }
 
     @Background
-    public void sendTextMessage(long teamId, long roomId, long entityId,
-                                String message, List<MentionObject> mentions,
+    public void sendTextMessage(String message, List<MentionObject> mentions,
                                 ReqSendMessageV3 reqSendMessage) {
+        long entityId = room.getEntityId();
+        long roomId = room.getRoomId();
+        long teamId = room.getTeamId();
         long localId = messageListModel.insertSendingMessageIfCan(entityId, roomId, message, mentions);
 
         if (localId > 0) {
