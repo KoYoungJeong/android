@@ -12,11 +12,10 @@ import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersAdapter;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.views.eastereggs.SnowView;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 19..
@@ -24,9 +23,9 @@ import java.util.Calendar;
 public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageListHeaderAdapter.HeaderViewHolder> {
 
     private final Context context;
-    private final MessageAdapter originAdapter;
+    private final MessageItemDate originAdapter;
 
-    public MessageListHeaderAdapter(Context context, MessageAdapter originAdapter) {
+    public MessageListHeaderAdapter(Context context, MessageItemDate originAdapter) {
         this.context = context;
         this.originAdapter = originAdapter;
     }
@@ -55,8 +54,8 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
     @Override
     public long getHeaderId(int position) {
         Calendar instance = Calendar.getInstance();
-        if (originAdapter.getItem(position).time != null) {
-            instance.setTime(originAdapter.getItem(position).time);
+        if (originAdapter.getItemDate(position) != null) {
+            instance.setTime(originAdapter.getItemDate(position));
         }
 
         instance.set(Calendar.HOUR_OF_DAY, 0);
@@ -65,6 +64,10 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
         instance.set(Calendar.MILLISECOND, 0);
 
         return instance.getTimeInMillis();
+    }
+
+    interface MessageItemDate {
+        Date getItemDate(int position);
     }
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {

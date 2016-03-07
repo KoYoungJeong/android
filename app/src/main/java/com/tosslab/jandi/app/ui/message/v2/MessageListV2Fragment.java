@@ -44,11 +44,10 @@ import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu.UploadMenuViewModel;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MainMessageListAdapter;
-import com.tosslab.jandi.app.ui.message.v2.adapter.MessageAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
+import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
 import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
@@ -201,7 +200,7 @@ public class MessageListV2Fragment extends Fragment implements
 
     private ProgressWheel progressWheel;
 
-    private MessageAdapter messageAdapter;
+    private MainMessageListAdapter messageAdapter;
 
     private StickerInfo stickerInfo = NULL_STICKER;
 
@@ -212,6 +211,7 @@ public class MessageListV2Fragment extends Fragment implements
     private String tempMessage;
 
     private Room room;
+    private MessagePointer messagePointer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -242,6 +242,7 @@ public class MessageListV2Fragment extends Fragment implements
     @AfterInject
     void initObjects() {
         room = Room.create(entityId, roomId, isFromPush);
+        messagePointer = MessagePointer.create(firstCursorLinkId, lastReadLinkId);
     }
 
     @AfterViews
@@ -278,6 +279,7 @@ public class MessageListV2Fragment extends Fragment implements
         messageListPresenter.setView(this);
         messageListPresenter.onInitMessageState(lastReadLinkId);
         messageListPresenter.setRoom(room);
+        messageListPresenter.setMessagePointer(messagePointer);
         messageListPresenter.setEntityInfo();
     }
 
@@ -422,6 +424,7 @@ public class MessageListV2Fragment extends Fragment implements
 
     private void initMessageListView() {
         messageAdapter = new MainMessageListAdapter(getActivity().getBaseContext());
+        messageAdapter.setMessagPointer(messagePointer);
         MessageListHeaderAdapter messageListHeaderAdapter =
                 new MessageListHeaderAdapter(getContext(), messageAdapter);
         lvMessages.setAdapter(messageAdapter);
@@ -463,7 +466,6 @@ public class MessageListV2Fragment extends Fragment implements
         messageListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
                 int lastAdapterItemPosition = recyclerView.getAdapter().getItemCount() - 1;
 
@@ -480,9 +482,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void initMessages(boolean withProgress) {
-        int currentItemCountWithoutDummy = getCurrentItemCountWithoutDummy();
-
-        messageListPresenter.onInitMessages(currentItemCountWithoutDummy, withProgress);
+        messageListPresenter.onInitMessages(withProgress);
     }
 
     private void initMentionControlViewModel(String readyMessage) {
@@ -504,12 +504,6 @@ public class MessageListV2Fragment extends Fragment implements
 
         // copy txt from mentioned edittext message
         mentionControlViewModel.registClipboardListener();
-    }
-
-    private int getCurrentItemCountWithoutDummy() {
-        return messageAdapter != null
-                ? (messageAdapter.getItemCount() - messageAdapter.getDummyMessageCount())
-                : 0;
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -588,21 +582,12 @@ public class MessageListV2Fragment extends Fragment implements
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void setLastReadLinkId(long lastReadLinkId) {
-        messageAdapter.setLastReadLinkId(lastReadLinkId);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void setUpOldMessage(List<ResMessages.Link> records,
-                                int currentItemCount, boolean isFirstMessage) {
+    public void setUpOldMessage(int currentItemCount, boolean isFirstMessage) {
         if (currentItemCount == 0) {
             // 첫 로드라면...
             clearMessages();
 
-            messageAdapter.addAll(0, records);
             messageAdapter.notifyDataSetChanged();
-
             layoutManager.scrollToPosition(messageAdapter.getItemCount() - 1);
 
         } else {
@@ -610,9 +595,7 @@ public class MessageListV2Fragment extends Fragment implements
             long latestVisibleLinkId = getFirstVisibleItemLinkId();
             int firstVisibleItemTop = getFirstVisibleItemTop();
 
-            messageAdapter.addAll(0, records);
             messageAdapter.notifyDataSetChanged();
-
             moveToMessage(latestVisibleLinkId, firstVisibleItemTop);
         }
 
@@ -634,7 +617,7 @@ public class MessageListV2Fragment extends Fragment implements
         }
 
         int visibleLastItemPosition = getLastVisibleItemPosition();
-        int lastItemPosition = getLastItemPosition();
+        int lastItemPosition = messageAdapter.getItemCount();
 
         messageAdapter.addAll(lastItemPosition, records);
         notifyDataSetChanged();
@@ -649,22 +632,11 @@ public class MessageListV2Fragment extends Fragment implements
             long messageId = lastUpdatedMessage.messageId;
 
             if (isFirstLoad) {
-
                 moveLastReadLink();
-                setUpLastReadLink(myId);
-
-            } else if (messageId <= 0) {
-                if (lastUpdatedMessage.fromEntity != myId) {
-                    moveToMessageById(lastUpdatedMessage.id, 0);
-                }
             } else {
                 moveToMessage(messageId, 0);
             }
         }
-    }
-
-    private int getLastItemPosition() {
-        return messageAdapter.getItemCount();
     }
 
     private int getLastVisibleItemPosition() {
@@ -675,26 +647,6 @@ public class MessageListV2Fragment extends Fragment implements
     public void moveToMessageById(long linkId, int firstVisibleItemTop) {
         int itemPosition = messageAdapter.indexOfLinkId(linkId);
         layoutManager.scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
-    }
-
-    private void setUpLastReadLink(long myId) {
-        long lastReadLinkId = messageAdapter.getLastReadLinkId();
-        int indexOfLinkId = messageAdapter.indexOfLinkId(lastReadLinkId);
-
-        if (indexOfLinkId < 0) {
-            return;
-        }
-
-        if (indexOfLinkId >= messageAdapter.getItemCount() - 1) {
-            // 라스트 링크가 마지막 아이템인경우
-            messageAdapter.setLastReadLinkId(-1);
-        } else {
-            ResMessages.Link item = messageAdapter.getItem(indexOfLinkId + 1);
-            if (item instanceof DummyMessageLink) {
-                // 마지막 아이템은 아니지만 다음 아이템이 더미인경우 마지막 아이템으로 간주
-                messageAdapter.setLastReadLinkId(-1);
-            }
-        }
     }
 
     private long getFirstVisibleItemLinkId() {
@@ -711,7 +663,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private int getFirstVisibleItemTop() {
-        View childAt = lvMessages.getLayoutManager().getChildAt(0);
+        View childAt = layoutManager.getChildAt(0);
         if (childAt != null) {
             return childAt.getTop();
         } else {
@@ -892,13 +844,11 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
-        int currentItemCountWithoutDummy = getCurrentItemCountWithoutDummy();
-
         if (TextUtils.equals(messageType, "topic_leave") ||
                 TextUtils.equals(messageType, "topic_join") ||
                 TextUtils.equals(messageType, "topic_invite")) {
 
-            messageListPresenter.updateRoomInfo(currentItemCountWithoutDummy, true);
+            messageListPresenter.updateRoomInfo(true);
 
             updateMentionInfo();
         } else {
@@ -909,7 +859,7 @@ public class MessageListV2Fragment extends Fragment implements
 
             if (roomId > 0) {
                 LogUtil.e("tony", "call new message");
-                messageListPresenter.addNewMessageQueue(currentItemCountWithoutDummy, true);
+                messageListPresenter.addNewMessageQueue(true);
             }
         }
     }
@@ -921,27 +871,13 @@ public class MessageListV2Fragment extends Fragment implements
 
         if (roomId > 0) {
             messageListPresenter.addNewMessageQueue(
-                    getCurrentItemCountWithoutDummy(), true);
+                    true);
         }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void updateMentionInfo() {
         mentionControlViewModel.refreshMembers(Arrays.asList(roomId));
-    }
-
-    @Nullable
-    @Override
-    public synchronized ResMessages.Link getLastItemFromAdapterWithoutDummy() {
-        int count = messageAdapter.getItemCount();
-        for (int idx = count - 1; idx >= 0; --idx) {
-            if (messageAdapter.getItem(idx) instanceof DummyMessageLink) {
-                continue;
-            }
-            return messageAdapter.getItem(idx);
-        }
-
-        return null;
     }
 
     @Override

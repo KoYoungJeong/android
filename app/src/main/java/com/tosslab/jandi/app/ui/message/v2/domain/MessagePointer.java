@@ -4,10 +4,12 @@ public class MessagePointer {
     private long firstCursorLinkId;
     private long lastReadLinkId;
 
-    public MessagePointer(long firstCursorLinkId, long lastReadLinkId) {
+    private MessagePointer(long firstCursorLinkId, long lastReadLinkId) {
         this.firstCursorLinkId = firstCursorLinkId;
         this.lastReadLinkId = lastReadLinkId;
     }
+
+    public static MessagePointer create(long firstCursorLinkId, long lastReadLinkId) {return new MessagePointer(firstCursorLinkId, lastReadLinkId);}
 
     public long getFirstCursorLinkId() {
         return firstCursorLinkId;

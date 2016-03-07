@@ -24,14 +24,6 @@ public class NewMessageQueue implements MessageQueue {
         return messageState;
     }
 
-    public int getCurrentItemCount() {
-        return currentItemCount;
-    }
-
-    public void setCurrentItemCount(int currentItemCount) {
-        this.currentItemCount = currentItemCount;
-    }
-
     public boolean isCacheMode() {
         return cacheMode;
     }
