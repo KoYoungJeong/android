@@ -35,7 +35,7 @@ public class NotificationSoundDialog {
         recyclerView.setAdapter(adapter);
 
         MediaPlayer mediaPlayer = new MediaPlayer();
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         Uri[] soundUris = getSoundIds(context);
 
         adapter.setOnRecyclerItemClickListener((view, adapter1, position) -> {
@@ -83,9 +83,9 @@ public class NotificationSoundDialog {
     private static void playNotifcationSound(Context context, MediaPlayer mediaPlayer, int position, Uri[] soundIds) {
 
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        int streamVolume = audioManager.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
+        int streamVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         if (streamVolume == 0) {
-            audioManager.adjustStreamVolume(AudioManager.STREAM_NOTIFICATION, AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
+            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
         }
 
         Uri notificationUri;
