@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.Divider;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -36,7 +37,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 
-public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHolder> implements MessageListHeaderAdapter.MessageItemDate {
+public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHolder>
+        implements MessageListHeaderAdapter.MessageItemDate {
 
     Context context;
     long lastMarker = -1;
@@ -50,7 +52,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     long roomId = -1;
     long entityId;
     List<ResMessages.Link> links;
-    private MessagePointer messagPointer;
+    private MessagePointer messagePointer;
 
     public MainMessageListAdapter(Context context) {
         this.context = context;
@@ -60,12 +62,12 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                if (roomId == -1 || messagPointer.getFirstCursorLinkId() == -1) {
+                if (roomId == -1 || messagePointer.getFirstCursorLinkId() == -1) {
                     links.clear();
                     return;
                 }
 
-                addBeforeLinks(roomId, messagPointer.getFirstCursorLinkId(), links);
+                addBeforeLinks(roomId, messagePointer.getFirstCursorLinkId(), links);
                 removeDummyLink(links);
                 addAfterLinks(roomId, links);
                 addDummyLink(roomId, links);
@@ -117,7 +119,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         }
 
         if (position > 0 && position < getItemCount() - 1 - getDummyMessageCount()) {
-            bodyViewHolder.setLastReadViewVisible(item.id, messagPointer.getLastReadLinkId());
+            bodyViewHolder.setLastReadViewVisible(item.id, messagePointer.getLastReadLinkId());
         } else {
             bodyViewHolder.setLastReadViewVisible(0, -1);
         }
@@ -435,8 +437,8 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         return getItem(position).time;
     }
 
-    public void setMessagPointer(MessagePointer messagPointer) {
-        this.messagPointer = messagPointer;
+    public void setMessagePointer(MessagePointer messagPointer) {
+        this.messagePointer = messagPointer;
     }
 
     enum MoreState {

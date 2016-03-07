@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
+import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -58,10 +60,10 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.BackPressCatchEditText;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -258,6 +260,8 @@ public class MessageListV2Fragment extends Fragment implements
 
         initProgressWheel();
 
+        initEmptyLayout();
+
         initMessageEditText();
 
         initStickerViewModel();
@@ -273,6 +277,10 @@ public class MessageListV2Fragment extends Fragment implements
         initMessages(true /* withProgress */);
 
         showCoachMarkIfNeed();
+    }
+
+    private void initEmptyLayout() {
+        messageListPresenter.onInitializeEmptyLayout(entityId);
     }
 
     private void initPresenter() {
@@ -324,7 +332,6 @@ public class MessageListV2Fragment extends Fragment implements
 
     private void initMessageEditText() {
         etMessage.setOnKeyListener((v, keyCode, event) -> {
-            LogUtil.d("In etMessage KeyCode : " + keyCode);
             if (keyCode == KeyEvent.KEYCODE_ENTER
                     && getResources().getConfiguration().keyboard != Configuration.KEYBOARD_NOKEYS) {
 
@@ -424,7 +431,7 @@ public class MessageListV2Fragment extends Fragment implements
 
     private void initMessageListView() {
         messageAdapter = new MainMessageListAdapter(getActivity().getBaseContext());
-        messageAdapter.setMessagPointer(messagePointer);
+        messageAdapter.setMessagePointer(messagePointer);
         MessageListHeaderAdapter messageListHeaderAdapter =
                 new MessageListHeaderAdapter(getContext(), messageAdapter);
         lvMessages.setAdapter(messageAdapter);
@@ -766,14 +773,18 @@ public class MessageListV2Fragment extends Fragment implements
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void setEmptyLayoutVisible(boolean visible) {
-//        AlertUtil.showConfirmDialog(getActivity(), "Hello", null, true);
+    public void showEmptyView(boolean show) {
+//        int originItemCount = messageAdapter.getItemCount();
+//        int itemCountWithoutEvent = getItemCountWithoutEvent();
+//        int eventCount = originItemCount - itemCountWithoutEvent;
+////        if (itemCountWithoutEvent > 0 || eventCount > 1) {
+
+        layoutEmpty.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void notifyDataSetChanged() {
-        LogUtil.i("tony", "notifyDataSetChanged");
         messageAdapter.notifyDataSetChanged();
     }
 
@@ -848,6 +859,10 @@ public class MessageListV2Fragment extends Fragment implements
                 TextUtils.equals(messageType, "topic_join") ||
                 TextUtils.equals(messageType, "topic_invite")) {
 
+            if (isForeground) {
+                initEmptyLayout();
+            }
+
             messageListPresenter.updateRoomInfo(true);
 
             updateMentionInfo();
@@ -858,7 +873,6 @@ public class MessageListV2Fragment extends Fragment implements
             }
 
             if (roomId > 0) {
-                LogUtil.e("tony", "call new message");
                 messageListPresenter.addNewMessageQueue(true);
             }
         }
@@ -890,28 +904,86 @@ public class MessageListV2Fragment extends Fragment implements
     public void finish() {
     }
 
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveLastReadLink() {
+        long lastReadLinkId = messagePointer.getLastReadLinkId();
 
+        if (lastReadLinkId <= 0) {
+            return;
+        }
+
+        int position = messageAdapter.indexOfLinkId(lastReadLinkId);
+
+        if (position > 0) {
+            int measuredHeight = lvMessages.getMeasuredHeight() / 2;
+            if (measuredHeight <= 0) {
+                measuredHeight = (int) UiUtils.getPixelFromDp(100f);
+            }
+            position = Math.min(messageAdapter.getItemCount() - 1, position + 1);
+            layoutManager.scrollToPositionWithOffset(position, measuredHeight);
+        } else if (position < 0) {
+            layoutManager.scrollToPosition(messageAdapter.getItemCount() - 1);
+        }
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void insertTeamMemberEmptyLayout() {
 
+        if (layoutEmpty == null) {
+            return;
+        }
+        layoutEmpty.removeAllViews();
+        View view = LayoutInflater.from(getActivity().getBaseContext())
+                .inflate(R.layout.view_team_member_empty, layoutEmpty, true);
+        View.OnClickListener onClickListener = v -> {
+            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_TOPIC_CHAT);
+            invitationDialogExecutor.execute();
+        };
+        view.findViewById(R.id.img_chat_choose_member_empty).setOnClickListener(onClickListener);
+        view.findViewById(R.id.btn_chat_choose_member_empty).setOnClickListener(onClickListener);
+
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void insertTopicMemberEmptyLayout() {
 
+        if (layoutEmpty == null) {
+            return;
+        }
+
+        layoutEmpty.removeAllViews();
+        View view = LayoutInflater.from(getActivity().getBaseContext())
+                .inflate(R.layout.view_topic_member_empty, layoutEmpty, true);
+        view.findViewById(R.id.img_chat_choose_member_empty)
+                .setOnClickListener(v -> EventBus.getDefault().post(new TopicInviteEvent()));
+        view.findViewById(R.id.btn_chat_choose_member_empty)
+                .setOnClickListener(v -> EventBus.getDefault().post(new TopicInviteEvent()));
+
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void clearEmptyMessageLayout() {
-
+        if (layoutEmpty != null) {
+            layoutEmpty.removeAllViews();
+        }
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void insertMessageEmptyLayout() {
+
+        if (layoutEmpty == null) {
+            return;
+        }
+        layoutEmpty.removeAllViews();
+
+        LayoutInflater.from(getActivity().getBaseContext())
+                .inflate(R.layout.view_message_list_empty, layoutEmpty, true);
 
     }
 

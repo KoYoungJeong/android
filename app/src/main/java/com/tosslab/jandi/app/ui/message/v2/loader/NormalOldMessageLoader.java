@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
-import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Presenter;
@@ -14,7 +13,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 
-import java.util.Collections;
 import java.util.List;
 
 import retrofit.RetrofitError;
@@ -193,7 +191,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
         boolean hasItem = currentItemCount > 0;
         if (!hasItem) {
 //            view.dismissLoadingView();
-            view.setEmptyLayoutVisible(true);
+            view.showEmptyView(true);
         }
     }
 
