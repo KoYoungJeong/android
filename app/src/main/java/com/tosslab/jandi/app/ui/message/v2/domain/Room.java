@@ -5,6 +5,8 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 
 public class Room {
+    public static final long INVALID_ROOM_ID = -1;
+
     private final int entityType;
     private final long entityId;
     private final long teamId;

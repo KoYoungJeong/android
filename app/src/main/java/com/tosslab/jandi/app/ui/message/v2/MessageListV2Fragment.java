@@ -480,11 +480,6 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void initMessages(boolean withProgress) {
-        if (room.getRoomId() <= 0) {
-            retrieveRoomId(withProgress);
-            return;
-        }
-
         int currentItemCountWithoutDummy = getCurrentItemCountWithoutDummy();
 
         messageListPresenter.onInitMessages(currentItemCountWithoutDummy, withProgress);
@@ -555,22 +550,6 @@ public class MessageListV2Fragment extends Fragment implements
         vgProgressForMessageList.animate()
                 .alpha(0.0f)
                 .setDuration(250);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void retrieveRoomId(boolean withProgress) {
-        messageListPresenter.onRetrieveRoomId(withProgress);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void setRoomId(long roomId, boolean withProgress) {
-        this.roomId = roomId;
-
-        LogUtil.e("tony", "roomId = " + roomId);
-
-        initMessages(withProgress);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

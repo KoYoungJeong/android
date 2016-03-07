@@ -8,8 +8,6 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 public class NewMessageQueue implements MessageQueue {
 
     private final MessageState messageState;
-    private long teamId;
-    private long roomId;
     private int currentItemCount;
     private boolean cacheMode = true;
     public NewMessageQueue(MessageState messageState) {
@@ -24,22 +22,6 @@ public class NewMessageQueue implements MessageQueue {
     @Override
     public Object getData() {
         return messageState;
-    }
-
-    public long getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(long teamId) {
-        this.teamId = teamId;
-    }
-
-    public long getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(long roomId) {
-        this.roomId = roomId;
     }
 
     public int getCurrentItemCount() {

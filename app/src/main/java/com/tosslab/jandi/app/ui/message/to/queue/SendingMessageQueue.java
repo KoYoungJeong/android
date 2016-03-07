@@ -8,8 +8,6 @@ import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 public class SendingMessageQueue implements MessageQueue {
 
     private final SendingMessage sendingMessage;
-    private long teamId;
-    private long entityId;
 
     public SendingMessageQueue(SendingMessage sendingMessage) {
         this.sendingMessage = sendingMessage;
@@ -25,19 +23,4 @@ public class SendingMessageQueue implements MessageQueue {
         return sendingMessage;
     }
 
-    public long getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(long teamId) {
-        this.teamId = teamId;
-    }
-
-    public long getEntityId() {
-        return entityId;
-    }
-
-    public void setEntityId(long entityId) {
-        this.entityId = entityId;
-    }
 }
