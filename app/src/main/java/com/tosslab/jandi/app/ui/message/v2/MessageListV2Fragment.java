@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
+import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
@@ -285,7 +286,6 @@ public class MessageListV2Fragment extends Fragment implements
 
     private void initPresenter() {
         messageListPresenter.setView(this);
-        messageListPresenter.onInitMessageState(lastReadLinkId);
         messageListPresenter.setRoom(room);
         messageListPresenter.setMessagePointer(messagePointer);
         messageListPresenter.setEntityInfo();
@@ -589,8 +589,8 @@ public class MessageListV2Fragment extends Fragment implements
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void setUpOldMessage(int currentItemCount, boolean isFirstMessage) {
-        if (currentItemCount == 0) {
+    public void setUpOldMessage(boolean isFirstLoad, boolean isFirstMessage) {
+        if (isFirstLoad) {
             // 첫 로드라면...
             clearMessages();
 
@@ -884,8 +884,18 @@ public class MessageListV2Fragment extends Fragment implements
         }
 
         if (roomId > 0) {
-            messageListPresenter.addNewMessageQueue(
-                    true);
+            messageListPresenter.addNewMessageQueue(true);
+        }
+    }
+
+    public void onEvent(RefreshOldMessageEvent event) {
+        if (!isForeground) {
+            return;
+        }
+
+
+        if (roomId > 0) {
+            messageListPresenter.addOldMessageQueue(true);
         }
     }
 

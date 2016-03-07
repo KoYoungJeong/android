@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.ui.message.v2.domain;
 
 public class MessagePointer {
-    private long firstCursorLinkId;
-    private long lastReadLinkId;
+    private long firstCursorLinkId = -1;
+    private long lastReadLinkId = -1;
 
     private MessagePointer(long firstCursorLinkId, long lastReadLinkId) {
         this.firstCursorLinkId = firstCursorLinkId;

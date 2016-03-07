@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 public class NewMessageQueue implements MessageQueue {
 
     private final MessageState messageState;
-    private int currentItemCount;
     private boolean cacheMode = true;
     public NewMessageQueue(MessageState messageState) {
         this.messageState = messageState;

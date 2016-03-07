@@ -28,10 +28,6 @@ public class OldMessageQueue implements MessageQueue {
         return currentItemCount;
     }
 
-    public void setCurrentItemCount(int currentItemCount) {
-        this.currentItemCount = currentItemCount;
-    }
-
     public boolean isCacheMode() {
         return cacheMode;
     }

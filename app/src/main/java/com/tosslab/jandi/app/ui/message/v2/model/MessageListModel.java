@@ -43,15 +43,8 @@ import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
-import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
-import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
-import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader_;
-import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
-import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader_;
-import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -63,8 +56,6 @@ import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -571,18 +562,18 @@ public class MessageListModel {
 
     @Nullable
     public List<ResMessages.Link> loadOldMessages(long roomId, long linkId,
-                                                  int currentItemCountWithoutDummy,
+                                                  boolean firstLoad,
                                                   int offset) {
 
         List<ResMessages.Link> oldMessages;
-        if (currentItemCountWithoutDummy > 0) {
-            // 처음 로드 아니면 현재 링크 - 1 ~ 이전 itemCount 로드
-            oldMessages =
-                    MessageRepository.getRepository().getOldMessages(roomId, linkId, offset);
-        } else {
+        if (firstLoad) {
             // 처음 로드면 현재 링크 ~ 이전 20개 로드
             oldMessages =
                     MessageRepository.getRepository().getOldMessages(roomId, linkId + 1, offset);
+        } else {
+            // 처음 로드 아니면 현재 링크 - 1 ~ 이전 itemCount 로드
+            oldMessages =
+                    MessageRepository.getRepository().getOldMessages(roomId, linkId, offset);
         }
 
         return oldMessages;
