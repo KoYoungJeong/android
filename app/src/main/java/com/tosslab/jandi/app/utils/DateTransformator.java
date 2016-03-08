@@ -17,11 +17,19 @@ import java.util.Locale;
  */
 public class DateTransformator {
     public static final long PARSE_FAIL = -1;
-    public static final String FORMAT_DEFAULT = "MM/dd/yyyy_hh:mm_a";
-    public static final String FORMAT_YYYYMMDD_HHMM_A = "yyyy/MM/dd_a_hh:mm";
+    public static final String FORMAT_DEFAULT = "MM/dd/yyyy hh:mm a";
+    public static final String FORMAT_YYYYMMDD_HHMM_A = "yyyy/MM/dd a hh:mm";
 
     public static String getTimeString(Date date) {
-        return getTimeString(date, FORMAT_DEFAULT);
+        Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
+        switch (locale.getLanguage()) {
+            case "ko":
+            case "zh":
+            case "ja":
+                return getTimeString(date, FORMAT_YYYYMMDD_HHMM_A);
+            default:
+                return getTimeString(date, FORMAT_DEFAULT);
+        }
     }
 
     public static String getTimeString(Date date, String format) {
@@ -29,7 +37,6 @@ public class DateTransformator {
     }
 
     public static long getTimeFromISO(String date) {
-
         if (TextUtils.isEmpty(date)) {
             return PARSE_FAIL;
         }
@@ -56,29 +63,21 @@ public class DateTransformator {
         return date;
     }
 
-    public static String getTimeStringFromISO(String date) {
-        return getTimeStringFromISO(date, "MM/dd/yyyy, hh:mm a");
-    }
-
-    public static String getTimeStringForDivider(Date date) {
-        return getTimeString(date, "MM/dd/yyyy, EEE");
-    }
-
     public static String getTimeStringForDivider(long dateTime) {
         Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
         DateFormat dateFormat = null;
         switch (locale.getLanguage()) {
             case "ko":
-                dateFormat = new SimpleDateFormat("yyyy년_MM월_dd일_(EEE)");
+                dateFormat = new SimpleDateFormat("yyyy년 MM월 dd일 (EEE)");
                 break;
             case "zh":
-                dateFormat = new SimpleDateFormat("yyyy年_MM月_dd日_EEE");
+                dateFormat = new SimpleDateFormat("yyyy年 MM月 dd日 EEE");
                 break;
             case "ja":
-                dateFormat = new SimpleDateFormat("yyyy年_MM月_dd日_(EEE)");
+                dateFormat = new SimpleDateFormat("yyyy年 MM月 dd日 (EEE)");
                 break;
             default:
-                dateFormat = new SimpleDateFormat("EEE_MMM_dd,_yyyy");
+                dateFormat = new SimpleDateFormat("EEE MMM dd, yyyy");
                 break;
         }
         return dateFormat.format(dateTime);
@@ -86,15 +85,13 @@ public class DateTransformator {
 
     public static String getTimeStringForSimple(Date date) {
         Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
-
-        String langCode = locale.getLanguage();
-
-        if (TextUtils.equals(langCode, Locale.KOREA.getLanguage())
-                || TextUtils.equals(langCode, Locale.JAPAN.getLanguage())) {
-
-            return getTimeString(date, "a_h:mm");
-        } else {
-            return getTimeString(date, "h:mm_a");
+        switch (locale.getLanguage()) {
+            case "ko":
+            case "zh":
+                return getTimeString(date, "a h:mm");
+            case "ja":
+            default:
+                return getTimeString(date, "h:mm a");
         }
 
     }
