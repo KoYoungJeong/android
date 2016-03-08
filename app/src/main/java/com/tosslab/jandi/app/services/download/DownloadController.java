@@ -126,23 +126,17 @@ public class DownloadController {
                     });
 
 
-            view.cancelNotification(notificationId);
+            String name = file.getName();
+            String description = file.getAbsolutePath();
+            String fileType = downloadFileInfo.getFileType();
+            long length = file.length();
+
+            addDownloadManager(name, description, fileType, file.getAbsolutePath(), length);
 
             DownloadModel.addToGalleryIfFileIsImage(file, downloadFileInfo.getFileType());
 
             Intent openFileViewerIntent = getFileViewerIntent(file, downloadFileInfo.getFileType());
             view.notifyComplete(downloadFileInfo.getFileName(), notificationId, openFileViewerIntent);
-
-            // download app 리스트 목록에서 다운받은 파일을 확인할 수 있도록 처리
-            DownloadManager downloadManager =
-                    (DownloadManager) view.getServiceContext().getSystemService(Context.DOWNLOAD_SERVICE);
-            String name = file.getName();
-            String description = file.getAbsolutePath();
-            String fileType = downloadFileInfo.getFileType();
-            long length = file.length();
-            downloadManager.addCompletedDownload(name, description,
-                    true, fileType,
-                    file.getAbsolutePath(), length, false);
 
             trackFileDownloadSuccess(downloadFileInfo.getFileId(),
                     downloadFileInfo.getFileType(),
@@ -161,6 +155,14 @@ public class DownloadController {
         DownloadModel.deleteDownloadInfo(notificationId);
 
         clear();
+    }
+
+    private void addDownloadManager(String name, String description,
+                                    String fileType, String filePath, long length) {
+        DownloadManager downloadManager =
+                (DownloadManager) JandiApplication.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+        downloadManager.addCompletedDownload(name, description,
+                true, fileType, filePath, length, false);
     }
 
     File downloadFileAndGet(File downloadTargetFile, String downloadUrl,
@@ -235,6 +237,5 @@ public class DownloadController {
 
         void showErrorToast(int resId);
 
-        Context getServiceContext();
     }
 }

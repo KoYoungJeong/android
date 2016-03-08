@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -28,13 +28,14 @@ public class JandiDummyReceiver extends BroadcastReceiver {
 
             // delay가 random인 이유는 동시에 이벤트가 들어갔을때 액티비티 생명주기의 충돌을 방지하기 위함인듯..
             Subject.just(1)
+                    .filter(val -> (System.currentTimeMillis() - JandiPreference.getLastExecutedTime()) < 1000 * 60 * 60 * 24)
                     .subscribeOn(AndroidSchedulers.mainThread())
                     .delay(new Random().nextInt(3000), TimeUnit.MILLISECONDS)
                     .subscribe(i -> {
+                        JandiPreference.setLastExecutedTime(System.currentTimeMillis());
                         Intent serviceIntent = new Intent(context, JandiDummyActivity.class);
                         serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(serviceIntent);
-                        LogUtil.e("dummy activity running!!");
                     });
 
         }

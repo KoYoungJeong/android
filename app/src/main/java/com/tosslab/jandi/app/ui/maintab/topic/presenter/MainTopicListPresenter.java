@@ -14,7 +14,8 @@ import com.tosslab.jandi.app.network.models.ResCommonError;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
-import com.tosslab.jandi.app.ui.maintab.topic.adapter.ExpandableTopicAdapter;
+import com.tosslab.jandi.app.ui.maintab.topic.adapter.folder.ExpandableTopicAdapter;
+import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
@@ -34,6 +35,7 @@ import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
@@ -62,17 +64,16 @@ public class MainTopicListPresenter {
         TopicFolderRepository repository = TopicFolderRepository.getRepository();
         topicFolders = repository.getFolders();
         topicFolderItems = repository.getFolderItems();
-        onRefreshList(topicFolders, topicFolderItems, false);
         view.showList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
+        onRefreshList(topicFolders, topicFolderItems);
+    }
+
+    public void refreshList() {
+        refreshListView(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
     }
 
     @Background(serial = "refresh_topic_list")
-    public void onRefreshList(List<ResFolder> inMemTopicFolders, List<ResFolderItem> inMemTopicFolderItems, boolean onlyInMemory) {
-
-        if (onlyInMemory) {
-            refreshListView(mainTopicModel.getDataProvider(inMemTopicFolders, inMemTopicFolderItems));
-            return;
-        }
+    public void onRefreshList(List<ResFolder> inMemTopicFolders, List<ResFolderItem> inMemTopicFolderItems) {
 
         Observable.combineLatest(
                 Observable.create(new Observable.OnSubscribe<List<ResFolder>>() {
@@ -129,6 +130,22 @@ public class MainTopicListPresenter {
         }
     }
 
+    public void onUpdatedTopicClick(Topic item) {
+        AnalyticsValue.Action action = item.isPublic() ? AnalyticsValue.Action.ChoosePublicTopic : AnalyticsValue.Action.ChoosePrivateTopic;
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, action);
+
+        updateBadgeCount(item.getUnreadCount());
+        item.setUnreadCount(0);
+        mainTopicModel.resetBadge(item.getEntityId());
+
+        long teamId = EntityManager.getInstance().getTeamId();
+        int unreadCount = mainTopicModel.getUnreadCount();
+        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+        int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
+        view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
+                item.getMarkerLinkId());
+    }
+
     public void onChildItemClick(RecyclerView.Adapter adapter, int groupPosition, int childPosition) {
         ExpandableTopicAdapter topicAdapter = (ExpandableTopicAdapter) adapter;
         TopicItemData item = topicAdapter.getTopicItemData(groupPosition, childPosition);
@@ -147,6 +164,20 @@ public class MainTopicListPresenter {
         mainTopicModel.resetBadge(item.getEntityId());
 
         long teamId = EntityManager.getInstance().getTeamId();
+        updateBadgeCount(itemsUnreadCount);
+
+        int unreadCount = getUnreadCount(Observable.from(topicAdapter.getAllTopicItemData()));
+        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+
+        int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
+        view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
+                item.getMarkerLinkId());
+        view.setSelectedItem(item.getEntityId());
+        view.notifyDatasetChangedForFolder();
+    }
+
+    private void updateBadgeCount(int itemsUnreadCount) {
+        long teamId = EntityManager.getInstance().getTeamId();
         BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
         int badgeCount = badgeCountRepository.findBadgeCountByTeamId(teamId) - itemsUnreadCount;
         if (badgeCount <= 0) {
@@ -154,16 +185,14 @@ public class MainTopicListPresenter {
         }
         badgeCountRepository.upsertBadgeCount(EntityManager.getInstance().getTeamId(), badgeCount);
         BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
-
-        int unreadCount = getUnreadCount(Observable.from(view.getJoinedTopics()));
-        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
-
-        int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
-        view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
-                item.getLastReadLinkId());
-        view.setSelectedItem(item.getEntityId());
-        view.notifyDatasetChanged();
     }
+
+    public void onUpdatedTopicLongClick(Topic item) {
+        long entityId = item.getEntityId();
+        long folderId = mainTopicModel.findFolderId(entityId);
+        view.showEntityMenuDialog(entityId, folderId);
+    }
+
 
     public void onChildItemLongClick(RecyclerView.Adapter adapter, int groupPosition, int childPosition) {
         TopicItemData topicItemData = ((ExpandableTopicAdapter) adapter).getTopicItemData(groupPosition, childPosition);
@@ -175,7 +204,6 @@ public class MainTopicListPresenter {
         view.showEntityMenuDialog(entityId, folderId);
     }
 
-
     public int getUnreadCount(Observable<TopicItemData> joinEntities) {
         final int[] value = {0};
         joinEntities.filter(topicItemData -> topicItemData.getUnreadCount() > 0)
@@ -184,20 +212,28 @@ public class MainTopicListPresenter {
         return value[0];
     }
 
-    public void onNewMessage(SocketMessageEvent event) {
+    public void onNewMessageForFolder(SocketMessageEvent event, List<TopicItemData> joinedTopics) {
 
         if (mainTopicModel.isMe(event.getWriter())) {
             return;
         }
 
-        List<TopicItemData> joinedTopics = view.getJoinedTopics();
-
         mainTopicModel.updateMessageCount(event, joinedTopics);
         view.updateGroupBadgeCount();
-        view.notifyDatasetChanged();
+        view.notifyDatasetChangedForFolder();
 
-        int unreadCount = getUnreadCount(Observable.from(view.getJoinedTopics()));
+        int unreadCount = getUnreadCount(Observable.from(joinedTopics));
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+    }
+
+    public void onNewMessageForUpdated(SocketMessageEvent event, List<Topic> items) {
+        if (mainTopicModel.isMe(event.getWriter())) {
+            return;
+        }
+
+        mainTopicModel.updateMessageCountForUpdated(event, items);
+        onRefreshUpdatedTopicList();
+
     }
 
     public void onFolderExpand(TopicFolderData topicFolderData) {
@@ -227,7 +263,7 @@ public class MainTopicListPresenter {
     public void createNewFolder(String title) {
         try {
             topicFolderChooseModel.createFolder(title);
-            view.notifyDatasetChanged();
+            view.notifyDatasetChangedForFolder();
         } catch (RetrofitError e) {
             e.printStackTrace();
             if (e.getResponse() != null) {
@@ -243,18 +279,27 @@ public class MainTopicListPresenter {
         }
     }
 
+    public void onRefreshUpdatedTopicList() {
+        mainTopicModel.getUpdatedTopicList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(view::setUpdatedItems, t -> {});
+
+    }
+
     public interface View {
+        void setUpdatedItems(List<Topic> topics);
+
         void showList(TopicFolderListDataProvider topicFolderListDataProvider);
 
         void refreshList(TopicFolderListDataProvider topicFolderListDataProvider);
 
         void moveToMessageActivity(long entityId, int entityType, boolean starred, long teamId, long markerLinkId);
 
-        void notifyDatasetChanged();
+        void notifyDatasetChangedForFolder();
+
+        void notifyDatasetChangedForUpdated();
 
         void showEntityMenuDialog(long entityId, long folderId);
-
-        List<TopicItemData> getJoinedTopics();
 
         void showProgressWheel();
 

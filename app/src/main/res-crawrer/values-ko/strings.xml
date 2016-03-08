@@ -79,7 +79,7 @@
 	<string name="jandi_add_an_email_address">"이메일 추가하기"</string>
 	<string name="jandi_add_to_contacts">"연락처 추가하기"</string>
 	<string name="jandi_alert_already_topic_owenr">"이미 이 토픽의 관리자입니다."</string>
-	<string name="jandi_all_of_topic_members">"@All (모든 토픽 멤버)"</string>
+	<string name="jandi_all_of_topic_members">"@all (모든 토픽 멤버)"</string>
 	<string name="jandi_already_in_team">"이 이메일 주소는 이미 %s의 멤버입니다."</string>
 	<string name="jandi_already_linked_email">"이미 계정과 연동되어있는 이메일입니다"</string>
 	<string name="jandi_announcement_create">"공지로 등록"</string>
@@ -113,7 +113,7 @@
 	<string name="jandi_cancel">"취소"</string>
 	<string name="jandi_canceled">"취소됨"</string>
 	<string name="jandi_cannot_connect_service_try_again">"일시적으로 서비스 접속이 되지 않습니다. 잠시 후 다시 시도해주세요."</string>
-	<string name="jandi_cannot_find_messages">"검색 결과가 없습니다:"</string>
+	<string name="jandi_cannot_find_messages">"검색 결과가 없습니다 : "</string>
 	<string name="jandi_cannot_find_search_result_1">"파일 서랍에 아직 파일이 없습니다."</string>
 	<string name="jandi_cannot_find_search_result_2">"토픽 또는 1:1메시지에서 파일을 업로드하실 수 있습니다."</string>
 	<string name="jandi_cannot_find_search_result_old">"검색된 파일이 없습니다."</string>
@@ -156,7 +156,7 @@
 	<string name="jandi_confirm_new_passcode">"비밀번호를 한번 더 입력해주세요."</string>
 	<string name="jandi_confirm_passcode">"비밀번호 재입력"</string>
 	<string name="jandi_copied_to_clipboard">"클립보드에 복사되었습니다."</string>
-	<string name="jandi_copy_link">"주소 복사하기"</string>
+	<string name="jandi_copy_link">"링크 복사"</string>
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"생성하기"</string>
 	<string name="jandi_create_channel">"토픽 생성"</string>
@@ -178,7 +178,7 @@
 	<string name="jandi_disabled_user">"차단된 멤버입니다"</string>
 	<string name="jandi_domain_is_already_taken">"이미 사용하고 있는 도메인이거나 알맞은 형식의 도메인 이름이 아닙니다."</string>
 	<string name="jandi_duplicate_email">"이미 사용중인 이메일입니다"</string>
-	<string name="jandi_empty">"None"</string>
+	<string name="jandi_empty">""</string>
 	<string name="jandi_enable_external_link">"외부 공유용 링크 생성"</string>
 	<string name="jandi_enter_new_passcode">"변경할 비밀번호를 입력해주세요."</string>
 	<string name="jandi_enter_passcode">"비밀번호 입력"</string>
@@ -328,8 +328,10 @@
 	<string name="jandi_no_preview_push_message">"새 메시지가 도착했습니다."</string>
 	<string name="jandi_no_recent_stickers">"최근 사용한 스티커가 없습니다."</string>
 	<string name="jandi_no_topic_to_join">"참여 가능한 토픽이 없습니다"</string>
+	<string name="jandi_normally_topic_messages">"일반 토픽 메시지"</string>
 	<string name="jandi_notification_off">"알림 끄기"</string>
 	<string name="jandi_notification_on">"알림 켜기"</string>
+	<string name="jandi_notification_sounds">"알림 소리"</string>
 	<string name="jandi_notify_download">"파일을 다운로드 합니다. 알림 표시줄에서 확인해주세요."</string>
 	<string name="jandi_notify_download_complete">"다운로드 완료"</string>
 	<string name="jandi_nowhere_shared_file">"공유된 대화방이 없습니다"</string>
@@ -385,7 +387,7 @@
 	<string name="jandi_sdcard_storage">"SD 카드"</string>
 	<string name="jandi_sdcard_storage_mounted">"SD 카드가 인식되었습니다"</string>
 	<string name="jandi_sdcard_storage_unmounted">"SD 카드가 해제되었습니다"</string>
-	<string name="jandi_search_ing">"<![CDATA[<b><font color=#404040>%s</font></b>]]>검색 중..."</string>
+	<string name="jandi_search_ing">"<![CDATA[<b><font color=#404040>%s</font></b>]]> 검색 중..."</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>에 대한 <b><font color=#404040>%2$d</font></b>개의 검색 결과가 있습니다.]]>"</string>
 	<string name="jandi_select_character">"캐릭터 선택하기"</string>
 	<string name="jandi_select_direct_messages">"대화 시작하기"</string>
@@ -432,7 +434,19 @@
 	<string name="jandi_signup_title">"가입하기"</string>
 	<string name="jandi_signup_verification_code">"인증번호 이메일을 발송했습니다.\n받으신 인증번호를 입력해주세요."</string>
 	<string name="jandi_signup_verify_title">"인증번호 확인"</string>
+	<string name="jandi_sort_folder">"폴더"</string>
+	<string name="jandi_sort_updated">"업데이트 순"</string>
 	<string name="jandi_sounds">"소리"</string>
+	<string name="jandi_sounds_air_pop">"버블팝"</string>
+	<string name="jandi_sounds_arise">"기타 이중음"</string>
+	<string name="jandi_sounds_chime_bel_ding">"트라이앵글"</string>
+	<string name="jandi_sounds_chimey">"딩동"</string>
+	<string name="jandi_sounds_mouse">"짧은 알림"</string>
+	<string name="jandi_sounds_nursey">"마림바 삼중음"</string>
+	<string name="jandi_sounds_on_point">"마림바 이중음"</string>
+	<string name="jandi_sounds_super">"실로폰 이중음"</string>
+	<string name="jandi_sounds_system">"시스템 사운드"</string>
+	<string name="jandi_sounds_think_ping">"마림바 단음"</string>
 	<string name="jandi_starmention_no_longer_in_topic">"이미 나갔거나 삭제된 토픽이므로 원본을 확인할 수 없습니다."</string>
 	<string name="jandi_starred">"즐겨찾기 추가"</string>
 	<string name="jandi_starred_all">"모든 타입"</string>

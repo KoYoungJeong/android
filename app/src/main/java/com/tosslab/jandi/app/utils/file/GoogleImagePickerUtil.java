@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.utils.file;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.Environment;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
@@ -59,13 +58,6 @@ public class GoogleImagePickerUtil {
 
     public static String getWebImageNameOnly() {
         return String.format("%s_%s", String.valueOf(System.currentTimeMillis()), "web_image");
-    }
-
-    /**
-     * @return /sdcard/DOWNLOAD/Jandi
-     */
-    public static String getDownloadPath() {
-        return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS + "/Jandi";
     }
 
     public static ProgressDialog getDownloadProgress(Context context, String downloadDir, String downloadPath) {

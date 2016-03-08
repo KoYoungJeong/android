@@ -2,14 +2,20 @@ package com.tosslab.jandi.app.ui.settings.push;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.parse.ParseInstallation;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
+import com.tosslab.jandi.app.ui.settings.push.model.NotificationSoundDialog;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.app.views.settings.SettingsBodyCheckView;
@@ -30,6 +36,14 @@ public class SettingsPushFragment extends Fragment {
     SettingsBodyCheckView sbcvPush;
     @ViewById(R.id.vg_settings_push_sound)
     SettingsBodyCheckView sbcvSound;
+    @ViewById(R.id.vg_settings_push_sound_sub)
+    LinearLayout vgSoundSub;
+    @ViewById(R.id.vg_settings_push_sound_sub_topic_message)
+    SettingsBodyView sbcvSoundSubTopic;
+    @ViewById(R.id.vg_settings_push_sound_sub_direct_message)
+    SettingsBodyView sbcvSoundSubDirectMessage;
+    @ViewById(R.id.vg_settings_push_sound_sub_mentions)
+    SettingsBodyView sbcvSoundSubMentions;
     @ViewById(R.id.vg_settings_push_vibration)
     SettingsBodyCheckView sbcvVibration;
     @ViewById(R.id.vg_settings_push_led)
@@ -45,15 +59,17 @@ public class SettingsPushFragment extends Fragment {
 
     @AfterViews
     void initViews() {
-        boolean pushOn = sharedPreferences.getBoolean("setting_push_auto_alarm", true);
-        boolean soundOn = sharedPreferences.getBoolean("setting_push_alarm_sound", true);
-        boolean ledOn = sharedPreferences.getBoolean("setting_push_alarm_led", true);
-        boolean vibrationOn = sharedPreferences.getBoolean("setting_push_alarm_vibration", true);
+        boolean pushOn = sharedPreferences.getBoolean(Settings.SETTING_PUSH_AUTO_ALARM, true);
+        boolean soundOn = sharedPreferences.getBoolean(Settings.SETTING_PUSH_ALARM_SOUND, true);
+        boolean ledOn = sharedPreferences.getBoolean(Settings.SETTING_PUSH_ALARM_LED, true);
+        boolean vibrationOn = sharedPreferences.getBoolean(Settings.SETTING_PUSH_ALARM_VIBRATION, true);
 
         sbcvPush.setChecked(pushOn);
         setPushOnSummary(pushOn);
         sbcvSound.setChecked(soundOn);
         setSoundOnSummary(soundOn);
+        setSoundSubVisible(soundOn);
+        setSoundSubStatus();
         sbcvLed.setChecked(ledOn);
         sbcvVibration.setChecked(vibrationOn);
 
@@ -61,8 +77,35 @@ public class SettingsPushFragment extends Fragment {
         setUpPreview();
     }
 
+    private void setSoundSubStatus() {
+        int topicSoundIdx = sharedPreferences.getInt(Settings.SETTING_PUSH_ALARM_SOUND_TOPIC, 0);
+        int directMessageSoundIdx = sharedPreferences.getInt(Settings.SETTING_PUSH_ALARM_SOUND_DM, 0);
+        int mentionSoundIdx = sharedPreferences.getInt(Settings.SETTING_PUSH_ALARM_SOUND_MENTION, 0);
+
+        Resources resources = JandiApplication.getContext().getResources();
+        String[] soundSummary = resources.getStringArray(R.array.jandi_notification_array_text);
+
+        String topicSound = soundSummary[topicSoundIdx];
+        String directMessageSound = soundSummary[directMessageSoundIdx];
+        String mentionSound = soundSummary[mentionSoundIdx];
+
+        sbcvSoundSubTopic.setSummary(topicSound);
+        sbcvSoundSubDirectMessage.setSummary(directMessageSound);
+        sbcvSoundSubMentions.setSummary(mentionSound);
+    }
+
+    private void setSoundSubVisible(boolean soundOn) {
+        int visible;
+        if (soundOn) {
+            visible = View.VISIBLE;
+        } else {
+            visible = View.GONE;
+        }
+        vgSoundSub.setVisibility(visible);
+    }
+
     private void setUpPreview() {
-        String value = sharedPreferences.getString("setting_push_preview", "0");
+        String value = sharedPreferences.getString(Settings.SETTING_PUSH_PREVIEW, "0");
         sbvPreview.setSummary(SettingsModel.getPushPreviewSummary(value));
     }
 
@@ -70,6 +113,9 @@ public class SettingsPushFragment extends Fragment {
         sbcvSound.setEnabled(pushOn);
         sbcvLed.setEnabled(pushOn);
         sbcvVibration.setEnabled(pushOn);
+        sbcvSoundSubTopic.setEnabled(pushOn);
+        sbcvSoundSubDirectMessage.setEnabled(pushOn);
+        sbcvSoundSubMentions.setEnabled(pushOn);
     }
 
     @Click(R.id.vg_settings_push_notification)
@@ -114,7 +160,7 @@ public class SettingsPushFragment extends Fragment {
 
     private void setPushOnValue(boolean checked) {
         sharedPreferences.edit()
-                .putBoolean("setting_push_auto_alarm", checked)
+                .putBoolean(Settings.SETTING_PUSH_AUTO_ALARM, checked)
                 .apply();
     }
 
@@ -122,18 +168,55 @@ public class SettingsPushFragment extends Fragment {
     void onSoundClick() {
         boolean checked = !sbcvSound.isChecked();
         sbcvSound.setChecked(checked);
+        setSoundSubVisible(checked);
         setSoundOnValue(checked);
         setSoundOnSummary(checked);
     }
 
     private void setSoundOnValue(boolean checked) {
         sharedPreferences.edit()
-                .putBoolean("setting_push_alarm_sound", checked)
+                .putBoolean(Settings.SETTING_PUSH_ALARM_SOUND, checked)
                 .apply();
     }
 
     private void setSoundOnSummary(boolean checked) {
         sbcvSound.setSummary(checked ? R.string.jandi_on : R.string.jandi_off);
+    }
+
+    @Click(R.id.vg_settings_push_sound_sub_topic_message)
+    void onTopicSoundClick() {
+        int topicSoundIdx = sharedPreferences.getInt(Settings.SETTING_PUSH_ALARM_SOUND_TOPIC, 0);
+        NotificationSoundDialog.showNotificationSound(getActivity(), topicSoundIdx,
+                selectPosition -> {
+                    sharedPreferences.edit()
+                            .putInt(Settings.SETTING_PUSH_ALARM_SOUND_TOPIC, selectPosition)
+                            .commit();
+                    setSoundSubStatus();
+                });
+    }
+
+    @Click(R.id.vg_settings_push_sound_sub_direct_message)
+    void onDirectMessageSoundClick() {
+        int topicSoundIdx = sharedPreferences.getInt(Settings.SETTING_PUSH_ALARM_SOUND_DM, 0);
+        NotificationSoundDialog.showNotificationSound(getActivity(), topicSoundIdx,
+                selectPosition -> {
+                    sharedPreferences.edit()
+                            .putInt(Settings.SETTING_PUSH_ALARM_SOUND_DM, selectPosition)
+                            .commit();
+                    setSoundSubStatus();
+                });
+    }
+
+    @Click(R.id.vg_settings_push_sound_sub_mentions)
+    void onMentionSoundClick() {
+        int topicSoundIdx = sharedPreferences.getInt(Settings.SETTING_PUSH_ALARM_SOUND_MENTION, 0);
+        NotificationSoundDialog.showNotificationSound(getActivity(), topicSoundIdx,
+                selectPosition -> {
+                    sharedPreferences.edit()
+                            .putInt(Settings.SETTING_PUSH_ALARM_SOUND_MENTION, selectPosition)
+                            .commit();
+                    setSoundSubStatus();
+                });
     }
 
     @Click(R.id.vg_settings_push_vibration)
@@ -145,7 +228,7 @@ public class SettingsPushFragment extends Fragment {
 
     private void setVibrationOnValue(boolean checked) {
         sharedPreferences.edit()
-                .putBoolean("setting_push_alarm_vibration", checked)
+                .putBoolean(Settings.SETTING_PUSH_ALARM_VIBRATION, checked)
                 .apply();
     }
 
@@ -158,14 +241,14 @@ public class SettingsPushFragment extends Fragment {
 
     private void setLedOnValue(boolean checked) {
         sharedPreferences.edit()
-                .putBoolean("setting_push_alarm_led", checked)
+                .putBoolean(Settings.SETTING_PUSH_ALARM_LED, checked)
                 .apply();
     }
 
 
     @Click(R.id.vg_settings_push_preview)
     void onPreviewClick() {
-        String value = sharedPreferences.getString("setting_push_preview", "0");
+        String value = sharedPreferences.getString(Settings.SETTING_PUSH_PREVIEW, "0");
         String[] values = getResources().getStringArray(R.array.jandi_pref_push_preview_values);
         int preselect = Math.max(0, Arrays.asList(values).indexOf(value));
 
@@ -176,7 +259,7 @@ public class SettingsPushFragment extends Fragment {
                     if (which >= 0 && values != null) {
                         String selectedValue = values[which];
                         sharedPreferences.edit()
-                                .putString("setting_push_preview", selectedValue)
+                                .putString(Settings.SETTING_PUSH_PREVIEW, selectedValue)
                                 .commit();
                         setUpPreview();
                     }

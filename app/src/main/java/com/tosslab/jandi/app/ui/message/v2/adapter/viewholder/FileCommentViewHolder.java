@@ -21,12 +21,12 @@ import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
-import com.tosslab.jandi.app.markdown.MarkdownLookUp;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
+import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
+import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
@@ -124,19 +124,21 @@ public class FileCommentViewHolder implements BodyViewHolder {
             builder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
             builder.append(" ");
 
-            MarkdownLookUp.text(builder).lookUp(tvComment.getContext());
+            long myId = EntityManager.getInstance().getMe().getId();
+            MentionAnalysisInfo mentionAnalysisInfo =
+                    MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
+                            .textSizeFromResource(R.dimen.jandi_mention_comment_item_font_size)
+                            .build();
 
-            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                    tvComment, builder, commentMessage.mentions, entityManager.getMe().getId())
-                    .setPxSize(R.dimen.jandi_mention_comment_item_font_size);
-            builder = generateMentionMessageUtil.generate(true);
+            SpannableLookUp.text(builder)
+                    .hyperLink(false)
+                    .markdown(false)
+                    .webLink(false)
+                    .emailLink(false)
+                    .telLink(false)
+                    .mention(mentionAnalysisInfo, false)
+                    .lookUp(tvComment.getContext());
 
-            MarkdownLookUp.text(builder).lookUp(tvComment.getContext());
-
-            MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvComment, builder, false);
-            markdownViewModel.execute();
-
-            LinkifyUtil.setOnLinkClick(tvComment);
             LinkifyUtil.addLinks(context, builder);
 
             int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,

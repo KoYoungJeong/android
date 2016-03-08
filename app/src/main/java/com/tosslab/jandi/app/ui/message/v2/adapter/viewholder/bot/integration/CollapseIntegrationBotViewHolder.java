@@ -11,9 +11,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.markdown.MarkdownLookUp;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.UnreadCountUtil;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.util.IntegrationBotUtil;
@@ -57,11 +56,14 @@ public class CollapseIntegrationBotViewHolder implements BodyViewHolder {
 
         Context context = tvMessage.getContext();
 
-        SpannableStringBuilder builder = MarkdownLookUp.text(message).lookUp(context);
-        MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvMessage, builder, false);
-        markdownViewModel.execute();
+        SpannableStringBuilder builder = SpannableLookUp.text(message)
+                .hyperLink(false)
+                .markdown(false)
+                .webLink(false)
+                .emailLink(false)
+                .telLink(false)
+                .lookUp(context);
 
-        LinkifyUtil.addLinks(context, builder);
         LinkifyUtil.setOnLinkClick(tvMessage);
 
         builder.append(" ");

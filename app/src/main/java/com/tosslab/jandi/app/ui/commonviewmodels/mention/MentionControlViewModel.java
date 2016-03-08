@@ -521,7 +521,7 @@ public class MentionControlViewModel {
     }
 
     public boolean hasMentionMember() {
-        return true;
+        return searchMemberModel.getAllSelectableMembers().size() > 0;
     }
 
     public void setTextOnClip(String pasteData) {

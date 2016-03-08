@@ -25,10 +25,6 @@ public class FileUtil {
         return dirPath;
     }
 
-    public static String getTempDownloadPath() {
-        return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS + "/Jandi/temp";
-    }
-
     public static String getCacheDir() {
         File cacheDir = JandiApplication.getContext().getCacheDir();
         if (!cacheDir.exists()) {

@@ -149,6 +149,7 @@
     <dimen name="jandi_dialog_min_width">326dp</dimen>
     <dimen name="jandi_dialog_min_width_2">346dp</dimen>
     <dimen name="jandi_text_size_larger_3">20sp</dimen>
+    <dimen name="jandi_text_size_larger_2">18sp</dimen>
 
     <!-- Profile -->
     <dimen name="jandi_member_profile_margin_top">0dp</dimen>

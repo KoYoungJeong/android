@@ -13,10 +13,10 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.commonviewmodels.markdown.viewmodel.MarkdownViewModel;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
+import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
-import com.tosslab.jandi.app.utils.GenerateMentionMessageUtil;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 4..
@@ -51,15 +51,19 @@ public class DummyPureViewHolder implements BodyViewHolder {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
             builder.append(textMessage.content.body);
             setTextSendingStatus(dummyMessageLink, builder);
-            MarkdownViewModel markdownViewModel = new MarkdownViewModel(tvMessage, builder, false);
-            markdownViewModel.execute();
-            GenerateMentionMessageUtil generateMentionMessageUtil = new GenerateMentionMessageUtil(
-                    tvMessage, builder, ((DummyMessageLink) link).getMentions(),
-                    EntityManager.getInstance().getMe().getId());
-            builder = generateMentionMessageUtil.generate(false);
+
+            long myId = EntityManager.getInstance().getMe().getId();
+            MentionAnalysisInfo mentionAnalysisInfo =
+                    MentionAnalysisInfo.newBuilder(myId, ((DummyMessageLink) link).getMentions())
+                            .textSize(tvMessage.getTextSize())
+                            .build();
+
+            SpannableLookUp.text(builder)
+                    .markdown(false)
+                    .mention(mentionAnalysisInfo, false)
+                    .lookUp(contentView.getContext());
 
             tvMessage.setText(builder);
-
 
         } else if (link.message instanceof ResMessages.StickerMessage) {
             ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) link.message;

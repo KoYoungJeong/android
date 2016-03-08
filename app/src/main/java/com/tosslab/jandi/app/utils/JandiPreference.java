@@ -48,6 +48,8 @@ public class JandiPreference {
     private static final String PREF_PUSH_PREVIEW_INFO = "setting_push_preview";
     private static final String PREF_SOCKET_CONNECTED_LAST_TIME = "socket_connected_last_time";
 
+    private static final String PREF_LAST_EXECUTED_TIME = "last_executed_time";
+
     public static boolean isOldParseFileCacheDeleted(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
         return pref.getBoolean(PREF_OLD_PARSE_FILE_CACHE_DELETED, false);
@@ -335,6 +337,17 @@ public class JandiPreference {
         getSharedPreferences(JandiApplication.getContext()).edit()
                 .putLong(PREF_SOCKET_CONNECTED_LAST_TIME, ts)
                 .commit();
+    }
+
+    public static long getLastExecutedTime() {
+        return getSharedPreferences(JandiApplication.getContext()).getLong(PREF_LAST_EXECUTED_TIME, 0);
+    }
+
+    public static void setLastExecutedTime(long time) {
+        getSharedPreferences(JandiApplication.getContext())
+                .edit()
+                .putLong(PREF_LAST_EXECUTED_TIME, time)
+                .apply();
     }
 
 }

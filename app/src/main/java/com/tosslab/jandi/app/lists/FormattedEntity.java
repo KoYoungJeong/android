@@ -348,6 +348,24 @@ public class FormattedEntity {
         }
     }
 
+    public long getTopicGlobalLastLink() {
+        if (isPrivateGroup()) {
+            return ((ResLeftSideMenu.PrivateGroup) getEntity()).lastLinkId;
+        } else if (isPublicTopic()) {
+            return ((ResLeftSideMenu.Channel) getEntity()).lastLinkId;
+        } else {
+            return 0;
+        }
+    }
+
+    public void setTopicGlobalLastLinkId(long lastLinkId) {
+        if (isPrivateGroup()) {
+            ((ResLeftSideMenu.PrivateGroup) getEntity()).lastLinkId = lastLinkId;
+        } else if (isPublicTopic()) {
+            ((ResLeftSideMenu.Channel) getEntity()).lastLinkId = lastLinkId;
+        }
+    }
+
     public String getDescription() {
 
         switch (this.type) {

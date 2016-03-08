@@ -237,12 +237,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     private void initKeyboardChangedDetectView() {
-        vgKeyboardVisibleChangeDetectView.setOnKeyboardVisibleChangeListener(isShow -> {
+        vgKeyboardVisibleChangeDetectView.setOnKeyboardVisibleChangeListener((isShow, height) -> {
             if (!isShow) {
                 if (stickerViewModel != null && stickerViewModel.isShow()) {
                     stickerViewModel.dismissStickerSelector(true);
                 }
                 btnAction.setSelected(false);
+                listView.smoothScrollBy(0, -height);
+            } else {
+                listView.smoothScrollBy(0, -height);
             }
         });
     }
@@ -269,6 +272,20 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         });
 
         stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
+
+        stickerViewModel.setOnStickerLayoutShowListener(isShow -> {
+            int keyboardHeight = JandiPreference.getKeyboardHeight(getApplicationContext());
+            if (isShow) {
+                if (!vgKeyboardVisibleChangeDetectView.isShowing()) {
+                    listView.post(() -> listView.smoothScrollBy(0, keyboardHeight));
+                }
+            } else {
+                if (!vgKeyboardVisibleChangeDetectView.isShowing()) {
+                    listView.post(() -> listView.smoothScrollBy(0, -keyboardHeight));
+                    btnAction.setSelected(false);
+                }
+            }
+        });
 
         stickerViewModel.setType(StickerViewModel.TYPE_FILE_DETAIL);
     }
@@ -307,13 +324,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             ReadyComment readyComment = ReadyCommentRepository.getRepository().getReadyComment(messageId);
             mentionControlViewModel.setUpMention(readyComment.getText());
             mentionControlViewModel.setOnMentionShowingListener(isShowing -> {
-                ivMention.setVisibility(isShowing ? View.GONE : View.VISIBLE);
+                if (mentionControlViewModel.hasMentionMember()) {
+                    ivMention.setVisibility(isShowing ? View.GONE : View.VISIBLE);
+                }
             });
         } else {
             mentionControlViewModel.refreshMembers(sharedTopicIds);
         }
 
-        boolean isEmpty = mentionControlViewModel.getAllSelectableMembers().size() == 0;
+        boolean isEmpty = !mentionControlViewModel.hasMentionMember();
         ivMention.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
 
         removeClipboardListenerForMention();
@@ -376,6 +395,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         dismissStickerPreview();
         dismissStickerSelectorIfShow();
+        ReadyCommentRepository.getRepository().upsertReadyComment(new ReadyComment(fileId, etComment.getText().toString()));
         super.onPause();
     }
 
@@ -497,7 +517,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         adapter.notifyDataSetChanged();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(delay = 100)
     @Override
     public void scrollToLastComment() {
         if (adapter.getItemCount() <= 0) {
@@ -1185,11 +1205,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Click(R.id.btn_show_mention)
     void onMentionClick() {
         etComment.requestFocus();
+        keyboardHeightModel.showKeyboard();
 
         boolean needSpace = needSpace(etComment.getSelectionStart(), etComment.getText().toString());
-        int keyEvent = needSpace ? KeyEvent.KEYCODE_SPACE : KeyEvent.KEYCODE_AT;
+        int keyEvent = KeyEvent.KEYCODE_AT;
 
         BaseInputConnection inputConnection = new BaseInputConnection(etComment, true);
+        if (needSpace) {
+            inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SPACE));
+        }
         inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, keyEvent));
 
         dismissStickerSelectorIfShow();

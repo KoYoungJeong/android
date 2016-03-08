@@ -243,8 +243,4 @@ public class DownloadService extends IntentService implements DownloadController
         }
     }
 
-    @Override
-    public Context getServiceContext() {
-        return this;
-    }
 }

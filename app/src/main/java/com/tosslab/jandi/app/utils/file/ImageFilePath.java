@@ -231,8 +231,12 @@ public class ImageFilePath {
         try {
             inputStream = context.getContentResolver().openInputStream(uri);
 
-            File downloadFile = DownloadModel.getDownloadTargetFile(
-                    new File(GoogleImagePickerUtil.getDownloadPath()), fileName, "");
+            File dir = new File(FileUtil.getDownloadPath());
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            File downloadFile = DownloadModel.getDownloadTargetFile(dir, fileName, "");
+            downloadFile.createNewFile();
             filePath = downloadFile.getAbsolutePath();
             outStream = new BufferedOutputStream(new FileOutputStream(filePath));
 

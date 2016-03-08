@@ -30,6 +30,7 @@
     <declare-styleable name="SettingsBodyView">
         <attr name="sbvTitle" format="string" />
         <attr name="sbvSummary" format="string" />
+        <attr name="sbvSummaryColor" format="color" />
     </declare-styleable>
 
     <declare-styleable name="SettingsBodyCheckView">

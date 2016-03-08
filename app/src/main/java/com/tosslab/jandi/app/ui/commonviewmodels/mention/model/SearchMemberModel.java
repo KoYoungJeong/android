@@ -26,7 +26,7 @@ import rx.functions.Func2;
 public class SearchMemberModel {
 
 
-    LinkedHashMap<Long, SearchedItemVO> selectableMembersLinkedHashMap;
+    LinkedHashMap<Long, SearchedItemVO> selectableMembersLinkedHashMap = new LinkedHashMap<>();
 
     public List<SearchedItemVO> getUserSearchByName(String subNameString) {
 
@@ -56,7 +56,7 @@ public class SearchMemberModel {
                                                                         List<Long> topicIds,
                                                                         String mentionType) {
 
-        selectableMembersLinkedHashMap = new LinkedHashMap<>();
+        selectableMembersLinkedHashMap.clear();
 
         ShareSelectModel_ shareSelectModel = ShareSelectModel_
                 .getInstance_(JandiApplication.getContext());
@@ -96,25 +96,24 @@ public class SearchMemberModel {
             SearchedItemVO searchedItemForAll = new SearchedItemVO();
             searchedItemForAll
                     .setId(topicIds.get(0))
-                    .setName("All")
+                    .setName("all")
                     .setType(SearchType.room.name());
 
             selectableMembersLinkedHashMap.put(searchedItemForAll.getId(), searchedItemForAll);
+        }
 
-            if (EntityManager.getInstance().hasJandiBot()) {
-                BotEntity botEntity = (BotEntity) EntityManager.getInstance().getJandiBot();
-                if (botEntity.isEnabled()) {
-                    SearchedItemVO jandiBot = new SearchedItemVO();
-                    jandiBot.setId(botEntity.getId())
-                            .setName(botEntity.getName())
-                            .setEnabled(true)
-                            .setStarred(false)
-                            .setBot(true)
-                            .setType(SearchType.member.name());
-                    selectableMembersLinkedHashMap.put(jandiBot.getId(), jandiBot);
-                }
+        if (EntityManager.getInstance().hasJandiBot()) {
+            BotEntity botEntity = (BotEntity) EntityManager.getInstance().getJandiBot();
+            if (botEntity.isEnabled()) {
+                SearchedItemVO jandiBot = new SearchedItemVO();
+                jandiBot.setId(botEntity.getId())
+                        .setName(botEntity.getName())
+                        .setEnabled(true)
+                        .setStarred(false)
+                        .setBot(true)
+                        .setType(SearchType.member.name());
+                selectableMembersLinkedHashMap.put(jandiBot.getId(), jandiBot);
             }
-
         }
 
         return selectableMembersLinkedHashMap;
@@ -126,7 +125,7 @@ public class SearchMemberModel {
     }
 
     public void clear() {
-        selectableMembersLinkedHashMap = new LinkedHashMap<>();
+        selectableMembersLinkedHashMap.clear();
     }
 
     private Func2<SearchedItemVO, SearchedItemVO, Integer> getChatItemComparator() {

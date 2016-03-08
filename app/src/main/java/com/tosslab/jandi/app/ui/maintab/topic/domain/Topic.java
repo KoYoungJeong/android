@@ -18,9 +18,10 @@ public class Topic {
     private long markerLinkId;
     private boolean isPushOn;
     private int type;
+    private long lastLinkId;
 
-    public Topic(String name, boolean isStarred, boolean isJoined, long entityId, int memberCount, int unreadCount,
-                 boolean isPublic, String description, long creatorId, long markerLinkId, boolean isPushOn) {
+    private Topic(String name, boolean isStarred, boolean isJoined, long entityId, int memberCount, int unreadCount,
+                  boolean isPublic, String description, long creatorId, long markerLinkId, boolean isPushOn, long lastLinkId) {
         this.name = name;
         this.isStarred = isStarred;
         this.isJoined = isJoined;
@@ -32,6 +33,7 @@ public class Topic {
         this.creatorId = creatorId;
         this.markerLinkId = markerLinkId;
         this.isPushOn = isPushOn;
+        this.lastLinkId = lastLinkId;
     }
 
     public long getMarkerLinkId() {
@@ -134,6 +136,14 @@ public class Topic {
         this.type = type;
     }
 
+    public long getLastLinkId() {
+        return lastLinkId;
+    }
+
+    public void setLastLinkId(long lastLinkId) {
+        this.lastLinkId = lastLinkId;
+    }
+
     public static class Builder {
         private String name;
         private boolean isStarred;
@@ -146,6 +156,7 @@ public class Topic {
         private long creatorId;
         private long markerLinkId;
         private boolean isPushOn;
+        private long lastLinkId;
 
         public Builder name(String name) {
             this.name = name;
@@ -202,9 +213,14 @@ public class Topic {
             return this;
         }
 
+        public Builder lastLinkId(long lastLinkId) {
+            this.lastLinkId = lastLinkId;
+            return this;
+        }
+
         public Topic build() {
             return new Topic(name, isStarred, isJoined, entityId, memberCount, unreadCount,
-                    isPublic, description, creatorId, markerLinkId, isPushOn);
+                    isPublic, description, creatorId, markerLinkId, isPushOn, lastLinkId);
         }
     }
 }
