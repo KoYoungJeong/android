@@ -17,8 +17,8 @@ import java.util.Locale;
  */
 public class DateTransformator {
     public static final long PARSE_FAIL = -1;
-    public static final String FORMAT_DEFAULT = "MM/dd/yyyy, hh:mm a";
-    public static final String FORMAT_YYYYMMDD_HHMM_A = "yyyy/MM/dd hh:mm a";
+    public static final String FORMAT_DEFAULT = "MM/dd/yyyy_hh:mm_a";
+    public static final String FORMAT_YYYYMMDD_HHMM_A = "yyyy/MM/dd_a_hh:mm";
 
     public static String getTimeString(Date date) {
         return getTimeString(date, FORMAT_DEFAULT);
@@ -65,7 +65,22 @@ public class DateTransformator {
     }
 
     public static String getTimeStringForDivider(long dateTime) {
-        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy, EEE");
+        Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
+        DateFormat dateFormat = null;
+        switch (locale.getLanguage()) {
+            case "ko":
+                dateFormat = new SimpleDateFormat("yyyy년_MM월_dd일_(EEE)");
+                break;
+            case "zh":
+                dateFormat = new SimpleDateFormat("yyyy年_MM月_dd日_EEE");
+                break;
+            case "ja":
+                dateFormat = new SimpleDateFormat("yyyy年_MM月_dd日_(EEE)");
+                break;
+            default:
+                dateFormat = new SimpleDateFormat("EEE_MMM_dd,_yyyy");
+                break;
+        }
         return dateFormat.format(dateTime);
     }
 
@@ -77,9 +92,9 @@ public class DateTransformator {
         if (TextUtils.equals(langCode, Locale.KOREA.getLanguage())
                 || TextUtils.equals(langCode, Locale.JAPAN.getLanguage())) {
 
-            return getTimeString(date, "a h:mm");
+            return getTimeString(date, "a_h:mm");
         } else {
-            return getTimeString(date, "h:mm a");
+            return getTimeString(date, "h:mm_a");
         }
 
     }
