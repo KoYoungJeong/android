@@ -71,17 +71,25 @@ public class UploadMenuViewModel {
         ivUploadImage.setOnClickListener(v -> {
             EventBus.getDefault().post(new RequestFileUploadEvent(FilePickerViewModel.TYPE_UPLOAD_GALLERY));
             dismissUploadSelector(true);
-            onClickUploadEventListener.onClick();
+            if (onClickUploadEventListener != null) {
+                onClickUploadEventListener.onClick();
+            }
         });
         ivUploadCamera.setOnClickListener(v -> {
             EventBus.getDefault().post(new RequestFileUploadEvent(FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO));
             dismissUploadSelector(true);
-            onClickUploadEventListener.onClick();
+
+            if (onClickUploadEventListener != null) {
+                onClickUploadEventListener.onClick();
+            }
         });
         ivUploadFile.setOnClickListener(v -> {
             EventBus.getDefault().post(new RequestFileUploadEvent(FilePickerViewModel.TYPE_UPLOAD_EXPLORER));
             dismissUploadSelector(true);
-            onClickUploadEventListener.onClick();
+
+            if (onClickUploadEventListener != null) {
+                onClickUploadEventListener.onClick();
+            }
         });
     }
 

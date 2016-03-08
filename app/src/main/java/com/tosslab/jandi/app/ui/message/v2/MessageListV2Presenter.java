@@ -2,12 +2,16 @@ package com.tosslab.jandi.app.ui.message.v2;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.exception.ExceptionData;
@@ -23,12 +27,14 @@ import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
+import com.tosslab.jandi.app.ui.message.to.queue.UpdateLinkPreviewMessageQueue;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
 import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -43,7 +49,6 @@ import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -104,7 +109,7 @@ public class MessageListV2Presenter {
                             sendMessage((SendingMessageQueue) messageQueue);
                             break;
                         case UpdateLinkPreview:
-//                            updateLinkPreview(messageQueue);
+                            updateLinkPreview((UpdateLinkPreviewMessageQueue) messageQueue);
                             break;
                     }
                 }, throwable -> {
@@ -115,17 +120,78 @@ public class MessageListV2Presenter {
     }
 
     public void onDetermineUserStatus() {
-        if (messageListModel.isEnabledIfUser(room.getEntityId())) {
+        if (!messageListModel.isEnabledIfUser(room.getEntityId())) {
             view.showDisabledUserLayer();
         }
     }
 
     @Background
     public void onInitAnnouncement() {
+        initAnnouncement();
+    }
+
+    // 같은 쓰레드에서 처리를 위함
+    private void initAnnouncement() {
         ResAnnouncement announcement = announcementModel.getAnnouncement(room.getTeamId(), room.getEntityId());
         view.dismissProgressWheel();
         if (announcement != null) {
             view.setAnnouncement(announcement, announcementModel.isAnnouncementOpened(room.getEntityId()));
+        }
+    }
+
+    public void setAnnouncementActionFrom(boolean fromUser) {
+        announcementModel.setActionFromUser(fromUser);
+    }
+
+    public void onUpdateAnnouncement(boolean isOpened) {
+        announcementModel.updateAnnouncementStatus(room.getTeamId(), room.getRoomId(), isOpened);
+    }
+
+    public void onChangeAnnouncementOpenStatusAction(boolean shouldOpened) {
+        if (!announcementModel.isActionFromUser()) {
+            view.openAnnouncement(shouldOpened);
+        }
+    }
+
+    @Background
+    public void onCheckAnnouncementExistsAndCreate(long messageId) {
+        ResAnnouncement announcement =
+                announcementModel.getAnnouncement(room.getTeamId(), room.getRoomId());
+
+        if (announcement == null || announcement.isEmpty()) {
+            createAnnouncement(messageId);
+            return;
+        }
+
+        view.showAnnouncementCreateDialog(messageId);
+    }
+
+    // 같은 쓰레드에서 처리를 위함
+    private void createAnnouncement(long messageId) {
+        view.showProgressWheel();
+
+        announcementModel.createAnnouncement(room.getTeamId(), room.getRoomId(), messageId);
+
+        boolean isSocketConnected = JandiSocketManager.getInstance().isConnectingOrConnected();
+        if (!isSocketConnected) {
+            initAnnouncement();
+        }
+    }
+
+    @Background
+    public void onCreateAnnouncement(long messageId) {
+        createAnnouncement(messageId);
+    }
+
+    @Background
+    public void onDeleteAnnouncementAction() {
+        view.showProgressWheel();
+
+        announcementModel.deleteAnnouncement(room.getTeamId(), room.getRoomId());
+
+        boolean isSocketConnected = JandiSocketManager.getInstance().isConnectingOrConnected();
+        if (!isSocketConnected) {
+            initAnnouncement();
         }
     }
 
@@ -224,6 +290,22 @@ public class MessageListV2Presenter {
         addQueue(messageQueue);
     }
 
+    public void addUpdateLinkPreviewMessageQueue(long messageId) {
+        UpdateLinkPreviewMessageQueue messageQueue = new UpdateLinkPreviewMessageQueue(messageId);
+        addQueue(messageQueue);
+    }
+
+    public void addSendingMessageQueue(long localId,
+                                       String body, StickerInfo stickerInfo,
+                                       List<MentionObject> mentionObjects) {
+        SendingMessage sendingMessage =
+                stickerInfo != null ?
+                        new SendingMessage(localId, body, stickerInfo, mentionObjects)
+                        : new SendingMessage(localId, new ReqSendMessageV3((body), mentionObjects));
+        SendingMessageQueue sendingMessageQueue =new SendingMessageQueue(sendingMessage);
+        addQueue(sendingMessageQueue);
+    }
+
     private void loadOldMessage(long teamId, long roomId, long linkId, boolean isFirst,
                                 boolean isCacheMode) {
 
@@ -281,7 +363,6 @@ public class MessageListV2Presenter {
 
                 Observable.from(resOldMessage.records)
                         .first()
-                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(link -> {
                             long firstCursorLinkId = messagePointer.getFirstCursorLinkId();
                             if (firstCursorLinkId < 0) {
@@ -453,13 +534,9 @@ public class MessageListV2Presenter {
 
             if (currentMessageState.isFirstLoadNewMessage()) {
                 currentMessageState.setIsFirstLoadNewMessage(false);
-                Observable.just(1)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(o -> {
-                            view.setUpLastReadLinkIdIfPosition();
-                            view.notifyDataSetChanged();
-                            view.moveLastReadLink();
-                        });
+                view.setUpLastReadLinkIdIfPosition();
+                view.notifyDataSetChanged();
+                view.moveLastReadLink();
             }
 
             return;
@@ -495,15 +572,11 @@ public class MessageListV2Presenter {
                 .getMessagesCount(roomId, messagePointer.getFirstCursorLinkId());
 
         boolean hasMessages = hasMessages(firstCursorLinkId, currentItemCount);
-        LogUtil.d("tony", "hasMessages - " + hasMessages);
         view.showEmptyView(!hasMessages);
     }
 
     private boolean hasMessages(long firstCursorLinkId, int currentItemCount) {
-        LogUtil.i("tony", "currentItemCount - " + currentItemCount);
         int eventMessageCount = getEventMessageCount(firstCursorLinkId);
-        LogUtil.e("tony", "eventMessageCount - " + eventMessageCount);
-
         return // event 메세지 외에 다른 메시지들이 있는 경우
                 (currentItemCount > 0
                         && (currentItemCount - eventMessageCount > 0))
@@ -597,6 +670,16 @@ public class MessageListV2Presenter {
 
     }
 
+    private void updateLinkPreview(UpdateLinkPreviewMessageQueue messageQueue) {
+        long messageId = messageQueue.getData();
+
+        ResMessages.TextMessage textMessage =
+                MessageRepository.getRepository().getTextMessage(messageId);
+
+        view.updateLinkPreviewMessage(textMessage);
+        view.notifyDataSetChanged();
+    }
+
     public void onInitializeEmptyLayout(long entityId) {
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entity = entityManager.getEntityById(entityId);
@@ -638,6 +721,33 @@ public class MessageListV2Presenter {
         long roomId = room.getRoomId();
         long teamId = room.getTeamId();
         messageListModel.updateMarkerInfo(teamId, roomId);
+    }
+
+    @Background
+    public void onModifyEntityAction(int entityType, long entityId, String name) {
+        view.showProgressWheel();
+
+        try {
+            messageListModel.modifyTopicName(entityType, entityId, name);
+
+            view.modifyTitle(name);
+
+            messageListModel.trackChangingEntityName(entityType);
+
+            EntityManager.getInstance().getEntityById(entityId).getEntity().name = name;
+
+        } catch (RetrofitError e) {
+            view.dismissProgressWheel();
+            if (e.getResponse() != null &&
+                    e.getResponse().getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
+                view.showDuplicatedTopicName();
+            } else {
+                view.showModifyEntityError();
+            }
+        } catch (Exception e) {
+            view.dismissProgressWheel();
+            view.showModifyEntityError();
+        }
     }
 
     @Background
@@ -699,6 +809,107 @@ public class MessageListV2Presenter {
         view.notifyDataSetChanged();
     }
 
+    public void onResume() {
+        if (room.getRoomId() > 0) {
+            messageListModel.removeNotificationSameEntityId(room.getRoomId());
+            String readyMessage = messageListModel.getReadyMessage(room.getRoomId());
+            view.initMentionControlViewModel(readyMessage);
+        }
+
+        if (NetworkCheckUtil.isConnected()) {
+            view.dismissOfflineLayer();
+        } else {
+            view.showOfflineLayer();
+        }
+    }
+
+    public void onSaveTempMessageAction(String tempMessage) {
+        if (TextUtils.isEmpty(tempMessage)) {
+            return;
+        }
+
+        messageListModel.saveTempMessage(room.getRoomId(), tempMessage);
+    }
+
+    public void onDetermineMessageMenuDialog(ResMessages.OriginalMessage message) {
+
+        if (message instanceof ResMessages.TextMessage) {
+            ResMessages.TextMessage textMessage = (ResMessages.TextMessage) message;
+            boolean isDirectMessage = messageListModel.isDirectMessage(room.getEntityType());
+            boolean isOwner = messageListModel.isTeamOwner();
+            boolean isMyMessage = (messageListModel.isMyMessage(textMessage.writerId) || isOwner);
+
+            view.showTextMessageMenuDialog(textMessage, isDirectMessage, isMyMessage);
+
+        } else if (message instanceof ResMessages.CommentMessage) {
+
+            view.showCommentMessageMenuDialog(((ResMessages.CommentMessage) message));
+
+        } else if (message instanceof ResMessages.StickerMessage) {
+            ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) message;
+            boolean isOwner = messageListModel.isTeamOwner();
+            boolean isMyMessage = (messageListModel.isMyMessage(stickerMessage.writerId) || isOwner);
+
+            if (!isMyMessage) {
+                return;
+            }
+
+            view.showStickerMessageMenuDialog(stickerMessage);
+        }
+    }
+
+    public void onDeleteDummyMessageAction(long localId) {
+        messageListModel.deleteDummyMessageAtDatabase(localId);
+        view.notifyDataSetChanged();
+    }
+
+    @Background
+    public void onDeleteMessageAction(int messageType, long messageId) {
+        view.showProgressWheel();
+        try {
+            if (messageType == MessageItem.TYPE_STRING) {
+                messageListModel.deleteMessage(messageId);
+            } else if (messageType == MessageItem.TYPE_STICKER
+                    || messageType == MessageItem.TYPE_STICKER_COMMNET) {
+                messageListModel.deleteSticker(messageId, messageType);
+            }
+            MessageRepository.getRepository().deleteLinkByMessageId(messageId);
+
+            view.dismissProgressWheel();
+
+            view.deleteLinkByMessageId(messageId);
+
+            messageListModel.trackMessageDeleteSuccess(messageId);
+
+        } catch (RetrofitError e) {
+            view.dismissProgressWheel();
+            LogUtil.e("deleteMessageInBackground : FAILED", e);
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            messageListModel.trackMessageDeleteFail(errorCode);
+        } catch (Exception e) {
+            view.dismissProgressWheel();
+            LogUtil.e("deleteMessageInBackground : FAILED", e);
+            messageListModel.trackMessageDeleteFail(-1);
+        }
+
+    }
+
+    @Background
+    public void onDeleteTopicAction() {
+        view.showProgressWheel();
+        try {
+            messageListModel.deleteTopic(room.getEntityId(), room.getEntityType());
+            messageListModel.trackDeletingEntity(room.getEntityType());
+            view.dismissProgressWheel();
+            view.finish();
+        } catch (RetrofitError e) {
+            view.dismissProgressWheel();
+            e.printStackTrace();
+        } catch (Exception e) {
+            view.dismissProgressWheel();
+        }
+    }
+
     public interface View {
         void showDisabledUserLayer();
 
@@ -741,10 +952,6 @@ public class MessageListV2Presenter {
 
         void clearMessages();
 
-        void scrollToPositionWithOffset(int itemPosition, int firstVisibleItemTop);
-
-        void scrollToPosition(int itemPosition);
-
         void moveLastPage();
 
         void dismissOldLoadProgress();
@@ -757,6 +964,8 @@ public class MessageListV2Presenter {
 
         void moveLastReadLink();
 
+        void updateLinkPreviewMessage(ResMessages.TextMessage message);
+
         void insertTeamMemberEmptyLayout();
 
         void insertTopicMemberEmptyLayout();
@@ -764,6 +973,27 @@ public class MessageListV2Presenter {
         void clearEmptyMessageLayout();
 
         void insertMessageEmptyLayout();
+
+        void initMentionControlViewModel(String readyMessage);
+
+        void modifyTitle(String name);
+
+        void showDuplicatedTopicName();
+
+        void showModifyEntityError();
+
+        void openAnnouncement(boolean shouldOpenAnnouncement);
+
+        void showAnnouncementCreateDialog(long messageId);
+
+        void showStickerMessageMenuDialog(ResMessages.StickerMessage stickerMessage);
+
+        void showTextMessageMenuDialog(ResMessages.TextMessage textMessage,
+                                       boolean isDirectMessage, boolean isMyMessage);
+
+        void showCommentMessageMenuDialog(ResMessages.CommentMessage message);
+
+        void deleteLinkByMessageId(long messageId);
     }
 
 }
