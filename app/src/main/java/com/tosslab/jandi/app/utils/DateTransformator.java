@@ -25,8 +25,8 @@ public class DateTransformator {
         switch (locale.getLanguage()) {
             case "ko":
             case "zh":
-            case "ja":
                 return getTimeString(date, FORMAT_YYYYMMDD_HHMM_A);
+            case "ja":
             default:
                 return getTimeString(date, FORMAT_DEFAULT);
         }
