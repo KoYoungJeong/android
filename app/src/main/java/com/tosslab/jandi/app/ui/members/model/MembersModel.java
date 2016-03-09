@@ -153,4 +153,6 @@ public class MembersModel {
     public void assignToTopicOwner(long teamId, long entityId, long memberId) throws Exception {
         RequestApiManager.getInstance().assignToTopicOwner(teamId, entityId, new ReqOwner(memberId));
     }
+
+
 }
