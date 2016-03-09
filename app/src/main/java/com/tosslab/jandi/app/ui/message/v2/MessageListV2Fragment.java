@@ -1601,9 +1601,7 @@ public class MessageListV2Fragment extends Fragment implements
 
         if (event.getRoom().getId() == roomId) {
             SocketRoomMarkerEvent.Marker marker = event.getMarker();
-            MarkerRepository.getRepository().upsertRoomMarker(
-                    teamId, roomId, marker.getMemberId(), marker.getLastLinkId());
-            notifyDataSetChanged();
+            messageListPresenter.onRoomMarkerChange(marker.getMemberId(), marker.getLastLinkId());
         }
     }
 

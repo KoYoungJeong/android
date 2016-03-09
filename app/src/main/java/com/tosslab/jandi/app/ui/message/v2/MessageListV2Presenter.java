@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
+import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.exception.ExceptionData;
@@ -950,6 +951,12 @@ public class MessageListV2Presenter {
         } catch (RetrofitError e) {
             e.printStackTrace();
         }
+    }
+
+    public void onRoomMarkerChange(long memberId, long lastLinkId) {
+        MarkerRepository.getRepository().upsertRoomMarker(
+                room.getTeamId(), room.getRoomId(), memberId, lastLinkId);
+        view.notifyDataSetChanged();
     }
 
     public interface View {
