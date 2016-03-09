@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 public class OldMessageQueue implements MessageQueue {
 
     private final MessageState messageState;
-    private int currentItemCount;
     private boolean cacheMode;
     public OldMessageQueue(MessageState messageState) {
         this.messageState = messageState;
@@ -22,10 +21,6 @@ public class OldMessageQueue implements MessageQueue {
     @Override
     public Object getData() {
         return messageState;
-    }
-
-    public int getCurrentItemCount() {
-        return currentItemCount;
     }
 
     public boolean isCacheMode() {
