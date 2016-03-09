@@ -148,7 +148,6 @@ public class BodyViewFactory {
 
     public static BodyViewHolder.Type getContentType(ResMessages.Link previousLink, ResMessages.Link currentLink,
                                                      ResMessages.Link nextLink) {
-
         ResMessages.OriginalMessage currentMessage = currentLink.message;
 
         if (TextUtils.equals(currentLink.status, "event")) {
@@ -236,7 +235,6 @@ public class BodyViewFactory {
 
 
             BodyViewHolder.Type defaultType;
-
             if (isImage) {
                 defaultType = BodyViewHolder.Type.Image;
             } else {
@@ -253,7 +251,6 @@ public class BodyViewFactory {
             if (nextLink == null) {
                 notNeedDivider = true;
             }
-
             if (notNeedDivider) {
                 if (isImage) {
                     return BodyViewHolder.Type.ImageWithoutDivider;
@@ -309,6 +306,7 @@ public class BodyViewFactory {
                  * 1,2,3 모두 해당 할때 CollapseComment
                  */
 
+
                 if (DateComparatorUtil.isSince5min(currentMessage.createTime, beforeOriginalMessage.createTime)
                         && currentMessage.writerId == beforeOriginalMessage.writerId) {
                     if (notNeedDivider) {
@@ -331,9 +329,7 @@ public class BodyViewFactory {
                 }
             }
         }
-
         return BodyViewHolder.Type.Empty;
-
     }
 
     private static boolean isCommentToNext(ResMessages.Link nextLink) {
@@ -390,6 +386,6 @@ public class BodyViewFactory {
         @Override
         public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
         }
-    }
 
+    }
 }

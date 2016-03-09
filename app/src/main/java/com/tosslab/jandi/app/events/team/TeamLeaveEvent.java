@@ -1,20 +1,20 @@
 package com.tosslab.jandi.app.events.team;
 
 public class TeamLeaveEvent {
-    private final int teamId;
-    private final int memberId;
+    private final long teamId;
+    private final long memberId;
 
-    public TeamLeaveEvent(int teamId, int memberId) {
+    public TeamLeaveEvent(long teamId, long memberId) {
 
         this.teamId = teamId;
         this.memberId = memberId;
     }
 
-    public int getMemberId() {
+    public long getMemberId() {
         return memberId;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 }

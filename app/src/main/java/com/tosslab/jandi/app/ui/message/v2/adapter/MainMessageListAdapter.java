@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.Divider;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -61,6 +62,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
+                LogUtil.e("tony", "onChanged");
                 if (roomId == -1 || messagePointer.getFirstCursorLinkId() == -1) {
                     links.clear();
                     return;
@@ -367,14 +369,17 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     }
 
     public void setMoreFromNew(boolean moreFromNew) {
+        LogUtil.w("tony", "setMoreFromNew");
         this.moreFromNew = moreFromNew;
     }
 
     public void setNewLoadingComplete() {
+        LogUtil.w("tony", "setNewLoadingComplete");
         newMoreState = MoreState.Idle;
     }
 
     public void setNewNoMoreLoading() {
+        LogUtil.w("tony", "setNewNoMoreLoading");
         newMoreState = MoreState.Nope;
     }
 

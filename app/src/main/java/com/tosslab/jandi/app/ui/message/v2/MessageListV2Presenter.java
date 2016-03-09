@@ -2,12 +2,11 @@ package com.tosslab.jandi.app.ui.message.v2;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
+import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -208,12 +207,16 @@ public class MessageListV2Presenter {
             }
         }
 
-        long roomId = messageListModel.getRoomId();
-        if (roomId <= 0) {
-            return Room.INVALID_ROOM_ID;
-        } else {
-            return roomId;
+        if (NetworkCheckUtil.isConnected()) {
+            long roomId = messageListModel.getRoomId();
+            if (roomId <= 0) {
+                return Room.INVALID_ROOM_ID;
+            } else {
+                return roomId;
+            }
         }
+
+        return Room.INVALID_ROOM_ID;
     }
 
     @Background
@@ -302,18 +305,23 @@ public class MessageListV2Presenter {
                 stickerInfo != null ?
                         new SendingMessage(localId, body, stickerInfo, mentionObjects)
                         : new SendingMessage(localId, new ReqSendMessageV3((body), mentionObjects));
-        SendingMessageQueue sendingMessageQueue =new SendingMessageQueue(sendingMessage);
+        SendingMessageQueue sendingMessageQueue = new SendingMessageQueue(sendingMessage);
         addQueue(sendingMessageQueue);
     }
 
     private void loadOldMessage(long teamId, long roomId, long linkId, boolean isFirst,
                                 boolean isCacheMode) {
+        if (!isFirst) {
+            view.showOldLoadProgress();
+        }
 
         ResMessages resOldMessage;
 
         try {
-            int messagesCount = linkId > 0 ?
-                    MessageRepository.getRepository().getMessagesCount(roomId, linkId) : MessageManipulator.NUMBER_OF_MESSAGES;
+            int messagesCount = linkId > 0
+                    ? MessageRepository.getRepository().getMessagesCount(roomId, linkId)
+                    : MessageManipulator.NUMBER_OF_MESSAGES;
+
             // 모든 요청은 dummy 가 아닌 실제 데이터 기준...
             int max = Math.max(MessageManipulator.NUMBER_OF_MESSAGES, messagesCount);
             int offset = Math.min(max, MessageManipulator.MAX_OF_MESSAGES);
@@ -475,7 +483,7 @@ public class MessageListV2Presenter {
 
     private void loadNewMessage(NewMessageQueue messageQueue) {
         MessageState data = (MessageState) messageQueue.getData();
-        long lastUpdateLinkId = MessageRepository.getRepository()
+        final long lastUpdateLinkId = MessageRepository.getRepository()
                 .getLastMessage(room.getRoomId()).id;
 
         long teamId = room.getTeamId();
@@ -483,7 +491,6 @@ public class MessageListV2Presenter {
         long firstCursorLinkId = messagePointer.getFirstCursorLinkId();
         int currentItemCount = MessageRepository.getRepository()
                 .getMessagesCount(roomId, firstCursorLinkId);
-
 
         if (lastUpdateLinkId < 0) {
             boolean firstLoadOldMessage = ((MessageState) messageQueue.getData()).isFirstLoadOldMessage();
@@ -503,10 +510,7 @@ public class MessageListV2Presenter {
             } catch (RetrofitError e) {
                 e.printStackTrace();
 
-                if (e.getKind() == RetrofitError.Kind.NETWORK) {
-
-
-                } else if (e.getKind() == RetrofitError.Kind.HTTP) {
+                if (e.getKind() == RetrofitError.Kind.HTTP) {
                     try {
                         ExceptionData exceptionData = (ExceptionData) e.getBodyAs(ExceptionData.class);
                         LogUtil.e(TAG, "errorCode = " + exceptionData.getCode());
@@ -527,9 +531,7 @@ public class MessageListV2Presenter {
         }
 
         if (newMessages == null || newMessages.isEmpty()) {
-            LogUtil.w("tony", "newMessages are empty");
             boolean hasMessages = hasMessages(firstCursorLinkId, currentItemCount);
-            LogUtil.d("tony", "hasMessages - " + hasMessages);
             view.showEmptyView(!hasMessages);
 
             if (currentMessageState.isFirstLoadNewMessage()) {
@@ -548,11 +550,6 @@ public class MessageListV2Presenter {
         }
 
         messageListModel.sortByTime(newMessages);
-
-        long lastLinkId = newMessages.get(newMessages.size() - 1).id;
-
-        messageListModel.upsertMyMarker(roomId, lastLinkId);
-        updateMarker(room.getTeamId(), roomId, lastUpdateLinkId);
 
         boolean firstLoadNewMessage = currentMessageState.isFirstLoadNewMessage();
         if (firstLoadNewMessage) {
@@ -573,6 +570,11 @@ public class MessageListV2Presenter {
 
         boolean hasMessages = hasMessages(firstCursorLinkId, currentItemCount);
         view.showEmptyView(!hasMessages);
+
+        long lastLinkId = newMessages.get(newMessages.size() - 1).id;
+        messageListModel.upsertMyMarker(roomId, lastLinkId);
+        messageListModel.updateLastLinkId(lastUpdateLinkId);
+        messageListModel.updateMarkerInfo(teamId, roomId);
     }
 
     private boolean hasMessages(long firstCursorLinkId, int currentItemCount) {
@@ -710,10 +712,8 @@ public class MessageListV2Presenter {
             }
         } catch (RetrofitError e) {
             e.printStackTrace();
-            LogUtil.e("set marker failed", e);
         } catch (Exception e) {
             e.printStackTrace();
-            LogUtil.e("set marker failed", e);
         }
     }
 
@@ -883,12 +883,10 @@ public class MessageListV2Presenter {
 
         } catch (RetrofitError e) {
             view.dismissProgressWheel();
-            LogUtil.e("deleteMessageInBackground : FAILED", e);
             int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
             messageListModel.trackMessageDeleteFail(errorCode);
         } catch (Exception e) {
             view.dismissProgressWheel();
-            LogUtil.e("deleteMessageInBackground : FAILED", e);
             messageListModel.trackMessageDeleteFail(-1);
         }
 
@@ -907,6 +905,50 @@ public class MessageListV2Presenter {
             e.printStackTrace();
         } catch (Exception e) {
             view.dismissProgressWheel();
+        }
+    }
+
+    public void onTeamLeaveEvent(long teamId, long memberId) {
+        if (!messageListModel.isCurrentTeam(teamId)) {
+            return;
+        }
+
+
+        if (memberId == room.getEntityId()) {
+            String name = EntityManager.getInstance().getEntityNameById(memberId);
+            view.showLeavedMemberDialog(name);
+            view.showDisabledUserLayer();
+        }
+    }
+
+
+    public void unSubscribeMessageQueue() {
+        if (messageLoadSubscription != null) {
+            messageLoadSubscription.unsubscribe();
+        }
+    }
+
+    public void onMessageStarredAction(long messageId) {
+        try {
+            messageListModel.registStarredMessage(room.getTeamId(), messageId);
+
+            view.showMessageStarSuccessToast();
+            view.modifyStarredInfo(messageId, true);
+            EventBus.getDefault().post(new StarredInfoChangeEvent());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onMessageUnStarredAction(long messageId) {
+        try {
+            messageListModel.unregistStarredMessage(room.getTeamId(), messageId);
+
+            view.showMessageUnStarSuccessToast();
+            view.modifyStarredInfo(messageId, false);
+            EventBus.getDefault().post(new StarredInfoChangeEvent());
+        } catch (RetrofitError e) {
+            e.printStackTrace();
         }
     }
 
@@ -933,12 +975,10 @@ public class MessageListV2Presenter {
 
         void setMarkerInfo(long roomId);
 
-        void setUpOldMessage(boolean isFirstLoad,
-                             boolean isFirstMessage);
+        void setUpOldMessage(boolean isFirstLoad, boolean isFirstMessage);
 
-        void setUpNewMessage(List<ResMessages.Link> records, long myId,
-                             boolean isFirstLoad,
-                             boolean moveToLinkId);
+        void setUpNewMessage(List<ResMessages.Link> records,
+                             long myId, boolean isFirstLoad, boolean moveToLinkId);
 
         void showOldLoadProgress();
 
@@ -994,6 +1034,15 @@ public class MessageListV2Presenter {
         void showCommentMessageMenuDialog(ResMessages.CommentMessage message);
 
         void deleteLinkByMessageId(long messageId);
+
+        void showLeavedMemberDialog(String name);
+
+        void showMessageStarSuccessToast();
+
+        void showMessageUnStarSuccessToast();
+
+        void modifyStarredInfo(long messageId, boolean isStarred);
+
     }
 
 }

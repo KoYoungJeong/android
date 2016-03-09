@@ -17,14 +17,14 @@ public class TopicItemData {
     private boolean isPublic;
     private String description;
     private boolean selected;
-    private long lastReadLinkId;
+    private long markerLinkId;
     private boolean isPushOn;
 
     public TopicItemData() {
     }
 
     public TopicItemData(long id, long creatorId, String name, boolean isStarred,
-                         boolean isJoined, long entityId, int unreadCount, long lastReadLinkId, boolean isPushOn,
+                         boolean isJoined, long entityId, int unreadCount, long markerLinkId, boolean isPushOn,
                          boolean selected, String description, boolean isPublic, int memberCount) {
         this.id = id;
         this.creatorId = creatorId;
@@ -33,7 +33,7 @@ public class TopicItemData {
         this.isJoined = isJoined;
         this.entityId = entityId;
         this.unreadCount = unreadCount;
-        this.lastReadLinkId = lastReadLinkId;
+        this.markerLinkId = markerLinkId;
         this.isPushOn = isPushOn;
         this.selected = selected;
         this.description = description;
@@ -145,12 +145,12 @@ public class TopicItemData {
         this.selected = selected;
     }
 
-    public long getLastReadLinkId() {
-        return lastReadLinkId;
+    public long getMarkerLinkId() {
+        return markerLinkId;
     }
 
-    public void setLastReadLinkId(long lastReadLinkId) {
-        this.lastReadLinkId = lastReadLinkId;
+    public void setMarkerLinkId(long markerLinkId) {
+        this.markerLinkId = markerLinkId;
     }
 
     public boolean isPushOn() {

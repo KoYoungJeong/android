@@ -436,7 +436,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     }
 
     @Override
-    public void onTeamLeave(int teamId, int memberId) {
+    public void onTeamLeave(long teamId, long memberId) {
         if (!messageListModel.isCurrentTeam(teamId)) {
             return;
         }

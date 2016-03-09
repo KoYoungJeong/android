@@ -160,7 +160,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     @ViewById(R.id.layout_messages_loading)
     View vgProgressForMessageList;
 
-    @ViewById(R.id.img_go_to_latest)
+    @ViewById(R.id.iv_go_to_latest)
     View vMoveToLatest;
 
     @ViewById(R.id.progress_go_to_latest)

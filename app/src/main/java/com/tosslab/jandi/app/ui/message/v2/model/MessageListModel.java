@@ -398,7 +398,6 @@ public class MessageListModel {
         } catch (RetrofitError e) {
             e.printStackTrace();
         }
-
     }
 
     public void upsertMyMarker(long roomId, long lastLinkId) {
