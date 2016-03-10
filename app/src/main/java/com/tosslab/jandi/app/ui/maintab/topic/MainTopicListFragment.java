@@ -252,14 +252,17 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         }
     }
 
-    @Click(value = {R.id.iv_main_topic_order_left_arrow,
-            R.id.iv_main_topic_order_right_arrow})
-    void onOrderArrowClick() {
-        boolean currentFolder = isCurrentFolder();
-        changeTopicSort(currentFolder, !currentFolder);
-        mainTopicListPresenter.updateLastTopicOrderType(!currentFolder);
+    @Click(R.id.vg_main_topic_order_title)
+    void onOrderTitleClick() {
+        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_280)
+                .setItems(R.array.jandi_topic_sort, (dialog, which) -> {
+                    boolean currentFolder = isCurrentFolder();
+                    boolean selectFolder = which == 0;
+                    changeTopicSort(currentFolder, selectFolder);
+                })
+                .create()
+                .show();
     }
-
     private boolean isCurrentFolder() {
         RecyclerView.Adapter adapter = lvMainTopic.getAdapter();
         return !(adapter instanceof UpdatedTopicAdapter);
