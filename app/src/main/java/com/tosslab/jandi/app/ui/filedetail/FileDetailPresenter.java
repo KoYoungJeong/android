@@ -311,7 +311,6 @@ public class FileDetailPresenter {
                             progressDialog.dismiss();
                             if (currentDownloadingFile.isCancelled()) {
                                 currentDownloadingFile = null;
-                                //Todo 파일 전송 취소 토스트
                                 return;
                             }
                             currentDownloadingFile = null;
