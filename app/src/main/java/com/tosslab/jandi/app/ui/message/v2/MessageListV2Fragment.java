@@ -88,7 +88,6 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
-import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
@@ -320,12 +319,13 @@ public class MessageListV2Fragment extends Fragment implements
         super.onResume();
         isForeground = true;
 
-        PushMonitor.getInstance().register(roomId);
+        PushMonitor.getInstance().register(room.getRoomId());
         fileUploadStateViewModel.registerEventBus();
 
         fileUploadStateViewModel.initDownloadState();
 
         messageListPresenter.onResume();
+        messageListPresenter.addNewMessageQueue(true);
     }
 
     @Override
@@ -414,7 +414,7 @@ public class MessageListV2Fragment extends Fragment implements
     public void onPause() {
         isForeground = false;
 
-        PushMonitor.getInstance().unregister(roomId);
+        PushMonitor.getInstance().unregister(room.getRoomId());
         if (fileUploadStateViewModel != null) {
             fileUploadStateViewModel.unregisterEventBus();
         }
@@ -769,7 +769,7 @@ public class MessageListV2Fragment extends Fragment implements
         btnShowMention.setVisibility(View.VISIBLE);
 
         List<Long> roomIds = new ArrayList<>();
-        roomIds.add(roomId);
+        roomIds.add(room.getRoomId());
 
         if (mentionControlViewModel == null) {
             mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(),
@@ -836,7 +836,6 @@ public class MessageListV2Fragment extends Fragment implements
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void initRoomInfo(long roomId, String readyMessage) {
-        this.roomId = roomId;
 
         EventBus.getDefault().post(new MainSelectTopicEvent(roomId));
 
@@ -1518,10 +1517,10 @@ public class MessageListV2Fragment extends Fragment implements
 
         if (!TextUtils.equals(messageType, "file_comment")) {
 
-            isSameRoomId = event.getRoom().getId() == roomId;
+            isSameRoomId = event.getRoom().getId() == room.getRoomId();
         } else {
             for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
-                if (roomId == messageRoom.getId()) {
+                if (room.getRoomId() == messageRoom.getId()) {
                     isSameRoomId = true;
                     break;
                 }
@@ -1549,7 +1548,7 @@ public class MessageListV2Fragment extends Fragment implements
                 return;
             }
 
-            if (roomId > 0) {
+            if (room.getRoomId() > 0) {
                 messageListPresenter.addNewMessageQueue(true);
             }
         }
@@ -1560,7 +1559,7 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
-        if (roomId > 0) {
+        if (room.getRoomId() > 0) {
             messageListPresenter.addNewMessageQueue(true);
         }
     }
@@ -1571,7 +1570,7 @@ public class MessageListV2Fragment extends Fragment implements
         }
 
 
-        if (roomId > 0) {
+        if (room.getRoomId() > 0) {
             messageListPresenter.addOldMessageQueue(true);
         }
     }
@@ -1599,7 +1598,7 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
-        if (event.getRoom().getId() == roomId) {
+        if (event.getRoom().getId() == room.getRoomId()) {
             SocketRoomMarkerEvent.Marker marker = event.getMarker();
             messageListPresenter.onRoomMarkerChange(marker.getMemberId(), marker.getLastLinkId());
         }
@@ -1636,7 +1635,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEventMainThread(TopicKickedoutEvent event) {
-        if (roomId == event.getRoomId()) {
+        if (room.getRoomId() == event.getRoomId()) {
             getActivity().finish();
             CharSequence topicName = ((AppCompatActivity) getActivity()).getSupportActionBar().getTitle();
             String msg = JandiApplication.getContext().getString(R.string.jandi_kicked_message, topicName);
@@ -2017,7 +2016,7 @@ public class MessageListV2Fragment extends Fragment implements
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void updateMentionInfo() {
-        mentionControlViewModel.refreshMembers(Arrays.asList(roomId));
+        mentionControlViewModel.refreshMembers(Arrays.asList(room.getRoomId()));
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

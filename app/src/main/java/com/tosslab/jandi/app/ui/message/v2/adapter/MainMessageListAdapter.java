@@ -330,7 +330,12 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         int count = getItemCount();
         for (int idx = 0; idx < count; idx++) {
             int itemViewType = getItemViewType(idx);
-            if (itemViewType == BodyViewHolder.Type.FileComment.ordinal() || itemViewType == BodyViewHolder.Type.PureComment.ordinal()) {
+            if (itemViewType == BodyViewHolder.Type.FileComment.ordinal()
+                    || itemViewType == BodyViewHolder.Type.PureComment.ordinal()
+                    || itemViewType == BodyViewHolder.Type.FileCommentWioutDivider.ordinal()
+                    || itemViewType == BodyViewHolder.Type.PureCommentWioutDivider.ordinal()
+                    || itemViewType == BodyViewHolder.Type.FileStickerCommentWioutDivider.ordinal()
+                    || itemViewType == BodyViewHolder.Type.PureStickerCommentWioutDivider.ordinal()) {
                 ResMessages.Link item = getItem(idx);
                 if (item.message.feedbackId == messageId) {
                     indexList.add(idx);
