@@ -49,30 +49,31 @@ public class JandiPreference {
     private static final String PREF_SOCKET_CONNECTED_LAST_TIME = "socket_connected_last_time";
 
     private static final String PREF_LAST_EXECUTED_TIME = "last_executed_time";
+    private static final String PREF_LAST_TOPIC_ORDER_TYPE = "last_topic_order_type";
 
     public static boolean isOldParseFileCacheDeleted(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         return pref.getBoolean(PREF_OLD_PARSE_FILE_CACHE_DELETED, false);
     }
 
     public static void setOldParseFileCacheDeleted(Context context, boolean delete) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         pref.edit().putBoolean(PREF_OLD_PARSE_FILE_CACHE_DELETED, delete).commit();
     }
 
     public static boolean isOldParseChannelDeleted(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         return pref.getBoolean(PREF_OLD_PARSE_CHANNEL_DELETED, false);
     }
 
     public static void setOldParseChannelDeleted(Context context, boolean delete) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         pref.edit().putBoolean(PREF_OLD_PARSE_CHANNEL_DELETED, delete).commit();
     }
 
     public static boolean isAleadyShowCoachMarkTopic(Context context) {
-        if (!getSharedPreferences(context).getBoolean(PREF_COACH_MARK_TOPIC, false)) {
-            getSharedPreferences(context).edit()
+        if (!getSharedPreferences().getBoolean(PREF_COACH_MARK_TOPIC, false)) {
+            getSharedPreferences().edit()
                     .putBoolean(PREF_COACH_MARK_TOPIC, true).commit();
             return false;
         }
@@ -80,8 +81,8 @@ public class JandiPreference {
     }
 
     public static boolean isAleadyShowCoachMarkTopicList(Context context) {
-        if (!getSharedPreferences(context).getBoolean(PREF_COACH_MARK_TOPIC_LIST, false)) {
-            getSharedPreferences(context).edit()
+        if (!getSharedPreferences().getBoolean(PREF_COACH_MARK_TOPIC_LIST, false)) {
+            getSharedPreferences().edit()
                     .putBoolean(PREF_COACH_MARK_TOPIC_LIST, true).commit();
             return false;
         }
@@ -89,8 +90,8 @@ public class JandiPreference {
     }
 
     public static boolean isAleadyShowCoachMarkFileList(Context context) {
-        if (!getSharedPreferences(context).getBoolean(PREF_COACH_MARK_FILE_LIST, false)) {
-            getSharedPreferences(context).edit()
+        if (!getSharedPreferences().getBoolean(PREF_COACH_MARK_FILE_LIST, false)) {
+            getSharedPreferences().edit()
                     .putBoolean(PREF_COACH_MARK_FILE_LIST, true).commit();
             return false;
         }
@@ -98,8 +99,8 @@ public class JandiPreference {
     }
 
     public static boolean isAleadyShowCoachMarkMore(Context context) {
-        if (!getSharedPreferences(context).getBoolean(PREF_COACH_MARK_MORE, false)) {
-            getSharedPreferences(context).edit()
+        if (!getSharedPreferences().getBoolean(PREF_COACH_MARK_MORE, false)) {
+            getSharedPreferences().edit()
                     .putBoolean(PREF_COACH_MARK_MORE, true).commit();
             return false;
         }
@@ -108,8 +109,8 @@ public class JandiPreference {
 
 
     public static boolean isAleadyShowCoachMarkDirectMessageList(Context context) {
-        if (!getSharedPreferences(context).getBoolean(PREF_COACH_MARK_DIRECT_MESSAGE_LIST, false)) {
-            getSharedPreferences(context).edit()
+        if (!getSharedPreferences().getBoolean(PREF_COACH_MARK_DIRECT_MESSAGE_LIST, false)) {
+            getSharedPreferences().edit()
                     .putBoolean(PREF_COACH_MARK_DIRECT_MESSAGE_LIST, true).commit();
             return false;
         }
@@ -117,36 +118,36 @@ public class JandiPreference {
     }
 
     public static int getChatIdFromPush(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         return pref.getInt(PREF_CHAT_ID_FROM_PUSH, NOT_SET_YET);
     }
 
     public static void setChatIdFromPush(Context context, int chatId) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt(PREF_CHAT_ID_FROM_PUSH, chatId);
         editor.commit();
     }
 
     public static int getActivatedChatId(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         return pref.getInt(PREF_CHAT_ID, NOT_SET_YET);
     }
 
     public static void setActivatedChatId(Context context, int chatId) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt(PREF_CHAT_ID, chatId);
         editor.commit();
     }
 
     public static int getMyEntityId(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         return pref.getInt(PREF_MY_ENTITY_ID, NOT_SET_YET);
     }
 
     public static void setMyEntityId(Context context, long myEntityId) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         SharedPreferences.Editor editor = pref.edit();
         editor.putLong(PREF_MY_ENTITY_ID, myEntityId);
         editor.commit();
@@ -154,12 +155,12 @@ public class JandiPreference {
 
     // JANDI Access Token
     public static String getMyToken(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         return pref.getString(PREF_TOKEN, "");
     }
 
     public static void clearMyToken(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(PREF_TOKEN, "");
         editor.commit();
@@ -167,24 +168,24 @@ public class JandiPreference {
 
     @Deprecated
     public static String getAccessTokenType(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         return pref.getString(PREF_ACCESS_TOKEN_TYPE, "");
     }
 
     @Deprecated
     public static String getAccessToken(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         return pref.getString(PREF_ACCESS_TOKEN, "");
     }
 
     @Deprecated
     public static String getRefreshToken(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         return pref.getString(PREF_REFRESH_TOKEN, "");
     }
 
     public static void removeTokenInfo(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         pref.edit()
                 .remove(PREF_ACCESS_TOKEN)
                 .remove(PREF_ACCESS_TOKEN_TYPE)
@@ -193,7 +194,7 @@ public class JandiPreference {
     }
 
     public static void signOut(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         pref.edit().clear().commit();
 
         isAleadyShowCoachMarkTopic(context);
@@ -206,17 +207,17 @@ public class JandiPreference {
     }
 
     public static void setFirstLogin(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         pref.edit().putBoolean(PREF_FIRST_LOGIN, true).commit();
     }
 
     public static boolean isFirstLogin(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         return pref.getBoolean(PREF_FIRST_LOGIN, false);
     }
 
-    private static SharedPreferences getSharedPreferences(Context context) {
-        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+    private static SharedPreferences getSharedPreferences() {
+        return JandiApplication.getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
     public static boolean isAlarmLED(Context context) {
@@ -232,19 +233,19 @@ public class JandiPreference {
     }
 
     public static boolean isInvitePopup(Context context) {
-        return getSharedPreferences(context).getBoolean(PREF_INVITE_POPUP, true);
+        return getSharedPreferences().getBoolean(PREF_INVITE_POPUP, true);
     }
 
     public static void setInvitePopup(Context context) {
-        getSharedPreferences(context).edit().putBoolean(PREF_INVITE_POPUP, false).commit();
+        getSharedPreferences().edit().putBoolean(PREF_INVITE_POPUP, false).commit();
     }
 
     public static void setKeyboardHeight(Context context, int keyboardHeight) {
 
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            getSharedPreferences(context).edit().putInt(PREF_KEYBOARD_HEIGHT_LANDSCAPE, keyboardHeight).commit();
+            getSharedPreferences().edit().putInt(PREF_KEYBOARD_HEIGHT_LANDSCAPE, keyboardHeight).commit();
         } else {
-            getSharedPreferences(context).edit().putInt(PREF_KEYBOARD_HEIGHT_PORTRAIT, keyboardHeight).commit();
+            getSharedPreferences().edit().putInt(PREF_KEYBOARD_HEIGHT_PORTRAIT, keyboardHeight).commit();
         }
 
     }
@@ -252,23 +253,23 @@ public class JandiPreference {
     public static int getKeyboardHeight(Context context) {
 
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            return getSharedPreferences(context).getInt(PREF_KEYBOARD_HEIGHT_LANDSCAPE, -1);
+            return getSharedPreferences().getInt(PREF_KEYBOARD_HEIGHT_LANDSCAPE, -1);
         } else {
-            return getSharedPreferences(context).getInt(PREF_KEYBOARD_HEIGHT_PORTRAIT, -1);
+            return getSharedPreferences().getInt(PREF_KEYBOARD_HEIGHT_PORTRAIT, -1);
         }
     }
 
     public static String getPassCode(Context context) {
-        return getSharedPreferences(context).getString(PREF_PASSCODE, "");
+        return getSharedPreferences().getString(PREF_PASSCODE, "");
     }
 
     public static void setPassCode(Context context, String passCode) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         pref.edit().putString(PREF_PASSCODE, passCode).commit();
     }
 
     public static void removePassCode(Context context) {
-        SharedPreferences pref = getSharedPreferences(context);
+        SharedPreferences pref = getSharedPreferences();
         pref.edit().remove(PREF_PASSCODE).commit();
     }
 
@@ -279,7 +280,7 @@ public class JandiPreference {
      * @param state   0 : disconnected, 1 : connected
      */
     public static void setLastNetworkConnect(Context context, int state) {
-        getSharedPreferences(context).edit().putInt(PREF_LAST_NETWORK_CONNECT, state).commit();
+        getSharedPreferences().edit().putInt(PREF_LAST_NETWORK_CONNECT, state).commit();
     }
 
     /**
@@ -289,7 +290,7 @@ public class JandiPreference {
      * @return 0 : disconnected, 1 : conntected, -1 : not setting
      */
     public static int getLastNetworkConnect(Context context) {
-        return getSharedPreferences(context).getInt(PREF_LAST_NETWORK_CONNECT, -1);
+        return getSharedPreferences().getInt(PREF_LAST_NETWORK_CONNECT, -1);
     }
 
     public static String getOrientation(Context context) {
@@ -298,12 +299,12 @@ public class JandiPreference {
     }
 
     public static void setVersionPopupLastTimeToCurrentTime(long time) {
-        getSharedPreferences(JandiApplication.getContext()).
+        getSharedPreferences().
                 edit().putLong(PREF_VERSION_POPUP_LAST_TIME, time).commit();
     }
 
     public static long getVersionPopupLastTime() {
-        return getSharedPreferences(JandiApplication.getContext())
+        return getSharedPreferences()
                 .getLong(PREF_VERSION_POPUP_LAST_TIME, 0);
     }
 
@@ -313,41 +314,52 @@ public class JandiPreference {
     }
 
     public static boolean isClearedLink() {
-        return getSharedPreferences(JandiApplication.getContext()).getBoolean("cleared_link", false);
+        return getSharedPreferences().getBoolean("cleared_link", false);
     }
 
     public static void setClearedLink() {
-        getSharedPreferences(JandiApplication.getContext()).edit()
+        getSharedPreferences().edit()
                 .putBoolean("cleared_link", true)
                 .commit();
     }
 
-    public static void init(Context context) {
-
-        SharedPreferences pref = getSharedPreferences(context);
-        pref.edit().clear().commit();
-
-    }
-
     public static long getSocketConnectedLastTime() {
-        return getSharedPreferences(JandiApplication.getContext()).getLong(PREF_SOCKET_CONNECTED_LAST_TIME, -1);
+        return getSharedPreferences().getLong(PREF_SOCKET_CONNECTED_LAST_TIME, -1);
     }
 
     public static void setSocketConnectedLastTime(long ts) {
-        getSharedPreferences(JandiApplication.getContext()).edit()
+        getSharedPreferences().edit()
                 .putLong(PREF_SOCKET_CONNECTED_LAST_TIME, ts)
                 .commit();
     }
 
     public static long getLastExecutedTime() {
-        return getSharedPreferences(JandiApplication.getContext()).getLong(PREF_LAST_EXECUTED_TIME, 0);
+        return getSharedPreferences().getLong(PREF_LAST_EXECUTED_TIME, 0);
     }
 
     public static void setLastExecutedTime(long time) {
-        getSharedPreferences(JandiApplication.getContext())
+        getSharedPreferences()
                 .edit()
                 .putLong(PREF_LAST_EXECUTED_TIME, time)
                 .apply();
     }
 
+    /**
+     * @return 0 = folder, 1 = updated
+     */
+    public static int getLastTopicOrderType() {
+        return getSharedPreferences()
+                .getInt(PREF_LAST_TOPIC_ORDER_TYPE, 0);
+
+    }
+
+    /**
+     * @param type 0 = folder, 1 = updated
+     */
+    public static void setLastTopicOrderType(int type) {
+        getSharedPreferences()
+                .edit()
+                .putInt(PREF_LAST_TOPIC_ORDER_TYPE, type)
+                .apply();
+    }
 }
