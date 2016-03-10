@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.topic;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -13,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -198,8 +196,12 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     void initViews() {
         lvMainTopic.setLayoutManager(layoutManager);
         mainTopicListPresenter.onLoadList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
+        mainTopicListPresenter.onInitViewList();
         FAButtonUtil.setFAButtonController(lvMainTopic, floatingActionMenu);
         hasOptionsMenu();
+
+
     }
 
     private void launchCreateTopicActivity() {
@@ -236,17 +238,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.Search);
     }
 
-    @OptionsItem(value = {R.id.action_main_topic_order_folder,
-            R.id.action_main_topic_order_updated})
-    void onSortingTopicOptionSelect(MenuItem menuItem) {
-        boolean currentFolder = isCurrentFolder();
-
-        boolean changeToFolder = menuItem.getItemId() == R.id.action_main_topic_order_folder;
-
-        changeTopicSort(currentFolder, changeToFolder);
-    }
-
-    private void changeTopicSort(boolean currentFolder, boolean changeToFolder) {
+    @Override
+    public void changeTopicSort(boolean currentFolder, boolean changeToFolder) {
         if (currentFolder && !changeToFolder) {
             lvMainTopic.setAdapter(updatedTopicAdapter);
             mainTopicListPresenter.onRefreshUpdatedTopicList();
@@ -259,26 +252,12 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         }
     }
 
-    @Click(R.id.vg_main_topic_order_title)
-    void onOrderTitleClick() {
-        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_280)
-                .setItems(R.array.jandi_topic_sort, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        boolean currentFolder = isCurrentFolder();
-                        boolean selectFolder = which == 0;
-                        changeTopicSort(currentFolder, selectFolder);
-                    }
-                })
-                .create()
-                .show();
-    }
-
     @Click(value = {R.id.iv_main_topic_order_left_arrow,
             R.id.iv_main_topic_order_right_arrow})
-    void onOrderArrowClick(View view) {
+    void onOrderArrowClick() {
         boolean currentFolder = isCurrentFolder();
         changeTopicSort(currentFolder, !currentFolder);
+        mainTopicListPresenter.updateLastTopicOrderType(!currentFolder);
     }
 
     private boolean isCurrentFolder() {
@@ -299,9 +278,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         expandableTopicAdapter = new ExpandableTopicAdapter(topicFolderListDataProvider);
 
         wrappedAdapter = expandableItemManager.createWrappedAdapter(expandableTopicAdapter);
-
-        lvMainTopic.setAdapter(wrappedAdapter);  // requires *wrapped* expandableTopicAdapter
-        lvMainTopic.setHasFixedSize(false);
 
         // ListView를 Set함
         expandableItemManager.attachRecyclerView(lvMainTopic);
