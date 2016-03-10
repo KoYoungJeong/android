@@ -459,7 +459,7 @@ public class JandiSocketServiceModel {
         markerSubscribe = markerPublishSubject.throttleWithTimeout(500, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
                 .filter(event -> {
-                    int markingUserId = event.getMarker().getMemberId();
+                    long markingUserId = event.getMarker().getMemberId();
                     return Observable.from(AccountRepository.getRepository().getAccountTeams())
                             .filter(userTeam -> userTeam.getMemberId() == markingUserId)
                             .map(userTeam1 -> true)
