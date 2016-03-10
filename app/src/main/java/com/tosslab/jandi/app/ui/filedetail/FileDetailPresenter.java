@@ -99,9 +99,10 @@ public class FileDetailPresenter {
             fileDetail = fileDetailModel.getFileDetailFromServer(fileId);
         } catch (RetrofitError e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
+            view.showUnexpectedErrorToast();
+            view.finish();
+            return;
         }
-
-        view.clearFileDetailAndComments();
 
         if (fileDetail == null || fileDetail.messageCount <= 0) {
             view.showUnexpectedErrorToast();
@@ -117,6 +118,8 @@ public class FileDetailPresenter {
             view.finish();
             return;
         }
+
+        view.clearFileDetailAndComments();
 
         // 파일의 상세정보는 API 로 부터 받아온 리스트의 마지막에 있다.
         int fileDetailPosition = messages.size() - 1;

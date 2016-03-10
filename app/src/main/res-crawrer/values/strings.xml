@@ -178,7 +178,7 @@
 	<string name="jandi_disabled_user">"This member has been temporarily disabled"</string>
 	<string name="jandi_domain_is_already_taken">"Domain is already taken or invalid."</string>
 	<string name="jandi_duplicate_email">"That email is already registered"</string>
-	<string name="jandi_empty">"None"</string>
+	<string name="jandi_empty">""</string>
 	<string name="jandi_enable_external_link">"Create public link"</string>
 	<string name="jandi_enter_new_passcode">"Enter New Passcode "</string>
 	<string name="jandi_enter_passcode">"Enter your password"</string>
@@ -317,7 +317,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_msg_network_offline_warn">"It seems you are not connected to the Internet."</string>
 	<string name="jandi_my_files">"<b>My Files</b>"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
-	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic. "</string>
+	<string name="jandi_need_to_assign_topic_owner">" "</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
 	<string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>
 	<string name="jandi_no_long_team_member">"%s is no longer a team member."</string>

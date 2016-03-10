@@ -8,11 +8,16 @@ import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import com.soundcloud.android.crop.Crop;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel_;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
@@ -32,6 +37,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 12..
@@ -121,6 +128,15 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
         try {
             filePickerModel.uploadProfilePhoto(activity.getApplicationContext(), profileFile);
             successPhotoUpload(activity.getApplicationContext());
+
+            if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
+                // 소켓이 연동되어 있지 않는 상태인 경우..
+                ResLeftSideMenu leftSideMenu = EntityClientManager_.getInstance_(activity).getTotalEntitiesInfo();
+                LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+                EntityManager.getInstance().refreshEntity();
+                ResLeftSideMenu.User me = EntityManager.getInstance().getMe().getUser();
+                EventBus.getDefault().post(new ProfileChangeEvent(me));
+            }
             dismissProgressWheel();
         } catch (ExecutionException e) {
             dismissProgressWheel();

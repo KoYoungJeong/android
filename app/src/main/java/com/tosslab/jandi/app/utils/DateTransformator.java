@@ -17,18 +17,16 @@ import java.util.Locale;
  */
 public class DateTransformator {
     public static final long PARSE_FAIL = -1;
-    public static final String FORMAT_DEFAULT = "MM/dd/yyyy hh:mm a";
-    public static final String FORMAT_YYYYMMDD_HHMM_A = "yyyy/MM/dd a hh:mm";
 
     public static String getTimeString(Date date) {
         Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
         switch (locale.getLanguage()) {
             case "ko":
             case "zh":
-                return getTimeString(date, FORMAT_YYYYMMDD_HHMM_A);
+                return getTimeString(date, yyyy/MM/dd a hh:mm);
             case "ja":
             default:
-                return getTimeString(date, FORMAT_DEFAULT);
+                return getTimeString(date, MM/dd/yyyy hh:mm a);
         }
     }
 
@@ -93,6 +91,6 @@ public class DateTransformator {
             default:
                 return getTimeString(date, "h:mm a");
         }
-
     }
+
 }
