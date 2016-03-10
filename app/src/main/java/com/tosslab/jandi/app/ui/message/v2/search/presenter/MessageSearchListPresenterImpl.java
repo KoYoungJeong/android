@@ -19,10 +19,10 @@ import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
-import com.tosslab.jandi.app.ui.message.to.queue.CheckAnnouncementQueue;
-import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
-import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
-import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
+import com.tosslab.jandi.app.ui.message.to.queue.CheckAnnouncementContainer;
+import com.tosslab.jandi.app.ui.message.to.queue.MessageContainer;
+import com.tosslab.jandi.app.ui.message.to.queue.NewMessageContainer;
+import com.tosslab.jandi.app.ui.message.to.queue.OldMessageContainer;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
@@ -56,7 +56,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     private MessageState messageState;
     private OldMessageLoader oldMessageLoader;
     private NewsMessageLoader newsMessageLoader;
-    private PublishSubject<MessageQueue> messagePublishSubject;
+    private PublishSubject<MessageContainer> messagePublishSubject;
     private Subscription messageSubscription;
     private long teamId;
     private long roomId;
@@ -112,9 +112,9 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
     }
 
-    private void loadOldMessage(MessageQueue messageQueue) {
+    private void loadOldMessage(MessageContainer messageContainer) {
         if (oldMessageLoader != null) {
-            ResMessages resMessages = oldMessageLoader.load(roomId, ((MessageState) messageQueue
+            ResMessages resMessages = oldMessageLoader.load(roomId, ((MessageState) messageContainer
                     .getData()).getFirstItemId());
 
             if (resMessages != null && roomId <= 0) {
@@ -127,11 +127,11 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
         }
     }
 
-    private void loadNewMessage(MessageQueue messageQueue) {
+    private void loadNewMessage(MessageContainer messageContainer) {
 
 
         if (newsMessageLoader != null) {
-            MessageState data = (MessageState) messageQueue.getData();
+            MessageState data = (MessageState) messageContainer.getData();
             long lastUpdateLinkId = data.getLastUpdateLinkId();
 
             if (lastUpdateLinkId < 0 && oldMessageLoader != null) {
@@ -149,7 +149,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
     @Override
     public void onRequestNewMessage() {
-        sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        sendMessagePublisherEvent(new NewMessageContainer(messageState));
     }
 
     @Override
@@ -196,12 +196,12 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
         messageListModel.setRoomId(roomId);
 
 
-        sendMessagePublisherEvent(new CheckAnnouncementQueue());
-        sendMessagePublisherEvent(new OldMessageQueue(messageState));
+        sendMessagePublisherEvent(new CheckAnnouncementContainer());
+        sendMessagePublisherEvent(new OldMessageContainer(messageState));
 
 
         if (view.isForeground()) {
-            sendMessagePublisherEvent(new NewMessageQueue(messageState));
+            sendMessagePublisherEvent(new NewMessageContainer(messageState));
         }
         view.setRoomInit(true);
     }
@@ -219,9 +219,9 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
     }
 
-    private void sendMessagePublisherEvent(MessageQueue messageQueue) {
+    private void sendMessagePublisherEvent(MessageContainer messageContainer) {
         if (!messageSubscription.isUnsubscribed()) {
-            messagePublishSubject.onNext(messageQueue);
+            messagePublishSubject.onNext(messageContainer);
         }
     }
 
@@ -250,8 +250,8 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
         if (!isForeground) {
             messageListModel.updateMarkerInfo(teamId, roomId);
         } else if (isRoomInit) {
-            sendMessagePublisherEvent(new NewMessageQueue(messageState));
-            sendMessagePublisherEvent(new CheckAnnouncementQueue());
+            sendMessagePublisherEvent(new NewMessageContainer(messageState));
+            sendMessagePublisherEvent(new CheckAnnouncementContainer());
         }
     }
 
@@ -451,7 +451,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     @Override
     public void onRequestOldMessage() {
         if (!messageState.isFirstMessage()) {
-            sendMessagePublisherEvent(new OldMessageQueue(messageState));
+            sendMessagePublisherEvent(new OldMessageContainer(messageState));
         }
     }
 

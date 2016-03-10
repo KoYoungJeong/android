@@ -23,11 +23,11 @@ import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
-import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
-import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
-import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
-import com.tosslab.jandi.app.ui.message.to.queue.UpdateLinkPreviewMessageQueue;
+import com.tosslab.jandi.app.ui.message.to.queue.MessageContainer;
+import com.tosslab.jandi.app.ui.message.to.queue.NewMessageContainer;
+import com.tosslab.jandi.app.ui.message.to.queue.OldMessageContainer;
+import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageContainer;
+import com.tosslab.jandi.app.ui.message.to.queue.UpdateLinkPreviewMessageContainer;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
 import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
@@ -63,7 +63,7 @@ public class MessageListV2Presenter {
 
     View view;
 
-    private PublishSubject<MessageQueue> messageLoadPublishSubject;
+    private PublishSubject<MessageContainer> messageRequestQueue;
     private Subscription messageLoadSubscription;
     private MessageState currentMessageState;
     private Room room;
@@ -93,23 +93,23 @@ public class MessageListV2Presenter {
     }
 
     void initMessageLoadQueue() {
-        messageLoadPublishSubject = PublishSubject.create();
-        messageLoadSubscription = messageLoadPublishSubject
+        messageRequestQueue = PublishSubject.create();
+        messageLoadSubscription = messageRequestQueue
                 .onBackpressureBuffer()
                 .observeOn(Schedulers.io())
-                .subscribe(messageQueue -> {
-                    switch (messageQueue.getQueueType()) {
+                .subscribe(messageContainer -> {
+                    switch (messageContainer.getQueueType()) {
                         case Old:
-                            loadOldMessage((OldMessageQueue) messageQueue);
+                            loadOldMessage((OldMessageContainer) messageContainer);
                             break;
                         case New:
-                            loadNewMessage((NewMessageQueue) messageQueue);
+                            loadNewMessage((NewMessageContainer) messageContainer);
                             break;
                         case Send:
-                            sendMessage((SendingMessageQueue) messageQueue);
+                            sendMessage((SendingMessageContainer) messageContainer);
                             break;
                         case UpdateLinkPreview:
-                            updateLinkPreview((UpdateLinkPreviewMessageQueue) messageQueue);
+                            updateLinkPreview((UpdateLinkPreviewMessageContainer) messageContainer);
                             break;
                     }
                 }, throwable -> {
@@ -249,10 +249,10 @@ public class MessageListV2Presenter {
 
         // 1. 처음 접근 하는 토픽/DM 인 경우
         // 2. 오랜만에 접근 하는 토픽/DM 인 경우
-        NewMessageQueue newMessageQueue = new NewMessageQueue(currentMessageState);
+        NewMessageContainer newMessageQueue = new NewMessageContainer(currentMessageState);
         newMessageQueue.setCacheMode(true);
 
-        OldMessageQueue oldMessageQueue = new OldMessageQueue(currentMessageState);
+        OldMessageContainer oldMessageQueue = new OldMessageContainer(currentMessageState);
         oldMessageQueue.setCacheMode(true);
 
         if (lastLinkMessage == null
@@ -276,26 +276,26 @@ public class MessageListV2Presenter {
         addQueue(newMessageQueue);
     }
 
-    private void addQueue(MessageQueue messageQueue) {
+    private void addQueue(MessageContainer messageContainer) {
         if (!messageLoadSubscription.isUnsubscribed()) {
-            messageLoadPublishSubject.onNext(messageQueue);
+            messageRequestQueue.onNext(messageContainer);
         }
     }
 
     public void addNewMessageQueue(boolean cacheMode) {
-        NewMessageQueue messageQueue = new NewMessageQueue(currentMessageState);
+        NewMessageContainer messageQueue = new NewMessageContainer(currentMessageState);
         messageQueue.setCacheMode(cacheMode);
         addQueue(messageQueue);
     }
 
     public void addOldMessageQueue(boolean cacheMode) {
-        OldMessageQueue messageQueue = new OldMessageQueue(currentMessageState);
+        OldMessageContainer messageQueue = new OldMessageContainer(currentMessageState);
         messageQueue.setCacheMode(cacheMode);
         addQueue(messageQueue);
     }
 
     public void addUpdateLinkPreviewMessageQueue(long messageId) {
-        UpdateLinkPreviewMessageQueue messageQueue = new UpdateLinkPreviewMessageQueue(messageId);
+        UpdateLinkPreviewMessageContainer messageQueue = new UpdateLinkPreviewMessageContainer(messageId);
         addQueue(messageQueue);
     }
 
@@ -306,7 +306,7 @@ public class MessageListV2Presenter {
                 stickerInfo != null ?
                         new SendingMessage(localId, body, stickerInfo, mentionObjects)
                         : new SendingMessage(localId, new ReqSendMessageV3((body), mentionObjects));
-        SendingMessageQueue sendingMessageQueue = new SendingMessageQueue(sendingMessage);
+        SendingMessageContainer sendingMessageQueue = new SendingMessageContainer(sendingMessage);
         addQueue(sendingMessageQueue);
     }
 
@@ -396,12 +396,12 @@ public class MessageListV2Presenter {
         }
     }
 
-    private void loadOldMessage(OldMessageQueue messageQueue) {
+    private void loadOldMessage(OldMessageContainer messageContainer) {
         long teamId = room.getTeamId();
         long roomId = room.getRoomId();
         long linkId = messagePointer.getFirstCursorLinkId();
-        boolean isFirstLoad = ((MessageState) messageQueue.getData()).isFirstLoadOldMessage();
-        boolean isCacheMode = messageQueue.isCacheMode();
+        boolean isFirstLoad = messageContainer.getData().isFirstLoadOldMessage();
+        boolean isCacheMode = messageContainer.isCacheMode();
 
         loadOldMessage(teamId, roomId, linkId, isFirstLoad, isCacheMode);
     }
@@ -482,8 +482,8 @@ public class MessageListV2Presenter {
         return resOldMessage;
     }
 
-    private void loadNewMessage(NewMessageQueue messageQueue) {
-        MessageState data = (MessageState) messageQueue.getData();
+    private void loadNewMessage(NewMessageContainer messageContainer) {
+        MessageState data = messageContainer.getData();
         final long lastUpdateLinkId = MessageRepository.getRepository()
                 .getLastMessage(room.getRoomId()).id;
 
@@ -494,7 +494,7 @@ public class MessageListV2Presenter {
                 .getMessagesCount(roomId, firstCursorLinkId);
 
         if (lastUpdateLinkId < 0) {
-            boolean firstLoadOldMessage = ((MessageState) messageQueue.getData()).isFirstLoadOldMessage();
+            boolean firstLoadOldMessage = messageContainer.getData().isFirstLoadOldMessage();
             loadOldMessage(teamId, roomId, lastUpdateLinkId, firstLoadOldMessage, true);
         }
 
@@ -545,7 +545,7 @@ public class MessageListV2Presenter {
             return;
         }
 
-        boolean cacheMode = messageQueue.isCacheMode();
+        boolean cacheMode = messageContainer.isCacheMode();
         if (cacheMode) {
             messageListModel.upsertMessages(roomId, newMessages);
         }
@@ -666,15 +666,15 @@ public class MessageListV2Presenter {
         messageListModel.updateMarkerInfo(teamId, roomId);
 
         if (roomId > 0) {
-            NewMessageQueue newMessageQueue = new NewMessageQueue(currentMessageState);
+            NewMessageContainer newMessageQueue = new NewMessageContainer(currentMessageState);
             newMessageQueue.setCacheMode(cacheMode);
             addQueue(newMessageQueue);
         }
 
     }
 
-    private void updateLinkPreview(UpdateLinkPreviewMessageQueue messageQueue) {
-        long messageId = messageQueue.getData();
+    private void updateLinkPreview(UpdateLinkPreviewMessageContainer messageContainer) {
+        long messageId = messageContainer.getData();
 
         ResMessages.TextMessage textMessage =
                 MessageRepository.getRepository().getTextMessage(messageId);
@@ -764,7 +764,7 @@ public class MessageListV2Presenter {
             ArrayList<MentionObject> mentions = new ArrayList<>();
             SendingMessage sendingMessage = new SendingMessage(localId, "", reqStickerInfo, mentions);
 
-            SendingMessageQueue messageQueue = new SendingMessageQueue(sendingMessage);
+            SendingMessageContainer messageQueue = new SendingMessageContainer(sendingMessage);
 
             addQueue(messageQueue);
         }
@@ -784,14 +784,14 @@ public class MessageListV2Presenter {
             // networking...
             SendingMessage sendingMessage = new SendingMessage(localId, reqSendMessage);
 
-            SendingMessageQueue messageQueue = new SendingMessageQueue(sendingMessage);
+            SendingMessageContainer messageQueue = new SendingMessageContainer(sendingMessage);
 
             addQueue(messageQueue);
         }
     }
 
-    private void sendMessage(SendingMessageQueue messageQueue) {
-        SendingMessage data = (SendingMessage) messageQueue.getData();
+    private void sendMessage(SendingMessageContainer messageContainer) {
+        SendingMessage data = messageContainer.getData();
         long linkId;
         if (data.getStickerInfo() != null) {
             linkId = messageListModel.sendStickerMessage(room.getTeamId(), room.getEntityId(),

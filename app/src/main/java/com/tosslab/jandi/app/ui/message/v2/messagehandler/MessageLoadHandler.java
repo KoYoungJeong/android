@@ -12,11 +12,11 @@ import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
-import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
-import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
-import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
-import com.tosslab.jandi.app.ui.message.to.queue.UpdateLinkPreviewMessageQueue;
+import com.tosslab.jandi.app.ui.message.to.queue.MessageContainer;
+import com.tosslab.jandi.app.ui.message.to.queue.NewMessageContainer;
+import com.tosslab.jandi.app.ui.message.to.queue.OldMessageContainer;
+import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageContainer;
+import com.tosslab.jandi.app.ui.message.to.queue.UpdateLinkPreviewMessageContainer;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Presenter;
 import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
@@ -60,7 +60,7 @@ public class MessageLoadHandler {
     private MessageState messageState;
 
     private boolean isRoomInit;
-    private PublishSubject<MessageQueue> messageHandlingQueue;
+    private PublishSubject<MessageContainer> messageHandlingQueue;
 
     public MessageLoadHandler(long teamId, long roomId, long entityId, long lastReadEntityId,
                               MessageListV2Presenter.View view, MessageListV2Presenter presenter, MessageListModel model) {
@@ -173,24 +173,24 @@ public class MessageLoadHandler {
 //            presenter.setLastReadLinkId(lastReadEntityId);
         }
 
-        messageHandlingPush(new OldMessageQueue(messageState));
+        messageHandlingPush(new OldMessageContainer(messageState));
 
 //        if (view.isForeground()) {
-            messageHandlingPush(new NewMessageQueue(messageState));
+            messageHandlingPush(new NewMessageContainer(messageState));
 //        }
 
         isRoomInit = true;
     }
 
-    private void messageHandlingPush(MessageQueue messageQueue) {
+    private void messageHandlingPush(MessageContainer messageContainer) {
         if (!messageHandlingQueueSubscription.isUnsubscribed()) {
-            messageHandlingQueue.onNext(messageQueue);
+            messageHandlingQueue.onNext(messageContainer);
         }
     }
 
-    private void loadOldMessage(MessageQueue messageQueue) {
+    private void loadOldMessage(MessageContainer messageContainer) {
         if (oldMessageLoader != null) {
-            ResMessages resMessages = oldMessageLoader.load(roomId, ((MessageState) messageQueue
+            ResMessages resMessages = oldMessageLoader.load(roomId, ((MessageState) messageContainer
                     .getData()).getFirstItemId());
 
             if (resMessages != null && roomId <= 0) {
@@ -202,9 +202,9 @@ public class MessageLoadHandler {
         }
     }
 
-    private void loadNewMessage(MessageQueue messageQueue) {
+    private void loadNewMessage(MessageContainer messageContainer) {
         if (newsMessageLoader != null) {
-            MessageState data = (MessageState) messageQueue.getData();
+            MessageState data = (MessageState) messageContainer.getData();
             long lastUpdateLinkId = data.getLastUpdateLinkId();
 
             if (lastUpdateLinkId < 0 && oldMessageLoader != null) {
@@ -215,8 +215,8 @@ public class MessageLoadHandler {
         }
     }
 
-    private void sendMessage(MessageQueue messageQueue) {
-        SendingMessage data = (SendingMessage) messageQueue.getData();
+    private void sendMessage(MessageContainer messageContainer) {
+        SendingMessage data = (SendingMessage) messageContainer.getData();
         long linkId;
         List mentions = data.getMentions();
 
@@ -235,8 +235,8 @@ public class MessageLoadHandler {
         view.notifyDataSetChanged();
     }
 
-    private void updateLinkPreview(MessageQueue messageQueue) {
-        int messageId = (Integer) messageQueue.getData();
+    private void updateLinkPreview(MessageContainer messageContainer) {
+        int messageId = (Integer) messageContainer.getData();
         ResMessages.TextMessage textMessage = MessageRepository.getRepository().getTextMessage(messageId);
         updateLinkPreviewMessage(textMessage);
         view.notifyDataSetChanged();
@@ -259,26 +259,26 @@ public class MessageLoadHandler {
 
     public void refreshNewMessages() {
         if (isRoomInit) {
-            messageHandlingPush(new NewMessageQueue(messageState));
+            messageHandlingPush(new NewMessageContainer(messageState));
         }
     }
 
     public void refreshOldMessages() {
         if (!messageState.isFirstMessage()) {
-            messageHandlingPush(new OldMessageQueue(messageState));
+            messageHandlingPush(new OldMessageContainer(messageState));
         }
     }
 
     public void refreshLinkPreview(int messageId) {
-        messageHandlingPush(new UpdateLinkPreviewMessageQueue(messageId));
+        messageHandlingPush(new UpdateLinkPreviewMessageContainer(messageId));
     }
 
     public void sendTextMessage(long localId, ReqSendMessageV3 reqSendMessage) {
-        messageHandlingPush(new SendingMessageQueue(new SendingMessage(localId, reqSendMessage)));
+        messageHandlingPush(new SendingMessageContainer(new SendingMessage(localId, reqSendMessage)));
     }
 
     public void sendStickerMessage(long localId, StickerInfo stickerInfo) {
-        messageHandlingPush(new SendingMessageQueue
+        messageHandlingPush(new SendingMessageContainer
                 (new SendingMessage(localId, "", new StickerInfo(stickerInfo), new ArrayList<>())));
     }
 
