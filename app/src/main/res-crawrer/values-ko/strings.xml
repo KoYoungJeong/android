@@ -178,7 +178,7 @@
 	<string name="jandi_disabled_user">"차단된 멤버입니다"</string>
 	<string name="jandi_domain_is_already_taken">"이미 사용하고 있는 도메인이거나 알맞은 형식의 도메인 이름이 아닙니다."</string>
 	<string name="jandi_duplicate_email">"이미 사용중인 이메일입니다"</string>
-	<string name="jandi_empty">"None"</string>
+	<string name="jandi_empty">""</string>
 	<string name="jandi_enable_external_link">"외부 공유용 링크 생성"</string>
 	<string name="jandi_enter_new_passcode">"변경할 비밀번호를 입력해주세요."</string>
 	<string name="jandi_enter_passcode">"비밀번호 입력"</string>
@@ -387,7 +387,7 @@
 	<string name="jandi_sdcard_storage">"SD 카드"</string>
 	<string name="jandi_sdcard_storage_mounted">"SD 카드가 인식되었습니다"</string>
 	<string name="jandi_sdcard_storage_unmounted">"SD 카드가 해제되었습니다"</string>
-	<string name="jandi_search_ing">"<![CDATA[<b><font color=#404040>%s</font></b>]]>검색 중..."</string>
+	<string name="jandi_search_ing">"<![CDATA[<b><font color=#404040>%s</font></b>]]> 검색 중..."</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>에 대한 <b><font color=#404040>%2$d</font></b>개의 검색 결과가 있습니다.]]>"</string>
 	<string name="jandi_select_character">"캐릭터 선택하기"</string>
 	<string name="jandi_select_direct_messages">"대화 시작하기"</string>

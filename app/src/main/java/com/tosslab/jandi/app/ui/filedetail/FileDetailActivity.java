@@ -517,7 +517,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         adapter.notifyDataSetChanged();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(delay = 100)
     @Override
     public void scrollToLastComment() {
         if (adapter.getItemCount() <= 0) {
