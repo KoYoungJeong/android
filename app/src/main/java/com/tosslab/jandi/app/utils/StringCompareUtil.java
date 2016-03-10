@@ -14,9 +14,9 @@ public class StringCompareUtil {
             }
 
             // 공백
-            if (c1 == 32 && c2 != 32) {
+            if (isSpaceCharacter(c1) && !isSpaceCharacter(c2)) {
                 return 1;
-            } else if (c1 != 32 && c2 == 32) {
+            } else if (!isSpaceCharacter(c1) && isSpaceCharacter(c2)) {
                 return -1;
             }
 
@@ -35,23 +35,31 @@ public class StringCompareUtil {
             }
 
             return c1 - c2;
-
         }
         return 1;
     }
 
+    private static boolean isSpaceCharacter(char c) {
+        if (c == ' ') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private static boolean isSpecialCharacters(char c) {
-        if ((c >= 33 && c <= 47)
-                || (c >= 58 && c <= 64)
-                || (c >= 91 && c <= 96)
-                || (c >= 123 && c <= 126)) {
+        if ((c >= '!' && c <= '/') // 아스키 코드 33 ~ 47
+                || (c >= ':' && c <= '@') // 58 ~ 64
+                || (c >= '[' && c <= '\'') // 91 ~ 96
+                || (c >= '{' && c <= '}') // 123 ~ 125
+                ) {
             return true;
         }
         return false;
     }
 
     private static boolean isNumberCharacter(char c) {
-        if (c >= 48 && c <= 57) {
+        if (c >= '0' && c <= '9') {
             return true;
         }
         return false;

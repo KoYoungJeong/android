@@ -113,7 +113,8 @@ public class IntroActivityPresenter {
             int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
             model.trackSignInFailAndFlush(errorCode);
 
-            if (e.getResponse().getStatus() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
+            if (errorCode != -1
+                    && e.getResponse().getStatus() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
                 view.showMaintenanceDialog();
             } else {
                 view.showCheckNetworkDialog();
