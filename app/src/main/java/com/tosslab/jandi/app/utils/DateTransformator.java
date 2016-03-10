@@ -50,11 +50,11 @@ public class DateTransformator {
         return PARSE_FAIL;
     }
 
-    public static String getTimeStringFromISO(String date, String format) {
+    public static String getTimeStringFromISO(String date) {
         try {
             ISO8601DateFormat isoFormat = new ISO8601DateFormat();
             Date formatDate = isoFormat.parse(date);
-            date = getTimeString(formatDate, format);
+            date = getTimeString(formatDate);
         } catch (ParseException e) {
             e.printStackTrace();
         }
