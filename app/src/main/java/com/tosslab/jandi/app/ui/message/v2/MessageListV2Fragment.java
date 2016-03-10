@@ -319,9 +319,9 @@ public class MessageListV2Fragment extends Fragment implements
         super.onResume();
         isForeground = true;
 
-        PushMonitor.getInstance().register(room.getRoomId());
-        fileUploadStateViewModel.registerEventBus();
+        PushMonitor.getInstance().register(roomId);
 
+        fileUploadStateViewModel.registerEventBus();
         fileUploadStateViewModel.initDownloadState();
 
         messageListPresenter.restoreStatus();
@@ -1187,19 +1187,16 @@ public class MessageListV2Fragment extends Fragment implements
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
             sendStickerMessage();
-            if (!TextUtils.isEmpty(message)) {
-                sendTextMessage(message, mentions, reqSendMessageV3);
-            }
-        } else {
-            if (!TextUtils.isEmpty(message)) {
-                sendTextMessage(message, mentions, reqSendMessageV3);
-            }
+        }
+
+        if (!TextUtils.isEmpty(message)) {
+            messageListPresenter.sendTextMessage(message, mentions, reqSendMessageV3);
         }
 
         dismissStickerPreview();
         stickerInfo = NULL_STICKER;
         setSendButtonEnabled(false);
-        setMessageIntoEditText("");
+        etMessage.setText("");
 
         sendAnalyticsEvent(AnalyticsValue.Action.Send);
     }
@@ -1212,12 +1209,6 @@ public class MessageListV2Fragment extends Fragment implements
         messageListPresenter.sendStickerMessage(stickerInfo);
 
         sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Send);
-    }
-
-    private void sendTextMessage(String message,
-                                 List<MentionObject> mentions,
-                                 ReqSendMessageV3 reqSendMessage) {
-        messageListPresenter.sendTextMessage(message, mentions, reqSendMessage);
     }
 
     @Click(R.id.btn_show_mention)
@@ -1410,10 +1401,6 @@ public class MessageListV2Fragment extends Fragment implements
 
     public void setSendButtonEnabled(boolean enabled) {
         btnSend.setEnabled(enabled);
-    }
-
-    public void setMessageIntoEditText(String text) {
-        etMessage.setText(text);
     }
 
     @Nullable
