@@ -824,6 +824,7 @@ public class MessageListV2Presenter {
         }
     }
 
+    @Background
     public void onSaveTempMessageAction(String tempMessage) {
         if (TextUtils.isEmpty(tempMessage)) {
             return;
@@ -859,6 +860,7 @@ public class MessageListV2Presenter {
         }
     }
 
+    @Background
     public void onDeleteDummyMessageAction(long localId) {
         messageListModel.deleteDummyMessageAtDatabase(localId);
         view.notifyDataSetChanged();
@@ -914,7 +916,6 @@ public class MessageListV2Presenter {
             return;
         }
 
-
         if (memberId == room.getEntityId()) {
             String name = EntityManager.getInstance().getEntityNameById(memberId);
             view.showLeavedMemberDialog(name);
@@ -929,6 +930,7 @@ public class MessageListV2Presenter {
         }
     }
 
+    @Background
     public void onMessageStarredAction(long messageId) {
         try {
             messageListModel.registStarredMessage(room.getTeamId(), messageId);
@@ -941,6 +943,7 @@ public class MessageListV2Presenter {
         }
     }
 
+    @Background
     public void onMessageUnStarredAction(long messageId) {
         try {
             messageListModel.unregistStarredMessage(room.getTeamId(), messageId);
@@ -953,6 +956,7 @@ public class MessageListV2Presenter {
         }
     }
 
+    @Background
     public void onRoomMarkerChange(long memberId, long lastLinkId) {
         MarkerRepository.getRepository().upsertRoomMarker(
                 room.getTeamId(), room.getRoomId(), memberId, lastLinkId);
