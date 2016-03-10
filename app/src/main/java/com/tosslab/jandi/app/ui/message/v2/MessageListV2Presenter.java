@@ -810,7 +810,7 @@ public class MessageListV2Presenter {
         view.notifyDataSetChanged();
     }
 
-    public void onResume() {
+    public void restoreStatus() {
         if (room.getRoomId() > 0) {
             messageListModel.removeNotificationSameEntityId(room.getRoomId());
             String readyMessage = messageListModel.getReadyMessage(room.getRoomId());

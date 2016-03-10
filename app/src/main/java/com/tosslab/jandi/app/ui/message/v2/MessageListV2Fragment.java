@@ -324,7 +324,7 @@ public class MessageListV2Fragment extends Fragment implements
 
         fileUploadStateViewModel.initDownloadState();
 
-        messageListPresenter.onResume();
+        messageListPresenter.restoreStatus();
         messageListPresenter.addNewMessageQueue(true);
     }
 
