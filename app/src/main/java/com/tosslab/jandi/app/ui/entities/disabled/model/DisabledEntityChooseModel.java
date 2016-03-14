@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import org.androidannotations.annotations.EBean;
 
@@ -30,7 +31,7 @@ public class DisabledEntityChooseModel {
                         .enabled(false)
                         .photoUrl(formattedEntity.getUserLargeProfileUrl()))
                 .toSortedList((lhs, rhs) -> {
-                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                    return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                 })
                 .collect(() -> items, List::addAll)
                 .subscribe();

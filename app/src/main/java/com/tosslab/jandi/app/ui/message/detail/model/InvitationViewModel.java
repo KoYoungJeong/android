@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -77,13 +78,12 @@ public class InvitationViewModel {
         PublishSubject<String> publishSubject = PublishSubject.create();
         Subscription subscribe = publishSubject.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
                 .flatMap(s -> Observable.from(getUnjoinedEntities(entityId))
-                                .filter(formattedEntity -> {
-                                    String searchTarget = s.toLowerCase();
-                                    return formattedEntity.getName().toLowerCase()
-                                            .contains(searchTarget);
-                                })
-                                .toSortedList((formattedEntity, formattedEntity2) -> formattedEntity
-                                        .getName().compareToIgnoreCase(formattedEntity2.getName()))
+                        .filter(formattedEntity -> {
+                            String searchTarget = s.toLowerCase();
+                            return formattedEntity.getName().toLowerCase()
+                                    .contains(searchTarget);
+                        })
+                        .toSortedList((formattedEntity, formattedEntity2) -> StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName()))
                 )
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(adapter::setUnjoinedEntities);

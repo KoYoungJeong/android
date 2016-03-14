@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.intro.presenter;
 import android.content.Context;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -114,10 +113,11 @@ public class IntroActivityPresenter {
             int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
             model.trackSignInFailAndFlush(errorCode);
 
-            if (e.getCause() instanceof ConnectionNotFoundException) {
-                view.showCheckNetworkDialog();
-            } else {
+            if (errorCode != -1
+                    && e.getResponse().getStatus() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
                 view.showMaintenanceDialog();
+            } else {
+                view.showCheckNetworkDialog();
             }
         } catch (Exception e) {
             model.trackSignInFailAndFlush(-1);
