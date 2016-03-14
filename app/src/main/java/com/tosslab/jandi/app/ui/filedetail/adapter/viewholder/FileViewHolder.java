@@ -36,7 +36,7 @@ import rx.Observable;
 
 /**
  * Created by tonyjs on 16. 1. 19..
- *
+ * <p>
  * 파일의 기본 정보 (올린 사람, 시간, 타입, 확장자, 사이즈 등등) 등을 "고정적으로" 그린다.
  * 파일의 형태에 따라 컨텐츠 영역을 다르게 보여주어야 하는데,
  * 이 클래스를 상속 후 #addContentView 안에서 컨텐츠 레이아웃을 add 한 후 구현한다.
@@ -151,8 +151,7 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
     }
 
     private String getDeletedDate(Date updateTime) {
-        String time = DateTransformator.getTimeString(
-                updateTime, DateTransformator.FORMAT_YYYYMMDD_HHMM_A_KOREA);
+        String time = DateTransformator.getTimeString(updateTime);
         return context.getResources().getString(R.string.jandi_file_deleted_with_date, time);
     }
 

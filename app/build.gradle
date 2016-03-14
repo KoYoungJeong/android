@@ -42,7 +42,7 @@ task checkstyles(type: Checkstyle) {
 }
 
 task resourceRefresh
-resourceRefresh.dependsOn (stringResourceRefresh, imageResourceRefresh)
+resourceRefresh.dependsOn(stringResourceRefresh, imageResourceRefresh)
 
 checkstyle {
     toolVersion = "6.2"

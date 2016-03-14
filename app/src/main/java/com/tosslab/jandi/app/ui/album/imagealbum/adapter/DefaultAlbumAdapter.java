@@ -37,12 +37,10 @@ public class DefaultAlbumAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(context).inflate(R.layout.item_default_album, parent, false);
-
         AlbumViewHolder albumViewHolder = new AlbumViewHolder(view);
         albumViewHolder.tvTitle = (TextView) view.findViewById(R.id.tv_item_default_album_title);
         albumViewHolder.tvSelectCount = (TextView) view.findViewById(R.id.tv_item_default_album_count);
         albumViewHolder.ivSample = (SimpleDraweeView) view.findViewById(R.id.iv_item_default_album_sample);
-
 
         return albumViewHolder;
     }
@@ -120,7 +118,6 @@ public class DefaultAlbumAdapter extends RecyclerView.Adapter {
 
         public AlbumViewHolder(View itemView) {
             super(itemView);
-
         }
     }
 

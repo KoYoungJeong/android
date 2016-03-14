@@ -156,7 +156,6 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
             } else {
                 callCropActivity(item);
             }
-
         });
 
         imagePictureAdapter.setOnLoadMoreCallback(imageId -> {

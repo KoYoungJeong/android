@@ -914,7 +914,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         ProgressDialog progressDialog = new ProgressDialog(FileDetailActivity.this);
         progressDialog.setMax(100);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setCancelable(false);
+        progressDialog.setCancelable(true);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setOnCancelListener(dialog -> {
+            fileDetailPresenter.cancelCurrentDownloading();
+        });
         progressDialog.setMessage("Downloading " + fileMessage.content.title);
         progressDialog.show();
 
@@ -1300,6 +1304,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             super.onBackPressed();
         }
     }
+
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @OptionsItem(android.R.id.home)
